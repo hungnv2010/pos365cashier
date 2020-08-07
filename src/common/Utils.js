@@ -1,0 +1,94 @@
+import I18n from "./language/i18n";
+import moment from "moment";
+
+export const DATE_FORMAT = "YYYY-MM-DD'T'HH:mm:ss.SSFFFFF'Z'";
+
+//Convert number, currency format
+export const currencyToString = value => {
+  if (!value || (value && value == "")) {
+    value = "0";
+  }
+  // value = value | 0;
+  value = parseInt(value)
+  if (value < 0) {
+    value = value.toString();
+    let money = parseInt(value.replace(/\D/g, ""), 10);
+    let currentMoney = I18n.toNumber(money, { delimiter: ",", precision: 0 });
+    return `-${currentMoney.toString()}`;
+  } else {
+    value = value.toString();
+    let money = parseInt(value.replace(/\D/g, ""), 10);
+    let currentMoney = I18n.toNumber(money, { delimiter: ",", precision: 0 });
+    return currentMoney.toString();
+  }
+};
+
+//Convert Time (Date is String type, moment is Moment type)
+export const dateToDate = (date, inputFormat = "YYYY-MM-DD HH:mm:ss", outputFormat = "DD/MM/YYYY") => {
+  let dateOutput = "";
+  try {
+    dateOutput = moment(date, inputFormat).format(outputFormat);
+    if (dateOutput == "Invalid date") {
+      dateOutput = "";
+    }
+  } catch (e) {
+    dateOutput = "";
+  }
+  return dateOutput;
+};
+
+export const dateUTCToDate = (date, inputFormat = "YYYYMMDDhhmmss", outputFormat = "HH:mm DD/MM/YYYY") => {
+  let momentUTC = moment.utc(date, inputFormat)
+  let momentITC = moment(momentUTC).local();
+  let dateITC = momentITC.format(outputFormat);
+  return dateITC;
+};
+
+export const dateUTCToMoment = (date, inputFormat = "yyyy-MM-dd'T'HH:mm:ss.SSFFFFF'Z'") => {
+  let momentUTC = moment.utc(date, inputFormat)
+  let momentITC = moment(momentUTC).local();
+  return momentITC;
+}
+
+export const momentToDateUTC = (momentInput, outputFormat = "YYYY-MM-DDTHH:mm:ss.SS") => {
+  let dateUTC = moment.utc(momentInput).format(outputFormat)
+  return dateUTC
+}
+
+export const change_alias = (alias) => {
+  var str = alias;
+  str = str.toLowerCase();
+  str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
+  str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
+  str = str.replace(/ì|í|ị|ỉ|ĩ/g, "i");
+  str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o");
+  str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
+  str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
+  str = str.replace(/đ/g, "d");
+  str = str.replace(/!|@|%|\^|\*|\(|\)|\+|\=|\<|\>|\?|\/|,|\.|\:|\;|\'|\"|\&|\#|\[|\]|~|\$|_|`|-|{|}|\||\\/g, " ");
+  str = str.replace(/ + /g, " ");
+  str = str.trim();
+  return str;
+}
+
+export const getTimeFromNow = (RoomMoment) => {
+  let [day, hour, minute] = [0, 0, 0]
+  let date = new Date()
+  let timeFromNow = date.getTime() - moment(RoomMoment).valueOf()
+  if (timeFromNow < 0) timeFromNow = 0
+  day = Math.floor(timeFromNow / (1000 * 60 * 60 * 24))
+  console.log("getTimeFromNowTime2 ", date.getTime(), moment(RoomMoment).valueOf() , day, timeFromNow, (timeFromNow / (1000 * 60 * 60 * 24)));
+  // if (day < 0) day = 0
+  timeFromNow -= day * 24 * 60 * 60 * 1000
+  hour = Math.floor(timeFromNow / (1000 * 60 * 60))
+
+  // if (hour < 0) hour = 0
+  timeFromNow -= hour * 60 * 60 * 1000
+  minute = Math.ceil(timeFromNow / (1000 * 60))
+
+  let getDay = day > 0 ? `${day} ${I18n.t('ngay')}` : '';
+  let getHour = +hour > 0 ? `${hour} ${I18n.t('gio')}` : '';
+  let getMinute = +minute > 0 ? `${minute} ${I18n.t('phut')}` : '';
+  return `${getDay} ${getHour} ${getMinute}`
+}
+
