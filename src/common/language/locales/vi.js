@@ -19,6 +19,7 @@ export default {
   ban_co_chac_chan_muon_dang_xuat: "Bạn có chắc chắn muốn đăng xuất tài khoản?",
   ban_dang_o_dung_vi_tri_da_chon: "Bạn đang ở đúng vị trí đã chọn. Vui lòng chọn vị trí khác để chuyển bàn",
   ban_co_muon_luu: "Bạn có muốn lưu thay đổi không?",
+  ban_khong_co_quyen_truy_cap:"Tài khoản không có quyền truy cập hoặc đã hết hạn sử dụng",
 
   // TODO: C
   cai_dat: "Cài đặt",
@@ -104,6 +105,7 @@ export default {
   hoan_thanh: "Hoàn thành",
   huy_tra: "Huỷ/Trả",
   hien_thi: "Hiển thị",
+  het_phien_lam_viec: "Phiên làm việc của quý khách đã hết hạn. Vui lòng đăng nhập lại để tiếp tục sử dụng.",
 
   // TODO: L
   lich_su_huy_tra_do: "Lịch sử Huỷ / Trả đồ",
@@ -165,7 +167,7 @@ export default {
   phieu_thu_chi: "phiếu thu chi",
   phuong_thuc: "Phương thức",
   phut: "phút",
-  phien_ban_ngay: "Phiên bản ngày",
+  phien_ban_ngay: "Phiên bản",
 
   // TODO: Q
   quy_dau_ky: "Quỹ đầu kỳ",
@@ -257,6 +259,7 @@ export default {
   xac_thuc_khong_dung: "Xác thực không đúng. Thử lại",
   xac_thuc_loi_nhieu_lan: "Quá nhiều lần thử. Hãy thử lại sau",
   xong: "Xong",
+  xin_cam_on: "Xin cảm ơn, hẹn gặp lại quý khách!",
 
   // TODO: Y
 

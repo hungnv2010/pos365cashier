@@ -16,6 +16,7 @@ import I18n from "../../../../common/language/i18n"
 import { Snackbar } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 
+var isClick = false;
 
 export default (props) => {
 
@@ -29,6 +30,11 @@ export default (props) => {
     const [listTopping, setListTopping] = useState([])
     const [marginModal, setMargin] = useState(0)
     const dispatch = useDispatch();
+
+    const historyOrder = useSelector(state => {
+        console.log("state.historyOrder", state.Common.historyOrder.length, state.Common.historyOrder);
+        return state.Common.historyOrder
+    });
 
 
     useEffect(() => {
@@ -176,11 +182,14 @@ export default (props) => {
 
     }
 
-    const sendOrder = () => {
-        if (list.length > 0) {
-            let ls = [];
-            ls = JSON.parse(JSON.stringify(list))
-            console.log("sendOrder ==== ", ls);
+    const sendOrder = async () => {
+        if (list.length > 0 && isClick == false) {
+            isClick = true;
+            let ls = list;
+            let listItem = [];
+            // ls = JSON.parse(JSON.stringify(list)) 
+            // console.log("sendOrder ====list", list);
+            // console.log("sendOrder ==== ", ls);
             let params = {
                 ServeEntities: []
             };
@@ -207,19 +216,41 @@ export default (props) => {
                     Description: element.Description
                 }
                 params.ServeEntities.push(obj)
+                listItem.push({
+                    Quantity: element.Quantity,
+                    ProductType: element.ProductType,
+                    IsTimer: element.IsTimer,
+                    IsLargeUnit: element.IsLargeUnit,
+                    PriceLargeUnit: element.PriceLargeUnit,
+                    Price: element.Price,
+                    TotalTopping: element.TotalTopping,
+                    ProductImages: element.ProductImages,
+                    Name: element.Name,
+                    Description: element.Description
+                })
             });
+
+
+
+            // let historyTemp = [];
+            // let history = await getFileDuLieuString(Constant.HISTORY_ORDER, true);
+
             dialogManager.showLoading();
-            new HTTPService().setPath(ApiPath.SAVE_ORDER).POST(params).then(async (res) => {
+            new HTTPService().setPath(ApiPath.SAVE_ORDER).POST(params).then((res) => {
                 console.log("sendOrder res ", res);
+                isClick = false;
                 if (res) {
                     syncListProducts([])
                     let tempListPosition = dataManager.dataChoosing.filter(item => item.Id != props.route.params.room.Id)
                     dataManager.dataChoosing = tempListPosition;
-
                     let historyTemp = [];
-                    let history = await getFileDuLieuString(Constant.HISTORY_ORDER, true);
-                    if (history != undefined && history != "") {
-                        history = JSON.parse(history)
+                    // let history = await getFileDuLieuString(Constant.HISTORY_ORDER, true);
+                    console.log("sendOrder history ");
+                    let history = [...historyOrder];
+                    console.log("sendOrder history ", history);
+                    
+                    if (history != undefined) {
+                        // history = JSON.parse(history)
                         let check = false;
                         if (history.length > 0)
                             history.forEach(el => {
@@ -229,11 +260,11 @@ export default (props) => {
                                         el.list.push({
                                             time: new Date(),
                                             Position: props.Position,
-                                            list: ls, RoomId: props.route.params.room.Id,
+                                            list: listItem, RoomId: props.route.params.room.Id,
                                             RoomName: props.route.params.room.Name,
                                         })
-                                        if (el.list.length >= 100) {
-                                            el.list = el.list.slice(1, 99);
+                                        if (el.list.length >= 50) {
+                                            el.list = el.list.slice(1, 49);
                                         }
                                     }
                                 }
@@ -247,7 +278,7 @@ export default (props) => {
                                     list: [{
                                         time: new Date(),
                                         Position: props.Position,
-                                        list: ls, RoomId: props.route.params.room.Id,
+                                        list: listItem, RoomId: props.route.params.room.Id,
                                         RoomName: props.route.params.room.Name,
                                     }]
                                 }
@@ -261,7 +292,7 @@ export default (props) => {
                                 list: [{
                                     time: new Date(),
                                     Position: props.Position,
-                                    list: ls, RoomId: props.route.params.room.Id,
+                                    list: listItem, RoomId: props.route.params.room.Id,
                                     RoomName: props.route.params.room.Name,
                                 }]
                             }
@@ -269,9 +300,11 @@ export default (props) => {
                     }
                     console.log("JSON.stringify(historyTemp) ", JSON.stringify(historyTemp));
                     setFileLuuDuLieu(Constant.HISTORY_ORDER, JSON.stringify(historyTemp))
+                    dispatch({ type: 'HISTORY_ORDER', historyOrder: historyTemp })
                 }
                 dialogManager.hiddenLoading()
             }).catch((e) => {
+                isClick = false;
                 console.log("sendOrder err ", e);
                 dialogManager.hiddenLoading()
             })

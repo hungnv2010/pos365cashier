@@ -12,6 +12,7 @@ import { getFileDuLieuString } from '../../../../data/fileStore/FileStorage';
 import { Constant } from '../../../../common/Constant';
 import { Snackbar } from 'react-native-paper';
 import realmStore from '../../../../data/realm/RealmStore';
+import { useDispatch } from 'react-redux';
 
 
 export default (props) => {
@@ -31,11 +32,19 @@ export default (props) => {
         { name: "C", status: false },
         { name: "D", status: false },
     ])
+    const dispatch = useDispatch();
 
-    useEffect(() => {
-        console.log(props, 'page served');
-
-    })
+    // useEffect(() => {
+    //     console.log(props, 'page served');
+    //     const getData = async () => {
+    //         let data = await getFileDuLieuString(Constant.HISTORY_ORDER, true);
+    //         if (data) {
+    //           data = JSON.parse(data);
+    //           dispatch({ type: 'HISTORY_ORDER', historyOrder: data })
+    //         }
+    //       }
+    //       getData()
+    // }, [])
 
     const outputListProducts = (list) => {
         if (props.route.params.room.ProductId) {

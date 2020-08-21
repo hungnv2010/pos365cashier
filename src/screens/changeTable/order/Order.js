@@ -24,6 +24,7 @@ import { HTTPService } from '../../../data/services/HttpService';
 import dialogManager from '../../../components/dialog/DialogManager';
 import { ApiPath } from '../../../data/services/ApiPath';
 import { Snackbar } from 'react-native-paper';
+import moment from 'moment';
 
 
 const _nodes = new Map();
@@ -137,7 +138,7 @@ export default (props) => {
                         let JsonContentJS = JSON.parse(elm.JsonContent)
                         Total += JsonContentJS.Total ? JsonContentJS.Total : 0
                         if (JsonContentJS.ActiveDate) {
-                            let ActiveMoment = dateUTCToMoment(JsonContentJS.ActiveDate)
+                            let ActiveMoment = moment(JsonContentJS.ActiveDate)
                             if (!RoomMoment) RoomMoment = ActiveMoment
                             else if (ActiveMoment.isBefore(RoomMoment)) RoomMoment = ActiveMoment
                         }
@@ -228,7 +229,7 @@ export default (props) => {
                                     duration={6000}
                                     bounce={false}
                                     marqueeDelay={1000}>
-                                    {item.RoomMoment && item.IsActive ? getTimeFromNow(item.RoomMoment._i) : ""}
+                                    {item.RoomMoment && item.IsActive ? getTimeFromNow(item) : ""}
                                 </TextTicker>
                             </View>
                             : null}

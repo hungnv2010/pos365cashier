@@ -71,18 +71,14 @@ export const change_alias = (alias) => {
   return str;
 }
 
-export const getTimeFromNow = (RoomMoment) => {
+export const getTimeFromNow = (item) => {
   let [day, hour, minute] = [0, 0, 0]
   let date = new Date()
-  let timeFromNow = date.getTime() - moment(RoomMoment).valueOf()
+  let timeFromNow = date.getTime() - moment(item.RoomMoment).valueOf()
   if (timeFromNow < 0) timeFromNow = 0
   day = Math.floor(timeFromNow / (1000 * 60 * 60 * 24))
-  console.log("getTimeFromNowTime2 ", date.getTime(), moment(RoomMoment).valueOf() , day, timeFromNow, (timeFromNow / (1000 * 60 * 60 * 24)));
-  // if (day < 0) day = 0
   timeFromNow -= day * 24 * 60 * 60 * 1000
   hour = Math.floor(timeFromNow / (1000 * 60 * 60))
-
-  // if (hour < 0) hour = 0
   timeFromNow -= hour * 60 * 60 * 1000
   minute = Math.ceil(timeFromNow / (1000 * 60))
 

@@ -154,7 +154,7 @@ export default (props) => {
         console.log('getCurrentIP ', getCurrentIP);
         if (getCurrentIP && getCurrentIP != "") {
             if (provisional.current && provisional.current == Constant.PROVISIONAL_PRINT) {
-                console.log("onClickProvisional ", jsonContent);
+                console.log("onClickProvisional jsonContent ", jsonContent);
                 if (jsonContent.RoomName == undefined || jsonContent.RoomName == "") {
                     jsonContent.RoomName = props.route.params.room.Name;
                 }

@@ -7,13 +7,16 @@ import realmStore, { SchemaName } from '../../data/realm/RealmStore';
 import I18n from '../../common/language/i18n'
 import { Switch, Snackbar } from 'react-native-paper';
 import dialogManager from '../../components/dialog/DialogManager';
-import { HTTPService } from '../../data/services/HttpService';
+import { HTTPService, getHeaders } from '../../data/services/HttpService';
 import { ApiPath } from '../../data/services/ApiPath';
 import { CommonActions } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import colors from '../../theme/Colors';
 import dataManager from '../../data/DataManager';
 import { navigate } from '../../navigator/NavigationService';
+import { useDispatch } from 'react-redux';
+import DeviceInfo from 'react-native-device-info';
+import signalRManager from '../../common/SignalR';
 const { Print } = NativeModules;
 const IP_DEFAULT = "192.168.99.";
 
@@ -51,7 +54,7 @@ const HeaderComponent = (props) => {
     const [Branch, setBranch] = useState({});
     const [vendorSession, setVendorSession] = useState({});
     const [showModal, setShowModal] = useState(false);
-
+    const dispatch = useDispatch();
 
     useLayoutEffect(() => {
         const getVendorSession = async () => {
@@ -101,25 +104,60 @@ const HeaderComponent = (props) => {
         dialogManager.showLoading();
         new HTTPService().setPath(ApiPath.CHANGE_BRANCH).POST(params).then(async (res) => {
             console.log("onClickItemBranch res ", res);
-            setFileLuuDuLieu(Constant.CURRENT_BRANCH, JSON.stringify(item));
-            setBranch(item)
-            dataManager.dataChoosing = [];
-            await realmStore.deleteAll(),
-                dialogManager.hiddenLoading()
-            props.navigation.dispatch(
-                CommonActions.reset({
-                    index: 0,
-                    routes: [
-                        { name: 'Home' },
-                    ],
-                })
-            )
+            if (res) {
+                setFileLuuDuLieu(Constant.CURRENT_BRANCH, JSON.stringify(item));
+                setBranch(item)
+                dispatch({ type: 'ALREADY', already: false })
+                dataManager.dataChoosing = [];
+                await realmStore.deleteAll(),
+                    signalRManager.killSignalR();
+                // props.navigation.dispatch(
+                //     CommonActions.reset({
+                //         index: 0,
+                //         routes: [
+                //             { name: 'Home' },
+                //         ],
+                //     })
+                // )
+                getRetailerInfoAndNavigate();
+            }
         }).catch((e) => {
             console.log("onClickItemBranch err ", e);
             dialogManager.hiddenLoading()
         })
     }
 
+    const navigateToHome = () => {
+        props.navigation.dispatch(
+            CommonActions.reset({
+                index: 0,
+                routes: [
+                    { name: 'Home' },
+                ],
+            })
+        )
+    }
+
+    const getRetailerInfoAndNavigate = () => {
+        let inforParams = {};
+        new HTTPService().setPath(ApiPath.VENDOR_SESSION).GET(inforParams, getHeaders()).then((res) => {
+            console.log("getDataRetailerInfo res ", res);
+            if (res && res.CurrentUser) {
+                if (res.CurrentRetailer && (res.CurrentRetailer.FieldId == 3 || res.CurrentRetailer.FieldId == 11)) {
+                    setFileLuuDuLieu(Constant.VENDOR_SESSION, JSON.stringify(res))
+                    navigateToHome()
+                } else {
+                    dialogManager.showPopupOneButton(I18n.t("vui_long_chon_linh_vuc_ban_le_ho_tro_shop_thoi_trang_sieu_thi"), I18n.t('thong_bao'));
+                }
+            } else {
+                dialogManager.showPopupOneButton(I18n.t('ban_khong_co_quyen_truy_cap'), I18n.t('thong_bao'));
+            }
+            dialogManager.hiddenLoading();
+        }).catch((e) => {
+            dialogManager.hiddenLoading();
+            console.log("getDataRetailerInfo err ", e);
+        })
+    }
 
     return (
         <View style={{ backgroundColor: Colors.colorchinh, justifyContent: "space-between", flexDirection: "row", alignItems: "center", padding: 20 }}>
@@ -196,6 +234,8 @@ const ContentComponent = (props) => {
     const [ip, setIp] = useState(IP_DEFAULT);
     const [isSwitchOn, setSwitchOn] = useState(false);
     const [paperSize, setPaperSize] = useState("");
+    const dispatch = useDispatch();
+    const [version, setVersion] = useState("");
 
     useEffect(() => {
         const getCurrentIP = async () => {
@@ -209,6 +249,10 @@ const ContentComponent = (props) => {
             if (provisional && provisional != "" && provisional == Constant.PROVISIONAL_PRINT) {
                 setSwitchOn(true);
             }
+            DeviceInfo.getVersion().then(res => {
+                console.log("DeviceInfo.getVersion() ===  ", res);
+                setVersion(res)
+            });
         }
         getCurrentIP()
     }, [])
@@ -216,18 +260,9 @@ const ContentComponent = (props) => {
     const onClickLogOut = () => {
         dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_dang_xuat'), I18n.t("thong_bao"), res => {
             if (res == 1) {
-                realmStore.deleteAll()
                 setFileLuuDuLieu(Constant.CURRENT_ACCOUNT, "");
                 setFileLuuDuLieu(Constant.CURRENT_BRANCH, "");
                 dataManager.dataChoosing = []
-                // props.navigation.dispatch(
-                //     CommonActions.reset({
-                //         index: 0,
-                //         routes: [
-                //             { name: 'Login' },
-                //         ],
-                //     })
-                // )
                 navigate('Login', {}, true);
             }
         })
@@ -299,7 +334,7 @@ const ContentComponent = (props) => {
                 </View>
                 <View style={{ borderBottomWidth: 0.5, borderBottomColor: "#ddd" }}>
                     <View style={{ padding: 20 }}>
-                        <Text style={{ marginTop: 0 }}>{I18n.t('phien_ban_ngay')} <Text style={{ color: colors.colorLightBlue }}> 03/08/2020</Text></Text>
+                        <Text style={{ marginTop: 0 }}>{I18n.t('phien_ban_ngay')} <Text style={{ color: colors.colorLightBlue }}> {version}</Text></Text>
                     </View>
                 </View>
                 <View style={{ borderBottomWidth: 0.5, borderBottomColor: "#ddd" }}>

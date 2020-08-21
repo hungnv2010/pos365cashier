@@ -25,7 +25,7 @@ export default (props) => {
         dialogManager.showLoading();
         new HTTPService().setPath(ApiPath.DETAIL_NOTE_BOOK).GET(params).then((res) => {
             console.log("getDetailNoteBook res ", res);
-            if (res.results && res.results.length > 0) {
+            if (res && res.results && res.results.length > 0) {
                 setDataList(res.results)
                 let total = 0;
                 res.results.forEach(element => {

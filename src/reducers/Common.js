@@ -18,6 +18,8 @@ const initState = {
 	deviceType: "",
 	orientaition: "",
 	numberOrder: 0,
+	already: false,
+	historyOrder: []
 }
 
 const commonReducer = (state = initState, action = {}) => {
@@ -79,6 +81,16 @@ const commonReducer = (state = initState, action = {}) => {
 			return {
 				...state,
 				numberOrder: action.numberOrder
+			}
+		case "ALREADY":
+			return {
+				...state,
+				already: action.already
+			}
+		case "HISTORY_ORDER":
+			return {
+				...state,
+				historyOrder: action.historyOrder
 			}
 		default:
 			return state

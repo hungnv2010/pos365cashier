@@ -100,8 +100,10 @@ const OnlineComponent = (props) => {
         let params = {};
         new HTTPService().setPath(ApiPath.PRINT_TEMPLATES + "/10").GET(params).then((res) => {
             console.log("onClickLoadOnline res ", res);
-            setDataHTML(res.Content)
-            props.output(res.Content)
+            if (res) {
+                setDataHTML(res.Content)
+                props.output(res.Content)
+            }
             dialogManager.hiddenLoading()
         }).catch((e) => {
             console.log("onClickLoadOnline err ", e);

@@ -17,6 +17,7 @@ import { getFileDuLieuString, setFileLuuDuLieu } from "../../data/fileStore/File
 import dialogManager from '../../components/dialog/DialogManager';
 import { CommonActions } from '@react-navigation/native';
 import dataManager from '../../data/DataManager'
+import realmStore from '../../data/realm/RealmStore';
 
 
 let error = "";
@@ -53,6 +54,8 @@ const LoginScreen = (props) => {
                     setHasLogin(false)
                 }
                 dialogManager.hiddenLoading()
+                dispatch({ type: 'ALREADY', already: false })
+                await realmStore.deleteAll()
             }
         }
         getCurrentAccount()
@@ -64,16 +67,16 @@ const LoginScreen = (props) => {
             return
         } else {
             dialogManager.showLoading();
-            URL.link = "https://" + shop + ".pos365.vn/";
+            URL.link = "https://" + shop.trim() + ".pos365.vn/";
             console.log("onClickLogin URL ", URL, shop);
             let params = { UserName: userName, Password: password };
             new HTTPService().setPath(ApiPath.LOGIN).POST(params, getHeaders({}, true)).then((res) => {
                 console.log("onClickLogin res ", res);
-                if (res.SessionId && res.SessionId != "") {
+                if (res && res.SessionId && res.SessionId != "") {
                     dispatch(saveDeviceInfoToStore({ SessionId: res.SessionId }))
                     handlerLoginSuccess(params, res);
                 }
-                if (res.status == 401) {
+                if (res == null) {
                     dialogManager.hiddenLoading();
                     dialogManager.showPopupOneButton(I18n.t('loi_dang_nhap'), I18n.t('thong_bao'))
                     // error = I18n.t('loi_dang_nhap');
@@ -97,7 +100,7 @@ const LoginScreen = (props) => {
     }, [onClickLogin])
 
     const handlerLoginSuccess = (params, res) => {
-        let account = { SessionId: res.SessionId, UserName: params.UserName, Link: shop };
+        let account = { SessionId: res.SessionId, UserName: params.UserName, Link: shop.trim() };
         setFileLuuDuLieu(Constant.CURRENT_ACCOUNT, JSON.stringify(account));
         getRetailerInfoAndNavigate();
     }
@@ -120,9 +123,9 @@ const LoginScreen = (props) => {
             console.log("getDataRetailerInfo res ", res);
             setFileLuuDuLieu(Constant.VENDOR_SESSION, JSON.stringify(res))
 
-            if (res.CurrentUser) {
+            if (res && res.CurrentUser) {
                 if (userName != '') {
-                    let account = { UserName: userName, Link: shop };
+                    let account = { UserName: userName, Link: shop.trim() };
                     setFileLuuDuLieu(Constant.REMEMBER_ACCOUNT, JSON.stringify(account));
                 }
 
@@ -146,11 +149,11 @@ const LoginScreen = (props) => {
 
     const onChangeText = (text, type) => {
         if (type == 1) {
-            setShop(text)
+            setShop(text.trim())
         } else if (type == 2) {
-            setUserName(text)
+            setUserName(text.trim())
         } else if (type == 3) {
-            setPassword(text)
+            setPassword(text.trim())
         }
     }
 

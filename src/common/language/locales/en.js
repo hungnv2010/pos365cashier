@@ -18,6 +18,7 @@ export default {
   ban_co_chac_chan_muon_dang_xuat: "Are you sure you want to log out account?",
   ban_dang_o_dung_vi_tri_da_chon: "You are in this position. Please select another position to change table",
   ban_co_muon_luu: "Do you want to save changes?",
+  ban_khong_co_quyen_truy_cap:"Account has no access or has expired time", 
 
   // TODO: C
   cai_dat: "Setting",
@@ -100,6 +101,7 @@ export default {
   hoan_thanh: "Complete",
   huy_tra: "Cancel / Return ",
   hien_thi: "Show",
+  het_phien_lam_viec: "Your session has expired. Please sign in again to continue using.",
 
   // TODO: L
   lich_su_huy_tra_do: "History Cancel / Return",
@@ -152,7 +154,7 @@ export default {
   phieu_thu_chi: "Income and expenditure",
   phuong_thuc: "Method",
   phut: "minutes",
-  phien_ban_ngay: "Date version",
+  phien_ban_ngay: "Version",
 
   // TODO: Q
   quy_khach_vui_long_nhap_mat_khau: "Please enter your password",
@@ -218,6 +220,7 @@ export default {
   // TODO: X
   xac_nhan: 'Comfirm',
   xong: "Done",
+  xin_cam_on: "Thank you, see you again!",
 
   // TODO: Y
   yeu_cau_thanh_toan: "Payment request",

@@ -32,10 +32,13 @@ export default (props) => {
     const [listOrder, setListOrder] = useState([])
     const [indexRoom, setIndexRoom] = useState(0)
     const [loadDone, setLoadDone] = useState(false)
+    const already = useSelector(state => {
+        return state.Common.already
+    });
     const dispatch = useDispatch();
 
     const { deviceType } = useSelector(state => {
-        console.log("useSelector state ", state);
+        console.log("useSelector state ======== ", state);
         return state.Common
     });
 
@@ -56,13 +59,13 @@ export default (props) => {
     const [listRoom, setListRoom] = useState([])
 
     useEffect(() => {
-        if (props.already) {
+        if (already) {
             init()
         }
         return () => {
             if (serverEvents) serverEvents.removeAllListeners()
         }
-    }, [props.already])
+    }, [already])
 
     useEffect(() => {
         // moment.locale('vi');
@@ -88,6 +91,7 @@ export default (props) => {
         rooms = await realmStore.queryRooms()
         rooms = rooms.sorted('Position')
         roomGroups = await realmStore.queryRoomGroups()
+        roomGroups = roomGroups.sorted('Id')
         serverEvents = await realmStore.queryServerEvents()
         console.log("init: ", JSON.parse(JSON.stringify(rooms, roomGroups, serverEvents)));
 
@@ -113,9 +117,11 @@ export default (props) => {
     }
 
     const reloadTime = async () => {
+        console.log('reloadTime');
         rooms = await realmStore.queryRooms()
         rooms = rooms.sorted('Position')
         roomGroups = await realmStore.queryRoomGroups()
+        roomGroups = roomGroups.sorted('Id')
         serverEvents = await realmStore.queryServerEvents()
         console.log("init: ", JSON.parse(JSON.stringify(rooms, roomGroups, serverEvents)));
 
@@ -141,6 +147,7 @@ export default (props) => {
             })
 
             let otherGroup = { Id: 0, Name: newDatas.length > 0 ? I18n.t('khac') : I18n.t('tat_ca'), isGroup: true }
+            console.log("An test ", newDatas.length);
             let roomsInside = rooms.filtered(`RoomGroupId == ${otherGroup.Id}`)
             let lengthRoomsInside = roomsInside.length
             if (roomsInside && lengthRoomsInside > 0) {
@@ -171,11 +178,9 @@ export default (props) => {
                         let totalPoision = JsonContentJS.Total ? JsonContentJS.Total : 0
                         Total += totalPoision
                         if (JsonContentJS.ActiveDate) {
-                            let ActiveMoment = dateUTCToMoment(JsonContentJS.ActiveDate)
+                            let ActiveMoment = moment(JsonContentJS.ActiveDate)
                             if (!RoomMoment) RoomMoment = ActiveMoment
                             else if (ActiveMoment.isBefore(RoomMoment) && totalPoision > 0) RoomMoment = ActiveMoment
-                        }else{
-                            RoomMoment = dateUTCToMoment(moment().subtract(1, 'seconds'))
                         }
                         if (JsonContentJS.OrderDetails && JsonContentJS.OrderDetails.length) IsActive = true
                     })
@@ -236,18 +241,18 @@ export default (props) => {
                     <View style={{ justifyContent: "center", paddingHorizontal: 10, alignItems: "center", flex: 2 }}>
                         {item.IsActive ?
                             // <View>
-                                <View style={{ flexDirection: "row", }}>
-                                    <Image source={Images.image_clock} style={{ width: 10, height: 10, marginRight: 2, alignSelf: "center" }}></Image>
-                                    {/* <Text style={{ color: "#fff", fontSize: 8 }}>{item.RoomMoment._i}</Text> */}
-                                    <TextTicker
+                            <View style={{ flexDirection: "row", }}>
+                                <Image source={Images.image_clock} style={{ width: 10, height: 10, marginRight: 2, alignSelf: "center" }}></Image>
+                                {/* <Text style={{ color: "#fff", fontSize: 8 }}>{item.RoomMoment._i}</Text> */}
+                                <TextTicker
                                     style={{ fontSize: 10, textAlign: "center", color: item.IsActive ? 'white' : 'black', fontSize: 8 }}
                                     duration={6000}
                                     bounce={false}
                                     marqueeDelay={1000}>
-                                    {item.RoomMoment && item.IsActive ? getTimeFromNow(item.RoomMoment._i) : ""}
+                                    {item.RoomMoment && item.IsActive ? getTimeFromNow(item) : ""}
                                 </TextTicker>
 
-                                </View>
+                            </View>
                             //      <TextTicker
                             //         style={{ fontSize: 10, textAlign: "center", color: item.IsActive ? 'white' : 'black', fontSize: 8 }}
                             //         duration={6000}

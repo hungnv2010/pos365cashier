@@ -31,13 +31,29 @@ export default (props) => {
 
     const back = useRef(0);
 
+    // const historyOrder = useSelector(state => {
+    //     console.log("state.historyOrder", state.Common.historyOrder.length, state.Common.historyOrder);
+    //     return [...state.Common.historyOrder]
+    // });
+
     useEffect(() => {
-        
+
     }, [])
 
     useFocusEffect(
         React.useCallback(() => {
             const getHistory = async () => {
+                // dialogManager.showLoading();
+                // if (historyOrder.length > 0)
+                //     historyOrder.forEach(el => {
+                //         console.log("useFocusEffect el ", el.shop, URL.link);
+                //         if (URL.link.indexOf(el.shop) > -1) {
+                //             console.log("useFocusEffect el list ", el.list);
+                //             let arr = [...el.list]
+                //             setListOrder(arr.reverse());
+                //         }
+                //     });
+                // dialogManager.hiddenLoading();
                 dialogManager.showLoading();
                 let history = await getFileDuLieuString(Constant.HISTORY_ORDER, true);
                 if (history && history != "") {
@@ -106,7 +122,7 @@ export default (props) => {
                 style={{ flexDirection: "row", borderRadius: 5, marginVertical: 4, padding: 20, width: "100%", borderColor: colors.colorchinh, borderWidth: 1, justifyContent: "center", alignItems: "center", backgroundColor: deviceType != Constant.PHONE && dataItem.time == item.time ? "#FFCC66" : "#EED6A7" }}>
                 <View style={{ flex: 1 }}>
                     <Text style={{ textTransform: "uppercase", color: "#000", fontWeight: "bold" }}>{item.RoomName}</Text>
-                    <Text style={{ color: "#000", marginTop: 10 }}>{I18n.t('tong_so_luong')}: {totalProduct(item.list)}</Text>
+                    <Text style={{ color: "#000", marginTop: 10 }}>{I18n.t('tong_so_luong')}: {item.list ? totalProduct(item.list) : ""}</Text>
                 </View>
                 <View style={{ flex: 1 }}>
                     <Text style={{ textAlign: "right", color: "#000", marginTop: 10 }}>{I18n.t('tam_tinh')}: {currencyToString(getTotalPrice(item.list))} đ</Text>

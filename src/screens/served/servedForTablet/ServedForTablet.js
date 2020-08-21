@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { View, NativeModules } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import ToolBarSelectProduct from '../../../components/toolbar/ToolBarSelectProduct'
 import ToolBarServed from '../../../components/toolbar/ToolBarServed'
 import SelectProduct from './selectProduct/SelectProduct';
@@ -9,6 +9,7 @@ import Topping from './Topping';
 import realmStore from '../../../data/realm/RealmStore';
 import { Constant } from '../../../common/Constant';
 import ViewPrint from '../../more/ViewPrint';
+import { getFileDuLieuString } from '../../../data/fileStore/FileStorage';
 const { Print } = NativeModules;
 
 const Served = (props) => {
@@ -21,15 +22,23 @@ const Served = (props) => {
     const [position, setPosition] = useState("")
     const meMoItemOrder = useMemo(() => itemOrder, [itemOrder])
     const toolBarTabletServedRef = useRef();
-
+    const dispatch = useDispatch();
     const orientaition = useSelector(state => {
         console.log("useSelector state ", state.Common.orientaition);
         return state.Common.orientaition
     });
 
-    useEffect(() => {
-        console.log("Served props ", props);
-    }, [])
+    // useEffect(() => {
+    //     console.log(props, 'page served');
+    //     const getData = async () => {
+    //         let data = await getFileDuLieuString(Constant.HISTORY_ORDER, true);
+    //         if (data) {
+    //           data = JSON.parse(data);
+    //           dispatch({ type: 'HISTORY_ORDER', historyOrder: data })
+    //         }
+    //       }
+    //       getData()
+    // }, [])
 
     const getProductImage = async (item) => {
         let products = await realmStore.queryProducts()

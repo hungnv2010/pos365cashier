@@ -11,7 +11,7 @@ const { AzureHub } = NativeModules;
 import NavigationService from "../../navigator/NavigationService";
 // import * as StackNavigation from '../../navigator/stack/StackNavigation';
 import { navigate } from '../../navigator/NavigationService';
-// import dataManager from '../DataManager';
+import dataManager from '../DataManager';
 import realmStore from '../realm/RealmStore';
 import NetInfo from "@react-native-community/netinfo";
 
@@ -66,7 +66,6 @@ export class HTTPService {
             headers: headers,
             credentials: "omit",
         }).then(extractData).catch((e) => {
-            // dialogManager.showPopupOneButton(I18n.t('loi_ket_noi_mang'), I18n.t('thong_bao'))
             error();
             console.log("GET err ", e);
         })
@@ -129,29 +128,29 @@ const extractData = (response) => {
     }
     else {
         if (response.status == 401) {
-            index401++;
-            if (index401 == 10) {
-                setFileLuuDuLieu(Constant.CURRENT_ACCOUNT, "");
-                realmStore.deleteAll()
-                setFileLuuDuLieu(Constant.CURRENT_BRANCH, "");
-                dataManager.dataChoosing = []
-                navigate('Login', {}, true);
-                index401 = 0
+            if (!(response.url.includes(ApiPath.VENDOR_SESSION) || response.url.includes(ApiPath.LOGIN))) {
+                index401++;
+                if (index401 >= 10) {
+                    setFileLuuDuLieu(Constant.CURRENT_ACCOUNT, "");
+                    setFileLuuDuLieu(Constant.CURRENT_BRANCH, "");
+                    dataManager.dataChoosing = []
+                    navigate('Login', {}, true);
+                    index401 = 0
+                } else
+                    dialogManager.showPopupOneButton(I18n.t('het_phien_lam_viec'), I18n.t('thong_bao'), () => {
+                        dialogManager.destroy();
+                    }, null, null, I18n.t('dong'))
             }
         } else {
             error();
-            // dialogManager.showPopupOneButton(I18n.t('loi_server'), I18n.t('thong_bao'), () => {
-            //     dialogManager.destroy();
-            // }, null, null, I18n.t('dong'))
         }
-        return {
-            status: response.status
-        };
+        // return {
+        //     status: response.status
+        // };
+        return null;
     }
 
 }
-
-
 
 export function convertJsonToPrameter(jsonData) {
     let state = store.getState();
@@ -162,7 +161,6 @@ export function convertJsonToPrameter(jsonData) {
 export function getHeaders(jsonHeader = null, isLogin = false) {
     let state = store.getState();
     let headers = {
-
         // 'Accept-Language': I18n.locale,
         'Accept': 'application/json',
         // 'Content-Type': 'application/json',

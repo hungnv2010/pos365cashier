@@ -1,18 +1,11 @@
 import React, { useState, useCallback, useEffect, useImperativeHandle, forwardRef } from 'react';
 import { Image, View, StyleSheet, Button, Text, TouchableOpacity, ScrollView, NativeEventEmitter, NativeModules } from 'react-native';
-import { Images, Colors, Metrics } from '../../theme';
-import { WebView } from 'react-native-webview';
-import useDidMountEffect from '../../customHook/useDidMountEffect';
-import dialogManager from '../../components/dialog/DialogManager';
-import { HTTPService } from '../../data/services/HttpService';
-import { ApiPath } from '../../data/services/ApiPath';
-import ToolBarPreviewHtml from '../../components/toolbar/ToolBarPreviewHtml';
-import JsonContent1 from '../../data/json/data_print_demo'
 import { dateToDate, DATE_FORMAT, currencyToString } from '../../common/Utils';
 import { getFileDuLieuString } from '../../data/fileStore/FileStorage';
 import { Constant } from '../../common/Constant';
 import { useSelector } from 'react-redux';
 import { Snackbar } from 'react-native-paper';
+import I18n from '../../common/language/i18n'
 const { Print } = NativeModules;
 const eventSwicthScreen = new NativeEventEmitter(Print);
 
@@ -41,7 +34,7 @@ class PrintService {
 
                 itemTable = itemTable.replace("{Ten_Hang_Hoa}", "" + el.Name)
                 itemTable = itemTable.replace("{Ghi_Chu_Hang_Hoa}", description)
-                itemTable = itemTable.replace("{So_Luong}", el.Quantity)
+                itemTable = itemTable.replace("{So_Luong}", Math.round(el.Quantity * 1000) / 1000)
                 itemTable = itemTable.replace("{Thanh_Tien_Hang_Hoa}", currencyToString(this.getPrice(el)))
                 itemTable = itemTable.replace("{Don_Gia}", currencyToString(el.Price))
                 itemTable = itemTable.replace("{Don_Gia_Goc_Hien_Thi_Check}", BasePriceCustomAndTopping > el.Price ? "style='display: block'" : "style='display: none'")
@@ -72,7 +65,7 @@ class PrintService {
                 HTMLBase = HTMLBase.replace("{Ngay}/{Thang}/{Nam}-{Gio}:{Phut}-Vao", dateToDate(JsonContent.ActiveDate, DATE_FORMAT, "DD/MM/YYYY - HH:mm"))
                 HTMLBase = HTMLBase.replace("{Ngay}/{Thang}/{Nam}-{Gio}:{Phut}-Ra", dateToDate(new Date(), DATE_FORMAT, "DD/MM/YYYY - HH:mm"))
                 HTMLBase = HTMLBase.replace("{Ten_Phong_Ban}", JsonContent.RoomName + "[" + JsonContent.Pos + "]")
-                HTMLBase = HTMLBase.replace("{Ten_Khach_Hang}", JsonContent.Partner && JsonContent.Partner.Name != "" ? JsonContent.partner.name : "Khách lẻ")
+                HTMLBase = HTMLBase.replace("{Ten_Khach_Hang}", JsonContent && JsonContent.Partner && JsonContent.Partner.Name != "" ? JsonContent.Partner.Name : "Khách lẻ")
                 HTMLBase = HTMLBase.replace("{Nhan_Vien}", vendorSession.CurrentUser.Name)
 
                 let partnerPhone = JsonContent.Partner && JsonContent.Partner.Phone ? JsonContent.Partner.Phone : ""
@@ -94,7 +87,7 @@ class PrintService {
                 HTMLBase = HTMLBase.replace("{Tien_Thua_Tra_Khach}", currencyToString(JsonContent.ExcessCash))
                 HTMLBase = HTMLBase.replace("{Ghi_Chu_Check}", JsonContent.Description && JsonContent.Description != "" ? "style='visibility: unset'" : "style='visibility: collapse; display: none'")
                 HTMLBase = HTMLBase.replace("{Ghi_Chu}", JsonContent.Description)
-                HTMLBase = HTMLBase.replace("{Chan_Trang}", "Xin cảm ơn, hẹn gặp lại quý khách!")
+                HTMLBase = HTMLBase.replace("{Chan_Trang}", I18n.t('xin_cam_on'))
                 HTMLBase = HTMLBase.replace("{FOOTER_POS_365}", CONTENT_FOOTER_POS365)
                 // console.log("html ", JSON.stringify(HTMLBase));
                 console.log("html Description ", JsonContent.Description);

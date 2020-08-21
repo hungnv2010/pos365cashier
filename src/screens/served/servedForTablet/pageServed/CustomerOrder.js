@@ -16,6 +16,7 @@ import I18n from "../../../../common/language/i18n";
 import { Snackbar } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 
+var isClick = false;
 
 const CustomerOrder = (props) => {
 
@@ -37,6 +38,11 @@ const CustomerOrder = (props) => {
     const deviceType = useSelector(state => {
         console.log("deviceType", state);
         return state.Common.deviceType
+    });
+
+    const historyOrder = useSelector(state => {
+        console.log("state.historyOrder5 ", state.Common.historyOrder);
+        return state.Common.historyOrder
     });
 
 
@@ -171,8 +177,10 @@ const CustomerOrder = (props) => {
     }
 
     const sendOrder = () => {
-        if (list.length > 0) {
+        if (list.length > 0 && isClick == false) {
+            isClick = true;
             let ls = [];
+            let listItem = [];
             ls = JSON.parse(JSON.stringify(list))
             console.log("sendOrder", ls, vendorSession);
             let params = {
@@ -202,18 +210,33 @@ const CustomerOrder = (props) => {
                     TotalTopping: element.TotalTopping,
                 }
                 params.ServeEntities.push(obj)
+                listItem.push({
+                    Quantity: element.Quantity,
+                    ProductType: element.ProductType,
+                    IsTimer: element.IsTimer,
+                    IsLargeUnit: element.IsLargeUnit,
+                    PriceLargeUnit: element.PriceLargeUnit,
+                    Price: element.Price,
+                    TotalTopping: element.TotalTopping,
+                    ProductImages: element.ProductImages,
+                    Name: element.Name,
+                    Description: element.Description
+                })
             });
             dialogManager.showLoading();
             new HTTPService().setPath(ApiPath.SAVE_ORDER).POST(params).then(async (res) => {
                 console.log("sendOrder res ", res);
+                // dialogManager.hiddenLoading()
+                isClick = false;
                 if (res) {
                     syncListProducts([])
                     let tempListPosition = dataManager.dataChoosing.filter(item => item.Id != props.route.params.room.Id)
                     dataManager.dataChoosing = tempListPosition;
                     let historyTemp = [];
-                    let history = await getFileDuLieuString(Constant.HISTORY_ORDER, true);
-                    if (history != undefined && history != "") {
-                        history = JSON.parse(history)
+                    // let history = await getFileDuLieuString(Constant.HISTORY_ORDER, true);
+                    let history = [...historyOrder];
+                    if (history != undefined) {
+                        // history = JSON.parse(history)
                         let check = false;
                         if (history.length > 0)
                             history.forEach(el => {
@@ -223,11 +246,11 @@ const CustomerOrder = (props) => {
                                         el.list.push({
                                             time: new Date(),
                                             Position: props.Position,
-                                            list: ls, RoomId: props.route.params.room.Id,
+                                            list: listItem, RoomId: props.route.params.room.Id,
                                             RoomName: props.route.params.room.Name,
                                         })
-                                        if (el.list.length >= 100) {
-                                            el.list = el.list.slice(1, 99);
+                                        if (el.list.length >= 50) {
+                                            el.list = el.list.slice(1, 49);
                                         }
                                     }
                                 }
@@ -241,7 +264,7 @@ const CustomerOrder = (props) => {
                                     list: [{
                                         time: new Date(),
                                         Position: props.Position,
-                                        list: ls, RoomId: props.route.params.room.Id,
+                                        list: listItem, RoomId: props.route.params.room.Id,
                                         RoomName: props.route.params.room.Name,
                                     }]
                                 }
@@ -255,7 +278,7 @@ const CustomerOrder = (props) => {
                                 list: [{
                                     time: new Date(),
                                     Position: props.Position,
-                                    list: ls, RoomId: props.route.params.room.Id,
+                                    list: listItem, RoomId: props.route.params.room.Id,
                                     RoomName: props.route.params.room.Name,
                                 }]
                             }
@@ -263,9 +286,11 @@ const CustomerOrder = (props) => {
                     }
                     console.log("JSON.stringify(historyTemp) ", JSON.stringify(historyTemp));
                     setFileLuuDuLieu(Constant.HISTORY_ORDER, JSON.stringify(historyTemp))
+                    dispatch({ type: 'HISTORY_ORDER', historyOrder: historyTemp })
                 }
                 dialogManager.hiddenLoading()
             }).catch((e) => {
+                isClick = false;
                 console.log("sendOrder err ", e);
                 dialogManager.hiddenLoading()
             })
@@ -277,7 +302,7 @@ const CustomerOrder = (props) => {
 
     const dellAll = () => {
         if (list.length > 0) {
-            dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_muon_xoa_toan_bo_mat_hang_da_chon'),  I18n.t('thong_bao'), (value) => {
+            dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_muon_xoa_toan_bo_mat_hang_da_chon'), I18n.t('thong_bao'), (value) => {
                 if (value == 1) {
                     syncListProducts([])
                     let hasData = true

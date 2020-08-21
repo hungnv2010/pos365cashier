@@ -15,7 +15,7 @@ import { Constant } from './common/Constant'
 import { navigationRef } from './navigator/NavigationService';
 import RNExitApp from "react-native-exit-app";
 import I18n from './common/language/i18n'
-import signalRManager from './common/SignalR';
+import signalRManager, { signalRInfo } from './common/SignalR';
 import { getFileDuLieuString } from './data/fileStore/FileStorage';
 import printService from './data/html/PrintService';
 import { Snackbar } from 'react-native-paper';
@@ -109,6 +109,10 @@ export default () => {
     const handleChangeState = (newState) => {
         if (newState === "active") {
             let currentLocale = I18n.currentLocale()
+            if (signalRInfo != "") {
+                signalRManager.killSignalR();
+                signalRManager.startSignalR();
+            }
             // const currentLocale = DeviceInfo.getDeviceLocale()
             console.log("currentLocale ", currentLocale);
             if (currentLocale.indexOf('vi') > -1) {
