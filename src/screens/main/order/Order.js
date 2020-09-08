@@ -80,10 +80,15 @@ export default (props) => {
 
     useFocusEffect(
         React.useCallback(() => {
+            const updateTime = setInterval(() => {
+                reloadTime()
+            }, 1000 * 60);
             console.log("useFocusEffect Main ", dataManager.dataChoosing);
             setListOrder(() => dataManager.dataChoosing.map(item => item.Id))
             dispatch({ type: 'NUMBER_ORDER', numberOrder: dataManager.dataChoosing.length })
-
+            return () => {
+                clearInterval(updateTime)
+            }
         }, [])
     );
 

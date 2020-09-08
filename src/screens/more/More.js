@@ -109,8 +109,8 @@ const HeaderComponent = (props) => {
                 setBranch(item)
                 dispatch({ type: 'ALREADY', already: false })
                 dataManager.dataChoosing = [];
-                await realmStore.deleteAll(),
-                    signalRManager.killSignalR();
+                // await realmStore.deleteAll(),
+                signalRManager.killSignalR();
                 getRetailerInfoAndNavigate();
             } else {
                 dialogManager.hiddenLoading();

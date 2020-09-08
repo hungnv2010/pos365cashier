@@ -42,6 +42,7 @@ export default {
   con_lai_so_luong: "SL còn lại",
   chi_tiet_goi_mon: "Chi tiết gọi món",
   co_so_luong_lon_hon: "Có số lượng hủy trả lớn hơn số lượng đã gọi",
+  chon_ghi_chu_nhanh:"Chọn ghi chú nhanh",
 
   // TODO: D
   dang_dung: "Đang dùng",

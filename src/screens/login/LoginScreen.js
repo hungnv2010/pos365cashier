@@ -32,6 +32,11 @@ const LoginScreen = (props) => {
     const [hasLogin, setHasLogin] = useState(true);
     const dispatch = useDispatch();
 
+    const orientaition = useSelector(state => {
+        console.log("orientaition", state);
+        return state.Common.orientaition
+    });
+
     useEffect(() => {
         const getCurrentAccount = async () => {
             dialogManager.showLoading();
@@ -192,7 +197,7 @@ const LoginScreen = (props) => {
 
                 <KeyboardAwareScrollView style={{}} enableOnAndroid={true} extraHeight={extraHeight}
                     showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
-                    <View style={{ flex: 1, height: Metrics.screenHeight - 60, justifyContent: 'center', alignItems: 'center' }}>
+                    <View style={{ flex: 1, height: orientaition == Constant.PORTRAIT ? Metrics.screenHeight - 60 : Metrics.screenWidth - 60, justifyContent: 'center', alignItems: 'center' }}>
                         <Image style={{ height: 70, width: 225, marginBottom: 50 }} resizeMethod="scale" source={Images.logo_365_boss_white} />
                         <View style={[styles.inputtext, { flexDirection: "row", alignItems: "center" }]}>
                             <Image style={{ height: 24, width: 24, margin: 10 }} resizeMethod="auto" source={Images.icon_shop} />
