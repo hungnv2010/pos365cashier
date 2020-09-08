@@ -30,7 +30,7 @@ export default (props) => {
         }
         dialogManager.showLoading();
         new HTTPService().setPath(ApiPath.NOTE_BOOK).GET(params).then((res) => {
-            console.log("getNoteBook res ", res.results[0].NotebookDetails);
+            console.log("getNoteBook res ", res);
             setListRefreshing(false);
             if (res && res.results && res.results.length > 0) {
                 setDataList(res.results)

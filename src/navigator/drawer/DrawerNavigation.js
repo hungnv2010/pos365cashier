@@ -5,6 +5,7 @@ import DrawerContent from './DrawerContent';
 import Animated from 'react-native-reanimated';
 import LinearGradient from 'react-native-linear-gradient';
 import Main from '../../screens/main/Main';
+import BottomTabNavigation from '../bottomTab/BottomTabNavigation';
 
 const Drawer = createDrawerNavigator();
 export default () => {
@@ -16,7 +17,7 @@ export default () => {
         }}
       >
         <Drawer.Screen name="Screens" options={{ title: "abc" }}>
-          {props => <Main {...props} />}
+          {props => <BottomTabNavigation {...props} />}
         </Drawer.Screen>
       </Drawer.Navigator>
     </LinearGradient>

@@ -191,7 +191,7 @@ export default (props) => {
                                 <Text style={{ margin: 10, fontSize: 16, fontWeight: "bold" }}>{I18n.t('gui_tin_nhan')}</Text>
                             </TouchableOpacity>
                             <View style={{ padding: 0, height: 40, borderRadius: 3, borderColor: Colors.colorchinh, borderWidth: 1, backgroundColor: "#fff", flexDirection: "row", margin: 10 }}>
-                                <TextInput value={textNotify} style={{ width: "100%", height: "100%" }}
+                                <TextInput value={textNotify} style={{ width: "100%", height: "100%", color: "#000" }}
                                     autoFocus={true}
                                     onChangeText={(text) => setTextNotify(text)}
                                 />

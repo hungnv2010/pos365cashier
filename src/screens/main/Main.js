@@ -50,6 +50,7 @@ export default (props) => {
 
 
     const syncAllDatas = async () => {
+      dispatch({ type: 'ALREADY', already: false })
       dialogManager.showLoading()
       await dataManager.syncAllDatas()
         .then(() => {
@@ -76,6 +77,7 @@ export default (props) => {
   }
 
   const clickRightIcon = async () => {
+    dispatch({ type: 'ALREADY', already: false })
     dialogManager.showLoading()
     await dataManager.syncAllDatas()
       .then(() => {

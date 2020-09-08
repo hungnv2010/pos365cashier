@@ -12,7 +12,7 @@ import dataManager from '../data/DataManager';
 import { useRef } from 'react';
 
 var statusInternet = { currentStatus: false, previousStatus: false };
-let version = 0
+// let version = 0
 export var kiler = false;
 export var signalRInfo = "";
 
@@ -146,8 +146,8 @@ class SignalRManager {
     }
 
     async onReceiveServerEvent(serverEvent) {
-        if (serverEvent.Version == version) return
-        version = serverEvent.Version
+        // if (serverEvent.Version == version) return
+        // version = serverEvent.Version
         if (serverEvent && serverEvent.Compress) {
             serverEvent.JsonContent = decodeBase64(serverEvent.JsonContent || "")
             serverEvent.Compress = false

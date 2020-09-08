@@ -64,7 +64,7 @@ export default (props) => {
     const [datas, setData] = useState([])
     const [valueAll, setValueAll] = useState({})
     const widthRoom = Dimensions.get('screen').width / numberColumn;
-    const RoomAll = { Name: "Tất cả", Id: "All" }
+    // const RoomAll = { Name: "Tất cả", Id: "All" }
     const [listRoom, setListRoom] = useState([])
 
 
@@ -78,6 +78,7 @@ export default (props) => {
         rooms = await realmStore.queryRooms()
         rooms = rooms.sorted('Position')
         roomGroups = await realmStore.queryRoomGroups()
+        roomGroups = roomGroups.sorted('Id')
         serverEvents = await realmStore.queryServerEvents()
         console.log("init: ", JSON.parse(JSON.stringify(rooms, roomGroups, serverEvents)));
 
@@ -87,7 +88,7 @@ export default (props) => {
         setData(newDatas)
 
         let list = []
-        list = [RoomAll].concat(newDatas.filter(item => item.isGroup))
+        list = [].concat(newDatas.filter(item => item.isGroup))
         console.log("list  ======= ", list.length);
 
         setListRoom(list)
@@ -108,7 +109,8 @@ export default (props) => {
                 }
             })
 
-            let otherGroup = { Id: 0, Name: 'Other', isGroup: true }
+            // let otherGroup = { Id: 0, Name: 'Other', isGroup: true }
+            let otherGroup = { Id: 0, Name: newDatas.length > 0 ? I18n.t('khac') : I18n.t('tat_ca'), isGroup: true }
             let roomsInside = rooms.filtered(`RoomGroupId == ${otherGroup.Id}`)
             let lengthRoomsInside = roomsInside.length
             if (roomsInside && lengthRoomsInside > 0) {

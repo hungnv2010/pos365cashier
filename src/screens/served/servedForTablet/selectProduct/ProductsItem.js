@@ -20,12 +20,22 @@ const ProductsItem = ({ item, index, getQuantityProduct, numColumns, onClickProd
                     source={JSON.parse(item.ProductImages).length > 0 ? { uri: JSON.parse(item.ProductImages)[0].ImageURL } : Images.default_food_image}
                 />
                 <View style={{ height: 1, backgroundColor: "#E5E7E9", width: "90%", alignSelf: "center" }}></View>
-                <View style={{ marginHorizontal: 10 }}>
-                    <TextTicker
-                        duration={6000}
-                        marqueeDelay={500}
-                        style={{ textTransform: "uppercase", fontWeight: "bold", padding: 5 }}>{item.Name}</TextTicker>
-                    <Text style={{ fontStyle: "italic" }}>{currencyToString(item.Price)}<Text style={{ color: Colors.colorchinh }}>{item.LargeUnit != '' ? `/${item.LargeUnit}` : item.Unit != '' ? `/${item.Unit}` : ''}</Text></Text>
+                <View style={{
+                    marginHorizontal: 10, flexDirection: "row",
+                    alignItems: "center"
+                }}>
+                    <View style={{
+                        flexDirection: "column",
+                        flex: 2,
+                        justifyContent: "space-between",
+                    }}>
+                        <TextTicker
+                            duration={6000}
+                            marqueeDelay={500}
+                            style={{ textTransform: "uppercase", fontWeight: "bold", paddingVertical: 5 }}>{item.Name.trim()}</TextTicker>
+                        <Text style={{ fontStyle: "italic", paddingBottom: 5 }}>{currencyToString(item.Price)}<Text style={{ color: Colors.colorchinh }}>{item.LargeUnit != '' ? `/${item.LargeUnit}` : item.Unit != '' ? `/${item.Unit}` : ''}</Text></Text>
+                    </View>
+                    <Text numberOfLines={2} style={{ textTransform: "uppercase", fontWeight: "bold", paddingLeft: 5, color: Colors.colorchinh }}>{item.ProductType == 1 ? (item.OnHand >= 0 ? item.OnHand : "") : "---"}</Text>
                 </View>
             </View>
             {getQuantityProduct > 0 ?

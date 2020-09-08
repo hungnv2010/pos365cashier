@@ -68,7 +68,7 @@ export default forwardRef((props, ref) => {
                         <View style={{ borderRadius: 3, borderColor: "#fff", borderWidth: 1, backgroundColor: "#fff", flexDirection: "row", marginRight: 2, height: "80%" }}>
                             <TextInput
                                 autoFocus={true}
-                                style={{ flex: 1 }}
+                                style={{ flex: 1 , color: "#000"}}
                                 onChangeText={(text) => onChangeText(text)}
                                 value={value}
                             />

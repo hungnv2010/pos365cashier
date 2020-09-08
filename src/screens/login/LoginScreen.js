@@ -201,7 +201,8 @@ const LoginScreen = (props) => {
                                 value={shop}
                                 onFocus={() => { setExtraHeight(270) }}
                                 keyboardType={"default"}
-                                style={{ height: 40, flex: 1, marginRight: 5 }}
+                                style={{ height: 40, flex: 1, marginRight: 5, color: "#000" }}
+                                placeholderTextColor="#808080"
                                 placeholder={I18n.t('ten_cua_hang')} />
                             <Text style={{ opacity: 0.5 }}>.pos365.vn</Text>
                         </View>
@@ -212,7 +213,8 @@ const LoginScreen = (props) => {
                                 value={userName}
                                 onFocus={() => { setExtraHeight(200) }}
                                 keyboardType={"default"}
-                                style={{ height: 40, flex: 1 }}
+                                style={{ height: 40, flex: 1, color: "#000" }}
+                                placeholderTextColor="#808080"
                                 placeholder={I18n.t('ten_dang_nhap')} />
                         </View>
                         <View style={[styles.inputtext, { flexDirection: "row", alignItems: "center" }]}>
@@ -222,8 +224,9 @@ const LoginScreen = (props) => {
                                 value={password}
                                 onFocus={() => { setExtraHeight(130) }}
                                 keyboardType={"default"}
-                                style={{ height: 40, margin: 0, flex: 1 }}
+                                style={{ height: 40, margin: 0, flex: 1, color: "#000" }}
                                 placeholder={I18n.t('mat_khau')}
+                                placeholderTextColor="#808080"
                                 secureTextEntry={true} />
                         </View>
                         <View style={{}}>

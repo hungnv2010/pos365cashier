@@ -188,6 +188,8 @@ const CustomerOrder = (props) => {
             };
 
             ls.forEach(element => {
+                // let PriceConfig = JSON.parse(element.PriceConfig);
+                let PriceConfig = element.PriceConfig ? JSON.parse(element.PriceConfig) : "";
                 let obj = {
                     BasePrice: element.Price,
                     Code: element.Code,
@@ -196,15 +198,17 @@ const CustomerOrder = (props) => {
                     OrderQuickNotes: [],
                     Position: props.Position,
                     Price: element.Price,
+
                     Printer: element.Printer,
-                    Printer3: null,
-                    Printer4: null,
-                    Printer5: null,
+                    Printer3: PriceConfig && PriceConfig.Printer3 ? PriceConfig.Printer3 : null,
+                    Printer4: PriceConfig && PriceConfig.Printer4 ? PriceConfig.Printer4 : null,
+                    Printer5: PriceConfig && PriceConfig.Printer5 ? PriceConfig.Printer5 : null,
                     ProductId: element.Id,
                     Quantity: element.Quantity,
                     RoomId: props.route.params.room.Id,
                     RoomName: props.route.params.room.Name,
-                    SecondPrinter: null,
+                    SecondPrinter: PriceConfig && PriceConfig.SecondPrinter ? PriceConfig.SecondPrinter : null,
+
                     Serveby: vendorSession.CurrentUser && vendorSession.CurrentUser.Id ? vendorSession.CurrentUser.Id : "",
                     Topping: element.Topping,
                     TotalTopping: element.TotalTopping,
@@ -700,17 +704,19 @@ const PopupDetail = (props) => {
                             <Text style={{ borderColor: Colors.colorchinh, borderWidth: 1, color: Colors.colorchinh, fontWeight: "bold", paddingHorizontal: 15, paddingVertical: 10, borderRadius: 5 }}>-</Text>
                         </TouchableOpacity>
                         <TextInput
-                            style={{ padding: 6, textAlign: "center", margin: 10, flex: 1, borderRadius: 4, borderWidth: 0.5, backgroundColor: "#D5D8DC" }}
+                            style={{ padding: 6, textAlign: "center", margin: 10, flex: 1, borderRadius: 4, borderWidth: 0.5, backgroundColor: "#D5D8DC", color: "#000" }}
                             value={"" + itemOrder.Quantity}
                             onChangeText={text => {
-                                if (!Number.isInteger(+text)) return
+                                if (!Number.isInteger(+text) || +text > 1000) return
                                 itemOrder.Quantity = +text
                                 setItemOrder({ ...itemOrder })
 
                             }} />
                         <TouchableOpacity onPress={() => {
-                            itemOrder.Quantity++
-                            setItemOrder({ ...itemOrder })
+                            if (itemOrder.Quantity < 1000) {
+                                itemOrder.Quantity++
+                                setItemOrder({ ...itemOrder })
+                            }
                         }}>
                             <Text style={{ borderColor: Colors.colorchinh, borderWidth: 1, color: Colors.colorchinh, fontWeight: "bold", paddingHorizontal: 15, paddingVertical: 10, borderRadius: 5 }}>+</Text>
                         </TouchableOpacity>
@@ -728,7 +734,7 @@ const PopupDetail = (props) => {
                             multiline={true}
                             value={itemOrder.Description}
 
-                            style={{ height: 50, paddingLeft: 5, flex: 7, fontStyle: "italic", fontSize: 12, borderWidth: 0.5, borderRadius: 4, backgroundColor: "#D5D8DC" }}
+                            style={{ height: 50, paddingLeft: 5, flex: 7, fontStyle: "italic", fontSize: 12, borderWidth: 0.5, borderRadius: 4, backgroundColor: "#D5D8DC", color: "#000" }}
                             placeholder={I18n.t('nhap_ghi_chu')} />
                     </View>
                 </View>

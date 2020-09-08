@@ -102,7 +102,7 @@ const HeaderComponent = (props) => {
         }
         let params = { branchId: item.Id }
         dialogManager.showLoading();
-        new HTTPService().setPath(ApiPath.CHANGE_BRANCH).POST(params).then(async (res) => {
+        new HTTPService().setPath(ApiPath.CHANGE_BRANCH).GET(params).then(async (res) => {
             console.log("onClickItemBranch res ", res);
             if (res) {
                 setFileLuuDuLieu(Constant.CURRENT_BRANCH, JSON.stringify(item));
@@ -111,17 +111,12 @@ const HeaderComponent = (props) => {
                 dataManager.dataChoosing = [];
                 await realmStore.deleteAll(),
                     signalRManager.killSignalR();
-                // props.navigation.dispatch(
-                //     CommonActions.reset({
-                //         index: 0,
-                //         routes: [
-                //             { name: 'Home' },
-                //         ],
-                //     })
-                // )
                 getRetailerInfoAndNavigate();
+            } else {
+                dialogManager.hiddenLoading();
             }
         }).catch((e) => {
+            dialogManager.hiddenLoading();
             console.log("onClickItemBranch err ", e);
             dialogManager.hiddenLoading()
         })
@@ -372,8 +367,8 @@ const ContentComponent = (props) => {
                         }}>
                             <View style={{ padding: 10 }}>
                                 <Text style={{ marginBottom: 15, fontSize: 18, fontWeight: 'bold' }}>IP connect</Text>
-                                <TextInput style={{ padding: 10, borderRadius: 5, borderWidth: 1, borderColor: "#ddd" }} onChangeText={(text) => setIpInput(text)} value={ipInput} placeholder="Địa chỉ ip" />
-                                <TextInput style={{ padding: 10, borderRadius: 5, borderWidth: 1, borderColor: "#ddd", marginTop: 15 }} onChangeText={(text) => setPaperSize(text)} value={paperSize} placeholder="Khổ giấy 58..80" />
+                                <TextInput style={{ padding: 10, borderRadius: 5, borderWidth: 1, borderColor: "#ddd", color: "#000" }} onChangeText={(text) => setIpInput(text)} value={ipInput} placeholderTextColor="#808080" placeholder={I18n.t('dia_chi_ip')} />
+                                {/* <TextInput style={{ padding: 10, borderRadius: 5, borderWidth: 1, borderColor: "#ddd", marginTop: 15 , color: "#000"}} onChangeText={(text) => setPaperSize(text)} value={paperSize} placeholder="Khổ giấy 58..80" /> */}
                                 <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
                                     <TouchableOpacity style={{ alignItems: "flex-end", marginTop: 15 }} onPress={() => {
                                         setShowModal(false)

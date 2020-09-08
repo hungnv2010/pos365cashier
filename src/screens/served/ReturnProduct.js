@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
         borderWidth: 0.5,
         borderRadius: 4,
         backgroundColor: "#D5D8DC",
-        padding: 5
+        padding: 5, color: "#000"
     },
     textQuantityModal: {
         padding: 6,
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
         flex: 1,
         borderRadius: 4,
         borderWidth: 0.5,
-        backgroundColor: "#D5D8DC"
+        backgroundColor: "#D5D8DC", color: "#000"
     },
     textQuantityModalOnly: {
         padding: 6,
@@ -222,6 +222,6 @@ const styles = StyleSheet.create({
         flex: 1,
         borderRadius: 4,
         borderWidth: 0.5,
-        backgroundColor: "#D5D8DC"
+        backgroundColor: "#D5D8DC", color: "#000"
     },
 });

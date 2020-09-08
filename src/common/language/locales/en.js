@@ -52,6 +52,7 @@ export default {
   dang_goi: "Order",
   dang_goi_mon: "Order now",
   dong: "Close",
+  dia_chi_ip: "IP Address",
 
   // TODO: E
 

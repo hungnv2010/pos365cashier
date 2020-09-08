@@ -82,7 +82,7 @@ const DefaultComponent = (props) => {
                 marginRight: 0,
                 padding: 0,
                 flex: 1,
-                paddingBottom: Platform.OS == "ios" ? 20 : 0
+                paddingBottom: Platform.OS == "ios" ? 20 : 0, color: "#000"
             }}
                 multiline={true} onChangeText={text => {
                     props.output(text)
@@ -122,7 +122,7 @@ const OnlineComponent = (props) => {
                 marginRight: 0,
                 padding: 0,
                 flex: 1,
-                paddingBottom: Platform.OS == "ios" ? 20 : 0
+                paddingBottom: Platform.OS == "ios" ? 20 : 0, color: "#000"
             }}
                 multiline={true} onChangeText={text => {
                     props.output(text)

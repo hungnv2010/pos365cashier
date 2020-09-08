@@ -51,7 +51,7 @@ export default function ToolBarDefault(props) {
                         <View style={{ borderRadius: 3, borderColor: "#fff", borderWidth: 1, backgroundColor: "#fff", flexDirection: "row", marginRight: 2, height: "80%" }}>
                             <TextInput
                                 ref={inputRef}
-                                style={{ backgroundColor: "transparent", flex: 1 }}
+                                style={{ backgroundColor: "transparent", flex: 1, color: "#000" }}
                                 onChangeText={(text) => onChangeText(text)}
                                 value={value}
                             />

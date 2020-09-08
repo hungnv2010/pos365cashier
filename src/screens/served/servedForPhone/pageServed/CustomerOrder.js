@@ -183,17 +183,17 @@ export default (props) => {
     }
 
     const sendOrder = async () => {
+        console.log("sendOrder list isClick ", list, isClick);
+
         if (list.length > 0 && isClick == false) {
             isClick = true;
             let ls = list;
             let listItem = [];
-            // ls = JSON.parse(JSON.stringify(list)) 
-            // console.log("sendOrder ====list", list);
-            // console.log("sendOrder ==== ", ls);
             let params = {
                 ServeEntities: []
             };
             ls.forEach(element => {
+                let PriceConfig = element.PriceConfig ? JSON.parse(element.PriceConfig) : "";
                 let obj = {
                     BasePrice: element.Price,
                     Code: element.Code,
@@ -202,14 +202,14 @@ export default (props) => {
                     Position: props.Position,
                     Price: element.Price,
                     Printer: element.Printer,
-                    Printer3: null,
-                    Printer4: null,
-                    Printer5: null,
+                    Printer3: PriceConfig && PriceConfig.Printer3 ? PriceConfig.Printer3 : null,
+                    Printer4: PriceConfig && PriceConfig.Printer4 ? PriceConfig.Printer4 : null,
+                    Printer5: PriceConfig && PriceConfig.Printer5 ? PriceConfig.Printer5 : null,
                     ProductId: element.Id,
                     Quantity: element.Quantity,
                     RoomId: props.route.params.room.Id,
                     RoomName: props.route.params.room.Name,
-                    SecondPrinter: null,
+                    SecondPrinter: PriceConfig && PriceConfig.SecondPrinter ? PriceConfig.SecondPrinter : null,
                     Serveby: vendorSession.CurrentUser && vendorSession.CurrentUser.Id ? vendorSession.CurrentUser.Id : "",
                     Topping: element.Topping,
                     TotalTopping: element.TotalTopping,
@@ -230,11 +230,7 @@ export default (props) => {
                 })
             });
 
-
-
-            // let historyTemp = [];
-            // let history = await getFileDuLieuString(Constant.HISTORY_ORDER, true);
-
+            console.log("saveOrder params ===", params);
             dialogManager.showLoading();
             new HTTPService().setPath(ApiPath.SAVE_ORDER).POST(params).then((res) => {
                 console.log("sendOrder res ", res);
@@ -248,7 +244,7 @@ export default (props) => {
                     console.log("sendOrder history ");
                     let history = [...historyOrder];
                     console.log("sendOrder history ", history);
-                    
+
                     if (history != undefined) {
                         // history = JSON.parse(history)
                         let check = false;
@@ -641,7 +637,7 @@ const PopupDetail = (props) => {
                         </TouchableOpacity>
                         <TextInput
                             onChangeText={text => {
-                                if (!Number.isInteger(+text)) return
+                                if (!Number.isInteger(+text) || +text > 1000) return
                                 itemOrder.Quantity = text
                                 setItemOrder({ ...itemOrder })
                             }}
@@ -649,8 +645,10 @@ const PopupDetail = (props) => {
                             value={"" + itemOrder.Quantity}
                             keyboardType="numeric" />
                         <TouchableOpacity onPress={() => {
-                            itemOrder.Quantity++
-                            setItemOrder({ ...itemOrder })
+                            if (itemOrder.Quantity < 1000) {
+                                itemOrder.Quantity++
+                                setItemOrder({ ...itemOrder })
+                            }
                         }}>
                             <Text style={styles.button}>+</Text>
                         </TouchableOpacity>
@@ -757,7 +755,7 @@ const styles = StyleSheet.create({
         borderWidth: 0.5,
         borderRadius: 4,
         backgroundColor: "#D5D8DC",
-        padding: 5
+        padding: 5, color: "#000"
     },
     textQuantityModal: {
         padding: 6,
@@ -766,7 +764,7 @@ const styles = StyleSheet.create({
         flex: 1,
         borderRadius: 4,
         borderWidth: 0.5,
-        backgroundColor: "#D5D8DC"
+        backgroundColor: "#D5D8DC", color: "#000"
     },
 });
 

@@ -28,7 +28,7 @@ const _nodes = new Map();
 
 export default (props) => {
 
-    const [forceUpdate, setForceUpdate] = useState(false);
+    const [timer, setTimer] = useState(false);
     const [listOrder, setListOrder] = useState([])
     const [indexRoom, setIndexRoom] = useState(0)
     const [loadDone, setLoadDone] = useState(false)
@@ -57,6 +57,7 @@ export default (props) => {
     const widthRoom = Dimensions.get('screen').width / numberColumn;
     const RoomAll = { Name: "Tất cả", Id: "All" }
     const [listRoom, setListRoom] = useState([])
+    const dataRef = useRef([])
 
     useEffect(() => {
         if (already) {
@@ -68,7 +69,6 @@ export default (props) => {
     }, [already])
 
     useEffect(() => {
-        // moment.locale('vi');
         const updateTime = setInterval(() => {
             reloadTime()
         }, 1000 * 60);
@@ -97,18 +97,19 @@ export default (props) => {
 
         let newDatas = insertServerEvent(getDatas(rooms, roomGroups), serverEvents)
         console.log("init: newDatas ", newDatas);
-
+        dataRef.current = newDatas
         setData(newDatas)
 
         let list = []
         list = [].concat(newDatas.filter(item => item.isGroup))
-        console.log("list  ======= ", list.length);
+        console.log("list123456789  =======>>>>>> ", list.length);
 
         setListRoom(list)
 
         serverEvents.addListener((collection, changes) => {
             if (changes.insertions.length || changes.modifications.length) {
                 let newDatas = insertServerEvent(getDatas(rooms, roomGroups), serverEvents)
+                dataRef.current = newDatas
                 setData(newDatas)
             }
         })
@@ -117,19 +118,8 @@ export default (props) => {
     }
 
     const reloadTime = async () => {
-        console.log('reloadTime');
-        rooms = await realmStore.queryRooms()
-        rooms = rooms.sorted('Position')
-        roomGroups = await realmStore.queryRoomGroups()
-        roomGroups = roomGroups.sorted('Id')
-        serverEvents = await realmStore.queryServerEvents()
-        console.log("init: ", JSON.parse(JSON.stringify(rooms, roomGroups, serverEvents)));
-
-        let newDatas = insertServerEvent(getDatas(rooms, roomGroups), serverEvents)
-        console.log("init: newDatas ", newDatas);
-
-        setData(newDatas)
-        // alert("reload")
+        console.log('reloadTime', dataRef.current);
+        setData([...dataRef.current])
     }
 
     const getDatas = (rooms, roomGroups) => {

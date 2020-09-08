@@ -54,6 +54,7 @@ export default {
   dang_goi: "Gọi món",
   dang_goi_mon: "Đang gọi món",
   dong:"Đóng",
+  dia_chi_ip: "Địa chỉ ip",
 
   // TODO: E
 

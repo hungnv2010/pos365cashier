@@ -4,6 +4,7 @@ import Animated from 'react-native-reanimated';
 import Login from '../../screens/login/LoginScreen';
 import ServedForTablet from '../../screens/served/servedForTablet/ServedForTablet';
 import BottomTabNavigation from '../bottomTab/BottomTabNavigation';
+import DrawerNavigation from '../drawer/DrawerNavigation'
 import PrintHtml from '../../screens/more/printHtml/PrintHtml'
 import Preview from '../../screens/more/printHtml/Preview'
 import Main from '../../screens/main/Main';
@@ -24,6 +25,7 @@ export default (props) => {
             <MainStack.Navigator
                 headerMode="none">
                 <MainStack.Screen name="Login">{props => <Login {...props} />}</MainStack.Screen>
+                {/* <MainStack.Screen name="Home">{props => <DrawerNavigation {...props} screenOptions={{ headerLeft: null }} />}</MainStack.Screen> */}
                 <MainStack.Screen name="Home">{props => <BottomTabNavigation {...props} screenOptions={{ headerLeft: null }} />}</MainStack.Screen>
                 <MainStack.Screen name="ServedForTablet">{props => <ServedForTablet {...props} />}</MainStack.Screen>
                 <MainStack.Screen name="PrintHtml">{props => <PrintHtml {...props} />}</MainStack.Screen>

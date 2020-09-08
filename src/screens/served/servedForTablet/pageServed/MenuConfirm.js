@@ -107,7 +107,7 @@ export default (props) => {
             }
             serverEvent.addListener((collection, changes) => {
                 // setJsonContent(JSON.parse(serverEvent[0].JsonContent))
-                if (JSON.stringify(serverEvent) != "{}" && JSON.parse(serverEvent[0].JsonContent).OrderDetails.length > 0) {
+                if (changes.insertions.length || changes.modifications.length) {
                     setJsonContent(JSON.parse(serverEvent[0].JsonContent))
                 }
             })
@@ -239,6 +239,9 @@ export default (props) => {
         let params = {
             ServeEntities: []
         };
+        let PriceConfig = "";
+        if (element.PriceConfig)
+            PriceConfig = JSON.parse(element.PriceConfig);
         let obj = {
             BasePrice: element.Price,
             Code: element.Code,
@@ -247,14 +250,14 @@ export default (props) => {
             Position: props.Position,
             Price: element.Price,
             Printer: element.Printer,
-            Printer3: null,
-            Printer4: null,
-            Printer5: null,
+            Printer3: PriceConfig && PriceConfig.Printer3 ? PriceConfig.Printer3 : null,
+            Printer4: PriceConfig && PriceConfig.Printer4 ? PriceConfig.Printer4 : null,
+            Printer5: PriceConfig && PriceConfig.Printer5 ? PriceConfig.Printer5 : null,
             ProductId: element.ProductId,
             Quantity: data.QuantityChange * -1,
             RoomId: props.route.params.room.Id,
             RoomName: props.route.params.room.Name,
-            SecondPrinter: null,
+            SecondPrinter: PriceConfig && PriceConfig.SecondPrinter ? PriceConfig.SecondPrinter : null,
             Serveby: vendorSession.CurrentUser && vendorSession.CurrentUser.Id ? vendorSession.CurrentUser.Id : "",
             // Topping: element.Topping,
             // TotalTopping: element.TotalTopping,
@@ -360,7 +363,7 @@ export default (props) => {
             }
             <TouchableOpacity
                 onPress={() => { setExpand(!expand) }}
-                style={{ borderTopWidth: .5, borderTopColor: "red", paddingVertical: 3, backgroundColor: "white",marginLeft: 10 }}>
+                style={{ borderTopWidth: .5, borderTopColor: "red", paddingVertical: 3, backgroundColor: "white", marginLeft: 10 }}>
                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                     <Text style={{ fontWeight: "bold" }}>{I18n.t('tong_thanh_tien')}</Text>
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
@@ -373,7 +376,7 @@ export default (props) => {
                     </View>
                 </View>
                 {expand ?
-                    <View style={{marginLeft: 0}}>
+                    <View style={{ marginLeft: 0 }}>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                             <Text>{I18n.t('tong_chiet_khau')}</Text>
                             <Text style={{ fontSize: 15, color: "#0072bc", marginRight: 30 }}>- {currencyToString(jsonContent.Discount)}đ</Text>

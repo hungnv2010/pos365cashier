@@ -89,9 +89,12 @@ export default (props) => {
 
 
     const getProductImage = async (item) => {
+        alert("onCallBack getProductImage == " + JSON.stringify(item))
         let products = await realmStore.queryProducts()
+        alert("onCallBack getProductImage " + JSON.stringify(products))
         let productWithId = products.filtered(`Id ==${item.Id}`)
         productWithId = JSON.parse(JSON.stringify(productWithId))[0] ? JSON.parse(JSON.stringify(productWithId))[0] : {}
+        // alert("onCallBack getProductImage " + JSON.stringify(productWithId.ProductImages) + " productWithId " + JSON.stringify(productWithId))
         return productWithId.ProductImages ? productWithId.ProductImages : ""
     }
 
@@ -109,35 +112,24 @@ export default (props) => {
                 setListProducts([...data])
                 break;
             case 2:
-                data.forEach((item, index, arr) => {
-                    getProductImage(item)
-                        .then((res) => {
-                            item.exist = false
-                            item.ProductImages = res
-                            listProducts.forEach((elm, idx) => {
-                                if (item.Id == elm.Id && !item.SplitForSalesOrder) {
-                                    elm.Quantity += item.Quantity
-                                    item.exist = true
-                                }
-                            })
-                            data = data.filter((item) => !item.exist)
-                            console.log('data', data);
-                            console.log('listProducts', listProducts);
-                            setListProducts([...data, ...listProducts])
-                        })
-                        .catch((e) => {
-                            item.exist = false
-                             listProducts.forEach((elm, idx) => {
-                                if (item.Id == elm.Id && !item.SplitForSalesOrder) {
-                                    elm.Quantity += item.Quantity
-                                    item.exist = true
-                                }
-                            })
-                            data = data.filter((item) => !item.exist)
-                            console.log('data', data);
-                            console.log('listProducts', listProducts);
-                            setListProducts([...data, ...listProducts])
-                        })
+                data.forEach(async (item, index, arr) => {
+                    let products = await realmStore.queryProducts()
+                    let productWithId = products.filtered(`Id ==${item.Id}`)
+                    productWithId = JSON.parse(JSON.stringify(productWithId))[0] ? JSON.parse(JSON.stringify(productWithId))[0] : {}
+                    let ProductImages = productWithId.ProductImages ? productWithId.ProductImages : ""
+
+                    item.exist = false
+                    item.ProductImages = ProductImages
+                    listProducts.forEach((elm, idx) => {
+                        if (item.Id == elm.Id && !item.SplitForSalesOrder) {
+                            elm.Quantity += item.Quantity
+                            item.exist = true
+                        }
+                    })
+                    data = data.filter((item) => !item.exist)
+                    console.log('data', data);
+                    console.log('listProducts', listProducts);
+                    setListProducts([...data, ...listProducts])
                 })
                 break;
             default:
@@ -298,7 +290,7 @@ export default (props) => {
                                 <Text style={{ margin: 10, fontSize: 16, fontWeight: "bold" }}>{I18n.t('gui_tin_nhan')}</Text>
                             </TouchableOpacity>
                             <View style={{ padding: 0, height: 40, borderRadius: 3, borderColor: Colors.colorchinh, borderWidth: 1, backgroundColor: "#fff", flexDirection: "row", margin: 10 }}>
-                                <TextInput value={textNotify} style={{ width: "100%", height: "100%" }}
+                                <TextInput value={textNotify} style={{ width: "100%", height: "100%", color: "#000" }}
                                     autoFocus={true}
                                     onChangeText={(text) => setTextNotify(text)}
                                 />

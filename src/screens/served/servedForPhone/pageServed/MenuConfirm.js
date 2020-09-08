@@ -101,9 +101,9 @@ export default (props) => {
                 setJsonContent(JSON.parse(serverEvent[0].JsonContent))
             }
             serverEvent.addListener((collection, changes) => {
-                if (JSON.stringify(serverEvent) != "{}" && JSON.parse(serverEvent[0].JsonContent).OrderDetails.length > 0) {
+                if (changes.insertions.length || changes.modifications.length) {
                     setJsonContent(JSON.parse(serverEvent[0].JsonContent))
-                }
+                } 
             })
         }
         getListPos()
@@ -226,30 +226,14 @@ export default (props) => {
     const saveOrder = (data) => {
         console.log("saveOrder data ", data, itemProduct);
 
-        // BasePrice: 30000
-        // Description: " -CUBA LIBRE x1=30,000↵ -BLOODY MARY x1=30,000↵ -Đĩa thịt nguội Tây Ba Nha hảo hạng x1=125,000↵ -Bia Heiniken x1=30,000↵ -Bia Hà Nội x1=30,000↵"
-        // DiscountRatio: 0
-        // Name: "APEROL SPRITZ"
-        // OrderQuickNotes: []
-        // Position: "A"
-        // Price: 275000
-        // Printer3: null
-        // Printer4: null
-        // Printer5: null
-        // ProductId: 8116696
-        // Quantity: -2
-        // RoomId: 627484
-        // RoomName: "B.1"
-        // SecondPrinter: null
-        // Serveby: 130772
-        // Topping: "[{"ExtraId":8116697,"QuantityExtra":1,"Price":30000,"Quantity":1},{"ExtraId":8116699,"QuantityExtra":1,"Price":30000,"Quantity":1},{"ExtraId":8116702,"QuantityExtra":1,"Price":125000,"Quantity":1},{"ExtraId":8116715,"QuantityExtra":1,"Price":30000,"Quantity":1},{"ExtraId":8116716,"QuantityExtra":1,"Price":30000,"Quantity":1}]"
-        // TotalTopping: 245000
-
         let element = itemProduct;
 
         let params = {
             ServeEntities: []
         };
+        let PriceConfig = "";
+        if (element.PriceConfig)
+            PriceConfig = JSON.parse(element.PriceConfig);
         let obj = {
             BasePrice: element.Price,
             Description: data.Description,
@@ -259,14 +243,14 @@ export default (props) => {
             Position: props.Position,
             Price: element.Price,
             Printer: element.Printer,
-            Printer3: null,
-            Printer4: null,
-            Printer5: null,
+            Printer3: PriceConfig && PriceConfig.Printer3 ? PriceConfig.Printer3 : null,
+            Printer4: PriceConfig && PriceConfig.Printer4 ? PriceConfig.Printer4 : null,
+            Printer5: PriceConfig && PriceConfig.Printer5 ? PriceConfig.Printer5 : null,
             ProductId: element.ProductId,
             Quantity: data.QuantityChange * -1,
             RoomId: props.route.params.room.Id,
             RoomName: props.route.params.room.Name,
-            SecondPrinter: null,
+            SecondPrinter: PriceConfig && PriceConfig.SecondPrinter ? PriceConfig.SecondPrinter : null,
             Serveby: vendorSession.CurrentUser && vendorSession.CurrentUser.Id ? vendorSession.CurrentUser.Id : "",
         }
         params.ServeEntities.push(obj)
