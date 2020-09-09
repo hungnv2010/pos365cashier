@@ -68,7 +68,8 @@ const images = {
     icon_group: require("../../assets/icons/icon_group.png"),
     default_food_image: require('../../assets/images/default-image.png'),
     icon_return: require("../../assets/icons/return.png"),
-    logo_365_long_color: require("../../assets/images/logo_365_long_color.png")
+    logo_365_long_color: require("../../assets/images/logo_365_long_color.png"),
+    icon_version: require("../../assets/icons/version.jpg"),
 
 }
 

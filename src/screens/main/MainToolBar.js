@@ -32,10 +32,13 @@ export default function MainToolBar(props) {
             }}
             >
 
-                <View style={[{ flex: 1, }, deviceType == Constant.TABLET ? { alignSelf: "flex-start" } : { alignItems: "center", flex: 2 }]}>
+                <TouchableOpacity onPress={() => {
+                    console.log("Click this.props ", props);
+                    props.navigation.openDrawer();
+                }} style={[{ flex: 1, }, deviceType == Constant.TABLET ? { alignSelf: "flex-start" } : { alignItems: "center", flex: 2 }]}>
                     <Image source={Images.logo_365_boss_white}
                         style={{ width: 172, height: 40, resizeMode: 'contain' }} />
-                </View>
+                </TouchableOpacity>
                 <View style={{ flex: 4, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
                     <Subheading
                         numberOfLines={1}

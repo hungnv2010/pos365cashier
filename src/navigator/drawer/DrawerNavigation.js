@@ -7,17 +7,35 @@ import LinearGradient from 'react-native-linear-gradient';
 import Main from '../../screens/main/Main';
 import BottomTabNavigation from '../bottomTab/BottomTabNavigation';
 
+import OrderNow from '../../screens/ordernow/OrderNow'
+import History from '../../screens/history/History'
+import More from '../../screens/more/More'
+import { ScreenList } from '../../common/ScreenList';
+
 const Drawer = createDrawerNavigator();
 export default () => {
   return (
     <LinearGradient style={{ flex: 1 }} colors={['#FFAB40', '#FF5722']}>
       <Drawer.Navigator
+        drawerStyle={{
+          backgroundColor: '#fff',
+          width: 300,
+        }}
         drawerContent={props => {
           return <DrawerContent {...props} />;
         }}
       >
-        <Drawer.Screen name="Screens" options={{ title: "abc" }}>
+        <Drawer.Screen name={ScreenList.Home} options={{ title: ScreenList.Home }}>
           {props => <BottomTabNavigation {...props} />}
+        </Drawer.Screen>
+        <Drawer.Screen name={ScreenList.OrderNow} options={{ title: ScreenList.OrderNow }}>
+          {props => <OrderNow {...props} />}
+        </Drawer.Screen>
+        <Drawer.Screen name={ScreenList.History} options={{ title: ScreenList.History }}>
+          {props => <History {...props} />}
+        </Drawer.Screen>
+        <Drawer.Screen name={ScreenList.More} options={{ title: ScreenList.More }}>
+          {props => <More {...props} />}
         </Drawer.Screen>
       </Drawer.Navigator>
     </LinearGradient>
