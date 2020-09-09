@@ -79,7 +79,7 @@ export default (props) => {
     subject.current.debounceTime(300
       ).subscribe(data => {
       console.log(data)
-      props.outputListProducts([...data], 0)
+      props.outputListProducts(data, 0)
     }, err => console.error(err))
   }, [])
 

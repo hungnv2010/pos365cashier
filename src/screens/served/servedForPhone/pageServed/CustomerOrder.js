@@ -15,6 +15,8 @@ import { currencyToString } from '../../../../common/Utils'
 import I18n from "../../../../common/language/i18n"
 import { Snackbar } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
+import { Checkbox, RadioButton } from 'react-native-paper';
+
 
 var isClick = false;
 
@@ -598,9 +600,23 @@ export default (props) => {
 const PopupDetail = (props) => {
 
     const [itemOrder, setItemOrder] = useState({ ...props.item })
+    const [showQuickNote, setShowQuickNote] = useState(false)
+    const [listQuickNote, setListQuickNote] = useState([])
+
+    useEffect(() => {
+        let list = itemOrder.OrderQuickNotes.split(',')
+        let listQuickNote = []
+        list.forEach((item, idx) => {
+            if (item != '') {
+                listQuickNote.push({ name: item.trim(), status: false })
+            }
+        })
+        console.log('setListQuickNote1', list);
+        setListQuickNote([...listQuickNote])
+    }, [])
 
     const onClickOk = () => {
-        console.log("onClickOk itemOrder ", itemOrder);
+        console.log("onClickOk itemOrder1111 ", itemOrder);
         props.getDataOnClick(itemOrder)
         props.setShowModal(false)
     }
@@ -616,71 +632,132 @@ const PopupDetail = (props) => {
             <View style={styles.headerModal}>
                 <Text style={styles.headerModalText}>{itemOrder.Name}</Text>
             </View>
-            <View style={{ padding: 20 }}>
-                <View style={{ flexDirection: "row", justifyContent: "center", }} onPress={() => setShowModal(false)}>
-                    <Text style={{ fontSize: 14, flex: 3 }}>{I18n.t('don_gia')}</Text>
-                    <View style={styles.wrapTextPriceModal}>
-                        <Text style={styles.textPriceModal}>{currencyToString(itemOrder.Price)}</Text>
+            {
+                showQuickNote ?
+                    <View style={{ padding: 20 }}>
+                        <View style={{paddingBottom: 20}}>
+                            {
+                                listQuickNote.map((item, index) => {
+                                    return (
+                                        <TouchableOpacity key={index} style={{ flexDirection: "row", alignItems: "center", }}>
+                                            <Checkbox.Android
+                                                color="orange"
+                                                status={item.status ? 'checked' : 'unchecked'}
+                                                onPress={() => {
+                                                    listQuickNote[index].status = !listQuickNote[index].status
+                                                    setListQuickNote([...listQuickNote])
+                                                }}
+                                            />
+                                            <Text style={{ marginLeft: 20, fontSize: 20 }}>{item.name}</Text>
+                                        </TouchableOpacity>
+                                    )
+                                })
+                            }
+                        </View>
+                        <View style={styles.wrapAllButtonModal}>
+                            <TouchableOpacity onPress={() => { setShowQuickNote(false) }} style={styles.wrapButtonModal} >
+                                <Text style={styles.buttonModal}>{I18n.t('huy')}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => {
+                                let list = []
+                                listQuickNote.forEach(item => {
+                                    if (item.status) {
+                                        list.push(item.name)
+                                    }
+                                })
+                                itemOrder.Description = list.join(', ')
+                                setItemOrder({ ...itemOrder })
+                                onClickOk()
+                            }} style={[styles.wrapButtonModal, { backgroundColor: Colors.colorchinh }]} >
+                                <Text style={{ color: "#fff", textTransform: "uppercase", }}>{I18n.t('dong_y')}</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
+                    :
+                    <View style={{ padding: 20 }}>
+                        <View style={{ flexDirection: "row", justifyContent: "center", }} onPress={() => setShowModal(false)}>
+                            <Text style={{ fontSize: 14, flex: 3 }}>{I18n.t('don_gia')}</Text>
+                            <View style={styles.wrapTextPriceModal}>
+                                <Text style={styles.textPriceModal}>{currencyToString(itemOrder.Price)}</Text>
+                            </View>
 
-                </View>
-                <View style={{ padding: 0, flexDirection: "row", justifyContent: "center" }} >
-                    <Text style={{ fontSize: 14, flex: 3 }}>{I18n.t('so_luong')}</Text>
-                    <View style={{ alignItems: "center", flexDirection: "row", flex: 7 }}>
-                        <TouchableOpacity onPress={() => {
-                            if (itemOrder.Quantity > 0) {
-                                itemOrder.Quantity--
-                                setItemOrder({ ...itemOrder })
-                            }
-                        }}>
-                            <Text style={styles.button}>-</Text>
-                        </TouchableOpacity>
-                        <TextInput
-                            onChangeText={text => {
-                                if (!Number.isInteger(+text) || +text > 1000) return
-                                itemOrder.Quantity = text
-                                setItemOrder({ ...itemOrder })
-                            }}
-                            style={styles.textQuantityModal}
-                            value={"" + itemOrder.Quantity}
-                            keyboardType="numeric" />
-                        <TouchableOpacity onPress={() => {
-                            if (itemOrder.Quantity < 1000) {
-                                itemOrder.Quantity++
-                                setItemOrder({ ...itemOrder })
-                            }
-                        }}>
-                            <Text style={styles.button}>+</Text>
-                        </TouchableOpacity>
+                        </View>
+                        <View style={{ padding: 0, flexDirection: "row", justifyContent: "center" }} >
+                            <Text style={{ fontSize: 14, flex: 3 }}>{I18n.t('so_luong')}</Text>
+                            <View style={{ alignItems: "center", flexDirection: "row", flex: 7 }}>
+                                <TouchableOpacity onPress={() => {
+                                    if (itemOrder.Quantity > 0) {
+                                        itemOrder.Quantity--
+                                        setItemOrder({ ...itemOrder })
+                                    }
+                                }}>
+                                    <Text style={styles.button}>-</Text>
+                                </TouchableOpacity>
+                                <TextInput
+                                    onChangeText={text => {
+                                        if (!Number.isInteger(+text) || +text > 1000) return
+                                        itemOrder.Quantity = text
+                                        setItemOrder({ ...itemOrder })
+                                    }}
+                                    style={styles.textQuantityModal}
+                                    value={"" + itemOrder.Quantity}
+                                    keyboardType="numeric" />
+                                <TouchableOpacity onPress={() => {
+                                    if (itemOrder.Quantity < 1000) {
+                                        itemOrder.Quantity++
+                                        setItemOrder({ ...itemOrder })
+                                    }
+                                }}>
+                                    <Text style={styles.button}>+</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        <View style={{ padding: 0, flexDirection: "row", justifyContent: "center" }} onPress={() => setShowModal(false)}>
+                            <Text style={{ fontSize: 14, flex: 3 }}>{I18n.t('ghi_chu')}</Text>
+                            <View style={{ flexDirection: "row", flex: 7 }}>
+                                <TextInput
+                                    onChangeText={text => {
+                                        itemOrder.Description = text
+                                        setItemOrder({ ...itemOrder })
+                                    }}
+                                    numberOfLines={3}
+                                    multiline={true}
+                                    value={itemOrder.Description}
+                                    style={styles.descModal}
+                                    placeholder={I18n.t('nhap_ghi_chu')} />
+                            </View>
+                        </View>
+                        {
+                            itemOrder.OrderQuickNotes != "" ?
+                                <View style={{ paddingVertical: 5, flexDirection: "row", justifyContent: "center" }} onPress={() => setShowModal(false)}>
+                                    <Text style={{ fontSize: 14, flex: 3 }}></Text>
+                                    <View style={{ flexDirection: "row", flex: 7 }}>
+                                        <TouchableOpacity
+                                            style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
+                                            onPress={() => {
+                                                setShowQuickNote(true)
+                                            }}>
+                                            <Icon name="square-edit-outline" size={30} color="#2381E5" />
+                                            <Text style={{ color: "#2381E5", marginLeft: 10 }}>{I18n.t('chon_ghi_chu_nhanh')}</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                                :
+                                null
+                        }
+                        <View style={styles.wrapAllButtonModal}>
+                            <TouchableOpacity onPress={() => props.setShowModal(false)} style={styles.wrapButtonModal} >
+                                <Text style={styles.buttonModal}>{I18n.t('huy')}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => onClickTopping()} style={styles.wrapButtonModal} >
+                                <Text style={styles.buttonModal}>Topping</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => onClickOk()} style={[styles.wrapButtonModal, { backgroundColor: Colors.colorchinh }]} >
+                                <Text style={{ color: "#fff", textTransform: "uppercase", }}>{I18n.t('dong_y')}</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                </View>
-                <View style={{ padding: 0, flexDirection: "row", justifyContent: "center" }} onPress={() => setShowModal(false)}>
-                    <Text style={{ fontSize: 14, flex: 3 }}>{I18n.t('ghi_chu')}</Text>
-                    <View style={{ flexDirection: "row", flex: 7 }}>
-                        <TextInput
-                            onChangeText={text => {
-                                itemOrder.Description = text
-                                setItemOrder({ ...itemOrder })
-                            }}
-                            numberOfLines={3}
-                            multiline={true}
-                            value={itemOrder.Description}
-                            style={styles.descModal}
-                            placeholder={I18n.t('nhap_ghi_chu')} />
-                    </View>
-                </View>
-                <View style={styles.wrapAllButtonModal}>
-                    <TouchableOpacity onPress={() => props.setShowModal(false)} style={styles.wrapButtonModal} >
-                        <Text style={styles.buttonModal}>{I18n.t('huy')}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => onClickTopping()} style={styles.wrapButtonModal} >
-                        <Text style={styles.buttonModal}>Topping</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => onClickOk()} style={[styles.wrapButtonModal, { backgroundColor: Colors.colorchinh }]} >
-                        <Text style={{ color: "#fff", textTransform: "uppercase", }}>{I18n.t('dong_y')}</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
+            }
         </View>
     )
 }
@@ -732,7 +809,7 @@ const styles = StyleSheet.create({
         alignItems: "center", flexDirection: "row", flex: 7, backgroundColor: "#D5D8DC"
     },
     wrapAllButtonModal: {
-        alignItems: "center", justifyContent: "space-between", flexDirection: "row", marginTop: 10
+        alignItems: "center", justifyContent: "space-between", flexDirection: "row", marginTop: 5
     },
     wrapButtonModal: {
         alignItems: "center",

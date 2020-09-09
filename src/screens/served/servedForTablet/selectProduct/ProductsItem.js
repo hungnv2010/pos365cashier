@@ -29,10 +29,11 @@ const ProductsItem = ({ item, index, getQuantityProduct, numColumns, onClickProd
                         flex: 2,
                         justifyContent: "space-between",
                     }}>
-                        <TextTicker
+                        {/* <TextTicker
                             duration={6000}
                             marqueeDelay={500}
-                            style={{ textTransform: "uppercase", fontWeight: "bold", paddingVertical: 5 }}>{item.Name.trim()}</TextTicker>
+                            style={{ textTransform: "uppercase", fontWeight: "bold", paddingVertical: 5 }}>{item.Name.trim()}</TextTicker> */}
+                            <Text style={{ textTransform: "uppercase", fontWeight: "bold", paddingVertical: 5 }}>{item.Name.trim()}</Text>
                         <Text style={{ fontStyle: "italic", paddingBottom: 5 }}>{currencyToString(item.Price)}<Text style={{ color: Colors.colorchinh }}>{item.LargeUnit != '' ? `/${item.LargeUnit}` : item.Unit != '' ? `/${item.Unit}` : ''}</Text></Text>
                     </View>
                     <Text numberOfLines={2} style={{ textTransform: "uppercase", fontWeight: "bold", paddingLeft: 5, color: Colors.colorchinh }}>{item.ProductType == 1 ? (item.OnHand >= 0 ? item.OnHand : "") : "---"}</Text>

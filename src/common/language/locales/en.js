@@ -40,6 +40,7 @@ export default {
   con_lai_so_luong: "Remain",
   chi_tiet_goi_mon: "Details",
   co_so_luong_lon_hon: "Cancellation amount greater than the amount requested",
+  chon_ghi_chu_nhanh:"Order quick notes",
 
   // TODO: D
   dang_dung: "Serving",
