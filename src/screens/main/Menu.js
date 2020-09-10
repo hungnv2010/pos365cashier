@@ -29,7 +29,8 @@ const KEY_FUNC = {
     VERSION: "VERSION",
     MORE: ScreenList.More,
     ORDER_NOW: ScreenList.OrderNow,
-    HISTORY: ScreenList.History
+    HISTORY: ScreenList.History,
+    ROOM_CATALOG: ScreenList.RoomCatalog,
 }
 
 const LIST_FUNCITION = [
@@ -47,6 +48,11 @@ const LIST_FUNCITION = [
         func: KEY_FUNC.HISTORY,
         icon: Images.icon_customer,
         title: "lich_su_goi_mon"
+    },
+    {
+        func: KEY_FUNC.ROOM_CATALOG,
+        icon: Images.icon_customer,
+        title: "danh_muc_phong_ban"
     },
     {
         func: KEY_FUNC.MORE,

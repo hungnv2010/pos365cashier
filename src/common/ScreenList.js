@@ -42,6 +42,9 @@ export const ScreenList = {
   PrintWebview: "PrintWebview",
   OrderNow: "OrderNow",
   History: "History",
-  More: "More"
+  More: "More",
+  RoomCatalog: "RoomCatalog",
+  RoomList: "RoomList",
+  RoomCategory: "RoomCategory"
 }
 

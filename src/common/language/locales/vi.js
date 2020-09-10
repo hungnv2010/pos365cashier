@@ -56,6 +56,8 @@ export default {
   dang_goi_mon: "Đang gọi món",
   dong:"Đóng",
   dia_chi_ip: "Địa chỉ ip",
+  danh_muc_phong_ban: "Danh mục phòng bàn",
+  danh_sach_phong_ban: "Danh sách phòng bàn",
 
   // TODO: E
 
@@ -158,6 +160,7 @@ export default {
   nhan_vien_order: "Nhân viên Order",
   nhap_ghi_chu: "Nhập ghi chú",
   ngay: "ngày",
+  nhom_phong_ban: "Nhóm phòng bàn",
 
   // TODO: O
 
@@ -191,6 +194,8 @@ export default {
   so_luong: "Số lượng",
   so_san_pham: "Số sản phẩm",
   san_sang: "Sẵn sàng",
+  so_luong_nhom: "Số lượng nhóm",
+  so_luong_ban: "Số lượng bàn",
 
   // TODO: T
   thong_bao_quet_van_tay: "Quý khách vui lòng quét dấu vân tay đã đăng ký trên thiết bị.",

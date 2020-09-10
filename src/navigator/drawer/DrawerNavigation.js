@@ -10,6 +10,7 @@ import BottomTabNavigation from '../bottomTab/BottomTabNavigation';
 import OrderNow from '../../screens/ordernow/OrderNow'
 import History from '../../screens/history/History'
 import More from '../../screens/more/More'
+import RoomCatalog from '../../screens/room/RoomCatalog'
 import { ScreenList } from '../../common/ScreenList';
 
 const Drawer = createDrawerNavigator();
@@ -36,6 +37,9 @@ export default () => {
         </Drawer.Screen>
         <Drawer.Screen name={ScreenList.More} options={{ title: ScreenList.More }}>
           {props => <More {...props} />}
+        </Drawer.Screen>
+        <Drawer.Screen name={ScreenList.RoomCatalog} options={{ title: ScreenList.RoomCatalog }}>
+          {props => <RoomCatalog {...props} />}
         </Drawer.Screen>
       </Drawer.Navigator>
     </LinearGradient>
