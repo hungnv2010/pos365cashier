@@ -45,6 +45,7 @@ export const ScreenList = {
   More: "More",
   RoomCatalog: "RoomCatalog",
   RoomList: "RoomList",
-  RoomCategory: "RoomCategory"
+  RoomCategory: "RoomCategory",
+  RoomDetail: "RoomDetail",
 }
 

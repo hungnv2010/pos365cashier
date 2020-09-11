@@ -215,9 +215,20 @@ const HeaderComponent = (props) => {
         })
     }
 
+    const onClickLogOut = () => {
+        dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_dang_xuat'), I18n.t("thong_bao"), res => {
+            if (res == 1) {
+                setFileLuuDuLieu(Constant.CURRENT_ACCOUNT, "");
+                setFileLuuDuLieu(Constant.CURRENT_BRANCH, "");
+                dataManager.dataChoosing = []
+                navigate('Login', {}, true);
+            }
+        })
+    }
+
     return (
         <View style={{ backgroundColor: Colors.colorchinh, justifyContent: "space-between", flexDirection: "row", alignItems: "center", padding: 20 }}>
-            <View >
+            <View style={{ flex: 1 }}>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                     {
                         Logo != "" ?
@@ -229,11 +240,17 @@ const HeaderComponent = (props) => {
                     }
                     <Text style={{ marginTop: 10, color: "#fff" }}>{Name}</Text>
                 </View>
-                <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", marginTop: 15 }} onPress={() => onClickBranh()}>
-                    <Icon name="location-on" size={20} color="#fff" />
-                    <Text style={{ color: "#fff" }}>{Branch.Name && Branch.Name != "" ? Branch.Name : I18n.t('chi_nhanh')}</Text>
-                </TouchableOpacity>
+                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 15 }}>
+                    <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", }} onPress={() => onClickBranh()}>
+                        <Icon name="location-on" size={20} color="#fff" />
+                        <Text style={{ color: "#fff" }}>{Branch.Name && Branch.Name != "" ? Branch.Name : I18n.t('chi_nhanh')}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => onClickLogOut()}>
+                        <Text style={{ textDecorationLine: "underline", color: "#fff" }}>{I18n.t('logout')}</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
+
             <Modal
                 animationType="fade"
                 transparent={true}
@@ -358,7 +375,7 @@ const ContentComponent = (props) => {
 
     const _renderItem = (chucnang = {}, indexchucnnag = 0) => {
         return (
-            <View key={indexchucnnag} style={{ width: "100%" , backgroundColor: currentItemMenu == indexchucnnag ? "#EEEEEE" : "#fff"}}>
+            <View key={indexchucnnag} style={{ width: "100%", backgroundColor: currentItemMenu == indexchucnnag ? "#EEEEEE" : "#fff" }}>
                 {/* {chucnang.func && chucnang.func == KEY_FUNC.SETTING_FUNC ?
                     _renderDivider()
                     : null} */}

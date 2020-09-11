@@ -43,6 +43,7 @@ export default {
   chi_tiet_goi_mon: "Chi tiết gọi món",
   co_so_luong_lon_hon: "Có số lượng hủy trả lớn hơn số lượng đã gọi",
   chon_ghi_chu_nhanh:"Chọn ghi chú nhanh",
+  chi_tiet_phong_ban: "Chi tiết phòng bàn",
 
   // TODO: D
   dang_dung: "Đang dùng",
@@ -252,6 +253,7 @@ export default {
   tu: "từ",
   thuc_don_da_goi: "Thực đơn đã gọi",
   thao_tac_sai: "Thao tác sai",
+  them_phong_ban: "Thêm phòng bàn",
   // TODO: U
 
   // TODO: V

@@ -5,8 +5,9 @@ import I18n from '../../common/language/i18n';
 import realmStore from '../../data/realm/RealmStore';
 import { Images, Metrics } from '../../theme';
 import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
-import { Chip, Snackbar } from 'react-native-paper';
+import { Chip, Snackbar, FAB } from 'react-native-paper';
 import colors from '../../theme/Colors';
+import { ScreenList } from '../../common/ScreenList';
 
 var HEADER_MAX_HEIGHT = 200;
 const HEADER_MIN_HEIGHT = Platform.OS === 'ios' ? 70 : 0;
@@ -19,6 +20,7 @@ export default (props) => {
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
     const [rooms, setRooms] = useState([])
+    const [indexTab, setIndexTab] = useState(0)
     const [heightTab, setHeightTab] = useState(200)
     const [update, setUpdate] = useState(0)
     const heightTab2 = useRef(0);
@@ -60,9 +62,21 @@ export default (props) => {
         setUpdate(1)
     }, [heightTab])
 
+    const onClickItem = (el) => {
+        props.navigation.navigate(ScreenList.RoomDetail, el)
+    }
+
+    const onClickTab = (el, i) => {
+        setIndexTab(i)
+    }
+
     const _renderScrollViewContent = () => {
         return (
             <ScrollView
+                bounces={false}
+                onMomentumScrollBegin={
+                    () => setHeightTab(100)
+                }
                 onScroll={(event) => {
                     if (event.nativeEvent.contentOffset.y < 30) {
                         setHeightTab(200)
@@ -70,144 +84,43 @@ export default (props) => {
                         setHeightTab(100)
                     }
                 }}
+                style={{ backgroundColor: "#fff" }}
             >
                 {
                     rooms.map((item, index) => {
-                        return (
-                            <View style={{ flex: 1 }}>
-                                {
-                                    item.list.length > 0 ?
-                                        <View style={{}}>
-                                            <View style={{ flexDirection: "row", justifyContent: "space-between", backgroundColor: "#eeeeee", }}>
-                                                <Text style={{ textTransform: "uppercase", fontWeight: "bold", padding: 15 }}>{item.Name}</Text>
-                                                <Text style={{ padding: 15 }}>{item.list.length} bàn</Text>
-                                            </View>
+                        if (indexTab == "" || indexTab == index + 1)
+                            return (
+                                <View style={{ flex: 1 }}>
+                                    {
+                                        item.list.length > 0 ?
+                                            <View style={{}}>
+                                                <View style={{ flexDirection: "row", justifyContent: "space-between", backgroundColor: "#eeeeee", }}>
+                                                    <Text style={{ textTransform: "uppercase", fontWeight: "bold", padding: 15 }}>{item.Name}</Text>
+                                                    <Text style={{ padding: 15 }}>{item.list.length} bàn</Text>
+                                                </View>
 
-                                            {
-                                                item.list.map((el, indexEl) => {
-                                                    return (
-                                                        <TouchableOpacity style={{ backgroundColor: "#fff", padding: 15, flexDirection: "column" }}>
-                                                            <Text style={{ textTransform: "uppercase", fontWeight: "bold" }}>{el.Name}</Text>
-                                                        </TouchableOpacity>
-                                                    )
-                                                })
-                                            }
-                                        </View>
-                                        : null
-                                }
-                            </View>
-                        )
+                                                {
+                                                    item.list.map((el, indexEl) => {
+                                                        return (
+                                                            <TouchableOpacity onPress={() => onClickItem(el)} style={{ backgroundColor: "#fff", padding: 15, flexDirection: "column" }}>
+                                                                <Text style={{ textTransform: "uppercase", fontWeight: "bold" }}>{el.Name}</Text>
+                                                            </TouchableOpacity>
+                                                        )
+                                                    })
+                                                }
+                                            </View>
+                                            : null
+                                    }
+                                </View>
+                            )
+                        else return null;
                     })
                 }
             </ScrollView>
         );
     }
 
-    const scrollY = Animated.add(
-        statescrollY,
-        Platform.OS === 'ios' ? HEADER_MAX_HEIGHT : 0,
-    );
-    const headerTranslate = scrollY.interpolate({
-        inputRange: [0, HEADER_SCROLL_DISTANCE],
-        outputRange: [0, -HEADER_SCROLL_DISTANCE],
-        extrapolate: 'clamp',
-    });
-
-    const imageOpacity = scrollY.interpolate({
-        inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
-        outputRange: [1, 1, 0],
-        extrapolate: 'clamp',
-    });
-    const imageTranslate = scrollY.interpolate({
-        inputRange: [0, HEADER_SCROLL_DISTANCE],
-        outputRange: [0, 100],
-        extrapolate: 'clamp',
-    });
-
-    const titleScale = scrollY.interpolate({
-        inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
-        outputRange: [1, 1, 0.8],
-        extrapolate: 'clamp',
-    });
-    const titleTranslate = scrollY.interpolate({
-        inputRange: [0, HEADER_SCROLL_DISTANCE / 2, HEADER_SCROLL_DISTANCE],
-        outputRange: [0, 0, -8],
-        extrapolate: 'clamp',
-    });
-
     return (
-        // <View style={styles.conatiner}>
-        //     <ToolBarDefault
-        //         navigation={props.navigation}
-        //         title={I18n.t('danh_sach_phong_ban')}
-        //     />
-        //     <View
-        //         style={{
-        //             height: heightTab > 0 && heightTab,
-        //             // width: Metrics.screenWidth * 1.5,
-        //             flexDirection: 'row', flexWrap: 'wrap', borderBottomWidth: 0.5, borderBottomColor: colors.colorchinh
-        //         }}>
-        //         {
-        //             rooms.map((item, index) => {
-        //                 return (
-        //                     <View style={{
-        //                         margin: 10,
-        //                     }}>
-        //                         <Text>{item.Name}</Text>
-        //                     </View>
-        //                 );
-        //             })}
-        //     </View>
-
-        //     <ScrollView
-        //         onScroll={(event) => {
-        //             if (event.nativeEvent.contentOffset.y < 30) {
-        //                 setHeightTab(200)
-        //             } else {
-        //                 setHeightTab(100)
-        //             }
-        //         }}
-        //     >
-        //         {
-        //             rooms.map((item, index) => {
-        //                 return (
-        //                     <View style={{ flex: 1 }}>
-        //                         {
-        //                             item.list.length > 0 ?
-        //                                 <View style={{}}>
-        //                                     <View style={{ flexDirection: "row", justifyContent: "space-between", backgroundColor: "#eeeeee", }}>
-        //                                         <Text style={{ textTransform: "uppercase", fontWeight: "bold", padding: 15 }}>{item.Name}</Text>
-        //                                         <Text style={{ padding: 15 }}>{item.list.length} bàn</Text>
-        //                                     </View>
-
-        //                                     {
-        //                                         item.list.map((el, indexEl) => {
-        //                                             return (
-        //                                                 <TouchableOpacity style={{ backgroundColor: "#fff", padding: 15, flexDirection: "column" }}>
-        //                                                     <Text style={{ textTransform: "uppercase", fontWeight: "bold" }}>{el.Name}</Text>
-        //                                                 </TouchableOpacity>
-        //                                             )
-        //                                         })
-        //                                     }
-        //                                 </View>
-        //                                 : null
-        //                         }
-        //                     </View>
-        //                 )
-        //             })
-        //         }
-        //     </ScrollView>
-        //     <Snackbar
-        //         duration={5000}
-        //         visible={showToast}
-        //         onDismiss={() =>
-        //             setShowToast(false)
-        //         }
-        //     >
-        //         {toastDescription}
-        //     </Snackbar>
-        // </View>
-
         <View style={styles.fill}>
             <ToolBarDefault
                 navigation={props.navigation}
@@ -221,84 +134,31 @@ export default (props) => {
                     // setHeightTab(height)
                 }}
                 style={{
-                    flexShrink: heightTab < 200 ? 2 : 0,
-                    // height: heightTab,
+                    backgroundColor: "#eeeeee",
+                    borderRadius: 10, margin: 10,
+                    flexShrink: heightTab < 200 ? 3.1 : 0,
                     // width: Metrics.screenWidth * 1.5,
                     flexDirection: 'row', flexWrap: 'wrap', borderBottomWidth: 0, borderBottomColor: colors.colorchinh
                 }}>
                 {
-                    rooms.map((item, index) => {
+                    [{ Id: "", Name: "Tất cả" }].concat(rooms).map((item, index) => {
                         return (
-                            <View style={{
-                                margin: 10,
+                            <TouchableOpacity onPress={() => onClickTab(item, index)} style={{
+                                padding: 10,
                             }}>
-                                <Text>{item.Name}</Text>
-                            </View>
+                                <Text style={{ color: indexTab == index ? colors.colorLightBlue : "black", fontSize: 15 }}>{item.Name}</Text>
+                            </TouchableOpacity>
                         );
                     })}
             </View>
             {_renderScrollViewContent()}
-            {/* <Animated.ScrollView
-                style={{}}
-                scrollEventThrottle={1}
-                onScroll={Animated.event(
-                    [{ nativeEvent: { contentOffset: { y: statescrollY } } }],
-                    { useNativeDriver: true },
-                )}
-
-                // iOS offset for RefreshControl
-                contentInset={{
-                    top: HEADER_MAX_HEIGHT,
-                }}
-                contentOffset={{
-                    y: -HEADER_MAX_HEIGHT,
-                }}
-            >
-                {_renderScrollViewContent()}
-            </Animated.ScrollView> */}
-            {/* <Animated.View
-                pointerEvents="none"
-                style={[
-                    styles.header,
-                    { transform: [{ translateY: headerTranslate }] },
-                ]}
-            >
-                <View
-                    onLayout={(event) => {
-                        var {x, y, width, height} = event.nativeEvent.layout;
-                        // heightTab2.current = height;
-                        // HEADER_MAX_HEIGHT = height;
-                        // setHeightTab(height)
-                      }}
-                    style={{
-                        // height: "100%",
-                        // width: Metrics.screenWidth * 1.5,
-                        flexDirection: 'row', flexWrap: 'wrap', borderBottomWidth: 0, borderBottomColor: colors.colorchinh
-                    }}>
-                    {
-                        rooms.map((item, index) => {
-                            return (
-                                <View style={{
-                                    margin: 10,
-                                }}>
-                                    <Text>{item.Name}</Text>
-                                </View>
-                            );
-                        })}
-                </View>
-            </Animated.View> */}
-            {/* <Animated.View
-                style={[
-                    styles.bar,
-                    {
-                        transform: [
-                            { scale: titleScale },
-                            { translateY: titleTranslate },
-                        ],
-                    },
-                ]}
-            >
-            </Animated.View> */}
+            <FAB
+                style={styles.fab}
+                big
+                icon="plus"
+                color="#fff"
+                onPress={() => props.navigation.navigate(ScreenList.RoomDetail)}
+            />
         </View>
 
     );
@@ -307,8 +167,15 @@ export default (props) => {
 
 const styles = StyleSheet.create({
     conatiner: { flex: 1, backgroundColor: "#eeeeee" },
+    fab: {
+        position: 'absolute',
+        margin: 16,
+        right: 0,
+        bottom: 0,
+        backgroundColor: colors.colorLightBlue
+    },
     fill: {
-        flex: 1,
+        flex: 1, backgroundColor: "#fff",
     },
     content: {
         flex: 1,

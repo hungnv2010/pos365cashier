@@ -173,6 +173,9 @@ const HeaderComponent = (props) => {
                     <Text style={{ color: "#fff" }}>{Branch.Name && Branch.Name != "" ? Branch.Name : I18n.t('chi_nhanh')}</Text>
                 </TouchableOpacity>
             </View>
+            <TouchableOpacity onPress={() => onClickLogOut()}>
+                <Text style={{ textDecorationLine: "underline", color: "#fff" }}>{I18n.t('logout')}</Text>
+            </TouchableOpacity> 
             <Modal
                 animationType="fade"
                 transparent={true}

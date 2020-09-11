@@ -26,6 +26,9 @@ export default () => {
           return <DrawerContent {...props} />;
         }}
       >
+        <Drawer.Screen name={ScreenList.Main} options={{ title: ScreenList.Main }}>
+          {props => <Main {...props} />}
+        </Drawer.Screen>
         <Drawer.Screen name={ScreenList.Home} options={{ title: ScreenList.Home }}>
           {props => <BottomTabNavigation {...props} />}
         </Drawer.Screen>
