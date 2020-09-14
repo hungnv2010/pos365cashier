@@ -15,6 +15,10 @@ import { Topping, PageServed, SelectProduct } from '../../screens/served/servedF
 import PrintWebview from '../../screens/more/PrintWebview';
 import DetailHistory from '../../screens/history/DetailHistory'
 import ChangeTable from '../../screens/changeTable/Main';
+import RoomList from '../../screens/room/RoomList'
+import RoomCategory from '../../screens/room/RoomCategory'
+import RoomDetail from '../../screens/room/RoomDetail'
+import { ScreenList } from '../../common/ScreenList';
 const MainStack = createStackNavigator();
 
 
@@ -24,22 +28,25 @@ export default (props) => {
         <Animated.View style={{ flex: 1 }}>
             <MainStack.Navigator
                 headerMode="none">
-                <MainStack.Screen name="Login">{props => <Login {...props} />}</MainStack.Screen>
-                {/* <MainStack.Screen name="Home">{props => <DrawerNavigation {...props} screenOptions={{ headerLeft: null }} />}</MainStack.Screen> */}
-                <MainStack.Screen name="Home">{props => <BottomTabNavigation {...props} screenOptions={{ headerLeft: null }} />}</MainStack.Screen>
-                <MainStack.Screen name="ServedForTablet">{props => <ServedForTablet {...props} />}</MainStack.Screen>
-                <MainStack.Screen name="PrintHtml">{props => <PrintHtml {...props} />}</MainStack.Screen>
-                <MainStack.Screen name="Preview">{props => <Preview {...props} />}</MainStack.Screen>
-                <MainStack.Screen name="Topping">{props => <Topping {...props} />}</MainStack.Screen>
-                <MainStack.Screen name="NoteBook">{props => <NoteBook {...props} />}</MainStack.Screen>
-                <MainStack.Screen name="DetailNoteBook">{props => <DetailNoteBook {...props} />}</MainStack.Screen>
-                <MainStack.Screen name="QRCode">{props => <QRCode {...props} />}</MainStack.Screen>
-                <MainStack.Screen name="PageServed">{props => <PageServed {...props} />}</MainStack.Screen>
-                <MainStack.Screen name="SelectProduct">{props => <SelectProduct {...props} />}</MainStack.Screen>
-                <MainStack.Screen name="Main">{props => <Main {...props} />}</MainStack.Screen>
-                <MainStack.Screen name="ChangeTable">{props => <ChangeTable {...props} />}</MainStack.Screen>
-                <MainStack.Screen name="DetailHistory">{props => <DetailHistory {...props} />}</MainStack.Screen>
-                <MainStack.Screen name="PrintWebview">{props => <PrintWebview {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.Login}>{props => <Login {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.Home}>{props => <DrawerNavigation {...props} screenOptions={{ headerLeft: null }} />}</MainStack.Screen>
+                {/* <MainStack.Screen name="Home">{props => <BottomTabNavigation {...props} screenOptions={{ headerLeft: null }} />}</MainStack.Screen> */}
+                <MainStack.Screen name={ScreenList.ServedForTablet}>{props => <ServedForTablet {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.PrintHtml}>{props => <PrintHtml {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.Preview}>{props => <Preview {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.Topping}>{props => <Topping {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.NoteBook}>{props => <NoteBook {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.DetailNoteBook}>{props => <DetailNoteBook {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.QRCode}>{props => <QRCode {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.PageServed}>{props => <PageServed {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.SelectProduct}>{props => <SelectProduct {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.Main}>{props => <Main {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.ChangeTable}>{props => <ChangeTable {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.DetailHistory}>{props => <DetailHistory {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.PrintWebview}>{props => <PrintWebview {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.RoomList}>{props => <RoomList {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.RoomCategory}>{props => <RoomCategory {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.RoomDetail}>{props => <RoomDetail {...props} />}</MainStack.Screen>
             </MainStack.Navigator>
         </Animated.View>
     );

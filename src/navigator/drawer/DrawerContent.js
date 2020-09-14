@@ -7,12 +7,13 @@ import {
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Constant } from "../../common/Constant";
 import { getFileDuLieuString, setFileLuuDuLieu } from "../../data/fileStore/FileStorage";
-
+import Menu from '../../screens/main/Menu'
 
 const DrawerContent = props => {
     return (
         <View style={{ flex: 1 }}>
-            <View>
+            <Menu {...props}></Menu>
+            {/* <View>
                 <Text style={{ color: "black", height: 100, backgroundColor: "yellow" }}>header</Text>
             </View>
             <DrawerContentScrollView contentContainerStyle={{ flex: 1, marginTop: -5 }}>
@@ -50,7 +51,7 @@ const DrawerContent = props => {
             </DrawerContentScrollView>
             <View>
                 <Text>Bottom</Text>
-            </View>
+            </View> */}
         </View>
     );
 };

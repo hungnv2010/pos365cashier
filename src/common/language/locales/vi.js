@@ -46,6 +46,7 @@ export default {
   co_so_luong_lon_hon: "Có số lượng hủy trả lớn hơn số lượng đã gọi",
   chon_ghi_chu_nhanh: "Chọn ghi chú nhanh",
   chon_khoang_thoi_gian:"Chọn khoảng thời gian",
+  chi_tiet_phong_ban: "Chi tiết phòng bàn",
 
   // TODO: D
   dang_dung: "Đang dùng",
@@ -60,6 +61,8 @@ export default {
   dong: "Đóng",
   dia_chi_ip: "Địa chỉ ip",
   doanh_thu_VND: "Doanh thu (VND)",
+  danh_muc_phong_ban: "Danh mục phòng bàn",
+  danh_sach_phong_ban: "Danh sách phòng bàn",
 
   // TODO: E
 
@@ -165,6 +168,7 @@ export default {
   nhan_vien_order: "Nhân viên Order",
   nhap_ghi_chu: "Nhập ghi chú",
   ngay: "ngày",
+  nhom_phong_ban: "Nhóm phòng bàn",
 
   // TODO: O
 
@@ -199,6 +203,8 @@ export default {
   so_san_pham: "Số sản phẩm",
   san_sang: "Sẵn sàng",
   san_pham_ban_chay: "Sản phẩm bán chạy",
+  so_luong_nhom: "Số lượng nhóm",
+  so_luong_ban: "Số lượng bàn",
 
   // TODO: T
   thong_bao_quet_van_tay: "Quý khách vui lòng quét dấu vân tay đã đăng ký trên thiết bị.",
@@ -255,6 +261,7 @@ export default {
   tu: "từ",
   thuc_don_da_goi: "Thực đơn đã gọi",
   thao_tac_sai: "Thao tác sai",
+  them_phong_ban: "Thêm phòng bàn",
   // TODO: U
 
   // TODO: V

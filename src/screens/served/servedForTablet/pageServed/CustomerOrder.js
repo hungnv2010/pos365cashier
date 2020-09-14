@@ -452,7 +452,7 @@ const CustomerOrder = (props) => {
                         <Text>{currencyToString(item.Price)}
                             {
                                 orientaition == Constant.PORTRAIT ?
-                                    <Text>x <Text style={{ color: Colors.colorchinh, }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text></Text>
+                                    <Text> x <Text style={{ color: Colors.colorchinh, }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text></Text>
                                     :
                                     <Text style={{ color: Colors.colorchinh, }}>{item.IsLargeUnit ? (item.LargeUnit ? "/" + item.LargeUnit : "") : (item.Unit ? "/" + item.Unit : "")}</Text>
                             }

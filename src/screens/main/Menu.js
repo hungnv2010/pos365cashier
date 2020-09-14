@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useLayoutEffect } from 'react';
 import { Image, View, StyleSheet, TouchableWithoutFeedback, Text, TouchableOpacity, NativeModules, Modal, TextInput, Linking, ScrollView } from 'react-native';
-import { Images, Colors, Metrics } from '../../theme';
+import { Images, Colors, Metrics, Fonts } from '../../theme';
 import { setFileLuuDuLieu, getFileDuLieuString } from '../../data/fileStore/FileStorage';
 import { Constant } from '../../common/Constant';
 import realmStore, { SchemaName } from '../../data/realm/RealmStore';
 import I18n from '../../common/language/i18n'
-import { Switch, Snackbar } from 'react-native-paper';
+import { Switch, Snackbar, Paragraph } from 'react-native-paper';
 import dialogManager from '../../components/dialog/DialogManager';
 import { HTTPService, getHeaders } from '../../data/services/HttpService';
 import { ApiPath } from '../../data/services/ApiPath';
@@ -17,8 +17,69 @@ import { navigate } from '../../navigator/NavigationService';
 import { useDispatch } from 'react-redux';
 import DeviceInfo from 'react-native-device-info';
 import signalRManager from '../../common/SignalR';
+import { ScreenList } from '../../common/ScreenList';
 const { Print } = NativeModules;
 const IP_DEFAULT = "192.168.99.";
+
+const KEY_FUNC = {
+    HOME: ScreenList.Home,
+    CUSTOMER: ScreenList.QRCode,
+    BILL: ScreenList.NoteBook,
+    SETTING_FUNC: ScreenList.PrintHtml,
+    VERSION: "VERSION",
+    MORE: ScreenList.More,
+    ORDER_NOW: ScreenList.OrderNow,
+    HISTORY: ScreenList.History,
+    ROOM_CATALOG: ScreenList.RoomCatalog,
+}
+
+const LIST_FUNCITION = [
+    {
+        func: KEY_FUNC.HOME,
+        icon: Images.icon_inventory,
+        title: "man_hinh_thu_ngan"
+    },
+    {
+        func: KEY_FUNC.ORDER_NOW,
+        icon: Images.icon_inventory,
+        title: "dang_goi_mon"
+    },
+    {
+        func: KEY_FUNC.HISTORY,
+        icon: Images.icon_customer,
+        title: "lich_su_goi_mon"
+    },
+    {
+        func: KEY_FUNC.ROOM_CATALOG,
+        icon: Images.icon_customer,
+        title: "danh_muc_phong_ban"
+    },
+    {
+        func: KEY_FUNC.MORE,
+        icon: Images.icon_star,
+        title: "them"
+    },
+    {
+        func: KEY_FUNC.CUSTOMER,
+        icon: Images.icon_customer,
+        title: "khach_hang"
+    },
+    {
+        func: KEY_FUNC.BILL,
+        icon: Images.icon_report,
+        title: "hoa_don"
+    },
+    {
+        func: KEY_FUNC.SETTING_FUNC,
+        icon: Images.icon_setting,
+        title: "cai_dat"
+    },
+    {
+        func: KEY_FUNC.VERSION,
+        icon: Images.icon_version,
+        title: "phien_ban_ngay"
+    }
+]
 
 export default (props) => {
 
@@ -59,7 +120,7 @@ const HeaderComponent = (props) => {
     useLayoutEffect(() => {
         const getVendorSession = async () => {
             let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
-            console.log('HeaderComponent data', JSON.parse(data));
+            console.log('HeaderComponent data', props);
             data = JSON.parse(data)
             setVendorSession(data);
             if (data.CurrentRetailer && data.CurrentRetailer.Logo) {
@@ -95,7 +156,7 @@ const HeaderComponent = (props) => {
     }
 
     const onClickItemBranch = (item) => {
-        console.log("onClickItemBranch ", item);
+        console.log("onClickItemBranch ", props);
         setShowModal(false)
         if (Branch.Id == item.Id) {
             return;
@@ -109,8 +170,8 @@ const HeaderComponent = (props) => {
                 setBranch(item)
                 dispatch({ type: 'ALREADY', already: false })
                 dataManager.dataChoosing = [];
-                // await realmStore.deleteAll(),
-                signalRManager.killSignalR();
+                await realmStore.deleteAll(),
+                    signalRManager.killSignalR();
                 getRetailerInfoAndNavigate();
             } else {
                 dialogManager.hiddenLoading();
@@ -154,9 +215,20 @@ const HeaderComponent = (props) => {
         })
     }
 
+    const onClickLogOut = () => {
+        dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_dang_xuat'), I18n.t("thong_bao"), res => {
+            if (res == 1) {
+                setFileLuuDuLieu(Constant.CURRENT_ACCOUNT, "");
+                setFileLuuDuLieu(Constant.CURRENT_BRANCH, "");
+                dataManager.dataChoosing = []
+                navigate('Login', {}, true);
+            }
+        })
+    }
+
     return (
         <View style={{ backgroundColor: Colors.colorchinh, justifyContent: "space-between", flexDirection: "row", alignItems: "center", padding: 20 }}>
-            <View >
+            <View style={{ flex: 1 }}>
                 <View style={{ flexDirection: "row", alignItems: "center" }}>
                     {
                         Logo != "" ?
@@ -168,14 +240,17 @@ const HeaderComponent = (props) => {
                     }
                     <Text style={{ marginTop: 10, color: "#fff" }}>{Name}</Text>
                 </View>
-                <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", marginTop: 15 }} onPress={() => onClickBranh()}>
-                    <Icon name="location-on" size={20} color="#fff" />
-                    <Text style={{ color: "#fff" }}>{Branch.Name && Branch.Name != "" ? Branch.Name : I18n.t('chi_nhanh')}</Text>
-                </TouchableOpacity>
+                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 15 }}>
+                    <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", }} onPress={() => onClickBranh()}>
+                        <Icon name="location-on" size={20} color="#fff" />
+                        <Text style={{ color: "#fff" }}>{Branch.Name && Branch.Name != "" ? Branch.Name : I18n.t('chi_nhanh')}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => onClickLogOut()}>
+                        <Text style={{ textDecorationLine: "underline", color: "#fff" }}>{I18n.t('logout')}</Text>
+                    </TouchableOpacity>
+                </View>
             </View>
-            <TouchableOpacity onPress={() => onClickLogOut()}>
-                <Text style={{ textDecorationLine: "underline", color: "#fff" }}>{I18n.t('logout')}</Text>
-            </TouchableOpacity> 
+
             <Modal
                 animationType="fade"
                 transparent={true}
@@ -234,6 +309,7 @@ const ContentComponent = (props) => {
     const [paperSize, setPaperSize] = useState("");
     const dispatch = useDispatch();
     const [version, setVersion] = useState("");
+    const [currentItemMenu, setCurrentItemMenu] = useState(0);
 
     useEffect(() => {
         const getCurrentIP = async () => {
@@ -283,63 +359,59 @@ const ContentComponent = (props) => {
         Linking.openURL(phone_number);
     }
 
+    const _renderDivider = () => {
+        return (
+            <View style={{ height: 8, width: "100%", backgroundColor: "#d6d6d6" }} ></View>
+        )
+    }
+
+    const onClickItem = (chucnang, index) => {
+        // OrderNow  QRCode
+        console.log("onClickItem props ", props);
+        setCurrentItemMenu(index)
+        props.navigation.navigate(chucnang.func)
+        props.navigation.closeDrawer();
+    }
+
+    const _renderItem = (chucnang = {}, indexchucnnag = 0) => {
+        return (
+            <View key={indexchucnnag} style={{ width: "100%", backgroundColor: currentItemMenu == indexchucnnag ? "#EEEEEE" : "#fff" }}>
+                {/* {chucnang.func && chucnang.func == KEY_FUNC.SETTING_FUNC ?
+                    _renderDivider()
+                    : null} */}
+                <TouchableOpacity
+                    style={{ with: Metrics.screenWidth * 1, flexDirection: "row", alignItems: "center" }}
+                    onPress={() => onClickItem(chucnang, indexchucnnag)}>
+                    {chucnang.icon && chucnang.icon != "" ?
+                        <Image
+                            resizeMode="contain"
+                            style={[styles.icon_menu]}
+                            source={chucnang.icon}
+                        />
+                        : null}
+                    <View style={styles.row_menu}>
+
+                        <Paragraph style={styles.text_menu}>
+                            {I18n.t(chucnang.title)}
+                            {chucnang.title == "hotline" ?
+                                <Text style={{ color: Colors.colorBlueText }}> {Constant.HOTLINE}</Text> : null}
+                            {chucnang.title == "phien_ban_ngay" ?
+                                <Text style={{ color: Colors.colorBlueText }}> {version}</Text> : null}
+                        </Paragraph>
+                    </View>
+                </TouchableOpacity>
+            </View>
+        )
+    }
+
     return (
         <View style={{ flex: 1 }}>
-            <ScrollView style={{ flexGrow: 1 }}>
-                <View style={{ padding: 20, borderBottomWidth: 0.5, borderBottomColor: "#ddd" }}>
-                    <Text style={{ color: Colors.colorchinh, fontSize: 18 }}>{I18n.t('ket_noi_may_in')}</Text>
-                    <TouchableOpacity style={{ paddingVertical: 10, paddingTop: 20 }} onPress={async () => {
-                        setShowModal(true)
-                        let size = await getFileDuLieuString(Constant.SIZE_INPUT, true);
-                        console.log('size ', size);
-                        if (size && size != "") {
-                            setPaperSize(size)
-                        }
-                    }}>
-                        <Text style={{}}>{I18n.t('may_in_tam_tinh')} ({I18n.t('qua_mang_lan')} {ip})</Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={{ padding: 20, borderBottomWidth: 0.5, borderBottomColor: "#ddd" }}>
-                    <Text style={{ color: Colors.colorchinh, fontSize: 18 }}>{I18n.t('cai_dat_may_in')}</Text>
-                    <TouchableOpacity style={{ paddingVertical: 10, paddingTop: 20 }} onPress={() => {
-                        props.navigation.navigate("PrintHtml")
-                        // props.navigation.navigate("PrintWebview")
-                    }}>
-                        <Text >HTML print</Text>
-                    </TouchableOpacity>
-                    <View style={{ flexDirection: "row", marginTop: 5, alignItems: "center" }}>
-                        <View style={{ flex: 1, flexDirection: "column", height: 40, justifyContent: "center" }}>
-                            <Text style={{ textAlign: "left", }}>{I18n.t('in_tam_tinh')}</Text>
-                        </View>
-                        <Switch
-                            color={Colors.colorchinh}
-                            value={isSwitchOn}
-                            onValueChange={() => {
-                                if (isSwitchOn == false)
-                                    setFileLuuDuLieu(Constant.PROVISIONAL_PRINT, Constant.PROVISIONAL_PRINT)
-                                else
-                                    setFileLuuDuLieu(Constant.PROVISIONAL_PRINT, "")
-                                setSwitchOn(!isSwitchOn)
-                            }
-                            }
-                        />
-                    </View>
-                </View>
-                <View style={{ borderBottomWidth: 0.5, borderBottomColor: "#ddd" }}>
-                    <TouchableOpacity onPress={() => onClickHotLine()} style={{ padding: 20 }}>
-                        <Text style={{ marginTop: 0 }}>{I18n.t('ho_tro')} <Text style={{ color: colors.colorLightBlue }}>{Constant.HOTLINE}</Text></Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={{ borderBottomWidth: 0.5, borderBottomColor: "#ddd" }}>
-                    <View style={{ padding: 20 }}>
-                        <Text style={{ marginTop: 0 }}>{I18n.t('phien_ban_ngay')} <Text style={{ color: colors.colorLightBlue }}> {version}</Text></Text>
-                    </View>
-                </View>
-                <View style={{ borderBottomWidth: 0.5, borderBottomColor: "#ddd" }}>
-                    <TouchableOpacity onPress={() => onClickLogOut()} style={{ padding: 20 }}>
-                        <Text style={{ marginTop: 0 }}>{I18n.t('logout')}</Text>
-                    </TouchableOpacity>
-                </View>
+            <ScrollView style={{ flex: 1, width: "100%", }} keyboardShouldPersistTaps={'handled'}>
+                {LIST_FUNCITION.map((item, index) => {
+                    return (
+                        _renderItem(item, index)
+                    )
+                })}
             </ScrollView>
             <Modal
                 animationType="fade"
@@ -390,3 +462,16 @@ const ContentComponent = (props) => {
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    icon_menu: {
+        width: 26, height: 26, margin: 13
+    },
+    row_menu: {
+        width: "100%", borderBottomWidth: 0, borderBottomColor: "#ddd",
+        flexDirection: "row", alignItems: "flex-start", paddingVertical: 12, justifyContent: "flex-start"
+    },
+    text_menu: {
+        margin: 0, color: Colors.colorText, fontSize: Fonts.size.mainSize
+    },
+})
