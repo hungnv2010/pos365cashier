@@ -24,7 +24,7 @@ const ProductsItemForPhone = ({ item, index, onClickProduct, handleButtonDecreas
             <View style={styles.viewInfo}>
                 <View style={styles.wrapNameItem}>
                     <Text numberOfLines={2} style={{ textTransform: "uppercase", fontWeight: "bold" }}>{item.Name}</Text>
-                    <Text style={{ paddingVertical: 5, fontStyle: "italic" }}>{currencyToString(item.Price)}<Text style={{ color: Colors.colorchinh }}>{item.LargeUnit != '' ? `/${item.LargeUnit}` : item.Unit != '' ? `/${item.Unit}` : ''}</Text></Text>
+                    <Text style={{ paddingVertical: 5, fontStyle: "italic" }}>{currencyToString(item.Price)}<Text style={{ color: Colors.colorchinh }}>{item.IsLargeUnit ? item.LargeUnit ? `/${item.LargeUnit}` : '' : item.Unit ? `/${item.Unit}` : ''}</Text></Text>
                 </View>
                 {item.Quantity <= 0 ?
                     <Text numberOfLines={2} style={{ textTransform: "uppercase", fontWeight: "bold", paddingRight: 10, color: Colors.colorchinh }}>{item.ProductType == 1 ? (item.OnHand >= 0 ? item.OnHand : "") : "---"}</Text>

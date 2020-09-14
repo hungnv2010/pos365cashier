@@ -19,7 +19,9 @@ export default {
   ban_co_chac_chan_muon_dang_xuat: "Bạn có chắc chắn muốn đăng xuất tài khoản?",
   ban_dang_o_dung_vi_tri_da_chon: "Bạn đang ở đúng vị trí đã chọn. Vui lòng chọn vị trí khác để chuyển bàn",
   ban_co_muon_luu: "Bạn có muốn lưu thay đổi không?",
-  ban_khong_co_quyen_truy_cap:"Tài khoản không có quyền truy cập hoặc đã hết hạn sử dụng",
+  ban_khong_co_quyen_truy_cap: "Tài khoản không có quyền truy cập hoặc đã hết hạn sử dụng",
+  ban_dang_dung: "Bàn đang dùng",
+  bieu_do_doanh_thu: "Biểu đồ doanh thu",
 
   // TODO: C
   cai_dat: "Cài đặt",
@@ -42,7 +44,8 @@ export default {
   con_lai_so_luong: "SL còn lại",
   chi_tiet_goi_mon: "Chi tiết gọi món",
   co_so_luong_lon_hon: "Có số lượng hủy trả lớn hơn số lượng đã gọi",
-  chon_ghi_chu_nhanh:"Chọn ghi chú nhanh",
+  chon_ghi_chu_nhanh: "Chọn ghi chú nhanh",
+  chon_khoang_thoi_gian:"Chọn khoảng thời gian",
 
   // TODO: D
   dang_dung: "Đang dùng",
@@ -54,8 +57,9 @@ export default {
   den: "đến",
   dang_goi: "Gọi món",
   dang_goi_mon: "Đang gọi món",
-  dong:"Đóng",
+  dong: "Đóng",
   dia_chi_ip: "Địa chỉ ip",
+  doanh_thu_VND: "Doanh thu (VND)",
 
   // TODO: E
 
@@ -77,6 +81,8 @@ export default {
   gui_tin_nhan: "Gửi tin nhắn",
   gui_thuc_don: "Gửi thực đơn",
   gio: "giờ",
+  gia_tri_tra_lai: "Giá trị trả lại",
+  ghi_no: "Ghi nợ",
 
   // TODO: H
   huy: 'Hủy',
@@ -99,6 +105,7 @@ export default {
   khong_the_huy_tra_mat_hang_thoi_gian: "Không thể hủy trả mặt hàng thời gian",
   kiem_tra_ket_noi_may_in: "Kiểm tra kết nối máy in. Địa chỉ IP",
   khach_yeu_cau: "Khách yêu cầu",
+  ket_qua_ban_hang: "Kết quả bán hàng",
 
   // TODO: H
   hoa_don: "Hoá đơn",
@@ -191,6 +198,7 @@ export default {
   so_luong: "Số lượng",
   so_san_pham: "Số sản phẩm",
   san_sang: "Sẵn sàng",
+  san_pham_ban_chay: "Sản phẩm bán chạy",
 
   // TODO: T
   thong_bao_quet_van_tay: "Quý khách vui lòng quét dấu vân tay đã đăng ký trên thiết bị.",

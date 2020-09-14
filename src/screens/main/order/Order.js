@@ -68,16 +68,6 @@ export default (props) => {
         }
     }, [already])
 
-    useEffect(() => {
-        const updateTime = setInterval(() => {
-            reloadTime()
-        }, 1000 * 60);
-
-        return () => {
-            clearInterval(updateTime)
-        }
-    }, [])
-
     useFocusEffect(
         React.useCallback(() => {
             const updateTime = setInterval(() => {
