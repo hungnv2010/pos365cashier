@@ -111,7 +111,7 @@ export default (props) => {
             new HTTPService().setPath(ApiPath.ROOM_GROUPS).POST(params).then(async (res) => {
                 console.log("onClickOk ADD_GROUP res ", res);
                 if (res) {
-
+                    roomGroups.current.push(res)
                 }
                 dialogManager.hiddenLoading();
                 setShowModal(false)
