@@ -24,5 +24,6 @@ export const ApiPath = {
     SAVE_ORDER: "api/rooms/task/saveorder",
     TOP_SELL: "api/chart/popularproducts",
     DASHBOARD:"api/chart/dashboard",
-    ROOM_GROUPS:"api/roomgroups"
+    ROOM_GROUPS:"api/roomgroups",
+    REVENUE:"api/chart/revenue",
 }

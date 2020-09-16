@@ -12,10 +12,11 @@ import { Constant } from '../../common/Constant';
 import DateRangePicker from "react-native-daterange-picker";
 import moment from "moment";
 import { getFileDuLieuString } from '../../data/fileStore/FileStorage';
-import { currencyToString } from '../../common/Utils';
+import { currencyToString, dateToString } from '../../common/Utils';
 
 
 export default (props) => {
+
 
     const [listTopSell, setListTopSell] = useState([])
     const [dataDashBoard, setDataDashBoard] = useState({})
@@ -28,14 +29,19 @@ export default (props) => {
         endDate: null,
         displayedDate: moment(),
     })
-    const currentBranch = useRef('')
+    const [dataChart, setDataChart] = useState({
+        times: [],
+        totalBranchs: [],
+    })
+    const currentBranch = useRef(null)
     const typeSelectTime = useRef(null) // 1: selectTimeForRevenue ; 2: selectTime
+    const timeFormat = useRef("")
+    const response = useRef([])
+
     const deviceType = useSelector(state => {
         console.log("useSelector state ", state);
         return state.Common.deviceType
     });
-    const fill = 'rgb(134, 65, 244)'
-    const data = [50, 10, 40, 95, -4, -24, null, 85, undefined, 0, 35, 53, -53, 24, 50, -20, -80]
 
     useEffect(() => {
         const getBranch = async () => {
@@ -43,15 +49,16 @@ export default (props) => {
             if (branch) {
                 currentBranch.current = JSON.parse(branch)
             }
+            console.log('currentBranch.current', currentBranch.current);
         }
         getBranch()
     }, [])
 
 
-    const genParams = useCallback(() => {
+    const genParams = useCallback((allType = false) => {
         const { startDate, endDate } = dateTimePicker;
         let params = { TimeRange: selectTimeForRevenue.key };
-        console.log("genParams time startDate, endDate ", selectTimeForRevenue.key, startDate, endDate);
+        console.log("genParams time startDate, endDate 2", selectTimeForRevenue.key, startDate, endDate, currentBranch.current);
 
         if (selectTimeForRevenue.key == "custom" && startDate) {
             let startDateFilter = momentToStringDateLocal(startDate.set({ 'hour': 0, 'minute': 0, 'second': 0 }))
@@ -63,9 +70,11 @@ export default (props) => {
         if (currentBranch.current.Id != "") {
             arrItemPath.push(currentBranch.current.Id)
         }
-        console.log("arrItemPath ", arrItemPath);
-        if (arrItemPath.length > 0)
-            params["BranchIds"] = arrItemPath;
+
+        if (allType == false) {
+            if (arrItemPath.length > 0)
+                params["BranchIds"] = arrItemPath[0];
+        }
         return params;
     }, [selectTimeForRevenue.key])
 
@@ -82,7 +91,31 @@ export default (props) => {
                 console.log("getDataDashBoard err ", e);
             })
         }
+        const getRevunue = () => {
+            let params = genParams(true);
+            new HTTPService().setPath(ApiPath.REVENUE).GET(params).then(async (res) => {
+                console.log("getRevunue res ", res);
+                if (res) {
+                    let array = [];
+                    res.forEach(element => {
+                        let obj = { ...element, time: parseInt(dateToString(element.Subject.trim(), "YYYYMMDDHHmmss")) }
+                        array.push(obj);
+                    });
+                    array = array.sort(compareValues('time'));
+
+                    let input = {
+                        res: array,
+                        showHour: selectTimeForRevenue.key == "today" || selectTimeForRevenue.key == "yesterday" ? true : false
+                    }
+                    getDataChart(input)
+                }
+
+            }).catch((e) => {
+                console.log("getRevunue err ", e);
+            })
+        }
         getDataDashBoard()
+        getRevunue()
     }, [genParams])
 
     useEffect(() => {
@@ -101,6 +134,85 @@ export default (props) => {
         getListTopSell()
     }, [selectTime.key])
 
+    const compareValues = (key, order = 'asc') => {
+        return function innerSort(a, b) {
+            if (!a.hasOwnProperty(key) || !b.hasOwnProperty(key)) {
+                return 0;
+            }
+
+            const varA = (typeof a[key] === 'string')
+                ? a[key].toUpperCase() : a[key];
+            const varB = (typeof b[key] === 'string')
+                ? b[key].toUpperCase() : b[key];
+
+            let comparison = 0;
+            if (varA > varB) {
+                comparison = 1;
+            } else if (varA < varB) {
+                comparison = -1;
+            }
+            return (
+                (order === 'desc') ? (comparison * -1) : comparison
+            );
+        };
+    }
+
+
+    const getDataChart = (data) => {
+        console.log('getDataChart', data);
+        if (data.showHour) {
+            timeFormat.current = "HH:mm"
+        } else {
+            timeFormat.current = "DD/MM"
+        }
+        handleDataChart(data.res)
+    }
+
+    const handleDataChart = (response) => {
+        // // let totalSaleBranchs = [];
+        // // let keyBranchs = [];
+        let totalBranchs = [];
+        // // let dataChartBranch = [];
+        let times = [];
+        // // this.listBranch.forEach((element, index) => {
+        // let sum = 0;
+        for (let item of response) {
+            let data = item.Data;
+            if (data["b_" + currentBranch.current.Id] && data["b_" + currentBranch.current.Id] != undefined && data["b_" + currentBranch.current.Id] != null) {
+                // sum += data["b_" + currentBranch.current.Id]
+                totalBranchs.push((data["b_" + currentBranch.current.Id] / 1000000))
+            } else {
+                totalBranchs.push(0)
+            }
+            times.push(dateToString(item.Subject.trim(), timeFormat.current))
+        }
+        console.log('totalBranchs', totalBranchs, 'times', times);
+        setDataChart({ times, totalBranchs })
+        // // keyBranchs.push(element.Id.toString())
+        // // totalSaleBranchs.push({ IsSelect: index == 0 ? true : false, Id: element.Id, Name: element.Name, total: sum })
+        // // });
+        // for (let item of response) {
+        //     let data = item.Data;
+        //     let list = [];
+        //     let sum = 0;
+        //     let obj = {};
+        //     this.listBranch.forEach(element => {
+        //         if (element.Id == this.listBranch[0].Id && data["b_" + element.Id] && data["b_" + element.Id] != undefined && data["b_" + element.Id] != null) {
+        //             list.push(data["b_" + element.Id]);
+        //             sum += data["b_" + element.Id]
+        //             obj[element.Id] = data["b_" + element.Id];
+        //         } else {
+        //             list.push(0);
+        //             obj[element.Id] = 0;
+        //         }
+        //     });
+        //     // dataChartBranch.push(obj)
+        //     totalBranchs.push((sum / 1000000))
+        //     times.push(dateToString(item.Subject.trim(), this.timeFormat))
+        // }
+        // console.log("handlerData data ", totalBranchs, keyBranchs, dataChartBranch, totalSaleBranchs, times);
+        // this.setState({ totalBranchs: totalBranchs, keyBranchs: keyBranchs, dataChartBranch: dataChartBranch, totalSaleBranchs: totalSaleBranchs, times: times });
+    }
 
     const onClickSelectTime = (item) => {
         console.log('onClickSelectTime', item);
@@ -123,9 +235,6 @@ export default (props) => {
 
     }
 
-
-
-  
 
     const onDoneSelectDate = () => {
 
@@ -154,7 +263,7 @@ export default (props) => {
                                     typeSelectTime.current = 1
                                 }}
                                 style={{ flexDirection: "row", alignItems: "center", backgroundColor: "#E6EAEF", borderRadius: 10, padding: 10 }}>
-                                <Text style={{ marginRight: 10, fontSize: 17, }}>{selectTimeForRevenue.name}</Text>
+                                <Text style={{ marginRight: 10, fontSize: 17, }}>{I18n.t(selectTimeForRevenue.name)}</Text>
                                 <Image style={{ width: 10, height: 10 }} source={Images.icon_path_4203} />
                             </TouchableOpacity>
                         </View>
@@ -224,15 +333,52 @@ export default (props) => {
                 </View>
                 <View style={{ height: 5, width: "100%", alignSelf: "center", backgroundColor: "#E6EAEF", marginVertical: 15 }}></View>
                 <View style={{ padding: 20 }}>
-                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
+                    <View>
                         <Text style={{ fontSize: 20, fontWeight: "bold", paddingBottom: 20 }}>{I18n.t('doanh_thu_VND')}</Text>
                         <Text style={{ fontSize: 17, color: "gray" }}>{I18n.t('bieu_do_doanh_thu')}</Text>
                     </View>
-                    <View>
-                        <BarChart style={{ height: 200 }} data={data} svg={{ fill }} contentInset={{ top: 30, bottom: 30 }}>
-                            <Grid />
-                        </BarChart>
-                    </View>
+                    {dataChart.totalBranchs.length > 0 ?
+                        <View style={{ flexDirection: "row", paddingVertical: 20 }}>
+                            <YAxis
+                                style={{ height: 300, width: 50 }}
+                                data={dataChart.totalBranchs}
+                                contentInset={{ top: 10, bottom: 10 }}
+                                svg={{
+                                    fill: colors.colorchinh,
+                                    fontSize: 8,
+                                }}
+                                numberOfTicks={5}
+                                formatLabel={(value) => `${value} ${I18n.t("trieu")}`}
+                                min={0}
+                            />
+                            <BarChart
+                                style={{ height: 300, flex: 1 }}
+                                data={dataChart.totalBranchs}
+                                contentInset={{ top: 10, bottom: 10 }}
+                                svg={{ fill: colors.colorchinh }}
+                                gridMin={0}
+                            ><Grid />
+                            </BarChart>
+                        </View>
+                        : null}
+                    {dataChart.times.length > 0 ? <XAxis
+                        style={{ marginHorizontal: 0, height: 40 }}
+                        data={dataChart.times}
+                        formatLabel={(value, index) => {
+                            return dataChart.times[`${index}`]
+                        }}
+                        contentInset={{
+                            left: dataChart.times.length < 4 ? 120 : dataChart.times.length > 4 && dataChart.times.length < 10 ? 85 : 75,
+                            right: dataChart.times.length < 10 ? 10 : dataChart.times.length > 10 && dataChart.times.length < 18 ? 0 : -10
+                        }}
+                        svg={{
+                            fontSize: 10, fill: 'black', rotation: 35, originY: 0,
+                            y: timeFormat.current == "DD/MM" ? 15 : 20
+                        }}
+                    />
+                        :
+                        null}
+                    <Text style={{ textAlign: "center", paddingTop: 20, fontSize: 20, fontWeight: "bold" }}> Tổng (VND): {dataDashBoard.AllRevenue ? currencyToString(dataDashBoard.AllRevenue) : "0"}</Text>
                 </View>
                 <View style={{ height: 5, width: "100%", alignSelf: "center", backgroundColor: "#E6EAEF", marginVertical: 15 }}></View>
                 <View style={{ padding: 20 }}>
@@ -244,7 +390,7 @@ export default (props) => {
                                 typeSelectTime.current = 2
                             }}
                             style={{ flexDirection: "row", alignItems: "center", backgroundColor: "#E6EAEF", borderRadius: 10, padding: 10 }}>
-                            <Text style={{ marginRight: 10, fontSize: 17, }}>{selectTime.name}</Text>
+                            <Text style={{ marginRight: 10, fontSize: 17, }}>{I18n.t(selectTime.name)}</Text>
                             <Image style={{ width: 10, height: 10 }} source={Images.icon_path_4203} />
                         </TouchableOpacity>
                     </View>
@@ -309,17 +455,17 @@ export default (props) => {
                                                     <TouchableOpacity
                                                         onPress={() => onClickSelectTime(item)}
                                                         key={index} style={{ paddingVertical: 15, }}>
-                                                        <Text style={{ fontSize: 17, textAlign: "center" }}>{item.key}</Text>
+                                                        <Text style={{ fontSize: 17, textAlign: "center" }}>{I18n.t(item.name)}</Text>
                                                     </TouchableOpacity>
                                                 )
                                             })
                                             :
-                                            Constant.TIME_SELECT_ALL_TIME.map((item, index) => {
+                                            Constant.TIME_SELECT_CUSTOM_TIME.map((item, index) => {
                                                 return (
                                                     <TouchableOpacity
                                                         onPress={() => onClickSelectTime(item)}
                                                         key={index} style={{ paddingVertical: 15, }}>
-                                                        <Text style={{ fontSize: 17, textAlign: "center" }}>{item.key}</Text>
+                                                        <Text style={{ fontSize: 17, textAlign: "center" }}>{I18n.t(item.name)}</Text>
                                                     </TouchableOpacity>
                                                 )
                                             })

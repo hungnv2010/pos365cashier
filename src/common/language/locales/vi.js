@@ -22,6 +22,7 @@ export default {
   ban_khong_co_quyen_truy_cap: "Tài khoản không có quyền truy cập hoặc đã hết hạn sử dụng",
   ban_dang_dung: "Bàn đang dùng",
   bieu_do_doanh_thu: "Biểu đồ doanh thu",
+  bay_ngay: "Bảy ngày",
 
   // TODO: C
   cai_dat: "Cài đặt",
@@ -45,7 +46,7 @@ export default {
   chi_tiet_goi_mon: "Chi tiết gọi món",
   co_so_luong_lon_hon: "Có số lượng hủy trả lớn hơn số lượng đã gọi",
   chon_ghi_chu_nhanh: "Chọn ghi chú nhanh",
-  chon_khoang_thoi_gian:"Chọn khoảng thời gian",
+  chon_khoang_thoi_gian: "Chọn khoảng thời gian",
   chi_tiet_phong_ban: "Chi tiết phòng bàn",
 
   // TODO: D
@@ -118,6 +119,8 @@ export default {
   huy_tra: "Huỷ/Trả",
   hien_thi: "Hiển thị",
   het_phien_lam_viec: "Phiên làm việc của quý khách đã hết hạn. Vui lòng đăng nhập lại để tiếp tục sử dụng.",
+  hom_nay: "Hôm nay",
+  hom_qua: "Hôm qua",
 
   // TODO: L
   lich_su_huy_tra_do: "Lịch sử Huỷ / Trả đồ",
@@ -262,6 +265,10 @@ export default {
   thuc_don_da_goi: "Thực đơn đã gọi",
   thao_tac_sai: "Thao tác sai",
   them_phong_ban: "Thêm phòng bàn",
+  thang_nay: "Tháng này",
+  thang_truoc: "Tháng trước",
+  toan_thoi_gian: "Toàn thời gian",
+  tuy_chon: "Tùy chọn",
   // TODO: U
 
   // TODO: V

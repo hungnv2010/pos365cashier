@@ -88,3 +88,15 @@ export const getTimeFromNow = (item) => {
   return `${getDay} ${getHour} ${getMinute}`
 }
 
+export const dateToString = (date, formatOutput = "DD/MM/YYYY") => {
+  let momentdate = "";
+  try {
+    momentdate = moment(date, "YYYY-MM-DD HH:mm:ss").format(formatOutput);
+    if (momentdate == "Invalid date") {
+      momentdate = "";
+    }
+  } catch (e) {
+    momentdate = "";
+  }
+  return momentdate;
+};

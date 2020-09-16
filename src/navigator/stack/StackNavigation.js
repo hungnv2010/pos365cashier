@@ -3,8 +3,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Animated from 'react-native-reanimated';
 import Login from '../../screens/login/LoginScreen';
 import ServedForTablet from '../../screens/served/servedForTablet/ServedForTablet';
-import BottomTabNavigation from '../bottomTab/BottomTabNavigation';
 import DrawerNavigation from '../drawer/DrawerNavigation'
+import OverView from '../../screens/overView/overView'
 import PrintHtml from '../../screens/more/printHtml/PrintHtml'
 import Preview from '../../screens/more/printHtml/Preview'
 import Main from '../../screens/main/Main';
@@ -30,7 +30,6 @@ export default (props) => {
                 headerMode="none">
                 <MainStack.Screen name={ScreenList.Login}>{props => <Login {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.Home}>{props => <DrawerNavigation {...props} screenOptions={{ headerLeft: null }} />}</MainStack.Screen>
-                {/* <MainStack.Screen name="Home">{props => <BottomTabNavigation {...props} screenOptions={{ headerLeft: null }} />}</MainStack.Screen> */}
                 <MainStack.Screen name={ScreenList.ServedForTablet}>{props => <ServedForTablet {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.PrintHtml}>{props => <PrintHtml {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.Preview}>{props => <Preview {...props} />}</MainStack.Screen>
@@ -38,6 +37,7 @@ export default (props) => {
                 <MainStack.Screen name={ScreenList.NoteBook}>{props => <NoteBook {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.DetailNoteBook}>{props => <DetailNoteBook {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.QRCode}>{props => <QRCode {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.OverView}>{props => <OverView {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.PageServed}>{props => <PageServed {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.SelectProduct}>{props => <SelectProduct {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.Main}>{props => <Main {...props} />}</MainStack.Screen>

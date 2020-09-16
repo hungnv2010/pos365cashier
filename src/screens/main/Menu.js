@@ -24,13 +24,14 @@ const IP_DEFAULT = "192.168.99.";
 const KEY_FUNC = {
     HOME: ScreenList.Home,
     CUSTOMER: ScreenList.QRCode,
-    BILL: ScreenList.NoteBook,
     SETTING_FUNC: ScreenList.PrintHtml,
     VERSION: "VERSION",
     MORE: ScreenList.More,
     ORDER_NOW: ScreenList.OrderNow,
     HISTORY: ScreenList.History,
     ROOM_CATALOG: ScreenList.RoomCatalog,
+    OVERVIEW: ScreenList.OverView,
+    INVOICE: ScreenList.Invoice
 }
 
 const LIST_FUNCITION = [
@@ -39,6 +40,7 @@ const LIST_FUNCITION = [
         icon: Images.icon_inventory,
         title: "man_hinh_thu_ngan"
     },
+
     {
         func: KEY_FUNC.ORDER_NOW,
         icon: Images.icon_inventory,
@@ -60,12 +62,17 @@ const LIST_FUNCITION = [
         title: "them"
     },
     {
+        func: KEY_FUNC.OVERVIEW,
+        icon: Images.icon_inventory,
+        title: "tong_quan"
+    },
+    {
         func: KEY_FUNC.CUSTOMER,
         icon: Images.icon_customer,
         title: "khach_hang"
     },
     {
-        func: KEY_FUNC.BILL,
+        func: KEY_FUNC.INVOICE,
         icon: Images.icon_report,
         title: "hoa_don"
     },
@@ -170,8 +177,8 @@ const HeaderComponent = (props) => {
                 setBranch(item)
                 dispatch({ type: 'ALREADY', already: false })
                 dataManager.dataChoosing = [];
-                await realmStore.deleteAll(),
-                    signalRManager.killSignalR();
+                // await realmStore.deleteAll(),
+                signalRManager.killSignalR();
                 getRetailerInfoAndNavigate();
             } else {
                 dialogManager.hiddenLoading();
@@ -376,9 +383,6 @@ const ContentComponent = (props) => {
     const _renderItem = (chucnang = {}, indexchucnnag = 0) => {
         return (
             <View key={indexchucnnag} style={{ width: "100%", backgroundColor: currentItemMenu == indexchucnnag ? "#EEEEEE" : "#fff" }}>
-                {/* {chucnang.func && chucnang.func == KEY_FUNC.SETTING_FUNC ?
-                    _renderDivider()
-                    : null} */}
                 <TouchableOpacity
                     style={{ with: Metrics.screenWidth * 1, flexDirection: "row", alignItems: "center" }}
                     onPress={() => onClickItem(chucnang, indexchucnnag)}>

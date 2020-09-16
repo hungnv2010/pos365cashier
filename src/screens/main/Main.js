@@ -22,7 +22,10 @@ export default (props) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    console.log('Main props1', props);
+  })
 
+  useEffect(() => {
     AppState.addEventListener('change', handleChangeState);
 
     const getData = async () => {
@@ -55,7 +58,7 @@ export default (props) => {
     const syncAllDatas = async () => {
       dispatch({ type: 'ALREADY', already: false })
       dialogManager.showLoading()
-      await realmStore.deleteAll()
+      // await realmStore.deleteAll()
       await dataManager.syncAllDatas()
         .then(() => {
           // setAlready(true)

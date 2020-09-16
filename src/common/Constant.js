@@ -46,6 +46,38 @@ export const Constant = {
         //     key: "custom"
         // }
     ],
+    TIME_SELECT_CUSTOM_TIME: [
+        {
+            type: 4,
+            name: "hom_nay",
+            key: "today"
+        },
+        {
+            type: 3,
+            name: "hom_qua",
+            key: "yesterday"
+        },
+        {
+            type: 1,
+            name: "bay_ngay",
+            key: "7days"
+        },
+        {
+            type: 2,
+            name: "thang_nay",
+            key: "month"
+        },
+        {
+            type: 6,
+            name: "thang_truoc",
+            key: "lastmonth"
+        },
+        {
+            type: 5,
+            name: "tuy_chon",
+            key: "custom"
+        }
+    ],
     TIME_SELECT_ALL_TIME: [
         {
             type: 4,
@@ -68,12 +100,7 @@ export const Constant = {
             key: "month"
         },
         {
-            type: 2,
-            name: "thang_truoc",
-            key: "lastmonth"
-        },
-        {
-            type: 0,
+            type: 6,
             name: "toan_thoi_gian",
             key: ""
         },

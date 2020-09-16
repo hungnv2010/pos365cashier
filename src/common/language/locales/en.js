@@ -21,6 +21,7 @@ export default {
   ban_khong_co_quyen_truy_cap: "Account has no access or has expired time",
   ban_dang_dung: "The table in use",
   bieu_do_doanh_thu: "Revenue chart",
+  bay_ngay: "7 days",
 
   // TODO: C
   cai_dat: "Setting",
@@ -43,7 +44,7 @@ export default {
   chi_tiet_goi_mon: "Details",
   co_so_luong_lon_hon: "Cancellation amount greater than the amount requested",
   chon_ghi_chu_nhanh: "Order quick notes",
-  chon_khoang_thoi_gian:"Select time",
+  chon_khoang_thoi_gian: "Select time",
 
   // TODO: D
   dang_dung: "Serving",
@@ -111,6 +112,8 @@ export default {
   huy_tra: "Cancel / Return ",
   hien_thi: "Show",
   het_phien_lam_viec: "Your session has expired. Please sign in again to continue using.",
+  hom_nay: "Today",
+  hom_qua: "Yesterday",
 
   // TODO: L
   lich_su_huy_tra_do: "History Cancel / Return",
@@ -221,6 +224,10 @@ export default {
   tu: "from",
   thuc_don_da_goi: "Customer order",
   thao_tac_sai: "Incorrect operation",
+  thang_nay: "Month",
+  thang_truoc: "Last month",
+  toan_thoi_gian: "All time",
+  tuy_chon: "Custom",
   // TODO: U
 
   // TODO: V

@@ -8,10 +8,12 @@ import Main from '../../screens/main/Main';
 import BottomTabNavigation from '../bottomTab/BottomTabNavigation';
 
 import OrderNow from '../../screens/ordernow/OrderNow'
+import OverView from '../../screens/overView/overView'
 import History from '../../screens/history/History'
 import More from '../../screens/more/More'
 import RoomCatalog from '../../screens/room/RoomCatalog'
 import { ScreenList } from '../../common/ScreenList';
+import Invoice from '../../screens/invoice/invoice';
 
 const Drawer = createDrawerNavigator();
 export default () => {
@@ -38,8 +40,14 @@ export default () => {
         <Drawer.Screen name={ScreenList.History} options={{ title: ScreenList.History }}>
           {props => <History {...props} />}
         </Drawer.Screen>
+        <Drawer.Screen name={ScreenList.OverView} options={{ title: ScreenList.OverView }}>
+          {props => <OverView {...props} />}
+        </Drawer.Screen>
         <Drawer.Screen name={ScreenList.More} options={{ title: ScreenList.More }}>
           {props => <More {...props} />}
+        </Drawer.Screen>
+        <Drawer.Screen name={ScreenList.Invoice} options={{ title: ScreenList.Invoice }}>
+          {props => <Invoice {...props} />}
         </Drawer.Screen>
         <Drawer.Screen name={ScreenList.RoomCatalog} options={{ title: ScreenList.RoomCatalog }}>
           {props => <RoomCatalog {...props} />}
