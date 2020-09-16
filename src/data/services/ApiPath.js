@@ -10,6 +10,7 @@ export const ApiPath = {
     LOGOUT: "api/auth/logout",
     CUSTOMER: "api/partners",
     SERVER_EVENT: "api/serverevents",
+    ROOMS: "api/rooms",
     SYNC_ROOMS: "api/rooms/sync",
     SYNC_ROOM_GROUPS: "api/roomgroups/sync",
     SYNC_PRODUCTS: "api/products/sync",

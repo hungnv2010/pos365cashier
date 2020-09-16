@@ -35,9 +35,15 @@ class DataManager {
 
     syncData = async (apiPath, schemaName) => {
         let res = await new HTTPService().setPath(apiPath).GET()
-        console.log("sync", apiPath, res);
+        console.log("syncData sync", apiPath, res);
         if (res && res.Data && res.Data.length > 0)
             await realmStore.insertDatas(schemaName, res.Data)
+    }
+
+    syncRoomsReInsert = async () => {
+        console.log("syncAllDatas");
+            await this.syncData(ApiPath.SYNC_ROOMS, SchemaName.ROOM),
+            await this.syncData(ApiPath.SYNC_ROOM_GROUPS, SchemaName.ROOM_GROUP)
     }
 
     syncRooms = async () => {

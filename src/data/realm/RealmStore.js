@@ -27,6 +27,16 @@ class RealmStore extends RealmBase {
         }))
     }
 
+    deleteRoom = async () => {
+        console.log("deleteRoom ");
+        let realm = await Realm.open(databaseOption)
+        return new Promise((resolve) => realm.write(() => {
+            let room = realm.objects(SchemaName.ROOM)
+            realm.delete(room)
+            resolve()
+        }))
+    }
+
     //server event
     insertServerEvent = async (newServerEvent) => {
         let realm = await Realm.open(databaseOption)
@@ -252,6 +262,12 @@ const ToppingsSchema = {
         Code: 'string'
     },
 
+}
+
+const databaseOptionRoom = {
+    path: 'Pos365Boss.realm',
+    schema: [RoomSchema, RoomGroupSchema],
+    schemaVersion: 22
 }
 
 const databaseOption = {

@@ -16,7 +16,11 @@ import { ScreenList } from '../../common/ScreenList';
 import Invoice from '../../screens/invoice/invoice';
 
 const Drawer = createDrawerNavigator();
-export default () => {
+export default (propsFunc) => {
+
+  console.log("props Func ", propsFunc);
+  
+
   return (
     <LinearGradient style={{ flex: 1 }} colors={['#FFAB40', '#FF5722']}>
       <Drawer.Navigator
@@ -29,7 +33,7 @@ export default () => {
         }}
       >
         <Drawer.Screen name={ScreenList.Main} options={{ title: ScreenList.Main }}>
-          {props => <Main {...props} />}
+          {props => <Main  {...props} params={propsFunc.route.state ? propsFunc.route.state : ""} />}
         </Drawer.Screen>
         <Drawer.Screen name={ScreenList.Home} options={{ title: ScreenList.Home }}>
           {props => <BottomTabNavigation {...props} />}

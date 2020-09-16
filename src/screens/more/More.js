@@ -17,6 +17,7 @@ import { navigate } from '../../navigator/NavigationService';
 import { useDispatch } from 'react-redux';
 import DeviceInfo from 'react-native-device-info';
 import signalRManager from '../../common/SignalR';
+import MainToolBar from '../main/MainToolBar';
 const { Print } = NativeModules;
 const IP_DEFAULT = "192.168.99.";
 
@@ -32,7 +33,12 @@ export default (props) => {
 
     return (
         <View style={{ flex: 1 }}>
-            <HeaderComponent {...props} showToast={(text) => handlerToast(text)} />
+            <MainToolBar
+                navigation={props.navigation}
+                title={I18n.t('them')}
+            />
+            {/* <HeaderComponent {...props} showToast={(text) => handlerToast(text)} /> */}
+
             <ContentComponent {...props} />
             <Snackbar
                 duration={5000}
@@ -175,7 +181,7 @@ const HeaderComponent = (props) => {
             </View>
             <TouchableOpacity onPress={() => onClickLogOut()}>
                 <Text style={{ textDecorationLine: "underline", color: "#fff" }}>{I18n.t('logout')}</Text>
-            </TouchableOpacity> 
+            </TouchableOpacity>
             <Modal
                 animationType="fade"
                 transparent={true}

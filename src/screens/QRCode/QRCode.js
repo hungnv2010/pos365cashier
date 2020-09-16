@@ -19,6 +19,8 @@ export default (props) => {
     const [flash, setFlash] = useState(FLASH_ON)
     let refQRCodeScanner = null;
 
+    console.log('QRCode data  props ====', props);
+
     useEffect(() => {
         console.log("props ", props);
 
