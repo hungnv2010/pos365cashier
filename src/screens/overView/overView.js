@@ -33,17 +33,16 @@ export default (props) => {
         times: [],
         totalBranchs: [],
     })
-    const currentBranch = useRef(null)
+    const currentBranch = useRef({})
     const typeSelectTime = useRef(null) // 1: selectTimeForRevenue ; 2: selectTime
     const timeFormat = useRef("")
-    const response = useRef([])
 
     const deviceType = useSelector(state => {
         console.log("useSelector state ", state);
         return state.Common.deviceType
     });
 
-    useEffect(() => {
+    useEffect(() => { 
         const getBranch = async () => {
             let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
             if (branch) {

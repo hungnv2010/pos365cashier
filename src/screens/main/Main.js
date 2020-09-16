@@ -7,7 +7,7 @@ import ToolBarDefault from '../../components/toolbar/ToolBarDefault'
 import dialogManager from '../../components/dialog/DialogManager';
 import I18n from '../../common/language/i18n';
 import signalRManager from '../../common/SignalR';
-import { getFileDuLieuString } from '../../data/fileStore/FileStorage';
+import { getFileDuLieuString , setFileLuuDuLieu} from '../../data/fileStore/FileStorage';
 import { Constant } from '../../common/Constant';
 import store from '../../store/configureStore';
 import { useDispatch } from 'react-redux';
