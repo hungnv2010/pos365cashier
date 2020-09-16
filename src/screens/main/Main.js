@@ -37,13 +37,16 @@ export default (props) => {
 
     const getVendorSession = async () => {
       let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
-      console.log('getVendorSession data  props ====', props);
+      console.log('getVendorSession data ====', JSON.parse(data));
+      data = JSON.parse(data);
       if (data) {
-        data = JSON.parse(data);
         console.log('this.info data.BID ', data.BID);
         let state = store.getState();
         signalRManager.init({ ...data, SessionId: state.Common.info.SessionId }, true)
-        // init({ ...data, SessionId: state.Common.info.SessionId }, true)
+      }
+      let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
+      if (!branch && data.Branchs.length > 0) {
+        setFileLuuDuLieu(Constant.CURRENT_BRANCH, JSON.stringify(data.Branchs[0]));
       }
     }
     getVendorSession()

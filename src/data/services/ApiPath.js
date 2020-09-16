@@ -23,5 +23,7 @@ export const ApiPath = {
     NOTE_BOOK: "api/notebooks",
     DETAIL_NOTE_BOOK: "api/notebooks/detail",
     SAVE_ORDER: "api/rooms/task/saveorder",
+    TOP_SELL: "api/chart/popularproducts",
+    DASHBOARD:"api/chart/dashboard",
     ROOM_GROUPS:"api/roomgroups"
 }

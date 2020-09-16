@@ -10,6 +10,7 @@ import More from '../../screens/more/More'
 import OrderNow from '../../screens/ordernow/OrderNow';
 import { useSelector } from 'react-redux';
 import History from '../../screens/history/History'
+import OverView from '../../screens/overView/overView'
 
 import I18n from '../../common/language/i18n'
 
@@ -72,6 +73,13 @@ export default () => {
                 tabBarLabel: I18n.t('them'),
                 tabBarIcon: ({ color }) => (
                     <Icon name="more-horiz" size={26} color={color} />
+                ),
+            }} />
+
+            <Tab.Screen name="khach_hang" component={OverView} options={{
+                tabBarLabel: I18n.t('tong_quan'),
+                tabBarIcon: ({ color }) => (
+                    <Icon name="history" size={26} color={color} />
                 ),
             }} />
 

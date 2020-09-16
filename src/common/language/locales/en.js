@@ -18,7 +18,9 @@ export default {
   ban_co_chac_chan_muon_dang_xuat: "Are you sure you want to log out account?",
   ban_dang_o_dung_vi_tri_da_chon: "You are in this position. Please select another position to change table",
   ban_co_muon_luu: "Do you want to save changes?",
-  ban_khong_co_quyen_truy_cap:"Account has no access or has expired time", 
+  ban_khong_co_quyen_truy_cap: "Account has no access or has expired time",
+  ban_dang_dung: "The table in use",
+  bieu_do_doanh_thu: "Revenue chart",
 
   // TODO: C
   cai_dat: "Setting",
@@ -40,7 +42,8 @@ export default {
   con_lai_so_luong: "Remain",
   chi_tiet_goi_mon: "Details",
   co_so_luong_lon_hon: "Cancellation amount greater than the amount requested",
-  chon_ghi_chu_nhanh:"Order quick notes",
+  chon_ghi_chu_nhanh: "Order quick notes",
+  chon_khoang_thoi_gian:"Select time",
 
   // TODO: D
   dang_dung: "Serving",
@@ -57,6 +60,7 @@ export default {
   danh_muc_phong_ban: "Danh mục phòng bàn",
   danh_sach_phong_ban: "Danh sách phòng bàn",
   dich_vu_tinh_gio: "Dịch vụ tính giờ",
+  doanh_thu_VND: "Revenue (VND)",
 
   // TODO: E
 
@@ -76,6 +80,8 @@ export default {
   gui_tin_nhan_that_bai: "Send message failed !",
   gui_tin_nhan: "Send message",
   gio: "hours",
+  gia_tri_tra_lai: "Value return",
+  ghi_no: "Debit",
 
   // TODO: H
   huy: 'Cancel',
@@ -99,6 +105,7 @@ export default {
   kiem_tra_ket_noi_may_in: "Check the printer connection. IP address",
   khach_yeu_cau: "Guest request",
   khong_xac_dinh: "Không xác định",
+  ket_qua_ban_hang: "Sales results",
 
   // TODO: H
   hoa_don: "Invoice",
@@ -176,6 +183,7 @@ export default {
   so_tay_ban_hang_nhanh: "Quick sales handbook",
   so_luong: "Quantity",
   san_sang: "Come in",
+  san_pham_ban_chay: "Top selling products",
 
   // TODO: T
   thong_bao: "Notification",
@@ -227,7 +235,7 @@ export default {
   vui_long_kiem_tra_ket_noi_may_in: "Please check the printer connection",
   vui_long_chon_linh_vuc_ban_le_ho_tro_shop_thoi_trang_sieu_thi: "Please select the field of RETAIL support such as shop, fashion, supermarket ...",
   vui_long_nhap_day_du_thong_tin_truoc_khi_luu: "Vui lòng nhập đầy đủ các thông tin bắt buộc trước khi lưu",
-  
+
   // TODO: X
   xac_nhan: 'Comfirm',
   xong: "Done",

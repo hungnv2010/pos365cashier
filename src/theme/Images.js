@@ -1,5 +1,13 @@
 // leave off @2x/@3x
 const images = {
+    icon_path_4203: require('../../assets/icons/path_4203.png'),
+    logo_vnpay_qr: require('../../assets/icons/logo_vnpay_qr.png'),
+    logo_vnpay_pos: require('../../assets/icons/logo_vnpay_pos.png'),
+    icon_revenue_overview: require('../../assets/icons/icon_revenue_overview.png'),
+    icon_circle: require('../../assets/icons/circle.png'),
+    icon_return_good: require('../../assets/icons/icon_return_good.png'),
+    icon_invoice_overview: require('../../assets/icons/icon_invoice_overview.png'),
+    icon_value_return: require('../../assets/icons/icon_value_return.png'),
     image_clock: require('../../assets/icons/clock.png'),
     image_bitmap: require('../../assets/images/bitmap.png'),
     icon_menu: require('../../assets/icons/menu.png'),
