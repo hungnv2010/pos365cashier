@@ -228,17 +228,14 @@ export default {
   tu: "from",
   thuc_don_da_goi: "Customer order",
   thao_tac_sai: "Incorrect operation",
-<<<<<<< HEAD
   thang_nay: "Month",
   thang_truoc: "Last month",
   toan_thoi_gian: "All time",
   tuy_chon: "Custom",
-=======
   them_phong_ban: "Thêm phòng bàn",
   them_moi_nhom: "Thêm mới nhóm",
   ten_phong_ban: "Tên phòng bàn",
   thu_tu_hien_thi: "Thứ tự hiển thị",
->>>>>>> 304a4b338dca27b6a40b4c11791d7baf9f5f50af
   // TODO: U
 
   // TODO: V

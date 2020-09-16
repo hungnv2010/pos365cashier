@@ -267,16 +267,13 @@ export default {
   thuc_don_da_goi: "Thực đơn đã gọi",
   thao_tac_sai: "Thao tác sai",
   them_phong_ban: "Thêm phòng bàn",
-<<<<<<< HEAD
   thang_nay: "Tháng này",
   thang_truoc: "Tháng trước",
   toan_thoi_gian: "Toàn thời gian",
   tuy_chon: "Tùy chọn",
-=======
   them_moi_nhom: "Thêm mới nhóm",
   ten_phong_ban: "Tên phòng bàn",
   thu_tu_hien_thi: "Thứ tự hiển thị",
->>>>>>> 304a4b338dca27b6a40b4c11791d7baf9f5f50af
   // TODO: U
 
   // TODO: V

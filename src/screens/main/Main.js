@@ -57,20 +57,6 @@ export default (props) => {
 
     const syncAllDatas = async () => {
       dispatch({ type: 'ALREADY', already: false })
-<<<<<<< HEAD
-      dialogManager.showLoading()
-      // await realmStore.deleteAll()
-      await dataManager.syncAllDatas()
-        .then(() => {
-          // setAlready(true)
-          dispatch({ type: 'ALREADY', already: true })
-        })
-        .catch((e) => {
-          dispatch({ type: 'ALREADY', already: true })
-          console.log(e);
-        })
-      dialogManager.hiddenLoading()
-=======
 
       if (props.params && props.params.index) {
         dialogManager.showLoading()
@@ -97,7 +83,6 @@ export default (props) => {
         dialogManager.hiddenLoading()
       }
 
->>>>>>> 304a4b338dca27b6a40b4c11791d7baf9f5f50af
     }
     syncAllDatas()
 
