@@ -185,7 +185,7 @@ export default (props) => {
             }
             times.push(dateToString(item.Subject.trim(), timeFormat.current))
         }
-        console.log('totalBranchs', totalBranchs, 'times', times);
+        console.log('totalBranchs', totalBranchs, 'currentBranch.current.Id', currentBranch.current.Id);
         setDataChart({ times, totalBranchs })
         // // keyBranchs.push(element.Id.toString())
         // // totalSaleBranchs.push({ IsSelect: index == 0 ? true : false, Id: element.Id, Name: element.Name, total: sum })

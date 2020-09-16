@@ -124,9 +124,18 @@ const LoginScreen = (props) => {
 
     const getRetailerInfoAndNavigate = () => {
         let inforParams = {};
-        new HTTPService().setPath(ApiPath.VENDOR_SESSION).GET(inforParams, getHeaders()).then((res) => {
+        new HTTPService().setPath(ApiPath.VENDOR_SESSION).GET(inforParams, getHeaders()).then(async (res) => {
             console.log("getDataRetailerInfo res ", res);
             setFileLuuDuLieu(Constant.VENDOR_SESSION, JSON.stringify(res))
+
+            let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
+            console.log("getDataRetailerInfo branch ", branch);
+            if (branch != undefined || branch != '') {
+                if (res && res.Branchs.length > 0) {
+                    console.log("getDataRetailerInfo branch done ");
+                    setFileLuuDuLieu(Constant.CURRENT_BRANCH, JSON.stringify(res.Branchs[0]))
+                }
+            }
 
             if (res && res.CurrentUser) {
                 if (userName != '') {
