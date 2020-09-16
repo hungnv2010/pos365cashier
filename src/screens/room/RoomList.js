@@ -8,14 +8,13 @@ import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
 import { Chip, Snackbar, FAB } from 'react-native-paper';
 import colors from '../../theme/Colors';
 import { ScreenList } from '../../common/ScreenList';
+import dataManager from '../../data/DataManager';
 
 var HEADER_MAX_HEIGHT = 200;
 const HEADER_MIN_HEIGHT = Platform.OS === 'ios' ? 70 : 0;
 const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
 export default (props) => {
-
-
 
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
@@ -32,38 +31,60 @@ export default (props) => {
 
         console.log("Room props rooms ", props.route.params.rooms);
         console.log("Room props roomGroups ", props.route.params.roomGroups);
-
-        handlerData = () => {
-            var outputList = [];
-            props.route.params.roomGroups.map(item => {
-                console.log("handlerData item ", item);
-                let object = { Id: item.Id, Name: item.Name, list: [] }
-                props.route.params.rooms.map(child => {
-                    if (item.Id == child.RoomGroupId) {
-                        object.list.push(JSON.parse(JSON.stringify(child)))
-                    }
-                })
-                outputList.push(object);
-            })
-            console.log("handerData outputList test ", outputList);
-            setRooms(outputList)
-
-            setTimeout(() => {
-                // alert( heightTab2.current)
-                setUpdate(1)
-            }, 1000);
-        }
-
-        handlerData();
+        getDataInRealm();
 
     }, [])
+
+    // async function getDataInRealm() {
+    const getDataInRealm = async () => {
+        let roomsTmp = await realmStore.queryRooms()
+        roomsTmp = roomsTmp.sorted('Position')
+        roomGroupsTmp = await realmStore.queryRoomGroups()
+        roomGroupsTmp = roomGroupsTmp.sorted('Id')
+
+        console.log("getDataInRealm roomsTmp ", JSON.parse(JSON.stringify(roomsTmp)));
+        var outputList = [];
+        roomGroupsTmp.map(item => {
+            console.log("getDataInRealm item ", item);
+            let object = { Id: item.Id, Name: item.Name, list: [] }
+            roomsTmp.map(child => {
+                if (item.Id == child.RoomGroupId) {
+                    object.list.push(JSON.parse(JSON.stringify(child)))
+                }
+            })
+            outputList.push(object);
+        })
+        outputList.push({ Id: "", Name: "Khác", list: props.route.params.rooms.filter(item => item.RoomGroupId == 0) })
+        console.log("getDataInRealm outputList test ", JSON.parse(JSON.stringify(outputList))[4].list);
+        setRooms([...outputList])
+    }
+
+    const onCallBack = async (data) => {
+        console.log("onCallBack data ", data);
+        if (data != "Add")
+            await realmStore.deleteRoom()
+        await dataManager.syncRoomsReInsert()
+        getDataInRealm();
+
+        // let outputList = [];
+        // rooms.map(item => {
+        //     let obj = { Id: item.Id, Name: item.Name,list: [] }
+        //     item.list.map(el=>{
+        //         if(data != el.Id){
+        //             obj.list.push(JSON.parse(JSON.stringify(el)))
+        //         }
+        //     })
+        //     outputList.push(obj);
+        // })
+        // setRooms([...outputList])
+    }
 
     useEffect(() => {
         setUpdate(1)
     }, [heightTab])
 
     const onClickItem = (el) => {
-        props.navigation.navigate(ScreenList.RoomDetail, el)
+        props.navigation.navigate(ScreenList.RoomDetail, { room: el, listRoom: rooms, roomGroups: props.route.params.roomGroups, _onSelect: onCallBack })
     }
 
     const onClickTab = (el, i) => {
@@ -90,7 +111,7 @@ export default (props) => {
                     rooms.map((item, index) => {
                         if (indexTab == "" || indexTab == index + 1)
                             return (
-                                <View style={{ flex: 1 }}>
+                                <View style={{ flex: 1 }} key={index.toString()}>
                                     {
                                         item.list.length > 0 ?
                                             <View style={{}}>
@@ -136,7 +157,7 @@ export default (props) => {
                 style={{
                     backgroundColor: "#eeeeee",
                     borderRadius: 10, margin: 10,
-                    flexShrink: heightTab < 200 ? 3.1 : 0,
+                    flexShrink: heightTab < 200 && rooms.length > 5 ? 3.5 : 0,
                     // width: Metrics.screenWidth * 1.5,
                     flexDirection: 'row', flexWrap: 'wrap', borderBottomWidth: 0, borderBottomColor: colors.colorchinh
                 }}>

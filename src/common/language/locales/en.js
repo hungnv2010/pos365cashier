@@ -54,6 +54,9 @@ export default {
   dang_goi_mon: "Order now",
   dong: "Close",
   dia_chi_ip: "IP Address",
+  danh_muc_phong_ban: "Danh mục phòng bàn",
+  danh_sach_phong_ban: "Danh sách phòng bàn",
+  dich_vu_tinh_gio: "Dịch vụ tính giờ",
 
   // TODO: E
 
@@ -95,6 +98,7 @@ export default {
   khong_the_huy_tra_mat_hang_thoi_gian: "Cannot return time item",
   kiem_tra_ket_noi_may_in: "Check the printer connection. IP address",
   khach_yeu_cau: "Guest request",
+  khong_xac_dinh: "Không xác định",
 
   // TODO: H
   hoa_don: "Invoice",
@@ -213,12 +217,17 @@ export default {
   tu: "from",
   thuc_don_da_goi: "Customer order",
   thao_tac_sai: "Incorrect operation",
+  them_phong_ban: "Thêm phòng bàn",
+  them_moi_nhom: "Thêm mới nhóm",
+  ten_phong_ban: "Tên phòng bàn",
+  thu_tu_hien_thi: "Thứ tự hiển thị",
   // TODO: U
 
   // TODO: V
   vui_long_kiem_tra_ket_noi_may_in: "Please check the printer connection",
   vui_long_chon_linh_vuc_ban_le_ho_tro_shop_thoi_trang_sieu_thi: "Please select the field of RETAIL support such as shop, fashion, supermarket ...",
-
+  vui_long_nhap_day_du_thong_tin_truoc_khi_luu: "Vui lòng nhập đầy đủ các thông tin bắt buộc trước khi lưu",
+  
   // TODO: X
   xac_nhan: 'Comfirm',
   xong: "Done",

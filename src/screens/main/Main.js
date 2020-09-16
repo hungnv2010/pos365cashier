@@ -37,7 +37,7 @@ export default (props) => {
 
     const getVendorSession = async () => {
       let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
-      console.log('getVendorSession data ====', JSON.parse(data));
+      console.log('getVendorSession data  props ====', props);
       if (data) {
         data = JSON.parse(data);
         console.log('this.info data.BID ', data.BID);
@@ -51,18 +51,32 @@ export default (props) => {
 
     const syncAllDatas = async () => {
       dispatch({ type: 'ALREADY', already: false })
-      dialogManager.showLoading()
-      await realmStore.deleteAll()
-      await dataManager.syncAllDatas()
-        .then(() => {
-          // setAlready(true)
-          dispatch({ type: 'ALREADY', already: true })
-        })
-        .catch((e) => {
-          dispatch({ type: 'ALREADY', already: true })
-          console.log(e);
-        })
-      dialogManager.hiddenLoading()
+
+      if (props.params && props.params.index) {
+        dialogManager.showLoading()
+        await realmStore.deleteAll()
+        await dataManager.syncAllDatas()
+          .then(() => {
+            dispatch({ type: 'ALREADY', already: true })
+          })
+          .catch((e) => {
+            dispatch({ type: 'ALREADY', already: true })
+            console.log(e);
+          })
+        dialogManager.hiddenLoading()
+      } else {
+        dialogManager.showLoading()
+        await dataManager.syncAllDatas()
+          .then(() => {
+            dispatch({ type: 'ALREADY', already: true })
+          })
+          .catch((e) => {
+            dispatch({ type: 'ALREADY', already: true })
+            console.log(e);
+          })
+        dialogManager.hiddenLoading()
+      }
+
     }
     syncAllDatas()
 

@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
 import { Image, View, StyleSheet, Text, TouchableOpacity, TextInput, ScrollView, Modal, TouchableWithoutFeedback } from "react-native";
-import { Snackbar } from 'react-native-paper';
+import { Snackbar, RadioButton } from 'react-native-paper';
 import MainToolBar from '../main/MainToolBar';
 import I18n from '../../common/language/i18n';
-import realmStore from '../../data/realm/RealmStore';
+import realmStore, { SchemaName } from '../../data/realm/RealmStore';
 import { Images, Metrics } from '../../theme';
 import { ScreenList } from '../../common/ScreenList';
 import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
@@ -14,6 +14,9 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { HTTPService } from '../../data/services/HttpService';
 import { ApiPath } from '../../data/services/ApiPath';
 import dialogManager from '../../components/dialog/DialogManager';
+import dataManager from '../../data/DataManager';
+import { getFileDuLieuString } from '../../data/fileStore/FileStorage';
+import { Constant } from '../../common/Constant';
 
 const TYPE_MODAL = {
     ADD_GROUP: 1,
@@ -28,16 +31,63 @@ export default (props) => {
     const [room, setRoom] = useState({})
     const [isEditRoom, setIsEditRoom] = useState(false)
     const [showModal, setShowModal] = useState(false);
-    const [nameRoomGroupAdd, setNameRoomGroup] = useState("");
+    const [itemRoomGroupAdd, setRoomGroupAdd] = useState("");
+    const [itemProductService, setProductService] = useState("");
+    const [itemRoomGroup, setRoomGroup] = useState("");
     const typeModal = useRef(0)
+    const listProductService = useRef([])
+    const roomGroups = useRef([])
+    const [indexRoomGroups, setIndexRoomGroups] = useState(-1)
+    const [indexProductService, setIndexProductService] = useState(0)
+    const [vendorSession, setVendorSession] = useState({});
+    const [branch, setBranch] = useState({});
 
     useEffect(() => {
-        console.log("Data ====== ", props.route.params);
-        if (props.route.params && props.route.params.Id) {
+        console.log("Room detail data ====== ", props.route.params);
+        if (props.route.params != undefined) {
             setIsEditRoom(true)
-            setRoom(JSON.parse(JSON.stringify(props.route.params)))
+            setRoom(JSON.parse(JSON.stringify(props.route.params.room)))
+            roomGroups.current = JSON.parse(JSON.stringify(props.route.params.roomGroups))
+            roomGroups.current = [{ Id: "", Name: I18n.t("khong_xac_dinh") }].concat(Object.keys(roomGroups.current).map((key) => roomGroups.current[key]));
+            setIndexRoomGroups(roomGroups.current.findIndex(item => item.Id == props.route.params.room.RoomGroupId))
+            let array = roomGroups.current.filter(item => (item.Id == props.route.params.room.RoomGroupId && props.route.params.room.RoomGroupId != 0));
+            setRoomGroup(array.length > 0 ? array[0] : "")
+        } else {
+            getDataRoomGroup()
         }
+
+        const getData = async () => {
+
+            let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
+            console.log('getDataInRealm VENDOR_SESSION data', JSON.parse(data));
+            data = JSON.parse(data)
+            setVendorSession(data);
+
+            let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
+            if (branch) {
+                console.log('getData branch', JSON.parse(branch));
+                setBranch(JSON.parse(branch))
+            }
+
+            let products = await realmStore.queryProducts();
+            listProductService.current = products.filter(item => ((item.IsTimer && item.IsTimer == true && item.ProductType == 2)))
+            listProductService.current = [{ Id: "", Name: I18n.t("khong_xac_dinh") }].concat(listProductService.current);
+            if (props.route.params != undefined) {
+                let product = listProductService.current.filter(item => (item.Id == props.route.params.room.ProductId && props.route.params.room.ProductId != 0))
+                setProductService(product && product.length > 0 ? product[0] : "");
+            }
+        }
+
+        getData();
+
     }, [])
+
+    const getDataRoomGroup = async () => {
+        let roomGroupsTmp = await realmStore.queryRoomGroups()
+        roomGroupsTmp = roomGroupsTmp.sorted('Id')
+        roomGroups.current = JSON.parse(JSON.stringify(roomGroupsTmp))
+        roomGroups.current = [{ Id: "", Name: I18n.t("khong_xac_dinh") }].concat(Object.keys(roomGroups.current).map((key) => roomGroups.current[key]));
+    }
 
     const onClickAddGroup = () => {
         typeModal.current = TYPE_MODAL.ADD_GROUP
@@ -57,7 +107,7 @@ export default (props) => {
     const onClickOk = () => {
 
         if (typeModal.current == TYPE_MODAL.ADD_GROUP) {
-            let params = { RoomGroup: { Id: 0, Type: null, Discount: 0, DiscountRatio: 0, Name: nameRoomGroupAdd } }
+            let params = { RoomGroup: { Id: 0, Type: null, Discount: 0, DiscountRatio: 0, Name: itemRoomGroupAdd } }
             new HTTPService().setPath(ApiPath.ROOM_GROUPS).POST(params).then(async (res) => {
                 console.log("onClickOk ADD_GROUP res ", res);
                 if (res) {
@@ -70,8 +120,108 @@ export default (props) => {
                 setShowModal(false)
                 console.log("onClickOk err ", e);
             })
-            setNameRoomGroup("")
+            setRoomGroupAdd("")
         }
+        if (typeModal.current == TYPE_MODAL.SELECT_SERVICE) {
+            if (indexProductService != 0) {
+                setProductService(listProductService.current[indexProductService])
+            } else {
+                setProductService('')
+            }
+            setShowModal(false)
+        }
+        if (typeModal.current == TYPE_MODAL.SELECT_GROUP) {
+            if (indexRoomGroups > -1)
+                setRoomGroup(roomGroups.current[indexRoomGroups].Id != "" ? roomGroups.current[indexRoomGroups] : "")
+            setShowModal(false)
+        }
+
+    }
+
+    const onClickApply = () => {
+
+        if (!(room && room.Name && room.Name.trim() != "")) {
+            setToastDescription(I18n.t("vui_long_nhap_day_du_thong_tin_truoc_khi_luu"))
+            setShowToast(true)
+            return;
+        }
+
+        if (isEditRoom) {
+            let params = {
+                Room: {
+                    BranchId: branch.Id ? branch.Id : "",
+                    CreatedBy: vendorSession.CurrentUser.Id,
+                    // CreatedDate: "2020-09-16T03:11:46.8330000Z"
+                    RetailerId: vendorSession.CurrentUser.RetailerId,
+
+                    Id: room.Id,
+                    // Printer: "12"
+                    Description: room.Description,
+                    Name: room.Name,
+                    Position: room.Position,
+                    Product: itemProductService,
+                    ProductId: itemProductService.Id,
+                    RoomGroupId: itemRoomGroup.Id
+                }
+            };
+            console.log("onClickApply isEditRoom params ", params);
+            dialogManager.showLoading();
+            new HTTPService().setPath(ApiPath.ROOMS).POST(params).then(async (res) => {
+                console.log("onClickApply isEditRoom  res ", res);
+                if (res) {
+                    // props.route.params._onSelect("Add");
+                    props.navigation.pop()
+                }
+                dialogManager.hiddenLoading();
+            }).catch((e) => {
+                dialogManager.hiddenLoading();
+                console.log("onClickApply isEditRoom err ", e);
+            })
+        } else {
+            let params = {
+                Room: {
+                    // Printer: "12"
+                    Description: room.Description,
+                    Name: room.Name,
+                    Position: room.Position,
+                    Product: itemProductService,
+                    ProductId: itemProductService.Id,
+                    RoomGroupId: itemRoomGroup.Id
+                }
+            };
+            console.log("onClickApply params ", params);
+            dialogManager.showLoading();
+            new HTTPService().setPath(ApiPath.ROOMS).POST(params).then(async (res) => {
+                console.log("onClickApply  res ", res);
+                if (res) {
+                    // props.route.params._onSelect("Add");
+                    props.navigation.pop()
+                }
+                dialogManager.hiddenLoading();
+            }).catch((e) => {
+                dialogManager.hiddenLoading();
+                console.log("onClickApply err ", e);
+            })
+        }
+    }
+
+    const onClickDelete = () => {
+        dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_xoa_ban_nay'), I18n.t("thong_bao"), async res => {
+            if (res == 1) {
+                dialogManager.showLoading();
+                new HTTPService().setPath(ApiPath.ROOMS + "/" + room.Id).DELETE().then(async (res) => {
+                    console.log("onClickDelete  res ", res);
+                    if (res) {
+                        props.route.params._onSelect(room.Id);
+                        props.navigation.pop()
+                    }
+                    dialogManager.hiddenLoading();
+                }).catch((e) => {
+                    dialogManager.hiddenLoading();
+                    console.log("onClickDelete err ", e);
+                })
+            }
+        })
 
     }
 
@@ -79,9 +229,9 @@ export default (props) => {
         if (typeModal.current == TYPE_MODAL.ADD_GROUP)
             return (
                 <View style={{ padding: 10 }}>
-                    <Text style={{ marginBottom: 15, fontSize: 18, fontWeight: 'bold' }}>Thêm mới nhóm</Text>
+                    <Text style={{ marginBottom: 15, fontSize: 18, fontWeight: 'bold' }}>{I18n.t('them_moi_nhom')}</Text>
                     <View style={styles.view_border_input}>
-                        <TextInput style={{ padding: 10, flex: 1, color: "#000" }} value={nameRoomGroupAdd} onChangeText={(text) => setNameRoomGroup(text)} placeholder="Tên nhóm" placeholderTextColor="gray" />
+                        <TextInput style={{ padding: 10, flex: 1, color: "#000" }} value={itemRoomGroupAdd} onChangeText={(text) => setRoomGroupAdd(text)} placeholder={I18n.t('ten_nhom')} placeholderTextColor="gray" />
                     </View>
 
                     <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
@@ -96,11 +246,24 @@ export default (props) => {
                     </View>
                 </View>
             )
-        if (typeModal.current == TYPE_MODAL.SELECT_GROUP)
+        if (typeModal.current == TYPE_MODAL.SELECT_GROUP) {
             return (
                 <View style={{ padding: 10 }}>
-                    <Text style={{ marginBottom: 15, fontSize: 18, fontWeight: 'bold' }}>Chọn nhóm</Text>
-
+                    <Text style={{ marginBottom: 15, fontSize: 18, fontWeight: 'bold' }}>{I18n.t('chon_nhom')}</Text>
+                    {roomGroups.current.map((el, index) => {
+                        return (
+                            <TouchableOpacity onPress={() => {
+                                setIndexRoomGroups(index)
+                            }} key={index} style={{ flexDirection: "row", alignItems: "center", }}>
+                                <RadioButton.Android
+                                    color={colors.colorLightBlue}
+                                    status={indexRoomGroups == index ? 'checked' : 'unchecked'}
+                                    onPress={() => { setIndexRoomGroups(index) }}
+                                />
+                                <Text style={{ marginLeft: 20 }}>{el.Name}</Text>
+                            </TouchableOpacity>
+                        )
+                    })}
                     <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
                         <TouchableOpacity style={{ alignItems: "flex-end", marginTop: 15 }} onPress={() => {
                             setShowModal(false)
@@ -113,11 +276,25 @@ export default (props) => {
                     </View>
                 </View>
             )
-        if (typeModal.current == TYPE_MODAL.SELECT_SERVICE)
+        }
+        if (typeModal.current == TYPE_MODAL.SELECT_SERVICE) {
             return (
                 <View style={{ padding: 10 }}>
-                    <Text style={{ marginBottom: 15, fontSize: 18, fontWeight: 'bold' }}>Dịch vụ tính giờ</Text>
-                   
+                    <Text style={{ marginBottom: 15, fontSize: 18, fontWeight: 'bold' }}>{I18n.t('dich_vu_tinh_gio')}</Text>
+                    <View>
+                        {listProductService.current.map((el, index) => {
+                            return (
+                                <TouchableOpacity onPress={() => { setIndexProductService(index) }} key={index} style={{ flexDirection: "row", alignItems: "center", }}>
+                                    <RadioButton.Android
+                                        color={colors.colorLightBlue}
+                                        status={indexProductService == index ? 'checked' : 'unchecked'}
+                                        onPress={() => { setIndexProductService(index) }}
+                                    />
+                                    <Text style={{ marginLeft: 20 }}>{el.Name}</Text>
+                                </TouchableOpacity>
+                            )
+                        })}
+                    </View>
                     <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
                         <TouchableOpacity style={{ alignItems: "flex-end", marginTop: 15 }} onPress={() => {
                             setShowModal(false)
@@ -130,28 +307,33 @@ export default (props) => {
                     </View>
                 </View>
             )
+        }
     }
 
     return (
         <View style={styles.conatiner}>
             <ToolBarDefault
+                {...props}
                 navigation={props.navigation}
-                title={room.Name ? room.Name : I18n.t('them_phong_ban')}
+                clickLeftIcon={() => {
+                    props.navigation.goBack()
+                }}
+                title={I18n.t('them_phong_ban')}
             />
 
             <KeyboardAwareScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" style={styles.view_content}>
                 <View>
-                    <Text>Tên phòng bàn</Text>
+                    <Text>{I18n.t('ten_phong_ban')}</Text>
                     <View style={styles.view_border_input}>
-                        <TextInput style={{ padding: 10, flex: 1, color: "#000" }} value={room.Name ? room.Name : ""} />
+                        <TextInput style={{ padding: 10, flex: 1, color: "#000" }} value={room.Name ? room.Name : ""} onChangeText={(text) => setRoom({ ...room, Name: text })} />
                         <Ionicons name={"close"} size={25} color="black" style={{ marginRight: 10 }} />
                     </View>
                 </View>
                 <View style={{ marginTop: 20 }}>
-                    <Text>Tên nhóm</Text>
+                    <Text>{I18n.t('ten_nhom')}</Text>
                     <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                         <TouchableOpacity onPress={onSelectGroup} style={[styles.view_border_input, { flex: 1 }]}>
-                            <Text style={{ padding: 11.5, flex: 1, color: "#000" }} ></Text>
+                            <Text style={{ padding: 11.5, flex: 1, color: "#000" }} >{itemRoomGroup.Name}</Text>
                             <IconAntDesign name={"down"} size={20} color="gray" style={{ marginRight: 10 }} />
                         </TouchableOpacity>
                         <TouchableOpacity onPress={onClickAddGroup} style={{ marginTop: 10, marginLeft: 10, backgroundColor: colors.colorLightBlue, padding: 5.5, borderRadius: 4 }}>
@@ -160,23 +342,24 @@ export default (props) => {
                     </View>
                 </View>
                 <View style={{ marginTop: 20 }}>
-                    <Text>Thứ tự hiển thị</Text>
+                    <Text>{I18n.t('thu_tu_hien_thi')}</Text>
                     <View style={styles.view_border_input}>
-                        <TextInput style={{ padding: 10, flex: 1, color: "#000" }} value={room.Position ? room.Position.toString() : ""} />
+                        <TextInput style={{ padding: 10, flex: 1, color: "#000" }} value={room.Position ? room.Position.toString() : ""} onChangeText={(text) => setRoom({ ...room, Position: +text })} />
                     </View>
                 </View>
                 <View style={{ marginTop: 20 }}>
-                    <Text>Dịch vụ tính giờ</Text>
+                    <Text>{I18n.t('dich_vu_tinh_gio')}</Text>
                     <TouchableOpacity onPress={onSelectService} style={styles.view_border_input}>
-                        <Text style={{ padding: 11.5, flex: 1, color: "#000" }} ></Text>
+                        <Text style={{ padding: 11.5, flex: 1, color: "#000" }} >{itemProductService.Name}</Text>
                         <IconAntDesign name={"down"} size={20} color="gray" style={{ marginRight: 10 }} />
                     </TouchableOpacity>
                 </View>
                 <View style={{ marginTop: 20 }}>
-                    <Text>Ghi chú</Text>
+                    <Text>{I18n.t('ghi_chu')}</Text>
                     <View style={styles.view_border_input}>
                         <TextInput
                             value={room.Description ? room.Description : ""}
+                            onChangeText={(text) => setRoom({ ...room, Description: text })}
                             multiline
                             placeholderTextColor="#808080"
                             style={{ padding: 10, flex: 1, height: 100, color: "#000" }} />
@@ -186,11 +369,11 @@ export default (props) => {
 
             <View style={{ flexDirection: "row", margin: 10, marginHorizontal: 20 }}>
                 {isEditRoom ?
-                    <TouchableOpacity style={{ flex: 1, flexDirection: "row", marginTop: 0, borderRadius: 5, backgroundColor: "#f2f2f2", justifyContent: "center", alignItems: "center", padding: 10 }}>
+                    <TouchableOpacity onPress={onClickDelete} style={{ flex: 1, flexDirection: "row", marginTop: 0, borderRadius: 5, backgroundColor: "#f2f2f2", justifyContent: "center", alignItems: "center", padding: 10 }}>
                         <IconAntDesign name={"delete"} size={25} color="black" />
                     </TouchableOpacity>
                     : null}
-                <TouchableOpacity style={{ flex: 8, flexDirection: "row", marginLeft: isEditRoom ? 15 : 0, marginTop: 0, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 15 }}>
+                <TouchableOpacity onPress={onClickApply} style={{ flex: 8, flexDirection: "row", marginLeft: isEditRoom ? 15 : 0, marginTop: 0, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 15 }}>
                     <Text style={{ color: "#fff", fontWeight: "bold" }}>Áp dụng</Text>
                 </TouchableOpacity>
             </View>
@@ -250,3 +433,4 @@ const styles = StyleSheet.create({
         bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)'
     }
 })
+

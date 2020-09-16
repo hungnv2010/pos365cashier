@@ -59,6 +59,7 @@ export default {
   dia_chi_ip: "Địa chỉ ip",
   danh_muc_phong_ban: "Danh mục phòng bàn",
   danh_sach_phong_ban: "Danh sách phòng bàn",
+  dich_vu_tinh_gio: "Dịch vụ tính giờ",
 
   // TODO: E
 
@@ -102,6 +103,7 @@ export default {
   khong_the_huy_tra_mat_hang_thoi_gian: "Không thể hủy trả mặt hàng thời gian",
   kiem_tra_ket_noi_may_in: "Kiểm tra kết nối máy in. Địa chỉ IP",
   khach_yeu_cau: "Khách yêu cầu",
+  khong_xac_dinh: "Không xác định",
 
   // TODO: H
   hoa_don: "Hoá đơn",
@@ -254,12 +256,16 @@ export default {
   thuc_don_da_goi: "Thực đơn đã gọi",
   thao_tac_sai: "Thao tác sai",
   them_phong_ban: "Thêm phòng bàn",
+  them_moi_nhom: "Thêm mới nhóm",
+  ten_phong_ban: "Tên phòng bàn",
+  thu_tu_hien_thi: "Thứ tự hiển thị",
   // TODO: U
 
   // TODO: V
   van_tay: "Vân tay",
   vui_long_kiem_tra_ket_noi_may_in: "Vui lòng kiểm tra kết nối máy in",
   vui_long_chon_linh_vuc_ban_le_ho_tro_shop_thoi_trang_sieu_thi: "Vui lòng chọn lĩnh vực BÁN LẺ hỗ trợ: shop, thời trang, siêu thị...",
+  vui_long_nhap_day_du_thong_tin_truoc_khi_luu: "Vui lòng nhập đầy đủ các thông tin bắt buộc trước khi lưu",
 
   // TODO: X
   xac_nhan: 'Xác nhận',

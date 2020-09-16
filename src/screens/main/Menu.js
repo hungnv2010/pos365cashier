@@ -189,7 +189,7 @@ const HeaderComponent = (props) => {
                 index: 0,
                 routes: [
                     { name: 'Home' },
-                ],
+                ]
             })
         )
     }
@@ -366,10 +366,13 @@ const ContentComponent = (props) => {
     }
 
     const onClickItem = (chucnang, index) => {
-        // OrderNow  QRCode
         console.log("onClickItem props ", props);
         setCurrentItemMenu(index)
-        props.navigation.navigate(chucnang.func)
+        let params = {};
+        if (chucnang.func == ScreenList.Home) {
+
+        }
+        props.navigation.navigate(chucnang.func, params)
         props.navigation.closeDrawer();
     }
 
