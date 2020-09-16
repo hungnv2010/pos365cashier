@@ -28,7 +28,8 @@ const Invoice = (props) => {
         endDate: null,
         displayedDate: moment(),
     })
-    const currentBranch = useRef(null)
+    const currentBranch = useRef({})
+    const count = useRef(null)
 
     useEffect(() => {
         const getBranch = async () => {
@@ -80,13 +81,12 @@ const Invoice = (props) => {
             params = { ...params, includes: ['Room', 'Partner'], IncludeSummary: true };
             new HTTPService().setPath(ApiPath.INVOICE).GET(params).then((res) => {
                 console.log("getInvoicesData res ", res);
-                // if (res) {
-                //     let results = res.results.filter(item => item.Id > 0);
-                //     this.count = res.__count;
-                //     this.setState({ data: [...this.state.data, ...results] })
-                // }
+                if (res) {
+                    let results = res.results.filter(item => item.Id > 0);
+                    count.current = res.__count;
+                    setInvoiceData([...invoiceData, ...results])
+                }
             }).catch((e) => {
-
                 console.log("getInvoicesData err  ======= ", e);
             })
         }
@@ -94,6 +94,10 @@ const Invoice = (props) => {
     }, [genParams])
 
     const onClickTimeFilter = () => {
+
+    }
+
+    const onRefresh = () => {
 
     }
 
@@ -114,7 +118,21 @@ const Invoice = (props) => {
                             <Image source={Images.icon_arrow_down} style={{ width: 14, height: 14, marginLeft: 5 }} />
                         </TouchableOpacity>
                     </View>
-                    <FlatList />
+                    <FlatList
+                        refreshControl={
+                            <RefreshControl colors={[Colors.colorchinh]} refreshing={this.state.refreshing} onRefresh={onRefresh} />
+                        }
+                        style={{ flex: 1, paddingBottom: 0 }}
+                        onEndReachedThreshold={0.5}
+                        onEndReached={(info) => {
+                            this.loadMore(info);
+                        }}
+                        keyExtractor={item => item.Id}
+                        data={this.state.data}
+                        renderItem={({ item }) =>
+                            this.renderItemList(item)
+                        }
+                    />
                 </View>
                 <View style={{ flex: 1 }}>
                     {/* <InvoiceDetail /> */}
