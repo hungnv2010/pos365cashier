@@ -159,6 +159,7 @@ export default {
   nhan_vien_order: "Order screen",
   nhap_ghi_chu: "Enter the note",
   ngay: "days",
+  ngay_ban: "Sold date",
 
   // TODO: O
 
@@ -187,6 +188,7 @@ export default {
   so_luong: "Quantity",
   san_sang: "Come in",
   san_pham_ban_chay: "Top selling products",
+  SL: "Qty",
 
   // TODO: T
   thong_bao: "Notification",

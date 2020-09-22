@@ -37,6 +37,14 @@ export const dateToDate = (date, inputFormat = "YYYY-MM-DD HH:mm:ss", outputForm
   return dateOutput;
 };
 
+export const momentToStringDateLocal = (
+  momentInput,
+  outputFormat = "YYYY-MM-DD[T]HH:mm:ss.SS[Z]"
+) => {
+  let dateTimeUtc = moment.utc(momentInput).format(outputFormat)
+  return dateTimeUtc
+}
+
 export const dateUTCToDate = (date, inputFormat = "YYYYMMDDhhmmss", outputFormat = "HH:mm DD/MM/YYYY") => {
   let momentUTC = moment.utc(date, inputFormat)
   let momentITC = moment(momentUTC).local();

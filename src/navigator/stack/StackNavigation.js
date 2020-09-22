@@ -18,6 +18,7 @@ import ChangeTable from '../../screens/changeTable/Main';
 import RoomList from '../../screens/room/RoomList'
 import RoomCategory from '../../screens/room/RoomCategory'
 import RoomDetail from '../../screens/room/RoomDetail'
+import InvoiceDetail from '../../screens/invoice/invoiceDetail';
 import { ScreenList } from '../../common/ScreenList';
 const MainStack = createStackNavigator();
 
@@ -47,6 +48,7 @@ export default (props) => {
                 <MainStack.Screen name={ScreenList.RoomList}>{props => <RoomList {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.RoomCategory}>{props => <RoomCategory {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.RoomDetail}>{props => <RoomDetail {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.InvoiceDetail}>{props => <InvoiceDetail {...props} />}</MainStack.Screen>
             </MainStack.Navigator>
         </Animated.View>
     );
