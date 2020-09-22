@@ -9,6 +9,9 @@ import { Chip, Snackbar, FAB } from 'react-native-paper';
 import colors from '../../theme/Colors';
 import { ScreenList } from '../../common/ScreenList';
 import dataManager from '../../data/DataManager';
+import { useSelector } from 'react-redux';
+import { Constant } from '../../common/Constant';
+import RoomDetail from './RoomDetail'
 
 var HEADER_MAX_HEIGHT = 200;
 const HEADER_MIN_HEIGHT = Platform.OS === 'ios' ? 70 : 0;
@@ -20,12 +23,25 @@ export default (props) => {
     const [toastDescription, setToastDescription] = useState("")
     const [rooms, setRooms] = useState([])
     const [indexTab, setIndexTab] = useState(0)
-    const [heightTab, setHeightTab] = useState(200)
+    const [expand, setExpand] = useState(true)
     const [update, setUpdate] = useState(0)
-    const heightTab2 = useRef(0);
+    const [dataParams, setDataParams] = useState({})
+    const isReLoad = useRef(false);
+    const roomItem = useRef({});
+    const clickAdd = useRef(false);
     const [statescrollY, setScrollY] = useState(new Animated.Value(
         Platform.OS === 'ios' ? -HEADER_MAX_HEIGHT : 0,
     ))
+
+    const deviceType = useSelector(state => {
+        console.log("useSelector state ", state);
+        return state.Common.deviceType
+    });
+
+    const orientaition = useSelector(state => {
+        console.log("orientaition", state);
+        return state.Common.orientaition
+    });
 
     useEffect(() => {
 
@@ -54,8 +70,8 @@ export default (props) => {
             })
             outputList.push(object);
         })
-        outputList.push({ Id: "", Name: "Khác", list: props.route.params.rooms.filter(item => item.RoomGroupId == 0) })
-        console.log("getDataInRealm outputList test ", JSON.parse(JSON.stringify(outputList))[4].list);
+        outputList.push({ Id: "", Name: I18n.t('khac'), list: props.route.params.rooms.filter(item => item.RoomGroupId == 0) })
+        console.log("getDataInRealm outputList test ", JSON.parse(JSON.stringify(outputList))[outputList.length - 1].list);
         setRooms([...outputList])
     }
 
@@ -65,26 +81,20 @@ export default (props) => {
             await realmStore.deleteRoom()
         await dataManager.syncRoomsReInsert()
         getDataInRealm();
-
-        // let outputList = [];
-        // rooms.map(item => {
-        //     let obj = { Id: item.Id, Name: item.Name,list: [] }
-        //     item.list.map(el=>{
-        //         if(data != el.Id){
-        //             obj.list.push(JSON.parse(JSON.stringify(el)))
-        //         }
-        //     })
-        //     outputList.push(obj);
-        // })
-        // setRooms([...outputList])
+        isReLoad.current = true;
     }
 
     useEffect(() => {
         setUpdate(1)
-    }, [heightTab])
+    }, [expand])
 
     const onClickItem = (el) => {
-        props.navigation.navigate(ScreenList.RoomDetail, { room: el, listRoom: rooms, roomGroups: props.route.params.roomGroups, _onSelect: onCallBack })
+        roomItem.current = el;
+        if (deviceType == Constant.PHONE)
+            props.navigation.navigate(ScreenList.RoomDetail, { room: roomItem.current, listRoom: rooms, roomGroups: props.route.params.roomGroups, _onSelect: onCallBack })
+        else {
+            setDataParams({ ...{ room: roomItem.current, listRoom: rooms, roomGroups: props.route.params.roomGroups } })
+        }
     }
 
     const onClickTab = (el, i) => {
@@ -94,18 +104,19 @@ export default (props) => {
     const _renderScrollViewContent = () => {
         return (
             <ScrollView
+                showsVerticalScrollIndicator={false}
                 bounces={false}
                 onMomentumScrollBegin={
-                    () => setHeightTab(100)
+                    () => setExpand(false)
                 }
                 onScroll={(event) => {
                     if (event.nativeEvent.contentOffset.y < 30) {
-                        setHeightTab(200)
+                        setExpand(true)
                     } else {
-                        setHeightTab(100)
+                        setExpand(false)
                     }
                 }}
-                style={{ backgroundColor: "#fff" }}
+                style={{ flexGrow: 1 }}
             >
                 {
                     rooms.map((item, index) => {
@@ -117,7 +128,7 @@ export default (props) => {
                                             <View style={{}}>
                                                 <View style={{ flexDirection: "row", justifyContent: "space-between", backgroundColor: "#eeeeee", }}>
                                                     <Text style={{ textTransform: "uppercase", fontWeight: "bold", padding: 15 }}>{item.Name}</Text>
-                                                    <Text style={{ padding: 15 }}>{item.list.length} bàn</Text>
+                                                    <Text style={{ padding: 15 }}>{item.list.length} {I18n.t('ban')}</Text>
                                                 </View>
 
                                                 {
@@ -144,41 +155,55 @@ export default (props) => {
     return (
         <View style={styles.fill}>
             <ToolBarDefault
+                clickLeftIcon={() => {
+                    if (isReLoad.current == true)
+                        props.route.params._onSelect();
+                    props.navigation.goBack()
+                }}
                 navigation={props.navigation}
                 title={I18n.t('danh_sach_phong_ban')}
             />
-            <View
-                onLayout={(event) => {
-                    var { x, y, width, height } = event.nativeEvent.layout;
-                    // heightTab2.current = height;
-                    // HEADER_MAX_HEIGHT = height;
-                    // setHeightTab(height)
-                }}
-                style={{
-                    backgroundColor: "#eeeeee",
-                    borderRadius: 10, margin: 10,
-                    flexShrink: heightTab < 200 && rooms.length > 5 ? 3.5 : 0,
-                    // width: Metrics.screenWidth * 1.5,
-                    flexDirection: 'row', flexWrap: 'wrap', borderBottomWidth: 0, borderBottomColor: colors.colorchinh
-                }}>
-                {
-                    [{ Id: "", Name: "Tất cả" }].concat(rooms).map((item, index) => {
-                        return (
-                            <TouchableOpacity onPress={() => onClickTab(item, index)} style={{
-                                padding: 10,
-                            }}>
-                                <Text style={{ color: indexTab == index ? colors.colorLightBlue : "black", fontSize: 15 }}>{item.Name}</Text>
-                            </TouchableOpacity>
-                        );
-                    })}
+
+            <View style={{ flexDirection: "row", flex: 1}}>
+                <View style={{ flex: 1, flexDirection: "column" }}>
+                    <View
+                        onLayout={(event) => {
+                            var { x, y, width, height } = event.nativeEvent.layout;
+                        }}
+                        // flexShrink: expand < true && rooms.length > 5 ? 3.5 : 0 
+                        style={[styles.header, {}]}>
+                        {
+                            [{ Id: "", Name: I18n.t("tat_ca") }].concat(rooms).map((item, index) => {
+                                return (
+                                    <TouchableOpacity onPress={() => onClickTab(item, index)} style={{
+                                        padding: 10,
+                                    }}>
+                                        <Text style={{ color: indexTab == index ? colors.colorLightBlue : "black", fontSize: 15 }}>{item.Name}</Text>
+                                    </TouchableOpacity>
+                                );
+                            })}
+                    </View>
+                    {_renderScrollViewContent()}
+                </View>
+                {deviceType == Constant.TABLET ?
+                    <View style={{ flex: 1, borderLeftWidth: 0.5, borderLeftColor: "#ccc" }}>
+                        <RoomDetail params={dataParams} _onSelect={(data) => onCallBack(data)} />
+                    </View>
+                    : null}
             </View>
-            {_renderScrollViewContent()}
             <FAB
                 style={styles.fab}
                 big
                 icon="plus"
                 color="#fff"
-                onPress={() => props.navigation.navigate(ScreenList.RoomDetail)}
+                onPress={() => {
+                    clickAdd.current = true;
+                    if (deviceType == Constant.PHONE)
+                        props.navigation.navigate(ScreenList.RoomDetail, { _onSelect: onCallBack })
+                    else {
+                        setDataParams({})
+                    }
+                }}
             />
         </View>
 
@@ -198,42 +223,10 @@ const styles = StyleSheet.create({
     fill: {
         flex: 1, backgroundColor: "#fff",
     },
-    content: {
-        flex: 1,
-    },
     header: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        backgroundColor: '#03A9F4',
-        overflow: 'hidden',
-        // height: HEADER_MAX_HEIGHT,
-    },
-    bar: {
-        backgroundColor: 'transparent',
-        // marginTop: Platform.OS === 'ios' ? 28 : 38,
-        // height: 32,
-        alignItems: 'center',
-        justifyContent: 'center',
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-    },
-    title: {
-        color: 'white',
-        fontSize: 18,
-    },
-    scrollViewContent: {
-        // iOS uses content inset, which acts like padding.
-        paddingTop: Platform.OS !== 'ios' ? HEADER_MAX_HEIGHT : 0,
-    },
-    row: {
-        height: 40,
-        margin: 16,
-        backgroundColor: '#D3D3D3',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
+        backgroundColor: "#eeeeee",
+        borderRadius: 10, margin: 10,
+        // width: Metrics.screenWidth * 1.5,
+        flexDirection: 'row', flexWrap: 'wrap', borderBottomWidth: 0, borderBottomColor: colors.colorchinh
+    }
 })

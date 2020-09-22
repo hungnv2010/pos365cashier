@@ -16,25 +16,29 @@ export default (props) => {
 
     useEffect(() => {
 
-        const getDataInRealm = async () => {
-            roomsTmp = await realmStore.queryRooms()
-            roomsTmp = roomsTmp.sorted('Position')
-            roomGroupsTmp = await realmStore.queryRoomGroups()
-            roomGroupsTmp = roomGroupsTmp.sorted('Id')
-            setRooms(roomsTmp)
-            setRoomGroups(roomGroupsTmp)
-        }
-
         getDataInRealm();
 
     }, [])
+
+    const getDataInRealm = async () => {
+        roomsTmp = await realmStore.queryRooms()
+        roomsTmp = roomsTmp.sorted('Position')
+        roomGroupsTmp = await realmStore.queryRoomGroups()
+        roomGroupsTmp = roomGroupsTmp.sorted('Id')
+        setRooms(roomsTmp)
+        setRoomGroups(roomGroupsTmp)
+    }
+
+    const onCallBack = ()=> {
+        getDataInRealm();
+    }
 
     const onClickRoomCategori = () => {
         props.navigation.navigate(ScreenList.RoomCategory, roomGroups)
     }
 
     const onClickRoomList = () => {
-        props.navigation.navigate(ScreenList.RoomList, { rooms: rooms, roomGroups: roomGroups })
+        props.navigation.navigate(ScreenList.RoomList, { rooms: rooms, roomGroups: roomGroups, _onSelect: onCallBack })
     }
 
     return (

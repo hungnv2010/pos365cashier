@@ -2,7 +2,8 @@
 
 export default {
   // TODO: A
-
+  ap_dung: "Áp dụng",
+  
   // TODO: B
   bo_loc: "Filter",
   bao_cao_cuoi_ngay: "Report",

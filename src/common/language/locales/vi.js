@@ -2,6 +2,7 @@
 
 export default {
   // TODO: A
+  ap_dung: "Áp dụng",
 
   // TODO: B
   bo_loc: "Bộ lọc",
@@ -23,6 +24,7 @@ export default {
   ban_dang_dung: "Bàn đang dùng",
   bieu_do_doanh_thu: "Biểu đồ doanh thu",
   bay_ngay: "Bảy ngày",
+  ban: "bàn",
 
   // TODO: C
   cai_dat: "Cài đặt",

@@ -17,6 +17,7 @@ import dialogManager from '../../components/dialog/DialogManager';
 import dataManager from '../../data/DataManager';
 import { getFileDuLieuString } from '../../data/fileStore/FileStorage';
 import { Constant } from '../../common/Constant';
+import { useSelector } from 'react-redux';
 
 const TYPE_MODAL = {
     ADD_GROUP: 1,
@@ -42,45 +43,63 @@ export default (props) => {
     const [vendorSession, setVendorSession] = useState({});
     const [branch, setBranch] = useState({});
 
+    const deviceType = useSelector(state => {
+        console.log("useSelector state ", state);
+        return state.Common.deviceType
+    });
+
     useEffect(() => {
-        console.log("Room detail data ====== ", props.route.params);
-        if (props.route.params != undefined) {
+        console.log("Room detail params ====== ", props);
+        getData(props.params);
+    }, [props.params])
+
+    useEffect(() => {
+        console.log("Room detail data ====== ", props);
+        if (deviceType == Constant.PHONE)
+            getData(props.route.params);
+    }, [])
+
+    const getData = async (params) => {
+
+        if (params && params.room != undefined) {
             setIsEditRoom(true)
-            setRoom(JSON.parse(JSON.stringify(props.route.params.room)))
-            roomGroups.current = JSON.parse(JSON.stringify(props.route.params.roomGroups))
+            setRoom(JSON.parse(JSON.stringify(params.room)))
+            roomGroups.current = JSON.parse(JSON.stringify(params.roomGroups))
             roomGroups.current = [{ Id: "", Name: I18n.t("khong_xac_dinh") }].concat(Object.keys(roomGroups.current).map((key) => roomGroups.current[key]));
-            setIndexRoomGroups(roomGroups.current.findIndex(item => item.Id == props.route.params.room.RoomGroupId))
-            let array = roomGroups.current.filter(item => (item.Id == props.route.params.room.RoomGroupId && props.route.params.room.RoomGroupId != 0));
+            setIndexRoomGroups(roomGroups.current.findIndex(item => item.Id == params.room.RoomGroupId))
+            let array = roomGroups.current.filter(item => (item.Id == params.room.RoomGroupId && params.room.RoomGroupId != 0));
             setRoomGroup(array.length > 0 ? array[0] : "")
         } else {
-            getDataRoomGroup()
+            resetRoom();
         }
 
-        const getData = async () => {
+        let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
+        console.log('getDataInRealm VENDOR_SESSION data', JSON.parse(data));
+        data = JSON.parse(data)
+        setVendorSession(data);
 
-            let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
-            console.log('getDataInRealm VENDOR_SESSION data', JSON.parse(data));
-            data = JSON.parse(data)
-            setVendorSession(data);
-
-            let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
-            if (branch) {
-                console.log('getData branch', JSON.parse(branch));
-                setBranch(JSON.parse(branch))
-            }
-
-            let products = await realmStore.queryProducts();
-            listProductService.current = products.filter(item => ((item.IsTimer && item.IsTimer == true && item.ProductType == 2)))
-            listProductService.current = [{ Id: "", Name: I18n.t("khong_xac_dinh") }].concat(listProductService.current);
-            if (props.route.params != undefined) {
-                let product = listProductService.current.filter(item => (item.Id == props.route.params.room.ProductId && props.route.params.room.ProductId != 0))
-                setProductService(product && product.length > 0 ? product[0] : "");
-            }
+        let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
+        if (branch) {
+            console.log('getData branch', JSON.parse(branch));
+            setBranch(JSON.parse(branch))
         }
 
-        getData();
+        let products = await realmStore.queryProducts();
+        listProductService.current = products.filter(item => ((item.IsTimer && item.IsTimer == true && item.ProductType == 2)))
+        listProductService.current = [{ Id: "", Name: I18n.t("khong_xac_dinh") }].concat(listProductService.current);
+        if (params && params.room != undefined) {
+            let product = listProductService.current.filter(item => (item.Id == params.room.ProductId && params.room.ProductId != 0))
+            setProductService(product && product.length > 0 ? product[0] : "");
+        }
+    }
 
-    }, [])
+    const resetRoom = () => {
+        setIsEditRoom(false)
+        setRoom({})
+        setRoomGroup("")
+        setProductService({})
+        getDataRoomGroup()
+    }
 
     const getDataRoomGroup = async () => {
         let roomGroupsTmp = await realmStore.queryRoomGroups()
@@ -111,7 +130,7 @@ export default (props) => {
             new HTTPService().setPath(ApiPath.ROOM_GROUPS).POST(params).then(async (res) => {
                 console.log("onClickOk ADD_GROUP res ", res);
                 if (res) {
-
+                    roomGroups.current.push(res)
                 }
                 dialogManager.hiddenLoading();
                 setShowModal(false)
@@ -169,8 +188,12 @@ export default (props) => {
             new HTTPService().setPath(ApiPath.ROOMS).POST(params).then(async (res) => {
                 console.log("onClickApply isEditRoom  res ", res);
                 if (res) {
-                    // props.route.params._onSelect("Add");
-                    props.navigation.pop()
+                    if (deviceType == Constant.PHONE) {
+                        props.route.params._onSelect("Add");
+                        props.navigation.pop()
+                    } else {
+                        props._onSelect("Add")
+                    }
                 }
                 dialogManager.hiddenLoading();
             }).catch((e) => {
@@ -194,8 +217,13 @@ export default (props) => {
             new HTTPService().setPath(ApiPath.ROOMS).POST(params).then(async (res) => {
                 console.log("onClickApply  res ", res);
                 if (res) {
-                    // props.route.params._onSelect("Add");
-                    props.navigation.pop()
+                    if (deviceType == Constant.PHONE) {
+                        props.route.params._onSelect("Add");
+                        props.navigation.pop()
+                    } else {
+                        props._onSelect("Add")
+                        resetRoom();
+                    }
                 }
                 dialogManager.hiddenLoading();
             }).catch((e) => {
@@ -212,8 +240,13 @@ export default (props) => {
                 new HTTPService().setPath(ApiPath.ROOMS + "/" + room.Id).DELETE().then(async (res) => {
                     console.log("onClickDelete  res ", res);
                     if (res) {
-                        props.route.params._onSelect(room.Id);
-                        props.navigation.pop()
+                        if (deviceType == Constant.PHONE) {
+                            props.route.params._onSelect(room.Id);
+                            props.navigation.pop()
+                        } else {
+                            props._onSelect(room.Id)
+                            resetRoom();
+                        }
                     }
                     dialogManager.hiddenLoading();
                 }).catch((e) => {
@@ -222,7 +255,6 @@ export default (props) => {
                 })
             }
         })
-
     }
 
     const renderContentModal = () => {
@@ -312,14 +344,15 @@ export default (props) => {
 
     return (
         <View style={styles.conatiner}>
-            <ToolBarDefault
-                {...props}
-                navigation={props.navigation}
-                clickLeftIcon={() => {
-                    props.navigation.goBack()
-                }}
-                title={I18n.t('them_phong_ban')}
-            />
+            {deviceType != Constant.TABLET ?
+                <ToolBarDefault
+                    {...props}
+                    navigation={props.navigation}
+                    clickLeftIcon={() => {
+                        props.navigation.goBack()
+                    }}
+                    title={I18n.t('them_phong_ban')}
+                /> : null}
 
             <KeyboardAwareScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" style={styles.view_content}>
                 <View>
@@ -365,18 +398,17 @@ export default (props) => {
                             style={{ padding: 10, flex: 1, height: 100, color: "#000" }} />
                     </View>
                 </View>
-            </KeyboardAwareScrollView>
-
-            <View style={{ flexDirection: "row", margin: 10, marginHorizontal: 20 }}>
-                {isEditRoom ?
-                    <TouchableOpacity onPress={onClickDelete} style={{ flex: 1, flexDirection: "row", marginTop: 0, borderRadius: 5, backgroundColor: "#f2f2f2", justifyContent: "center", alignItems: "center", padding: 10 }}>
-                        <IconAntDesign name={"delete"} size={25} color="black" />
+                <View style={{ flexDirection: "row", margin: 10, marginHorizontal: 0, marginTop: 50 }}>
+                    {isEditRoom ?
+                        <TouchableOpacity onPress={onClickDelete} style={{ flex: 1, flexDirection: "row", marginTop: 0, borderRadius: 5, backgroundColor: "#f2f2f2", justifyContent: "center", alignItems: "center", padding: 10 }}>
+                            <IconAntDesign name={"delete"} size={25} color="black" />
+                        </TouchableOpacity>
+                        : null}
+                    <TouchableOpacity onPress={onClickApply} style={{ flex: 8, flexDirection: "row", marginLeft: isEditRoom ? 15 : 0, marginTop: 0, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 15 }}>
+                        <Text style={{ color: "#fff", fontWeight: "bold" }}>{I18n.t('ap_dung')}</Text>
                     </TouchableOpacity>
-                    : null}
-                <TouchableOpacity onPress={onClickApply} style={{ flex: 8, flexDirection: "row", marginLeft: isEditRoom ? 15 : 0, marginTop: 0, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 15 }}>
-                    <Text style={{ color: "#fff", fontWeight: "bold" }}>Áp dụng</Text>
-                </TouchableOpacity>
-            </View>
+                </View>
+            </KeyboardAwareScrollView>
 
             <Modal
                 animationType="fade"
@@ -423,7 +455,7 @@ export default (props) => {
 const styles = StyleSheet.create({
     conatiner: { flex: 1, backgroundColor: "#ffffff" },
     image: { width: 50, height: 50 },
-    view_content: { padding: 15, marginBottom: 0 },
+    view_content: { padding: 15, marginBottom: 0, flex: 1 },
     view_border_input: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 10, borderWidth: 0.5, borderRadius: 2, borderColor: "black" },
     view_feedback: {
         position: 'absolute',
