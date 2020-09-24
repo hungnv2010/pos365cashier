@@ -93,6 +93,10 @@ class RealmStore extends RealmBase {
         return this.queryAll(databaseOption, SchemaName.ROOM_GROUP)
     }
 
+    queryCustomer() {
+        return this.queryAll(databaseOption, SchemaName.CUSTOMER)
+    }
+
     //Product
     async insertProducts(newProducts) {
         let realm = await Realm.open(databaseOption)
@@ -140,7 +144,25 @@ export const SchemaName = {
     ROOM_GROUP: "RoomGroup",
     PRODUCT: "Product",
     CATEGORIES: "Categories",
-    TOPPING: "Topping"
+    TOPPING: "Topping",
+    CUSTOMER: "Customer"
+}
+
+const CustomerSchema = {
+    name: SchemaName.CUSTOMER,
+    primaryKey: 'Id',
+    properties: {
+        Id: 'int',
+        Code: 'string',
+        Name: 'string',
+        Phone: { type: 'string', default: '' },
+        Address: { type: 'string', default: '' },
+        Description: { type: 'string', default: '' },
+        Gender: { type: 'int', default: 0 },
+        Debt: { type: 'int', default: 0 },
+        TotalDebt: { type: 'int', default: 0 },
+        Point: { type: 'int', default: 0 }
+    }
 }
 
 const ServerEventSchema = {
@@ -264,16 +286,10 @@ const ToppingsSchema = {
 
 }
 
-const databaseOptionRoom = {
-    path: 'Pos365Boss.realm',
-    schema: [RoomSchema, RoomGroupSchema],
-    schemaVersion: 22
-}
-
 const databaseOption = {
     path: 'Pos365Boss.realm',
-    schema: [ServerEventSchema, RoomSchema, RoomGroupSchema, ProductSchema, CategoriesSchema, ToppingsSchema],
-    schemaVersion: 22
+    schema: [ServerEventSchema, RoomSchema, RoomGroupSchema, ProductSchema, CategoriesSchema, ToppingsSchema, CustomerSchema],
+    schemaVersion: 23
 }
 
 const realm = new Realm(databaseOption);

@@ -49,5 +49,6 @@ export const ScreenList = {
   RoomDetail: "RoomDetail",
   OverView: "OverView",
   Invoice: "Invoice",
+  CashFlow: "CashFlow",
 }
 
