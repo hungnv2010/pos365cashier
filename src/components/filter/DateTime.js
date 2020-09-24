@@ -33,7 +33,7 @@ export default (props) => {
     }
 
     const onCancel = () => {
-
+        props.outputDateTime()
     }
 
     const onDone = () => {
