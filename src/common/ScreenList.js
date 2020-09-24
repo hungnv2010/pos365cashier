@@ -49,10 +49,7 @@ export const ScreenList = {
   RoomDetail: "RoomDetail",
   OverView: "OverView",
   Invoice: "Invoice",
-<<<<<<< HEAD
   CashFlow: "CashFlow",
-=======
   InvoiceDetail:"InvoiceDetail",
->>>>>>> eb8f7e6577e343c03e37970a9b21a06fd78cd911
 }
 
