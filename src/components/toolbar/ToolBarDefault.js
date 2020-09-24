@@ -26,17 +26,18 @@ export default function ToolBarDefault(props) {
                         <Icon name={props.leftIcon} size={props.size ? props.size : 30} color="white" />
                     </TouchableOpacity>
                     :
-                    <TouchableOpacity onPress={() => {
-                        if (blockClick == false) {
-                            blockClick = true;
-                            props.navigation.pop()
-                            setTimeout(() => {
-                                blockClick = false;
-                            }, 1000);
-                        }
-                    }}>
-                        <Icon name={props.leftIcon} size={props.size ? props.size : 30} color="white" />
-                    </TouchableOpacity>
+                    // <TouchableOpacity onPress={() => {
+                    //     if (blockClick == false) {
+                    //         blockClick = true;
+                    //         props.navigation.pop()
+                    //         setTimeout(() => {
+                    //             blockClick = false;
+                    //         }, 1000);
+                    //     }
+                    // }}>
+                    //     <Icon name={props.leftIcon} size={props.size ? props.size : 30} color="white" />
+                    // </TouchableOpacity>
+                    null
                 }
             </View>
             <View style={{ flex: 5, paddingLeft: 10, alignItems: 'center', flexDirection: 'row' }}>
@@ -50,9 +51,9 @@ export default function ToolBarDefault(props) {
                 </Subheading>
             </View>
 
-            <View style={{ flex: 1, alignItems: "center", justifyContent: "center"}}>
+            <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
                 {props.clickRightIcon && props.rightIcon ?
-                    <TouchableOpacity style={{paddingHorizontal: 10}} onPress={props.clickRightIcon}>
+                    <TouchableOpacity style={{ paddingHorizontal: 10 }} onPress={props.clickRightIcon}>
                         <Icon name={props.rightIcon} size={props.size ? props.size : 30} color="white" />
                     </TouchableOpacity>
                     :

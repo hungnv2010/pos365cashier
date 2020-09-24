@@ -12,7 +12,7 @@ import { Constant } from "../../common/Constant";
 import { ApiPath } from "../../data/services/ApiPath";
 import { HTTPService, getHeaders, URL } from "../../data/services/HttpService";
 import { useSelector, useDispatch } from 'react-redux';
-import { saveDeviceInfoToStore, updateStatusLogin, saveCurrentBranch, saveNotificationCount } from "../../actions/Common";
+import { saveDeviceInfoToStore } from "../../actions/Common";
 import { getFileDuLieuString, setFileLuuDuLieu } from "../../data/fileStore/FileStorage";
 import dialogManager from '../../components/dialog/DialogManager';
 import { CommonActions } from '@react-navigation/native';
@@ -84,14 +84,10 @@ const LoginScreen = (props) => {
                 if (res == null) {
                     dialogManager.hiddenLoading();
                     dialogManager.showPopupOneButton(I18n.t('loi_dang_nhap'), I18n.t('thong_bao'))
-                    // error = I18n.t('loi_dang_nhap');
-                    // setShowToast(true)
                 }
             }).catch((e) => {
                 dialogManager.hiddenLoading();
                 dialogManager.showPopupOneButton(I18n.t('loi_server'), I18n.t('thong_bao'))
-                // error = I18n.t('loi_server');
-                // setShowToast(true); 
                 console.log("onClickLogin err ", e);
             })
         }
@@ -192,7 +188,6 @@ const LoginScreen = (props) => {
     if (hasLogin) {
         return (
             <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: Colors.colorchinh }}>
-                {/* <Text>INTRO</Text> */}
             </View>
         );
     }
@@ -244,10 +239,6 @@ const LoginScreen = (props) => {
                                 secureTextEntry={true} />
                         </View>
                         <View style={{}}>
-                            {/* <TouchableOpacity style={{ height: 50, width: Metrics.screenWidth - 50, marginTop: 30, borderColor: "#fff", borderWidth: 1, borderRadius: 5, justifyContent: "center", alignItems: "center" }}
-                                onPress={() => { }}>
-                                <Text style={{ color: "#fff", fontWeight: 'bold' }}>{I18n.t("man_hinh_thu_ngan").toUpperCase()}</Text>
-                            </TouchableOpacity> */}
                             <TouchableOpacity style={{ height: 50, width: Metrics.screenWidth - 50, marginTop: 15, borderColor: "#fff", borderWidth: 1, borderRadius: 5, justifyContent: "center", alignItems: "center" }}
                                 onPress={() => {
                                     Keyboard.dismiss();
