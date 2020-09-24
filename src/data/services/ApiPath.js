@@ -28,5 +28,6 @@ export const ApiPath = {
     ROOM_GROUPS:"api/roomgroups",
     REVENUE:"api/chart/revenue",
     SYNC_PARTNERS: "api/partners/sync",
-    TRANSACTION_GROUPS: "api/accountingtransactiongroups"
+    TRANSACTION_GROUPS: "api/accountingtransactiongroups",
+    TRANSACTION: "api/accountingtransaction"
 }

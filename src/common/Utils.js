@@ -23,6 +23,19 @@ export const currencyToString = value => {
   }
 };
 
+export const dateToStringFormatUTC = (
+  date,
+  inputFormat = "YYYY-MM-DD[T]HH:mm:ss.SS[Z]",
+  outputFormat = "HH:mm DD/MM/YYYY"
+) => {
+  var momentdate = moment.utc(date, inputFormat)
+
+  var dateITC = moment(momentdate).local();
+  var dateTimezone = dateITC.format(outputFormat);
+
+  return dateTimezone;
+};
+
 //Convert Time (Date is String type, moment is Moment type)
 export const dateToDate = (date, inputFormat = "YYYY-MM-DD HH:mm:ss", outputFormat = "DD/MM/YYYY") => {
   let dateOutput = "";

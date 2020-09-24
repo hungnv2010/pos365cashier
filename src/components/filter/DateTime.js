@@ -46,15 +46,19 @@ export default (props) => {
 
     return (
         <View style={{
-            padding: 20,
-            backgroundColor: "#fff", borderRadius: 4, marginHorizontal: 20,
-            width: !isSelectCustom ? Metrics.screenWidth * 0.5 : null,
+            padding: 0,
+            backgroundColor: "#fffÏ", borderRadius: 4, marginHorizontal: 0,
+            // width: !isSelectCustom ? Metrics.screenWidth * 0.5 : null,
             justifyContent: 'center', alignItems: 'center',
         }}>
             {
                 !isSelectCustom ?
                     <View>
-                        <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", paddingVertical: 10 }}>{I18n.t('chon_khoang_thoi_gian')}</Text>
+                        {props.header ?
+                            props.header
+                            :
+                            <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", paddingVertical: 10 }}>{I18n.t('chon_khoang_thoi_gian')}</Text>
+                        }
                         {
                             props.timeCustom ?
                                 Constant.TIME_SELECT_CUSTOM_TIME.map((item, index) => {
@@ -62,7 +66,7 @@ export default (props) => {
                                         <TouchableOpacity
                                             onPress={() => onClickSelectTime(item)}
                                             key={index} style={{ paddingVertical: 15, }}>
-                                            <Text style={{ fontSize: 17, textAlign: "center" }}>{I18n.t(item.name)}</Text>
+                                            <Text style={{ textAlign: "center" }}>{I18n.t(item.name)}</Text>
                                         </TouchableOpacity>
                                     )
                                 })
@@ -74,7 +78,7 @@ export default (props) => {
                                             <TouchableOpacity
                                                 onPress={() => onClickSelectTime(item)}
                                                 key={index} style={{ paddingVertical: 15, }}>
-                                                <Text style={{ fontSize: 17, textAlign: "center" }}>{I18n.t(item.name)}</Text>
+                                                <Text style={{ textAlign: "center" }}>{I18n.t(item.name)}</Text>
                                             </TouchableOpacity>
                                         )
                                     })
@@ -84,7 +88,7 @@ export default (props) => {
                                             <TouchableOpacity
                                                 onPress={() => onClickSelectTime(item)}
                                                 key={index} style={{ paddingVertical: 15, }}>
-                                                <Text style={{ fontSize: 17, textAlign: "center" }}>{I18n.t(item.name)}</Text>
+                                                <Text style={{ textAlign: "center" }}>{I18n.t(item.name)}</Text>
                                             </TouchableOpacity>
                                         )
                                     })
@@ -103,16 +107,24 @@ export default (props) => {
                             displayedDate={dateTimePicker.displayedDate}
                             maxDate={moment()}
                             range
+                            action={<View style={{ flexDirection: "row", margin: 10, alignItems: "center", justifyContent: "center" }}>
+                                <TouchableOpacity onPress={onCancel} style={{ marginHorizontal: 20, paddingHorizontal: 30, borderColor: colors.colorchinh, borderWidth: 1, paddingVertical: 10, borderRadius: 5 }}>
+                                    <Text style={{ color: colors.colorchinh, textTransform: "uppercase" }}>{I18n.t("huy")}</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={onDone} style={{ marginHorizontal: 20, paddingHorizontal: 30, paddingVertical: 10, backgroundColor: colors.colorchinh, borderRadius: 5, borderWidth: 0 }}>
+                                    <Text style={{ color: "#fff", textTransform: "uppercase" }}>{I18n.t("xong")}</Text>
+                                </TouchableOpacity>
+                            </View>}
                         >
                         </DateRangePicker>
-                        <View style={{ flexDirection: "row", margin: 10 }}>
+                        {/* <View style={{ flexDirection: "row", margin: 10 }}>
                             <TouchableOpacity onPress={onCancel} style={{ marginHorizontal: 20, paddingHorizontal: 30, borderColor: colors.colorchinh, borderWidth: 1, paddingVertical: 10, borderRadius: 5 }}>
                                 <Text style={{ color: colors.colorchinh, textTransform: "uppercase" }}>{I18n.t("huy")}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={onDone} style={{ marginHorizontal: 20, paddingHorizontal: 30, paddingVertical: 10, backgroundColor: colors.colorchinh, borderRadius: 5, borderWidth: 0 }}>
                                 <Text style={{ color: "#fff", textTransform: "uppercase" }}>{I18n.t("xong")}</Text>
                             </TouchableOpacity>
-                        </View>
+                        </View> */}
                     </View>
             }
         </View>
