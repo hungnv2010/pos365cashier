@@ -47,7 +47,7 @@ export default (props) => {
     return (
         <View style={{
             padding: 0,
-            backgroundColor: "#fffÏ", borderRadius: 4, marginHorizontal: 0,
+            backgroundColor: "#fff", borderRadius: 4, marginHorizontal: 0,
             // width: !isSelectCustom ? Metrics.screenWidth * 0.5 : null,
             justifyContent: 'center', alignItems: 'center',
         }}>

@@ -16,6 +16,8 @@ import dialogManager from '../../components/dialog/DialogManager';
 import DateTime from '../../components/filter/DateTime';
 import { currencyToString, dateToStringFormatUTC } from '../../common/Utils';
 
+const TOTAL = 20;
+
 const TYPE_MODAL = {
     ALL: 0,
     COUPON: 1,
@@ -59,42 +61,40 @@ export default (props) => {
     const listCustomerBackup = useRef([]);
     const ListCategories = useRef([]);
     const ListAccount = useRef([]);
+    const outData = useRef(true);
+    const filterRef = useRef({ skip: 0, top: TOTAL });
 
     useEffect(() => {
         getDataInRealm();
         getDataFilterFromServer();
-        // setTimeout(() => {
         getDataCashFlow();
-        // }, 2000);
     }, [])
 
-    const getDataCashFlow = () => {
-        let params = { Includes: "Partner", Includes: "Group", skip: 0, top: 20 }
+    const getDataCashFlow = (reset = false) => {
+        let params = { Includes: "Partner", Includes: "Group", skip: filterRef.current.skip, top: TOTAL }
         dialogManager.showLoading();
+        console.log("getDataCashFlow params ", params);
         new HTTPService().setPath(ApiPath.TRANSACTION).GET(params).then((res) => {
             console.log("getDataCashFlow res ", res);
             if (res) {
                 if (res.status == 401) return;
-                setResCashFlow(res);
-                // this.CustomVaule1 = res.CustomVaule1
-                // this.CustomVaule2 = res.CustomVaule2
-                // this.CustomVaule3 = res.CustomVaule3
-
-                // if (res.results.length > 0) {
-                //     this.outData = false;
-                //     this.setState({ count: res.__count, data: [...this.state.data, ...res.results] })
-                //     if (res.results.length < TOTAL) {
-                //         this.outData = true;
-                //     }
-                // } else {
-                //     this.outData = true;
-                //     this.setState({ count: 0 })
-                // }
+                if (res.results && res.results.length > 0) {
+                    outData.current = false;
+                    if (reset == true) {
+                        setResCashFlow({ ...res });
+                    } else
+                        setResCashFlow({ ...res, results: [...resCashFlow.results, ...res.results] });
+                    if (res.results.length < TOTAL) {
+                        outData.current = true;
+                    }
+                } else {
+                    outData.current = true;
+                }
             }
             dialogManager.hiddenLoading();
         }).catch((e) => {
             dialogManager.hiddenLoading();
-            console.log("getRevenueAndExpenditureData err ", e);
+            console.log("getDataCashFlow err ", e);
         })
     }
 
@@ -186,14 +186,29 @@ export default (props) => {
 
     const outputDateTime = (item) => {
         console.log('outputDateTime', item);
+        setFilter({ ...filter, time: item })
         setTypeModal(TYPE_MODAL.ALL)
     }
 
     const loadMore = () => {
-
+        if (filterRef.current.skip < resCashFlow.__count && outData.current == false) {
+            filterRef.current = {
+                ...filterRef.current,
+                skip: filterRef.current.skip + TOTAL
+            }
+            getDataCashFlow();
+        }
     }
 
     const onRefresh = () => {
+        filterRef.current = {
+            ...filterRef.current,
+            skip: 0
+        }
+        // setResCashFlow({ ...resCashFlow, results: [...[]] })
+        setTimeout(() => {
+            getDataCashFlow(true);
+        }, 200);
 
     }
 
@@ -203,10 +218,10 @@ export default (props) => {
 
     const renderTime = () => {
         return (
-            <View style={{ }}>
+            <View style={{}}>
 
                 <DateTime
-                    header={<View style={{ width: "100%",backgroundColor: colors.colorchinh, flexDirection: "row", justifyContent: "center", alignItems: "center", paddingRight: 10 }}>
+                    header={<View style={{ width: "100%", backgroundColor: colors.colorchinh, flexDirection: "row", justifyContent: "center", alignItems: "center", paddingRight: 10 }}>
                         <Text style={{ flex: 1, color: "#fff", marginLeft: 10, fontWeight: "bold" }}>{I18n.t('ngay')}</Text>
                         <TouchableOpacity onPress={() => setTypeModal(TYPE_MODAL.ALL)}>
                             <Icon name="close" size={props.size ? props.size : 30} color="white" />
@@ -361,36 +376,46 @@ export default (props) => {
         }
     }
 
-
+    const renderDateTime = () => {
+        console.log('renderDateTime', filter.time);
+        if (filter.time) {
+            if (filter.time.key != "custom") {
+                return I18n.t(filter.time.name)
+            } else {
+                return filter.time.name
+            }
+        }
+        return I18n.t('tat_ca')
+    }
 
     const renderContentFilter = () => {
         return (
             <View style={{ backgroundColor: "#fff", padding: 10 }}>
-                <TouchableOpacity style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 7, alignItems: "center", height: 35, backgroundColor: "#eeeeee", paddingHorizontal: 0 }}>
+                <TouchableOpacity style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 10, alignItems: "center", height: 35, backgroundColor: "#eeeeee", paddingHorizontal: 0 }}>
                     {renderSelectCoupon()}
                 </TouchableOpacity>
-                <TouchableOpacity onPress={onClickSelectTime} style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 7, alignItems: "center", height: 35, backgroundColor: "#eeeeee", paddingHorizontal: 10 }}>
+                <TouchableOpacity onPress={onClickSelectTime} style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 10, alignItems: "center", height: 35, backgroundColor: "#eeeeee", paddingHorizontal: 10 }}>
                     <Text style={{ width: 80 }}>{I18n.t('ngay')}</Text>
-                    <View style={{ flexDirection: "row", justifyContent: "space-between", flex: 1, borderLeftColor: "gray", borderBottomWidth: 0.5, marginLeft: 20 }}>
-                        <Text>{I18n.t('tat_ca')}</Text>
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", flex: 1, borderLeftColor: "gray", borderBottomWidth: 0.5, marginLeft: 20, alignItems: "center" }}>
+                        <Text>{renderDateTime()}</Text>
                         <Image source={Images.arrow_down} style={{ width: 14, height: 14, marginLeft: 10 }} />
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={onClickSelectMethod} style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 7, alignItems: "center", height: 35, backgroundColor: "#eeeeee", paddingHorizontal: 10 }}>
+                <TouchableOpacity onPress={onClickSelectMethod} style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 10, alignItems: "center", height: 35, backgroundColor: "#eeeeee", paddingHorizontal: 10 }}>
                     <Text style={{ width: 80 }}>Phương thức</Text>
                     <View style={{ flexDirection: "row", justifyContent: "space-between", flex: 1, borderLeftColor: "gray", borderBottomWidth: 0.5, marginLeft: 20 }}>
                         <Text>{filter.account.Name ? filter.account.Name : I18n.t('tat_ca')}</Text>
                         <Image source={Images.arrow_down} style={{ width: 14, height: 14, marginLeft: 10 }} />
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={onClickSelectCategories} style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 7, alignItems: "center", height: 35, backgroundColor: "#eeeeee", paddingHorizontal: 10 }}>
+                <TouchableOpacity onPress={onClickSelectCategories} style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 10, alignItems: "center", height: 35, backgroundColor: "#eeeeee", paddingHorizontal: 10 }}>
                     <Text style={{ width: 80 }}>Hạng mục thu chi</Text>
                     <View style={{ flexDirection: "row", justifyContent: "space-between", flex: 1, borderLeftColor: "gray", borderBottomWidth: 0.5, marginLeft: 20 }}>
                         <Text>{filter.categories.Name ? filter.categories.Name : I18n.t('tat_ca')}</Text>
                         <Image source={Images.arrow_down} style={{ width: 14, height: 14, marginLeft: 10 }} />
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={onClickSelectPartner} style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 7, alignItems: "center", height: 35, backgroundColor: "#eeeeee", paddingHorizontal: 10 }}>
+                <TouchableOpacity onPress={onClickSelectPartner} style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 10, alignItems: "center", height: 35, backgroundColor: "#eeeeee", paddingHorizontal: 10 }}>
                     <Text style={{ width: 80 }}>Đối tác</Text>
                     <View style={{ flexDirection: "row", justifyContent: "space-between", flex: 1, borderLeftColor: "gray", borderBottomWidth: 0.5, marginLeft: 20 }}>
                         <Text>{filter.customer.Name ? filter.customer.Name : ""}</Text>
@@ -486,7 +511,7 @@ export default (props) => {
                 onEndReachedThreshold={0.5}
                 onEndReached={loadMore}
                 refreshControl={
-                    <RefreshControl colors={[colors.colorchinh]} onRefresh={onRefresh} />
+                    <RefreshControl colors={[colors.colorLightBlue]} refreshing={false} onRefresh={() => onRefresh()} />
                 }
                 keyExtractor={(item, index) => index.toString()}
                 data={resCashFlow.results}
@@ -518,7 +543,6 @@ export default (props) => {
                     </View>
                 </View>
             </Modal>
-
             <Snackbar
                 duration={5000}
                 visible={showToast}
