@@ -117,14 +117,6 @@ export default (props) => {
                             </View>}
                         >
                         </DateRangePicker>
-                        {/* <View style={{ flexDirection: "row", margin: 10 }}>
-                            <TouchableOpacity onPress={onCancel} style={{ marginHorizontal: 20, paddingHorizontal: 30, borderColor: colors.colorchinh, borderWidth: 1, paddingVertical: 10, borderRadius: 5 }}>
-                                <Text style={{ color: colors.colorchinh, textTransform: "uppercase" }}>{I18n.t("huy")}</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={onDone} style={{ marginHorizontal: 20, paddingHorizontal: 30, paddingVertical: 10, backgroundColor: colors.colorchinh, borderRadius: 5, borderWidth: 0 }}>
-                                <Text style={{ color: "#fff", textTransform: "uppercase" }}>{I18n.t("xong")}</Text>
-                            </TouchableOpacity>
-                        </View> */}
                     </View>
             }
         </View>
