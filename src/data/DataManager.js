@@ -57,6 +57,7 @@ class DataManager {
         await this.syncProduct(),
             await this.syncTopping(),
             await this.syncData(ApiPath.SYNC_CATEGORIES, SchemaName.CATEGORIES)
+            await this.syncData(ApiPath.SYNC_PARTNERS, SchemaName.CUSTOMER)
     }
 
     syncAllDatas = async () => {

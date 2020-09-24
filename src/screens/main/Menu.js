@@ -31,7 +31,8 @@ const KEY_FUNC = {
     HISTORY: ScreenList.History,
     ROOM_CATALOG: ScreenList.RoomCatalog,
     OVERVIEW: ScreenList.OverView,
-    INVOICE: ScreenList.Invoice
+    INVOICE: ScreenList.Invoice,
+    CASH_FLOW: ScreenList.CashFlow
 }
 
 const LIST_FUNCITION = [
@@ -70,6 +71,11 @@ const LIST_FUNCITION = [
         func: KEY_FUNC.CUSTOMER,
         icon: Images.icon_customer,
         title: "khach_hang"
+    },
+    {
+        func: KEY_FUNC.CASH_FLOW,
+        icon: Images.icon_customer,
+        title: "thu_chi_"
     },
     {
         func: KEY_FUNC.INVOICE,
