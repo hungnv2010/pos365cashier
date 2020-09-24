@@ -26,18 +26,17 @@ export default function ToolBarDefault(props) {
                         <Icon name={props.leftIcon} size={props.size ? props.size : 30} color="white" />
                     </TouchableOpacity>
                     :
-                    // <TouchableOpacity onPress={() => {
-                    //     if (blockClick == false) {
-                    //         blockClick = true;
-                    //         props.navigation.pop()
-                    //         setTimeout(() => {
-                    //             blockClick = false;
-                    //         }, 1000);
-                    //     }
-                    // }}>
-                    //     <Icon name={props.leftIcon} size={props.size ? props.size : 30} color="white" />
-                    // </TouchableOpacity>
-                    null
+                    <TouchableOpacity onPress={() => {
+                        if (blockClick == false) {
+                            blockClick = true;
+                            props.navigation.pop()
+                            setTimeout(() => {
+                                blockClick = false;
+                            }, 1000);
+                        }
+                    }}>
+                        <Icon name="keyboard-backspace" size={props.size ? props.size : 30} color="white" />
+                    </TouchableOpacity>
                 }
             </View>
             <View style={{ flex: 5, paddingLeft: 10, alignItems: 'center', flexDirection: 'row' }}>

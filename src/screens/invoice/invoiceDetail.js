@@ -144,7 +144,7 @@ const InvoiceDetail = (props) => {
             {
                 JSON.stringify(invoiceDetail) != "{}" ?
                     <>
-                        <ToolBarDefault {...props} title={invoiceDetail.Code ? invoiceDetail.Code : ""} />
+                        {/* <ToolBarDefault {...props} title={invoiceDetail.Code ? invoiceDetail.Code : ""} /> */}
                         <View style={{ paddingHorizontal: 10, flex: 1 }}>
                             <View style={{ borderBottomColor: "#0072bc", borderBottomWidth: 1, }}>
                                 <View style={{ margin: 5, flexDirection: "row", justifyContent: "space-between" }}>

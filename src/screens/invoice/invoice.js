@@ -25,7 +25,7 @@ const Invoice = (props) => {
     const [skip, setSkip] = useState(0)
     const [loadMore, setLoadMore] = useState(false)
     const [refreshing, setRefreshing] = useState(false)
-    const [textSearch, setTextSearch] = useState('')
+    const [textSearch, setTextSearch] = useState("")
     const currentBranch = useRef({})
     const count = useRef(0)
     const currentCount = useRef(0)
@@ -204,13 +204,15 @@ const Invoice = (props) => {
     const renderHeader = () => {
         return invoiceData.length > 0 ?
             (
-                <View style={{ backgroundColor: "white", height: 45, width: " 95%", borderRadius: 10, flexDirection: "row", alignItems: "center", }}>
-                    <Image source={Images.icon_waiting} style={{ height: 20, width: 20, marginHorizontal: 20 }} />
-                    <TextInput
-                        value={textSearch}
-                        onChangeText={text => onChangeText(text)}
-                        style={{ flex: 1, paddingHorizontal: 10 }}
-                        placeholder={I18n.t('nhap_tu_khoa_tim_kiem')} />
+                <View style={{ alignItems: "center", justifyContent: "center", backgroundColor: "grey", height: 65, flex: 1 }}>
+                    <View style={{ backgroundColor: "white", height: 45, width: " 95%", borderRadius: 10, flexDirection: "row", alignItems: "center", }}>
+                        <Image source={Images.icon_waiting} style={{ height: 20, width: 20, marginHorizontal: 20 }} />
+                        <TextInput
+                            value={textSearch}
+                            onChangeText={text => onChangeText(text)}
+                            style={{ flex: 1, height: 40 }}
+                        />
+                    </View>
                 </View>
             )
             :
@@ -219,7 +221,7 @@ const Invoice = (props) => {
 
     const onChangeText = (text) => {
         console.log('onChangeText', text);
-        setTextSearch(text)
+        // setTextSearch(text)
     }
 
     return (
