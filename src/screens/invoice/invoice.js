@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, createRef, useCallback } from 'react';
-import { View, Text, Modal, TouchableOpacity, RefreshControl, TouchableWithoutFeedback, Image } from 'react-native';
+import { View, Text, Modal, TouchableOpacity, RefreshControl, TouchableWithoutFeedback, Image, ActivityIndicator, TextInput } from 'react-native';
 import I18n from '../../common/language/i18n';
 import MainToolBar from '../main/MainToolBar';
 import { Metrics, Images } from '../../theme';
@@ -8,12 +8,13 @@ import { useSelector } from 'react-redux';
 import { URL, HTTPService } from '../../data/services/HttpService';
 import { ApiPath } from '../../data/services/ApiPath';
 import { Constant } from '../../common/Constant';
-// import DateRangePicker from "react-native-daterange-picker";
+import DateRangePicker from "react-native-daterange-picker";
 import moment from "moment";
 import { getFileDuLieuString } from '../../data/fileStore/FileStorage';
-import { currencyToString, dateToString } from '../../common/Utils';
+import { currencyToString, dateToString, momentToStringDateLocal } from '../../common/Utils';
 import InvoiceDetail from '../invoice/invoiceDetail';
 import { FlatList } from 'react-native-gesture-handler';
+import DateTime from '../../components/filter/DateTime';
 
 const Invoice = (props) => {
 
@@ -21,14 +22,10 @@ const Invoice = (props) => {
     const [currentItem, setCurrentItem] = useState({})
     const [timeFilter, setTimeFilter] = useState(Constant.TIME_SELECT_ALL_TIME[0])
     const [showModal, setShowModal] = useState(false)
-    const [isSelectCustom, setIsSelectCustom] = useState(false)
     const [skip, setSkip] = useState(0)
-    const [dateTimePicker, setDateTimePicker] = useState({
-        startDate: null,
-        endDate: null,
-        displayedDate: moment(),
-    })
+    const [loadMore, setLoadMore] = useState(false)
     const [refreshing, setRefreshing] = useState(false)
+    const [textSearch, setTextSearch] = useState('')
     const currentBranch = useRef({})
     const count = useRef(0)
     const currentCount = useRef(0)
@@ -48,8 +45,8 @@ const Invoice = (props) => {
     }, [])
 
 
-    const genParams = useCallback(() => {
-        const { startDate, endDate } = dateTimePicker;
+    const genParams = () => {
+        const { startDate, endDate } = timeFilter;
         let params = { skip: skip, top: Constant.LOAD_LIMIT };
         let arrItemPath = [];
         let pathBranch = "";
@@ -79,7 +76,7 @@ const Invoice = (props) => {
         }
         console.log('params', params);
         return params;
-    }, [timeFilter.key, skip])
+    }
 
     useEffect(() => {
         const getInvoice = async () => {
@@ -92,16 +89,15 @@ const Invoice = (props) => {
                     console.log('res.__count', res.__count);
                     count.current = res.__count;
                     currentCount.current = results.length
-
                     setInvoiceData([...invoiceData, ...results])
-
+                    setLoadMore(false)
                 }
             }).catch((e) => {
                 console.log("getInvoicesData err  ======= ", e);
             })
         }
         getInvoice()
-    }, [genParams])
+    }, [timeFilter.key, skip])
 
     useEffect(() => {
         if (invoiceData.length > 0) {
@@ -110,15 +106,18 @@ const Invoice = (props) => {
         console.log('timeFilter.key', invoiceData.length, invoiceData);
     }, [timeFilter.key, invoiceData])
 
-    const onClickTimeFilter = () => {
-        console.log('onClickTimeFilter');
-        setShowModal(true)
-    }
 
-    const reset = () => {
+    const onReset = () => {
         onRefresh()
         setInvoiceData([])
         setCurrentItem({})
+    }
+
+    const outputDateTime = (item) => {
+        console.log('outputDateTime', item);
+        setTimeFilter(item)
+        onReset()
+        setShowModal(false)
     }
 
     const onRefresh = () => {
@@ -126,16 +125,14 @@ const Invoice = (props) => {
         setSkip(0)
     }
 
-    const loadMore = (info) => {
+    const onLoadMore = (info) => {
         console.log('loadMore');
         if (currentCount.current > 0) {
+            setLoadMore(true)
             setSkip(prevSkip => prevSkip + Constant.LOAD_LIMIT)
         }
     }
 
-    const onDoneSelectDate = () => {
-
-    }
 
     const onClickInvoiceItem = (item) => {
         if (deviceType == Constant.TABLET) {
@@ -145,17 +142,6 @@ const Invoice = (props) => {
         }
     }
 
-    const onClickSelectTime = (item) => {
-        console.log('onClickSelectTime', item);
-        if (item.key == 'custom') {
-            setIsSelectCustom(true)
-        } else {
-            setTimeFilter({ ...item })
-            onRefresh()
-            setShowModal(false)
-        }
-        reset()
-    }
 
     const renderIcon = (status) => {
         switch (status) {
@@ -215,6 +201,27 @@ const Invoice = (props) => {
         )
     }
 
+    const renderHeader = () => {
+        return invoiceData.length > 0 ?
+            (
+                <View style={{ backgroundColor: "white", height: 45, width: " 95%", borderRadius: 10, flexDirection: "row", alignItems: "center", }}>
+                    <Image source={Images.icon_waiting} style={{ height: 20, width: 20, marginHorizontal: 20 }} />
+                    <TextInput
+                        value={textSearch}
+                        onChangeText={text => onChangeText(text)}
+                        style={{ flex: 1, paddingHorizontal: 10 }}
+                        placeholder={I18n.t('nhap_tu_khoa_tim_kiem')} />
+                </View>
+            )
+            :
+            null
+    }
+
+    const onChangeText = (text) => {
+        console.log('onChangeText', text);
+        setTextSearch(text)
+    }
+
     return (
         <View style={{ flex: 1, backgroundColor: "#fff" }}>
             <MainToolBar
@@ -226,9 +233,11 @@ const Invoice = (props) => {
                     <View style={{ flexDirection: "row", alignItems: "center", padding: 10, borderBottomColor: "grey", borderBottomWidth: 1, justifyContent: "space-between" }}>
                         <TouchableOpacity
                             style={{ flexDirection: "row", alignItems: "center" }}
-                            onPress={onClickTimeFilter}>
+                            onPress={() => {
+                                setShowModal(true)
+                            }}>
                             <Image source={Images.icon_calendar} style={{ width: 20, height: 20 }} />
-                            <Text style={{ marginHorizontal: 10 }}>{I18n.t(timeFilter.name)}</Text>
+                            <Text style={{ marginHorizontal: 10 }}>{timeFilter.name.includes('-') ? timeFilter.name : I18n.t(timeFilter.name)}</Text>
                             <Image source={Images.icon_arrow_down} style={{ width: 14, height: 14, marginLeft: 5 }} />
                         </TouchableOpacity>
                         <Text>{invoiceData.length} / {count.current}</Text>
@@ -240,13 +249,15 @@ const Invoice = (props) => {
                         style={{ flex: 1, paddingBottom: 0 }}
                         onEndReachedThreshold={0.5}
                         onEndReached={(info) => {
-                            loadMore(info);
+                            onLoadMore(info);
                         }}
                         keyExtractor={(item, index) => index.toString()}
                         data={invoiceData}
                         renderItem={({ item, index }) =>
                             renderItemList(item, index)
                         }
+                        ListFooterComponent={loadMore ? <ActivityIndicator color={colors.colorchinh} /> : null}
+                        ListHeaderComponent={renderHeader}
                     />
                 </View>
                 <View style={{ flex: 1 }}>
@@ -265,7 +276,6 @@ const Invoice = (props) => {
                     <TouchableWithoutFeedback
                         onPress={() => {
                             setShowModal(false)
-                            setIsSelectCustom(false)
                         }}
                         style={{
                             position: 'absolute',
@@ -283,56 +293,9 @@ const Invoice = (props) => {
                         }}></View>
 
                     </TouchableWithoutFeedback>
-                    <View style={{
-                        padding: 20,
-                        backgroundColor: "#fff", borderRadius: 4, marginHorizontal: 20,
-                        width: !isSelectCustom ? Metrics.screenWidth * 0.5 : null,
-                        justifyContent: 'center', alignItems: 'center',
-                    }}>
-                        {
-                            !isSelectCustom ?
-                                <View>
-                                    <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", paddingVertical: 10 }}>{I18n.t('chon_khoang_thoi_gian')}</Text>
-                                    {
-                                        Constant.TIME_SELECT_ALL_TIME.map((item, index) => {
-                                            return (
-                                                <TouchableOpacity
-                                                    onPress={() => onClickSelectTime(item)}
-                                                    key={index} style={{ paddingVertical: 15, }}>
-                                                    <Text style={{ fontSize: 17, textAlign: "center" }}>{I18n.t(item.name)}</Text>
-                                                </TouchableOpacity>
-                                            )
-                                        })
-                                    }
-                                </View>
-                                :
-                                <View style={{
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                }}>
-                                    {/* <DateRangePicker
-                                        visible={true}
-                                        onChange={(dates) => setDates(dates)}
-                                        endDate={dateTimePicker.endDate}
-                                        startDate={dateTimePicker.startDate}
-                                        displayedDate={dateTimePicker.displayedDate}
-                                        range
-                                    >
-                                    </DateRangePicker> */}
-                                    <View style={{ flexDirection: "row", margin: 10 }}>
-                                        <TouchableOpacity onPress={() => {
-                                            setShowModal(false);
-                                            setIsSelectCustom(false)
-                                        }} style={{ marginHorizontal: 20, paddingHorizontal: 30, borderColor: colors.colorchinh, borderWidth: 1, paddingVertical: 10, borderRadius: 5 }}>
-                                            <Text style={{ color: colors.colorchinh, textTransform: "uppercase" }}>{I18n.t("huy")}</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity onPress={() => onDoneSelectDate} style={{ marginHorizontal: 20, paddingHorizontal: 30, paddingVertical: 10, backgroundColor: colors.colorchinh, borderRadius: 5, borderWidth: 0 }}>
-                                            <Text style={{ color: "#fff", textTransform: "uppercase" }}>{I18n.t("xong")}</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                </View>
-                        }
-                    </View>
+                    <DateTime
+                        timeAll={true}
+                        outputDateTime={outputDateTime} />
                 </View>
             </Modal>
         </View>

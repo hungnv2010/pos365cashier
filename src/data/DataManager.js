@@ -28,7 +28,7 @@ class DataManager {
     syncTopping = async () => {
         let results = await new HTTPService().setPath(ApiPath.SYNC_EXTRAEXT).GET()
         console.log('syncTopping', results);
-        if (results && results && results.length > 0) {
+        if (results && results.length > 0) {
             realmStore.insertTopping(results)
         }
     }
@@ -42,7 +42,7 @@ class DataManager {
 
     syncRoomsReInsert = async () => {
         console.log("syncAllDatas");
-            await this.syncData(ApiPath.SYNC_ROOMS, SchemaName.ROOM),
+        await this.syncData(ApiPath.SYNC_ROOMS, SchemaName.ROOM),
             await this.syncData(ApiPath.SYNC_ROOM_GROUPS, SchemaName.ROOM_GROUP)
     }
 

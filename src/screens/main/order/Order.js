@@ -28,7 +28,6 @@ const _nodes = new Map();
 
 export default (props) => {
 
-    const [timer, setTimer] = useState(false);
     const [listOrder, setListOrder] = useState([])
     const [indexRoom, setIndexRoom] = useState(0)
     const [loadDone, setLoadDone] = useState(false)

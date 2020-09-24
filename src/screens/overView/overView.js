@@ -9,11 +9,10 @@ import { BarChart, XAxis, YAxis, Grid } from 'react-native-svg-charts';
 import { URL, HTTPService } from '../../data/services/HttpService';
 import { ApiPath } from '../../data/services/ApiPath';
 import { Constant } from '../../common/Constant';
-import DateRangePicker from "react-native-daterange-picker";
 import moment from "moment";
 import { getFileDuLieuString } from '../../data/fileStore/FileStorage';
 import { currencyToString, dateToString, momentToStringDateLocal } from '../../common/Utils';
-import DateTime from '../../components/filter/dateTime';
+import DateTime from '../../components/filter/DateTime';
 
 
 export default (props) => {
@@ -25,10 +24,12 @@ export default (props) => {
         times: [],
         totalBranchs: [],
     })
+    const [timeForRevenue, setTimeForRevenue] = useState(Constant.TIME_SELECT_CUSTOM_TIME[0])
+    const [timeForTopSell, setTimeForTopSell] = useState(Constant.TIME_SELECT[0])
+    const [showModal, setShowModal] = useState(false)
     const currentBranch = useRef({})
     const timeFormat = useRef("")
-    const isClickDone = useRef(false)
-
+    const typeDateTime = useRef(null)
     const deviceType = useSelector(state => {
         console.log("useSelector state ", state);
         return state.Common.deviceType
@@ -45,89 +46,80 @@ export default (props) => {
         getBranch()
     }, [])
 
+    useEffect(() => {
+        const getDataDashBoard = () => {
+            let params = genParams(timeForRevenue)
+            console.log("getDataDashBoard params ", params);
+            new HTTPService().setPath(ApiPath.DASHBOARD).GET(params).then((res) => {
+                console.log("getDataDashBoard res ", res);
+                if (res)
+                    setDataDashBoard(res)
+            }).catch((e) => {
+                console.log("getDataDashBoard err ", e);
+            })
+        }
+        const getRevunue = () => {
+            let params = genParams(timeForRevenue, true)
+            new HTTPService().setPath(ApiPath.REVENUE).GET(params).then(async (res) => {
+                console.log("getRevunue res ", res);
+                if (res) {
+                    let array = [];
+                    res.forEach(element => {
+                        let obj = { ...element, time: parseInt(dateToString(element.Subject.trim(), "YYYYMMDDHHmmss")) }
+                        array.push(obj);
+                    });
+                    array = array.sort(compareValues('time'));
+
+                    let input = {
+                        res: array,
+                        showHour: params.TimeRange == "today" || params.TimeRange == "yesterday" ? true : false
+                    }
+                    getDataChart(input)
+                }
+
+            }).catch((e) => {
+                console.log("getRevunue err ", e);
+            })
+        }
+        getDataDashBoard()
+        getRevunue()
+    }, [timeForRevenue.key])
+
+    useEffect(() => {
+        const getListTopSell = () => {
+            let params = { TimeRange: timeForTopSell.key }
+            new HTTPService().setPath(ApiPath.TOP_SELL).GET(params).then(res => {
+                console.log('getListTopSell', res);
+                if (res) {
+                    setListTopSell([...res])
+                }
+            })
+        }
+        getListTopSell()
+    }, [timeForTopSell])
+
     const genParams = (data, allType = false) => {
-        const { startDate, endDate } = data
+        const { startDate, endDate, key } = data
         let params = {}
-        if (startDate) {
+        if (key == 'custom' && startDate) {
             let startDateFilter = momentToStringDateLocal(startDate.set({ 'hour': 0, 'minute': 0, 'second': 0 }))
             let endDateFilter = momentToStringDateLocal((endDate ? endDate : startDate).set({ 'hour': 23, 'minute': 59, 'second': 59 }))
             params = { TimeRange: "custom", StartDate: startDateFilter, EndDate: endDateFilter }
         } else {
-            params = { TimeRange: data }
+            params = { TimeRange: key }
         }
-
+        let arrItemPath = [];
+        if (currentBranch.current && currentBranch.current.Id != "") {
+            arrItemPath.push(currentBranch.current.Id)
+        }
         if (allType == false) {
             params["IsMobileApp"] = true;
+            if (arrItemPath.length > 0)
+                params["BranchIds"] = arrItemPath;
         }
         console.log('genParams', params);
         return params;
     }
-
-    // useEffect(() => {
-    //     getDataDashBoard()
-    //     getRevunue()
-    // }, [selectTimeForRevenue.key])
-
-    const getDataDashBoard = (params) => {
-        // let params = genParams()
-        console.log("getDataDashBoard params ", params);
-        new HTTPService().setPath(ApiPath.DASHBOARD).GET(params).then((res) => {
-            console.log("getDataDashBoard res ", res);
-            if (res)
-                setDataDashBoard(res)
-        }).catch((e) => {
-            console.log("getDataDashBoard err ", e);
-        })
-    }
-    const getRevunue = (params) => {
-        // let params = genParams(true)
-        new HTTPService().setPath(ApiPath.REVENUE).GET(params).then(async (res) => {
-            console.log("getRevunue res ", res);
-            if (res) {
-                let array = [];
-                res.forEach(element => {
-                    let obj = { ...element, time: parseInt(dateToString(element.Subject.trim(), "YYYYMMDDHHmmss")) }
-                    array.push(obj);
-                });
-                array = array.sort(compareValues('time'));
-
-                let input = {
-                    res: array,
-                    showHour: params.TimeRange == "today" || params.TimeRange == "yesterday" ? true : false
-                }
-                getDataChart(input)
-            }
-
-        }).catch((e) => {
-            console.log("getRevunue err ", e);
-        })
-    }
-
-    const getListTopSell = (data) => {
-        let params = { TimeRange: data }
-        new HTTPService().setPath(ApiPath.TOP_SELL).GET(params).then(res => {
-            console.log('getListTopSell', res);
-            if (res) {
-                setListTopSell([...res])
-            }
-        })
-    }
-
-    // useEffect(() => {
-    //     let param = { TimeRange: selectTime.key }
-    //     const getListTopSell = () => {
-    //         if (selectTime.key == 'custom') {
-    //             return
-    //         }
-    //         new HTTPService().setPath(ApiPath.TOP_SELL).GET(param).then(res => {
-    //             console.log('getListTopSell', res);
-    //             if (res) {
-    //                 setListTopSell([...res])
-    //             }
-    //         })
-    //     }
-    //     getListTopSell()
-    // }, [selectTime.key])
 
 
 
@@ -181,16 +173,15 @@ export default (props) => {
         setDataChart({ times, totalBranchs })
     }
 
-
-    const outputForTopSell = (data) => {
-        getListTopSell(data)
+    const outputForRevenue = (item) => {
+        console.log('outputDateTime', item);
+        setTimeForRevenue(item)
+        setShowModal(false)
     }
 
-    const outputForRevenue = (data) => {
-        let params_1 = genParams(data)
-        let params_2 = genParams(data, true)
-        getDataDashBoard(params_1)
-        getRevunue(params_2)
+    const outputForTopSell = (item) => {
+        setTimeForTopSell(item)
+        setShowModal(false)
     }
 
 
@@ -207,9 +198,15 @@ export default (props) => {
                     <View>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
                             <Text style={{ fontSize: 20, fontWeight: "bold", paddingBottom: 20 }}>{I18n.t('ket_qua_ban_hang')}</Text>
-                            <DateTime
-                                timeCustom={true}
-                                outputDateTime={outputForRevenue}/>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    setShowModal(true);
+                                    typeDateTime.current = 1
+                                }}
+                                style={{ flexDirection: "row", alignItems: "center", backgroundColor: "#E6EAEF", borderRadius: 10, padding: 10 }}>
+                                <Text style={{ marginRight: 10, fontSize: 17, }}>{timeForRevenue.name.includes('-') ? timeForRevenue.name : I18n.t(timeForRevenue.name)}</Text>
+                                <Image style={{ width: 10, height: 10 }} source={Images.icon_path_4203} />
+                            </TouchableOpacity>
                         </View>
                         <View style={deviceType == Constant.TABLET ? { flexDirection: "row", } : {}}>
                             <View style={{ flex: 1 }}>
@@ -328,8 +325,15 @@ export default (props) => {
                 <View style={{ padding: 20 }}>
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingBottom: 20 }}>
                         <Text style={{ fontSize: 20, fontWeight: "bold", }}>{I18n.t('san_pham_ban_chay')}</Text>
-                        <DateTime
-                            outputDateTime={outputForTopSell} />
+                        <TouchableOpacity
+                            onPress={() => {
+                                setShowModal(true);
+                                typeDateTime.current = 2
+                            }}
+                            style={{ flexDirection: "row", alignItems: "center", backgroundColor: "#E6EAEF", borderRadius: 10, padding: 10 }}>
+                            <Text style={{ marginRight: 10, fontSize: 17, }}>{I18n.t(timeForTopSell.name)}</Text>
+                            <Image style={{ width: 10, height: 10 }} source={Images.icon_path_4203} />
+                        </TouchableOpacity>
                     </View>
                     <View>
                         {listTopSell.map((item, index) => {
@@ -346,6 +350,45 @@ export default (props) => {
                     </View>
                 </View>
             </ScrollView>
+            <Modal
+                animationType="fade"
+                supportedOrientations={['portrait', 'landscape']}
+                transparent={true}
+                visible={showModal}
+                onRequestClose={() => {
+                }}>
+                <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+                    <TouchableWithoutFeedback
+                        onPress={() => {
+                            setShowModal(false)
+                        }}
+                        style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0
+                        }}>
+                        <View style={{
+                            backgroundColor: 'rgba(0,0,0,0.5)', position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0
+                        }}></View>
+
+                    </TouchableWithoutFeedback>
+                    {
+                        typeDateTime.current == 1 ?
+                            <DateTime
+                                timeCustom={true}
+                                outputDateTime={outputForRevenue} />
+                            :
+                            <DateTime
+                                outputDateTime={outputForTopSell} />
+                    }
+                </View>
+            </Modal>
         </View>
     );
 };

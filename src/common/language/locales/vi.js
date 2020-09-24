@@ -176,6 +176,7 @@ export default {
   nhap_ghi_chu: "Nhập ghi chú",
   ngay: "ngày",
   nhom_phong_ban: "Nhóm phòng bàn",
+  nhap_tu_khoa_tim_kiem:"Nhập tự khóa tìm kiếm",
 
   // TODO: O
 

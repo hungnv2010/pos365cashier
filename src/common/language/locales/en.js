@@ -3,7 +3,7 @@
 export default {
   // TODO: A
   ap_dung: "Áp dụng",
-  
+
   // TODO: B
   bo_loc: "Filter",
   bao_cao_cuoi_ngay: "Report",
@@ -161,6 +161,7 @@ export default {
   nhap_ghi_chu: "Enter the note",
   ngay: "days",
   ngay_ban: "Sold date",
+  nhap_tu_khoa_tim_kiem: "Enter search keywords",
 
   // TODO: O
 
