@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
 import { Image, View, StyleSheet, Text, TouchableOpacity, Modal, TouchableWithoutFeedback, ScrollView, TextInput, FlatList, RefreshControl } from "react-native";
-import { Snackbar, RadioButton } from 'react-native-paper';
+import { Snackbar, RadioButton, FAB } from 'react-native-paper';
 import MainToolBar from '../main/MainToolBar';
 import I18n from '../../common/language/i18n';
 import realmStore from '../../data/realm/RealmStore';
@@ -10,11 +10,12 @@ import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
 import colors from '../../theme/Colors';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import EvilIcons from 'react-native-vector-icons/EvilIcons'
 import { HTTPService } from '../../data/services/HttpService';
 import { ApiPath } from '../../data/services/ApiPath';
 import dialogManager from '../../components/dialog/DialogManager';
 import DateTime from '../../components/filter/DateTime';
-import { currencyToString, dateToStringFormatUTC } from '../../common/Utils';
+import { currencyToString, dateToStringFormatUTC, momentToStringDateLocal } from '../../common/Utils';
 
 const TOTAL = 20;
 
@@ -26,8 +27,6 @@ const TYPE_MODAL = {
     CATEGORIES: 4,
     PARNER: 5
 }
-
-const list = [{ "AccountingTransactionType": 1, "Amount": 550000, "BranchId": 620, "Code": "PT240920-0019", "CreatedBy": 426, "CreatedDate": "2020-09-24T03:43:00.8600000Z", "Description": "Phiếu thanh toán cho chứng từ DN240920-0019", "Group": [Object], "GroupId": 1, "Id": 62463786, "OrderId": 60570522, "RetailerId": 375, "Status": 2, "TransDate": "2020-09-24T03:43:01.8430000Z", "UserId": 426 }, { "AccountingTransactionType": 1, "Amount": 875000, "BranchId": 620, "Code": "PT240920-0018", "CreatedBy": 426, "CreatedDate": "2020-09-24T03:42:56.3830000Z", "Description": "Phiếu thanh toán cho chứng từ DN240920-0018", "Group": [Object], "GroupId": 1, "Id": 62463773, "OrderId": 60570507, "RetailerId": 375, "Status": 2, "TransDate": "2020-09-24T03:42:57.3630000Z", "UserId": 426 }, { "AccountingTransactionType": 1, "Amount": 250000, "BranchId": 620, "Code": "PT240920-0017", "CreatedBy": 426, "CreatedDate": "2020-09-24T03:42:51.1000000Z", "Description": "Phiếu thanh toán cho chứng từ DN240920-0017", "Group": [Object], "GroupId": 1, "Id": 62463753, "OrderId": 60570488, "RetailerId": 375, "Status": 2, "TransDate": "2020-09-24T03:42:52.0830000Z", "UserId": 426 }, { "AccountId": 1755, "AccountingTransactionType": 1, "Amount": 500000, "BranchId": 620, "Code": "PT240920-0016", "CreatedBy": 426, "CreatedDate": "2020-09-24T03:42:48.1770000Z", "Description": "Phiếu thanh toán cho chứng từ DN240920-0016", "Group": [Object], "GroupId": 1, "Id": 62463744, "OrderId": 60570479, "RetailerId": 375, "Status": 2, "TransDate": "2020-09-24T03:42:49.1570000Z", "UserId": 426 }, { "AccountingTransactionType": 1, "Amount": 1100000, "BranchId": 620, "Code": "PT240920-0015", "CreatedBy": 426, "CreatedDate": "2020-09-24T03:42:45.4130000Z", "Description": "Phiếu thanh toán cho chứng từ DN240920-0015", "Group": [Object], "GroupId": 1, "Id": 62463739, "OrderId": 60570474, "RetailerId": 375, "Status": 2, "TransDate": "2020-09-24T03:42:46.3970000Z", "UserId": 426 }, { "AccountingTransactionType": 1, "Amount": 300000, "BranchId": 620, "Code": "PT240920-0014", "CreatedBy": 426, "CreatedDate": "2020-09-24T03:42:42.6400000Z", "Description": "Phiếu thanh toán cho chứng từ DN240920-0014", "Group": [Object], "GroupId": 1, "Id": 62463734, "OrderId": 60570467, "RetailerId": 375, "Status": 2, "TransDate": "2020-09-24T03:42:43.6230000Z", "UserId": 426 }, { "AccountingTransactionType": 1, "Amount": 250000, "BranchId": 620, "Code": "PT240920-0013", "CreatedBy": 426, "CreatedDate": "2020-09-24T03:42:34.0800000Z", "Description": "Phiếu thanh toán cho chứng từ DN240920-0013", "Group": [Object], "GroupId": 1, "Id": 62463715, "OrderId": 60570446, "RetailerId": 375, "Status": 2, "TransDate": "2020-09-24T03:42:35.0600000Z", "UserId": 426 }, { "AccountingTransactionType": 1, "Amount": 280000, "BranchId": 620, "Code": "PT240920-0012", "CreatedBy": 426, "CreatedDate": "2020-09-24T03:42:31.6570000Z", "Description": "Phiếu thanh toán cho chứng từ DN240920-0012", "Group": [Object], "GroupId": 1, "Id": 62463705, "OrderId": 60570437, "RetailerId": 375, "Status": 2, "TransDate": "2020-09-24T03:42:32.6370000Z", "UserId": 426 }]
 
 var OBJECT_ALL = [{
     "Id": 0,
@@ -71,9 +70,41 @@ export default (props) => {
     }, [])
 
     const getDataCashFlow = (reset = false) => {
-        let params = { Includes: "Partner", Includes: "Group", skip: filterRef.current.skip, top: TOTAL }
+        let params = { skip: filterRef.current.skip, top: TOTAL, Includes: ["Group", "Partner", "AccountingTransactionGroup"] };
+        let arrItemPath = [];
+        if (filter.account && filter.account.Id) {
+            params["AccountId"] = filter.account.Id
+        }
+
+        if (filter.method && filter.method != 0) {
+            arrItemPath.push("AccountingTransactionType+eq+" + filter.method)
+        }
+
+        if (filter.time && filter.time.key) {
+            if (filter.time.key == "custom") {
+                let startDateFilter = momentToStringDateLocal(filter.time.startDate.set({ 'hour': 0, 'minute': 0, 'second': 0 }))
+                let endDateFilter = momentToStringDateLocal((filter.time.endDate ? filter.time.endDate : filter.time.startDate).set({ 'hour': 23, 'minute': 59, 'second': 59 }))
+                arrItemPath.push("TransDate+ge+'datetime''" + startDateFilter.toString().trim() + "'''")
+                arrItemPath.push("TransDate+lt+'datetime''" + endDateFilter.toString().trim() + "'''")
+            } else {
+                arrItemPath.push("TransDate+eq+'" + filter.time.key.toString() + "'")
+            }
+        }
+
+        if (filter.categories && filter.categories.Id) {
+            arrItemPath.push("GroupId+eq+" + filter.categories.Id)
+        }
+
+        if (filter.customer && filter.customer.Id) {
+            arrItemPath.push("PartnerId+eq+" + filter.customer.Id)
+        }
+
+        console.log("arrItemPath ", arrItemPath);
+        if (arrItemPath.length > 0)
+            params["filter"] = "(" + arrItemPath.join("+and+") + ")";
+
+        console.log("getDataCashFlow params  ", params);
         dialogManager.showLoading();
-        console.log("getDataCashFlow params ", params);
         new HTTPService().setPath(ApiPath.TRANSACTION).GET(params).then((res) => {
             console.log("getDataCashFlow res ", res);
             if (res) {
@@ -88,6 +119,7 @@ export default (props) => {
                         outData.current = true;
                     }
                 } else {
+                    setResCashFlow({ ...res });
                     outData.current = true;
                 }
             }
@@ -158,12 +190,13 @@ export default (props) => {
 
     const onClickOkFilter = () => {
         console.log("onClickOkFilter ", filter);
+        filterRef.current.skip = 0;
         setShowModal(false)
+        getDataCashFlow(true);
     }
 
     const onClickSelectMethod = () => {
         setTypeModal(TYPE_MODAL.METHOD)
-        // setShowModal(true)
     }
 
     const onClickSelectCategories = () => {
@@ -205,15 +238,15 @@ export default (props) => {
             ...filterRef.current,
             skip: 0
         }
-        // setResCashFlow({ ...resCashFlow, results: [...[]] })
-        setTimeout(() => {
-            getDataCashFlow(true);
-        }, 200);
-
+        getDataCashFlow(true);
     }
 
     const onClickItemMenu = (item) => {
 
+    }
+
+    const onClickDeletePartner = () => {
+        setFilter({ ...filter, customer: {} })
     }
 
     const renderTime = () => {
@@ -417,9 +450,15 @@ export default (props) => {
                 </TouchableOpacity>
                 <TouchableOpacity onPress={onClickSelectPartner} style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 10, alignItems: "center", height: 35, backgroundColor: "#eeeeee", paddingHorizontal: 10 }}>
                     <Text style={{ width: 80 }}>Đối tác</Text>
-                    <View style={{ flexDirection: "row", justifyContent: "space-between", flex: 1, borderLeftColor: "gray", borderBottomWidth: 0.5, marginLeft: 20 }}>
-                        <Text>{filter.customer.Name ? filter.customer.Name : ""}</Text>
-                        <Image source={Images.arrow_down} style={{ width: 14, height: 14, marginLeft: 10 }} />
+                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", flex: 1, borderLeftColor: "gray", borderBottomWidth: 0.5, marginLeft: 20 }}>
+                        <TouchableOpacity onPress={onClickDeletePartner} >
+                            <Text>{filter.customer.Name ? filter.customer.Name : ""}</Text>
+                        </TouchableOpacity>
+                        {filter.customer.Name && filter.customer.Name != '' ?
+                            <EvilIcons onPress={onClickDeletePartner} name="close" size={25} color="gray" style={{ marginLeft: 5 }} />
+                            :
+                            <Image source={Images.arrow_down} style={{ width: 14, height: 14, marginLeft: 10 }} />
+                        }
                     </View>
                 </TouchableOpacity>
                 <View style={{ justifyContent: "center", flexDirection: "row", paddingTop: 10 }}>
@@ -486,21 +525,21 @@ export default (props) => {
                     <View style={{ flex: 1 }}>
                         <View style={{ marginLeft: 10, marginTop: 10, marginBottom: 5, marginRight: 5, flexDirection: "column", alignItems: "center", backgroundColor: "#fff", borderRadius: 5, padding: 10, justifyContent: "space-between" }}>
                             <Text style={{ marginLeft: 15 }}>{I18n.t('quy_dau_ky')}</Text>
-                            <Text style={{ marginLeft: 15, color: "#0072bc", marginTop: 5 }}>{resCashFlow.CustomVaule3 >= 0 ? "" : "-"}{currencyToString(resCashFlow.CustomVaule3)}</Text>
+                            <Text style={{ marginLeft: 15, color: "#0072bc", marginTop: 5 }}>{currencyToString(resCashFlow.CustomVaule3)}</Text>
                         </View>
                         <View style={{ marginRight: 5, marginTop: 5, marginBottom: 10, marginLeft: 10, flexDirection: "column", alignItems: "center", backgroundColor: "#fff", borderRadius: 5, padding: 10, justifyContent: "space-between" }}>
                             <Text style={{ marginLeft: 15 }}>{I18n.t('tong_thu')}</Text>
-                            <Text style={{ marginLeft: 15, color: "#0072bc", marginTop: 5 }}>{resCashFlow.CustomVaule2 >= 0 ? "" : "-"}{currencyToString(resCashFlow.CustomVaule2)}</Text>
+                            <Text style={{ marginLeft: 15, color: "#0072bc", marginTop: 5 }}>{currencyToString(resCashFlow.CustomVaule1)}</Text>
                         </View>
                     </View>
                     <View style={{ flex: 1 }}>
                         <View style={{ marginLeft: 5, marginTop: 10, marginBottom: 5, marginRight: 10, flexDirection: "column", alignItems: "center", backgroundColor: "#fff", borderRadius: 5, padding: 10, justifyContent: "space-between" }}>
                             <Text style={{ marginLeft: 15 }}>{I18n.t('tong_chi')}</Text>
-                            <Text style={{ marginLeft: 15, color: "#0072bc", marginTop: 5 }}>{resCashFlow.CustomVaule1 >= 0 ? "" : "-"}{currencyToString(resCashFlow.CustomVaule1)}</Text>
+                            <Text style={{ marginLeft: 15, color: "#0072bc", marginTop: 5 }}>{currencyToString(resCashFlow.CustomVaule2)}</Text>
                         </View>
                         <View style={{ marginLeft: 5, marginTop: 5, marginBottom: 10, marginRight: 10, flexDirection: "column", alignItems: "center", backgroundColor: "#fff", borderRadius: 5, padding: 10, justifyContent: "space-between" }}>
                             <Text style={{ marginLeft: 15 }}>{I18n.t('ton_quy')}</Text>
-                            <Text style={{ marginLeft: 15, color: "#0072bc", marginTop: 5 }}>{currencyToString(resCashFlow.CustomVaule2 - resCashFlow.CustomVaule1 + resCashFlow.CustomVaule3)}</Text>
+                            <Text style={{ marginLeft: 15, color: "#0072bc", marginTop: 5 }}>{currencyToString(resCashFlow.CustomVaule1 - resCashFlow.CustomVaule2 + resCashFlow.CustomVaule3)}</Text>
                         </View>
                     </View>
                 </View>
@@ -552,6 +591,13 @@ export default (props) => {
             >
                 {toastDescription}
             </Snackbar>
+            <FAB
+                style={styles.fab}
+                big
+                icon="plus"
+                color="#fff"
+                onPress={() => {}}
+            />
         </View>
     );
 
@@ -569,5 +615,12 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)'
-    }
+    },
+    fab: {
+        position: 'absolute',
+        margin: 16,
+        right: 0,
+        bottom: 0,
+        backgroundColor: colors.colorLightBlue
+    },
 })
