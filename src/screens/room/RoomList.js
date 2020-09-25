@@ -51,7 +51,6 @@ export default (props) => {
 
     }, [])
 
-    // async function getDataInRealm() {
     const getDataInRealm = async () => {
         let roomsTmp = await realmStore.queryRooms()
         roomsTmp = roomsTmp.sorted('Position')

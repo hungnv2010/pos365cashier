@@ -19,7 +19,7 @@ const Drawer = createDrawerNavigator();
 export default (propsFunc) => {
 
   console.log("props Func ", propsFunc);
-  
+
 
   return (
     <LinearGradient style={{ flex: 1 }} colors={['#FFAB40', '#FF5722']}>
@@ -32,11 +32,14 @@ export default (propsFunc) => {
           return <DrawerContent {...props} />;
         }}
       >
-        <Drawer.Screen name={ScreenList.Main} options={{ title: ScreenList.Main }}>
+        {/* <Drawer.Screen name={ScreenList.Main} options={{ title: ScreenList.Main }}>
           {props => <Main  {...props} params={propsFunc.route.state ? propsFunc.route.state : ""} />}
-        </Drawer.Screen>
-        <Drawer.Screen name={ScreenList.Home} options={{ title: ScreenList.Home }}>
+        </Drawer.Screen> */}
+        {/* <Drawer.Screen name={ScreenList.Home} options={{ title: ScreenList.Home }}>
           {props => <BottomTabNavigation {...props} />}
+        </Drawer.Screen> */}
+        <Drawer.Screen name={ScreenList.Home} options={{ title: ScreenList.Home }}>
+          {props => <Main  {...props} params={propsFunc.route.state ? propsFunc.route.state : ""} />}
         </Drawer.Screen>
         <Drawer.Screen name={ScreenList.OrderNow} options={{ title: ScreenList.OrderNow }}>
           {props => <OrderNow {...props} />}

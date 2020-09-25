@@ -25,7 +25,8 @@ const TYPE_MODAL = {
     DATE: 2,
     METHOD: 3,
     CATEGORIES: 4,
-    PARNER: 5
+    PARNER: 5,
+    ADD_CASH_FLOW: 6
 }
 
 var OBJECT_ALL = [{
@@ -212,6 +213,11 @@ export default (props) => {
         setTypeModal(TYPE_MODAL.DATE)
     }
 
+    const onClickAddCashFlow = () => {
+        setTypeModal(TYPE_MODAL.ADD_CASH_FLOW)
+        setShowModal(true)
+    }
+
     const selectPartner = (item) => {
         setFilter({ ...filter, customer: item })
         setTypeModal(TYPE_MODAL.ALL)
@@ -221,6 +227,16 @@ export default (props) => {
         console.log('outputDateTime', item);
         setFilter({ ...filter, time: item })
         setTypeModal(TYPE_MODAL.ALL)
+    }
+
+    const onClickItemAdd = (option) => {
+        if (option == 1) {
+
+        } else if (option == 2) {
+
+        } else {
+
+        }
     }
 
     const loadMore = () => {
@@ -252,7 +268,6 @@ export default (props) => {
     const renderTime = () => {
         return (
             <View style={{}}>
-
                 <DateTime
                     header={<View style={{ width: "100%", backgroundColor: colors.colorchinh, flexDirection: "row", justifyContent: "center", alignItems: "center", paddingRight: 10 }}>
                         <Text style={{ flex: 1, color: "#fff", marginLeft: 10, fontWeight: "bold" }}>{I18n.t('ngay')}</Text>
@@ -304,7 +319,7 @@ export default (props) => {
         return (
             <View>
                 <View style={{ backgroundColor: colors.colorchinh, flexDirection: "row", justifyContent: "center", alignItems: "center", paddingRight: 10 }}>
-                    <Text style={{ flex: 1, color: "#fff", marginLeft: 10, fontWeight: "bold" }}>Phương thức</Text>
+                    <Text style={{ flex: 1, color: "#fff", marginLeft: 10, fontWeight: "bold" }}>{I18n.t('phuong_thuc')}</Text>
                     <TouchableOpacity onPress={() => setTypeModal(TYPE_MODAL.ALL)}>
                         <Icon name="close" size={props.size ? props.size : 30} color="white" />
                     </TouchableOpacity>
@@ -332,7 +347,7 @@ export default (props) => {
         return (
             <View>
                 <View style={{ backgroundColor: colors.colorchinh, flexDirection: "row", justifyContent: "center", alignItems: "center", paddingRight: 10 }}>
-                    <Text style={{ flex: 1, color: "#fff", marginLeft: 10, fontWeight: "bold" }}>Hạng mục thu chi</Text>
+                    <Text style={{ flex: 1, color: "#fff", marginLeft: 10, fontWeight: "bold" }}>{I18n.t('hang_muc_thu_chi')}</Text>
                     <TouchableOpacity onPress={() => setTypeModal(TYPE_MODAL.ALL)}>
                         <Icon name="close" size={props.size ? props.size : 30} color="white" />
                     </TouchableOpacity>
@@ -360,7 +375,7 @@ export default (props) => {
         return (
             <View>
                 <View style={{ backgroundColor: colors.colorchinh, flexDirection: "row", justifyContent: "center", alignItems: "center", paddingRight: 10 }}>
-                    <Text style={{ flex: 1, color: "#fff", marginLeft: 10, fontWeight: "bold" }}>Đối tác</Text>
+                    <Text style={{ flex: 1, color: "#fff", marginLeft: 10, fontWeight: "bold" }}>{I18n.t('doi_tac')}</Text>
                     <TouchableOpacity onPress={() => setTypeModal(TYPE_MODAL.ALL)}>
                         <Icon name="close" size={props.size ? props.size : 30} color="white" />
                     </TouchableOpacity>
@@ -391,8 +406,28 @@ export default (props) => {
         )
     }
 
-    const renderFilter = () => {
+    const renderAddCashFlow = () => {
+        return (
+            <View>
+                <View style={{ backgroundColor: colors.colorchinh, flexDirection: "row", justifyContent: "center", alignItems: "center", padding: 10 }}>
+                    <Text style={{ flex: 1, color: "#fff", marginLeft: 10, fontWeight: "bold" }}>{I18n.t('them_moi_phieu_thu_chi')}</Text>
+                </View>
+                <View style={{ padding: 10 }}>
+                    <TouchableOpacity onPress={() => onClickItemAdd(1)} style={{ flexDirection: "row", alignItems: "center", paddingVertical: 10 }}>
+                        <Text style={{ marginTop: 7 }}>{I18n.t('phieu_thu')}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => onClickItemAdd(2)} style={{ flexDirection: "row", alignItems: "center", paddingVertical: 10 }}>
+                        <Text style={{ marginTop: 7 }}>{I18n.t('phieu_chi')}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => onClickItemAdd(3)} style={{ flexDirection: "row", alignItems: "center", paddingVertical: 10 }}>
+                        <Text style={{ marginTop: 7 }}>{I18n.t('chuyen_khoan')}</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        )
+    }
 
+    const renderFilter = () => {
         switch (typeModal) {
             case TYPE_MODAL.ALL:
                 return renderContentFilter();
@@ -404,6 +439,8 @@ export default (props) => {
                 return renderSelectCategories();
             case TYPE_MODAL.PARNER:
                 return renderSelectPartner();
+            case TYPE_MODAL.ADD_CASH_FLOW:
+                return renderAddCashFlow();
             default:
                 break;
         }
@@ -435,21 +472,21 @@ export default (props) => {
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={onClickSelectMethod} style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 10, alignItems: "center", height: 35, backgroundColor: "#eeeeee", paddingHorizontal: 10 }}>
-                    <Text style={{ width: 80 }}>Phương thức</Text>
+                    <Text style={{ width: 80 }}>{I18n.t('phuong_thuc')}</Text>
                     <View style={{ flexDirection: "row", justifyContent: "space-between", flex: 1, borderLeftColor: "gray", borderBottomWidth: 0.5, marginLeft: 20 }}>
                         <Text>{filter.account.Name ? filter.account.Name : I18n.t('tat_ca')}</Text>
                         <Image source={Images.arrow_down} style={{ width: 14, height: 14, marginLeft: 10 }} />
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={onClickSelectCategories} style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 10, alignItems: "center", height: 35, backgroundColor: "#eeeeee", paddingHorizontal: 10 }}>
-                    <Text style={{ width: 80 }}>Hạng mục thu chi</Text>
+                    <Text style={{ width: 80 }}>{I18n.t('hang_muc_thu_chi')}</Text>
                     <View style={{ flexDirection: "row", justifyContent: "space-between", flex: 1, borderLeftColor: "gray", borderBottomWidth: 0.5, marginLeft: 20 }}>
                         <Text>{filter.categories.Name ? filter.categories.Name : I18n.t('tat_ca')}</Text>
                         <Image source={Images.arrow_down} style={{ width: 14, height: 14, marginLeft: 10 }} />
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={onClickSelectPartner} style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 10, alignItems: "center", height: 35, backgroundColor: "#eeeeee", paddingHorizontal: 10 }}>
-                    <Text style={{ width: 80 }}>Đối tác</Text>
+                    <Text style={{ width: 80 }}>{I18n.t('doi_tac')}</Text>
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", flex: 1, borderLeftColor: "gray", borderBottomWidth: 0.5, marginLeft: 20 }}>
                         <TouchableOpacity onPress={onClickDeletePartner} >
                             <Text>{filter.customer.Name ? filter.customer.Name : ""}</Text>
@@ -596,7 +633,7 @@ export default (props) => {
                 big
                 icon="plus"
                 color="#fff"
-                onPress={() => {}}
+                onPress={onClickAddCashFlow}
             />
         </View>
     );
