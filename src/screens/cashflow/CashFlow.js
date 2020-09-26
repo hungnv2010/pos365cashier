@@ -258,7 +258,7 @@ export default (props) => {
     }
 
     const onClickItemMenu = (item) => {
-
+        
     }
 
     const onClickDeletePartner = () => {
@@ -395,8 +395,8 @@ export default (props) => {
                                     <Text style={{ marginTop: 7 }}>{item.Code}</Text>
                                 </View>
                                 <View style={{ margin: 10, flexDirection: "column", flex: 1, alignItems: "flex-end" }}>
-                                    <Text style={{}}>{item.Phone ? item.Phone : "Đang cập nhật"}</Text>
-                                    <Text style={{ marginTop: 7 }}>{item.Address ? item.Address : "Đang cập nhật"}</Text>
+                                    <Text style={{}}>{item.Phone ? item.Phone : I18n.t('dang_cap_nhat')}</Text>
+                                    <Text style={{ marginTop: 7 }}>{item.Address ? item.Address : I18n.t('dang_cap_nhat')}</Text>
                                 </View>
                             </TouchableOpacity>
                         )

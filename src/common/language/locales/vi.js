@@ -69,6 +69,7 @@ export default {
   danh_sach_phong_ban: "Danh sách phòng bàn",
   dich_vu_tinh_gio: "Dịch vụ tính giờ",
   doi_tac: "Đối tác",
+  dang_cap_nhat: "Đang cập nhật",
 
   // TODO: E
 
