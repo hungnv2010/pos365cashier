@@ -23,7 +23,7 @@ const TYPE_MODAL = {
     ALL: 0,
     COUPON: 1,
     DATE: 2,
-    METHOD: 3,
+    ACCOUNT: 3,
     CATEGORIES: 4,
     PARNER: 5,
     ADD_CASH_FLOW: 6
@@ -175,14 +175,12 @@ export default (props) => {
         setIndexItemAccount(index)
         setFilter({ ...filter, account: data })
         setTypeModal(TYPE_MODAL.ALL)
-
     }
 
     const selectCategories = (data, index) => {
         setIndexItemAccountTransactionGroups(index)
         setFilter({ ...filter, categories: data })
         setTypeModal(TYPE_MODAL.ALL)
-
     }
 
     const onClickCancelFilter = () => {
@@ -196,8 +194,8 @@ export default (props) => {
         getDataCashFlow(true);
     }
 
-    const onClickSelectMethod = () => {
-        setTypeModal(TYPE_MODAL.METHOD)
+    const onClickSelectAccount = () => {
+        setTypeModal(TYPE_MODAL.ACCOUNT)
     }
 
     const onClickSelectCategories = () => {
@@ -315,7 +313,7 @@ export default (props) => {
         )
     }
 
-    const renderSelectMethod = () => {
+    const renderSelectAccount = () => {
         return (
             <View>
                 <View style={{ backgroundColor: colors.colorchinh, flexDirection: "row", justifyContent: "center", alignItems: "center", paddingRight: 10 }}>
@@ -433,8 +431,8 @@ export default (props) => {
                 return renderContentFilter();
             case TYPE_MODAL.DATE:
                 return renderTime();
-            case TYPE_MODAL.METHOD:
-                return renderSelectMethod();
+            case TYPE_MODAL.ACCOUNT:
+                return renderSelectAccount();
             case TYPE_MODAL.CATEGORIES:
                 return renderSelectCategories();
             case TYPE_MODAL.PARNER:
@@ -471,7 +469,7 @@ export default (props) => {
                         <Image source={Images.arrow_down} style={{ width: 14, height: 14, marginLeft: 10 }} />
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={onClickSelectMethod} style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 10, alignItems: "center", height: 35, backgroundColor: "#eeeeee", paddingHorizontal: 10 }}>
+                <TouchableOpacity onPress={onClickSelectAccount} style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 10, alignItems: "center", height: 35, backgroundColor: "#eeeeee", paddingHorizontal: 10 }}>
                     <Text style={{ width: 80 }}>{I18n.t('phuong_thuc')}</Text>
                     <View style={{ flexDirection: "row", justifyContent: "space-between", flex: 1, borderLeftColor: "gray", borderBottomWidth: 0.5, marginLeft: 20 }}>
                         <Text>{filter.account.Name ? filter.account.Name : I18n.t('tat_ca')}</Text>
