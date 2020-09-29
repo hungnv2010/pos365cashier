@@ -136,7 +136,7 @@ export default (props) => {
 
 
     const getPriceItem = (item) => {
-        return item.Quantity * item.Price
+        return Math.round(item.Quantity * 1000) / 1000 * item.Price
     }
 
 
@@ -259,6 +259,7 @@ export default (props) => {
             RoomName: props.route.params.room.Name,
             SecondPrinter: PriceConfig && PriceConfig.SecondPrinter ? PriceConfig.SecondPrinter : null,
             Serveby: vendorSession.CurrentUser && vendorSession.CurrentUser.Id ? vendorSession.CurrentUser.Id : "",
+            IsLargeUnit: element.IsLargeUnit,
             // Topping: element.Topping,
             // TotalTopping: element.TotalTopping,
             // Description: data.Description
@@ -285,7 +286,7 @@ export default (props) => {
         let total = 0;
         if (orderDetails && orderDetails.length > 0)
             orderDetails.forEach(item => {
-                total += (item.IsLargeUnit ? item.PriceLargeUnit : item.Price) * item.Quantity
+                total += item.Price * item.Quantity
             });
         return total
     }
@@ -298,9 +299,10 @@ export default (props) => {
             setShowToast(true)
             return
         }
+        // let totalQty = item.Quantity;
         let totalQty = 0;
         jsonContent.OrderDetails.forEach(elm => {
-            if (elm.ProductId == item.ProductId) {
+            if (elm.ProductId == item.ProductId && item.IsLargeUnit == elm.IsLargeUnit) {
                 totalQty += elm.Quantity
             }
         })
@@ -342,7 +344,7 @@ export default (props) => {
                                 <View style={{ flexDirection: "column", flex: 1 }}>
                                     <Text style={{ fontWeight: "bold", marginBottom: 7 }}>{item.Name}</Text>
                                     <View style={{ flexDirection: "row" }}>
-                                        <Text style={{ fontStyle: "italic" }}>{currencyToString(item.Price)} x</Text>
+                                        <Text style={{ fontStyle: "italic" }}>{item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : currencyToString(item.Price)} x</Text>
                                         <Text style={{ color: Colors.colorchinh }}> {Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text>
                                     </View>
                                     {item.Description != "" ?

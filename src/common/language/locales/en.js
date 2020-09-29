@@ -46,6 +46,7 @@ export default {
   co_so_luong_lon_hon: "Cancellation amount greater than the amount requested",
   chon_ghi_chu_nhanh: "Order quick notes",
   chon_khoang_thoi_gian: "Select time",
+  chon_dvt: "Unit",
 
   // TODO: D
   dang_dung: "Serving",

@@ -51,6 +51,7 @@ export default {
   chon_khoang_thoi_gian: "Chọn khoảng thời gian",
   chi_tiet_phong_ban: "Chi tiết phòng bàn",
   chuyen_khoan: "Chuyển khoản",
+  chon_dvt: "ĐVT",
 
   // TODO: D
   dang_dung: "Đang dùng",

@@ -78,7 +78,7 @@ const images = {
     icon_return: require("../../assets/icons/return.png"),
     logo_365_long_color: require("../../assets/images/logo_365_long_color.png"),
     icon_version: require("../../assets/icons/version.jpg"),
-
+    icon_quick_note: require("../../assets/icons/icon_quick_note.jpg")
 }
 
 export default images
