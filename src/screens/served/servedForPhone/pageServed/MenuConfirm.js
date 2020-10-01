@@ -103,7 +103,7 @@ export default (props) => {
             serverEvent.addListener((collection, changes) => {
                 if (changes.insertions.length || changes.modifications.length) {
                     setJsonContent(JSON.parse(serverEvent[0].JsonContent))
-                } 
+                }
             })
         }
         getListPos()
@@ -194,16 +194,17 @@ export default (props) => {
     }
 
     const cancelProduct = (item) => {
-        console.log("cancelProduct item ", item);
+        console.log("cancelProduct item ", JSON.stringify(item));
 
         if (item.ProductType == 2 && item.IsTimer) {
             setToastDescription(I18n.t("khong_the_huy_tra_mat_hang_thoi_gian"))
             setShowToast(true)
             return
         }
+        // let totalQty = item.Quantity;
         let totalQty = 0;
         jsonContent.OrderDetails.forEach(elm => {
-            if (elm.ProductId == item.ProductId) {
+            if (elm.ProductId == item.ProductId && item.IsLargeUnit == elm.IsLargeUnit) {
                 totalQty += elm.Quantity
             }
         })
@@ -252,6 +253,7 @@ export default (props) => {
             RoomName: props.route.params.room.Name,
             SecondPrinter: PriceConfig && PriceConfig.SecondPrinter ? PriceConfig.SecondPrinter : null,
             Serveby: vendorSession.CurrentUser && vendorSession.CurrentUser.Id ? vendorSession.CurrentUser.Id : "",
+            IsLargeUnit: element.IsLargeUnit,
         }
         params.ServeEntities.push(obj)
 
@@ -275,7 +277,7 @@ export default (props) => {
         let total = 0;
         if (orderDetails && orderDetails.length > 0)
             orderDetails.forEach(item => {
-                total += (item.IsLargeUnit ? item.PriceLargeUnit : item.Price) * item.Quantity
+                total += (item.Price) * item.Quantity
             });
         return total
     }
@@ -293,7 +295,7 @@ export default (props) => {
                 <View style={{ flexDirection: "column", flex: 1 }}>
                     <Text style={{ fontWeight: "bold", marginBottom: 7 }}>{item.Name}</Text>
                     <View style={{ flexDirection: "row" }}>
-                        <Text style={{ fontStyle: "italic" }}>{currencyToString(item.Price)} x</Text>
+                        <Text style={{ fontStyle: "italic" }}>{item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : currencyToString(item.Price)} x</Text>
                         <Text style={{ color: Colors.colorchinh }}> {Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text>
                     </View>
                     {item.Description != "" ?

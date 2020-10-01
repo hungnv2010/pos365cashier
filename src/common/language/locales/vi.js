@@ -50,6 +50,8 @@ export default {
   chon_ghi_chu_nhanh: "Chọn ghi chú nhanh",
   chon_khoang_thoi_gian: "Chọn khoảng thời gian",
   chi_tiet_phong_ban: "Chi tiết phòng bàn",
+  chuyen_khoan: "Chuyển khoản",
+  chon_dvt: "ĐVT",
 
   // TODO: D
   dang_dung: "Đang dùng",
@@ -67,7 +69,12 @@ export default {
   danh_muc_phong_ban: "Danh mục phòng bàn",
   danh_sach_phong_ban: "Danh sách phòng bàn",
   dich_vu_tinh_gio: "Dịch vụ tính giờ",
+<<<<<<< HEAD
   dat_hang: "Đặt hàng",
+=======
+  doi_tac: "Đối tác",
+  dang_cap_nhat: "Đang cập nhật",
+>>>>>>> d251f7045e0948bbedce3fe2f2d87d8123be6599
 
   // TODO: E
 
@@ -126,6 +133,7 @@ export default {
   het_phien_lam_viec: "Phiên làm việc của quý khách đã hết hạn. Vui lòng đăng nhập lại để tiếp tục sử dụng.",
   hom_nay: "Hôm nay",
   hom_qua: "Hôm qua",
+  hang_muc_thu_chi: "Hạng mục thu chi",
 
   // TODO: L
   lich_su_huy_tra_do: "Lịch sử Huỷ / Trả đồ",
@@ -279,6 +287,7 @@ export default {
   them_moi_nhom: "Thêm mới nhóm",
   ten_phong_ban: "Tên phòng bàn",
   thu_tu_hien_thi: "Thứ tự hiển thị",
+  them_moi_phieu_thu_chi: "Thêm mới phiếu thu/chi/chuyển khoản",
   // TODO: U
 
   // TODO: V

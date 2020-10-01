@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useLayoutEffect } from 'react';
-import { Image, View, Text, Keyboard, TouchableWithoutFeedback, TouchableOpacity, Modal, TextInput, ImageBackground, FlatList } from 'react-native';
+import { Image, View, Text, Keyboard, TouchableWithoutFeedback, TouchableOpacity, Modal, TextInput, ImageBackground, FlatList, StyleSheet } from 'react-native';
 import { Colors, Images, Metrics } from '../../../../theme';
 import Menu from 'react-native-material-menu';
 import dataManager from '../../../../data/DataManager';
@@ -15,8 +15,14 @@ import I18n from "../../../../common/language/i18n";
 import { Snackbar } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import { Checkbox, RadioButton } from 'react-native-paper';
+import colors from '../../../../theme/Colors';
 
 var isClick = false;
+
+const TYPE_MODAL = {
+    UNIT: 1,
+    DETAIL: 2
+}
 
 const CustomerOrder = (props) => {
 
@@ -28,6 +34,7 @@ const CustomerOrder = (props) => {
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
     const [marginModal, setMargin] = useState(0)
+    const [IsLargeUnit, setIsLargeUnit] = useState(false)
     const dispatch = useDispatch();
 
     const orientaition = useSelector(state => {
@@ -192,7 +199,6 @@ const CustomerOrder = (props) => {
                 let obj = {
                     BasePrice: element.Price,
                     Code: element.Code,
-                    Description: element.Description,
                     Name: element.Name,
                     OrderQuickNotes: [],
                     Position: props.Position,
@@ -211,6 +217,9 @@ const CustomerOrder = (props) => {
                     Serveby: vendorSession.CurrentUser && vendorSession.CurrentUser.Id ? vendorSession.CurrentUser.Id : "",
                     Topping: element.Topping,
                     TotalTopping: element.TotalTopping,
+                    Description: element.Description,
+                    IsLargeUnit: element.IsLargeUnit,
+                    PriceLargeUnit: element.PriceLargeUnit,
                 }
                 params.ServeEntities.push(obj)
                 listItem.push({
@@ -223,7 +232,9 @@ const CustomerOrder = (props) => {
                     TotalTopping: element.TotalTopping,
                     ProductImages: element.ProductImages,
                     Name: element.Name,
-                    Description: element.Description
+                    Description: element.Description,
+                    Unit: element.Unit,
+                    LargeUnit: element.LargeUnit
                 })
             });
             dialogManager.showLoading();
@@ -373,6 +384,7 @@ const CustomerOrder = (props) => {
                 }
                 element.Description = data.Description
                 element.Quantity = +data.Quantity
+                element.IsLargeUnit = data.IsLargeUnit
             }
         });
         props.outputListProducts(list, 0)
@@ -420,6 +432,15 @@ const CustomerOrder = (props) => {
             props.outputSendNotify(type);
     }
 
+    const onClickUnit = (item) => {
+        if (item.Unit && item.Unit != "" && item.LargeUnit && item.LargeUnit != "") {
+            this.typeModal = TYPE_MODAL.UNIT;
+            setIsLargeUnit(item.IsLargeUnit)
+            setItemOrder(item)
+            setShowModal(true)
+        }
+    }
+
     const renderForTablet = (item, index) => {
         return (
             <TouchableOpacity key={index} onPress={() => {
@@ -429,6 +450,7 @@ const CustomerOrder = (props) => {
                     return
                 }
                 console.log("setItemOrder ", item);
+                this.typeModal = TYPE_MODAL.DETAIL;
                 setItemOrder({ ...item })
                 setShowModal(!showModal)
             }}>
@@ -442,21 +464,20 @@ const CustomerOrder = (props) => {
                         <Icon name="trash-can-outline" size={40} color="black" />
                     </TouchableOpacity>
                     <View style={{ flexDirection: "column", flex: 1, }}>
-                        {/* <TextTicker
-                            style={{ fontWeight: "bold", marginBottom: 7 }}
-                            duration={6000}
-                            marqueeDelay={1000}>
-                            {item.Name}
-                        </TextTicker> */}
                         <Text style={{ fontWeight: "bold", marginBottom: 7 }}>{item.Name}</Text>
-                        <Text>{currencyToString(item.Price)}
-                            {
-                                orientaition == Constant.PORTRAIT ?
-                                    <Text> x <Text style={{ color: Colors.colorchinh, }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text></Text>
-                                    :
-                                    <Text style={{ color: Colors.colorchinh, }}>{item.IsLargeUnit ? (item.LargeUnit ? "/" + item.LargeUnit : "") : (item.Unit ? "/" + item.Unit : "")}</Text>
-                            }
-                        </Text>
+                        <View style={{ flexDirection: "row" }}>
+                            <Text style={{}}>{item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : currencyToString(item.Price)} x </Text>
+                            <View onPress={() => onClickUnit(item)}>
+                                {
+                                    orientaition == Constant.PORTRAIT ?
+                                        <Text style={{ color: Colors.colorchinh, }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text>
+                                        :
+                                        <View>
+                                            <Text style={{ color: Colors.colorchinh, }}>{item.IsLargeUnit ? (item.LargeUnit ? "/" + item.LargeUnit : "") : (item.Unit ? "/" + item.Unit : "")}</Text>
+                                        </View>
+                                }
+                            </View>
+                        </View>
                         <Text
                             style={{ fontStyle: "italic", fontSize: 11, color: "gray" }}>
                             {item.Description}
@@ -545,6 +566,69 @@ const CustomerOrder = (props) => {
         )
     }
 
+    const onClickSubmitUnit = () => {
+        let array = list.map(item => {
+            if (item.Id == itemOrder.Id && item.Sid == itemOrder.Sid) {
+                item.IsLargeUnit = IsLargeUnit
+            }
+            return item;
+        })
+        console.log("onClickSubmitUnit array ", array);
+
+        setListOrder([...array])
+        setShowModal(false)
+    }
+
+    const renderViewUnit = () => {
+        return (
+            <View >
+                <View style={styles.headerModal}>
+                    <Text style={styles.headerModalText}>{I18n.t('chon_dvt')}</Text>
+                </View>
+
+                <TouchableOpacity onPress={() => {
+                    setIsLargeUnit(false)
+                }} style={{ flexDirection: "row", alignItems: "center", marginTop: 10 }}>
+                    <RadioButton.Android
+                        color="orange"
+                        status={!IsLargeUnit ? 'checked' : 'unchecked'}
+                        onPress={() => {
+                            setIsLargeUnit(false)
+                        }}
+                    />
+                    <Text style={{ marginLeft: 20, fontSize: 20 }}>{itemOrder.Unit}</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity onPress={() => {
+                    setIsLargeUnit(true)
+                }} style={{ flexDirection: "row", alignItems: "center", marginBottom: 5 }}>
+                    <RadioButton.Android
+                        color="orange"
+                        status={IsLargeUnit ? 'checked' : 'unchecked'}
+                        onPress={() => {
+                            setIsLargeUnit(true)
+                        }}
+                    />
+                    <Text style={{ marginLeft: 20, fontSize: 20 }}>{itemOrder.LargeUnit}</Text>
+                </TouchableOpacity>
+
+                <View style={[styles.wrapAllButtonModal, { justifyContent: "center", marginBottom: 10 }]}>
+                    <TouchableOpacity onPress={() => onClickSubmitUnit()} style={{
+                        backgroundColor: Colors.colorchinh, alignItems: "center",
+                        margin: 2,
+                        width: 100,
+                        borderWidth: 1,
+                        borderColor: Colors.colorchinh,
+                        padding: 5,
+                        borderRadius: 4,
+                    }} >
+                        <Text style={{ color: "#fff", textTransform: "uppercase", }}>{I18n.t('dong_y')}</Text>
+                    </TouchableOpacity>
+                </View>
+
+            </View >
+        )
+    }
 
 
     return (
@@ -634,18 +718,22 @@ const CustomerOrder = (props) => {
                             width: Metrics.screenWidth * 0.8,
                             marginBottom: Platform.OS == 'ios' ? marginModal : 0
                         }}>
-                            <PopupDetail
-                                onClickTopping={() => onClickTopping(itemOrder)}
-                                item={itemOrder}
-                                getDataOnClick={(data) => {
-                                    console.log("getDataOnClick ", data);
-                                    mapDataToList(data)
-                                }}
-                                setShowModal={() => {
-                                    console.log("getDataOnClick list ", list);
-                                    setShowModal(false)
-                                }
-                                } />
+                            {this.typeModal == TYPE_MODAL.DETAIL ?
+                                <PopupDetail
+                                    onClickTopping={() => onClickTopping(itemOrder)}
+                                    item={itemOrder}
+                                    getDataOnClick={(data) => {
+                                        console.log("getDataOnClick ", data);
+                                        mapDataToList(data)
+                                    }}
+                                    setShowModal={() => {
+                                        console.log("getDataOnClick list ", list);
+                                        setShowModal(false)
+                                    }
+                                    } />
+                                :
+                                renderViewUnit()
+                            }
                         </View>
                     </View>
                 </View>
@@ -668,9 +756,10 @@ const PopupDetail = (props) => {
     const [itemOrder, setItemOrder] = useState({ ...props.item })
     const [showQuickNote, setShowQuickNote] = useState(false)
     const [listQuickNote, setListQuickNote] = useState([])
+    const [IsLargeUnit, setIsLargeUnit] = useState(false)
 
     useEffect(() => {
-        let list = itemOrder.OrderQuickNotes.split(',')
+        let list = itemOrder.OrderQuickNotes ? itemOrder.OrderQuickNotes.split(',') : [];
         let listQuickNote = []
         list.forEach((item, idx) => {
             if (item != '') {
@@ -679,11 +768,12 @@ const PopupDetail = (props) => {
         })
         console.log('setListQuickNote1', list);
         setListQuickNote([...listQuickNote])
+        setIsLargeUnit(itemOrder.IsLargeUnit)
     }, [])
 
     const onClickOk = () => {
         console.log("onClickOk itemOrder ", itemOrder);
-        props.getDataOnClick(itemOrder)
+        props.getDataOnClick({ ...itemOrder, IsLargeUnit: IsLargeUnit })
         props.setShowModal(false)
     }
 
@@ -699,22 +789,22 @@ const PopupDetail = (props) => {
                 <Text style={{ margin: 5, textTransform: "uppercase", fontSize: 15, fontWeight: "bold", marginLeft: 20, marginVertical: 20, color: "#fff" }}>{itemOrder.Name}</Text>
             </View>
             {
-                showQuickNote ?
+                showQuickNote && listQuickNote.length > 0 ?
                     <View style={{ padding: 20 }}>
                         <View style={{ paddingBottom: 20 }}>
                             {
                                 listQuickNote.map((item, index) => {
                                     return (
-                                        <TouchableOpacity key={index} style={{ flexDirection: "row", alignItems: "center", }}>
+                                        <TouchableOpacity key={index} style={{ flexDirection: "row", alignItems: "center", }}
+                                            onPress={() => {
+                                                listQuickNote[index].status = !listQuickNote[index].status
+                                                setListQuickNote([...listQuickNote])
+                                            }}>
                                             <Checkbox.Android
                                                 color="orange"
                                                 status={item.status ? 'checked' : 'unchecked'}
-                                                onPress={() => {
-                                                    listQuickNote[index].status = !listQuickNote[index].status
-                                                    setListQuickNote([...listQuickNote])
-                                                }}
                                             />
-                                            <Text style={{ marginLeft: 20, fontSize: 20 }}>{item.name}</Text>
+                                            <Text style={{ marginLeft: 20 }}>{item.name}</Text>
                                         </TouchableOpacity>
                                     )
                                 })
@@ -741,14 +831,45 @@ const PopupDetail = (props) => {
                     </View>
                     :
                     <View style={{ padding: 20 }}>
-                        <View style={{ flexDirection: "row", justifyContent: "center", }} onPress={() => setShowModal(false)}>
+                        <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }} onPress={() => setShowModal(false)}>
                             <Text style={{ fontSize: 14, flex: 3 }}>{I18n.t('don_gia')}</Text>
                             <View style={{ alignItems: "center", flexDirection: "row", flex: 7, backgroundColor: "#D5D8DC" }}>
                                 <Text style={{ padding: 7, flex: 1, fontSize: 14, borderWidth: 0.5, borderRadius: 4 }}>{currencyToString(itemOrder.Price)}</Text>
                             </View>
-
                         </View>
-                        <View style={{ alignItems: "center", flexDirection: "row", justifyContent: "center", marginTop: 10 }} >
+                        {itemOrder.Unit != undefined && itemOrder.Unit != "" && itemOrder.LargeUnit != undefined && itemOrder.LargeUnit != "" ?
+                            <View style={{ flexDirection: "row", justifyContent: "center", marginTop: 15, alignItems: "center" }} onPress={() => setShowModal(false)}>
+                                <Text style={{ fontSize: 14, flex: 3 }}>{I18n.t('chon_dvt')}</Text>
+                                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", flex: 7 }}>
+                                    <TouchableOpacity onPress={() => {
+                                        setIsLargeUnit(false)
+                                    }} style={{ flexDirection: "row", alignItems: "center", marginLeft: -10 }}>
+                                        <RadioButton.Android
+                                            color={colors.colorchinh}
+                                            status={!IsLargeUnit ? 'checked' : 'unchecked'}
+                                            onPress={() => {
+                                                setIsLargeUnit(false)
+                                            }}
+                                        />
+                                        <Text style={{ marginLeft: 0 }}>{itemOrder.Unit}</Text>
+                                    </TouchableOpacity>
+
+                                    <TouchableOpacity onPress={() => {
+                                        setIsLargeUnit(true)
+                                    }} style={{ flexDirection: "row", alignItems: "center" }}>
+                                        <RadioButton.Android
+                                            color={colors.colorchinh}
+                                            status={IsLargeUnit ? 'checked' : 'unchecked'}
+                                            onPress={() => {
+                                                setIsLargeUnit(true)
+                                            }}
+                                        />
+                                        <Text style={{ marginLeft: 0 }}>{itemOrder.LargeUnit}</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                            : null}
+                        <View style={{ alignItems: "center", flexDirection: "row", justifyContent: "center", marginTop: (itemOrder.Unit != undefined && itemOrder.Unit != "" && itemOrder.LargeUnit != undefined && itemOrder.LargeUnit != "") ? 10 : 20 }} >
                             <Text style={{ fontSize: 14, flex: 3 }}>{I18n.t('so_luong')}</Text>
                             <View style={{ alignItems: "center", flexDirection: "row", flex: 7 }}>
                                 <TouchableOpacity onPress={() => {
@@ -778,7 +899,7 @@ const PopupDetail = (props) => {
                                 </TouchableOpacity>
                             </View>
                         </View>
-                        <View style={{ alignItems: "center", flexDirection: "row", justifyContent: "center", marginTop: 10 }} onPress={() => setShowModal(false)}>
+                        <View style={{ alignItems: "center", flexDirection: "row", justifyContent: "center", marginTop: 20 }} onPress={() => setShowModal(false)}>
                             <Text style={{ fontSize: 14, flex: 3 }}>{I18n.t('ghi_chu')}</Text>
                             <View style={{ flexDirection: "row", flex: 7 }}>
                                 <TextInput
@@ -795,8 +916,8 @@ const PopupDetail = (props) => {
                             </View>
                         </View>
                         {
-                            itemOrder.OrderQuickNotes != "" ?
-                                <View style={{ paddingVertical: 5, flexDirection: "row", justifyContent: "center" }} onPress={() => setShowModal(false)}>
+                            itemOrder.OrderQuickNotes != undefined && itemOrder.OrderQuickNotes != "" ?
+                                <View style={{ paddingVertical: 5, flexDirection: "row", justifyContent: "center", marginTop: 10 }} onPress={() => setShowModal(false)}>
                                     <Text style={{ fontSize: 14, flex: 3 }}></Text>
                                     <View style={{ flexDirection: "row", flex: 7 }}>
                                         <TouchableOpacity
@@ -804,7 +925,8 @@ const PopupDetail = (props) => {
                                             onPress={() => {
                                                 setShowQuickNote(true)
                                             }}>
-                                            <Icon name="square-edit-outline" size={30} color="#2381E5" />
+                                            <Image style={{ width: 20, height: 20 }} source={Images.icon_quick_note} />
+                                            {/* <Icon name="square-edit-outline" size={30} color="#2381E5" /> */}
                                             <Text style={{ color: "#2381E5", marginLeft: 10 }}>{I18n.t('chon_ghi_chu_nhanh')}</Text>
                                         </TouchableOpacity>
                                     </View>
@@ -828,6 +950,40 @@ const PopupDetail = (props) => {
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    headerModal: {
+        backgroundColor: Colors.colorchinh, borderTopRightRadius: 4, borderTopLeftRadius: 4,
+    },
+    headerModalText: {
+        margin: 5, textTransform: "uppercase", fontSize: 15, fontWeight: "bold", marginLeft: 20, marginVertical: 10, color: "#fff"
+    },
+    button: {
+        borderColor: Colors.colorchinh,
+        borderWidth: 1,
+        color: Colors.colorchinh,
+        fontWeight: "bold",
+        paddingHorizontal: 17,
+        paddingVertical: 10,
+        borderRadius: 5
+    },
+    wrapAllButtonModal: {
+        alignItems: "center", justifyContent: "space-between", flexDirection: "row", marginTop: 15
+    },
+    wrapButtonModal: {
+        alignItems: "center",
+        margin: 2,
+        flex: 1,
+        borderWidth: 1,
+        borderColor: Colors.colorchinh,
+        padding: 5,
+        borderRadius: 4,
+        backgroundColor: "#fff"
+    },
+    buttonModal: {
+        color: Colors.colorchinh, textTransform: "uppercase"
+    },
+});
 
 
 export default React.memo(CustomerOrder)
