@@ -50,6 +50,6 @@ export const ScreenList = {
   OverView: "OverView",
   Invoice: "Invoice",
   CashFlow: "CashFlow",
-  InvoiceDetail:"InvoiceDetail",
+  InvoiceDetailForPhone:"InvoiceDetailForPhone",
 }
 

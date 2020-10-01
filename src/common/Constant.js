@@ -109,5 +109,23 @@ export const Constant = {
             name: "tuy_chon",
             key: "custom"
         }
+    ],
+    STATUS_FILTER: [
+        {
+            name: "tat_ca",
+            key: ''
+        },
+        {
+            name: "dat_hang",
+            key: 1
+        },
+        {
+            name: "hoan_thanh",
+            key: 2
+        },
+        {
+            name: "huy",
+            key: 3
+        },
     ]
 };

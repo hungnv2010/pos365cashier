@@ -25,6 +25,15 @@ class DataManager {
             await realmStore.insertProducts(res.Data)
     }
 
+    syncPromotion = async () => {
+        let params = { Includes: ['Product', 'Promotion'] }
+        let res = await new HTTPService().setPath(ApiPath.PROMOTION).GET(params)
+        console.log('syncPromotion', res);
+        if (res && res.results.length > 0) {
+            realmStore.insertPromotion(res.results)
+        }
+    }
+
     syncTopping = async () => {
         let results = await new HTTPService().setPath(ApiPath.SYNC_EXTRAEXT).GET()
         console.log('syncTopping', results);
@@ -48,21 +57,27 @@ class DataManager {
 
     syncRooms = async () => {
         console.log("syncAllDatas");
-        await this.syncServerEvent(),
-            await this.syncData(ApiPath.SYNC_ROOMS, SchemaName.ROOM),
+        await this.syncData(ApiPath.SYNC_ROOMS, SchemaName.ROOM),
             await this.syncData(ApiPath.SYNC_ROOM_GROUPS, SchemaName.ROOM_GROUP)
     }
 
-    syncForFirstTime = async () => {
-        await this.syncProduct(),
-            await this.syncTopping(),
-            await this.syncData(ApiPath.SYNC_CATEGORIES, SchemaName.CATEGORIES)
-            await this.syncData(ApiPath.SYNC_PARTNERS, SchemaName.CUSTOMER)
+
+    syncCategories = async () => {
+        await this.syncData(ApiPath.SYNC_CATEGORIES, SchemaName.CATEGORIES)
+    }
+
+    syncPartner = async () => {
+        await this.syncData(ApiPath.SYNC_PARTNERS, SchemaName.CUSTOMER)
     }
 
     syncAllDatas = async () => {
-        await this.syncForFirstTime(),
-            await this.syncRooms()
+        await this.syncProduct(),
+            await this.syncTopping(),
+            await this.syncServerEvent(),
+            await this.syncRooms(),
+            await this.syncPartner(),
+            await this.syncCategories(),
+            await this.syncPromotion()
     }
 }
 

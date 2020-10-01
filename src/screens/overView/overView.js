@@ -196,14 +196,14 @@ export default (props) => {
             <ScrollView>
                 <View style={{ padding: 20 }}>
                     <View>
-                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-                            <Text style={{ fontSize: 20, fontWeight: "bold", paddingBottom: 20 }}>{I18n.t('ket_qua_ban_hang')}</Text>
+                        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingBottom: 10 }}>
+                            <Text style={{ fontSize: 20, fontWeight: "bold", }}>{I18n.t('ket_qua_ban_hang')}</Text>
                             <TouchableOpacity
                                 onPress={() => {
                                     setShowModal(true);
                                     typeDateTime.current = 1
                                 }}
-                                style={{ flexDirection: "row", alignItems: "center", backgroundColor: "#E6EAEF", borderRadius: 10, padding: 10 }}>
+                                style={{ flexDirection: "row", backgroundColor: "#E6EAEF", borderRadius: 10, padding: 10 }}>
                                 <Text style={{ marginRight: 10, fontSize: 17, }}>{timeForRevenue.name.includes('-') ? timeForRevenue.name : I18n.t(timeForRevenue.name)}</Text>
                                 <Image style={{ width: 10, height: 10 }} source={Images.icon_path_4203} />
                             </TouchableOpacity>
@@ -378,17 +378,19 @@ export default (props) => {
                         }}></View>
 
                     </TouchableWithoutFeedback>
-                    {
-                        typeDateTime.current == 1 ?
-                            <DateTime
-                                timeCustom={true}
-                                outputDateTime={outputForRevenue} />
-                            :
-                            <DateTime
-                                outputDateTime={outputForTopSell} />
-                    }
+                    <View style={{ width: Metrics.screenWidth * 0.8 }}>
+                        {
+                            typeDateTime.current == 1 ?
+                                <DateTime
+                                    timeCustom={true}
+                                    outputDateTime={outputForRevenue} />
+                                :
+                                <DateTime
+                                    outputDateTime={outputForTopSell} />
+                        }
+                    </View>
                 </View>
             </Modal>
-        </View>
+        </View >
     );
 };

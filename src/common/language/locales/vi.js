@@ -67,6 +67,7 @@ export default {
   danh_muc_phong_ban: "Danh mục phòng bàn",
   danh_sach_phong_ban: "Danh sách phòng bàn",
   dich_vu_tinh_gio: "Dịch vụ tính giờ",
+  dat_hang: "Đặt hàng",
 
   // TODO: E
 
@@ -176,7 +177,7 @@ export default {
   nhap_ghi_chu: "Nhập ghi chú",
   ngay: "ngày",
   nhom_phong_ban: "Nhóm phòng bàn",
-  nhap_tu_khoa_tim_kiem:"Nhập tự khóa tìm kiếm",
+  nhap_tu_khoa_tim_kiem: "Nhập tự khóa tìm kiếm",
   ngay: "Ngày",
 
   // TODO: O

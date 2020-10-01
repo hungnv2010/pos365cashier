@@ -16,13 +16,18 @@ const InvoiceDetail = (props) => {
     const [invoiceDetail, setInvoiceDetail] = useState({})
     const [dataDetail, setDataDetail] = useState([])
     const moreAttributes = useRef(null)
+    const deviceType = useSelector(state => {
+        console.log("useSelector state ", state);
+        return state.Common.deviceType
+    });
 
     useEffect(() => {
-        if (props.currentItem) {
-            console.log('props.currentItem ', props.currentItem);
-            setInvoiceDetail({ ...props.currentItem })
+        console.log('InvoiceDetail', props.route.params.item);
+        if (props.route.params.item) {
+            setInvoiceDetail(props.route.params.item)
         }
-    }, [props.currentItem])
+    }, [props.route.params.item])
+
 
     useEffect(() => {
         moreAttributes.current = getMoreAttributes()
@@ -69,7 +74,7 @@ const InvoiceDetail = (props) => {
 
     const renderItemList = (item) => {
         return (
-            <View key={item.Id} style={{ flex: 1, flexDirection: 'row', paddingVertical: 10, borderBottomColor: "#ddd", borderBottomWidth: 1, justifyContent: 'space-between', alignItems: "center" }}>
+            <View style={{ flex: 1, flexDirection: 'row', paddingVertical: 10, borderBottomColor: "#ddd", borderBottomWidth: 1, justifyContent: 'space-between', alignItems: "center" }}>
                 <View style={{ flex: 1 }}>
                     <Text style={{ flex: 1, textAlign: "center", fontSize: 12 }}>{item.Product && item.Product.Name ? item.Product.Name.trim() : ""}</Text>
                     {item.Description && item.Description != "" ?
@@ -143,65 +148,63 @@ const InvoiceDetail = (props) => {
 
     return (
         <View style={{ flex: 1, backgroundColor: 'white' }}>
-            {
-                JSON.stringify(invoiceDetail) != "{}" ?
-                    <View style={{ paddingHorizontal: 10, flex: 1 }}>
-                        <View style={{ borderBottomColor: "#0072bc", borderBottomWidth: 1, }}>
-                            <View style={{ margin: 5, flexDirection: "row", justifyContent: "space-between" }}>
-                                <Text style={{ padding: 0, flex: 1, fontWeight: 'bold', }}>{I18n.t("ngay_tao")}</Text>
-                                <Text style={{ paddingLeft: 5, }}>{invoiceDetail.CreatedDate ? dateToString(invoiceDetail.CreatedDate) : ""}</Text>
-                            </View>
-                            {invoiceDetail.PurchaseDate ?
-                                <View style={{ margin: 5, flexDirection: "row", justifyContent: "space-between" }}>
-                                    <Text style={{ padding: 0, flex: 1, fontWeight: 'bold', }}>{I18n.t("ngay_ban")}</Text>
-                                    <Text style={{ paddingLeft: 5, }}>{dateToString(invoiceDetail.PurchaseDate)}</Text>
-                                </View>
-                                : null
-                            }
-                            {invoiceDetail.ModifiedDate ?
-                                <View style={{ margin: 5, flexDirection: "row", justifyContent: "space-between" }}>
-                                    <Text style={{ padding: 0, flex: 1, fontWeight: 'bold' }}>{I18n.t("ngay_sua")}</Text>
-                                    <Text style={{ paddingLeft: 5, color: "red" }}>{dateToString(invoiceDetail.ModifiedDate)}</Text>
-                                </View>
-                                : null
-                            }
 
-                            {invoiceDetail.ModifiedBy && typeof invoiceDetail.ModifiedBy != "number" ?
-                                <View style={{ margin: 5, flexDirection: "row", justifyContent: "space-between" }}>
-                                    <Text style={{ padding: 0, flex: 1, fontWeight: 'bold' }}>{I18n.t("nguoi_sua")}</Text>
-                                    <Text style={{ paddingLeft: 5, color: "red" }}>{invoiceDetail.ModifiedBy}</Text>
-                                </View>
-                                : null
-                            }
-                            <View style={{ margin: 5, alignItems: "center", }}>
-                                <Text style={{ fontWeight: 'bold' }}>{I18n.t("trang_thai")} :  <Text style={{ color: colors.colorchinh }}>{invoiceDetail.Status ? I18n.t(getStatus(invoiceDetail.Status)) : ""}</Text></Text>
-                            </View>
-
-                        </View>
-
-                        <View style={{ flexDirection: 'row', borderBottomColor: "#0072bc", borderBottomWidth: 1, paddingVertical: 10, alignItems: "center" }}>
-                            <Text style={styles.text2}>{I18n.t("ten_hang")}</Text>
-                            <Text style={styles.text2}>{I18n.t("don_gia")}</Text>
-                            <Text style={styles.text2}>{I18n.t("SL")}</Text>
-                            <Text style={styles.text2}> {I18n.t("TT")}</Text>
-                        </View>
-                        <View style={{ flex: 1 }}>
-                            {dataDetail && dataDetail.length > 0 ?
-                                <FlatList
-                                    style={{ flexGrow: 0 }}
-                                    keyExtractor={(item, index) => index.toString()}
-                                    data={dataDetail}
-                                    renderItem={({ item }) =>
-                                        renderItemList(item)
-                                    }
-                                />
-                                : null}
-                            {renderFooter()}
-                        </View>
+            <ToolBarDefault {...props} title={invoiceDetail.Code ? invoiceDetail.Code : ""} />
+            <View style={{ paddingHorizontal: 10, flex: 1 }}>
+                <View style={{ borderBottomColor: "#0072bc", borderBottomWidth: 1, }}>
+                    <View style={{ margin: 5, flexDirection: "row", justifyContent: "space-between" }}>
+                        <Text style={{ padding: 0, flex: 1, fontWeight: 'bold', }}>{I18n.t("ngay_tao")}</Text>
+                        <Text style={{ paddingLeft: 5, }}>{invoiceDetail.CreatedDate ? dateToString(invoiceDetail.CreatedDate) : ""}</Text>
                     </View>
-                    :
-                    null
-            }
+                    {invoiceDetail.PurchaseDate ?
+                        <View style={{ margin: 5, flexDirection: "row", justifyContent: "space-between" }}>
+                            <Text style={{ padding: 0, flex: 1, fontWeight: 'bold', }}>{I18n.t("ngay_ban")}</Text>
+                            <Text style={{ paddingLeft: 5, }}>{dateToString(invoiceDetail.PurchaseDate)}</Text>
+                        </View>
+                        : null
+                    }
+                    {invoiceDetail.ModifiedDate ?
+                        <View style={{ margin: 5, flexDirection: "row", justifyContent: "space-between" }}>
+                            <Text style={{ padding: 0, flex: 1, fontWeight: 'bold' }}>{I18n.t("ngay_sua")}</Text>
+                            <Text style={{ paddingLeft: 5, color: "red" }}>{dateToString(invoiceDetail.ModifiedDate)}</Text>
+                        </View>
+                        : null
+                    }
+
+                    {invoiceDetail.ModifiedBy && typeof invoiceDetail.ModifiedBy != "number" ?
+                        <View style={{ margin: 5, flexDirection: "row", justifyContent: "space-between" }}>
+                            <Text style={{ padding: 0, flex: 1, fontWeight: 'bold' }}>{I18n.t("nguoi_sua")}</Text>
+                            <Text style={{ paddingLeft: 5, color: "red" }}>{invoiceDetail.ModifiedBy}</Text>
+                        </View>
+                        : null
+                    }
+                    <View style={{ margin: 5, alignItems: "center", }}>
+                        <Text style={{ fontWeight: 'bold' }}>{I18n.t("trang_thai")} :  <Text style={{ color: colors.colorchinh }}>{invoiceDetail.Status ? I18n.t(getStatus(invoiceDetail.Status)) : ""}</Text></Text>
+                    </View>
+
+                </View>
+
+                <View style={{ flexDirection: 'row', borderBottomColor: "#0072bc", borderBottomWidth: 1, paddingVertical: 10, alignItems: "center" }}>
+                    <Text style={styles.text2}>{I18n.t("ten_hang")}</Text>
+                    <Text style={styles.text2}>{I18n.t("don_gia")}</Text>
+                    <Text style={styles.text2}>{I18n.t("SL")}</Text>
+                    <Text style={styles.text2}> {I18n.t("TT")}</Text>
+                </View>
+                <View style={{ flex: 1 }}>
+                    {dataDetail && dataDetail.length > 0 ?
+                        <FlatList
+                            style={{ flexGrow: 0 }}
+                            keyExtractor={(item, index) => index.toString()}
+                            data={dataDetail}
+                            renderItem={({ item }) =>
+                                renderItemList(item)
+                            }
+                        />
+                        : null}
+                    {renderFooter()}
+                </View>
+            </View>
+
         </View>
     )
 }

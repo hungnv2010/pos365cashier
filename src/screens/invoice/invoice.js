@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, createRef, useCallback } from 'react';
-import { View, Text, Modal, TouchableOpacity, RefreshControl, TouchableWithoutFeedback, Image, ActivityIndicator, TextInput } from 'react-native';
+import { View, Text, Modal, TouchableOpacity, RefreshControl, TouchableWithoutFeedback, Image, ActivityIndicator, TextInput, Keyboard } from 'react-native';
 import I18n from '../../common/language/i18n';
 import MainToolBar from '../main/MainToolBar';
 import { Metrics, Images } from '../../theme';
@@ -8,31 +8,42 @@ import { useSelector } from 'react-redux';
 import { URL, HTTPService } from '../../data/services/HttpService';
 import { ApiPath } from '../../data/services/ApiPath';
 import { Constant } from '../../common/Constant';
-import DateRangePicker from "react-native-daterange-picker";
-import moment from "moment";
 import { getFileDuLieuString } from '../../data/fileStore/FileStorage';
 import { currencyToString, dateToString, momentToStringDateLocal } from '../../common/Utils';
 import InvoiceDetail from '../invoice/invoiceDetail';
 import { FlatList } from 'react-native-gesture-handler';
 import DateTime from '../../components/filter/DateTime';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import useDebounce from '../../customHook/useDebounce';
+import { ScreenList } from '../../common/ScreenList';
 
 const Invoice = (props) => {
 
     const [invoiceData, setInvoiceData] = useState([])
     const [currentItem, setCurrentItem] = useState({})
-    const [timeFilter, setTimeFilter] = useState(Constant.TIME_SELECT_ALL_TIME[0])
+    const [filter, setFilter] = useState({
+        time: Constant.TIME_SELECT_ALL_TIME[0],
+        status: Constant.STATUS_FILTER[0]
+    })
     const [showModal, setShowModal] = useState(false)
     const [skip, setSkip] = useState(0)
     const [loadMore, setLoadMore] = useState(false)
-    const [refreshing, setRefreshing] = useState(false)
     const [textSearch, setTextSearch] = useState("")
     const currentBranch = useRef({})
+    const typeModal = useRef(null)
     const count = useRef(0)
-    const currentCount = useRef(0)
+    const onEndReachedCalledDuringMomentum = useRef(false)
     const deviceType = useSelector(state => {
         console.log("useSelector state ", state);
         return state.Common.deviceType
     });
+    const filterRef = useRef({
+        time: Constant.TIME_SELECT_ALL_TIME[0],
+        status: Constant.STATUS_FILTER[0],
+        skip: 0
+    })
+    const debounceTextSearch = useDebounce(textSearch)
+
 
     useEffect(() => {
         const getBranch = async () => {
@@ -44,79 +55,96 @@ const Invoice = (props) => {
         getBranch()
     }, [])
 
+    useEffect(() => {
+        filterRef.current = { ...filter }
+    }, [filter])
+
+
+    useEffect(() => {
+        const getInvoiceBySearch = () => {
+            if (debounceTextSearch != '') {
+                let params = {
+                    Includes: ['Partner', 'Room'],
+                    IncludeSummary: true,
+                    filter: `(substringof('${textSearch}', Code) and BranchId eq ${currentBranch.current.Id})`
+                };
+                new HTTPService().setPath(ApiPath.INVOICE).GET(params).then((res) => {
+                    console.log('getInvoiceBySearch', res);
+                })
+            }
+        }
+        getInvoiceBySearch()
+    }, [debounceTextSearch])
+
+    // useEffect(() => {
+    //     onRefresh()
+    //     getInvoice()
+    // }, [filter])
+
+    useEffect(() => {
+        getInvoice(true)
+    }, [skip])
+
+    const getInvoice = (isLoadMore = false) => {
+        let params = genParams();
+        params = { ...params, includes: ['Room', 'Partner'], IncludeSummary: true };
+        new HTTPService().setPath(ApiPath.INVOICE).GET(params).then((res) => {
+            console.log("getInvoicesData res ", res);
+            let results = res.results.filter(item => item.Id > 0);
+            console.log('res.__count', res.__count);
+            count.current = res.__count;
+            if (!isLoadMore) {
+                setInvoiceData([...results])
+            } else {
+                setInvoiceData([...invoiceData, ...results])
+            }
+            setLoadMore(false)
+        }).catch((e) => {
+            console.log("getInvoicesData err  ======= ", e);
+        })
+    }
+
 
     const genParams = () => {
-        const { startDate, endDate } = timeFilter;
+        const { startDate, endDate } = filterRef.current.time;
         let params = { skip: skip, top: Constant.LOAD_LIMIT };
         let arrItemPath = [];
-        let pathBranch = "";
-
 
         if (currentBranch.current.Id) {
-            pathBranch = "BranchId+eq+" + currentBranch.current.Id
-            arrItemPath.push(pathBranch)
+            arrItemPath.push("BranchId eq " + currentBranch.current.Id)
         }
-        console.log("arrItemPath ", arrItemPath);
-        if (timeFilter.key != "custom") {
-            if (timeFilter.key !== Constant.TIME_SELECT_ALL_TIME[4].key) {
-                params['filter'] = `PurchaseDate+eq+%27${timeFilter.key}%27`;
+        if (filterRef.current.time.key != "custom") {
+            if (filterRef.current.time.key != Constant.TIME_SELECT_ALL_TIME[4].key) {
+                arrItemPath.push(`PurchaseDate eq '${filterRef.current.time.key}'`)
             }
-            if (arrItemPath[0]) {
-                params['filter'] = `(${arrItemPath.join()})`;
+            if (filterRef.current.status.key != '') {
+                arrItemPath.push(`Status eq ${filterRef.current.status.key}`)
             }
-            if (timeFilter.key != Constant.TIME_SELECT_ALL_TIME[4].key && arrItemPath[0]) {
-                params['filter'] = `(PurchaseDate+eq+%27${timeFilter.key}%27+and+${arrItemPath.join()})`;
-            }
-        } else {
+        } else if (startDate) {
             let startDateFilter = momentToStringDateLocal(startDate.set({ 'hour': 0, 'minute': 0, 'second': 0 }))
             let endDateFilter = momentToStringDateLocal((endDate ? endDate : startDate).set({ 'hour': 23, 'minute': 59, 'second': 59 }))
             arrItemPath.push("PurchaseDate+ge+'datetime''" + startDateFilter.toString().trim() + "'''");
             arrItemPath.push("PurchaseDate+lt+'datetime''" + endDateFilter.toString().trim() + "'''");
-            params['filter'] = `(${arrItemPath.join("+and+")})`;
+            params['filter'] = `(${arrItemPath.join(" and ")})`;
         }
+        params['filter'] = `(${arrItemPath.join(' and ')})`
         console.log('params', params);
         return params;
     }
-
-    useEffect(() => {
-        const getInvoice = async () => {
-            let params = genParams();
-            params = { ...params, includes: ['Room', 'Partner'], IncludeSummary: true };
-            new HTTPService().setPath(ApiPath.INVOICE).GET(params).then((res) => {
-                console.log("getInvoicesData res ", res);
-                if (res) {
-                    let results = res.results.filter(item => item.Id > 0);
-                    console.log('res.__count', res.__count);
-                    count.current = res.__count;
-                    currentCount.current = results.length
-                    setInvoiceData([...invoiceData, ...results])
-                    setLoadMore(false)
-                }
-            }).catch((e) => {
-                console.log("getInvoicesData err  ======= ", e);
-            })
-        }
-        getInvoice()
-    }, [timeFilter.key, skip])
-
-    useEffect(() => {
-        if (invoiceData.length > 0) {
-            setCurrentItem(invoiceData[0])
-        }
-        console.log('timeFilter.key', invoiceData.length, invoiceData);
-    }, [timeFilter.key, invoiceData])
 
 
     const onReset = () => {
         onRefresh()
         setInvoiceData([])
-        setCurrentItem({})
     }
 
     const outputDateTime = (item) => {
         console.log('outputDateTime', item);
-        setTimeFilter(item)
-        onReset()
+        setFilter({
+            ...filter,
+            time: item
+        })
+        getInvoice()
         setShowModal(false)
     }
 
@@ -125,12 +153,13 @@ const Invoice = (props) => {
         setSkip(0)
     }
 
-    const onLoadMore = (info) => {
-        console.log('loadMore');
-        if (currentCount.current > 0) {
-            setLoadMore(true)
-            setSkip(prevSkip => prevSkip + Constant.LOAD_LIMIT)
-        }
+    const onLoadMore = () => {
+        // if (count.current > skip && !onEndReachedCalledDuringMomentum.current) {
+            console.log('loadMore', skip, count.current);
+        //     setLoadMore(true)
+        //     setSkip(prevSkip => prevSkip + Constant.LOAD_LIMIT)
+        //     onEndReachedCalledDuringMomentum.current = true
+        // }
     }
 
 
@@ -138,8 +167,19 @@ const Invoice = (props) => {
         if (deviceType == Constant.TABLET) {
             setCurrentItem({ ...item })
         } else {
+            console.log('onClickInvoiceItem', item, props);
+            props.navigation.navigate(ScreenList.InvoiceDetailForPhone, { item })
 
         }
+    }
+
+    const onClickStatusFilter = (item) => {
+        setFilter({
+            ...filter,
+            status: item
+        })
+        // onReset()
+        setShowModal(false)
     }
 
 
@@ -178,54 +218,74 @@ const Invoice = (props) => {
         return (
             <TouchableOpacity
                 onPress={() => onClickInvoiceItem(item)}
-                key={item.Id}
-                style={{ flexDirection: "column", alignItems: "center", borderBottomColor: "#ddd", borderBottomWidth: 1, paddingVertical: 15, paddingHorizontal: 10, backgroundColor: item.Id == currentItem.Id ? "#F3DAC8" : null }}>
-                <View style={{ flex: 1, flexDirection: "row", }}>
-                    <Image source={renderIcon(item.Status)} style={{ width: 30, height: 30, marginRight: 10, alignSelf: "center" }}></Image>
-                    <View style={{ flex: 1 }}>
-                        <Text style={{ fontSize: 15, }}>{item.Code}</Text>
-                        <Text style={{ fontSize: 12, color: "#1565C0" }}>{item.PartnerId ? item.Partner.Name : I18n.t("khach_le")}</Text>
-                        <Text>{item.Room ? item.Room.Name : ''}</Text>
-                    </View>
+                key={item.Id}>
+                <View style={{ flex: 1, alignItems: "center", padding: 15, marginBottom: 5, backgroundColor: item.Id == currentItem.Id ? "#F6DFCE" : 'white', borderRadius: 10 }}>
+                    <View style={{ flexDirection: "row", }}>
+                        <Image source={renderIcon(item.Status)} style={{ width: 30, height: 30, marginRight: 10, alignSelf: "center" }}></Image>
+                        <View style={{ flex: 1 }}>
+                            <Text style={{ fontSize: 15, }}>{item.Code}</Text>
+                            <Text style={{ fontSize: 12, color: "#1565C0" }}>{I18n.t("khach_le")}</Text>
+                            <Text>{item.Room ? item.Room.Name : ''}</Text>
+                        </View>
 
-                    <View style={{ alignItems: "flex-end" }}>
-                        <Text style={{ fontSize: 14, color: checkColor(item) ? "black" : "red" }}>{currencyToString(item.TotalPayment)}</Text>
-                        <Text style={{ color: '#689f38', fontSize: 13 }}>{item.AccountId ? (item.AccountId) : I18n.t("tien_mat")}</Text>
-                        <Text style={{ color: "#0072bc", fontSize: 12 }}>{dateToString(item.CreatedDate)}</Text>
+                        <View style={{ alignItems: "flex-end" }}>
+                            <Text style={{ fontSize: 14, color: checkColor(item) ? "black" : "red" }}>{currencyToString(item.TotalPayment)}</Text>
+                            <Text style={{ color: '#689f38', fontSize: 13 }}>{item.AccountId ? (item.AccountId) : I18n.t("tien_mat")}</Text>
+                            <Text style={{ color: "#0072bc", fontSize: 12 }}>{dateToString(item.CreatedDate)}</Text>
+                        </View>
                     </View>
+                    {
+                        getMoreAttributes(item) ?
+                            <Text style={{ fontStyle: 'italic', color: "gray" }}>{I18n.t("tam_tinh")} {getMoreAttributes(item).TemporaryPrints.length} {I18n.t("lan")}</Text>
+                            : null
+                    }
                 </View>
-                {getMoreAttributes(item) ?
-                    <Text style={{ fontStyle: 'italic', color: "gray" }}>{I18n.t("tam_tinh")} {getMoreAttributes(item).TemporaryPrints.length} {I18n.t("lan")}</Text>
-                    : null}
+
+
             </TouchableOpacity>
         )
     }
 
-    const renderHeader = () => {
-        return invoiceData.length > 0 ?
-            (
-                <View style={{ alignItems: "center", justifyContent: "center", backgroundColor: "grey", height: 65, flex: 1 }}>
-                    <View style={{ backgroundColor: "white", height: 45, width: " 95%", borderRadius: 10, flexDirection: "row", alignItems: "center", }}>
-                        <Image source={Images.icon_waiting} style={{ height: 20, width: 20, marginHorizontal: 20 }} />
-                        <TextInput
-                            value={textSearch}
-                            onChangeText={text => onChangeText(text)}
-                            style={{ flex: 1, height: 40 }}
-                        />
-                    </View>
-                </View>
-            )
+    const renderFilter = () => {
+        return typeModal.current == 1 ?
+            <DateTime
+                timeAll={true}
+                outputDateTime={outputDateTime} />
             :
-            null
+            <View style={{
+                padding: 0,
+                backgroundColor: "#fff", borderRadius: 4, marginHorizontal: 0,
+                justifyContent: 'center', alignItems: 'center',
+            }}>
+                <View>
+                    <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", paddingVertical: 10 }}>{I18n.t('chon_khoang_thoi_gian')}</Text>
+                    {
+                        Constant.STATUS_FILTER.map((item, index) => {
+                            return (
+                                <TouchableOpacity
+                                    onPress={() => onClickStatusFilter(item)}
+                                    key={index} style={{ paddingVertical: 15, }}>
+                                    <Text style={{ textAlign: "center" }}>{I18n.t(item.name)}</Text>
+                                </TouchableOpacity>
+                            )
+                        })
+                    }
+                </View>
+            </View>
+    }
+
+    const onClickFilter = (type) => {
+        setShowModal(true)
+        typeModal.current = type
     }
 
     const onChangeText = (text) => {
         console.log('onChangeText', text);
-        // setTextSearch(text)
+        setTextSearch(text)
     }
 
     return (
-        <View style={{ flex: 1, backgroundColor: "#fff" }}>
+        <View style={{ flex: 1, backgroundColor: "#f2f2f2" }}>
             <MainToolBar
                 navigation={props.navigation}
                 title={I18n.t('hoa_don')}
@@ -235,37 +295,74 @@ const Invoice = (props) => {
                     <View style={{ flexDirection: "row", alignItems: "center", padding: 10, borderBottomColor: "grey", borderBottomWidth: 1, justifyContent: "space-between" }}>
                         <TouchableOpacity
                             style={{ flexDirection: "row", alignItems: "center" }}
-                            onPress={() => {
-                                setShowModal(true)
-                            }}>
+                            onPress={() => onClickFilter(1)}>
                             <Image source={Images.icon_calendar} style={{ width: 20, height: 20 }} />
-                            <Text style={{ marginHorizontal: 10 }}>{timeFilter.name.includes('-') ? timeFilter.name : I18n.t(timeFilter.name)}</Text>
+                            <Text style={{ marginHorizontal: 10 }}>{filter.time.name.includes('-') ? filter.time.name : I18n.t(filter.time.name)}</Text>
                             <Image source={Images.icon_arrow_down} style={{ width: 14, height: 14, marginLeft: 5 }} />
                         </TouchableOpacity>
-                        <Text>{invoiceData.length} / {count.current}</Text>
+                        <TouchableOpacity
+                            style={{ flexDirection: "row", alignItems: "center" }}
+                            onPress={() => onClickFilter(2)}>
+                            <Image source={Images.icon_calendar} style={{ width: 20, height: 20 }} />
+                            <Text style={{ marginHorizontal: 10 }}>{I18n.t(filter.status.name)}</Text>
+                            <Image source={Images.icon_arrow_down} style={{ width: 14, height: 14, marginLeft: 5 }} />
+                        </TouchableOpacity>
+                    </View>
+                    {
+                        invoiceData.length > 0 ?
+                            <View style={{ alignItems: "center", justifyContent: "center", backgroundColor: "#f2f2f2", height: 60, }}>
+                                <View style={{ backgroundColor: "white", height: 40, width: " 95%", borderRadius: 10, flexDirection: "row", alignItems: "center", paddingHorizontal: 10 }}>
+                                    <Image source={Images.icon_waiting} style={{ height: 20, width: 20, marginRight: 20 }} />
+                                    <TextInput
+                                        style={{ flex: 1, height: 35 }}
+                                        value={textSearch}
+                                        onChangeText={text => onChangeText(text)}
+                                        placeholder={I18n.t('nhap_tu_khoa_tim_kiem')}
+                                    />
+                                    {
+                                        textSearch != "" ?
+                                            <TouchableOpacity onPress={() => {
+                                                setTextSearch('')
+                                                Keyboard.dismiss()
+                                            }}>
+                                                <Ionicons name="md-close" size={20} color="black" />
+                                            </TouchableOpacity>
+                                            :
+                                            null
+                                    }
+                                </View>
+                            </View>
+                            :
+                            null
+                    }
+                    <View style={{ marginVertical: 5, padding: 10, backgroundColor: "white" }}>
+                        <Text style={{ fontSize: 10 }}>{invoiceData.length} / {count.current}</Text>
                     </View>
                     <FlatList
                         refreshControl={
-                            <RefreshControl colors={[colors.colorchinh]} refreshing={refreshing} onRefresh={onRefresh} />
+                            <RefreshControl colors={[colors.colorchinh]} refreshing={false} onRefresh={onRefresh} />
                         }
                         style={{ flex: 1, paddingBottom: 0 }}
-                        onEndReachedThreshold={0.5}
-                        onEndReached={(info) => {
-                            onLoadMore(info);
-                        }}
+                        onEndReachedThreshold={0.1}
+                        onEndReached={onLoadMore}
                         keyExtractor={(item, index) => index.toString()}
                         data={invoiceData}
                         renderItem={({ item, index }) =>
                             renderItemList(item, index)
                         }
                         ListFooterComponent={loadMore ? <ActivityIndicator color={colors.colorchinh} /> : null}
-                        ListHeaderComponent={renderHeader}
+                        onMomentumScrollBegin={() => { onEndReachedCalledDuringMomentum.current = false }}
                     />
                 </View>
-                <View style={{ flex: 1 }}>
-                    <InvoiceDetail
-                        currentItem={currentItem} />
-                </View>
+                {
+                    deviceType == Constant.TABLET ?
+                        <View style={{ flex: 1 }}>
+                            <InvoiceDetail
+                                currentItem={currentItem} />
+                        </View>
+                        :
+                        null
+                }
             </View>
             <Modal
                 animationType="fade"
@@ -295,9 +392,9 @@ const Invoice = (props) => {
                         }}></View>
 
                     </TouchableWithoutFeedback>
-                    <DateTime
-                        timeAll={true}
-                        outputDateTime={outputDateTime} />
+                    <View style={{ width: Metrics.screenWidth * 0.8 }}>
+                        {renderFilter()}
+                    </View>
                 </View>
             </Modal>
         </View>
