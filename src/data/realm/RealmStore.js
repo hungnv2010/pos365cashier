@@ -71,6 +71,18 @@ class RealmStore extends RealmBase {
         })
     }
 
+    insertPromotion = async (newPromotion) => {
+        let realm = await Realm.open(databaseOption)
+        return new Promise((resolve) => realm.write(() => {
+            newPromotion.map(newPromo => {
+                newPromo.Product = JSON.stringify(newPromo.Product)
+                newPromo.Promotion = JSON.stringify(newPromo.Promotion)
+                realm.create(SchemaName.PROMOTION, newPromo, true)
+            })
+            resolve(newPromotion)
+        }))
+    }
+
     queryServerEvents = async () => {
         return this.queryAll(databaseOption, SchemaName.SERVER_EVENT)
     }
@@ -134,6 +146,10 @@ class RealmStore extends RealmBase {
         return this.queryAll(databaseOption, SchemaName.TOPPING)
     }
 
+    querryPromotion() {
+        return this.queryAll(databaseOption, SchemaName.PROMOTION)
+    }
+
 
 }
 
@@ -145,7 +161,8 @@ export const SchemaName = {
     PRODUCT: "Product",
     CATEGORIES: "Categories",
     TOPPING: "Topping",
-    CUSTOMER: "Customer"
+    CUSTOMER: "Customer",
+    PROMOTION: "Promotion",
 }
 
 const CustomerSchema = {
@@ -286,10 +303,32 @@ const ToppingsSchema = {
 
 }
 
+const PromotionSchema = {
+    name: SchemaName.PROMOTION,
+    primaryKey: "Id",
+    properties: {
+        Id: 'int',
+        ProductId: 'int',
+        QuantityCondition: 'int',
+        IsLargeUnit: "bool",
+        ProductPromotionId: "int",
+        ProductPromotionIsLargeUnit: "bool",
+        QuantityPromotion: "int",
+        PricePromotion: "double",
+        BeginDate: "string",
+        EndDate: "string",
+        RetailerId: 'int',
+        CreatedDate: "string",
+        CreatedBy: "int",
+        Product: { type: "string", default: '{}' },
+        Promotion: { type: "string", default: '{}' }
+    }
+}
+
 const databaseOption = {
     path: 'Pos365Boss.realm',
-    schema: [ServerEventSchema, RoomSchema, RoomGroupSchema, ProductSchema, CategoriesSchema, ToppingsSchema, CustomerSchema],
-    schemaVersion: 23
+    schema: [ServerEventSchema, RoomSchema, RoomGroupSchema, ProductSchema, CategoriesSchema, ToppingsSchema, CustomerSchema, PromotionSchema],
+    schemaVersion: 25
 }
 
 const realm = new Realm(databaseOption);

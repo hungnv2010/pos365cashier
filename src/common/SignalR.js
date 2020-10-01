@@ -152,7 +152,7 @@ class SignalRManager {
             serverEvent.JsonContent = decodeBase64(serverEvent.JsonContent || "")
             serverEvent.Compress = false
         }
-        await realmStore.insertServerEvent(serverEvent)
+        await realmStore.insertServerEvents(serverEvent)
     }
 
     sendMessage = (message, type = TYPE_SALE_HUB) => {

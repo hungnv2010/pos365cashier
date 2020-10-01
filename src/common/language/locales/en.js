@@ -64,6 +64,7 @@ export default {
   danh_sach_phong_ban: "Danh sách phòng bàn",
   dich_vu_tinh_gio: "Dịch vụ tính giờ",
   doanh_thu_VND: "Revenue (VND)",
+  dat_hang: "On order",
 
   // TODO: E
 
