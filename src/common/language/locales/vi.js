@@ -69,12 +69,9 @@ export default {
   danh_muc_phong_ban: "Danh mục phòng bàn",
   danh_sach_phong_ban: "Danh sách phòng bàn",
   dich_vu_tinh_gio: "Dịch vụ tính giờ",
-<<<<<<< HEAD
   dat_hang: "Đặt hàng",
-=======
   doi_tac: "Đối tác",
   dang_cap_nhat: "Đang cập nhật",
->>>>>>> d251f7045e0948bbedce3fe2f2d87d8123be6599
 
   // TODO: E
 

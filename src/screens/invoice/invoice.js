@@ -26,12 +26,12 @@ const Invoice = (props) => {
         status: Constant.STATUS_FILTER[0]
     })
     const [showModal, setShowModal] = useState(false)
-    const [skip, setSkip] = useState(0)
     const [loadMore, setLoadMore] = useState(false)
     const [textSearch, setTextSearch] = useState("")
     const currentBranch = useRef({})
     const typeModal = useRef(null)
     const count = useRef(0)
+    const currentCount = useRef(0)
     const onEndReachedCalledDuringMomentum = useRef(false)
     const deviceType = useSelector(state => {
         console.log("useSelector state ", state);
@@ -55,9 +55,9 @@ const Invoice = (props) => {
         getBranch()
     }, [])
 
-    useEffect(() => {
-        filterRef.current = { ...filter }
-    }, [filter])
+    // useEffect(() => {
+    //     console.log('filterRef.current', filterRef.current);
+    // }, [filter])
 
 
     useEffect(() => {
@@ -76,16 +76,12 @@ const Invoice = (props) => {
         getInvoiceBySearch()
     }, [debounceTextSearch])
 
-    // useEffect(() => {
-    //     onRefresh()
-    //     getInvoice()
-    // }, [filter])
 
     useEffect(() => {
-        getInvoice(true)
-    }, [skip])
+        getInvoice()
+    }, [])
 
-    const getInvoice = (isLoadMore = false) => {
+    const getInvoice = (reset = false) => {
         let params = genParams();
         params = { ...params, includes: ['Room', 'Partner'], IncludeSummary: true };
         new HTTPService().setPath(ApiPath.INVOICE).GET(params).then((res) => {
@@ -93,7 +89,8 @@ const Invoice = (props) => {
             let results = res.results.filter(item => item.Id > 0);
             console.log('res.__count', res.__count);
             count.current = res.__count;
-            if (!isLoadMore) {
+            currentCount.current = results.length
+            if (reset) {
                 setInvoiceData([...results])
             } else {
                 setInvoiceData([...invoiceData, ...results])
@@ -107,7 +104,7 @@ const Invoice = (props) => {
 
     const genParams = () => {
         const { startDate, endDate } = filterRef.current.time;
-        let params = { skip: skip, top: Constant.LOAD_LIMIT };
+        let params = { skip: filterRef.current.skip, top: Constant.LOAD_LIMIT };
         let arrItemPath = [];
 
         if (currentBranch.current.Id) {
@@ -144,22 +141,28 @@ const Invoice = (props) => {
             ...filter,
             time: item
         })
-        getInvoice()
+        filterRef.current = { ...filterRef.current, time: item }
+        getInvoice(true)
         setShowModal(false)
     }
 
     const onRefresh = () => {
         console.log('onRefresh', count.current);
-        setSkip(0)
+        filterRef.current.skip = 0
+        getInvoice(true)
     }
 
     const onLoadMore = () => {
-        // if (count.current > skip && !onEndReachedCalledDuringMomentum.current) {
-            console.log('loadMore', skip, count.current);
-        //     setLoadMore(true)
-        //     setSkip(prevSkip => prevSkip + Constant.LOAD_LIMIT)
-        //     onEndReachedCalledDuringMomentum.current = true
-        // }
+        if (!(currentCount.current < Constant.LOAD_LIMIT) && !onEndReachedCalledDuringMomentum.current) {
+            console.log('loadMore', count.current);
+            setLoadMore(true)
+            filterRef.current = {
+                ...filterRef.current,
+                skip: filterRef.current.skip + Constant.LOAD_LIMIT
+            }
+            onEndReachedCalledDuringMomentum.current = true
+            getInvoice()
+        }
     }
 
 
@@ -178,7 +181,8 @@ const Invoice = (props) => {
             ...filter,
             status: item
         })
-        // onReset()
+        filterRef.current = { ...filterRef.current, status: item }
+        getInvoice(true)
         setShowModal(false)
     }
 
