@@ -17,6 +17,7 @@ import { Snackbar } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import { Checkbox, RadioButton } from 'react-native-paper';
 import colors from '../../../../theme/Colors';
+import { ScreenList } from '../../../../common/ScreenList';
 
 
 var isClick = false;
@@ -193,6 +194,9 @@ export default (props) => {
 
     const sendOrder = async () => {
         console.log("sendOrder list isClick ", list, isClick);
+
+        props.navigation.navigate(ScreenList.Payment);
+        return;
 
         if (list.length > 0 && isClick == false) {
             isClick = true;
