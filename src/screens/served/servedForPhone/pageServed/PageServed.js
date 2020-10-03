@@ -13,6 +13,7 @@ import { Constant } from '../../../../common/Constant';
 import { Snackbar } from 'react-native-paper';
 import realmStore from '../../../../data/realm/RealmStore';
 import { useDispatch } from 'react-redux';
+import colors from '../../../../theme/Colors';
 
 
 export default (props) => {
@@ -197,6 +198,14 @@ export default (props) => {
         }
     }
 
+    const onClickListedPrice = () => {
+
+    }
+
+    const onClickRetailCustomer = () => {
+
+    }
+
 
     return (
         <View style={{ flex: 1, backgroundColor: "#fff" }}>
@@ -232,28 +241,34 @@ export default (props) => {
                     <Icon style={{}} name="chevron-down" size={20} color="white" />
                 </TouchableOpacity>
             </View>
-            <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 2, borderColor: Colors.colorchinh, borderWidth: 0.5 }}>
-                <TouchableOpacity onPress={() => setTab(1)} style={{ paddingVertical: 8, flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: tab == 1 ? Colors.colorchinh : "#fff", paddingHorizontal: 20, flexDirection: "row" }}>
-                    <Text style={{ color: tab == 1 ? "white" : Colors.colorchinh, fontWeight: "bold" }}>{I18n.t('thuc_don_da_goi')}</Text>
+            <View style={{ flexDirection: "row", justifyContent: "space-between", borderBottomColor: Colors.colorchinh, borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5 }}>
+                <TouchableOpacity
+                    style={{ flexDirection: "row", alignItems: "center" }}
+                    onPress={onClickListedPrice}>
+                    <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} color={colors.colorchinh} />
+                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{I18n.t('gia_niem_yet')}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => setTab(2)} style={{ paddingVertical: 8, flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: tab == 2 ? Colors.colorchinh : "#fff", paddingHorizontal: 20, flexDirection: "row" }}>
-                    <Text style={{ color: tab == 2 ? "white" : Colors.colorchinh, fontWeight: "bold" }}>{I18n.t('mon_da_xac_nhan')}</Text>
+                <TouchableOpacity
+                    style={{ flexDirection: "row", alignItems: "center" }}
+                    onPress={onClickRetailCustomer}>
+                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{I18n.t('khach_hang')}</Text>
+                    <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} color={colors.colorchinh} />
                 </TouchableOpacity>
             </View>
-            {tab == 1 ?
-                <CustomerOrder
-                    {...props}
-                    Position={position}
-                    listProducts={listProducts}
-                    outputListProducts={outputListProducts}
-                    outputSendNotify={(type) => outputSendNotify(type)} />
-                :
+            <CustomerOrder
+                {...props}
+                Position={position}
+                listProducts={listProducts}
+                outputListProducts={outputListProducts}
+                outputSendNotify={(type) => outputSendNotify(type)} />
+            {/* {tab == 1 ? */}
+            {/* :
                 <MenuConfirm
                     {...props}
                     Position={position}
                     outputSendNotify={(type) => outputSendNotify(type)}
                     outputListPos={outputListPos} />
-            }
+            } */}
             <Modal
                 animationType="fade"
                 transparent={true}

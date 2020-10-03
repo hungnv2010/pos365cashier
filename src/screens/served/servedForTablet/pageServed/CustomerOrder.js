@@ -16,6 +16,7 @@ import { Snackbar } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
 import { Checkbox, RadioButton } from 'react-native-paper';
 import colors from '../../../../theme/Colors';
+import { ScreenList } from '../../../../common/ScreenList';
 
 var isClick = false;
 
@@ -35,6 +36,7 @@ const CustomerOrder = (props) => {
     const [toastDescription, setToastDescription] = useState("")
     const [marginModal, setMargin] = useState(0)
     const [IsLargeUnit, setIsLargeUnit] = useState(false)
+    const typeModal = useRef(TYPE_MODAL.UNIT)
     const dispatch = useDispatch();
 
     const orientaition = useSelector(state => {
@@ -184,6 +186,9 @@ const CustomerOrder = (props) => {
     }
 
     const sendOrder = () => {
+        props.navigation.navigate(ScreenList.Payment);
+        return;
+
         if (list.length > 0 && isClick == false) {
             isClick = true;
             let ls = [];
@@ -434,7 +439,7 @@ const CustomerOrder = (props) => {
 
     const onClickUnit = (item) => {
         if (item.Unit && item.Unit != "" && item.LargeUnit && item.LargeUnit != "") {
-            this.typeModal = TYPE_MODAL.UNIT;
+            typeModal.current = TYPE_MODAL.UNIT;
             setIsLargeUnit(item.IsLargeUnit)
             setItemOrder(item)
             setShowModal(true)
@@ -450,7 +455,7 @@ const CustomerOrder = (props) => {
                     return
                 }
                 console.log("setItemOrder ", item);
-                this.typeModal = TYPE_MODAL.DETAIL;
+                typeModal.current = TYPE_MODAL.DETAIL;
                 setItemOrder({ ...item })
                 setShowModal(!showModal)
             }}>
@@ -718,7 +723,7 @@ const CustomerOrder = (props) => {
                             width: Metrics.screenWidth * 0.8,
                             marginBottom: Platform.OS == 'ios' ? marginModal : 0
                         }}>
-                            {this.typeModal == TYPE_MODAL.DETAIL ?
+                            {typeModal.current == TYPE_MODAL.DETAIL ?
                                 <PopupDetail
                                     onClickTopping={() => onClickTopping(itemOrder)}
                                     item={itemOrder}

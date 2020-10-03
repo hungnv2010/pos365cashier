@@ -22,6 +22,7 @@ import { ReturnProduct } from '../../ReturnProduct';
 import { HTTPService } from '../../../../data/services/HttpService';
 import { ApiPath } from '../../../../data/services/ApiPath';
 import colors from '../../../../theme/Colors';
+import { ScreenList } from '../../../../common/ScreenList';
 
 
 export default (props) => {
@@ -387,22 +388,26 @@ export default (props) => {
                         <View style={{
                             backgroundColor: "#fff", borderRadius: 4, marginHorizontal: 5,
                         }}>
-                            <TouchableOpacity onPress={() => sendNotidy(1)} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
+                            <TouchableOpacity onPress={() => { }} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
                                 <MaterialIcons style={{ paddingHorizontal: 7 }} name="notifications" size={26} color={Colors.colorchinh} />
-                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('yeu_cau_thanh_toan')}</Text>
+                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('tach_ban')}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => sendNotidy(2)} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
+                            <TouchableOpacity onPress={changTable} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
                                 <Icon style={{ paddingHorizontal: 10 }} name="message" size={22} color={Colors.colorchinh} />
-                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('gui_thong_bao_toi_thu_ngan')}</Text>
+                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('chuyen_ban')}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => { }} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
+                                <Icon style={{ paddingHorizontal: 10 }} name="message" size={22} color={Colors.colorchinh} />
+                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('thanh_toan_nhanh')}</Text>
                             </TouchableOpacity>
                         </View>
                     </Menu>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={changTable} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
-                    <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('chuyen_ban')}</Text>
+                <TouchableOpacity onPress={() => { }} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
+                    <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('bao_che_bien')}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => { onClickProvisional() }} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
-                    <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('tam_tinh')}</Text>
+                <TouchableOpacity onPress={() => { props.navigation.navigate(ScreenList.Payment) }} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
+                    <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('thanh_toan')}</Text>
                 </TouchableOpacity>
             </View>
             <Modal

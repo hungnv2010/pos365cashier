@@ -23,6 +23,7 @@ export default {
   ban_dang_dung: "The table in use",
   bieu_do_doanh_thu: "Revenue chart",
   bay_ngay: "7 days",
+  bao_che_bien: "Print cook",
 
   // TODO: C
   cai_dat: "Setting",
@@ -86,6 +87,7 @@ export default {
   gio: "hours",
   gia_tri_tra_lai: "Value return",
   ghi_no: "Debit",
+  gia_niem_yet: "Listed price",
 
   // TODO: H
   huy: 'Cancel',
@@ -242,6 +244,9 @@ export default {
   them_moi_nhom: "Thêm mới nhóm",
   ten_phong_ban: "Tên phòng bàn",
   thu_tu_hien_thi: "Thứ tự hiển thị",
+  thanh_toan_nhanh: "Quick payment",
+  tach_ban:"Split table",
+
   // TODO: U
 
   // TODO: V

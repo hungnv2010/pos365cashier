@@ -127,5 +127,19 @@ export const Constant = {
             name: "huy",
             key: 3
         },
+    ],
+    METHOD: [
+        {
+            name: "Payment paid",
+            key: 0
+        },
+        {
+            name: "VAT",
+            key: 1
+        },
+        {
+            name: "Discount",
+            key: 2
+        },
     ]
 };

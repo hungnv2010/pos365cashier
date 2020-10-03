@@ -25,6 +25,7 @@ export default {
   bieu_do_doanh_thu: "Biểu đồ doanh thu",
   bay_ngay: "Bảy ngày",
   ban: "bàn",
+  bao_che_bien: "Báo chế biến",
 
   // TODO: C
   cai_dat: "Cài đặt",
@@ -95,6 +96,7 @@ export default {
   gio: "giờ",
   gia_tri_tra_lai: "Giá trị trả lại",
   ghi_no: "Ghi nợ",
+  gia_niem_yet: "Giá niêm yết",
 
   // TODO: H
   huy: 'Hủy',
@@ -285,6 +287,8 @@ export default {
   ten_phong_ban: "Tên phòng bàn",
   thu_tu_hien_thi: "Thứ tự hiển thị",
   them_moi_phieu_thu_chi: "Thêm mới phiếu thu/chi/chuyển khoản",
+  thanh_toan_nhanh:"Thanh toán nhanh",
+  tach_ban:"Tách bàn",
   // TODO: U
 
   // TODO: V

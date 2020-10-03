@@ -39,6 +39,8 @@ export default (props) => {
     const [listTopping, setListTopping] = useState([])
     const [marginModal, setMargin] = useState(0)
     const [IsLargeUnit, setIsLargeUnit] = useState(false)
+    const typeModal = useRef(TYPE_MODAL.UNIT)
+    const [expand, setExpand] = useState(false)
     const dispatch = useDispatch();
 
     const historyOrder = useSelector(state => {
@@ -450,7 +452,7 @@ export default (props) => {
 
     const onClickUnit = (item) => {
         if (item.Unit && item.Unit != "" && item.LargeUnit && item.LargeUnit != "") {
-            this.typeModal = TYPE_MODAL.UNIT;
+            typeModal.current = TYPE_MODAL.UNIT;
             setIsLargeUnit(item.IsLargeUnit)
             setItemOrder(item)
             setShowModal(true)
@@ -467,7 +469,7 @@ export default (props) => {
                     return
                 }
                 console.log("setItemOrder ", item);
-                this.typeModal = TYPE_MODAL.DETAIL;
+                typeModal.current = TYPE_MODAL.DETAIL;
                 setItemOrder({ ...item })
                 setShowModal(!showModal)
             }}>
@@ -487,10 +489,10 @@ export default (props) => {
                         <View style={{ flexDirection: "row" }}>
                             <Text style={{}}>{item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : currencyToString(item.Price)} x </Text>
                             <View>
-                                {/* onPress={() => onClickUnit(item)} */}
                                 <Text style={{ color: Colors.colorchinh }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text>
                             </View>
                         </View>
+
                         {item.Description != "" ?
                             <Text
                                 style={{ fontStyle: "italic", fontSize: 11, color: "gray" }}>
@@ -499,6 +501,7 @@ export default (props) => {
                             :
                             null}
                     </View>
+                    <Icon style={{ paddingHorizontal: 5 }} name="bell-ring" size={20} color="grey" />
                     {item.ProductType == 2 && item.IsTimer ?
                         null
                         :
@@ -579,7 +582,7 @@ export default (props) => {
 
     return (
         <View style={{ flex: 1 }}>
-            <View style={{ flex: 1 }}>
+            <View style={{ flexGrow: 1 }}>
                 {list.length > 0 ?
                     <FlatList
                         data={list}
@@ -594,13 +597,50 @@ export default (props) => {
                     </View>
                 }
             </View>
-            <View style={styles.wrapTamTinh}>
-                <View style={styles.tamTinh}>
+            <View>
+                {/* <View style={styles.tamTinh}>
                     <Text style={styles.textTamTinh}>{I18n.t('tam_tinh')}</Text>
                     <View style={styles.totalPrice}>
                         <Text style={{ fontWeight: "bold", fontSize: 18, color: "#0072bc" }}>{currencyToString(getTotalPrice())}đ</Text>
                     </View>
-                </View>
+                </View> */}
+                <TouchableOpacity
+                    onPress={() => { setExpand(!expand) }}
+                    style={{ borderTopWidth: .5, borderTopColor: "red", paddingVertical: 3, backgroundColor: "white", marginLeft: 10 }}>
+                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+                        <Text style={{ fontWeight: "bold" }}>{I18n.t('tong_thanh_tien')}</Text>
+                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
+                            <Text style={{ fontWeight: "bold", fontSize: 16, color: colors.colorchinh }}>{}đ</Text>
+                            {expand ?
+                                <Icon style={{}} name="chevron-up" size={30} color="black" />
+                                :
+                                <Icon style={{}} name="chevron-down" size={30} color="black" />
+                            }
+                        </View>
+                    </View>
+                    {expand ?
+                        <View style={{ marginLeft: 0 }}>
+                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+                                <Text>{I18n.t('tong_chiet_khau')}</Text>
+                                <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>- {}đ</Text>
+                            </View>
+                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+                                <Text>VAT (%)</Text>
+                                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
+                                    <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>{}đ</Text>
+                                </View>
+                            </View>
+                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+                                <Text style={{ fontWeight: "bold" }}>{I18n.t('khach_phai_tra')}</Text>
+                                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
+                                    <Text style={{ fontWeight: "bold", fontSize: 16, color: "#0072bc", marginRight: 30 }}>{}đ</Text>
+                                </View>
+                            </View>
+                        </View>
+                        :
+                        null
+                    }
+                </TouchableOpacity>
             </View>
             <View style={styles.footerMenu}>
                 <TouchableOpacity
@@ -612,23 +652,30 @@ export default (props) => {
                         <View style={{
                             backgroundColor: "#fff", borderRadius: 4, marginHorizontal: 5,
                         }}>
-                            <TouchableOpacity onPress={() => sendNotidy(1)} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
+                            <TouchableOpacity onPress={() => { }} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
                                 <MaterialIcons style={{ paddingHorizontal: 7 }} name="notifications" size={26} color={Colors.colorchinh} />
-                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('yeu_cau_thanh_toan')}</Text>
+                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('tach_ban')}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => sendNotidy(2)} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
+                            <TouchableOpacity onPress={() => { }} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
                                 <Icon style={{ paddingHorizontal: 10 }} name="message" size={22} color={Colors.colorchinh} />
-                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('gui_thong_bao_toi_thu_ngan')}</Text>
+                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('chuyen_ban')}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => { }} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
+                                <Icon style={{ paddingHorizontal: 10 }} name="message" size={22} color={Colors.colorchinh} />
+                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('thanh_toan_nhanh')}</Text>
                             </TouchableOpacity>
                         </View>
                     </Menu>
                 </TouchableOpacity>
+                <TouchableOpacity onPress={() => { }} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
+                    <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('bao_che_bien')}</Text>
+                </TouchableOpacity>
                 <TouchableOpacity onPress={sendOrder} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
-                    <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('gui_thuc_don')}</Text>
+                    <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('thanh_toan')}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={dellAll} style={{ justifyContent: "center", alignItems: "center", paddingHorizontal: 10, borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
+                {/* <TouchableOpacity onPress={dellAll} style={{ justifyContent: "center", alignItems: "center", paddingHorizontal: 10, borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
                     <Icon name="delete-forever" size={30} color="white" />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </View>
             <Modal
                 animationType="fade"
@@ -664,7 +711,7 @@ export default (props) => {
                             // marginBottom: Platform.OS == 'ios' ? Metrics.screenHeight / 2.5 : 0
                             marginBottom: Platform.OS == 'ios' ? marginModal : 0
                         }}>
-                            {this.typeModal == TYPE_MODAL.DETAIL ?
+                            {typeModal.current == TYPE_MODAL.DETAIL ?
                                 <PopupDetail
                                     onClickTopping={() => onClickTopping(itemOrder)}
                                     item={itemOrder}
