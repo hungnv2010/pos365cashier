@@ -197,7 +197,7 @@ export default (props) => {
     const sendOrder = async () => {
         console.log("sendOrder list isClick ", list, isClick);
 
-        props.navigation.navigate(ScreenList.Payment);
+        props.navigation.navigate(ScreenList.Payment, { totalPrice: 100000});
         return;
 
         if (list.length > 0 && isClick == false) {

@@ -45,6 +45,7 @@ export default (props) => {
     const [point, setPoint] = useState(0)
     const [allMethod, setAllMethod] = useState(METHOD)
     const [sendMethod, setSendMethod] = useState(METHOD.payment_paid)
+    const [update, setUpdate] = useState(0)
     const { deviceType } = useSelector(state => {
         console.log("useSelector state ", state);
         return state.Common
@@ -116,6 +117,40 @@ export default (props) => {
     //     }
     //     setAllMethod({ ...allMethod })
     // }, [sendMethod])
+
+    const onChangeTextInput = (text, type) => {
+        console.log("onChangeTextInput text, type == ", text, type, allMethod);
+        text = text.replace(/,/g, "");
+        text = Number(text);
+        switch (type) {
+            case 1:
+                setAllMethod({
+                    ...allMethod, discount: {
+                        name: "Payment paid",
+                        value: text
+                    },
+                })
+                break;
+            case 2:
+                setAllMethod({
+                    ...allMethod, vat: {
+                        name: "VAT",
+                        value: text
+                    },
+                })
+                break;
+            case 3:
+                setAllMethod({
+                    ...allMethod, vat: {
+                        name: "Discount",
+                        value: text
+                    },
+                })
+                break;
+            default:
+                break;
+        }
+    }
 
 
     useDidMountEffect(() => {
@@ -190,7 +225,8 @@ export default (props) => {
                                 <TextInput
                                     value={"" + currencyToString(allMethod.discount.value)}
                                     onTouchStart={() => { setSendMethod(METHOD.discount) }}
-                                    editable={false}
+                                    editable={deviceType == Constant.TABLET ? false : true}
+                                    onChangeText={(text) => onChangeTextInput(text, 1)}
                                     style={{ textAlign: "right", backgroundColor: "#eeeeee", marginLeft: 10, flex: 3, borderColor: sendMethod.name == METHOD.discount.name ? colors.colorchinh : "gray", borderWidth: 0.5, borderRadius: 5, padding: 6.8 }} />
                             </View>
                             <View style={{ height: 50, backgroundColor: "#fff", flexDirection: "row", paddingHorizontal: 10, alignItems: "center", justifyContent: "space-between" }}>
@@ -221,7 +257,8 @@ export default (props) => {
                                 <TextInput
                                     value={"" + currencyToString(allMethod.vat.value)}
                                     onTouchStart={() => { setSendMethod(METHOD.vat); }}
-                                    editable={false}
+                                    editable={deviceType == Constant.TABLET ? false : true}
+                                    onChangeText={(text) => onChangeTextInput(text, 2)}
                                     style={{ textAlign: "right", backgroundColor: "#eeeeee", marginLeft: 10, flex: 3, borderColor: sendMethod.name == METHOD.vat.name ? colors.colorchinh : "gray", borderWidth: 0.5, borderRadius: 5, padding: 6.8 }} />
                             </View>
                         </Surface>
@@ -242,7 +279,8 @@ export default (props) => {
                                 <TextInput
                                     value={"" + currencyToString(allMethod.payment_paid.value)}
                                     onTouchStart={() => { setSendMethod(METHOD.payment_paid) }}
-                                    editable={false}
+                                    editable={deviceType == Constant.TABLET ? false : true}
+                                    onChangeText={(text) => onChangeTextInput(text, 3)}
                                     style={{ textAlign: "right", backgroundColor: "#eeeeee", marginLeft: 10, flex: 3, borderColor: sendMethod.name == METHOD.payment_paid.name ? colors.colorchinh : "gray", borderWidth: 0.5, borderRadius: 5, padding: 6.8 }} />
                             </View>
                             <View style={{ height: 50, backgroundColor: "#fff", flexDirection: "row", paddingHorizontal: 10, alignItems: "center", justifyContent: "space-between" }}>
