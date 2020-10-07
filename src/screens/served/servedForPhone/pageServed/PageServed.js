@@ -233,10 +233,7 @@ export default (props) => {
                         {
                             listPosition.map(item => <MenuItem key={item.name} onPress={() => hideMenu(item.name)}>{item.name} {item.status ? <Text style={{ color: Colors.colorchinh }}>*</Text> : null}</MenuItem>)
                         }
-                        {/* <MenuItem onPress={() => hideMenu("A")}>A *</MenuItem>
-                        <MenuItem onPress={() => hideMenu("B")}>B</MenuItem>
-                        <MenuItem onPress={() => hideMenu("C")}>C</MenuItem>
-                        <MenuItem onPress={() => hideMenu("D")}>D</MenuItem> */}
+                     
                     </Menu>
                     <Icon style={{}} name="chevron-down" size={20} color="white" />
                 </TouchableOpacity>
@@ -261,14 +258,7 @@ export default (props) => {
                 listProducts={listProducts}
                 outputListProducts={outputListProducts}
                 outputSendNotify={(type) => outputSendNotify(type)} />
-            {/* {tab == 1 ? */}
-            {/* :
-                <MenuConfirm
-                    {...props}
-                    Position={position}
-                    outputSendNotify={(type) => outputSendNotify(type)}
-                    outputListPos={outputListPos} />
-            } */}
+          
             <Modal
                 animationType="fade"
                 transparent={true}

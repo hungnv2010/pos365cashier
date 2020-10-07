@@ -14,6 +14,7 @@ import More from '../../screens/more/More'
 import RoomCatalog from '../../screens/room/RoomCatalog'
 import { ScreenList } from '../../common/ScreenList';
 import Invoice from '../../screens/invoice/invoice';
+import Customer from '../../screens/customer/Customer';
 
 const Drawer = createDrawerNavigator();
 export default (propsFunc) => {
@@ -58,6 +59,9 @@ export default (propsFunc) => {
         </Drawer.Screen>
         <Drawer.Screen name={ScreenList.RoomCatalog} options={{ title: ScreenList.RoomCatalog }}>
           {props => <RoomCatalog {...props} />}
+        </Drawer.Screen>
+        <Drawer.Screen name={ScreenList.Customer} options={{ title: ScreenList.Customer }}>
+          {props => <Customer {...props} />}
         </Drawer.Screen>
       </Drawer.Navigator>
     </LinearGradient>

@@ -53,6 +53,7 @@ export default {
   chi_tiet_phong_ban: "Chi tiết phòng bàn",
   chuyen_khoan: "Chuyển khoản",
   chon_dvt: "ĐVT",
+  chon:"Chọn",
 
   // TODO: D
   dang_dung: "Đang dùng",
@@ -73,6 +74,7 @@ export default {
   dat_hang: "Đặt hàng",
   doi_tac: "Đối tác",
   dang_cap_nhat: "Đang cập nhật",
+  diem_voucher: "Điểm/Voucher",
 
   // TODO: E
 
@@ -287,8 +289,9 @@ export default {
   ten_phong_ban: "Tên phòng bàn",
   thu_tu_hien_thi: "Thứ tự hiển thị",
   them_moi_phieu_thu_chi: "Thêm mới phiếu thu/chi/chuyển khoản",
-  thanh_toan_nhanh:"Thanh toán nhanh",
-  tach_ban:"Tách bàn",
+  thanh_toan_nhanh: "Thanh toán nhanh",
+  tach_ban: "Tách bàn",
+  tien_thua: "Tiền thừa",
   // TODO: U
 
   // TODO: V

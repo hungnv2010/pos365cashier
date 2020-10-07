@@ -128,18 +128,18 @@ export const Constant = {
             key: 3
         },
     ],
-    METHOD: [
-        {
+    METHOD: {
+        payment_paid: {
             name: "Payment paid",
-            key: 0
+            value: '0'
         },
-        {
+        vat: {
             name: "VAT",
-            key: 1
+            value: '0'
         },
-        {
+        discount: {
             name: "Discount",
-            key: 2
+            value: '0'
         },
-    ]
+    }
 };

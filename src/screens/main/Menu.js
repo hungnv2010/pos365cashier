@@ -23,7 +23,7 @@ const IP_DEFAULT = "192.168.99.";
 
 const KEY_FUNC = {
     HOME: ScreenList.Home,
-    CUSTOMER: ScreenList.QRCode,
+    CUSTOMER: ScreenList.Customer,
     SETTING_FUNC: ScreenList.PrintHtml,
     VERSION: "VERSION",
     MORE: ScreenList.More,
@@ -242,12 +242,12 @@ const HeaderComponent = (props) => {
     return (
         <View style={{ backgroundColor: Colors.colorchinh, justifyContent: "space-between", flexDirection: "row", alignItems: "center", padding: 20 }}>
             <View style={{ flex: 1 }}>
-                <View style={{ flexDirection: "row", alignItems: "center"}}>
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
                     {
                         Logo != "" ?
                             <Image key="1" resizeMethod="scale"
                                 source={{ uri: Logo }}
-                                style={[{ width: 50, height: 50, marginRight: 20, borderRadius: 25, borderWidth: 2, backgroundColor: "#fff"  }]} />
+                                style={[{ width: 50, height: 50, marginRight: 20, borderRadius: 25, borderWidth: 2, backgroundColor: "#fff" }]} />
                             :
                             <Image key="2" source={Images.icon_person} style={[{ width: 50, height: 50, marginRight: 20 }]} />
                     }
@@ -381,7 +381,7 @@ const ContentComponent = (props) => {
     const onClickItem = (chucnang, index) => {
         console.log("onClickItem props ", props);
         let params = {};
-        if (chucnang.func == ScreenList.Home || chucnang.func == ScreenList.More || chucnang.func == ScreenList.History || chucnang.func == ScreenList.OrderNow || chucnang.func == ScreenList.OverView || chucnang.func == ScreenList.RoomCatalog) {
+        if (chucnang.func == ScreenList.Home || chucnang.func == ScreenList.More || chucnang.func == ScreenList.History || chucnang.func == ScreenList.OrderNow || chucnang.func == ScreenList.OverView || chucnang.func == ScreenList.RoomCatalog || chucnang.func == ScreenList.Customer) {
             setCurrentItemMenu(index)
         }
         props.navigation.navigate(chucnang.func, params)

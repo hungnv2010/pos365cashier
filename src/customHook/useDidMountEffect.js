@@ -8,14 +8,7 @@ const useDidMountEffect = (func, deps) => {
             didMount.current = true;
             return
         }
-        else {
-            func();
-        }
-
-        return () => {
-            didMount.current = false;
-            func && func();
-        }
+        func();
     }, deps);
 }
 

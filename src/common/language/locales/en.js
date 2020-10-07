@@ -48,6 +48,7 @@ export default {
   chon_ghi_chu_nhanh: "Order quick notes",
   chon_khoang_thoi_gian: "Select time",
   chon_dvt: "Unit",
+  chon: "Choose",
 
   // TODO: D
   dang_dung: "Serving",
@@ -66,6 +67,7 @@ export default {
   dich_vu_tinh_gio: "Dịch vụ tính giờ",
   doanh_thu_VND: "Revenue (VND)",
   dat_hang: "On order",
+  diem_voucher: "Point/Voucher",
 
   // TODO: E
 
@@ -245,7 +247,8 @@ export default {
   ten_phong_ban: "Tên phòng bàn",
   thu_tu_hien_thi: "Thứ tự hiển thị",
   thanh_toan_nhanh: "Quick payment",
-  tach_ban:"Split table",
+  tach_ban: "Split table",
+  tien_thua:"Excess cash",
 
   // TODO: U
 
