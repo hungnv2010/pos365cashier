@@ -21,6 +21,8 @@ import RoomDetail from '../../screens/room/RoomDetail'
 import CashFlow from '../../screens/cashflow/CashFlow'
 import InvoiceDetail from '../../screens/invoice/invoiceDetail';
 import Payment from '../../screens/payment/Payment'
+import PointVoucher from '../../screens/payment/pointVoucher'
+import SearchVoucher from '../../screens/payment/SearchVoucher'
 import InvoiceDetailForPhone from '../../screens/invoice/invoiceDetailForPhone';
 import { ScreenList } from '../../common/ScreenList';
 import Customer from '../../screens/customer/Customer';
@@ -58,6 +60,8 @@ export default (props) => {
                 <MainStack.Screen name={ScreenList.Payment}>{props => <Payment {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.Customer}>{props => <Customer {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.InvoiceDetailForPhone}>{props => <InvoiceDetailForPhone {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.PointVoucher}>{props => <PointVoucher {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.SearchVoucher}>{props => <SearchVoucher {...props} />}</MainStack.Screen>
             </MainStack.Navigator>
         </Animated.View>
     );

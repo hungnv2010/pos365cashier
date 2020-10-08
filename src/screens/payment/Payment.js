@@ -15,6 +15,7 @@ import { getFileDuLieuString } from '../../data/fileStore/FileStorage';
 import images from '../../theme/Images';
 import PointVoucher from './pointVoucher';
 import useDidMountEffect from '../../customHook/useDidMountEffect';
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 let METHOD = {
     payment_paid: {
@@ -123,9 +124,9 @@ export default (props) => {
         text = text.replace(/,/g, "");
         text = Number(text);
         switch (type) {
-            case 1:
+            case 3:
                 setAllMethod({
-                    ...allMethod, discount: {
+                    ...allMethod, payment_paid: {
                         name: "Payment paid",
                         value: text
                     },
@@ -139,9 +140,9 @@ export default (props) => {
                     },
                 })
                 break;
-            case 3:
+            case 1:
                 setAllMethod({
-                    ...allMethod, vat: {
+                    ...allMethod, discount: {
                         name: "Discount",
                         value: text
                     },
@@ -187,7 +188,7 @@ export default (props) => {
                 title={I18n.t('thanh_toan')} />
             <View style={{ flexDirection: "row", flex: 1 }}>
                 <View style={{ flex: 1 }}>
-                    <ScrollView>
+                    <KeyboardAwareScrollView style={{ flexGrow: 1 }}>
 
                         <Surface style={styles.surface}>
                             <View style={{ height: 50, backgroundColor: "#fff", flexDirection: "row", paddingHorizontal: 10, alignItems: "center" }}>
@@ -214,9 +215,9 @@ export default (props) => {
                             </View>
                             <View style={{ height: 50, backgroundColor: "#fff", flexDirection: "row", paddingHorizontal: 10, alignItems: "center", justifyContent: "space-between", borderBottomWidth: 0.5, borderBottomColor: "#ccc", }}>
                                 <Text style={{ flex: 3 }}>{I18n.t('chiet_khau')}</Text>
-                                <View style={{ flexDirection: "row", flex: 3 }}>
+                                <View style={{ flexDirection: "row", flex: 3, marginLeft: 5 }}>
                                     <TouchableOpacity onPress={() => setPercent(false)} style={{ width: 55, alignItems: "center", borderWidth: 0.5, borderTopLeftRadius: 5, borderBottomLeftRadius: 5, paddingVertical: 7, borderColor: colors.colorchinh, backgroundColor: !percent ? colors.colorchinh : "#fff" }}>
-                                        <Text style={{ color: !percent ? "#fff" : "#000" }}>VNĐ</Text>
+                                        <Text style={{ color: !percent ? "#fff" : "#000" }}>{I18n.t('vnd')}</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={() => setPercent(true)} style={{ width: 55, alignItems: "center", borderWidth: 0.5, borderColor: colors.colorchinh, borderTopRightRadius: 5, borderBottomRightRadius: 5, paddingVertical: 7, backgroundColor: !percent ? "#fff" : colors.colorchinh }}>
                                         <Text style={{ color: percent ? "#fff" : "#000" }}>%</Text>
@@ -233,7 +234,9 @@ export default (props) => {
                                 <Text style={{ flex: 3 }}>{I18n.t('diem_voucher')}</Text>
                                 <View style={{ flexDirection: "row", flex: 3 }}>
                                     <TouchableOpacity onPress={() => {
-                                        setChoosePoint(!choosePoint)
+                                        if (deviceType == Constant.TABLET)
+                                            setChoosePoint(!choosePoint)
+                                        else props.navigation.navigate(ScreenList.PointVoucher)
                                     }}
                                         style={{ width: 110, borderRadius: 5, borderWidth: 0.5, borderColor: colors.colorchinh, paddingHorizontal: 20, paddingVertical: 7, backgroundColor: colors.colorchinh }}>
                                         <Text style={{ color: "#fff", textAlign: "center", textTransform: "uppercase" }}>{I18n.t('chon')}</Text>
@@ -246,7 +249,7 @@ export default (props) => {
                         <Surface style={styles.surface}>
                             <View style={{ height: 50, backgroundColor: "#fff", flexDirection: "row", paddingHorizontal: 10, alignItems: "center", justifyContent: "space-between" }}>
                                 <Text style={{ flex: 3 }}>VAT</Text>
-                                <View style={{ flexDirection: "row", flex: 3 }}>
+                                <View style={{ flexDirection: "row", flex: 3 , marginLeft: 5}}>
                                     <TouchableOpacity onPress={() => setPercentVAT(false)} style={{ width: 55, alignItems: "center", borderWidth: 0.5, borderTopLeftRadius: 5, borderBottomLeftRadius: 5, paddingVertical: 7, borderColor: colors.colorchinh, backgroundColor: !percentVAT ? colors.colorchinh : "#fff" }}>
                                         <Text style={{ color: !percentVAT ? "#fff" : "#000" }}>0%</Text>
                                     </TouchableOpacity>
@@ -288,13 +291,13 @@ export default (props) => {
                                 <Text style={{ flex: 4, textAlign: "right", color: excessCash > 0 ? "green" : "red" }}>{currencyToString(excessCash)}</Text>
                             </View>
                         </Surface>
-                    </ScrollView>
+                    </KeyboardAwareScrollView>
 
                     <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
                         <TouchableOpacity onPress={() => { }} style={{ flex: 1, alignItems: "center", backgroundColor: colors.colorLightBlue, paddingVertical: 15 }}>
                             <Text style={{ color: "#fff", textTransform: "uppercase", fontWeight: "bold" }}>{I18n.t('tam_tinh')}</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => { }} style={{ borderLeftWidth: 0.5, borderLeftColor: "#fff", flex: 1, alignItems: "center", backgroundColor: colors.colorLightBlue, paddingVertical: 15 }}>
+                        <TouchableOpacity onPress={() => { }} style={{ borderLeftWidth: 2, borderLeftColor: "#fff", flex: 1, alignItems: "center", backgroundColor: colors.colorLightBlue, paddingVertical: 15 }}>
                             <Text style={{ color: "#fff", textTransform: "uppercase", fontWeight: "bold" }}>{I18n.t('thanh_toan')}</Text>
                         </TouchableOpacity>
                     </View>

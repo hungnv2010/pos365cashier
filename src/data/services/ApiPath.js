@@ -31,4 +31,5 @@ export const ApiPath = {
     TRANSACTION_GROUPS: "api/accountingtransactiongroups",
     TRANSACTION: "api/accountingtransaction",
     PROMOTION:"api/promotion",
+    VOUCHER: "api/voucher",
 }
