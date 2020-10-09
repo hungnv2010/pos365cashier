@@ -76,6 +76,16 @@ export default (props) => {
                 setResults(results + button)
                 break;
 
+            case '500000':
+                var lastChar = results.slice(results.length - 1)
+                if (!specialChar.includes(lastChar)) {
+                    oldResult = eval(results)
+                    console.log('oldResult',oldResult);
+                }
+            case '200000':
+            case '100000':
+            case '50000':
+
             default:
                 let newResult = results + button
                 setResults(newResult)

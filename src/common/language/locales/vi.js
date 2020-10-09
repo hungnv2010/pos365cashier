@@ -304,7 +304,6 @@ export default {
   vui_long_kiem_tra_ket_noi_may_in: "Vui lòng kiểm tra kết nối máy in",
   vui_long_chon_linh_vuc_ban_le_ho_tro_shop_thoi_trang_sieu_thi: "Vui lòng chọn lĩnh vực BÁN LẺ hỗ trợ: shop, thời trang, siêu thị...",
   vui_long_nhap_day_du_thong_tin_truoc_khi_luu: "Vui lòng nhập đầy đủ các thông tin bắt buộc trước khi lưu",
-  voucher: "Voucher",
   vnd: "VNĐ",
 
   // TODO: X

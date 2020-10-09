@@ -15,7 +15,7 @@ import images from '../../theme/Images';
 export default (props) => {
     return (
         <View style={{ flex: 1 }}>
-            <Text>customer detail</Text>
+            <Text>{JSON.stringify(props.customerDetail)}</Text>
         </View>
     )
 }

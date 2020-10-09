@@ -217,7 +217,7 @@ export default (props) => {
                                 <Text style={{ flex: 3 }}>{I18n.t('chiet_khau')}</Text>
                                 <View style={{ flexDirection: "row", flex: 3, marginLeft: 5 }}>
                                     <TouchableOpacity onPress={() => setPercent(false)} style={{ width: 55, alignItems: "center", borderWidth: 0.5, borderTopLeftRadius: 5, borderBottomLeftRadius: 5, paddingVertical: 7, borderColor: colors.colorchinh, backgroundColor: !percent ? colors.colorchinh : "#fff" }}>
-                                        <Text style={{ color: !percent ? "#fff" : "#000" }}>{I18n.t('vnd')}</Text>
+                                        <Text style={{ color: !percent ? "#fff" : "#000" }}>VNĐ</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={() => setPercent(true)} style={{ width: 55, alignItems: "center", borderWidth: 0.5, borderColor: colors.colorchinh, borderTopRightRadius: 5, borderBottomRightRadius: 5, paddingVertical: 7, backgroundColor: !percent ? "#fff" : colors.colorchinh }}>
                                         <Text style={{ color: percent ? "#fff" : "#000" }}>%</Text>

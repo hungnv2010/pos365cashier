@@ -10,12 +10,14 @@ import colors from '../../theme/Colors';
 import { useSelector } from 'react-redux';
 import { Constant } from '../../common/Constant';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import SearchVoucher from './SearchVoucher';
 
 export default (props) => {
 
     const [pointCurrent, setPointCurrent] = useState(100)
     const [pointUse, setPointUse] = useState(0)
     const [listVoucher, setListVoucher] = useState([])
+    const [isSearch, setIsSearch] = useState(false)
 
     const { deviceType } = useSelector(state => {
         console.log("useSelector state ", state);
@@ -71,6 +73,10 @@ export default (props) => {
         )
     }
 
+    const outputIsSearch = () => {
+        console.log('outputIsSearch');
+    }
+
     return (
         <View style={{ flex: 1 }}>
             {deviceType != Constant.TABLET ?
@@ -86,60 +92,72 @@ export default (props) => {
                     }}
                     title={I18n.t('diem_voucher')}
                 /> : null}
-            <Surface style={styles.surface}>
-                <View style={styles.row}>
-                    <View style={styles.view_payment_paid}>
-                        <IconFeather name="credit-card" size={20} color={colors.colorchinh} />
-                        <Text style={styles.text_payment_paid}>{I18n.t('khach_phai_tra')}</Text>
-                    </View>
-                    <View style={styles.flex_3}></View>
-                    <Text style={styles.value_payment_paid}>{currencyToString(1000)}</Text>
-                </View>
-            </Surface>
-            <Surface style={styles.surface}>
-                <View style={styles.point_row_1}>
-                    <Icon name="heart" size={20} color={colors.colorchinh} />
-                    <Text style={styles.text_payment_paid}>{I18n.t('diem_thuong')}</Text>
-                </View>
-                <View style={styles.point_row_2}>
-                    <Text>{I18n.t('diem_hien_tai')}</Text>
-                    <Text>{pointCurrent}</Text>
-                </View>
-                <View style={styles.point_row_2}>
-                    <Text style={styles.flex_3}>{I18n.t('su_dung_diem')}</Text>
-                    <View style={styles.flex_3}></View>
-                    <TextInput
-                        onChangeText={(text) => onChangeTextInput(text)}
-                        value={pointUse == 0 ? "" : pointUse}
-                        style={styles.text_input} />
-                </View>
-                <View style={styles.point_row_2}>
-                    <Text>{I18n.t('so_tien_quy_doi')}</Text>
-                    <Text>{currencyToString(12000)}</Text>
-                </View>
-            </Surface>
-            <Surface style={[styles.surface, { flex: 1 }]}>
-                <View style={styles.row}>
-                    <View style={styles.view_payment_paid}>
-                        <Icon name="star" size={20} color={colors.colorchinh} />
-                        <Text style={styles.text_payment_paid}>{I18n.t('voucher')}</Text>
-                    </View>
-                    <TextInput
-                        placeholder={I18n.t('tim_kiem')}
-                        onTouchStart={() => {
-                            props.navigation.navigate(ScreenList.SearchVoucher, { _onSelect: onCallBack, listVoucher: listVoucher })
-                        }}
-                        editable={false}
-                        style={styles.text_input} />
-                </View>
-                <ScrollView style={{ flex: 1 }}>
-                    {
-                        listVoucher.length > 0 ?
-                            listVoucher.map((item, index) => renderItemList(item, index))
-                            : null
-                    }
-                </ScrollView>
-            </Surface>
+            {
+                !isSearch ?
+                    <>
+                        <Surface style={styles.surface}>
+                            <View style={styles.row}>
+                                <View style={styles.view_payment_paid}>
+                                    <IconFeather name="credit-card" size={20} color={colors.colorchinh} />
+                                    <Text style={styles.text_payment_paid}>{I18n.t('khach_phai_tra')}</Text>
+                                </View>
+                                <View style={styles.flex_3}></View>
+                                <Text style={styles.value_payment_paid}>{currencyToString(1000)}</Text>
+                            </View>
+                        </Surface>
+                        <Surface style={styles.surface}>
+                            <View style={styles.point_row_1}>
+                                <Icon name="heart" size={20} color={colors.colorchinh} />
+                                <Text style={styles.text_payment_paid}>{I18n.t('diem_thuong')}</Text>
+                            </View>
+                            <View style={styles.point_row_2}>
+                                <Text>{I18n.t('diem_hien_tai')}</Text>
+                                <Text>{pointCurrent}</Text>
+                            </View>
+                            <View style={styles.point_row_2}>
+                                <Text style={styles.flex_3}>{I18n.t('su_dung_diem')}</Text>
+                                <View style={styles.flex_3}></View>
+                                <TextInput
+                                    onChangeText={(text) => onChangeTextInput(text)}
+                                    value={pointUse == 0 ? "" : pointUse}
+                                    style={styles.text_input} />
+                            </View>
+                            <View style={styles.point_row_2}>
+                                <Text>{I18n.t('so_tien_quy_doi')}</Text>
+                                <Text>{currencyToString(12000)}</Text>
+                            </View>
+                        </Surface>
+                        <Surface style={[styles.surface, { flex: 1 }]}>
+                            <View style={styles.row}>
+                                <View style={styles.view_payment_paid}>
+                                    <Icon name="star" size={20} color={colors.colorchinh} />
+                                    <Text style={styles.text_payment_paid}>Voucher</Text>
+                                </View>
+                                <TextInput
+                                    placeholder={I18n.t('tim_kiem')}
+                                    onTouchStart={() => {
+                                        if (deviceType == Constant.PHONE) {
+                                            props.navigation.navigate(ScreenList.SearchVoucher, { _onSelect: onCallBack, listVoucher: listVoucher })
+                                        } else {
+                                            setIsSearch(true)
+                                        }
+                                    }}
+                                    editable={false}
+                                    style={styles.text_input} />
+                            </View>
+                            <ScrollView style={{ flex: 1 }}>
+                                {
+                                    listVoucher.length > 0 ?
+                                        listVoucher.map((item, index) => renderItemList(item, index))
+                                        : null
+                                }
+                            </ScrollView>
+                        </Surface>
+                    </>
+                    :
+                    <SearchVoucher
+                        outputIsSearch={outputIsSearch} />
+            }
         </View>
     )
 }
