@@ -297,6 +297,7 @@ export default {
   tach_ban: "Tách bàn",
   tien_thua: "Tiền thừa",
   tim_kiem: "Tìm kiếm",
+  tien_khach_tra: "Tiền khách trả",
   // TODO: U
 
   // TODO: V

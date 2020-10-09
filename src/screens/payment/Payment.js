@@ -16,6 +16,9 @@ import images from '../../theme/Images';
 import PointVoucher from './pointVoucher';
 import useDidMountEffect from '../../customHook/useDidMountEffect';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import IconFeather from 'react-native-vector-icons/Feather';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Fontisto from 'react-native-vector-icons/Fontisto';
 
 let METHOD = {
     payment_paid: {
@@ -46,7 +49,7 @@ export default (props) => {
     const [point, setPoint] = useState(0)
     const [allMethod, setAllMethod] = useState(METHOD)
     const [sendMethod, setSendMethod] = useState(METHOD.payment_paid)
-    const [update, setUpdate] = useState(0)
+    const [listMethod, setListMethod] = useState([{ Id: "" + new Date(), Name: "Tiền mặt" }])
     const { deviceType } = useSelector(state => {
         console.log("useSelector state ", state);
         return state.Common
@@ -105,20 +108,6 @@ export default (props) => {
         setExcessCash(excessCash)
     }, [allMethod.payment_paid.value])
 
-    // useEffect(() => {
-    //     if (firstTimeRender.current) {
-    //         firstTimeRender.current = false
-    //         return
-    //     }
-    //     for (const property in allMethod) {
-    //         console.log('property', property, allMethod[property]);
-    //         if (allMethod[property].name == sendMethod.name) {
-    //             allMethod[property].value = 0
-    //         }
-    //     }
-    //     setAllMethod({ ...allMethod })
-    // }, [sendMethod])
-
     const onChangeTextInput = (text, type) => {
         console.log("onChangeTextInput text, type == ", text, type, allMethod);
         text = text.replace(/,/g, "");
@@ -175,6 +164,23 @@ export default (props) => {
         }
         console.log('allMethod', allMethod);
         setAllMethod({ ...allMethod })
+    }
+
+    const addAccount = () => {
+        let list = listMethod;
+        list.push({ Id: "" + new Date(), Name: "Tiền mặt" })
+        setListMethod([...list])
+    }
+
+    const deleteMethod = (item) => {
+        let list = listMethod;
+        list = list.filter(el => el.Id != item.Id);
+        setListMethod([...list])
+    }
+
+    const onCallBack = (data) => {
+        console.log("onCallBack data ", data);
+
     }
 
     return (
@@ -236,7 +242,7 @@ export default (props) => {
                                     <TouchableOpacity onPress={() => {
                                         if (deviceType == Constant.TABLET)
                                             setChoosePoint(!choosePoint)
-                                        else props.navigation.navigate(ScreenList.PointVoucher)
+                                        else props.navigation.navigate(ScreenList.PointVoucher, { _onSelect: onCallBack })
                                     }}
                                         style={{ width: 110, borderRadius: 5, borderWidth: 0.5, borderColor: colors.colorchinh, paddingHorizontal: 20, paddingVertical: 7, backgroundColor: colors.colorchinh }}>
                                         <Text style={{ color: "#fff", textAlign: "center", textTransform: "uppercase" }}>{I18n.t('chon')}</Text>
@@ -249,7 +255,7 @@ export default (props) => {
                         <Surface style={styles.surface}>
                             <View style={{ height: 50, backgroundColor: "#fff", flexDirection: "row", paddingHorizontal: 10, alignItems: "center", justifyContent: "space-between" }}>
                                 <Text style={{ flex: 3 }}>VAT</Text>
-                                <View style={{ flexDirection: "row", flex: 3 , marginLeft: 5}}>
+                                <View style={{ flexDirection: "row", flex: 3, marginLeft: 5 }}>
                                     <TouchableOpacity onPress={() => setPercentVAT(false)} style={{ width: 55, alignItems: "center", borderWidth: 0.5, borderTopLeftRadius: 5, borderBottomLeftRadius: 5, paddingVertical: 7, borderColor: colors.colorchinh, backgroundColor: !percentVAT ? colors.colorchinh : "#fff" }}>
                                         <Text style={{ color: !percentVAT ? "#fff" : "#000" }}>0%</Text>
                                     </TouchableOpacity>
@@ -269,22 +275,50 @@ export default (props) => {
                         <Surface style={styles.surface}>
                             <View style={{ height: 50, backgroundColor: "#fff", flexDirection: "row", paddingHorizontal: 10, alignItems: "center", justifyContent: "space-between", borderBottomWidth: 0.5, borderBottomColor: "#ccc", }}>
                                 <View style={{ flex: 3, flexDirection: "row", alignItems: "center", }}>
-                                    <Image source={images.icon_checked} style={{ width: 20, height: 20, marginRight: 10 }} />
-                                    <Text style={{ fontWeight: "bold", color: colors.colorchinh }}>{I18n.t('tong_tien')}</Text>
+                                    <IconFeather name="credit-card" size={20} color={colors.colorchinh} />
+                                    <Text style={{ fontWeight: "bold", color: colors.colorchinh, marginLeft: 10 }}>{I18n.t('khach_phai_tra')}</Text>
                                 </View>
                                 <View style={{ flex: 3 }}></View>
                                 <Text style={{ flex: 3, textAlign: "right", fontWeight: "bold" }}>{currencyToString(grandTotal)}</Text>
 
                             </View>
-                            <View style={{ height: 50, backgroundColor: "#fff", flexDirection: "row", paddingHorizontal: 10, alignItems: "center", justifyContent: "space-between", borderBottomWidth: 0.5, borderBottomColor: "#ccc", }}>
-                                <Text style={{ flex: 3 }}>{I18n.t('khach_phai_tra')}</Text>
-                                <View style={{ flex: 3 }}></View>
-                                <TextInput
-                                    value={"" + currencyToString(allMethod.payment_paid.value)}
-                                    onTouchStart={() => { setSendMethod(METHOD.payment_paid) }}
-                                    editable={deviceType == Constant.TABLET ? false : true}
-                                    onChangeText={(text) => onChangeTextInput(text, 3)}
-                                    style={{ textAlign: "right", backgroundColor: "#eeeeee", marginLeft: 10, flex: 3, borderColor: sendMethod.name == METHOD.payment_paid.name ? colors.colorchinh : "gray", borderWidth: 0.5, borderRadius: 5, padding: 6.8 }} />
+                            <View style={{ backgroundColor: "#fff", flexDirection: "column", borderBottomWidth: 0.5, borderBottomColor: "#ccc", }}>
+                                <Text style={{ flex: 3, padding: 10, paddingBottom: 0 }}>{I18n.t('tien_khach_tra')}</Text>
+                                {
+                                    listMethod.map((item, index) => {
+                                        return (
+                                            <View style={{ height: 50, backgroundColor: "#fff", flexDirection: "row", paddingHorizontal: 10, alignItems: "center", justifyContent: "space-between", }}>
+                                                {
+                                                    index != 0 ?
+                                                        <TouchableOpacity onPress={() => deleteMethod(item)} style={{ width: 32, height: 32, justifyContent: "center", alignItems: "center", borderRadius: 5, borderWidth: 0.5, borderColor: colors.colorchinh }}>
+                                                            <Icon name="close" size={24} color={colors.colorchinh} style={{ marginTop: 3, alignContent: "center" }} />
+                                                        </TouchableOpacity>
+                                                        :
+                                                        <View style={{ width: 32, height: 32, }}>
+                                                        </View>
+                                                }
+                                                <TouchableOpacity style={{ flexDirection: "row", justifyContent: "space-between", marginLeft: 20, backgroundColor: "#eeeeee", marginLeft: 10, flex: 7, borderColor: "gray", borderWidth: 0.5, borderRadius: 5, paddingVertical: 7 }}>
+                                                    <Text style={{ marginLeft: 5 }}>{I18n.t('tien_mat')}</Text>
+                                                    <Image source={Images.arrow_down} style={{ width: 14, height: 14, marginHorizontal: 10 }} />
+                                                </TouchableOpacity>
+                                                <View style={{ flex: 3, justifyContent: "center", alignItems: "center", }}>
+                                                    <TouchableOpacity style={{ width: 32, height: 32, justifyContent: "center", alignItems: "center", borderRadius: 5, borderWidth: 0.5, borderColor: colors.colorchinh }}>
+                                                        <Fontisto name="calculator" size={20} color={colors.colorchinh} />
+                                                    </TouchableOpacity>
+                                                </View>
+                                                <TextInput
+                                                    value={"" + currencyToString(allMethod.payment_paid.value)}
+                                                    onTouchStart={() => { setSendMethod(METHOD.payment_paid) }}
+                                                    editable={deviceType == Constant.TABLET ? false : true}
+                                                    onChangeText={(text) => onChangeTextInput(text, 3)}
+                                                    style={{ textAlign: "right", backgroundColor: "#eeeeee", marginLeft: 10, flex: 3, borderColor: sendMethod.name == METHOD.payment_paid.name ? colors.colorchinh : "gray", borderWidth: 0.5, borderRadius: 5, padding: 6.8 }} />
+                                            </View>
+                                        )
+                                    })
+                                }
+                                <TouchableOpacity onPress={() => addAccount()}>
+                                    <Text style={{ flex: 3, padding: 10, paddingTop: 5, color: colors.colorchinh }}>+ {I18n.t('them_tai_khoan_moi')}</Text>
+                                </TouchableOpacity>
                             </View>
                             <View style={{ height: 50, backgroundColor: "#fff", flexDirection: "row", paddingHorizontal: 10, alignItems: "center", justifyContent: "space-between" }}>
                                 <Text style={{ flex: 2 }}>{I18n.t('tien_thua')}</Text>
