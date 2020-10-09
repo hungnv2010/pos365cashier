@@ -15,6 +15,7 @@ import { FAB } from 'react-native-paper';
 import CustomerDetail from './customerDetail';
 import MainToolBar from '../main/MainToolBar';
 import { FlatList } from 'react-native-gesture-handler';
+import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
 
 export default (props) => {
 
@@ -42,20 +43,28 @@ export default (props) => {
         console.log('onClickAddCustomer');
     }
 
+    const onClickItemCustomer = (item) => {
+        console.log('onClickItemCustomer');
+        setCustomerItem({ ...item })
+        if (props.route.params._onSelect) {
+            props.route.params._onSelect(item);
+            props.navigation.goBack()
+        }
+    }
+
     const renderListItem = (item, index) => {
         return (
-            <TouchableOpacity onPress={() => { setCustomerItem({ ...item }) }} key={index.toString()}
+            <TouchableOpacity onPress={() => onClickItemCustomer(item)} key={index.toString()}
                 style={{ flexDirection: "row", alignItems: "center", borderBottomColor: "#ddd", borderBottomWidth: 1, padding: 10 }}>
                 <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center", }}>
                     <Image source={images.icon_bell_blue} style={{ height: 50, width: 50, marginRight: 10 }} />
-                    <View style={{ flex: 1 }}>
+                    <View style={{ flex: 1.3 }}>
                         <Text style={{ fontSize: 15, fontWeight: "bold" }}>{item.Name}</Text>
                         <Text style={{ paddingVertical: 5 }}>{item.Code}</Text>
                         <Text style={{}}>Reward Point: {currencyToString(item.Point)}</Text>
                     </View>
-                    <View style={{ flex: 1 }}></View>
-                    <View style={{ flex: 1,  }}>
-                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" , marginBottom: 10}}>
+                    <View style={{ flex: 1 }}>
+                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
                             <Image source={images.icon_bell_blue} style={{ height: 15, width: 15, }} />
                             <Text>{item.Phone != '' ? item.Phone : "No information"}</Text>
                         </View>
@@ -71,10 +80,25 @@ export default (props) => {
 
     return (
         <View style={{ flex: 1, }}>
-            <MainToolBar
+            {
+                props.route.params._onSelect ?
+                    <ToolBarDefault
+                        {...props}
+                        navigation={props.navigation}
+                        clickLeftIcon={() => {
+                            props.navigation.goBack()
+                        }}
+                        title={I18n.t('thanh_toan')} />
+                    :
+                    <MainToolBar
+                        navigation={props.navigation}
+                        title={I18n.t('khach_hang')}
+                    />
+            }
+            {/* <MainToolBar
                 navigation={props.navigation}
                 title={I18n.t('khach_hang')}
-            />
+            /> */}
             <View style={{ flexDirection: "row", flex: 1 }}>
                 <View style={{ flex: 1, }}>
                     <FlatList

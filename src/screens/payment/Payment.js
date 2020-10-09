@@ -19,6 +19,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import IconFeather from 'react-native-vector-icons/Feather';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
+import ToolBarPayment from '../../components/toolbar/ToolbarPayment';
 
 let METHOD = {
     payment_paid: {
@@ -50,6 +51,9 @@ export default (props) => {
     const [allMethod, setAllMethod] = useState(METHOD)
     const [sendMethod, setSendMethod] = useState(METHOD.payment_paid)
     const [listMethod, setListMethod] = useState([{ Id: "" + new Date(), Name: "Tiền mặt" }])
+    const [customer, setCustomer] = useState({ Id: "", Name: I18n.t('khach_le') })
+    const toolBarPaymentRef = useRef();
+
     const { deviceType } = useSelector(state => {
         console.log("useSelector state ", state);
         return state.Common
@@ -183,9 +187,19 @@ export default (props) => {
 
     }
 
+    const onCallBackCustomer = (data) => {
+        console.log("onCallBackCustomer data ", data);
+        setCustomer(data);
+    }
+
+    const addCustomer = () => {
+        props.navigation.navigate(ScreenList.Customer, { _onSelect: onCallBackCustomer })
+    }
+
     return (
         <View style={styles.conatiner}>
-            <ToolBarDefault
+            <ToolBarPayment
+                ref={toolBarPaymentRef}
                 {...props}
                 navigation={props.navigation}
                 clickLeftIcon={() => {
@@ -199,8 +213,8 @@ export default (props) => {
                         <Surface style={styles.surface}>
                             <View style={{ height: 50, backgroundColor: "#fff", flexDirection: "row", paddingHorizontal: 10, alignItems: "center" }}>
                                 <Text style={{ flex: 3 }}>{I18n.t('khach_hang')}</Text>
-                                <TouchableOpacity style={{ flexDirection: "row", justifyContent: "space-between", marginLeft: 20, backgroundColor: "#eeeeee", marginLeft: 10, flex: 7, borderColor: "gray", borderWidth: 0.5, borderRadius: 5, paddingVertical: 7 }}>
-                                    <Text style={{ marginLeft: 5 }}>{I18n.t('tat_ca')}</Text>
+                                <TouchableOpacity onPress={addCustomer} style={{ flexDirection: "row", justifyContent: "space-between", marginLeft: 20, backgroundColor: "#eeeeee", marginLeft: 10, flex: 7, borderColor: "gray", borderWidth: 0.5, borderRadius: 5, paddingVertical: 7 }}>
+                                    <Text style={{ marginLeft: 5 }}>{customer.Name}</Text>
                                     <Image source={Images.arrow_down} style={{ width: 14, height: 14, marginHorizontal: 10 }} />
                                 </TouchableOpacity>
                             </View>
@@ -328,10 +342,10 @@ export default (props) => {
                     </KeyboardAwareScrollView>
 
                     <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-                        <TouchableOpacity onPress={() => { }} style={{ flex: 1, alignItems: "center", backgroundColor: colors.colorLightBlue, paddingVertical: 15 }}>
+                        <TouchableOpacity onPress={() => { toolBarPaymentRef.current.setStatusSearch(true) }} style={{ flex: 1, alignItems: "center", backgroundColor: colors.colorLightBlue, paddingVertical: 15 }}>
                             <Text style={{ color: "#fff", textTransform: "uppercase", fontWeight: "bold" }}>{I18n.t('tam_tinh')}</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => { }} style={{ borderLeftWidth: 2, borderLeftColor: "#fff", flex: 1, alignItems: "center", backgroundColor: colors.colorLightBlue, paddingVertical: 15 }}>
+                        <TouchableOpacity onPress={() => { toolBarPaymentRef.current.setStatusSearch(false) }} style={{ borderLeftWidth: 2, borderLeftColor: "#fff", flex: 1, alignItems: "center", backgroundColor: colors.colorLightBlue, paddingVertical: 15 }}>
                             <Text style={{ color: "#fff", textTransform: "uppercase", fontWeight: "bold" }}>{I18n.t('thanh_toan')}</Text>
                         </TouchableOpacity>
                     </View>
