@@ -31,16 +31,6 @@ export default (props) => {
 
     const onCallBack = (data) => {
         console.log("onCallBack data ", data);
-        // let check = false;
-        // listVoucher.forEach(element => {
-        //     if (element.Code == data.Code) {
-        //         check = true;
-        //     }
-        // });
-        // if (!check) {
-        //     let list = listVoucher.push(data)
-        //     setListVoucher(list)
-        // }
         if (listVoucher.length > 0) {
             let filterList = listVoucher.filter(item => item.Id == data.Id)
             console.log("onCallBack filterList ", filterList);
@@ -88,6 +78,7 @@ export default (props) => {
                     }}
                     rightIcon="check"
                     clickRightIcon={() => {
+                        props.route.params._onSelect("item");
                         props.navigation.goBack()
                     }}
                     title={I18n.t('diem_voucher')}
