@@ -27,10 +27,13 @@ export default (props) => {
         new HTTPService().setPath(ApiPath.VOUCHER).GET(params).then(async (res) => {
             console.log("getDataVoucher res ", res);
             if (res && res.results) {
+                let listVoucherSelect = (deviceType == Constant.PHONE) ? props.route.params : props
+                console.log("getDataVoucher props ", props);
+
                 let list = [];
                 res.results.forEach(el => {
                     el["check"] = false;
-                    props.route.params.listVoucher.map(item => {
+                    listVoucherSelect.listVoucher.map(item => {
                         console.log("checkList ", item.Id, el.Id);
                         if (el.Id == item.Id) {
                             el["check"] = true;
@@ -39,7 +42,25 @@ export default (props) => {
                     })
                     list.push(el);
                 })
+                console.log("checkList list ", list);
                 setListVoucher(list);
+                // if (deviceType == Constant.PHONE) {
+                //     let list = [];
+                //     res.results.forEach(el => {
+                //         el["check"] = false;
+                //         props.route.params.listVoucher.map(item => {
+                //             console.log("checkList ", item.Id, el.Id);
+                //             if (el.Id == item.Id) {
+                //                 el["check"] = true;
+                //                 return;
+                //             }
+                //         })
+                //         list.push(el);
+                //     })
+                //     setListVoucher(list);
+                // } else {
+                //     setListVoucher(res.results);
+                // }
             }
         }).catch((e) => {
             console.log("getDataVoucher err ", e);
@@ -47,8 +68,14 @@ export default (props) => {
     }
 
     useEffect(() => {
-
+        // getDataVoucher()
     }, [])
+
+    useEffect(() => {
+        console.log("props.text ", props.text);
+        if (props.text)
+            getDataVoucher(props.text)
+    }, [props.text])
 
     const outputIsSelectProduct = (textSearch) => {
         console.log("outputIsSelectProduct textSearch ", textSearch);
@@ -60,8 +87,14 @@ export default (props) => {
     }
 
     const onClickItem = (item) => {
-        props.route.params._onSelect(item);
-        props.navigation.pop()
+        console.log("onClickItem item ", item);
+        if (deviceType == Constant.PHONE) {
+            props.route.params._onSelect(item);
+            props.navigation.pop()
+        } else {
+            console.log("onClickItem callBackSearch ", item);
+            props.callBackSearch(item)
+        }
     }
 
     const renderItemList = (item, index) => {
@@ -89,7 +122,8 @@ export default (props) => {
                     clickLeftIcon={() => { props.navigation.goBack() }}
                     rightIcon="md-search"
                     clickRightIcon={(textSearch) => outputIsSelectProduct(textSearch)}
-                /> : null}
+                />
+                : null}
             <FlatList
                 keyboardShouldPersistTaps="handled"
                 style={{ flex: 1, paddingBottom: 0, }}

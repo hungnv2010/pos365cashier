@@ -24,6 +24,7 @@ export default forwardRef((props, ref) => {
         setStatusSearch(status) {
             console.log("setStatusSearch status ", status);
             setStatusSearch(status)
+            setShowInput(status)
         }
     }));
 
@@ -76,7 +77,10 @@ export default forwardRef((props, ref) => {
                         <TextInput value={textSearch} style={{ flex: 1, color: "#000" }}
                             autoFocus={true}
                             onSubmitEditing={(text) => onSubmitEditing(text)}
-                            onChangeText={(text) => setTextSearch(text)}
+                            onChangeText={(text) => {
+                                setTextSearch(text);
+                                props.clickRightIcon(text)
+                            }}
                         />
                     </View>
                 }

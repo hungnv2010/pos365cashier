@@ -20,6 +20,7 @@ import IconFeather from 'react-native-vector-icons/Feather';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import ToolBarPayment from '../../components/toolbar/ToolbarPayment';
+import SearchVoucher from './SearchVoucher';
 
 let METHOD = {
     payment_paid: {
@@ -41,7 +42,7 @@ export default (props) => {
     const totalPrice = props.route.params.totalPrice ? props.route.params.totalPrice : 0
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
-    const [choosePoint, setChoosePoint] = useState(false)
+    const [choosePoint, setChoosePoint] = useState(0)
     const [percent, setPercent] = useState(false)
     const [totalDiscount, setTotalDiscount] = useState(0)
     const [excessCash, setExcessCash] = useState(0)
@@ -52,6 +53,8 @@ export default (props) => {
     const [sendMethod, setSendMethod] = useState(METHOD.payment_paid)
     const [listMethod, setListMethod] = useState([{ Id: "" + new Date(), Name: "Tiền mặt" }])
     const [customer, setCustomer] = useState({ Id: "", Name: I18n.t('khach_le') })
+    const [textSearch, setTextSearch] = useState("")
+    const [listVoucher, setListVoucher] = useState([])
     const toolBarPaymentRef = useRef();
 
     const { deviceType } = useSelector(state => {
@@ -154,7 +157,8 @@ export default (props) => {
                 allMethod[property].value = 0
             }
         }
-         setChoosePoint(false)
+        setChoosePoint(0)
+        toolBarPaymentRef.current.setStatusSearch(false)
         setAllMethod({ ...allMethod })
     }, [sendMethod])
 
@@ -197,6 +201,32 @@ export default (props) => {
         props.navigation.navigate(ScreenList.Customer, { _onSelect: onCallBackCustomer })
     }
 
+    const onClickSearch = () => {
+        toolBarPaymentRef.current.setStatusSearch(true)
+        setTextSearch('');
+        setChoosePoint(2)
+    }
+
+    const callBackSearch = (data) => {
+        console.log('callBackSearch === ', data);
+        toolBarPaymentRef.current.setStatusSearch(false)
+        if (listVoucher.length > 0) {
+            let filterList = listVoucher.filter(item => item.Id == data.Id)
+            console.log("onCallBack filterList ", filterList);
+            if (filterList.length == 0) {
+                console.log("onCallBack listVoucher ", listVoucher);
+                let list = listVoucher;
+                list.push(data)
+                console.log("onCallBack list ", list);
+                setListVoucher([...list])
+            }
+        } else {
+            setListVoucher([data])
+        }
+        toolBarPaymentRef.current.setStatusSearch(false)
+        setChoosePoint(1)
+    }
+
     return (
         <View style={styles.conatiner}>
             <ToolBarPayment
@@ -205,6 +235,10 @@ export default (props) => {
                 navigation={props.navigation}
                 clickLeftIcon={() => {
                     props.navigation.goBack()
+                }}
+                clickRightIcon={(data) => {
+                    console.log("clickRightIcon data ", data);
+                    setTextSearch(data);
                 }}
                 title={I18n.t('thanh_toan')} />
             <View style={{ flexDirection: "row", flex: 1 }}>
@@ -255,8 +289,10 @@ export default (props) => {
                                 <Text style={{ flex: 3 }}>{I18n.t('diem_voucher')}</Text>
                                 <View style={{ flexDirection: "row", flex: 3 }}>
                                     <TouchableOpacity onPress={() => {
-                                        if (deviceType == Constant.TABLET)
-                                            setChoosePoint(!choosePoint)
+                                        if (deviceType == Constant.TABLET) {
+                                            toolBarPaymentRef.current.setStatusSearch(false)
+                                            setChoosePoint(1)
+                                        }
                                         else props.navigation.navigate(ScreenList.PointVoucher, { _onSelect: onCallBack })
                                     }}
                                         style={{ width: 110, borderRadius: 5, borderWidth: 0.5, borderColor: colors.colorchinh, paddingHorizontal: 20, paddingVertical: 7, backgroundColor: colors.colorchinh }}>
@@ -353,10 +389,26 @@ export default (props) => {
                 </View>
                 {
                     deviceType == Constant.TABLET ?
-                        <Calculator
-                            method={sendMethod}
-                            outputResult={outputResult}
-                            choosePoint={choosePoint} />
+                        choosePoint == 0 ?
+                            <Calculator
+                                method={sendMethod}
+                                outputResult={outputResult} />
+                            :
+                            (
+                                choosePoint == 1 ?
+                                    < PointVoucher
+                                        listVoucher={listVoucher}
+                                        onClickSearch={() => onClickSearch()} />
+                                    :
+                                    <SearchVoucher
+                                        listVoucher={listVoucher}
+                                        text={textSearch}
+                                        callBackSearch={(item) => {
+                                            callBackSearch(item)
+                                        }}
+                                    />
+                            )
+
                         :
                         null
                 }
