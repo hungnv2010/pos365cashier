@@ -43,6 +43,7 @@ export default (props) => {
         console.log('onClickAddCustomer');
     }
 
+<<<<<<< HEAD
     const onClickItemCustomer = (item) => {
         console.log('onClickItemCustomer');
         setCustomerItem({ ...item })
@@ -50,11 +51,20 @@ export default (props) => {
             props.route.params._onSelect(item);
             props.navigation.goBack()
         }
+=======
+    const onClickCustomerItem = (item) => {
+        console.log('onClickCustomerItem', item);
+        setCustomerItem({...item})
+>>>>>>> ed27f2f48180aa6d1fe3c16306523ab966292e2a
     }
 
     const renderListItem = (item, index) => {
         return (
+<<<<<<< HEAD
             <TouchableOpacity onPress={() => onClickItemCustomer(item)} key={index.toString()}
+=======
+            <TouchableOpacity onPress={() => onClickCustomerItem(item)} key={index.toString()}
+>>>>>>> ed27f2f48180aa6d1fe3c16306523ab966292e2a
                 style={{ flexDirection: "row", alignItems: "center", borderBottomColor: "#ddd", borderBottomWidth: 1, padding: 10 }}>
                 <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center", }}>
                     <Image source={images.icon_bell_blue} style={{ height: 50, width: 50, marginRight: 10 }} />
@@ -63,7 +73,12 @@ export default (props) => {
                         <Text style={{ paddingVertical: 5 }}>{item.Code}</Text>
                         <Text style={{}}>Reward Point: {currencyToString(item.Point)}</Text>
                     </View>
+<<<<<<< HEAD
                     <View style={{ flex: 1 }}>
+=======
+                    <View style={{ flex: 1 }}></View>
+                    <View style={{ flex: 1, }}>
+>>>>>>> ed27f2f48180aa6d1fe3c16306523ab966292e2a
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
                             <Image source={images.icon_bell_blue} style={{ height: 15, width: 15, }} />
                             <Text>{item.Phone != '' ? item.Phone : "No information"}</Text>
@@ -98,8 +113,13 @@ export default (props) => {
             {/* <MainToolBar
                 navigation={props.navigation}
                 title={I18n.t('khach_hang')}
+<<<<<<< HEAD
             /> */}
             <View style={{ flexDirection: "row", flex: 1 }}>
+=======
+            />
+            <View style={{ flexDirection: "row", flex: 1, }}>
+>>>>>>> ed27f2f48180aa6d1fe3c16306523ab966292e2a
                 <View style={{ flex: 1, }}>
                     <FlatList
                         data={customerData}

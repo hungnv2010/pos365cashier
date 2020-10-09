@@ -15,7 +15,16 @@ import images from '../../theme/Images';
 export default (props) => {
     return (
         <View style={{ flex: 1 }}>
-            <Text>{JSON.stringify(props.customerDetail)}</Text>
+           <ScrollView style={{flex: 1}}>
+           </ScrollView>
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    conatiner: { flex: 1, backgroundColor: "#eeeeee" },
+    surface: {
+        margin: 5,
+        elevation: 4,
+    }
+})
