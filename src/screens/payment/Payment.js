@@ -150,6 +150,7 @@ export default (props) => {
                 allMethod[property].value = 0
             }
         }
+         setChoosePoint(false)
         setAllMethod({ ...allMethod })
     }, [sendMethod])
 
