@@ -232,13 +232,12 @@ export default (props) => {
             <ToolBarPayment
                 ref={toolBarPaymentRef}
                 {...props}
-                navigation={props.navigation}
-                clickLeftIcon={() => {
-                    props.navigation.goBack()
-                }}
                 clickRightIcon={(data) => {
                     console.log("clickRightIcon data ", data);
                     setTextSearch(data);
+                }}
+                onClickBackSearch={()=>{
+                    setChoosePoint(1)
                 }}
                 title={I18n.t('thanh_toan')} />
             <View style={{ flexDirection: "row", flex: 1 }}>

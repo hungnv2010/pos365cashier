@@ -23,6 +23,7 @@ export default forwardRef((props, ref) => {
     useImperativeHandle(ref, () => ({
         setStatusSearch(status) {
             console.log("setStatusSearch status ", status);
+            setTextSearch("")
             setStatusSearch(status)
             setShowInput(status)
         }
@@ -44,12 +45,13 @@ export default forwardRef((props, ref) => {
         <View style={styles.toolbarContainer}>
 
             <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-                {props.clickLeftIcon ?
+                {/* {props.clickLeftIcon ?
                     <TouchableOpacity onPress={props.clickLeftIcon}>
                         <Icon name="keyboard-backspace" size={props.size ? props.size : 30} color="white" />
                     </TouchableOpacity>
-                    :
-                    <TouchableOpacity onPress={() => {
+                    : */}
+                <TouchableOpacity onPress={() => {
+                    if (!showInput) {
                         if (blockClick == false) {
                             blockClick = true;
                             props.navigation.pop()
@@ -57,10 +59,15 @@ export default forwardRef((props, ref) => {
                                 blockClick = false;
                             }, 1000);
                         }
-                    }}>
-                        <Icon name={props.leftIcon} size={props.size ? props.size : 30} color="white" />
-                    </TouchableOpacity>
-                }
+                    } else {
+                        setStatusSearch(false)
+                        setShowInput(false)
+                        props.onClickBackSearch()
+                    }
+                }}>
+                    <Icon name="keyboard-backspace" size={props.size ? props.size : 30} color="white" />
+                </TouchableOpacity>
+                {/* } */}
             </View>
             <View style={{ flex: 5, paddingLeft: 10, alignItems: 'center', flexDirection: 'row' }}>
                 {showInput == false ?
@@ -86,33 +93,34 @@ export default forwardRef((props, ref) => {
                 }
             </View>
 
-            {statusSearch ?
-                <View style={{ flex: 2, alignItems: "center", justifyContent: "center" }}>
-                    {showInput == false ?
-                        <TouchableOpacity onPress={() => onClickSearch()}>
-                            <Ionicons name="md-search" size={props.size ? props.size : 30} color="white" />
-                        </TouchableOpacity>
-                        :
-                        <TouchableOpacity onPress={() => setShowInput(false)}>
-                            <Icon name="close" size={props.size ? props.size : 30} color="white" />
-                        </TouchableOpacity>
-                    }
-                </View>
-                :
-                <View style={{ flexDirection: "row", flex: 2 }}>
-                    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-                        <TouchableOpacity onPress={props.clickQRCode}>
-                            <Icon name="qrcode-scan" size={props.size ? props.size : 23} color="white" />
-                        </TouchableOpacity>
+            {
+                statusSearch ?
+                    <View style={{ flex: 2, alignItems: "center", justifyContent: "center" }}>
+                        {showInput == false ?
+                            <TouchableOpacity onPress={() => onClickSearch()}>
+                                <Ionicons name="md-search" size={props.size ? props.size : 30} color="white" />
+                            </TouchableOpacity>
+                            :
+                            <TouchableOpacity onPress={() => setShowInput(false)}>
+                                <Icon name="close" size={props.size ? props.size : 30} color="white" />
+                            </TouchableOpacity>
+                        }
                     </View>
-                    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-                        <TouchableOpacity onPress={props.clickNoteBook}>
-                            <Icon name="library-books" size={props.size ? props.size : 26} color="white" />
-                        </TouchableOpacity>
+                    :
+                    <View style={{ flexDirection: "row", flex: 2 }}>
+                        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+                            <TouchableOpacity onPress={props.clickQRCode}>
+                                <Icon name="qrcode-scan" size={props.size ? props.size : 23} color="white" />
+                            </TouchableOpacity>
+                        </View>
+                        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+                            <TouchableOpacity onPress={props.clickNoteBook}>
+                                <Icon name="library-books" size={props.size ? props.size : 26} color="white" />
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                </View>
             }
-        </View>
+        </View >
 
     )
 
