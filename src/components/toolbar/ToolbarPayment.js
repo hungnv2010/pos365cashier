@@ -114,7 +114,7 @@ export default forwardRef((props, ref) => {
                             </TouchableOpacity>
                         </View>
                         <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-                            <TouchableOpacity onPress={props.clickNoteBook}>
+                            <TouchableOpacity onPress={props.clickNote}>
                                 <Icon name="library-books" size={props.size ? props.size : 26} color="white" />
                             </TouchableOpacity>
                         </View>
