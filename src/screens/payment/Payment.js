@@ -39,11 +39,12 @@ let METHOD = {
 
 let timeClickCash = 1000;
 
-
+let room = {};
 
 const CUSTOMER_DEFAULT = { Id: "", Name: I18n.t('khach_le') };
 
 export default (props) => {
+
     const CASH = {
         Id: 0,
         MethodId: 0,
@@ -79,6 +80,15 @@ export default (props) => {
 
 
     useEffect(() => {
+
+        const getRoom = async () => {
+            const row_key = `${props.route.params.RoomId}_${props.route.params.Position}`
+            let serverEvent = await realmStore.queryServerEvents()
+            room = serverEvent.filtered(`RowKey == '${row_key}'`)
+            alert('useEffect getRoom  ' + JSON.parse(room[0].JsonContent).OrderDetails.length);
+        }
+        getRoom()
+
         const getVendorSession = async () => {
             let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
             console.log('getVendorSession data payment', JSON.parse(data));
@@ -166,12 +176,15 @@ export default (props) => {
     }
 
     useDidMountEffect(() => {
+        console.log("useDidMountEffect ");
+
         for (const property in allMethod) {
             console.log('property', property, allMethod[property]);
             if (allMethod[property].name == sendMethod.name) {
                 allMethod[property].value = 0
             }
         }
+
         setChoosePoint(0)
         toolBarPaymentRef.current.setStatusSearch(false)
         setAllMethod({ ...allMethod })
@@ -274,7 +287,6 @@ export default (props) => {
             } else
                 list.push(element)
         });
-        console.log("onClickOkFilter list ", list);
         setListMethod([...list])
     }
 
@@ -287,19 +299,22 @@ export default (props) => {
         return total + Math.round(num.Value);
     }
 
+    const setListVoucherTemp = (item, value) => {
+        let list = [];
+        listMethod.forEach(element => {
+            if (item.Id == element.Id) {
+                list.push({ ...item, Value: value })
+            } else
+                list.push(element)
+        });
+        console.log("onClickOkFilter list ", list);
+        setListMethod([...list])
+    }
+
     const checkExcessCash = (item) => {
         let total = listMethod.reduce(getSum, 0);
-        console.log("checkExcessCash total ", total, itemMethod);
         if (total < totalPrice) {
-            let list = [];
-            listMethod.forEach(element => {
-                if (item.Id == element.Id) {
-                    list.push({ ...item, Value: totalPrice - total + item.Value })
-                } else
-                    list.push(element)
-            });
-            console.log("onClickOkFilter list ", list);
-            setListMethod([...list])
+            setListVoucherTemp(item, totalPrice - total + item.Value)
             setExcessCash(0)
         }
     }
@@ -322,9 +337,12 @@ export default (props) => {
         setExcessCash(total - totalPrice)
     }
 
+    const setValueMethod = (item) => {
+        setListVoucherTemp(item, 0)
+    }
+
     const renderFilter = () => {
         console.log("renderFilter vendorSession ", vendorSession);
-
         return (
             <View style={{ backgroundColor: "#fff", padding: 10, }}>
                 <Text style={{ padding: 10, fontWeight: "bold", textTransform: "uppercase", color: colors.colorLightBlue }}>Loại hình thanh toán</Text>
@@ -381,7 +399,7 @@ export default (props) => {
                         <Surface style={styles.surface}>
                             <View style={{ height: 50, backgroundColor: "#fff", flexDirection: "row", paddingHorizontal: 10, alignItems: "center", justifyContent: "space-between" }}>
                                 <Text style={{ flex: 3 }}>{I18n.t('tong_thanh_tien')}</Text>
-                                <Text style={{ borderColor: colors.colorchinh, paddingHorizontal: 15, paddingVertical: 7, borderRadius: 5, borderWidth: 0.5 }}>9</Text>
+                                <Text style={{ borderColor: colors.colorchinh, paddingHorizontal: 15, paddingVertical: 7, borderRadius: 5, borderWidth: 0.5 }}>{room && room[0] && room[0].JsonContent ? JSON.parse(room[0].JsonContent).OrderDetails.length : 0}</Text>
                                 <Text style={{ flex: 5.3, textAlign: "right" }}>{currencyToString(totalPrice)}</Text>
                             </View>
                         </Surface>
@@ -479,7 +497,7 @@ export default (props) => {
                                                 </View>
                                                 <TextInput
                                                     value={"" + currencyToString(item.Value)}
-                                                    onTouchStart={() => { setSendMethod(METHOD.payment_paid) }}
+                                                    onTouchStart={() => { setValueMethod(item) }}
                                                     editable={deviceType == Constant.TABLET ? false : true}
                                                     onChangeText={(text) => onChangeTextPaymentPaid(text, item)}
                                                     style={{ textAlign: "right", backgroundColor: "#eeeeee", marginLeft: 0, flex: 3, borderColor: sendMethod.name == METHOD.payment_paid.name ? colors.colorchinh : "gray", borderWidth: 0.5, borderRadius: 5, padding: 6.8 }} />
