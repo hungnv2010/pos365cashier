@@ -49,9 +49,10 @@ export default (props) => {
         Id: 0,
         MethodId: 0,
         Name: I18n.t('tien_mat'),
-        Value: props.route.params.totalPrice ? props.route.params.totalPrice : 0,
+        Value: 0,
     }
-    const totalPrice = props.route.params.totalPrice ? props.route.params.totalPrice : 0
+    // const totalPrice = props.route.params.totalPrice ? props.route.params.totalPrice : 0
+    const [totalPrice, setTotalPrice] = useState(0);
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
     const [choosePoint, setChoosePoint] = useState(0)
@@ -85,7 +86,16 @@ export default (props) => {
             const row_key = `${props.route.params.RoomId}_${props.route.params.Position}`
             let serverEvent = await realmStore.queryServerEvents()
             room = serverEvent.filtered(`RowKey == '${row_key}'`)
-            alert('useEffect getRoom  ' + JSON.parse(room[0].JsonContent).OrderDetails.length);
+
+            let orderDetails = JSON.parse(room[0].JsonContent).OrderDetails;
+            let total = 0;
+            if (orderDetails && orderDetails.length > 0) {
+                orderDetails.forEach(item => {
+                    total += item.Price * item.Quantity
+                });
+            }
+            setTotalPrice(total);
+            CASH.Value = total;
         }
         getRoom()
 
@@ -339,6 +349,8 @@ export default (props) => {
 
     const setValueMethod = (item) => {
         setListVoucherTemp(item, 0)
+        let total = listMethod.reduce(getSum, 0);
+        setExcessCash(total - item.Value - totalPrice)
     }
 
     const renderFilter = () => {
