@@ -167,7 +167,7 @@ const CustomerOrder = (props) => {
 
     const syncListProducts = (listProducts) => {
         console.log('syncListProducts');
-        setListOrder(listProducts)
+        // setListOrder(listProducts)
         props.outputListProducts(listProducts, 0)
     }
 
