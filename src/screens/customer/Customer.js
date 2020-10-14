@@ -18,6 +18,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import { HTTPService } from '../../data/services/HttpService';
 import { ApiPath } from '../../data/services/ApiPath';
 import dataManager from '../../data/DataManager';
+import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
 
 let GUEST = {
     Id: -1,
@@ -82,13 +83,12 @@ export default (props) => {
                 style={[{ flexDirection: "row", alignItems: "center", borderBottomColor: "#ddd", borderBottomWidth: 1, padding: 10 }, item.Id == customerItem.Id ? { backgroundColor: "#F6DFCE" } : { backgroundColor: "white" }]}>
                 <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center", }}>
                     <Image source={images.icon_bell_blue} style={{ height: 50, width: 50, marginRight: 10 }} />
-                    <View style={{ flex: 1 }}>
+                    <View style={{ flex: 1.3 }}>
                         <Text style={{ fontSize: 15, fontWeight: "bold" }}>{item.Name}</Text>
                         <Text style={{ paddingVertical: 5 }}>{item.Code}</Text>
                         <Text style={{}}>Reward Point: {currencyToString(item.Point)}</Text>
                     </View>
-                    <View style={{ flex: 1 }}></View>
-                    <View style={{ flex: 1, }}>
+                    <View style={{ flex: 1 }}>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
                             <Image source={images.icon_bell_blue} style={{ height: 15, width: 15, }} />
                             <Text>{item.Phone && item.Phone != '' ? item.Phone : "No information"}</Text>
@@ -117,11 +117,26 @@ export default (props) => {
 
     return (
         <View style={{ flex: 1, }}>
-            <MainToolBar
+            {
+                props.route.params._onSelect ?
+                    <ToolBarDefault
+                        {...props}
+                        navigation={props.navigation}
+                        clickLeftIcon={() => {
+                            props.navigation.goBack()
+                        }}
+                        title={I18n.t('thanh_toan')} />
+                    :
+                    <MainToolBar
+                        navigation={props.navigation}
+                        title={I18n.t('khach_hang')}
+                    />
+            }
+            {/* <MainToolBar
                 navigation={props.navigation}
                 title={I18n.t('khach_hang')}
-            />
-            <View style={{ flexDirection: "row", flex: 1, }}>
+            /> */}
+            <View style={{ flexDirection: "row", flex: 1 }}>
                 <View style={{ flex: 1, }}>
                     <FlatList
                         data={customerData}
