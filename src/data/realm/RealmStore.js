@@ -37,6 +37,16 @@ class RealmStore extends RealmBase {
         }))
     }
 
+    deletePartner = async () => {
+        console.log("deletePartnerItem ");
+        let realm = await Realm.open(databaseOption)
+        return new Promise((resolve) => realm.write(() => {
+            let room = realm.objects(SchemaName.CUSTOMER)
+            realm.delete(room)
+            resolve()
+        }))
+    }
+
     //server event
     insertServerEvent = async (newServerEvent) => {
         let realm = await Realm.open(databaseOption)
@@ -174,11 +184,7 @@ const CustomerSchema = {
         Name: 'string',
         Phone: { type: 'string', default: '' },
         Address: { type: 'string', default: '' },
-        Description: { type: 'string', default: '' },
-        Gender: { type: 'int', default: 0 },
-        Debt: { type: 'int', default: 0 },
-        TotalDebt: { type: 'int', default: 0 },
-        Point: { type: 'int', default: 0 }
+        Point: { type: 'int', default: 0 },
     }
 }
 
@@ -328,7 +334,7 @@ const PromotionSchema = {
 const databaseOption = {
     path: 'Pos365Boss.realm',
     schema: [ServerEventSchema, RoomSchema, RoomGroupSchema, ProductSchema, CategoriesSchema, ToppingsSchema, CustomerSchema, PromotionSchema],
-    schemaVersion: 25
+    schemaVersion: 27
 }
 
 const realm = new Realm(databaseOption);
