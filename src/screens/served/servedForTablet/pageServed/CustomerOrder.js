@@ -186,7 +186,7 @@ const CustomerOrder = (props) => {
     }
 
     const sendOrder = () => {
-        props.navigation.navigate(ScreenList.Payment, { totalPrice: 100000});
+        props.navigation.navigate(ScreenList.Payment, { totalPrice: 100000, RoomId: props.route.params.room.Id, Position: props.Position });
         return;
 
         if (list.length > 0 && isClick == false) {

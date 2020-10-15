@@ -11,18 +11,42 @@ import { useSelector } from 'react-redux';
 import { Constant } from '../../common/Constant';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import SearchVoucher from './SearchVoucher';
+import { getFileDuLieuString } from '../../data/fileStore/FileStorage';
 
 export default (props) => {
 
-    const [pointCurrent, setPointCurrent] = useState(100)
+    const [pointCurrent, setPointCurrent] = useState(0)
     const [pointUse, setPointUse] = useState(0)
     const [listVoucher, setListVoucher] = useState([])
     const [isSearch, setIsSearch] = useState(false)
+    const [vendorSession, setVendorSession] = useState({})
+    const [grandTotal, setGrandTotal] = useState(0)
 
     const { deviceType } = useSelector(state => {
         console.log("useSelector state ", state);
         return state.Common
     });
+
+    useEffect(() => {
+        if (deviceType == Constant.PHONE) {
+            if (props.route.params.customer && props.route.params.customer.Point)
+                setPointCurrent(props.route.params.customer.Point)
+            if (props.route.params.grandTotal)
+                setGrandTotal(props.route.params.grandTotal)
+        } else {
+            if (props.customer && props.customer.Point)
+                setPointCurrent(props.customer.Point)
+            if (props.grandTotal)
+                setGrandTotal(props.grandTotal)
+        }
+
+        // PointToValue
+        const getVendorSession = async () => {
+            let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
+            setVendorSession(JSON.parse(data));
+        }
+        getVendorSession()
+    }, [])
 
     useEffect(() => {
         console.log("props.listVoucher ", props.listVoucher);
@@ -31,9 +55,18 @@ export default (props) => {
         }
     }, [props.listVoucher])
 
+    useEffect(() => {
+        console.log("useEffect props.customer ", props);
+        if (props.customer && props.customer.Point)
+            setPointCurrent(props.customer.Point)
+    }, [props.customer])
+
     const onChangeTextInput = (text) => {
-        if (+text < pointCurrent)
+        console.log("onChangeTextInput text ", text);
+        if (+text < pointCurrent) {
             setPointUse(text)
+        }
+        props.onChangePointUse(vendorSession.Settings && vendorSession.Settings.PointToValue ? vendorSession.Settings.PointToValue * (text != "" ? +text : 0) : 0)
     }
 
     const onCallBack = (data) => {
@@ -56,6 +89,26 @@ export default (props) => {
     const deleteVoucher = (el) => {
         let filter = listVoucher.filter(item => item.Code != el.Code)
         setListVoucher(filter)
+        props.deleteVoucher(filter)
+    }
+
+    const sumVoucher = () => {
+        console.log("sumVoucher ", listVoucher);
+        let total = 0;
+        listVoucher.forEach(it => {
+            if (it.IsPercent)
+                total += grandTotal / 100 * it.Value
+            else
+                total += it.Value
+        })
+        return total;
+    }
+
+    const callBackPayment = () => {
+        console.log("callBackPayment sumVoucher ", sumVoucher());
+
+        props.route.params._onSelect({ sumVoucher: sumVoucher(), rewardPoints: vendorSession.Settings && vendorSession.Settings.PointToValue ? vendorSession.Settings.PointToValue * pointUse : 0 });
+        props.navigation.goBack()
     }
 
     const renderItemList = (item, index) => {
@@ -80,14 +133,10 @@ export default (props) => {
                         props.navigation.goBack()
                     }}
                     rightIcon="check"
-                    clickRightIcon={() => {
-                        props.route.params._onSelect("item");
-                        props.navigation.goBack()
-                    }}
+                    clickRightIcon={callBackPayment}
                     title={I18n.t('diem_voucher')}
                 /> : null}
             {
-                // !isSearch ?
                 <>
                     <Surface style={styles.surface}>
                         <View style={styles.row}>
@@ -96,7 +145,7 @@ export default (props) => {
                                 <Text style={styles.text_payment_paid}>{I18n.t('khach_phai_tra')}</Text>
                             </View>
                             <View style={styles.flex_3}></View>
-                            <Text style={styles.value_payment_paid}>{currencyToString(1000)}</Text>
+                            <Text style={styles.value_payment_paid}>{currencyToString(grandTotal)}</Text>
                         </View>
                     </Surface>
                     <Surface style={styles.surface}>
@@ -106,19 +155,19 @@ export default (props) => {
                         </View>
                         <View style={styles.point_row_2}>
                             <Text>{I18n.t('diem_hien_tai')}</Text>
-                            <Text>{pointCurrent}</Text>
+                            <Text>{currencyToString(pointCurrent)}</Text>
                         </View>
                         <View style={styles.point_row_2}>
                             <Text style={styles.flex_3}>{I18n.t('su_dung_diem')}</Text>
                             <View style={styles.flex_3}></View>
                             <TextInput
                                 onChangeText={(text) => onChangeTextInput(text)}
-                                value={pointUse == 0 ? "" : pointUse}
+                                value={pointUse == 0 ? "" : currencyToString(pointUse)}
                                 style={styles.text_input} />
                         </View>
                         <View style={styles.point_row_2}>
                             <Text>{I18n.t('so_tien_quy_doi')}</Text>
-                            <Text>{currencyToString(12000)}</Text>
+                            <Text>{currencyToString(vendorSession.Settings && vendorSession.Settings.PointToValue ? vendorSession.Settings.PointToValue * pointUse : 0)}</Text>
                         </View>
                     </Surface>
                     <Surface style={[styles.surface, { flex: 1 }]}>
@@ -133,7 +182,6 @@ export default (props) => {
                                     if (deviceType == Constant.PHONE) {
                                         props.navigation.navigate(ScreenList.SearchVoucher, { _onSelect: onCallBack, listVoucher: listVoucher })
                                     } else {
-                                        // setIsSearch(true)
                                         props.onClickSearch()
                                     }
                                 }}
@@ -149,12 +197,6 @@ export default (props) => {
                         </ScrollView>
                     </Surface>
                 </>
-                // :
-                // <SearchVoucher
-                //     callBackSearch={(item) => {
-                //         callBackSearch(item)
-                //     }}
-                // />
             }
         </View>
     )

@@ -51,7 +51,6 @@ export default (props) => {
         Name: I18n.t('tien_mat'),
         Value: 0,
     }
-    // const totalPrice = props.route.params.totalPrice ? props.route.params.totalPrice : 0
     const [totalPrice, setTotalPrice] = useState(0);
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
@@ -59,7 +58,7 @@ export default (props) => {
     const [percent, setPercent] = useState(false)
     const [totalDiscount, setTotalDiscount] = useState(0)
     const [excessCash, setExcessCash] = useState(0)
-    const [grandTotal, setGrandTotal] = useState(props.route.params.totalPrice ? props.route.params.totalPrice : 0)
+    const [grandTotal, setGrandTotal] = useState(0)
     const [percentVAT, setPercentVAT] = useState(false)
     const [point, setPoint] = useState(0)
     const [allMethod, setAllMethod] = useState(METHOD)
@@ -70,6 +69,7 @@ export default (props) => {
     const [listVoucher, setListVoucher] = useState([])
     const [vendorSession, setVendorSession] = useState({})
     const [showModal, setShowModal] = useState(false);
+    const [giveMoneyBack, setGiveMoneyBack] = useState(true);
     const [itemMethod, setItemMethod] = useState(CASH);
     const toolBarPaymentRef = useRef();
     const itemAccountRef = useRef();
@@ -88,6 +88,8 @@ export default (props) => {
             room = serverEvent.filtered(`RowKey == '${row_key}'`)
 
             let orderDetails = JSON.parse(room[0].JsonContent).OrderDetails;
+            console.log("getRoom JsonContent ======= ", JSON.parse(room[0].JsonContent));
+
             let total = 0;
             if (orderDetails && orderDetails.length > 0) {
                 orderDetails.forEach(item => {
@@ -95,14 +97,13 @@ export default (props) => {
                 });
             }
             setTotalPrice(total);
+            setGrandTotal(total)
             CASH.Value = total;
         }
         getRoom()
 
         const getVendorSession = async () => {
             let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
-            console.log('getVendorSession data payment', JSON.parse(data));
-            console.log('payment props', props);
             setVendorSession(JSON.parse(data));
         }
         getVendorSession()
@@ -229,12 +230,13 @@ export default (props) => {
         let list = listMethod;
         list = list.filter(el => el.Id != item.Id);
         setListMethod([...list])
-        setExcessCash(total + item.Value - totalPrice)
+        setExcessCash(total + item.Value - grandTotal)
     }
 
     const onCallBack = (data) => {
         console.log("onCallBack data ", data);
-
+        // {"rewardPoints": 30000, "sumVoucher": 92000}
+        setPoint((data.rewardPoints + data.sumVoucher))
     }
 
     const onCallBackCustomer = (data) => {
@@ -252,6 +254,18 @@ export default (props) => {
         setChoosePoint(2)
     }
 
+    const sumVoucher = (listVoucher) => {
+        console.log("sumVoucher ", listVoucher);
+        let total = 0;
+        listVoucher.forEach(it => {
+            if (it.IsPercent)
+                total += grandTotal / 100 * it.Value
+            else
+                total += it.Value
+        })
+        return total;
+    }
+
     const callBackSearch = (data) => {
         console.log('callBackSearch === ', data);
         toolBarPaymentRef.current.setStatusSearch(false)
@@ -264,12 +278,22 @@ export default (props) => {
                 list.push(data)
                 console.log("onCallBack list ", list);
                 setListVoucher([...list])
+                setPoint(sumVoucher([list]))
             }
         } else {
             setListVoucher([data])
+            setPoint(sumVoucher([data]))
         }
         toolBarPaymentRef.current.setStatusSearch(false)
         setChoosePoint(1)
+    }
+
+    const deleteVoucher = (list) => {
+        setPoint(sumVoucher(list))
+    }
+    const onChangePointUse = (total) => {
+        console.log("onChangePointUse total ", total);
+        setPoint(sumVoucher(listVoucher) + total);
     }
 
     const onClickNote = () => {
@@ -323,8 +347,8 @@ export default (props) => {
 
     const checkExcessCash = (item) => {
         let total = listMethod.reduce(getSum, 0);
-        if (total < totalPrice) {
-            setListVoucherTemp(item, totalPrice - total + item.Value)
+        if (total < grandTotal) {
+            setListVoucherTemp(item, grandTotal - total + item.Value)
             setExcessCash(0)
         }
     }
@@ -344,17 +368,31 @@ export default (props) => {
             }
         });
         setListMethod([...list])
-        setExcessCash(total - totalPrice)
+        setExcessCash(total - grandTotal)
     }
 
     const setValueMethod = (item) => {
         setListVoucherTemp(item, 0)
         let total = listMethod.reduce(getSum, 0);
-        setExcessCash(total - item.Value - totalPrice)
+        setExcessCash(total - item.Value - grandTotal)
+    }
+
+    const onSelectExcess = (type) => {
+        setGiveMoneyBack(type)
+    }
+
+    const calculator = (jsonContent) => {
+        // let jsonContent = JSON.parse(room[0].JsonContent)
+        let realPriceValue = totalPrice;
+        let disCountValue = jsonContent.discountValue;
+
+        var totalDiscount = disCountValue + jsonContent.PointDiscountValue + (jsonContent.voucher ? jsonContent.voucher : 0)
+
+        totalDiscount = (totalDiscount >= realPriceValue) ? realPriceValue : totalDiscount;
+
     }
 
     const renderFilter = () => {
-        console.log("renderFilter vendorSession ", vendorSession);
         return (
             <View style={{ backgroundColor: "#fff", padding: 10, }}>
                 <Text style={{ padding: 10, fontWeight: "bold", textTransform: "uppercase", color: colors.colorLightBlue }}>Loại hình thanh toán</Text>
@@ -445,13 +483,13 @@ export default (props) => {
                                             toolBarPaymentRef.current.setStatusSearch(false)
                                             setChoosePoint(1)
                                         }
-                                        else props.navigation.navigate(ScreenList.PointVoucher, { _onSelect: onCallBack })
+                                        else props.navigation.navigate(ScreenList.PointVoucher, { _onSelect: onCallBack, customer: customer, grandTotal: totalPrice })
                                     }}
                                         style={{ width: 110, borderRadius: 5, borderWidth: 0.5, borderColor: colors.colorchinh, paddingHorizontal: 20, paddingVertical: 7, backgroundColor: colors.colorchinh }}>
                                         <Text style={{ color: "#fff", textAlign: "center", textTransform: "uppercase" }}>{I18n.t('chon')}</Text>
                                     </TouchableOpacity>
                                 </View>
-                                <Text style={{ textAlign: "right", marginLeft: 10, flex: 3, padding: 6.8, paddingRight: 0 }}>{point}</Text>
+                                <Text style={{ textAlign: "right", marginLeft: 10, flex: 3, padding: 6.8, paddingRight: 0 }}>{currencyToString(point)}</Text>
                             </View>
                         </Surface>
                         <Surface style={styles.surface}>
@@ -525,6 +563,31 @@ export default (props) => {
                                 <Text style={{ flex: 2 }}>{I18n.t('tien_thua')}</Text>
                                 <Text style={{ flex: 4, textAlign: "right", color: excessCash > 0 ? "green" : "red" }}>{currencyToString(excessCash)}</Text>
                             </View>
+                            {
+                                (excessCash > 0 && (customer && customer.Id && customer.Id != "")) ?
+                                    <View style={{ flexDirection: "row", justifyContent: "flex-end", marginRight: 10 }}>
+                                        <TouchableOpacity onPress={() => onSelectExcess(true)} style={{ flexDirection: "row", alignItems: "center" }}>
+                                            <RadioButton.Android
+                                                status={giveMoneyBack ? 'checked' : 'unchecked'}
+                                                onPress={() => onSelectExcess(true)}
+                                                style={{ padding: 0, margin: 0 }}
+                                                color={colors.colorchinh}
+                                            />
+                                            <Text style={{ marginLeft: 0 }}>{I18n.t('tra_lai_tien')}</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity onPress={() => onSelectExcess(false)} style={{ flexDirection: "row", alignItems: "center" }}>
+                                            <RadioButton.Android
+                                                status={!giveMoneyBack ? 'checked' : 'unchecked'}
+                                                onPress={() => onSelectExcess(false)}
+                                                style={{ padding: 0, margin: 0 }}
+                                                color={colors.colorchinh}
+                                            />
+                                            <Text style={{ marginLeft: 0 }}>{I18n.t('cong_vao_khoan_no')}</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                    :
+                                    null
+                            }
                         </Surface>
                     </KeyboardAwareScrollView>
                     <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
@@ -545,8 +608,12 @@ export default (props) => {
                             :
                             (
                                 choosePoint == 1 ?
-                                    < PointVoucher
+                                    <PointVoucher
+                                        grandTotal={totalPrice}
+                                        customer={customer}
                                         listVoucher={listVoucher}
+                                        onChangePointUse={(total) => onChangePointUse(total)}
+                                        deleteVoucher={(list) => deleteVoucher(list)}
                                         onClickSearch={() => onClickSearch()} />
                                     :
                                     <SearchVoucher

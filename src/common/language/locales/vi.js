@@ -53,7 +53,8 @@ export default {
   chi_tiet_phong_ban: "Chi tiết phòng bàn",
   chuyen_khoan: "Chuyển khoản",
   chon_dvt: "ĐVT",
-  chon:"Chọn",
+  chon: "Chọn",
+  cong_vao_khoan_no: "Cộng vào khoản nợ",
 
   // TODO: D
   dang_dung: "Đang dùng",
@@ -298,6 +299,7 @@ export default {
   tien_thua: "Tiền thừa",
   tim_kiem: "Tìm kiếm",
   tien_khach_tra: "Tiền khách trả",
+  tra_lai_tien: "Trả lại tiền",
   // TODO: U
 
   // TODO: V
