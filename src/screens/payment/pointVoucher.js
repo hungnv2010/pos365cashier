@@ -29,10 +29,16 @@ export default (props) => {
 
     useEffect(() => {
         if (deviceType == Constant.PHONE) {
+            console.log("props.route.params ", props.route.params);
+
             if (props.route.params.customer && props.route.params.customer.Point)
                 setPointCurrent(props.route.params.customer.Point)
             if (props.route.params.grandTotal)
                 setGrandTotal(props.route.params.grandTotal)
+            if (props.route.params.listVoucher)
+                setListVoucher(props.route.params.listVoucher)
+            if (props.route.params.pointUse)
+                setPointUse(props.route.params.pointUse)
         } else {
             if (props.customer && props.customer.Point)
                 setPointCurrent(props.customer.Point)
@@ -56,6 +62,13 @@ export default (props) => {
     }, [props.listVoucher])
 
     useEffect(() => {
+        console.log("props.pointUse ", props.pointUse);
+        if (props.pointUse) {
+            setPointUse(props.pointUse)
+        }
+    }, [props.pointUse])
+
+    useEffect(() => {
         console.log("useEffect props.customer ", props);
         if (props.customer && props.customer.Point)
             setPointCurrent(props.customer.Point)
@@ -66,7 +79,8 @@ export default (props) => {
         if (+text < pointCurrent) {
             setPointUse(text)
         }
-        props.onChangePointUse(vendorSession.Settings && vendorSession.Settings.PointToValue ? vendorSession.Settings.PointToValue * (text != "" ? +text : 0) : 0)
+        if (deviceType == Constant.TABLET)
+            props.onChangePointUse(text)
     }
 
     const onCallBack = (data) => {
@@ -106,8 +120,7 @@ export default (props) => {
 
     const callBackPayment = () => {
         console.log("callBackPayment sumVoucher ", sumVoucher());
-
-        props.route.params._onSelect({ sumVoucher: sumVoucher(), rewardPoints: vendorSession.Settings && vendorSession.Settings.PointToValue ? vendorSession.Settings.PointToValue * pointUse : 0 });
+        props.route.params._onSelect({ listVoucher: listVoucher, pointUse: pointUse, sumVoucher: sumVoucher(), rewardPoints: vendorSession.Settings && vendorSession.Settings.PointToValue ? vendorSession.Settings.PointToValue * pointUse : 0 });
         props.navigation.goBack()
     }
 
@@ -161,6 +174,7 @@ export default (props) => {
                             <Text style={styles.flex_3}>{I18n.t('su_dung_diem')}</Text>
                             <View style={styles.flex_3}></View>
                             <TextInput
+                                keyboardType="number-pad"
                                 onChangeText={(text) => onChangeTextInput(text)}
                                 value={pointUse == 0 ? "" : currencyToString(pointUse)}
                                 style={styles.text_input} />

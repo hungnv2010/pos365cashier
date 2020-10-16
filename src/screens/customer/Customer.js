@@ -60,7 +60,7 @@ export default (props) => {
 
 
     const onClickCustomerItem = (item) => {
-        if (deviceType == Constant.TABLET) {
+        if (deviceType == Constant.TABLET && !props.route.params._onSelect) {
             if (item.Id == -1) {
                 onClickAddCustomer()
             } else {
@@ -73,6 +73,8 @@ export default (props) => {
                 })
             }
         } else {
+            props.route.params._onSelect(item)
+            props.navigation.goBack()
             console.log('onClickCustomerItem for PHONE');
         }
     }

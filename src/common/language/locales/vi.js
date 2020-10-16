@@ -152,6 +152,7 @@ export default {
   logout: "Đăng xuất",
   lich_su: "Lịch sử",
   lich_su_goi_mon: "Lịch sử gọi món",
+  loai_hinh_thanh_toan: 'Loại hình thanh toán',
 
   // TODO: M
   mang_luoi: 'Mạng lưới',
