@@ -1,25 +1,45 @@
 import { HTTPService } from "./services/HttpService";
 import { ApiPath } from "./services/ApiPath";
 import realmStore, { SchemaName } from "./realm/RealmStore"
-import { Observable, map } from 'rxjs';
-
+import { getFileDuLieuString, setFileLuuDuLieu } from "../data/fileStore/FileStorage";
+import { Subject } from 'rxjs';
+import moment from "moment";
+import signalRManager from "../common/SignalR";
+import { momentToDateUTC } from "../common/Utils";
 class DataManager {
     constructor() {
         this.dataChoosing = [];
-        this.listTopping = [];
+        this.subjectUpdateServerEvent = new Subject()
+        this.subjectUpdateServerEvent.debounceTime(300)
+            .map(serverEvent => {
+                return serverEvent
+            })
+            .subscribe( async (serverEvent) => {
+                await realmStore.insertServerEvent(serverEvent)
+                signalRManager.sendMessageServerEvent(serverEvent)
+            })
     }
 
+    //get information (From FileStore)
+    selectVendorSession = async () => {
+        return await JSON.parse(getFileDuLieuString(Constant.VENDOR_SESSION, true));
+    }
+
+    isRestaurant = async () => {
+        let vendorSession = await this.selectVendorSession()
+        return vendorSession.CurrentRetailer && (vendorSession.CurrentRetailer.FieldId == 3 || vendorSession.CurrentRetailer.FieldId == 11)
+    }
+
+    //Synchoronous
     syncServerEvent = async () => {
         let res = await new HTTPService().setPath(ApiPath.SERVER_EVENT).GET()
-        console.log("syncSE", res);
 
         if (res && res.length > 0)
-            realmStore.insertServerEvents(res).subscribe((res, serverEvent) => console.log("syncServerEvent", res, serverEvent))
+            realmStore.insertServerEvents(res).subscribe((res, serverEvent) => {})
     }
 
     syncProduct = async () => {
         let res = await new HTTPService().setPath(ApiPath.SYNC_PRODUCTS).GET()
-        console.log("syncProduct", res);
 
         if (res && res.Data && res.Data.length > 0)
             await realmStore.insertProducts(res.Data)
@@ -28,7 +48,6 @@ class DataManager {
     syncPromotion = async () => {
         let params = { Includes: ['Product', 'Promotion'] }
         let res = await new HTTPService().setPath(ApiPath.PROMOTION).GET(params)
-        console.log('syncPromotion', res);
         if (res && res.results.length > 0) {
             realmStore.insertPromotion(res.results)
         }
@@ -36,7 +55,6 @@ class DataManager {
 
     syncTopping = async () => {
         let results = await new HTTPService().setPath(ApiPath.SYNC_EXTRAEXT).GET()
-        console.log('syncTopping', results);
         if (results && results.length > 0) {
             realmStore.insertTopping(results)
         }
@@ -44,7 +62,6 @@ class DataManager {
 
     syncData = async (apiPath, schemaName) => {
         let res = await new HTTPService().setPath(apiPath).GET()
-        console.log("syncData sync", apiPath, res);
         if (res && res.Data && res.Data.length > 0)
             await realmStore.insertDatas(schemaName, res.Data)
     }
@@ -78,6 +95,32 @@ class DataManager {
             await this.syncPartner(),
             await this.syncCategories(),
             await this.syncPromotion()
+    }
+
+    //calculator and send ServerEvent
+    updateServerEvent = (serverEvent) => {
+        this.subjectUpdateServerEvent.next(serverEvent)
+    }
+
+    calculatateServerEvent = (serverEvent, newOrderDetail) => {
+        if(!serverEvent.JsonContent) return
+        let jsonContentObject = JSON.parse(serverEvent.JsonContent)
+        jsonContentObject.OrderDetails = newOrderDetail
+        let totalProducts = this.totalProducts(newOrderDetail)
+        let totalWithVAT = totalProducts + jsonContentObject.VAT  
+        jsonContentObject.Total = totalWithVAT
+        jsonContentObject.AmountReceived = totalWithVAT
+        if (jsonContentObject.ActiveDate)
+            jsonContentObject.ActiveDate = momentToDateUTC(moment())
+        else if (!jsonContentObject.OrderDetails || jsonContentObject.OrderDetails.length == 0)
+            jsonContentObject.ActiveDate = ""
+
+        serverEvent.JsonContent = JSON.stringify(jsonContentObject)
+
+    }
+
+    totalProducts = (products) => {
+        return products.reduce((total, product) => total + product.Price * product.Quantity, 0)
     }
 }
 

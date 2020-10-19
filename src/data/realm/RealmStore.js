@@ -114,6 +114,7 @@ class RealmStore extends RealmBase {
         let realm = await Realm.open(databaseOption)
         return new Promise((resolve) => realm.write(() => {
             newProducts.map(product => {
+                product.ProductId = product.Id
                 product.BasePrice = product.Price;
                 product.NameLatin = change_alias(product.Name)
                 product.ProductImages = JSON.stringify(product.ProductImages);

@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { View, NativeModules } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
-import ToolBarSelectProduct from '../../../components/toolbar/ToolBarSelectProduct'
 import ToolBarServed from '../../../components/toolbar/ToolBarServed'
 import SelectProduct from './selectProduct/SelectProduct';
 import PageServed from './pageServed/PageServed';
@@ -9,10 +8,14 @@ import Topping from './Topping';
 import realmStore from '../../../data/realm/RealmStore';
 import { Constant } from '../../../common/Constant';
 import ViewPrint from '../../more/ViewPrint';
-import { getFileDuLieuString } from '../../../data/fileStore/FileStorage';
 const { Print } = NativeModules;
+import dataManager from '../../../data/DataManager'
 
 const Served = (props) => {
+    let serverEvent = null;
+    const [currentServerEvent, setCurrentSeverEvent] = useState({})
+
+    const [jsonContent, setJsonContent] = useState({})
 
     const [data, setData] = useState("");
     const [listProducts, setListProducts] = useState([])
@@ -28,18 +31,6 @@ const Served = (props) => {
         return state.Common.orientaition
     });
 
-    // useEffect(() => {
-    //     console.log(props, 'page served');
-    //     const getData = async () => {
-    //         let data = await getFileDuLieuString(Constant.HISTORY_ORDER, true);
-    //         if (data) {
-    //           data = JSON.parse(data);
-    //           dispatch({ type: 'HISTORY_ORDER', historyOrder: data })
-    //         }
-    //       }
-    //       getData()
-    // }, [])
-
     const getProductImage = async (item) => {
         let products = await realmStore.queryProducts()
         let productWithId = products.filtered(`Id ==${item.Id}`)
@@ -47,39 +38,72 @@ const Served = (props) => {
         return productWithId.ProductImages ? productWithId.ProductImages : ""
     }
 
+    useEffect(() => {
+        const getListPos = async () => {
+
+            let serverEvent = await realmStore.queryServerEvents()
+
+            const row_key = `${props.route.params.room.Id}_${position}`
+
+            serverEvent = serverEvent.filtered(`RowKey == '${row_key}'`)
+        
+            if (JSON.stringify(serverEvent) != '{}' && serverEvent[0].JsonContent) {
+                setCurrentSeverEvent(serverEvent[0])
+                let jsonContentObject = JSON.parse(serverEvent[0].JsonContent)
+                setJsonContent(jsonContentObject.OrderDetails? jsonContentObject : Constant.JSONCONTENT_EMPTY) 
+            } else setJsonContent(Constant.JSONCONTENT_EMPTY)
+
+            serverEvent.addListener((collection, changes) => {
+                if (changes.insertions.length || changes.modifications.length) {
+                    setCurrentSeverEvent(serverEvent[0])
+                    setJsonContent(JSON.parse(serverEvent[0].JsonContent))
+
+                }
+            })
+
+        }
+
+        getListPos()
+        return () => {
+            if (serverEvent) serverEvent.removeAllListeners()
+        }
+    }, [position])
+
     const outputListProducts = (newList, type) => {
         console.log(newList, 'newList start');
         newList = newList.filter(item => item.Quantity > 0)
         switch (type) {
             case 0:
-                setListProducts(newList)
+                outputListProducts(newList)
                 break;
             case 2:
                 console.log('newListnewListnewListnewListnewList', newList);
-                newList.forEach((element, index) => {
-                    getProductImage(element)
+                newList.forEach((newItem, index) => {
+                    getProductImage(newItem)
                         .then((res) => {
-                            element.exist = false
-                            element.ProductImages = res
-                            listProducts.forEach(item => {
-                                if (element.Id == item.Id && !item.SplitForSalesOrder) {
-                                    item.Quantity += element.Quantity
-                                    element.exist = true
+                            newItem.exist = false
+                            newItem.ProductImages = res
+                            if(!jsonContent.OrderDetails) jsonContent.OrderDetails = []
+                            jsonContent.OrderDetails.forEach((elm, idx) => {
+                                if (newItem.Id == elm.Id && !elm.SplitForSalesOrder) {
+                                    elm.Quantity += newItem.Quantity
+                                    newItem.exist = true
                                 }
                             })
                             newList = newList.filter(item => !item.exist)
-                            setListProducts([...newList, ...listProducts])
+                            outputListProducts([...newList, ...jsonContent.OrderDetails])
                         })
                         .catch((e) => {
-                            element.exist = false
-                            listProducts.forEach(item => {
-                                if (element.Id == item.Id && !item.SplitForSalesOrder) {
-                                    item.Quantity += element.Quantity
-                                    element.exist = true
+                            newItem.exist = false
+                            if(!jsonContent.OrderDetails) jsonContent.OrderDetails = []
+                            jsonContent.OrderDetails.forEach((elm, idx) => {
+                                if (newItem.Id == elm.Id && !elm.SplitForSalesOrder) {
+                                    elm.Quantity += newItem.Quantity
+                                    newItem.exist = true
                                 }
                             })
                             newList = newList.filter(item => !item.exist)
-                            setListProducts([...newList, ...listProducts])
+                            outputListProducts([...newList, ...jsonContent.OrderDetails])
                         })
                 });
                 break;
@@ -90,6 +114,15 @@ const Served = (props) => {
         console.log(newList, 'newList');
         checkHasItemOrder(newList)
         checkProductId(newList, props.route.params.room.ProductId)
+
+        if(currentServerEvent)
+            updateServerEvent(JSON.parse(JSON.stringify(currentServerEvent)), newList)
+    }
+
+    const updateServerEvent = (serverEvent, newOrderDetail) => {
+        dataManager.calculatateServerEvent(serverEvent, newOrderDetail)
+        serverEvent.Version += 1
+        dataManager.subjectUpdateServerEvent.next(serverEvent)
     }
 
     const outputTextSearch = (text) => {
@@ -205,6 +238,7 @@ const Served = (props) => {
                         <PageServed
                             {...props}
                             itemOrder={meMoItemOrder}
+                            jsonContent ={jsonContent}
                             onClickProvisional={(res) => onClickProvisional(res)}
                             listProducts={[...listProducts]}
                             outputListProducts={outputListProducts}

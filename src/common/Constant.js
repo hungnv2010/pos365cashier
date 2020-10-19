@@ -141,5 +141,8 @@ export const Constant = {
             name: "Discount",
             value: '0'
         },
+    },
+    JSONCONTENT_EMPTY: {
+        OrderDetails:[]
     }
 };
