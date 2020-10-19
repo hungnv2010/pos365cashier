@@ -26,6 +26,8 @@ import SearchVoucher from '../../screens/payment/SearchVoucher'
 import InvoiceDetailForPhone from '../../screens/invoice/invoiceDetailForPhone';
 import { ScreenList } from '../../common/ScreenList';
 import Customer from '../../screens/customer/Customer';
+import CustomerDetailForPhone from '../../screens/customer/CustomerDetailForPhone';
+
 
 const MainStack = createStackNavigator();
 
@@ -59,6 +61,7 @@ export default (props) => {
                 <MainStack.Screen name={ScreenList.InvoiceDetail}>{props => <InvoiceDetail {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.Payment}>{props => <Payment {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.Customer}>{props => <Customer {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.CustomerDetailForPhone}>{props => <CustomerDetailForPhone {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.InvoiceDetailForPhone}>{props => <InvoiceDetailForPhone {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.PointVoucher}>{props => <PointVoucher {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.SearchVoucher}>{props => <SearchVoucher {...props} />}</MainStack.Screen>

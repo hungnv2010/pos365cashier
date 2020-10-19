@@ -53,7 +53,8 @@ export default {
   chi_tiet_phong_ban: "Chi tiết phòng bàn",
   chuyen_khoan: "Chuyển khoản",
   chon_dvt: "ĐVT",
-  chon:"Chọn",
+  chon: "Chọn",
+  chon_tinh_thanh: "Chọn tỉnh thành",
 
   // TODO: D
   dang_dung: "Đang dùng",

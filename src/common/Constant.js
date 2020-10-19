@@ -78,6 +78,7 @@ export const Constant = {
             key: "custom"
         }
     ],
+
     TIME_SELECT_ALL_TIME: [
         {
             type: 4,
@@ -141,5 +142,263 @@ export const Constant = {
             name: "Discount",
             value: '0'
         },
-    }
+    },
+
+    LIST_PROVICE: [
+        {
+            key: 1,
+            name: "An Giang"
+        },
+        {
+            key: 2,
+            name: "Bà rịa – Vũng tàu"
+        },
+        {
+            key: 3,
+            name: "Bắc Giang"
+        },
+        {
+            key: 4,
+            name: "Bắc Kạn"
+        },
+        {
+            key: 5,
+            name: "Bạc Liêu"
+        },
+        {
+            key: 6,
+            name: "Bắc Ninh"
+        },
+        {
+            key: 7,
+            name: "Bến Tre"
+        },
+        {
+            key: 8,
+            name: "Bình Định"
+        },
+        {
+            key: 9,
+            name: "Bình Dương"
+        },
+        {
+            key: 10,
+            name: "Bình Phước"
+        },
+        {
+            key: 11,
+            name: "Bình Thuận"
+        },
+        {
+            key: 12,
+            name: "Cà Mau"
+        },
+        {
+            key: 13,
+            name: "Cần Thơ"
+        },
+        {
+            key: 14,
+            name: "Cao Bằng"
+        },
+        {
+            key: 15,
+            name: "Đà Nẵng"
+        },
+        {
+            key: 16,
+            name: "Đắk Lắk"
+        },
+        {
+            key: 17,
+            name: "Đắk Nông"
+        },
+        {
+            key: 18,
+            name: "Điện Biên"
+        },
+        {
+            key: 19,
+            name: "Đồng Nai"
+        },
+        {
+            key: 20,
+            name: "Đồng Tháp"
+        },
+        {
+            key: 21,
+            name: "Gia Lai"
+        },
+        {
+            key: 22,
+            name: "Hà Giang"
+        },
+        {
+            key: 23,
+            name: "Hà Nam"
+        },
+        {
+            key: 24,
+            name: "Hà Nội"
+        },
+        {
+            key: 25,
+            name: "Hà Tĩnh"
+        },
+        {
+            key: 26,
+            name: "Hải Dương"
+        },
+        {
+            key: 27,
+            name: "Hải Phòng"
+        },
+        {
+            key: 28,
+            name: "Hậu Giang"
+        },
+        {
+            key: 29,
+            name: "Hòa Bình"
+        },
+        {
+            key: 30,
+            name: "Hưng Yên"
+        },
+        {
+            key: 31,
+            name: "Khánh Hòa"
+        },
+        {
+            key: 32,
+            name: "Kiên Giang"
+        },
+        {
+            key: 33,
+            name: "Kon Tum"
+        },
+        {
+            key: 34,
+            name: "Lai Châu"
+        },
+        {
+            key: 35,
+            name: "Lâm Đồng"
+        },
+        {
+            key: 36,
+            name: "Lạng Sơn"
+        },
+        {
+            key: 37,
+            name: "Lào Cai"
+        },
+        {
+            key: 38,
+            name: "Long An"
+        },
+        {
+            key: 39,
+            name: "Nam Định"
+        },
+        {
+            key: 40,
+            name: "Nghệ An"
+        },
+        {
+            key: 41,
+            name: "Nghệ An"
+        },
+        {
+            key: 42,
+            name: "Nghệ An"
+        },
+        {
+            key: 43,
+            name: "Phú Thọ"
+        },
+        {
+            key: 44,
+            name: "Phú Yên"
+        },
+        {
+            key: 45,
+            name: "Quảng Bình"
+        },
+        {
+            key: 46,
+            name: "Quảng Nam"
+        },
+        {
+            key: 47,
+            name: "Quảng Ngãi"
+        },
+        {
+            key: 48,
+            name: "Quảng Ninh"
+        },
+        {
+            key: 49,
+            name: "Quảng Trị"
+        },
+        {
+            key: 50,
+            name: "Sóc Trăng"
+        },
+        {
+            key: 51,
+            name: "Sơn La"
+        },
+        {
+            key: 52,
+            name: "Tây Ninh"
+        },
+        {
+            key: 53,
+            name: "Thái Bình"
+        },
+        {
+            key: 54,
+            name: "Thái Nguyên"
+        },
+        {
+            key: 55,
+            name: "Thanh Hóa"
+        },
+        {
+            key: 56,
+            name: "Thừa Thiên Huế"
+        },
+        {
+            key: 57,
+            name: "Tiền Giang"
+        },
+        {
+            key: 58,
+            name: "Thành phố Hồ Chí Minh"
+        },
+        {
+            key: 59,
+            name: "Trà Vinh"
+        },
+        {
+            key: 60,
+            name: "Tuyên Quang"
+        },
+        {
+            key: 61,
+            name: "Vĩnh Long"
+        },
+        {
+            key: 62,
+            name: "Yên Bái"
+        },
+        {
+            key: 63,
+            name: "Yên Bái"
+        },
+
+
+    ]
+
 };
