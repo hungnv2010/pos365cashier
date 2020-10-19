@@ -349,33 +349,6 @@ export default (props) => {
         console.log("onClickPay params ", params);
 
         dialogManager.showLoading();
-        // new HTTPService().setPath(ApiPath.ORDERS).POST(params).then((res) => {
-        //     console.log("onClickPay res ", res);
-        //     if (res) {
-        //         // Body: "Khách thanh toán 33,750"
-        //         // DocId: 64977360
-        //         // Title: "B.21 😝"
-        //         let p = {
-        //             Title: jsonContent.RoomName,
-        //             Body: "Khách thanh toán " + currencyToString(jsonContent.TotalPayment),
-        //             DocId: 0
-        //         }
-        //         new HTTPService().setPath(ApiPath.SENT).POST(p).then((result) => {
-        //             console.log("onClickPay SENT result ", result);
-        //             if (result) {
-
-        //             }
-        //         }).catch((e) => {
-        //             console.log("onClickPay SENT err ", e);
-        //             dialogManager.hiddenLoading()
-        //         })
-        //     }
-        //     dialogManager.hiddenLoading()
-        // }).catch((e) => {
-        //     console.log("onClickPay err ", e);
-        //     dialogManager.hiddenLoading()
-        // })
-
         let order = new HTTPService().setPath(ApiPath.ORDERS).POST(params)
         console.log("onClickPay order ", order);
         if (order) {
