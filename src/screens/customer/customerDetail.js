@@ -323,7 +323,9 @@ export default (props) => {
             setShowToast(true)
             return
         }
-        if(customerDetail.DOB)
+        if (customerDetail.DOB) {
+
+        }
         let PartnerGroupMembers = []
         listGroup.forEach(item => {
             if (item.status) {
