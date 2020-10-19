@@ -21,6 +21,7 @@ class SignalRManager {
     constructor() {
         this.isStartSignalR = false;
         this.connectionHub = null
+        this.cacheMessage = ""
     }
 
     killSignalR() {
@@ -38,8 +39,8 @@ class SignalRManager {
             bId: data.BID
         }
         signalRInfo = this.info;
-        this.subject = new Subject()
-        this.subject.map(serverEvent => {
+        this.subjectReceive = new Subject()
+        this.subjectReceive.map(serverEvent => {
             return serverEvent
         })
             // .distinct(serverEvent => serverEvent.Version)
@@ -56,7 +57,7 @@ class SignalRManager {
 
         this.connectionHub.logging = true
         this.proxy = this.connectionHub.createHubProxy("saleHub")
-        this.proxy.on("Update", (serverEvent) => { this.subject.next(serverEvent) })
+        this.proxy.on("Update", (serverEvent) => { this.subjectReceive.next(serverEvent) })
 
         if (forceUpdate == true) {
             this.startSignalR();
@@ -80,6 +81,13 @@ class SignalRManager {
         //         this.init(this.data, true);
         //     }, 5000);
         // });
+
+        this.subjectSend = new Subject()
+        this.subjectSend.debounceTime(300)
+        .map(serverEvent => {
+            return serverEvent
+        })
+        .subscribe(serverEvent => this.sendMessageServerEventNow(serverEvent))
 
         // Subscribe
         const unsubscribe = NetInfo.addEventListener(state => {
@@ -145,6 +153,35 @@ class SignalRManager {
         }
     }
 
+    sendMessageServerEvent = (serverEvent, isNow = false) => {
+        if(this.cacheMessage == JSON.stringify(serverEvent)) return;
+        if(isNow) 
+            this.sendMessageServerEventNow(serverEvent)
+        else
+            this.subjectSend.next(serverEvent)
+    }
+
+    sendMessageServerEventNow = (serverEvent) => {
+
+        // let jsonContentObject = JSON.parse(serverEvent.JsonContent)
+        // if(jsonContentObject.orderDetails)
+        //     jsonContentObject.orderDetails.forEach(element => {
+        //         element.productImages = []
+        //     });
+        // if(!jsonContentObject.OfflineId || jsonContentObject.OfflineId == "")
+        //     jsonContentObject.OfflineId = randomUUID()
+        // serverEvent.JsonContent = JSON.stringify(jsonContentObject)
+
+        // try {
+        //     serverEvent.JsonContent = encodeBase64(serverEvent.JsonContent)
+        //     serverEvent.Compress = true
+        // } catch (error) {
+        //     serverEvent.Compress = false
+        // }
+        
+        this.sendMessage(serverEvent)
+    }
+
     async onReceiveServerEvent(serverEvent) {
         // if (serverEvent.Version == version) return
         // version = serverEvent.Version
@@ -152,21 +189,21 @@ class SignalRManager {
             serverEvent.JsonContent = decodeBase64(serverEvent.JsonContent || "")
             serverEvent.Compress = false
         }
-        await realmStore.insertServerEvents(serverEvent)
+        await realmStore.insertServerEvent(serverEvent)
     }
 
-    sendMessage = (message, type = TYPE_SALE_HUB) => {
+    sendMessage = (message, type = 'SynchronizationOrder') => {
         if (this.isStartSignalR) {
             this.proxy.invoke(type, message)
                 .done((response) => {
-                    console.log('', response);
+                    console.log('', response)
                 })
                 .fail(() => {
                     console.warn('Something went wrong when calling server, it might not be up and running?')
                 });
         } else {
             console.log("settimeout");
-            Alert.alert("Opps!", "Cannot connect to server")
+            alert("Opps!", "Cannot connect to server")
 
         }
     }

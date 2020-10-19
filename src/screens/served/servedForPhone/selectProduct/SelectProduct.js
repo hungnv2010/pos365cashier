@@ -55,7 +55,7 @@ export default (props) => {
     productsRes.forEach((item, index) => {
       item.Quantity = 0
       listProducts.current.forEach(elm => {
-        if (item.Id == elm.Id) {
+        if (item.ProductId == elm.ProductId) {
           item.Quantity += +elm.Quantity
         }
       })

@@ -49,6 +49,7 @@ export default {
   chon_khoang_thoi_gian: "Select time",
   chon_dvt: "Unit",
   chon: "Choose",
+  chon_tinh_thanh: "Choose province",
 
   // TODO: D
   dang_dung: "Serving",

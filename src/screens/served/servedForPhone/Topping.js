@@ -10,60 +10,51 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export default (props) => {
 
-    const [topping, setTopping] = useState([])
+    const [topping, setTopping] = useState([]) // list toppings to show
     const [categories, setCategories] = useState([])
     const [listCateId, setlistCateId] = useState([I18n.t('tat_ca')])
-    const [itemOrder, setItemOrder] = useState(() => props.route.params.itemOrder)
-    const [listTopping, setListTopping] = useState([])
-    const toppingRef = useRef([])
+    const [itemOrder, setItemOrder] = useState(() => props.route.params.itemOrder) //current product
+    const toppingRef = useRef([]) // save all toppings from db
 
 
-    useEffect(() => {
-        console.log('dataManager.listTopping', dataManager.listTopping);
-        const init = () => {
-            dataManager.listTopping.forEach(item => {
-                if (item.IdRoom == props.route.params.IdRoom) {
-                    setListTopping([...item.Data])
-                }
-            })
-        }
-        init()
-    }, [])
+    useEffect(() => {// initial
+        console.log('initial', itemOrder);
+        const init = async () => {
 
+            let toppingIntial = []
+            if (itemOrder.Topping)
+                try {
+                    toppingIntial = [...JSON.parse(itemOrder.Topping)]
+                } catch (error) {}
 
-
-    useEffect(() => {
-        const getTopping = async () => {
             let newCategories = [{ Id: -1, Name: I18n.t('tat_ca') }]
             let newTopping = []
-            let exist = false
             let results = await realmStore.queryTopping()
+
             results.forEach(item => {
                 if (item.ExtraGroup !== '' && newCategories.filter(cate => cate.Name == item.ExtraGroup).length == 0) {
                     newCategories.push({ Id: item.Id, Name: item.ExtraGroup })
                 }
                 newTopping.push({ ...JSON.parse(JSON.stringify(item)), Quantity: 0 })
             })
-            toppingRef.current = [...newTopping]
-            listTopping.forEach(lt => {
-                if (lt.Id == itemOrder.Sid && lt.Key == props.route.params.Position) {
-                    exist = true
-                    newTopping.forEach(top => {
-                        lt.List.forEach(ls => {
-                            if (top.Id == ls.Id) {
-                                top.Quantity = ls.Quantity
-                            }
-                        })
-                    })
-                }
-            })
-            setCategories(newCategories)
-            setTopping(newTopping)
-        }
-        getTopping()
-    }, [listTopping, itemOrder])
 
-    useEffect(() => {
+            newTopping.forEach(top => {
+                toppingIntial.forEach(ls => {
+                    if (top.ExtraId == ls.ExtraId) {
+                        top.Quantity = ls.Quantity
+                    }
+                })
+            })
+
+            toppingRef.current = [...newTopping]
+            setCategories(newCategories)
+
+            setTopping(toppingRef.current)
+        }
+        init()
+    }, [])
+
+    useEffect(() => {// change category topping
         if (listCateId[0] == I18n.t('tat_ca')) {
             setTopping(toppingRef.current)
         } else {
@@ -78,11 +69,9 @@ export default (props) => {
         return priceTotal
     }
 
-
     const onclose = () => {
         saveListTopping()
-        console.log(listTopping);
-
+        console.log(topping);
     }
 
     const handleButtonDecrease = (item, index) => {
@@ -99,37 +88,9 @@ export default (props) => {
     }
 
     const saveListTopping = () => {
-        let exist = false
         let ls = toppingRef.current.filter(item => item.Quantity > 0)
         ls = JSON.parse(JSON.stringify(ls))
-        listTopping.forEach(lt => {
-            if (lt.Id == itemOrder.Sid && lt.Key == props.route.params.Position) {
-                exist = true
-                lt.List = [...ls]
-                lt.Key = props.route.params.Position
-            }
-        })
-        if (!exist) {
-            listTopping.push({ Id: itemOrder.Sid, List: [...ls], Key: props.route.params.Position })
-        }
-        saveData()
         navigationBack(ls)
-    }
-
-
-    const saveData = () => {
-        let exist = false
-        dataManager.listTopping.forEach(data => {
-            if (data.IdRoom == props.route.params.IdRoom) {
-                exist = true
-                data.Data = listTopping
-            }
-        })
-        if (!exist) {
-            dataManager.listTopping.push({ IdRoom: props.route.params.IdRoom, Data: listTopping })
-        }
-        console.log(dataManager.listTopping, 'dataManager.listTopping');
-
     }
 
     const navigationBack = (list) => {

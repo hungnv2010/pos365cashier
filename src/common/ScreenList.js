@@ -54,6 +54,7 @@ export const ScreenList = {
   Payment: "Payment",
   InvoiceDetailForPhone: "InvoiceDetailForPhone",
   Customer: "Customer",
+  CustomerDetailForPhone: "CustomerDetailForPhone",
   PointVoucher: "PointVoucher",
   SearchVoucher: "SearchVoucher"
 }

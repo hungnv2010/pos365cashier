@@ -54,6 +54,7 @@ export default {
   chuyen_khoan: "Chuyển khoản",
   chon_dvt: "ĐVT",
   chon: "Chọn",
+  chon_tinh_thanh: "Chọn tỉnh thành",
   cong_vao_khoan_no: "Cộng vào khoản nợ",
 
   // TODO: D
