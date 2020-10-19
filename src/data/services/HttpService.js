@@ -141,6 +141,8 @@ const extractData = (response) => {
                         dialogManager.destroy();
                     }, null, null, I18n.t('dong'))
             }
+        } else if (response.status == 204) {
+            return { status: 204 };
         } else {
             error();
         }

@@ -122,6 +122,17 @@ class DataManager {
     totalProducts = (products) => {
         return products.reduce((total, product) => total + product.Price * product.Quantity, 0)
     }
+    sentNotification = (Title, Body) => {
+        let params = {
+            Title: Title,
+            Body: Body,
+        }
+        let sent = new HTTPService().setPath(ApiPath.SENT).POST(params)
+        console.log("sentNotification sent ", sent);
+        if (sent) {
+
+        }
+    }
 }
 
 const dataManager = new DataManager();

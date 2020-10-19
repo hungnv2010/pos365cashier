@@ -98,10 +98,10 @@ export const dateToString = (date, formatOutput = "DD/MM/YYYY") => {
   try {
     momentdate = moment(date, "YYYY-MM-DD HH:mm:ss").format(formatOutput);
     if (momentdate == "Invalid date") {
-      momentdate = "";
+      momentdate = date;
     }
   } catch (e) {
-    momentdate = "";
+    momentdate = date;
   }
   return momentdate;
 };

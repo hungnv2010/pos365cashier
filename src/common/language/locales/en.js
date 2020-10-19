@@ -68,7 +68,8 @@ export default {
   doanh_thu_VND: "Revenue (VND)",
   dat_hang: "On order",
   diem_voucher: "Point/Voucher",
-
+  diem_thuong: "Reward Points",
+  diem_hien_tai: "Current Point",
   // TODO: E
 
 
@@ -197,6 +198,8 @@ export default {
   san_sang: "Come in",
   san_pham_ban_chay: "Top selling products",
   SL: "Qty",
+  su_dung_diem: "Use Point",
+  so_tien_quy_doi: "Money Discount",
 
   // TODO: T
   thong_bao: "Notification",
@@ -248,7 +251,8 @@ export default {
   thu_tu_hien_thi: "Thứ tự hiển thị",
   thanh_toan_nhanh: "Quick payment",
   tach_ban: "Split table",
-  tien_thua:"Excess cash",
+  tien_thua: "Excess cash",
+  tim_kiem: "Search",
 
   // TODO: U
 

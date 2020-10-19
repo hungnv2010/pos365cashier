@@ -53,7 +53,8 @@ export default {
   chi_tiet_phong_ban: "Chi tiết phòng bàn",
   chuyen_khoan: "Chuyển khoản",
   chon_dvt: "ĐVT",
-  chon:"Chọn",
+  chon: "Chọn",
+  cong_vao_khoan_no: "Cộng vào khoản nợ",
 
   // TODO: D
   dang_dung: "Đang dùng",
@@ -151,6 +152,7 @@ export default {
   logout: "Đăng xuất",
   lich_su: "Lịch sử",
   lich_su_goi_mon: "Lịch sử gọi món",
+  loai_hinh_thanh_toan: 'Loại hình thanh toán',
 
   // TODO: M
   mang_luoi: 'Mạng lưới',
@@ -297,6 +299,8 @@ export default {
   tach_ban: "Tách bàn",
   tien_thua: "Tiền thừa",
   tim_kiem: "Tìm kiếm",
+  tien_khach_tra: "Tiền khách trả",
+  tra_lai_tien: "Trả lại tiền",
   // TODO: U
 
   // TODO: V
@@ -304,7 +308,6 @@ export default {
   vui_long_kiem_tra_ket_noi_may_in: "Vui lòng kiểm tra kết nối máy in",
   vui_long_chon_linh_vuc_ban_le_ho_tro_shop_thoi_trang_sieu_thi: "Vui lòng chọn lĩnh vực BÁN LẺ hỗ trợ: shop, thời trang, siêu thị...",
   vui_long_nhap_day_du_thong_tin_truoc_khi_luu: "Vui lòng nhập đầy đủ các thông tin bắt buộc trước khi lưu",
-  voucher: "Voucher",
   vnd: "VNĐ",
 
   // TODO: X

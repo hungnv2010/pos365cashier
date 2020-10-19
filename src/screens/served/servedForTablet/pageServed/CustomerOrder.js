@@ -113,12 +113,12 @@ const CustomerOrder = (props) => {
 
     const syncListProducts = (listProducts) => {
         console.log('syncListProducts');
-        setListOrder(listProducts)
+        // setListOrder(listProducts)
         props.outputListProducts(listProducts, 0)
     }
 
     const sendOrder = () => {
-        props.navigation.navigate(ScreenList.Payment, { totalPrice: 100000});
+        props.navigation.navigate(ScreenList.Payment, { RoomId: props.route.params.room.Id, Position: props.Position });
     }
 
     const removeItem = (item, index) => {

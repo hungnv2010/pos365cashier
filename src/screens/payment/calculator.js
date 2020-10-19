@@ -76,12 +76,28 @@ export default (props) => {
                 setResults(results + button)
                 break;
 
+            case '500000':
+            case '200000':
+            case '100000':
+            case '50000':
+                var lastChar = results.slice(results.length - 1)
+                if (specialChar.includes(lastChar) || results == 0) {
+                    setResults(results + button)
+                } else {
+                    let oldResult = eval(results)
+                    let newResult = +button + oldResult
+                    console.log('oldResult', oldResult, newResult, results);
+                    setResults("" + newResult)
+                }
+                break;
+
             default:
                 let newResult = results + button
                 setResults(newResult)
                 break;
         }
     }
+
 
     const getFinalResults = () => {
         try {
@@ -122,7 +138,7 @@ export default (props) => {
                     <>
                         <View style={{ flex: 1 }}>
                             <Text style={{ textTransform: "uppercase", textAlign: "center", paddingVertical: 20, fontWeight: "500", fontSize: 25 }}>Calculator</Text>
-                            <Text style={{ color: colors.colorchinh, textAlign: "center", paddingVertical: 30, fontWeight: "bold", fontSize: 18 }}>{method.name}</Text>
+                            <Text style={{ color: colors.colorchinh, textAlign: "center", paddingVertical: 30, fontWeight: "bold", fontSize: 18 }}>{method && method.name ? method.name : ""}</Text>
                             <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
                                 <Text style={[styles.textButton, { fontSize: 35 }]}>{results != '' || results == '0' ? results : '0'}</Text>
                             </View>

@@ -10,35 +10,81 @@ import colors from '../../theme/Colors';
 import { useSelector } from 'react-redux';
 import { Constant } from '../../common/Constant';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import SearchVoucher from './SearchVoucher';
+import { getFileDuLieuString } from '../../data/fileStore/FileStorage';
 
 export default (props) => {
 
-    const [pointCurrent, setPointCurrent] = useState(100)
+    const [pointCurrent, setPointCurrent] = useState(0)
     const [pointUse, setPointUse] = useState(0)
     const [listVoucher, setListVoucher] = useState([])
+    const [isSearch, setIsSearch] = useState(false)
+    const [vendorSession, setVendorSession] = useState({})
+    const [grandTotal, setGrandTotal] = useState(0)
 
     const { deviceType } = useSelector(state => {
         console.log("useSelector state ", state);
         return state.Common
     });
 
+    useEffect(() => {
+        if (deviceType == Constant.PHONE) {
+            console.log("props.route.params ", props.route.params);
+
+            if (props.route.params.customer && props.route.params.customer.Point)
+                setPointCurrent(props.route.params.customer.Point)
+            if (props.route.params.grandTotal)
+                setGrandTotal(props.route.params.grandTotal)
+            if (props.route.params.listVoucher)
+                setListVoucher(props.route.params.listVoucher)
+            if (props.route.params.pointUse)
+                setPointUse(props.route.params.pointUse)
+        } else {
+            if (props.customer && props.customer.Point)
+                setPointCurrent(props.customer.Point)
+            if (props.grandTotal)
+                setGrandTotal(props.grandTotal)
+        }
+
+        // PointToValue
+        const getVendorSession = async () => {
+            let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
+            setVendorSession(JSON.parse(data));
+        }
+        getVendorSession()
+    }, [])
+
+    useEffect(() => {
+        console.log("props.listVoucher ", props.listVoucher);
+        if (props.listVoucher && props.listVoucher.length > 0) {
+            setListVoucher(props.listVoucher)
+        }
+    }, [props.listVoucher])
+
+    useEffect(() => {
+        console.log("props.pointUse ", props.pointUse);
+        if (props.pointUse) {
+            setPointUse(props.pointUse)
+        }
+    }, [props.pointUse])
+
+    useEffect(() => {
+        console.log("useEffect props.customer ", props);
+        if (props.customer && props.customer.Point)
+            setPointCurrent(props.customer.Point)
+    }, [props.customer])
+
     const onChangeTextInput = (text) => {
-        if (+text < pointCurrent)
+        console.log("onChangeTextInput text ", text);
+        if (+text < pointCurrent) {
             setPointUse(text)
+        }
+        if (deviceType == Constant.TABLET)
+            props.onChangePointUse(text)
     }
 
     const onCallBack = (data) => {
         console.log("onCallBack data ", data);
-        // let check = false;
-        // listVoucher.forEach(element => {
-        //     if (element.Code == data.Code) {
-        //         check = true;
-        //     }
-        // });
-        // if (!check) {
-        //     let list = listVoucher.push(data)
-        //     setListVoucher(list)
-        // }
         if (listVoucher.length > 0) {
             let filterList = listVoucher.filter(item => item.Id == data.Id)
             console.log("onCallBack filterList ", filterList);
@@ -57,6 +103,25 @@ export default (props) => {
     const deleteVoucher = (el) => {
         let filter = listVoucher.filter(item => item.Code != el.Code)
         setListVoucher(filter)
+        props.deleteVoucher(filter)
+    }
+
+    const sumVoucher = () => {
+        console.log("sumVoucher ", listVoucher);
+        let total = 0;
+        listVoucher.forEach(it => {
+            if (it.IsPercent)
+                total += grandTotal / 100 * it.Value
+            else
+                total += it.Value
+        })
+        return total;
+    }
+
+    const callBackPayment = () => {
+        console.log("callBackPayment sumVoucher ", sumVoucher());
+        props.route.params._onSelect({ listVoucher: listVoucher, pointUse: pointUse, sumVoucher: sumVoucher(), rewardPoints: vendorSession.Settings && vendorSession.Settings.PointToValue ? vendorSession.Settings.PointToValue * pointUse : 0 });
+        props.navigation.goBack()
     }
 
     const renderItemList = (item, index) => {
@@ -81,65 +146,72 @@ export default (props) => {
                         props.navigation.goBack()
                     }}
                     rightIcon="check"
-                    clickRightIcon={() => {
-                        props.navigation.goBack()
-                    }}
+                    clickRightIcon={callBackPayment}
                     title={I18n.t('diem_voucher')}
                 /> : null}
-            <Surface style={styles.surface}>
-                <View style={styles.row}>
-                    <View style={styles.view_payment_paid}>
-                        <IconFeather name="credit-card" size={20} color={colors.colorchinh} />
-                        <Text style={styles.text_payment_paid}>{I18n.t('khach_phai_tra')}</Text>
-                    </View>
-                    <View style={styles.flex_3}></View>
-                    <Text style={styles.value_payment_paid}>{currencyToString(1000)}</Text>
-                </View>
-            </Surface>
-            <Surface style={styles.surface}>
-                <View style={styles.point_row_1}>
-                    <Icon name="heart" size={20} color={colors.colorchinh} />
-                    <Text style={styles.text_payment_paid}>{I18n.t('diem_thuong')}</Text>
-                </View>
-                <View style={styles.point_row_2}>
-                    <Text>{I18n.t('diem_hien_tai')}</Text>
-                    <Text>{pointCurrent}</Text>
-                </View>
-                <View style={styles.point_row_2}>
-                    <Text style={styles.flex_3}>{I18n.t('su_dung_diem')}</Text>
-                    <View style={styles.flex_3}></View>
-                    <TextInput
-                        onChangeText={(text) => onChangeTextInput(text)}
-                        value={pointUse == 0 ? "" : pointUse}
-                        style={styles.text_input} />
-                </View>
-                <View style={styles.point_row_2}>
-                    <Text>{I18n.t('so_tien_quy_doi')}</Text>
-                    <Text>{currencyToString(12000)}</Text>
-                </View>
-            </Surface>
-            <Surface style={[styles.surface, { flex: 1 }]}>
-                <View style={styles.row}>
-                    <View style={styles.view_payment_paid}>
-                        <Icon name="star" size={20} color={colors.colorchinh} />
-                        <Text style={styles.text_payment_paid}>{I18n.t('voucher')}</Text>
-                    </View>
-                    <TextInput
-                        placeholder={I18n.t('tim_kiem')}
-                        onTouchStart={() => {
-                            props.navigation.navigate(ScreenList.SearchVoucher, { _onSelect: onCallBack, listVoucher: listVoucher })
-                        }}
-                        editable={false}
-                        style={styles.text_input} />
-                </View>
-                <ScrollView style={{ flex: 1 }}>
-                    {
-                        listVoucher.length > 0 ?
-                            listVoucher.map((item, index) => renderItemList(item, index))
-                            : null
-                    }
-                </ScrollView>
-            </Surface>
+            {
+                <>
+                    <Surface style={styles.surface}>
+                        <View style={styles.row}>
+                            <View style={styles.view_payment_paid}>
+                                <IconFeather name="credit-card" size={20} color={colors.colorchinh} />
+                                <Text style={styles.text_payment_paid}>{I18n.t('khach_phai_tra')}</Text>
+                            </View>
+                            <View style={styles.flex_3}></View>
+                            <Text style={styles.value_payment_paid}>{currencyToString(grandTotal)}</Text>
+                        </View>
+                    </Surface>
+                    <Surface style={styles.surface}>
+                        <View style={styles.point_row_1}>
+                            <Icon name="heart" size={20} color={colors.colorchinh} />
+                            <Text style={styles.text_payment_paid}>{I18n.t('diem_thuong')}</Text>
+                        </View>
+                        <View style={styles.point_row_2}>
+                            <Text>{I18n.t('diem_hien_tai')}</Text>
+                            <Text>{currencyToString(pointCurrent)}</Text>
+                        </View>
+                        <View style={styles.point_row_2}>
+                            <Text style={styles.flex_3}>{I18n.t('su_dung_diem')}</Text>
+                            <View style={styles.flex_3}></View>
+                            <TextInput
+                                keyboardType="number-pad"
+                                onChangeText={(text) => onChangeTextInput(text)}
+                                value={pointUse == 0 ? "" : currencyToString(pointUse)}
+                                style={styles.text_input} />
+                        </View>
+                        <View style={styles.point_row_2}>
+                            <Text>{I18n.t('so_tien_quy_doi')}</Text>
+                            <Text>{currencyToString(vendorSession.Settings && vendorSession.Settings.PointToValue ? vendorSession.Settings.PointToValue * pointUse : 0)}</Text>
+                        </View>
+                    </Surface>
+                    <Surface style={[styles.surface, { flex: 1 }]}>
+                        <View style={styles.row}>
+                            <View style={styles.view_payment_paid}>
+                                <Icon name="star" size={20} color={colors.colorchinh} />
+                                <Text style={styles.text_payment_paid}>Voucher</Text>
+                            </View>
+                            <TextInput
+                                placeholder={I18n.t('tim_kiem')}
+                                onTouchStart={() => {
+                                    if (deviceType == Constant.PHONE) {
+                                        props.navigation.navigate(ScreenList.SearchVoucher, { _onSelect: onCallBack, listVoucher: listVoucher })
+                                    } else {
+                                        props.onClickSearch()
+                                    }
+                                }}
+                                editable={false}
+                                style={styles.text_input} />
+                        </View>
+                        <ScrollView style={{ flex: 1 }}>
+                            {
+                                listVoucher.length > 0 ?
+                                    listVoucher.map((item, index) => renderItemList(item, index))
+                                    : null
+                            }
+                        </ScrollView>
+                    </Surface>
+                </>
+            }
         </View>
     )
 }
