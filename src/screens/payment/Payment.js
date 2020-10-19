@@ -19,6 +19,10 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import ToolBarPayment from '../../components/toolbar/ToolbarPayment';
 import SearchVoucher from './SearchVoucher';
+import { ApiPath } from '../../data/services/ApiPath';
+import { HTTPService } from '../../data/services/HttpService';
+import dialogManager from '../../components/dialog/DialogManager';
+import dataManager from '../../data/DataManager';
 
 let timeClickCash = 1000;
 
@@ -70,12 +74,14 @@ export default (props) => {
             let room = serverEvent.filtered(`RowKey == '${row_key}'`)
             let orderDetails = JSON.parse(room[0].JsonContent).OrderDetails;
             let jsonContentTmp = JSON.parse(room[0].JsonContent)
+            console.log("useEffect jsonContentTmp ", jsonContentTmp);
+
             setJsonContent(jsonContentTmp)
             let total = getTotalOrder(orderDetails);
             setTotalPrice(total);
             CASH.Value = total;
             setPercentVAT(jsonContentTmp.VATRates ? true : false)
-            setPercent(jsonContentTmp.DiscountToView.indexOf('%') > -1 ? true : false)
+            setPercent(jsonContentTmp.DiscountToView.toString().indexOf('%') > -1 ? true : false)
             calculatorPrice(jsonContentTmp, total);
         }
 
@@ -318,6 +324,66 @@ export default (props) => {
 
     const onClickPay = () => {
         console.log("onClickPay jsonContent ", jsonContent);
+
+        let json = { ...jsonContent }
+        let MoreAttributes = json.MoreAttributes ? JSON.parse(json.MoreAttributes) : {}
+
+        MoreAttributes.PointDiscount = 0;
+        MoreAttributes.PointDiscountValue = 0;
+        MoreAttributes.TemporaryPrints = [];
+        MoreAttributes.Vouchers = listVoucher;
+
+        json['MoreAttributes'] = JSON.stringify(MoreAttributes);
+        json.TotalPayment = json.Total
+        json.VATRates = json.VATRates + "%"
+
+        let params = {
+            QrCodeEnable: vendorSession.Settings.QrCodeEnable,
+            MerchantCode: vendorSession.Settings.MerchantCode,
+            MerchantName: vendorSession.Settings.MerchantName,
+            DontSetTime: true,
+            ExcessCashType: 0,
+            Order: json,
+        };
+
+        console.log("onClickPay params ", params);
+
+        dialogManager.showLoading();
+        // new HTTPService().setPath(ApiPath.ORDERS).POST(params).then((res) => {
+        //     console.log("onClickPay res ", res);
+        //     if (res) {
+        //         // Body: "Khách thanh toán 33,750"
+        //         // DocId: 64977360
+        //         // Title: "B.21 😝"
+        //         let p = {
+        //             Title: jsonContent.RoomName,
+        //             Body: "Khách thanh toán " + currencyToString(jsonContent.TotalPayment),
+        //             DocId: 0
+        //         }
+        //         new HTTPService().setPath(ApiPath.SENT).POST(p).then((result) => {
+        //             console.log("onClickPay SENT result ", result);
+        //             if (result) {
+
+        //             }
+        //         }).catch((e) => {
+        //             console.log("onClickPay SENT err ", e);
+        //             dialogManager.hiddenLoading()
+        //         })
+        //     }
+        //     dialogManager.hiddenLoading()
+        // }).catch((e) => {
+        //     console.log("onClickPay err ", e);
+        //     dialogManager.hiddenLoading()
+        // })
+
+        let order = new HTTPService().setPath(ApiPath.ORDERS).POST(params)
+        console.log("onClickPay order ", order);
+        if (order) {
+            console.log("onClickPay jsonContent ", jsonContent);
+            dataManager.sentNotification(jsonContent.RoomName, "Khách thanh toán " + currencyToString(jsonContent.Total))
+            dialogManager.hiddenLoading()
+        }
+
     }
 
     const amountReceived = () => {
@@ -623,10 +689,10 @@ export default (props) => {
                         </Surface>
                     </KeyboardAwareScrollView>
                     <View style={styles.viewBottom}>
-                        <TouchableOpacity onPress={onClickPay} style={styles.viewPrint}>
+                        <TouchableOpacity onPress={onClickProvisional} style={styles.viewPrint}>
                             <Text style={styles.textBottom}>{I18n.t('tam_tinh')}</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={onClickProvisional} style={styles.viewButtomPayment}>
+                        <TouchableOpacity onPress={onClickPay} style={styles.viewButtomPayment}>
                             <Text style={styles.textBottom}>{I18n.t('thanh_toan')}</Text>
                         </TouchableOpacity>
                     </View>

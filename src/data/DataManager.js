@@ -79,6 +79,18 @@ class DataManager {
             await this.syncCategories(),
             await this.syncPromotion()
     }
+
+    sentNotification = (Title, Body) => {
+        let params = {
+            Title: Title,
+            Body: Body,
+        }
+        let sent = new HTTPService().setPath(ApiPath.SENT).POST(params)
+        console.log("sentNotification sent ", sent);
+        if (sent) {
+
+        }
+    }
 }
 
 const dataManager = new DataManager();
