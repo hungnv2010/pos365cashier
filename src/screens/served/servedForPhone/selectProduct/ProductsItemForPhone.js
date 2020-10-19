@@ -33,8 +33,6 @@ const ProductsItemForPhone = ({ item, index, onClickProduct, handleButtonDecreas
             {item.Quantity > 0 ?
                 <View style={{ flex: 1.5, flexDirection: "row", alignItems: "center", marginRight: 25 }}>
 
-
-                    <>
                         <TouchableOpacity onPress={() => {
                             if (value > 0) {
                                 let tmp = +value - 1;
@@ -64,8 +62,6 @@ const ProductsItemForPhone = ({ item, index, onClickProduct, handleButtonDecreas
                         }}>
                             <Icon name="plus-box" size={40} color={Colors.colorchinh} />
                         </TouchableOpacity>
-                    </>
-
                 </View> :
                 null
             }

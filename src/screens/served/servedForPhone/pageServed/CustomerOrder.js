@@ -5,9 +5,6 @@ import Menu from 'react-native-material-menu';
 import dataManager from '../../../../data/DataManager';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { ApiPath } from '../../../../data/services/ApiPath';
-import dialogManager from '../../../../components/dialog/DialogManager';
-import { HTTPService, URL } from '../../../../data/services/HttpService';
 import { getFileDuLieuString, setFileLuuDuLieu } from '../../../../data/fileStore/FileStorage';
 import { Constant } from '../../../../common/Constant';
 import TextTicker from 'react-native-text-ticker';
@@ -29,43 +26,21 @@ const TYPE_MODAL = {
 
 export default (props) => {
 
-    const [listPosition, setListPosition] = useState([])
     const [showModal, setShowModal] = useState(false)
-    const [list, setListOrder] = useState(() => props.listProducts.filter(item => item.Id > 0))
-    const [vendorSession, setVendorSession] = useState({})
+    const [list, setListOrder] = useState(() =>
+        (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0 )
+        ? props.jsonContent.OrderDetails.filter(item => item.ProductId > 0) : []
+        )
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
     const [itemOrder, setItemOrder] = useState({})
-    const [listTopping, setListTopping] = useState([])
     const [marginModal, setMargin] = useState(0)
     const [IsLargeUnit, setIsLargeUnit] = useState(false)
     const typeModal = useRef(TYPE_MODAL.UNIT)
     const [expand, setExpand] = useState(false)
     const dispatch = useDispatch();
 
-    const historyOrder = useSelector(state => {
-        console.log("state.historyOrder", state.Common.historyOrder.length, state.Common.historyOrder);
-        return state.Common.historyOrder
-    });
-
-
     useEffect(() => {
-        console.log("Customer props ", props);
-        const getVendorSession = async () => {
-            let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
-            console.log('data', JSON.parse(data));
-            setVendorSession(JSON.parse(data));
-        }
-
-        const init = () => {
-            let tempListPosition = dataManager.dataChoosing.filter(item => item.Id == props.route.params.room.Id)
-            if (tempListPosition && tempListPosition.length > 0) {
-                console.log('from tempListPosition');
-                setListPosition(tempListPosition[0].data)
-            }
-        }
-        getVendorSession()
-        init()
 
         var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
         var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
@@ -79,317 +54,70 @@ export default (props) => {
     const _keyboardDidShow = () => {
         // if (orientaition != Constant.PORTRAIT)
         setMargin(Metrics.screenWidth / 1.5)
-
     }
 
     const _keyboardDidHide = () => {
         setMargin(0)
     }
 
-
     useEffect(() => {
-        if (props.listProducts.length > 0) {
-            let list = props.listProducts.filter(item => item.Id > 0)
-            let exist = false
-            listPosition.forEach((element, idx, arr) => {
-                if (element.key == props.Position) {
-                    exist = true
-                    if (list.length == 0) {
-                        listPosition.splice(idx, 1)
-                    } else {
-                        element.list = list
-                    }
-                }
-            })
-            if (!exist && list.length > 0) {
-                listPosition.push({ key: props.Position, list: list })
-            }
-            console.log(listPosition, 'listPosition');
-
+        if (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0) {
+            let list = props.jsonContent.OrderDetails.filter(item => item.ProductId > 0)
             setListOrder(list)
-            savePosition()
-        }
-    }, [props.listProducts])
-
-    useEffect(() => {
-        console.log('useEffect props.Position', props.Position);
-        let exist = false
-        listPosition.forEach(element => {
-            if (element.key == props.Position) {
-                exist = true
-                syncListProducts([...element.list])
-            }
-        })
-        if (!exist) {
-            syncListProducts([])
-        }
-    }, [props.Position, listPosition])
-
-
-    useEffect(() => {
-        console.log(listTopping, 'listTopping');
-        console.log(itemOrder, 'itemOrder');
-
-        const getInfoTopping = (lt) => {
-            let description = '';
-            let totalPrice = 0;
-            let topping = []
-            lt.forEach(item => {
-                if (item.Quantity > 0) {
-                    description += ` -${item.Name} x${item.Quantity} = ${currencyToString(item.Quantity * item.Price)};\n `
-                    totalPrice += item.Quantity * item.Price
-                    topping.push({ ExtraId: item.ExtraId, QuantityExtra: item.Quantity, Price: item.Price, Quantity: item.Quantity })
-                }
-            })
-            return [description, totalPrice, topping]
-        }
-        let [description, totalPrice, topping] = getInfoTopping(listTopping)
-        list.forEach(element => {
-            if (element.Sid == itemOrder.Sid) {
-                element.Description = description
-                element.Topping = JSON.stringify(topping)
-                element.TotalTopping = totalPrice
-            }
-        });
-        setListOrder([...list])
-    }, [listTopping])
-
-    const sendNotidy = (type) => {
-        console.log("sendNotidy type ", type);
-        hideMenu();
-        if (type == 1 && !props.route.params.room.IsActive) {
-            setToastDescription(I18n.t("ban_hay_chon_mon_an_truoc"))
-            setShowToast(true)
-        } else
-            props.outputSendNotify(type);
-    }
-
-
-    const syncListProducts = (listProducts) => {
-        console.log('syncListProducts');
-        setListOrder(listProducts)
-        props.outputListProducts(listProducts)
-    }
-
-    const savePosition = () => {
-        console.log('savePosition');
-        let exist = false
-        let hasData = true
-        dataManager.dataChoosing.forEach(element => {
-            if (element.Id == props.route.params.room.Id) {
-                exist = true
-                element.data = listPosition
-                if (element.data.length == 0) {
-                    hasData = false
-                }
-            }
-        })
-        if (!hasData) {
-            handleDataChoosing()
-        }
-        if (!exist && listPosition.length > 0) {
-            dataManager.dataChoosing.push({ Id: props.route.params.room.Id, ProductId: props.route.params.room.ProductId, Name: props.route.params.room.Name, data: listPosition })
-        }
-        console.log(dataManager.dataChoosing, 'savePosition');
-
-    }
+        } else setListOrder([])
+    }, [props.jsonContent])
 
     const sendOrder = async () => {
-        console.log("sendOrder list isClick ", list, isClick);
-
-        props.navigation.navigate(ScreenList.Payment, { totalPrice: 100000, RoomId: props.route.params.room.Id, Position: props.Position });
-        return;
-
-        if (list.length > 0 && isClick == false) {
-            isClick = true;
-            let ls = list;
-            let listItem = [];
-            let params = {
-                ServeEntities: []
-            };
-            ls.forEach(element => {
-                let PriceConfig = element.PriceConfig ? JSON.parse(element.PriceConfig) : "";
-                let obj = {
-                    BasePrice: element.Price,
-                    Code: element.Code,
-                    Name: element.Name,
-                    OrderQuickNotes: [],
-                    Position: props.Position,
-                    Price: element.Price,
-                    Printer: element.Printer,
-                    Printer3: PriceConfig && PriceConfig.Printer3 ? PriceConfig.Printer3 : null,
-                    Printer4: PriceConfig && PriceConfig.Printer4 ? PriceConfig.Printer4 : null,
-                    Printer5: PriceConfig && PriceConfig.Printer5 ? PriceConfig.Printer5 : null,
-                    ProductId: element.Id,
-                    Quantity: element.Quantity,
-                    RoomId: props.route.params.room.Id,
-                    RoomName: props.route.params.room.Name,
-                    SecondPrinter: PriceConfig && PriceConfig.SecondPrinter ? PriceConfig.SecondPrinter : null,
-                    Serveby: vendorSession.CurrentUser && vendorSession.CurrentUser.Id ? vendorSession.CurrentUser.Id : "",
-                    Topping: element.Topping,
-                    TotalTopping: element.TotalTopping,
-                    Description: element.Description,
-                    IsLargeUnit: element.IsLargeUnit,
-                    PriceLargeUnit: element.PriceLargeUnit,
-                }
-                params.ServeEntities.push(obj)
-                listItem.push({
-                    Quantity: element.Quantity,
-                    ProductType: element.ProductType,
-                    IsTimer: element.IsTimer,
-                    IsLargeUnit: element.IsLargeUnit,
-                    PriceLargeUnit: element.PriceLargeUnit,
-                    Price: element.Price,
-                    TotalTopping: element.TotalTopping,
-                    ProductImages: element.ProductImages,
-                    Name: element.Name,
-                    Description: element.Description,
-                    Unit: element.Unit,
-                    LargeUnit: element.LargeUnit
-                })
-            });
-
-            console.log("saveOrder params ===", params);
-            dialogManager.showLoading();
-            new HTTPService().setPath(ApiPath.SAVE_ORDER).POST(params).then((res) => {
-                console.log("sendOrder res ", res);
-                isClick = false;
-                if (res) {
-                    syncListProducts([])
-                    let tempListPosition = dataManager.dataChoosing.filter(item => item.Id != props.route.params.room.Id)
-                    dataManager.dataChoosing = tempListPosition;
-                    let historyTemp = [];
-                    // let history = await getFileDuLieuString(Constant.HISTORY_ORDER, true);
-                    console.log("sendOrder history ");
-                    let history = [...historyOrder];
-                    console.log("sendOrder history ", history);
-
-                    if (history != undefined) {
-                        // history = JSON.parse(history)
-                        let check = false;
-                        if (history.length > 0)
-                            history.forEach(el => {
-                                if (URL.link.indexOf(el.shop) > -1) {
-                                    check = true;
-                                    if (el.list.length > 0) {
-                                        el.list.push({
-                                            time: new Date(),
-                                            Position: props.Position,
-                                            list: listItem, RoomId: props.route.params.room.Id,
-                                            RoomName: props.route.params.room.Name,
-                                        })
-                                        if (el.list.length >= 50) {
-                                            el.list = el.list.slice(1, 49);
-                                        }
-                                    }
-                                }
-                                historyTemp.push(el)
-                            });
-
-                        if (check == false) {
-                            history.push(
-                                {
-                                    shop: URL.link,
-                                    list: [{
-                                        time: new Date(),
-                                        Position: props.Position,
-                                        list: listItem, RoomId: props.route.params.room.Id,
-                                        RoomName: props.route.params.room.Name,
-                                    }]
-                                }
-                            )
-                            historyTemp = history;
-                        }
-                    } else {
-                        historyTemp = [
-                            {
-                                shop: URL.link,
-                                list: [{
-                                    time: new Date(),
-                                    Position: props.Position,
-                                    list: listItem, RoomId: props.route.params.room.Id,
-                                    RoomName: props.route.params.room.Name,
-                                }]
-                            }
-                        ]
-                    }
-                    console.log("JSON.stringify(historyTemp) ", JSON.stringify(historyTemp));
-                    setFileLuuDuLieu(Constant.HISTORY_ORDER, JSON.stringify(historyTemp))
-                    dispatch({ type: 'HISTORY_ORDER', historyOrder: historyTemp })
-                }
-                dialogManager.hiddenLoading()
-            }).catch((e) => {
-                isClick = false;
-                console.log("sendOrder err ", e);
-                dialogManager.hiddenLoading()
-            })
-        } else {
-            setToastDescription(I18n.t("ban_hay_chon_mon_an_truoc"))
-            setShowToast(true)
-        }
-    }
-
-    const handleDataChoosing = () => {
-        console.log('handleDataChoosing');
-        dataManager.dataChoosing = dataManager.dataChoosing.filter(item => item.data.length > 0)
-        dispatch({ type: 'NUMBER_ORDER', numberOrder: dataManager.dataChoosing.length })
-    }
-
-    const dellAll = () => {
-        if (list.length > 0) {
-            dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_muon_xoa_toan_bo_mat_hang_da_chon'), I18n.t('thong_bao'), (value) => {
-                if (value == 1) {
-                    syncListProducts([])
-                    let hasData = true
-                    dataManager.dataChoosing.forEach(item => {
-                        if (item.Id == props.route.params.room.Id) {
-                            console.log("dellAll ok == ", item.data.length, props.Position);
-                            item.data = item.data.filter(it => it.key != props.Position)
-                            console.log("dellAll ok ", item.data.length, props.Position);
-                            if (item.data.length == 0) {
-                                hasData = false
-                            }
-                        }
-
-                    })
-                    if (!hasData) {
-                        handleDataChoosing()
-                    }
-                }
-            })
-        }
-
+        console.log("sendOrder list isClick ");
+        props.navigation.navigate(ScreenList.Payment, { RoomId: props.route.params.room.Id, Position: props.Position });
     }
 
     const removeItem = (item, index) => {
         console.log('delete ', item.Name, index);
-        let hasData = true
         list.splice(index, 1)
-        dataManager.dataChoosing.forEach(item => {
-            if (item.Id == props.route.params.room.Id) {
-                if (list.length == 0) {
-                    item.data = item.data.filter(it => it.key != props.Position)
-                }
-            }
-            if (item.data.length == 0) {
-                hasData = false
-            }
-        })
-        if (!hasData) {
-            handleDataChoosing()
-        }
-        syncListProducts([...list])
-    }
-
-    const onCallBack = (data) => {
-        console.log('data', data);
-        setListTopping(data)
-
+        props.outputListProducts([...list])
     }
 
     const onClickTopping = (item) => {
         setItemOrder(item)
         props.navigation.navigate('Topping', { _onSelect: onCallBack, itemOrder: item, Position: props.Position, IdRoom: props.route.params.room.Id })
+    }
+
+    const onCallBack = (data) => {
+        console.log('onCallBack from topping', data);
+        mapToppingToList(data)
+    }
+
+    const mapToppingToList = (listTopping) => {
+        console.log(listTopping, 'listTopping');
+        console.log(itemOrder, 'itemOrder');
+
+        const getInfoTopping = (lt) => {
+            let description = '';
+            let totalTopping = 0;
+            let topping = []
+            lt.forEach(item => {
+                if (item.Quantity > 0) {
+                    description += ` -${item.Name} x${item.Quantity} = ${currencyToString(item.Quantity * item.Price)};\n `
+                    totalTopping += item.Quantity * item.Price
+                    topping.push({ ExtraId: item.ExtraId, QuantityExtra: item.Quantity, Price: item.Price, Quantity: item.Quantity })
+                }
+            })
+            return [description, totalTopping, topping]
+        }
+        let [description, totalTopping, topping] = getInfoTopping(listTopping)
+        list.forEach(element => {
+            if (element.ProductId == itemOrder.ProductId && element.Sid == itemOrder.Sid) {
+                element.Description = description
+                element.Topping = JSON.stringify(topping)
+                element.TotalTopping = totalTopping
+
+                let basePriceProduct = element.Price > element.TotalTopping ? element.Price - element.TotalTopping : 0
+                element.Price = basePriceProduct + totalTopping
+            }
+        });
+        // setListOrder([...list])
+        props.outputListProducts([...list])
     }
 
     const mapDataToList = (data) => {
@@ -406,21 +134,7 @@ export default (props) => {
         });
         console.log("mapDataToList(ls) ", list);
 
-        let hasData = true
-        dataManager.dataChoosing.forEach(item => {
-            if (item.Id == props.route.params.room.Id) {
-                if (list.length == 0) {
-                    item.data = item.data.filter(it => it.key != props.Position)
-                }
-            }
-            if (item.data.length == 0) {
-                hasData = false
-            }
-        })
-        if (!hasData) {
-            handleDataChoosing()
-        }
-        syncListProducts([...list])
+        props.outputListProducts([...list])
     }
 
     const getTotalPrice = () => {
@@ -458,7 +172,6 @@ export default (props) => {
             setShowModal(true)
         }
     }
-
 
     const renderForPhone = (item, index) => {
         return (
@@ -580,6 +293,20 @@ export default (props) => {
         )
     }
 
+    const totalPrice = (orderDetails) => {
+
+        console.log('getPrice', orderDetails);
+
+        let total = 0;
+        if (orderDetails && orderDetails.length > 0)
+            orderDetails.forEach(item => {
+                total += (item.Price) * item.Quantity
+            });
+        return total
+    }
+
+
+    let {jsonContent} = props
     return (
         <View style={{ flex: 1 }}>
             <View style={{ flexGrow: 1 }}>
@@ -598,49 +325,44 @@ export default (props) => {
                 }
             </View>
             <View>
-                {/* <View style={styles.tamTinh}>
-                    <Text style={styles.textTamTinh}>{I18n.t('tam_tinh')}</Text>
-                    <View style={styles.totalPrice}>
-                        <Text style={{ fontWeight: "bold", fontSize: 18, color: "#0072bc" }}>{currencyToString(getTotalPrice())}đ</Text>
+    
+            <TouchableOpacity
+                onPress={() => { setExpand(!expand) }}
+                style={{ borderTopWidth: .5, borderTopColor: "red", paddingVertical: 3, backgroundColor: "white", marginLeft: 10 }}>
+                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+                    <Text style={{ fontWeight: "bold" }}>{I18n.t('tong_thanh_tien')}</Text>
+                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
+                        <Text style={{ fontWeight: "bold", fontSize: 16, color: colors.colorchinh }}>{currencyToString(totalPrice(jsonContent.OrderDetails))}đ</Text>
+                        {expand ?
+                            <Icon style={{}} name="chevron-up" size={30} color="black" />
+                            :
+                            <Icon style={{}} name="chevron-down" size={30} color="black" />
+                        }
                     </View>
-                </View> */}
-                <TouchableOpacity
-                    onPress={() => { setExpand(!expand) }}
-                    style={{ borderTopWidth: .5, borderTopColor: "red", paddingVertical: 3, backgroundColor: "white", marginLeft: 10 }}>
-                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
-                        <Text style={{ fontWeight: "bold" }}>{I18n.t('tong_thanh_tien')}</Text>
-                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                            <Text style={{ fontWeight: "bold", fontSize: 16, color: colors.colorchinh }}>{}đ</Text>
-                            {expand ?
-                                <Icon style={{}} name="chevron-up" size={30} color="black" />
-                                :
-                                <Icon style={{}} name="chevron-down" size={30} color="black" />
-                            }
+                </View>
+                {expand ?
+                    <View style={{ marginLeft: 0 }}>
+                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+                            <Text>{I18n.t('tong_chiet_khau')}</Text>
+                            <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>- {currencyToString(jsonContent.Discount)}đ</Text>
                         </View>
-                    </View>
-                    {expand ?
-                        <View style={{ marginLeft: 0 }}>
-                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
-                                <Text>{I18n.t('tong_chiet_khau')}</Text>
-                                <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>- {}đ</Text>
-                            </View>
-                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
-                                <Text>VAT (%)</Text>
-                                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                                    <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>{}đ</Text>
-                                </View>
-                            </View>
-                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
-                                <Text style={{ fontWeight: "bold" }}>{I18n.t('khach_phai_tra')}</Text>
-                                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                                    <Text style={{ fontWeight: "bold", fontSize: 16, color: "#0072bc", marginRight: 30 }}>{}đ</Text>
-                                </View>
+                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+                            <Text>VAT ({jsonContent.VATRates}%)</Text>
+                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
+                                <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(jsonContent.VAT ? jsonContent.VAT : 0)}đ</Text>
                             </View>
                         </View>
-                        :
-                        null
-                    }
-                </TouchableOpacity>
+                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+                            <Text style={{ fontWeight: "bold" }}>{I18n.t('khach_phai_tra')}</Text>
+                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
+                                <Text style={{ fontWeight: "bold", fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(jsonContent.Total)}đ</Text>
+                            </View>
+                        </View>
+                    </View>
+                    :
+                    null
+                }
+            </TouchableOpacity>
             </View>
             <View style={styles.footerMenu}>
                 <TouchableOpacity
@@ -716,11 +438,9 @@ export default (props) => {
                                     onClickTopping={() => onClickTopping(itemOrder)}
                                     item={itemOrder}
                                     getDataOnClick={(data) => {
-                                        console.log("getDataOnClick ", data);
                                         mapDataToList(data)
                                     }}
                                     setShowModal={() => {
-                                        console.log("getDataOnClick list ", list);
                                         setShowModal(false)
                                     }
                                     } />
@@ -744,6 +464,8 @@ export default (props) => {
     )
 }
 
+
+//===================PopupDetail=================
 
 
 const PopupDetail = (props) => {

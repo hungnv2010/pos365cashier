@@ -55,6 +55,7 @@ export default {
   chon_dvt: "ĐVT",
   chon: "Chọn",
   chon_tinh_thanh: "Chọn tỉnh thành",
+  cong_vao_khoan_no: "Cộng vào khoản nợ",
 
   // TODO: D
   dang_dung: "Đang dùng",
@@ -152,6 +153,7 @@ export default {
   logout: "Đăng xuất",
   lich_su: "Lịch sử",
   lich_su_goi_mon: "Lịch sử gọi món",
+  loai_hinh_thanh_toan: 'Loại hình thanh toán',
 
   // TODO: M
   mang_luoi: 'Mạng lưới',
@@ -299,6 +301,7 @@ export default {
   tien_thua: "Tiền thừa",
   tim_kiem: "Tìm kiếm",
   tien_khach_tra: "Tiền khách trả",
+  tra_lai_tien: "Trả lại tiền",
   // TODO: U
 
   // TODO: V

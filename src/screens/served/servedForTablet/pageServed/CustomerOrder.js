@@ -5,10 +5,6 @@ import Menu from 'react-native-material-menu';
 import dataManager from '../../../../data/DataManager';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { ApiPath } from '../../../../data/services/ApiPath';
-import dialogManager from '../../../../components/dialog/DialogManager';
-import { HTTPService, URL } from '../../../../data/services/HttpService';
-import { getFileDuLieuString, setFileLuuDuLieu } from '../../../../data/fileStore/FileStorage';
 import { Constant } from '../../../../common/Constant';
 import { currencyToString } from '../../../../common/Utils';
 import I18n from "../../../../common/language/i18n";
@@ -27,10 +23,11 @@ const TYPE_MODAL = {
 
 const CustomerOrder = (props) => {
 
-    const [listPosition, setListPosition] = useState([])
     const [showModal, setShowModal] = useState(false)
-    const [list, setListOrder] = useState([])
-    const [vendorSession, setVendorSession] = useState({})
+    const [list, setListOrder] = useState(() =>
+    (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0 )
+    ? props.jsonContent.OrderDetails.filter(item => item.ProductId > 0) : []
+    )
     const [itemOrder, setItemOrder] = useState({})
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
@@ -44,40 +41,11 @@ const CustomerOrder = (props) => {
         return state.Common.orientaition
     });
 
-    const deviceType = useSelector(state => {
-        console.log("deviceType", state);
-        return state.Common.deviceType
-    });
-
-    const historyOrder = useSelector(state => {
-        console.log("state.historyOrder5 ", state.Common.historyOrder);
-        return state.Common.historyOrder
-    });
-
-
     useEffect(() => {
-        console.log("Customer props ", props);
-        const getVendorSession = async () => {
-            let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
-            console.log('data', JSON.parse(data));
-            setVendorSession(JSON.parse(data));
-        }
-
-        const init = () => {
-            let tempListPosition = dataManager.dataChoosing.filter(item => item.Id == props.route.params.room.Id)
-            if (tempListPosition && tempListPosition.length > 0) {
-                console.log('from tempListPosition');
-                setListPosition(tempListPosition[0].data)
-            }
-        }
-        getVendorSession()
-        init()
-
         var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
         var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
 
         return () => {
-            console.log(dataManager.dataChoosing, 'dataManager.dataChoosing');
             keyboardDidShowListener.remove();
             keyboardDidHideListener.remove();
         }
@@ -86,7 +54,6 @@ const CustomerOrder = (props) => {
     const _keyboardDidShow = () => {
         if (orientaition != Constant.PORTRAIT)
             setMargin(Metrics.screenWidth / 2)
-
     }
 
     const _keyboardDidHide = () => {
@@ -103,36 +70,15 @@ const CustomerOrder = (props) => {
     }, [props.Position])
 
     useEffect(() => {
-        if (props.listProducts.length == 0) return
-        let exist = false
-        listPosition.forEach(element => {
-            if (element.key == props.Position) {
-                exist = true
-                element.list = props.listProducts
-            }
-        })
-        if (!exist) {
-            listPosition.push({ key: props.Position, list: props.listProducts })
-        }
-        console.log(listPosition, 'listPosition');
-
-        setListOrder([...props.listProducts])
-        savePosition()
-    }, [props.listProducts])
+        if (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0) {
+            let list = props.jsonContent.OrderDetails.filter(item => item.ProductId > 0)
+            setListOrder(list)
+        } else setListOrder([])
+    }, [props.jsonContent])
 
     useEffect(() => {
         console.log('useEffect props.Position', props.Position);
-        let exist = false
-        listPosition.forEach(element => {
-            if (element.key == props.Position) {
-                exist = true
-                syncListProducts(element.list)
-            }
-        })
-        if (!exist) {
-            syncListProducts([])
-        }
-    }, [props.Position, listPosition])
+    }, [props.Position])
 
 
     useEffect(() => {
@@ -171,196 +117,13 @@ const CustomerOrder = (props) => {
         props.outputListProducts(listProducts, 0)
     }
 
-    const savePosition = () => {
-        let exist = false
-        dataManager.dataChoosing.forEach(element => {
-            if (element.Id == props.route.params.room.Id) {
-                exist = true
-                element.data = listPosition
-            }
-        })
-        if (!exist) {
-            dataManager.dataChoosing.push({ Id: props.route.params.room.Id, ProductId: props.route.params.room.ProductId, Name: props.route.params.room.Name, data: listPosition })
-        }
-        console.log(dataManager.dataChoosing, 'savePosition');
-    }
-
     const sendOrder = () => {
-        props.navigation.navigate(ScreenList.Payment, { totalPrice: 100000});
-        return;
-
-        if (list.length > 0 && isClick == false) {
-            isClick = true;
-            let ls = [];
-            let listItem = [];
-            ls = JSON.parse(JSON.stringify(list))
-            console.log("sendOrder", ls, vendorSession);
-            let params = {
-                ServeEntities: []
-            };
-
-            ls.forEach(element => {
-                let PriceConfig = element.PriceConfig ? JSON.parse(element.PriceConfig) : '';
-                let obj = {
-                    BasePrice: element.Price,
-                    Code: element.Code,
-                    Name: element.Name,
-                    OrderQuickNotes: [],
-                    Position: props.Position,
-                    Price: element.Price,
-
-                    Printer: element.Printer,
-                    Printer3: PriceConfig && PriceConfig.Printer3 ? PriceConfig.Printer3 : null,
-                    Printer4: PriceConfig && PriceConfig.Printer4 ? PriceConfig.Printer4 : null,
-                    Printer5: PriceConfig && PriceConfig.Printer5 ? PriceConfig.Printer5 : null,
-                    ProductId: element.Id,
-                    Quantity: element.Quantity,
-                    RoomId: props.route.params.room.Id,
-                    RoomName: props.route.params.room.Name,
-                    SecondPrinter: PriceConfig && PriceConfig.SecondPrinter ? PriceConfig.SecondPrinter : null,
-
-                    Serveby: vendorSession.CurrentUser && vendorSession.CurrentUser.Id ? vendorSession.CurrentUser.Id : "",
-                    Topping: element.Topping,
-                    TotalTopping: element.TotalTopping,
-                    Description: element.Description,
-                    IsLargeUnit: element.IsLargeUnit,
-                    PriceLargeUnit: element.PriceLargeUnit,
-                }
-                params.ServeEntities.push(obj)
-                listItem.push({
-                    Quantity: element.Quantity,
-                    ProductType: element.ProductType,
-                    IsTimer: element.IsTimer,
-                    IsLargeUnit: element.IsLargeUnit,
-                    PriceLargeUnit: element.PriceLargeUnit,
-                    Price: element.Price,
-                    TotalTopping: element.TotalTopping,
-                    ProductImages: element.ProductImages,
-                    Name: element.Name,
-                    Description: element.Description,
-                    Unit: element.Unit,
-                    LargeUnit: element.LargeUnit
-                })
-            });
-            dialogManager.showLoading();
-            new HTTPService().setPath(ApiPath.SAVE_ORDER).POST(params).then(async (res) => {
-                console.log("sendOrder res ", res);
-                // dialogManager.hiddenLoading()
-                isClick = false;
-                if (res) {
-                    syncListProducts([])
-                    let tempListPosition = dataManager.dataChoosing.filter(item => item.Id != props.route.params.room.Id)
-                    dataManager.dataChoosing = tempListPosition;
-                    let historyTemp = [];
-                    // let history = await getFileDuLieuString(Constant.HISTORY_ORDER, true);
-                    let history = [...historyOrder];
-                    if (history != undefined) {
-                        // history = JSON.parse(history)
-                        let check = false;
-                        if (history.length > 0)
-                            history.forEach(el => {
-                                if (URL.link.indexOf(el.shop) > -1) {
-                                    check = true;
-                                    if (el.list.length > 0) {
-                                        el.list.push({
-                                            time: new Date(),
-                                            Position: props.Position,
-                                            list: listItem, RoomId: props.route.params.room.Id,
-                                            RoomName: props.route.params.room.Name,
-                                        })
-                                        if (el.list.length >= 50) {
-                                            el.list = el.list.slice(1, 49);
-                                        }
-                                    }
-                                }
-                                historyTemp.push(el)
-                            });
-
-                        if (check == false) {
-                            history.push(
-                                {
-                                    shop: URL.link,
-                                    list: [{
-                                        time: new Date(),
-                                        Position: props.Position,
-                                        list: listItem, RoomId: props.route.params.room.Id,
-                                        RoomName: props.route.params.room.Name,
-                                    }]
-                                }
-                            )
-                            historyTemp = history;
-                        }
-                    } else {
-                        historyTemp = [
-                            {
-                                shop: URL.link,
-                                list: [{
-                                    time: new Date(),
-                                    Position: props.Position,
-                                    list: listItem, RoomId: props.route.params.room.Id,
-                                    RoomName: props.route.params.room.Name,
-                                }]
-                            }
-                        ]
-                    }
-                    console.log("JSON.stringify(historyTemp) ", JSON.stringify(historyTemp));
-                    setFileLuuDuLieu(Constant.HISTORY_ORDER, JSON.stringify(historyTemp))
-                    dispatch({ type: 'HISTORY_ORDER', historyOrder: historyTemp })
-                }
-                dialogManager.hiddenLoading()
-            }).catch((e) => {
-                isClick = false;
-                console.log("sendOrder err ", e);
-                dialogManager.hiddenLoading()
-            })
-        } else {
-            setToastDescription(I18n.t("ban_hay_chon_mon_an_truoc"))
-            setShowToast(true)
-        }
-    }
-
-    const dellAll = () => {
-        if (list.length > 0) {
-            dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_muon_xoa_toan_bo_mat_hang_da_chon'), I18n.t('thong_bao'), (value) => {
-                if (value == 1) {
-                    syncListProducts([])
-                    let hasData = true
-                    dataManager.dataChoosing.forEach(item => {
-                        if (item.Id == props.route.params.room.Id) {
-                            item.data = item.data.filter(it => it.key != props.Position)
-                        }
-                        if (item.data.length == 0) {
-                            hasData = false
-                        }
-                    })
-                    if (!hasData) {
-                        dataManager.dataChoosing = dataManager.dataChoosing.filter(item => item.data.length > 0)
-                        dispatch({ type: 'NUMBER_ORDER', numberOrder: dataManager.dataChoosing.length })
-                    }
-                }
-            })
-        }
-
+        props.navigation.navigate(ScreenList.Payment, { RoomId: props.route.params.room.Id, Position: props.Position });
     }
 
     const removeItem = (item, index) => {
         console.log('delete', index, item);
-        let hasData = true
         list.splice(index, 1)
-        dataManager.dataChoosing.forEach(item => {
-            if (item.Id == props.route.params.room.Id) {
-                if (list.length == 0) {
-                    item.data = item.data.filter(it => it.key != props.Position)
-                }
-            }
-            if (item.data.length == 0) {
-                hasData = false
-            }
-        })
-        if (!hasData) {
-            dataManager.dataChoosing = dataManager.dataChoosing.filter(item => item.data.length > 0)
-            dispatch({ type: 'NUMBER_ORDER', numberOrder: dataManager.dataChoosing.length })
-        }
         syncListProducts(list)
     }
 
@@ -685,9 +448,6 @@ const CustomerOrder = (props) => {
                 </TouchableOpacity>
                 <TouchableOpacity onPress={sendOrder} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
                     <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('gui_thuc_don')}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={dellAll} style={{ justifyContent: "center", alignItems: "center", paddingHorizontal: 10, borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
-                    <Icon name="delete-forever" size={30} color="white" />
                 </TouchableOpacity>
             </View>
             <Modal

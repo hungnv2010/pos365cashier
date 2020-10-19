@@ -401,4 +401,7 @@ export const Constant = {
 
     ]
 
+    JSONCONTENT_EMPTY: {
+        OrderDetails:[]
+    }
 };
