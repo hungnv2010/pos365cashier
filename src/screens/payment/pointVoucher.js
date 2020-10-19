@@ -103,7 +103,8 @@ export default (props) => {
     const deleteVoucher = (el) => {
         let filter = listVoucher.filter(item => item.Code != el.Code)
         setListVoucher(filter)
-        props.deleteVoucher(filter)
+        if (deviceType == Constant.TABLET)
+            props.deleteVoucher(filter)
     }
 
     const sumVoucher = () => {
@@ -129,7 +130,7 @@ export default (props) => {
             <View key={index.toString()} style={styles.item_voucher}>
                 <View style={styles.content_text_voucher}>
                     <Text style={styles.text_code}>{item.Code}</Text>
-                    <Text style={styles.text_price}>{currencyToString(item.Value)}</Text>
+                    <Text style={styles.text_price}>{item.IsPercent ? item.Value + "%" : currencyToString(item.Value)}</Text>
                 </View>
                 <Icon name="close" size={30} color="black" onPress={() => deleteVoucher(item)} />
             </View>

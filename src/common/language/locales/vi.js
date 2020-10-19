@@ -126,6 +126,7 @@ export default {
   khach_yeu_cau: "Khách yêu cầu",
   khong_xac_dinh: "Không xác định",
   ket_qua_ban_hang: "Kết quả bán hàng",
+  khach_thanh_toan: "Khách thanh toán",
 
   // TODO: H
   hoa_don: "Hoá đơn",

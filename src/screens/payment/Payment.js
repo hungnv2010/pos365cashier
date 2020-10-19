@@ -335,7 +335,7 @@ export default (props) => {
 
         json['MoreAttributes'] = JSON.stringify(MoreAttributes);
         json.TotalPayment = json.Total
-        json.VATRates = json.VATRates + "%"
+        json.VATRates = json.VATRates
 
         let params = {
             QrCodeEnable: vendorSession.Settings.QrCodeEnable,
@@ -353,7 +353,7 @@ export default (props) => {
         console.log("onClickPay order ", order);
         if (order) {
             console.log("onClickPay jsonContent ", jsonContent);
-            dataManager.sentNotification(jsonContent.RoomName, "Khách thanh toán " + currencyToString(jsonContent.Total))
+            dataManager.sentNotification(jsonContent.RoomName, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
             dialogManager.hiddenLoading()
         }
 
