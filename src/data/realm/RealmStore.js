@@ -174,6 +174,22 @@ export const SchemaName = {
     TOPPING: "Topping",
     CUSTOMER: "Customer",
     PROMOTION: "Promotion",
+    ORDERS_OFFLINE: "OrdersOffline",
+}
+
+const OrdersOffline = {
+    name: SchemaName.ORDERS_OFFLINE,
+    primaryKey: "Id",
+    properties: {
+        Id: 'string',
+        Orders: 'string',
+        ExcessCash: { type: 'int', default: 0 },
+        DontSetTime: { type: 'int', default: 0 },
+        HostName: { type: 'string', default: '' },
+        BranchId: { type: 'int', default: 0 },
+        SyncCount: { type: 'int', default: 0 },
+    }
+
 }
 
 const CustomerSchema = {
@@ -334,8 +350,8 @@ const PromotionSchema = {
 
 const databaseOption = {
     path: 'Pos365Boss.realm',
-    schema: [ServerEventSchema, RoomSchema, RoomGroupSchema, ProductSchema, CategoriesSchema, ToppingsSchema, CustomerSchema, PromotionSchema],
-    schemaVersion: 27
+    schema: [ServerEventSchema, RoomSchema, RoomGroupSchema, ProductSchema, CategoriesSchema, ToppingsSchema, CustomerSchema, PromotionSchema, OrdersOffline],
+    schemaVersion: 29
 }
 
 const realm = new Realm(databaseOption);

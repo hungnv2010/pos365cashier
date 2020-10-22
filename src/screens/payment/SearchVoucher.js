@@ -30,7 +30,6 @@ export default (props) => {
             if (res && res.results) {
                 let listVoucherSelect = (deviceType == Constant.PHONE) ? props.route.params : props
                 console.log("getDataVoucher props ", props);
-
                 let list = [];
                 res.results.forEach(el => {
                     el["check"] = false;
@@ -43,25 +42,7 @@ export default (props) => {
                     })
                     list.push(el);
                 })
-                console.log("checkList list ", list);
                 setListVoucher(list);
-                // if (deviceType == Constant.PHONE) {
-                //     let list = [];
-                //     res.results.forEach(el => {
-                //         el["check"] = false;
-                //         props.route.params.listVoucher.map(item => {
-                //             console.log("checkList ", item.Id, el.Id);
-                //             if (el.Id == item.Id) {
-                //                 el["check"] = true;
-                //                 return;
-                //             }
-                //         })
-                //         list.push(el);
-                //     })
-                //     setListVoucher(list);
-                // } else {
-                //     setListVoucher(res.results);
-                // }
             }
         }).catch((e) => {
             console.log("getDataVoucher err ", e);

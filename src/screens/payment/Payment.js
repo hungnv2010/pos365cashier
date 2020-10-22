@@ -26,6 +26,8 @@ import dataManager from '../../data/DataManager';
 
 let timeClickCash = 1000;
 
+const TYPE_MODAL = { FILTER_ACCOUNT: "FILTER_ACCOUNT", QRCODE: "QRCODE" }
+
 const CUSTOMER_DEFAULT = { Id: "", Name: I18n.t('khach_le') };
 
 const METHOD = {
@@ -62,6 +64,10 @@ export default (props) => {
     const [sendMethod, setSendMethod] = useState(METHOD.discount)
     const toolBarPaymentRef = useRef();
     const itemAccountRef = useRef();
+    const typeModal = useRef();
+    const qrCode = useRef();
+    var currentServerEvent = useRef();
+    let row_key = "";
 
     const { deviceType } = useSelector(state => {
         return state.Common
@@ -69,19 +75,22 @@ export default (props) => {
 
     useEffect(() => {
         const getRoom = async () => {
-            const row_key = `${props.route.params.RoomId}_${props.route.params.Position}`
-            let serverEvent = await realmStore.queryServerEvents()
-            let room = serverEvent.filtered(`RowKey == '${row_key}'`)
-            let orderDetails = JSON.parse(room[0].JsonContent).OrderDetails;
-            let jsonContentTmp = JSON.parse(room[0].JsonContent)
-            console.log("useEffect jsonContentTmp ", jsonContentTmp);
-
+            row_key = `${props.route.params.RoomId}_${props.route.params.Position}`
+            let serverEvents = await realmStore.queryServerEvents()
+            currentServerEvent.current = serverEvents.filtered(`RowKey == '${row_key}'`)[0]
+            let orderDetails = JSON.parse(currentServerEvent.current.JsonContent).OrderDetails;
+            let jsonContentTmp = JSON.parse(currentServerEvent.current.JsonContent)
+            console.log("useEffect serverEvent ", currentServerEvent.current);
             setJsonContent(jsonContentTmp)
             let total = getTotalOrder(orderDetails);
             setTotalPrice(total);
             CASH.Value = total;
             setPercentVAT(jsonContentTmp.VATRates ? true : false)
-            setPercent(jsonContentTmp.DiscountToView.toString().indexOf('%') > -1 ? true : false)
+            if (jsonContentTmp.DiscountToView && jsonContentTmp.DiscountToView.toString().indexOf('%') > -1) {
+                setPercent(true)
+            } else {
+                setPercent(false)
+            }
             calculatorPrice(jsonContentTmp, total);
         }
 
@@ -224,6 +233,7 @@ export default (props) => {
         console.log("onClickShowListMethod ", item);
         itemAccountRef.current = item;
         setItemMethod(item)
+        typeModal.current = TYPE_MODAL.FILTER_ACCOUNT
         setShowModal(true)
     }
 
@@ -323,20 +333,24 @@ export default (props) => {
     }
 
     const onClickPay = () => {
-        console.log("onClickPay jsonContent ", jsonContent);
-
+        // console.log("onClickPay jsonContent ", jsonContent);
+        console.log("onClickPay serverEvent ", currentServerEvent.current);
+        let paramMethod = []
+        listMethod.forEach(element => {
+            paramMethod.push({ AccountId: element.Id, Value: element.Value })
+        });
         let json = { ...jsonContent }
         let MoreAttributes = json.MoreAttributes ? JSON.parse(json.MoreAttributes) : {}
-
         MoreAttributes.PointDiscount = 0;
         MoreAttributes.PointDiscountValue = 0;
         MoreAttributes.TemporaryPrints = [];
         MoreAttributes.Vouchers = listVoucher;
-
+        MoreAttributes.PaymentMethods = paramMethod
         json['MoreAttributes'] = JSON.stringify(MoreAttributes);
         json.TotalPayment = json.Total
         json.VATRates = json.VATRates
-
+        if (listMethod.length > 0)
+            json.AccountId = listMethod[0].Id;
         let params = {
             QrCodeEnable: vendorSession.Settings.QrCodeEnable,
             MerchantCode: vendorSession.Settings.MerchantCode,
@@ -345,17 +359,33 @@ export default (props) => {
             ExcessCashType: 0,
             Order: json,
         };
-
         console.log("onClickPay params ", params);
-
         dialogManager.showLoading();
-        let order = new HTTPService().setPath(ApiPath.ORDERS).POST(params)
-        console.log("onClickPay order ", order);
-        if (order) {
-            console.log("onClickPay jsonContent ", jsonContent);
-            dataManager.sentNotification(jsonContent.RoomName, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
-            dialogManager.hiddenLoading()
-        }
+        new HTTPService().setPath(ApiPath.ORDERS).POST(params).then(order => {
+            console.log("onClickPay order ", order);
+            if (order) {
+                let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
+                dataManager.paymentSetServerEvent(serverEvent, {});
+                console.log("onClickPay order serverEvent ", serverEvent);
+                dataManager.subjectUpdateServerEvent.next(serverEvent)
+                dataManager.sentNotification(jsonContent.RoomName, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
+                dialogManager.hiddenLoading()
+                if (order.QRCode != "") {
+                    qrCode.current = order.QRCode
+                    typeModal.current = TYPE_MODAL.QRCODE
+                    setShowModal(true)
+                } else
+                    props.navigation.pop()
+            }
+        }).catch(err => {
+            console.log("onClickPay err ", err);
+            handlerError({ JsonContent: json, RowKey: row_key })
+        });
+    }
+
+    const handlerError = (data) => {
+
+        let dataOffline = data;
 
     }
 
@@ -439,41 +469,59 @@ export default (props) => {
     }
 
     const renderFilter = () => {
-        return (
-            <View style={styles.viewFilter}>
-                <Text style={styles.titleFiler}>{I18n.t('loai_hinh_thanh_toan')}</Text>
-                <ScrollView style={{ maxHeight: Metrics.screenWidth }}>
-                    {
-                        vendorSession.Accounts && [CASH].concat(vendorSession.Accounts).map((item, index) => {
-                            return (
-                                <TouchableOpacity onPress={() => onSelectMethod(item)} style={styles.viewRadioButton}>
-                                    <RadioButton.Android
-                                        status={itemMethod.MethodId == item.Id ? 'checked' : 'unchecked'}
-                                        onPress={() => onSelectMethod(item)}
-                                        color={colors.colorchinh}
-                                    />
-                                    <Text style={{}}>{item.Name}</Text>
-                                </TouchableOpacity>
-                            )
-                        })
-                    }
-                </ScrollView>
-                <View style={styles.viewBottomFilter}>
-                    <TouchableOpacity style={styles.viewButtonCancel} onPress={onClickCancelFilter}>
-                        <Text style={styles.textButtonCancel}>{I18n.t("huy")}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.viewButtonOk} onPress={onClickOkFilter}>
-                        <Text style={styles.textButtonOk}>{I18n.t("dong_y")}</Text>
-                    </TouchableOpacity>
+        if (typeModal.current == TYPE_MODAL.FILTER_ACCOUNT)
+            return (
+                <View style={styles.viewFilter}>
+                    <Text style={styles.titleFiler}>{I18n.t('loai_hinh_thanh_toan')}</Text>
+                    <ScrollView style={{ maxHeight: Metrics.screenWidth }}>
+                        {
+                            vendorSession.Accounts && [CASH].concat(vendorSession.Accounts).map((item, index) => {
+                                return (
+                                    <TouchableOpacity key={index.toString()} onPress={() => onSelectMethod(item)} style={styles.viewRadioButton}>
+                                        <RadioButton.Android
+                                            status={itemMethod.MethodId == item.Id ? 'checked' : 'unchecked'}
+                                            onPress={() => onSelectMethod(item)}
+                                            color={colors.colorchinh}
+                                        />
+                                        <Text style={{}}>{item.Name}</Text>
+                                    </TouchableOpacity>
+                                )
+                            })
+                        }
+                    </ScrollView>
+                    <View style={styles.viewBottomFilter}>
+                        <TouchableOpacity style={styles.viewButtonCancel} onPress={onClickCancelFilter}>
+                            <Text style={styles.textButtonCancel}>{I18n.t("huy")}</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.viewButtonOk} onPress={onClickOkFilter}>
+                            <Text style={styles.textButtonOk}>{I18n.t("dong_y")}</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
-            </View>
-        )
+            )
+        if (typeModal.current == TYPE_MODAL.QRCODE)
+            return (
+                <View style={[styles.viewFilter, { justifyContent: "center", alignItems: "center" }]}>
+                    {/* qrCode.current */}
+                    <Text>{qrCode.current}</Text>
+                    {/* <Image style={styles.logoImage}
+                        source={{
+                            uri: qrCode.current
+                            // uri: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAAAzCAYAAAA6oTAqAAAAEXRFWHRTb2Z0d2FyZQBwbmdjcnVzaEB1SfMAAABQSURBVGje7dSxCQBACARB+2/ab8BEeQNhFi6WSYzYLYudDQYGBgYGBgYGBgYGBgYGBgZmcvDqYGBgmhivGQYGBgYGBgYGBgYGBgYGBgbmQw+P/eMrC5UTVAAAAABJRU5ErkJggg==',
+                        }} /> */}
+                    <View style={styles.viewBottomFilter}>
+                        <TouchableOpacity style={styles.viewButtonCancel} onPress={onClickCancelFilter}>
+                            <Text style={styles.textButtonCancel}>{I18n.t("huy")}</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            )
     }
 
     const renderListMethod = () => {
         return listMethod.map((item, index) => {
             return (
-                <View style={styles.viewListMethod}>
+                <View key={index.toString()} style={styles.viewListMethod}>
                     {
                         index != 0 ?
                             <TouchableOpacity onPress={() => deleteMethod(item)} style={styles.viewIconCloseMethod}>
@@ -754,4 +802,5 @@ const styles = StyleSheet.create({
     viewButtonOk: { marginLeft: 10, flex: 1, backgroundColor: colors.colorchinh, borderRadius: 4, paddingHorizontal: 20, paddingVertical: 10, justifyContent: "flex-end" },
     viewButtonCancel: { flex: 1, backgroundColor: "#fff", borderRadius: 4, borderWidth: 1, borderColor: colors.colorchinh, paddingHorizontal: 20, paddingVertical: 10, justifyContent: "flex-end" },
     viewTextExcessCash: { height: 50, backgroundColor: "#fff", flexDirection: "row", paddingHorizontal: 10, alignItems: "center", justifyContent: "space-between" },
+    logoImage: { width: Metrics.screenWidth * 2 / 3, height: Metrics.screenWidth * 2 / 3 }
 })

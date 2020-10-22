@@ -14,7 +14,9 @@ class DataManager {
             .map(serverEvent => {
                 return serverEvent
             })
-            .subscribe( async (serverEvent) => {
+            .subscribe(async (serverEvent) => {
+                console.log("subjectUpdateServerEvent serverEvent ", serverEvent);
+                
                 await realmStore.insertServerEvent(serverEvent)
                 signalRManager.sendMessageServerEvent(serverEvent)
             })
@@ -35,7 +37,7 @@ class DataManager {
         let res = await new HTTPService().setPath(ApiPath.SERVER_EVENT).GET()
 
         if (res && res.length > 0)
-            realmStore.insertServerEvents(res).subscribe((res, serverEvent) => {})
+            realmStore.insertServerEvents(res).subscribe((res, serverEvent) => { })
     }
 
     syncProduct = async () => {
@@ -103,11 +105,11 @@ class DataManager {
     }
 
     calculatateServerEvent = (serverEvent, newOrderDetail) => {
-        if(!serverEvent.JsonContent) return
+        if (!serverEvent.JsonContent) return
         let jsonContentObject = JSON.parse(serverEvent.JsonContent)
         jsonContentObject.OrderDetails = newOrderDetail
         let totalProducts = this.totalProducts(newOrderDetail)
-        let totalWithVAT = totalProducts + jsonContentObject.VAT  
+        let totalWithVAT = totalProducts + jsonContentObject.VAT
         jsonContentObject.Total = totalWithVAT
         jsonContentObject.AmountReceived = totalWithVAT
         if (jsonContentObject.ActiveDate)
@@ -117,6 +119,13 @@ class DataManager {
 
         serverEvent.JsonContent = JSON.stringify(jsonContentObject)
 
+    }
+
+    paymentSetServerEvent = (serverEvent, newJsonContent) => {
+        if (!serverEvent.JsonContent) return
+        serverEvent.JsonContent = JSON.stringify(newJsonContent)
+        serverEvent.Version += 10
+        
     }
 
     totalProducts = (products) => {
