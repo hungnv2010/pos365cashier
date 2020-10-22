@@ -20,7 +20,7 @@ import Fontisto from 'react-native-vector-icons/Fontisto';
 import ToolBarPayment from '../../components/toolbar/ToolbarPayment';
 import SearchVoucher from './SearchVoucher';
 import { ApiPath } from '../../data/services/ApiPath';
-import { HTTPService } from '../../data/services/HttpService';
+import { HTTPService, URL } from '../../data/services/HttpService';
 import dialogManager from '../../components/dialog/DialogManager';
 import dataManager from '../../data/DataManager';
 
@@ -92,6 +92,10 @@ export default (props) => {
                 setPercent(false)
             }
             calculatorPrice(jsonContentTmp, total);
+
+            let ordersOffline = await realmStore.queryOrdersOffline()
+            console.log("useEffect ordersOffline == ", ordersOffline);
+            console.log("useEffect ordersOffline ", JSON.parse(JSON.stringify(ordersOffline)));
         }
 
         const getVendorSession = async () => {
@@ -366,7 +370,6 @@ export default (props) => {
             if (order) {
                 let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
                 dataManager.paymentSetServerEvent(serverEvent, {});
-                console.log("onClickPay order serverEvent ", serverEvent);
                 dataManager.subjectUpdateServerEvent.next(serverEvent)
                 dataManager.sentNotification(jsonContent.RoomName, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
                 dialogManager.hiddenLoading()
@@ -376,6 +379,9 @@ export default (props) => {
                     setShowModal(true)
                 } else
                     props.navigation.pop()
+            } else {
+                alert("err")
+                handlerError({ JsonContent: json, RowKey: row_key })
             }
         }).catch(err => {
             console.log("onClickPay err ", err);
@@ -384,8 +390,30 @@ export default (props) => {
     }
 
     const handlerError = (data) => {
-
+        // console.log("handlerError data ", data);
         let dataOffline = data;
+
+        // Id: 'string',
+        // Orders: 'string',
+        // ExcessCash: { type: 'int', default: 0 },
+        // DontSetTime: { type: 'int', default: 0 },
+        // HostName: { type: 'string', default: '' },
+        // BranchId: { type: 'int', default: 0 },
+        // SyncCount: { type: 'int', default: 0 },
+
+        let params = {
+            Id: "OFFLINE" + Math.floor(Math.random() * 9999999),
+            Orders: JSON.stringify(data.JsonContent),
+            ExcessCash: data.JsonContent.ExcessCash,
+            DontSetTime: 0,
+            HostName: URL.link,
+            BranchId: vendorSession.CurrentBranchId,
+            SyncCount: 0
+        }
+
+        console.log("handlerError params ", params);
+
+        dataManager.syncOrdersOffline([params]);
 
     }
 

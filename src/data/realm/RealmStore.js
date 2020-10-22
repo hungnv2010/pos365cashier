@@ -16,6 +16,7 @@ class RealmStore extends RealmBase {
 
     //override
     insertDatas(schema, datas) {
+        console.log("insertDatas datas.length ", datas.length);
         return super.insertDatas(databaseOption, schema, datas);
     }
 
@@ -161,6 +162,15 @@ class RealmStore extends RealmBase {
         return this.queryAll(databaseOption, SchemaName.PROMOTION)
     }
 
+    //OrdersOffline
+    insertOrdersOffline(newOrdersOffline) {
+        console.log("insertOrdersOffline newOrdersOffline ", newOrdersOffline);
+        return this.insertDatas(SchemaName.ORDERS_OFFLINE, newOrdersOffline)
+    }
+
+    queryOrdersOffline = async () => {
+        return this.queryAll(databaseOption, SchemaName.ORDERS_OFFLINE)
+    }
 
 }
 
@@ -189,7 +199,6 @@ const OrdersOffline = {
         BranchId: { type: 'int', default: 0 },
         SyncCount: { type: 'int', default: 0 },
     }
-
 }
 
 const CustomerSchema = {

@@ -16,7 +16,7 @@ class DataManager {
             })
             .subscribe(async (serverEvent) => {
                 console.log("subjectUpdateServerEvent serverEvent ", serverEvent);
-                
+
                 await realmStore.insertServerEvent(serverEvent)
                 signalRManager.sendMessageServerEvent(serverEvent)
             })
@@ -89,6 +89,13 @@ class DataManager {
         await this.syncData(ApiPath.SYNC_PARTNERS, SchemaName.CUSTOMER)
     }
 
+    syncOrdersOffline = async (value) => {
+        console.log("syncOrdersOffline value ", value);
+        if (value) {
+            realmStore.insertOrdersOffline(value)
+        }
+    }
+
     syncAllDatas = async () => {
         await this.syncProduct(),
             await this.syncTopping(),
@@ -125,7 +132,7 @@ class DataManager {
         if (!serverEvent.JsonContent) return
         serverEvent.JsonContent = JSON.stringify(newJsonContent)
         serverEvent.Version += 10
-        
+
     }
 
     totalProducts = (products) => {
