@@ -14,6 +14,7 @@ export const Constant = {
     PROVISIONAL_PRINT: "PROVISIONAL_PRINT",
     ALREADY_INSERT_PRODUCT: 'ALREADY_INSERT_PRODUCT',
     HISTORY_ORDER: "HISTORY_ORDER",
+    ID_VNPAY_QR: 978,
     TIME_SELECT: [
         {
             type: 4,

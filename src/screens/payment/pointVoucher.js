@@ -76,11 +76,20 @@ export default (props) => {
 
     const onChangeTextInput = (text) => {
         console.log("onChangeTextInput text ", text);
-        if (+text < pointCurrent) {
-            setPointUse(text)
+        text = text.replace(/,/g, "");
+        text = Number(text);
+        if (text < pointCurrent) {
+            if (deviceType == Constant.TABLET)
+                props.onChangePointUse(text)
+            else
+                setPointUse(text)
+        } else {
+            if (deviceType == Constant.TABLET)
+                props.onChangePointUse(props.route.params.customer.Point)
+            else
+                setPointUse(props.route.params.customer.Point)
         }
-        if (deviceType == Constant.TABLET)
-            props.onChangePointUse(text)
+
     }
 
     const onCallBack = (data) => {

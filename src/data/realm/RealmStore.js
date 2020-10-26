@@ -211,6 +211,14 @@ const CustomerSchema = {
         Phone: { type: 'string', default: '' },
         Address: { type: 'string', default: '' },
         Point: { type: 'int', default: 0 },
+        Gender: { type: 'int', default: 0 },
+        Debt: { type: 'double', default: 0 },
+        TotalDebt: { type: 'double', default: 0 },
+        // PartnerGroupMembers: { type: 'string', default: '' },
+        // LeadOwnerId: { type: 'int', default: 0 },
+        Description: { type: 'string', default: '' },
+        Dob: { type: 'string', default: '' },
+        // BestDiscount: { type: 'double', default: 0 },
     }
 }
 
@@ -360,7 +368,7 @@ const PromotionSchema = {
 const databaseOption = {
     path: 'Pos365Boss.realm',
     schema: [ServerEventSchema, RoomSchema, RoomGroupSchema, ProductSchema, CategoriesSchema, ToppingsSchema, CustomerSchema, PromotionSchema, OrdersOffline],
-    schemaVersion: 29
+    schemaVersion: 30
 }
 
 const realm = new Realm(databaseOption);

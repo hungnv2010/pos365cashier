@@ -285,10 +285,39 @@ export default (props) => {
         }
     }
 
-    const onChangeTextPaymentPaid = (text, item) => {
+    const onChangeTextPaymentPaid = (text, item, index = 0) => {
+
+        let amountReceived = 0;
+
+        listMethod.forEach((element, indexArr) => {
+            if (indexArr != 0 && index != indexArr) {
+                amountReceived += element.Value
+            }
+        });
+
+        let json = jsonContent;
         let total = 0;
         text = text.replace(/,/g, "");
         text = Number(text);
+        console.log("onChangeTextPaymentPaid text== ", text);
+        console.log("onChangeTextPaymentPaid json.Total==, amountReceived ", json.Total, amountReceived);
+        if (index != 0) {
+            if (amountReceived == 0) {
+                if (text > json.Total) {
+                    text = json.Total
+                }
+            } else {
+                if (json.Total - amountReceived > 0) {
+                    if (text > json.Total - amountReceived) {
+                        text = json.Total - amountReceived;
+                    }
+                }
+                else {
+                    text = 0
+                }
+            }
+        }
+
         listMethod.forEach(element => {
             if (item.Id == element.Id) {
                 element.Value = text
@@ -298,7 +327,7 @@ export default (props) => {
             }
         });
         setListMethod([...listMethod])
-        let json = jsonContent;
+
         json.ExcessCash = total - jsonContent.Total;
         setJsonContent(json)
     }
@@ -308,6 +337,17 @@ export default (props) => {
     }
 
     const onSelectExcess = (type) => {
+        if (type) {
+            let total = listMethod.reduce(getSumValue, 0);
+            console.log("onSelectExcess total jsonContent.Total ", total, jsonContent.Total);
+            let json = jsonContent;
+            json.ExcessCash = total - json.Total;
+            console.log("onSelectExcess json ", json)
+            setJsonContent({ ...json })
+        } else {
+            jsonContent.ExcessCash = 0;
+            setJsonContent(jsonContent)
+        }
         setGiveMoneyBack(type)
     }
 
@@ -336,23 +376,53 @@ export default (props) => {
 
     }
 
-    const onClickPay = () => {
-        // console.log("onClickPay jsonContent ", jsonContent);
-        console.log("onClickPay serverEvent ", currentServerEvent.current);
-        let paramMethod = []
+    const checkQRInListMethod = () => {
+        let check = false;
         listMethod.forEach(element => {
-            paramMethod.push({ AccountId: element.Id, Value: element.Value })
+            if (element.Id == Constant.ID_VNPAY_QR) {
+                check = true;
+            }
         });
+        return (check && listMethod.length > 1) ? true : false;
+    }
+
+    const onClickPay = () => {
+        if (checkQRInListMethod()) {
+            setToastDescription(I18n.t("khong_ho_tro_nhieu_tai_khoan_cho_qr"))
+            setShowToast(true)
+            return;
+        }
         let json = { ...jsonContent }
+        let amountReceived = listMethod.reduce(getSumValue, 0);
+        let paramMethod = []
+        listMethod.forEach((element, index) => {
+            let value = element.Value
+            if (index == 0 && giveMoneyBack && amountReceived > json.Total) {
+                value = (amountReceived - value) > json.Total ? 0 : json.Total - (amountReceived - value)
+            }
+            paramMethod.push({ AccountId: element.Id, Value: value })
+        });
         let MoreAttributes = json.MoreAttributes ? JSON.parse(json.MoreAttributes) : {}
         MoreAttributes.PointDiscount = 0;
         MoreAttributes.PointDiscountValue = 0;
         MoreAttributes.TemporaryPrints = [];
         MoreAttributes.Vouchers = listVoucher;
         MoreAttributes.PaymentMethods = paramMethod
+        if (customer && customer.Id) {
+            let debt = customer.Debt ? customer.Debt : 0;
+            MoreAttributes.OldDebt = debt
+            if (!giveMoneyBack)
+                MoreAttributes.NewDebt = debt - (amountReceived - json.Total);
+            else
+                MoreAttributes.NewDebt = debt
+            json.Partner = customer
+            json.PartnerId = customer.Id
+            json.ExcessCashType = giveMoneyBack ? "0" : "1"
+        }
         json['MoreAttributes'] = JSON.stringify(MoreAttributes);
-        json.TotalPayment = json.Total
+        json.TotalPayment = giveMoneyBack ? json.Total : amountReceived
         json.VATRates = json.VATRates
+        json.AmountReceived = amountReceived
         if (listMethod.length > 0)
             json.AccountId = listMethod[0].Id;
         let params = {
@@ -390,17 +460,7 @@ export default (props) => {
     }
 
     const handlerError = (data) => {
-        // console.log("handlerError data ", data);
-        let dataOffline = data;
-
-        // Id: 'string',
-        // Orders: 'string',
-        // ExcessCash: { type: 'int', default: 0 },
-        // DontSetTime: { type: 'int', default: 0 },
-        // HostName: { type: 'string', default: '' },
-        // BranchId: { type: 'int', default: 0 },
-        // SyncCount: { type: 'int', default: 0 },
-
+        console.log("handlerError data ", data);
         let params = {
             Id: "OFFLINE" + Math.floor(Math.random() * 9999999),
             Orders: JSON.stringify(data.JsonContent),
@@ -410,11 +470,8 @@ export default (props) => {
             BranchId: vendorSession.CurrentBranchId,
             SyncCount: 0
         }
-
         console.log("handlerError params ", params);
-
         dataManager.syncOrdersOffline([params]);
-
     }
 
     const amountReceived = () => {
@@ -450,50 +507,47 @@ export default (props) => {
 
     const calculatorPrice = (jsonContent, totalPrice) => {
         let realPriceValue = totalPrice;
-        console.log("calculator realPriceValue ", realPriceValue);
         let disCountValue = 0;
-        console.log("calculator percent ", percent);
-        console.log("calculator jsonContent.DiscountValue ", jsonContent.DiscountValue);
         if (!percent) {
             disCountValue = jsonContent.DiscountValue ? jsonContent.DiscountValue : 0;
         } else {
             disCountValue = realPriceValue / 100 * jsonContent.DiscountRatio
         }
-        console.log("calculator disCountValue ", disCountValue);
         let MoreAttributes = jsonContent.MoreAttributes ? JSON.parse(jsonContent.MoreAttributes) : {};
         let totalDiscount = parseFloat(disCountValue) + (MoreAttributes.PointDiscountValue ? parseFloat(MoreAttributes.PointDiscountValue) : 0) + (point);
-        console.log("calculator totalDiscount ", totalDiscount);
         totalDiscount = (totalDiscount >= realPriceValue) ? realPriceValue : totalDiscount;
-        console.log("calculator totalDiscount ==  ", totalDiscount);
         let notVat = (realPriceValue - totalDiscount + (jsonContent.SafeShippingCost ? jsonContent.SafeShippingCost : 0))
-        console.log("calculator notVat ", notVat);
-        console.log("calculator VATRates ", jsonContent.VATRates);
         let vat = notVat / 100 * parseFloat(jsonContent.VATRates ? jsonContent.VATRates : 0);
-        console.log("calculator vat ", vat);
-        let totalPrice1 = notVat + vat
-        console.log("calculator totalPrice== ", totalPrice1);
-        if (totalPrice1 < 0) totalPrice1 = 0.0
-
-        let excess = amountReceived() - totalPrice1
-        console.log("calculator excess ", excess);
+        let total = notVat + vat
+        if (total < 0) total = 0.0
+        let excess = amountReceived() - total
         let excessCash = (excess < 0.0 && excess > -0.001) ? 0 : excess;
-        console.log("calculator excessCash ", excessCash);
-
         jsonContent.Discount = totalDiscount
         jsonContent.DiscountValue = disCountValue
         jsonContent.Vat = vat
-        jsonContent.Total = totalPrice1
+        jsonContent.Total = total
         jsonContent.ExcessCash = excessCash
-        console.log("calculator totalPrice1 ", totalPrice1);
-
         if (listMethod.length == 1) {
             listMethod.forEach(element => {
-                element.Value = totalPrice1;
+                element.Value = total;
             });
             setListMethod([...listMethod])
             jsonContent.ExcessCash = 0
         }
         setJsonContent({ ...jsonContent })
+        console.log("calculator percent ", percent);
+        console.log("calculator jsonContent.DiscountValue ", jsonContent.DiscountValue);
+        console.log("calculator realPriceValue ", realPriceValue);
+        console.log("calculator disCountValue ", disCountValue);
+        console.log("calculator totalDiscount ", totalDiscount);
+        console.log("calculator totalDiscount ==  ", totalDiscount);
+        console.log("calculator notVat ", notVat);
+        console.log("calculator VATRates ", jsonContent.VATRates);
+        console.log("calculator vat ", vat);
+        console.log("calculator totalPrice== ", total);
+        console.log("calculator excess ", excess);
+        console.log("calculator excessCash ", excessCash);
+        console.log("calculator total ", total);
     }
 
     const renderFilter = () => {
@@ -530,13 +584,12 @@ export default (props) => {
         if (typeModal.current == TYPE_MODAL.QRCODE)
             return (
                 <View style={[styles.viewFilter, { justifyContent: "center", alignItems: "center" }]}>
-                    {/* qrCode.current */}
                     <Text>{qrCode.current}</Text>
-                    {/* <Image style={styles.logoImage}
+                    <Image style={styles.logoImage}
                         source={{
                             uri: qrCode.current
                             // uri: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAAAzCAYAAAA6oTAqAAAAEXRFWHRTb2Z0d2FyZQBwbmdjcnVzaEB1SfMAAABQSURBVGje7dSxCQBACARB+2/ab8BEeQNhFi6WSYzYLYudDQYGBgYGBgYGBgYGBgYGBgZmcvDqYGBgmhivGQYGBgYGBgYGBgYGBgYGBgbmQw+P/eMrC5UTVAAAAABJRU5ErkJggg==',
-                        }} /> */}
+                        }} />
                     <View style={styles.viewBottomFilter}>
                         <TouchableOpacity style={styles.viewButtonCancel} onPress={onClickCancelFilter}>
                             <Text style={styles.textButtonCancel}>{I18n.t("huy")}</Text>
@@ -573,7 +626,7 @@ export default (props) => {
                         value={"" + currencyToString(item.Value)}
                         onTouchStart={() => onTouchInput({ ...item, ...METHOD.pay })}
                         editable={deviceType == Constant.TABLET ? false : true}
-                        onChangeText={(text) => onChangeTextPaymentPaid(text, item)}
+                        onChangeText={(text) => onChangeTextPaymentPaid(text, item, index)}
                         style={[styles.inputListMethod, { borderColor: sendMethod.Id == item.Id ? colors.colorchinh : "gray" }]} />
                 </View>
             )
@@ -713,7 +766,7 @@ export default (props) => {
                                 <Text style={{ flex: 4, textAlign: "right", color: jsonContent.ExcessCash > 0 ? "green" : "red" }}>{currencyToString(jsonContent.ExcessCash)}</Text>
                             </View>
                             {
-                                (jsonContent.ExcessCash > 0 && (customer && customer.Id && customer.Id != "")) ?
+                                (jsonContent.ExcessCash >= 0 && (customer && customer.Id && customer.Id != "")) ?
                                     <View style={styles.viewExcessCash}>
                                         <TouchableOpacity onPress={() => onSelectExcess(true)} style={styles.viewRadioButton}>
                                             <RadioButton.Android

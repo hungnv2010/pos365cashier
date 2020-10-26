@@ -128,6 +128,7 @@ export default {
   khong_xac_dinh: "Không xác định",
   ket_qua_ban_hang: "Kết quả bán hàng",
   khach_thanh_toan: "Khách thanh toán",
+  khong_ho_tro_nhieu_tai_khoan_cho_qr: "Không hỗ trợ nhiều tài khoản thanh toán cho QR",
 
   // TODO: H
   hoa_don: "Hoá đơn",
