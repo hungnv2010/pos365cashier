@@ -69,21 +69,26 @@ export default (props) => {
 
 
     const onClickCustomerItem = (item) => {
-        if (item.Id == -1) {
-            onClickAddCustomer()
+        if (props.route.params._onSelect) {
+            props.route.params._onSelect(item);
+            props.navigation.goBack()
         } else {
-            let params = { Includes: 'PartnerGroupMembers' }
-            new HTTPService().setPath(`${ApiPath.CUSTOMER}/${item.Id}`).GET(params).then(res => {
-                console.log('onClickCustomerItem res', res);
-                if (res) {
-                    if (deviceType == Constant.TABLET) {
-                        setCustomerItem(res)
-                    } else {
-                        console.log('onClickCustomerItem for PHONE');
-                        props.navigation.navigate(ScreenList.CustomerDetailForPhone, { item: res, onCallBack: handleSuccess })
+            if (item.Id == -1) {
+                onClickAddCustomer()
+            } else {
+                let params = { Includes: 'PartnerGroupMembers' }
+                new HTTPService().setPath(`${ApiPath.CUSTOMER}/${item.Id}`).GET(params).then(res => {
+                    console.log('onClickCustomerItem res', res);
+                    if (res) {
+                        if (deviceType == Constant.TABLET) {
+                            setCustomerItem(res)
+                        } else {
+                            console.log('onClickCustomerItem for PHONE');
+                            props.navigation.navigate(ScreenList.CustomerDetailForPhone, { item: res, onCallBack: handleSuccess })
+                        }
                     }
-                }
-            })
+                })
+            }
         }
     }
 
