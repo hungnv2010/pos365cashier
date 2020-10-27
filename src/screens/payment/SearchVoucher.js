@@ -9,6 +9,7 @@ import { Constant } from '../../common/Constant';
 import { HTTPService } from '../../data/services/HttpService';
 import { ApiPath } from '../../data/services/ApiPath';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default (props) => {
 
@@ -29,7 +30,6 @@ export default (props) => {
             if (res && res.results) {
                 let listVoucherSelect = (deviceType == Constant.PHONE) ? props.route.params : props
                 console.log("getDataVoucher props ", props);
-
                 let list = [];
                 res.results.forEach(el => {
                     el["check"] = false;
@@ -42,25 +42,7 @@ export default (props) => {
                     })
                     list.push(el);
                 })
-                console.log("checkList list ", list);
                 setListVoucher(list);
-                // if (deviceType == Constant.PHONE) {
-                //     let list = [];
-                //     res.results.forEach(el => {
-                //         el["check"] = false;
-                //         props.route.params.listVoucher.map(item => {
-                //             console.log("checkList ", item.Id, el.Id);
-                //             if (el.Id == item.Id) {
-                //                 el["check"] = true;
-                //                 return;
-                //             }
-                //         })
-                //         list.push(el);
-                //     })
-                //     setListVoucher(list);
-                // } else {
-                //     setListVoucher(res.results);
-                // }
             }
         }).catch((e) => {
             console.log("getDataVoucher err ", e);
@@ -102,7 +84,7 @@ export default (props) => {
             <TouchableOpacity onPress={() => { onClickItem(item) }} style={[styles.item_voucher, { backgroundColor: index % 2 == 0 ? "#FFFAF0" : "#fff" }]}>
                 <View key={index.toString()} style={styles.item_voucher_content}>
                     <Text style={styles.text_code}>{item.Code}</Text>
-                    <Text style={{}}>{currencyToString(item.Value)}</Text>
+                    <Text >{item.IsPercent ? item.Value + "%" : currencyToString(item.Value)}</Text>
                 </View>
                 {
                     item.check == true ? <Icon name="check" size={30} color={colors.colorchinh} /> : null
@@ -124,15 +106,18 @@ export default (props) => {
                     clickRightIcon={(textSearch) => outputIsSelectProduct(textSearch)}
                 />
                 : null}
-            <FlatList
-                keyboardShouldPersistTaps="handled"
-                style={{ flex: 1, paddingBottom: 0, }}
-                onEndReachedThreshold={0.5}
-                onEndReached={loadMore}
-                keyExtractor={(item, index) => index.toString()}
-                data={listVoucher}
-                renderItem={({ item, index }) => renderItemList(item, index)}
-            />
+            <KeyboardAwareScrollView>
+                <FlatList
+                    keyboardShouldPersistTaps="handled"
+                    style={{ flex: 1, paddingBottom: 0, }}
+                    onEndReachedThreshold={0.5}
+                    onEndReached={loadMore}
+                    keyExtractor={(item, index) => index.toString()}
+                    data={listVoucher}
+                    renderItem={({ item, index }) => renderItemList(item, index)}
+                />
+            </KeyboardAwareScrollView>
+
         </View>
     )
 }

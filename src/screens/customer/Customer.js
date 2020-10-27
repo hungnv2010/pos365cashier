@@ -19,6 +19,7 @@ import { HTTPService } from '../../data/services/HttpService';
 import { ApiPath } from '../../data/services/ApiPath';
 import dataManager from '../../data/DataManager';
 import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
+import dialogManager from '../../components/dialog/DialogManager';
 
 let GUEST = {
     Id: -1,
@@ -47,20 +48,31 @@ export default (props) => {
     }
 
     const getCustomer = async () => {
-        let customers = await realmStore.queryCustomer()
-        customers = JSON.parse(JSON.stringify(customers))
-        customers = Object.values(customers)
-        console.log('getCustomer', customers);
-        if (customers) {
-            customers.unshift(GUEST)
-            setCustomerData(customers)
+        dialogManager.showLoading()
+        try {
+            let customers = await realmStore.queryCustomer()
+            customers = customers.sorted('Name')
+            customers = JSON.parse(JSON.stringify(customers))
+            customers = Object.values(customers)
+            console.log('getCustomer', customers);
+            if (customers) {
+                customers.unshift(GUEST)
+                setCustomerData(customers)
+            }
+            dialogManager.hiddenLoading()
+        } catch (error) {
+            console.log('getCustomer err', error);
+            dialogManager.hiddenLoading()
         }
     }
 
 
 
     const onClickCustomerItem = (item) => {
-        if (deviceType == Constant.TABLET && !props.route.params._onSelect) {
+        if (props.route.params._onSelect) {
+            props.route.params._onSelect(item);
+            props.navigation.goBack()
+        } else {
             if (item.Id == -1) {
                 onClickAddCustomer()
             } else {
@@ -68,14 +80,15 @@ export default (props) => {
                 new HTTPService().setPath(`${ApiPath.CUSTOMER}/${item.Id}`).GET(params).then(res => {
                     console.log('onClickCustomerItem res', res);
                     if (res) {
-                        setCustomerItem(res)
+                        if (deviceType == Constant.TABLET) {
+                            setCustomerItem(res)
+                        } else {
+                            console.log('onClickCustomerItem for PHONE');
+                            props.navigation.navigate(ScreenList.CustomerDetailForPhone, { item: res, onCallBack: handleSuccess })
+                        }
                     }
                 })
             }
-        } else {
-            props.route.params._onSelect(item)
-            props.navigation.goBack()
-            console.log('onClickCustomerItem for PHONE');
         }
     }
 
@@ -106,14 +119,21 @@ export default (props) => {
     }
 
     const handleSuccess = async (type) => {
-        if (type != 'delete') {
-            console.log('handleSuccess');
-            await dataManager.syncPartner()
-            getCustomer()
-        } else {
-            await realmStore.deletePartner()
-            await dataManager.syncPartner()
-            getCustomer()
+        dialogManager.showLoading()
+        try {
+            if (type != 'delete') {
+                console.log('handleSuccess');
+                await dataManager.syncPartner()
+                getCustomer()
+            } else {
+                await realmStore.deletePartner()
+                await dataManager.syncPartner()
+                getCustomer()
+            }
+            dialogManager.hiddenLoading()
+        } catch (error) {
+            console.log('handleSuccess err', error);
+            dialogManager.hiddenLoading()
         }
     }
 

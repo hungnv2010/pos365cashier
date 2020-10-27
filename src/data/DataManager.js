@@ -5,7 +5,7 @@ import { getFileDuLieuString, setFileLuuDuLieu } from "../data/fileStore/FileSto
 import { Subject } from 'rxjs';
 import moment from "moment";
 import signalRManager from "../common/SignalR";
-import { momentToDateUTC } from "../common/Utils";
+import { momentToDateUTC, groupBy } from "../common/Utils";
 class DataManager {
     constructor() {
         this.subjectUpdateServerEvent = new Subject()
@@ -13,10 +13,51 @@ class DataManager {
             .map(serverEvent => {
                 return serverEvent
             })
-            .subscribe( async (serverEvent) => {
+            .subscribe(async (serverEvent) => {
+                console.log("subjectUpdateServerEvent serverEvent ", serverEvent);
+
                 await realmStore.insertServerEvent(serverEvent)
                 signalRManager.sendMessageServerEvent(serverEvent)
             })
+        this.initComfirmOrder()
+    }
+
+    initComfirmOrder = () => {
+        const scan = setInterval(async () => {
+            try {
+                let intNewOrder = await new HTTPService().setPath(ApiPath.WAIT_FOR_COMFIRMATION).GET()
+                if (intNewOrder && intNewOrder > 0) {
+                    // let serverEvent = await realmStore.queryServerEvents()
+                    // serverEvent = JSON.parse(JSON.stringify(serverEvent))
+                    let newOrders = await new HTTPService().setPath(ApiPath.WAIT_FOR_COMFIRMATION_ALL).GET()
+                    this.printCook(newOrders)
+                    let newServerEvents = this.mergeServerEvents(serverEvent, newOrders)
+                    console.log('newServerEvents', newServerEvents);
+                    // this.updateServerEvent(newServerEvents)
+                }
+            } catch (error) {
+                console.log('initComfirmOrder error', error);
+            }
+        }, 15000);
+    }
+
+    printCook = (newOrders) => {
+        newOrders.forEach((elm, idx)=>{
+            
+        })
+    }
+
+    mergeServerEvents = (serverEvent, newOrders) => {
+        let listRowKey = []
+        newOrders.forEach(element => {
+            let rowKey = `${element.RoomId}_${element.Position}`;
+
+
+        });
+
+        console.log('mergeServerEvents', serverEvent, newOrders);
+        serverEvent.Version += 1;
+        return serverEvent
     }
 
     //get information (From FileStore)
@@ -34,7 +75,7 @@ class DataManager {
         let res = await new HTTPService().setPath(ApiPath.SERVER_EVENT).GET()
 
         if (res && res.length > 0)
-            realmStore.insertServerEvents(res).subscribe((res, serverEvent) => {})
+            realmStore.insertServerEvents(res).subscribe((res, serverEvent) => { })
     }
 
     syncProduct = async () => {
@@ -86,6 +127,13 @@ class DataManager {
         await this.syncData(ApiPath.SYNC_PARTNERS, SchemaName.CUSTOMER)
     }
 
+    syncOrdersOffline = async (value) => {
+        console.log("syncOrdersOffline value ", value);
+        if (value) {
+            realmStore.insertOrdersOffline(value)
+        }
+    }
+
     syncAllDatas = async () => {
         await this.syncProduct(),
         await this.syncTopping(),
@@ -102,11 +150,11 @@ class DataManager {
     }
 
     calculatateServerEvent = (serverEvent, newOrderDetail) => {
-        if(!serverEvent.JsonContent) return
+        if (!serverEvent.JsonContent) return
         let jsonContentObject = JSON.parse(serverEvent.JsonContent)
         jsonContentObject.OrderDetails = newOrderDetail
         let totalProducts = this.totalProducts(newOrderDetail)
-        let totalWithVAT = totalProducts + jsonContentObject.VAT  
+        let totalWithVAT = totalProducts + jsonContentObject.VAT
         jsonContentObject.Total = totalWithVAT
         jsonContentObject.AmountReceived = totalWithVAT
         if (jsonContentObject.ActiveDate)
@@ -127,6 +175,13 @@ class DataManager {
             JsonContent.ActiveDate = momentToDateUTC(moment())
         else if (!JsonContent.OrderDetails || JsonContent.OrderDetails.length == 0)
             JsonContent.ActiveDate = ""
+    }
+    
+    paymentSetServerEvent = (serverEvent, newJsonContent) => {
+        if (!serverEvent.JsonContent) return
+        serverEvent.JsonContent = JSON.stringify(newJsonContent)
+        serverEvent.Version += 10
+
     }
 
     totalProducts = (products) => {

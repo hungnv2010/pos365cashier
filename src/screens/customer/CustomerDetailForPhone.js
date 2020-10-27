@@ -11,19 +11,22 @@ import { useSelector } from 'react-redux';
 import { Constant } from '../../common/Constant';
 import { getFileDuLieuString } from '../../data/fileStore/FileStorage';
 import moment from 'moment';
+import DateTime from '../../components/filter/DateTime';
 import DateRangePicker from 'react-native-daterange-picker';
 import { HTTPService } from '../../data/services/HttpService';
 import { ApiPath } from '../../data/services/ApiPath';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import dialogManager from '../../components/dialog/DialogManager';
+import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
 
 
 export default (props) => {
 
-    const [customerDetail, setCustomerDetail] = useState({})
+    const [customerDetail, setCustomerDetail] = useState({...props.route.params.item})
     const [listGroup, setListGroup] = useState([])
     const [dateTimePicker, setDateTimePicker] = useState({
         startDate: null,
+        endDate: null,
         displayedDate: moment(),
     })
     const [showToast, setShowToast] = useState(false);
@@ -51,20 +54,31 @@ export default (props) => {
         getListGroup()
     }, [])
 
-    useEffect(() => {
-        console.log('customeretail props', props.customerDetail);
-        if (props.customerDetail.Id == - 1) {
-            resetCustomer()
-            return
-        }
-        setCustomerDetail({ ...props.customerDetail })
-    }, [props.customerDetail])
+    // useEffect(() => {
+    //     console.log('customeretail props', props, listGroup);
+    //     let customerDetail = props.route.params.item
+    //     if (customerDetail.Id == - 1) {
+    //         resetCustomer()
+    //         return
+    //     }
+    //     listGroup.forEach(item => {
+    //         item.status = false // reset listGroup
+    //         customerDetail.PartnerGroupMembers.forEach(elm => {
+    //             if (item.Id == elm.GroupId) {
+    //                 item.status = true
+    //             }
+    //         })
+    //     })
+    //     setListGroup([...listGroup])
+    //     setCustomerDetail({ ...props.route.params.item })
+    // }, [props.route.params.item])
 
-    useEffect(() => {
-        getListGroupByCustomer()
-    }, [customerDetail])
+    // useEffect(() => {
+    //     getListGroupByCustomer()
+    // }, [getListGroupByCustomer])
 
-    const getListGroupByCustomer = () => {
+    const getListGroupByCustomer = useCallback(() => {
+        console.log();
         listGroup.forEach(item => {
             item.status = false // reset listGroup
             customerDetail.PartnerGroupMembers.forEach(elm => {
@@ -74,7 +88,7 @@ export default (props) => {
             })
         })
         setListGroup([...listGroup])
-    }
+    }, [customerDetail])
 
     const setDates = (dates) => {
         console.log('setDates', dates);
@@ -100,6 +114,7 @@ export default (props) => {
     }
 
     const renderGender = (item) => {
+        console.log('renderGender', item);
         return (
             <View style={{ padding: 15 }}>
                 <Text style={{ paddingBottom: 10 }}>Sex</Text>
@@ -169,23 +184,6 @@ export default (props) => {
         }
     }
 
-    const onCancel = () => {
-        setShowModal(false)
-    }
-
-    const onDone = () => {
-        console.log('onDone', dateTimePicker);
-        const { startDate } = dateTimePicker;
-        if (!startDate) {
-            toastDescription.current = I18n.t('vui_long_chon_ngay_sinh')
-            showToast(true)
-        } else {
-            console.log(momentToStringDateLocal(startDate));
-            setCustomerDetail({ ...customerDetail, DOB: momentToStringDateLocal(startDate) })
-        }
-        setShowModal(false)
-    }
-
     const renderModalContent = () => {
         return typeModal.current == 1 ?
             <View style={{
@@ -195,19 +193,12 @@ export default (props) => {
                 <DateRangePicker
                     visible={true}
                     onChange={(dates) => setDates(dates)}
+                    endDate={dateTimePicker.endDate}
                     startDate={dateTimePicker.startDate}
                     displayedDate={dateTimePicker.displayedDate}
                     maxDate={moment()}
                     range
-                    onlyStartDate={true}
-                    action={<View style={{ flexDirection: "row", margin: 10, alignItems: "center", justifyContent: "center" }}>
-                        <TouchableOpacity onPress={onCancel} style={{ marginHorizontal: 20, paddingHorizontal: 30, borderColor: colors.colorchinh, borderWidth: 1, paddingVertical: 10, borderRadius: 5 }}>
-                            <Text style={{ color: colors.colorchinh, textTransform: "uppercase" }}>{I18n.t("huy")}</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={onDone} style={{ marginHorizontal: 20, paddingHorizontal: 30, paddingVertical: 10, backgroundColor: colors.colorchinh, borderRadius: 5, borderWidth: 0 }}>
-                            <Text style={{ color: "#fff", textTransform: "uppercase" }}>{I18n.t("xong")}</Text>
-                        </TouchableOpacity>
-                    </View>}
+
                 >
                 </DateRangePicker>
             </View>
@@ -290,7 +281,7 @@ export default (props) => {
     }
 
     const onClickCancelGroupName = () => {
-        getListGroupByCustomer()
+        // getListGroupByCustomer()
         setShowModal(false)
     }
 
@@ -316,15 +307,11 @@ export default (props) => {
         return value.toString()
     }
 
-    const onClickApply = () => {
-        let dateRegex = /^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/;
+    const onClickDone = () => {
         if (customerDetail.Name == '') {
             toastDescription.current = I18n.t("vui_long_nhap_day_du_thong_tin_truoc_khi_luu")
             setShowToast(true)
             return
-        }
-        if (customerDetail.DOB) {
-
         }
         let PartnerGroupMembers = []
         listGroup.forEach(item => {
@@ -350,24 +337,21 @@ export default (props) => {
                 Description: customerDetail.Description,
             }
         }
-        if (props.customerDetail.Id == -1) {
+        if (props.route.params.item.Id == -1) {
             console.log('add');
             dialogManager.showLoading()
             new HTTPService().setPath(ApiPath.CUSTOMER).POST(params)
                 .then(res => {
-                    console.log('onClickApply res', res);
+                    console.log('onClickDone res', res);
                     if (res) {
-                        props.handleSuccess('add')
+                        props.route.params.onCallBack('add')
                         resetCustomer()
-                    } else {
-                        toastDescription.current = `${customerDetail.Code} ${I18n.t('da_ton_tai_trong_he_thong')}`
-                        setShowToast(true)
                     }
                     dialogManager.hiddenLoading()
                 })
                 .catch(err => {
                     dialogManager.hiddenLoading()
-                    console.log('onClickApply err', err);
+                    console.log('onClickDone err', err);
                 })
         } else {
             console.log('update');
@@ -375,16 +359,16 @@ export default (props) => {
             dialogManager.showLoading()
             new HTTPService().setPath(ApiPath.CUSTOMER).POST(params)
                 .then(res => {
-                    console.log('onClickApply res', res);
+                    console.log('onClickDone res', res);
                     if (res) {
-                        props.handleSuccess('update')
+                        props.route.params.onCallBack('update')
                         resetCustomer()
                     }
                     dialogManager.hiddenLoading()
                 })
                 .catch(err => {
                     dialogManager.hiddenLoading()
-                    console.log('onClickApply err', err);
+                    console.log('onClickDone err', err);
                 })
         }
     }
@@ -394,7 +378,7 @@ export default (props) => {
         new HTTPService().setPath(`${ApiPath.CUSTOMER}/${customerDetail.Id}`).DELETE()
             .then(res => {
                 console.log('onClickDelete', res)
-                if (res) props.handleSuccess('delete')
+                if (res) props.route.params.onCallBack('delete')
             })
             .catch(err => console.log('onClickDelete err', err))
     }
@@ -403,41 +387,24 @@ export default (props) => {
 
     }
 
-    const getIcon = (Gender, Image) => {
-        if (Image) {
-            return { uri: Image };
-        } else {
-            switch (Gender) {
-                case 2:
-                    return Images.icon_woman;
-                    break;
-                case 1:
-                    return Images.icon_male;
-                    break;
-
-                default:
-                    return Images.icon_avatar;
-                    break;
-            }
-        }
-    }
-
     return (
         <View style={{ flex: 1 }}>
-            <View style={{ backgroundColor: colors.colorchinh, marginLeft: 15, paddingVertical: 10 }}>
-                <Text style={{ textAlign: "center", color: "white", fontSize: 15, textTransform: "uppercase" }}>{props.customerDetail.Id == -1 ? 'Add customer' : 'Update Customer'}</Text>
-            </View>
+            {/* <View style={{ backgroundColor: colors.colorchinh, marginLeft: 15, paddingVertical: 10 }}>
+                <Text style={{ textAlign: "center", color: "white", fontSize: 15, textTransform: "uppercase" }}>{props.route.params.item && props.route.params.item.Id == -1 ? 'Add customer' : 'Update Customer'}</Text>
+            </View> */}
+            <ToolBarDefault
+                {...props}
+                title={props.route.params.item.Id == -1 ? 'Add customer' : 'Update Customer'} />
             <ScrollView style={{ flex: 1, padding: 10 }}>
                 <Surface style={styles.surface}>
                     <View style={{ height: Metrics.screenHeight / 6, flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 15 }}>
-                        <View style={{ flex: 1, marginRight: 20, borderRadius: 20 }}>
-                            <Image source={getIcon(customerDetail.Gender, customerDetail.Image)} style={{ height: 100, width: 100, alignSelf: "center" }} />
+                        <View style={{ flex: 1, marginRight: 20 }}>
+                            <View style={{ flex: 1, borderRadius: 100, backgroundColor: "red" }}></View>
                         </View>
                         <View style={{ flex: 2, }}>
-                            <Text style={{ fontWeight: "bold" }}>{I18n.t('ma_khach_hang')}</Text>
+                            <Text style={{ fontWeight: "bold" }}>Customer Code</Text>
                             <View style={{ paddingVertical: 20 }}>
                                 <TextInput
-                                    placeholder={I18n.t('tu_dong_tao_ma')}
                                     value={customerDetail.Code}
                                     style={{ borderWidth: 0.5, padding: 10, borderRadius: 5 }}
                                     onChangeText={(text) => { onChangeText(text, 0) }}
@@ -448,18 +415,16 @@ export default (props) => {
                 </Surface>
                 <Surface style={styles.surface}>
                     <View style={{ padding: 15 }}>
-                        <Text style={{ paddingBottom: 10 }}>{I18n.t('ten')}<Text style={{ color: "red" }}>*</Text></Text>
+                        <Text style={{ paddingBottom: 10 }}>Name <Text style={{ color: "red" }}>*</Text></Text>
                         <TextInput
-                            placeholder={I18n.t('ten')}
                             value={customerDetail.Name}
                             style={{ borderWidth: 0.5, padding: 10, borderRadius: 5 }}
                             onChangeText={(text) => { onChangeText(text, 1) }}
                         />
                     </View>
                     <View style={{ padding: 15 }}>
-                        <Text style={{ paddingBottom: 10 }}>{I18n.t('dien_thoai')}</Text>
+                        <Text style={{ paddingBottom: 10 }}>Phone</Text>
                         <TextInput
-                            placeholder={I18n.t('dien_thoai')}
                             keyboardType="numeric"
                             value={customerDetail.Phone}
                             style={{ borderWidth: 0.5, padding: 10, borderRadius: 5 }}
@@ -467,12 +432,11 @@ export default (props) => {
                         />
                     </View>
                     <View style={{ padding: 15 }}>
-                        <Text style={{ paddingBottom: 10 }}>{I18n.t('ngay_sinh')}</Text>
+                        <Text style={{ paddingBottom: 10 }}>Birthday</Text>
                         <View style={{ flexDirection: "row", flex: 1 }}>
                             <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
                                 <TextInput
-                                    placeholder='dd/mm/yyyy'
-                                    value={(customerDetail.DOB)}
+                                    value={customerDetail.DOB}
                                     style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1 }}
                                     onChangeText={(text) => { onChangeText(text, 3) }}
                                 />
@@ -481,7 +445,6 @@ export default (props) => {
                             <TouchableOpacity
                                 onPress={() => {
                                     typeModal.current = 1
-                                    setDateTimePicker({ ...dateTimePicker, startDate: null })
                                     setShowModal(true)
                                 }}
                                 style={{ marginLeft: 20, justifyContent: "center", backgroundColor: colors.colorLightBlue, borderRadius: 5 }}>
@@ -495,17 +458,15 @@ export default (props) => {
                     <View style={{ padding: 15 }}>
                         <Text style={{ paddingBottom: 10 }}>Email</Text>
                         <TextInput
-                            placeholder="Email"
                             value={customerDetail.Email}
                             style={{ borderWidth: 0.5, padding: 10, borderRadius: 5 }}
                             onChangeText={(text) => { onChangeText(text, 4) }}
                         />
                     </View>
                     <View style={{ padding: 15 }}>
-                        <Text style={{ paddingBottom: 10 }}>{I18n.t('ten_nhom')}</Text>
+                        <Text style={{ paddingBottom: 10 }}>Group name</Text>
                         <View style={{ flexDirection: "row", alignItems: "center" }}>
                             <TextInput
-                                placeholder={I18n.t('ten_nhom')}
                                 value={getGroupName(customerDetail.PartnerGroupMembers)}
                                 editable={false}
                                 onTouchStart={() => {
@@ -522,20 +483,18 @@ export default (props) => {
                 </Surface>
                 <Surface style={styles.surface}>
                     <View style={{ padding: 15 }}>
-                        <Text style={{ paddingBottom: 10 }}>{I18n.t('dia_chi')}</Text>
+                        <Text style={{ paddingBottom: 10 }}>Address</Text>
                         <TextInput
-                            placeholder={I18n.t('dia_chi')}
                             value={customerDetail.Address}
                             style={{ borderWidth: 0.5, padding: 10, borderRadius: 5 }}
                             onChangeText={(text) => { onChangeText(text, 6) }}
                         />
                     </View>
                     <View style={{ padding: 15 }}>
-                        <Text style={{ paddingBottom: 10 }}>{I18n.t('tinh_thanh')}</Text>
+                        <Text style={{ paddingBottom: 10 }}>City</Text>
                         <View style={{ flexDirection: "row", flex: 1 }}>
                             <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
                                 <TextInput
-                                    placeholder={I18n.t('tinh_thanh')}
                                     value={customerDetail.Province}
                                     style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1 }}
                                     onChangeText={(text) => { onChangeText(text, 7) }}
@@ -554,9 +513,8 @@ export default (props) => {
                 </Surface>
                 <Surface style={styles.surface}>
                     <View style={{ padding: 15 }}>
-                        <Text style={{ paddingBottom: 10 }}>{I18n.t('du_no')}</Text>
+                        <Text style={{ paddingBottom: 10 }}>Debt</Text>
                         <TextInput
-                            placeholder={I18n.t('du_no')}
                             keyboardType="numeric"
                             value={currencyToString(customerDetail.TotalDebt)}
                             style={{ borderWidth: 0.5, padding: 10, borderRadius: 5 }}
@@ -564,9 +522,8 @@ export default (props) => {
                         />
                     </View>
                     <View style={{ padding: 15 }}>
-                        <Text style={{ paddingBottom: 10 }}>{I18n.t('diem_thuong')}</Text>
+                        <Text style={{ paddingBottom: 10 }}>Reward point</Text>
                         <TextInput
-                            placeholder={I18n.t('diem_thuong')}
                             keyboardType="numeric"
                             value={currencyToString(customerDetail.Point)}
                             style={{ borderWidth: 0.5, padding: 10, borderRadius: 5 }}
@@ -577,9 +534,8 @@ export default (props) => {
                 </Surface>
                 <Surface style={styles.surface}>
                     <View style={{ padding: 15 }}>
-                        <Text style={{ paddingBottom: 10 }}>{I18n.t('ghi_chu')}</Text>
+                        <Text style={{ paddingBottom: 10 }}>Note</Text>
                         <TextInput
-                            placeholder={I18n.t('ghi_chu')}
                             value={customerDetail.Description}
                             style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, height: 70 }}
                             onChangeText={(text) => { onChangeText(text, 10) }}
@@ -591,7 +547,7 @@ export default (props) => {
             </ScrollView>
             <View style={{ flexDirection: "row", margin: 10, }}>
                 {
-                    props.customerDetail.Id == -1 ?
+                    props.route.params.item.Id == -1 ?
                         null
                         :
                         <>
@@ -603,7 +559,7 @@ export default (props) => {
                             </TouchableOpacity>
                         </>
                 }
-                <TouchableOpacity onPress={onClickApply} style={{ flex: 8, flexDirection: "row", marginLeft: 10, marginTop: 0, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 15 }}>
+                <TouchableOpacity onPress={onClickDone} style={{ flex: 8, flexDirection: "row", marginLeft: 10, marginTop: 0, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 15 }}>
                     <Text style={{ color: "#fff", fontWeight: "bold" }}>{I18n.t('ap_dung')}</Text>
                 </TouchableOpacity>
             </View>
