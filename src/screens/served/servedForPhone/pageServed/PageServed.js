@@ -17,7 +17,7 @@ import dataManager from '../../../../data/DataManager';
 export default (props) => {
 
     let serverEvent = null;
-    const [currentServerEvent, setCurrentSeverEvent] = useState({})
+    const currentServerEvent = useRef({})
 
     const [jsonContent, setJsonContent] = useState({})
 
@@ -44,14 +44,14 @@ export default (props) => {
             serverEvent = serverEvent.filtered(`RowKey == '${row_key}'`)
         
             if (JSON.stringify(serverEvent) != '{}' && serverEvent[0].JsonContent) {
-                setCurrentSeverEvent(serverEvent[0])
+                currentServerEvent.current = serverEvent[0]
                 let jsonContentObject = JSON.parse(serverEvent[0].JsonContent)
                 setJsonContent(jsonContentObject.OrderDetails? jsonContentObject : Constant.JSONCONTENT_EMPTY)     
             } else setJsonContent(Constant.JSONCONTENT_EMPTY)
 
             serverEvent.addListener((collection, changes) => {
-                if (changes.insertions.length || changes.modifications.length) {
-                    setCurrentSeverEvent(serverEvent[0])
+                if ((changes.insertions.length || changes.modifications.length) && serverEvent[0].FromServer) {
+                    currentServerEvent.current = serverEvent[0]
                     setJsonContent(JSON.parse(serverEvent[0].JsonContent))
                 }
             })
@@ -75,14 +75,19 @@ export default (props) => {
             });
             toolBarPhoneServedRef.current.clickCheckInRef(!ischeck)
         }
-        if(currentServerEvent)
-            updateServerEvent(JSON.parse(JSON.stringify(currentServerEvent)), list)
+        jsonContent.OrderDetails = [...list]
+        updateServerEvent()
     }
 
-    const updateServerEvent = (serverEvent, newOrderDetail) => {
-        dataManager.calculatateServerEvent(serverEvent, newOrderDetail)
-        serverEvent.Version += 1
-        dataManager.subjectUpdateServerEvent.next(serverEvent)
+    const updateServerEvent = () => {
+        if(currentServerEvent) {
+            let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current))
+            dataManager.calculatateJsonContent(jsonContent)
+            setJsonContent({...jsonContent})
+            serverEvent.Version += 1
+            serverEvent.JsonContent = JSON.stringify(jsonContent)
+            dataManager.updateServerEvent(serverEvent)
+        }
     }
 
     const onClickNoteBook = () => {
@@ -101,7 +106,6 @@ export default (props) => {
                 results = JSON.parse(JSON.stringify(results))
                 console.log("outputClickProductService results ", [results["0"]]);
                 results["0"]["Quantity"] = 1;
-                results["0"]["Sid"] = Date.now();
                 toolBarPhoneServedRef.current.clickCheckInRef()
                 onCallBack([results["0"]], 2)
             }
@@ -150,7 +154,7 @@ export default (props) => {
             default:
                 break;
         }
-        checkProductId(newList, props.route.params.room.ProductId)
+        checkRoomProductId(newList, props.route.params.room.ProductId)
     }
 
 
@@ -174,12 +178,12 @@ export default (props) => {
         _menu.show();
     };
 
-    const checkProductId = (listProduct, Id) => {
-        console.log("checkProductId id ", Id);
+    const checkRoomProductId = (listProduct, Id) => {
+        console.log("checkRoomProductId id ", Id);
 
         if (Id != 0) {
             let list = listProduct.filter(item => { return item.Id == Id })
-            console.log("checkProductId listProduct ", list);
+            console.log("checkRoomProductId listProduct ", list);
             setTimeout(() => {
                 list.length > 0 ? toolBarPhoneServedRef.current.clickCheckInRef(false) : toolBarPhoneServedRef.current.clickCheckInRef(true)
             }, 500);

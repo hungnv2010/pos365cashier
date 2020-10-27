@@ -7,7 +7,6 @@ import LinearGradient from 'react-native-linear-gradient';
 import Main from '../../screens/main/Main';
 import BottomTabNavigation from '../bottomTab/BottomTabNavigation';
 
-import OrderNow from '../../screens/ordernow/OrderNow'
 import OverView from '../../screens/overView/overView'
 import History from '../../screens/history/History'
 import More from '../../screens/more/More'
@@ -41,9 +40,6 @@ export default (propsFunc) => {
         </Drawer.Screen> */}
         <Drawer.Screen name={ScreenList.Home} options={{ title: ScreenList.Home }}>
           {props => <Main  {...props} params={propsFunc.route.state ? propsFunc.route.state : ""} />}
-        </Drawer.Screen>
-        <Drawer.Screen name={ScreenList.OrderNow} options={{ title: ScreenList.OrderNow }}>
-          {props => <OrderNow {...props} />}
         </Drawer.Screen>
         <Drawer.Screen name={ScreenList.History} options={{ title: ScreenList.History }}>
           {props => <History {...props} />}

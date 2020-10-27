@@ -91,6 +91,7 @@ export default {
   gia_tri_tra_lai: "Value return",
   ghi_no: "Debit",
   gia_niem_yet: "Listed price",
+  gio_khach_vao: "Visitors to ",
 
   // TODO: H
   huy: 'Cancel',

@@ -16,7 +16,7 @@ export default (props) => {
     const toppingRef = useRef([])
 
     useEffect(() => {
-        console.log(props.itemOrder, 'props.itemOrder');
+        console.log('Topping props.itemOrder', props.itemOrder);
         setItemOrder(props.itemOrder)
     }, [props.itemOrder])
 

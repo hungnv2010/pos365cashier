@@ -102,6 +102,7 @@ export default {
   gia_tri_tra_lai: "Giá trị trả lại",
   ghi_no: "Ghi nợ",
   gia_niem_yet: "Giá niêm yết",
+  gio_khach_vao: "Giờ khách vào ",
 
   // TODO: H
   huy: 'Hủy',

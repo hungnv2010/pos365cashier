@@ -1,20 +1,18 @@
-import React, { useEffect, useState, useRef, useLayoutEffect } from 'react';
-import { Image, View, Text, Keyboard, TouchableWithoutFeedback, TouchableOpacity, Modal, TextInput, ImageBackground, FlatList, StyleSheet } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { View, Text, Keyboard, TouchableWithoutFeedback, TouchableOpacity, Modal, ImageBackground, FlatList, StyleSheet } from 'react-native';
 import { Colors, Images, Metrics } from '../../../../theme';
 import Menu from 'react-native-material-menu';
-import dataManager from '../../../../data/DataManager';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { Constant } from '../../../../common/Constant';
 import { currencyToString } from '../../../../common/Utils';
 import I18n from "../../../../common/language/i18n";
 import { Snackbar } from 'react-native-paper';
-import { useSelector, useDispatch } from 'react-redux';
-import { Checkbox, RadioButton } from 'react-native-paper';
-import colors from '../../../../theme/Colors';
+import { useSelector } from 'react-redux';
 import { ScreenList } from '../../../../common/ScreenList';
-
-var isClick = false;
+import useDebounce from '../../../../customHook/useDebounce';
+import DialogProductDetail from '../../../../components/dialog/DialogProductDetail'
+import DialogProductUnit from '../../../../components/dialog/DialogProductUnit'
 
 const TYPE_MODAL = {
     UNIT: 1,
@@ -24,7 +22,7 @@ const TYPE_MODAL = {
 const CustomerOrder = (props) => {
 
     const [showModal, setShowModal] = useState(false)
-    const [list, setListOrder] = useState(() =>
+    const [listOrder, setListOrder] = useState(() =>
     (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0 )
     ? props.jsonContent.OrderDetails.filter(item => item.ProductId > 0) : []
     )
@@ -34,7 +32,9 @@ const CustomerOrder = (props) => {
     const [marginModal, setMargin] = useState(0)
     const [IsLargeUnit, setIsLargeUnit] = useState(false)
     const typeModal = useRef(TYPE_MODAL.UNIT)
-    const dispatch = useDispatch();
+
+    const [waitingList, setWaitingList] = useState([])
+    const debouceWaitingList = useDebounce(waitingList)
 
     const orientaition = useSelector(state => {
         console.log("orientaition", state);
@@ -61,6 +61,10 @@ const CustomerOrder = (props) => {
     }
 
     useEffect(() => {
+        listOrder.forEach((elm, index) =>  elm.index = index)
+    },[listOrder])
+
+    useEffect(() => {
         setItemOrder(props.itemOrder)
     }, [props.itemOrder])
 
@@ -71,20 +75,14 @@ const CustomerOrder = (props) => {
 
     useEffect(() => {
         if (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0) {
-            let list = props.jsonContent.OrderDetails.filter(item => item.ProductId > 0)
-            setListOrder(list)
+            let listOrder = props.jsonContent.OrderDetails.filter(item => item.ProductId > 0)
+            setListOrder(listOrder)
         } else setListOrder([])
     }, [props.jsonContent])
 
     useEffect(() => {
-        console.log('useEffect props.Position', props.Position);
-    }, [props.Position])
-
-
-    useEffect(() => {
         console.log(props.listTopping, 'props.listTopping');
         console.log(props.itemOrder, 'props.itemOrder');
-        console.log(itemOrder, 'itemOrder');
 
         const getInfoTopping = (listTopping) => {
             let description = '';
@@ -100,36 +98,65 @@ const CustomerOrder = (props) => {
             return [description, totalPrice, topping]
         }
         let [description, totalPrice, topping] = getInfoTopping(props.listTopping)
-        list.forEach(element => {
-            if (element.Sid == props.itemOrder.Sid) {
+        let indexFind = -1
+        listOrder.forEach((element, index) => {
+            if (element.ProductId == props.itemOrder.ProductId && index == props.itemOrder.index) {
+                indexFind = index
                 element.Description = description
                 element.Topping = JSON.stringify(topping)
                 element.TotalTopping = totalPrice
             }
         });
-        setListOrder([...list])
+        setListOrder([...listOrder])
+        if (indexFind >= 0 && listOrder.length >= indexFind) mapDataToList(listOrder[indexFind], false)
+
     }, [props.listTopping])
 
-
-    const syncListProducts = (listProducts) => {
-        console.log('syncListProducts');
-        // setListOrder(listProducts)
-        props.outputListProducts(listProducts, 0)
-    }
+    useEffect(() => { 
+        if (debouceWaitingList.length > 0) {
+            debouceWaitingList.forEach( product => props.outputSelectedProduct(product, true))
+            setWaitingList([])
+        }
+    }, [debouceWaitingList])
 
     const sendOrder = () => {
         props.navigation.navigate(ScreenList.Payment, { RoomId: props.route.params.room.Id, Position: props.Position });
     }
 
-    const removeItem = (item, index) => {
-        console.log('delete', index, item);
-        list.splice(index, 1)
-        syncListProducts(list)
+    const applyDialogDetail = (product) => {
+        listOrder.forEach( (elm, index) => {
+            if(elm.ProductId == product.ProductId && index == product.index) elm = product
+        })
+        setListOrder([...listOrder])
+        mapDataToList(product, true)
+    }
+
+    const mapDataToList = (product, isNow = true) => {
+        if (isNow) props.outputSelectedProduct(product, true)
+        else {
+            let isExist = false
+            waitingList.forEach(elm => {
+                if (elm.ProductId == product.ProductId) {
+                    isExist = true
+                    elm = product
+                }
+            })
+            if(!isExist) waitingList.push(product)
+            setWaitingList([...waitingList])
+        }
+    }
+
+    const removeItem = (product, index) => {
+        console.log('removeItem', index, product);
+        product.Quantity = 0
+        product.index = index
+        listOrder.splice(index, 1)
+        props.outputSelectedProduct(product)
     }
 
     const getTotalPrice = () => {
         let total = 0;
-        list.forEach(item => {
+        listOrder.forEach(item => {
             if (!(item.ProductType == 2 && item.IsTimer)) {
                 let price = item.IsLargeUnit ? item.PriceLargeUnit : item.Price
                 let totalTopping = item.TotalTopping ? item.TotalTopping : 0
@@ -142,39 +169,6 @@ const CustomerOrder = (props) => {
     const onClickTopping = (item) => {
         props.outputItemOrder(item)
     }
-
-    const mapDataToList = (data) => {
-        console.log("mapDataToList(data) ", data);
-        list.forEach((element, idx, arr) => {
-            if (element.Sid == data.Sid) {
-                if (data.Quantity == 0) {
-                    arr.splice(idx, 1)
-                }
-                element.Description = data.Description
-                element.Quantity = +data.Quantity
-                element.IsLargeUnit = data.IsLargeUnit
-            }
-        });
-        props.outputListProducts(list, 0)
-        console.log("mapDataToList(ls) ", list);
-
-        let hasData = true
-        dataManager.dataChoosing.forEach(item => {
-            if (item.Id == props.route.params.room.Id) {
-                if (list.length == 0) {
-                    item.data = item.data.filter(it => it.key != props.Position)
-                }
-            }
-            if (item.data.length == 0) {
-                hasData = false
-            }
-        })
-        if (!hasData) {
-            dataManager.dataChoosing = dataManager.dataChoosing.filter(item => item.data.length > 0)
-            dispatch({ type: 'NUMBER_ORDER', numberOrder: dataManager.dataChoosing.length })
-        }
-    }
-
 
     let _menu = null;
 
@@ -193,11 +187,6 @@ const CustomerOrder = (props) => {
     const sendNotidy = (type) => {
         console.log("sendNotidy type ", type);
         hideMenu();
-        if (type == 1 && !props.route.params.room.IsActive) {
-            setToastDescription(I18n.t("ban_hay_chon_mon_an_truoc"))
-            setShowToast(true)
-        } else
-            props.outputSendNotify(type);
     }
 
     const onClickUnit = (item) => {
@@ -219,12 +208,13 @@ const CustomerOrder = (props) => {
                 }
                 console.log("setItemOrder ", item);
                 typeModal.current = TYPE_MODAL.DETAIL;
-                setItemOrder({ ...item })
+                setItemOrder({ ...item})
                 setShowModal(!showModal)
             }}>
                 <View style={{
                     borderBottomColor: "#ddd", borderBottomWidth: 0.5,
-                    flexDirection: "row", flex: 1, alignItems: "center", justifyContent: "space-evenly", padding: 5, backgroundColor: item.Sid == props.itemOrder.Sid ? "#EED6A7" : 'white', borderRadius: 10, marginBottom: 2
+                    flexDirection: "row", flex: 1, alignItems: "center", justifyContent: "space-evenly", padding: 5, 
+                    backgroundColor: index == props.itemOrder.index ? "#EED6A7" : 'white', borderRadius: 10, marginBottom: 2
                 }}>
                     <TouchableOpacity
                         style={{ marginRight: 5 }}
@@ -235,7 +225,7 @@ const CustomerOrder = (props) => {
                         <Text style={{ fontWeight: "bold", marginBottom: 7 }}>{item.Name}</Text>
                         <View style={{ flexDirection: "row" }}>
                             <Text style={{}}>{item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : currencyToString(item.Price)} x </Text>
-                            <View onPress={() => onClickUnit(item)}>
+                            <View onPress={() => onClickUnit({...item})}>
                                 {
                                     orientaition == Constant.PORTRAIT ?
                                         <Text style={{ color: Colors.colorchinh, }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text>
@@ -277,11 +267,11 @@ const CustomerOrder = (props) => {
                                             <TouchableOpacity
                                                 onPress={() => {
                                                     if (item.Quantity == 1) {
-                                                        list.splice(index, 1)
-                                                        syncListProducts(list)
+                                                        removeItem(item, index)
                                                     } else {
-                                                        item.Quantity--
-                                                        setListOrder([...list])
+                                                        item.Quantity --
+                                                        setListOrder([...listOrder])
+                                                        mapDataToList(item, false)
                                                     }
                                                 }}>
                                                 <Icon name="minus-box" size={40} color={Colors.colorchinh} />
@@ -309,7 +299,8 @@ const CustomerOrder = (props) => {
                                             </View>
                                             <TouchableOpacity onPress={() => {
                                                 item.Quantity++
-                                                setListOrder([...list])
+                                                setListOrder([...listOrder])
+                                                mapDataToList(item, false)
                                             }}>
                                                 <Icon name="plus-box" size={40} color={Colors.colorchinh} />
                                             </TouchableOpacity>
@@ -324,7 +315,7 @@ const CustomerOrder = (props) => {
                             <TouchableOpacity
                                 style={{ borderWidth: 1, borderRadius: 50, borderColor: Colors.colorchinh, }}
                                 onPress={() => {
-                                    props.outputItemOrder(item)
+                                    props.outputItemOrder(item, index)
                                 }}>
                                 <Icon name="puzzle" size={25} color={Colors.colorchinh} style={{ padding: 5 }} />
                             </TouchableOpacity>
@@ -335,77 +326,24 @@ const CustomerOrder = (props) => {
     }
 
     const onClickSubmitUnit = () => {
-        let array = list.map(item => {
-            if (item.Id == itemOrder.Id && item.Sid == itemOrder.Sid) {
+        let array = listOrder.map((item, index) => {
+            if (item.ProductId == itemOrder.ProductId && index == itemOrder.index) {
                 item.IsLargeUnit = IsLargeUnit
             }
             return item;
         })
-        console.log("onClickSubmitUnit array ", array);
 
         setListOrder([...array])
         setShowModal(false)
     }
 
-    const renderViewUnit = () => {
-        return (
-            <View >
-                <View style={styles.headerModal}>
-                    <Text style={styles.headerModalText}>{I18n.t('chon_dvt')}</Text>
-                </View>
-
-                <TouchableOpacity onPress={() => {
-                    setIsLargeUnit(false)
-                }} style={{ flexDirection: "row", alignItems: "center", marginTop: 10 }}>
-                    <RadioButton.Android
-                        color="orange"
-                        status={!IsLargeUnit ? 'checked' : 'unchecked'}
-                        onPress={() => {
-                            setIsLargeUnit(false)
-                        }}
-                    />
-                    <Text style={{ marginLeft: 20, fontSize: 20 }}>{itemOrder.Unit}</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => {
-                    setIsLargeUnit(true)
-                }} style={{ flexDirection: "row", alignItems: "center", marginBottom: 5 }}>
-                    <RadioButton.Android
-                        color="orange"
-                        status={IsLargeUnit ? 'checked' : 'unchecked'}
-                        onPress={() => {
-                            setIsLargeUnit(true)
-                        }}
-                    />
-                    <Text style={{ marginLeft: 20, fontSize: 20 }}>{itemOrder.LargeUnit}</Text>
-                </TouchableOpacity>
-
-                <View style={[styles.wrapAllButtonModal, { justifyContent: "center", marginBottom: 10 }]}>
-                    <TouchableOpacity onPress={() => onClickSubmitUnit()} style={{
-                        backgroundColor: Colors.colorchinh, alignItems: "center",
-                        margin: 2,
-                        width: 100,
-                        borderWidth: 1,
-                        borderColor: Colors.colorchinh,
-                        padding: 5,
-                        borderRadius: 4,
-                    }} >
-                        <Text style={{ color: "#fff", textTransform: "uppercase", }}>{I18n.t('dong_y')}</Text>
-                    </TouchableOpacity>
-                </View>
-
-            </View >
-        )
-    }
-
-
     return (
         <View style={{ flex: 1 }}>
             <View style={{ flex: 1 }}>
-                {list.length > 0 ?
+                {listOrder.length > 0 ?
                     <FlatList
-                        data={list}
-                        extraData={list}
+                        data={listOrder}
+                        extraData={listOrder}
                         renderItem={({ item, index }) => renderForTablet(item, index)}
                         keyExtractor={(item, index) => '' + index}
                     />
@@ -484,20 +422,21 @@ const CustomerOrder = (props) => {
                             marginBottom: Platform.OS == 'ios' ? marginModal : 0
                         }}>
                             {typeModal.current == TYPE_MODAL.DETAIL ?
-                                <PopupDetail
+                                <DialogProductDetail
                                     onClickTopping={() => onClickTopping(itemOrder)}
                                     item={itemOrder}
                                     getDataOnClick={(data) => {
-                                        console.log("getDataOnClick ", data);
-                                        mapDataToList(data)
+                                        applyDialogDetail(data)
                                     }}
                                     setShowModal={() => {
-                                        console.log("getDataOnClick list ", list);
                                         setShowModal(false)
-                                    }
-                                    } />
+                                    }} 
+                                />
                                 :
-                                renderViewUnit()
+                                <DialogProductUnit
+                                    setIsLargeUnit = {(IsLargeUnit) => setIsLargeUnit(IsLargeUnit)}
+                                    onClickSubmitUnit = {() => onClickSubmitUnit()}
+                                />
                             }
                         </View>
                     </View>
@@ -512,206 +451,6 @@ const CustomerOrder = (props) => {
             >
                 {toastDescription}
             </Snackbar>
-        </View>
-    )
-}
-
-const PopupDetail = (props) => {
-
-    const [itemOrder, setItemOrder] = useState({ ...props.item })
-    const [showQuickNote, setShowQuickNote] = useState(false)
-    const [listQuickNote, setListQuickNote] = useState([])
-    const [IsLargeUnit, setIsLargeUnit] = useState(false)
-
-    useEffect(() => {
-        let list = itemOrder.OrderQuickNotes ? itemOrder.OrderQuickNotes.split(',') : [];
-        let listQuickNote = []
-        list.forEach((item, idx) => {
-            if (item != '') {
-                listQuickNote.push({ name: item.trim(), status: false })
-            }
-        })
-        console.log('setListQuickNote1', list);
-        setListQuickNote([...listQuickNote])
-        setIsLargeUnit(itemOrder.IsLargeUnit)
-    }, [])
-
-    const onClickOk = () => {
-        console.log("onClickOk itemOrder ", itemOrder);
-        props.getDataOnClick({ ...itemOrder, IsLargeUnit: IsLargeUnit })
-        props.setShowModal(false)
-    }
-
-    const onClickTopping = () => {
-        props.onClickTopping()
-        props.setShowModal(false)
-    }
-
-
-    return (
-        <View>
-            <View style={{ backgroundColor: Colors.colorchinh, borderTopRightRadius: 4, borderTopLeftRadius: 4, }}>
-                <Text style={{ margin: 5, textTransform: "uppercase", fontSize: 15, fontWeight: "bold", marginLeft: 20, marginVertical: 20, color: "#fff" }}>{itemOrder.Name}</Text>
-            </View>
-            {
-                showQuickNote && listQuickNote.length > 0 ?
-                    <View style={{ padding: 20 }}>
-                        <View style={{ paddingBottom: 20 }}>
-                            {
-                                listQuickNote.map((item, index) => {
-                                    return (
-                                        <TouchableOpacity key={index} style={{ flexDirection: "row", alignItems: "center", }}
-                                            onPress={() => {
-                                                listQuickNote[index].status = !listQuickNote[index].status
-                                                setListQuickNote([...listQuickNote])
-                                            }}>
-                                            <Checkbox.Android
-                                                color="orange"
-                                                status={item.status ? 'checked' : 'unchecked'}
-                                            />
-                                            <Text style={{ marginLeft: 20 }}>{item.name}</Text>
-                                        </TouchableOpacity>
-                                    )
-                                })
-                            }
-                        </View>
-                        <View style={{ alignItems: "center", justifyContent: "space-between", flexDirection: "row", marginTop: 20 }}>
-                            <TouchableOpacity onPress={() => { setShowQuickNote(false) }} style={{ alignItems: "center", margin: 2, flex: 1, borderWidth: 1, borderColor: Colors.colorchinh, padding: 5, borderRadius: 4, backgroundColor: "#fff" }} >
-                                <Text style={{ color: Colors.colorchinh, textTransform: "uppercase" }}>{I18n.t('huy')}</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => {
-                                let list = []
-                                listQuickNote.forEach(item => {
-                                    if (item.status) {
-                                        list.push(item.name)
-                                    }
-                                })
-                                itemOrder.Description = list.join(', ')
-                                setItemOrder({ ...itemOrder })
-                                onClickOk()
-                            }} style={{ alignItems: "center", margin: 2, flex: 1, borderWidth: 1, borderColor: Colors.colorchinh, padding: 5, borderRadius: 4, backgroundColor: Colors.colorchinh }}>
-                                <Text style={{ color: "#fff", textTransform: "uppercase", }}>{I18n.t('dong_y')}</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    :
-                    <View style={{ padding: 20 }}>
-                        <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }} onPress={() => setShowModal(false)}>
-                            <Text style={{ fontSize: 14, flex: 3 }}>{I18n.t('don_gia')}</Text>
-                            <View style={{ alignItems: "center", flexDirection: "row", flex: 7, backgroundColor: "#D5D8DC" }}>
-                                <Text style={{ padding: 7, flex: 1, fontSize: 14, borderWidth: 0.5, borderRadius: 4 }}>{currencyToString(itemOrder.Price)}</Text>
-                            </View>
-                        </View>
-                        {itemOrder.Unit != undefined && itemOrder.Unit != "" && itemOrder.LargeUnit != undefined && itemOrder.LargeUnit != "" ?
-                            <View style={{ flexDirection: "row", justifyContent: "center", marginTop: 15, alignItems: "center" }} onPress={() => setShowModal(false)}>
-                                <Text style={{ fontSize: 14, flex: 3 }}>{I18n.t('chon_dvt')}</Text>
-                                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", flex: 7 }}>
-                                    <TouchableOpacity onPress={() => {
-                                        setIsLargeUnit(false)
-                                    }} style={{ flexDirection: "row", alignItems: "center", marginLeft: -10 }}>
-                                        <RadioButton.Android
-                                            color={colors.colorchinh}
-                                            status={!IsLargeUnit ? 'checked' : 'unchecked'}
-                                            onPress={() => {
-                                                setIsLargeUnit(false)
-                                            }}
-                                        />
-                                        <Text style={{ marginLeft: 0 }}>{itemOrder.Unit}</Text>
-                                    </TouchableOpacity>
-
-                                    <TouchableOpacity onPress={() => {
-                                        setIsLargeUnit(true)
-                                    }} style={{ flexDirection: "row", alignItems: "center" }}>
-                                        <RadioButton.Android
-                                            color={colors.colorchinh}
-                                            status={IsLargeUnit ? 'checked' : 'unchecked'}
-                                            onPress={() => {
-                                                setIsLargeUnit(true)
-                                            }}
-                                        />
-                                        <Text style={{ marginLeft: 0 }}>{itemOrder.LargeUnit}</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                            : null}
-                        <View style={{ alignItems: "center", flexDirection: "row", justifyContent: "center", marginTop: (itemOrder.Unit != undefined && itemOrder.Unit != "" && itemOrder.LargeUnit != undefined && itemOrder.LargeUnit != "") ? 10 : 20 }} >
-                            <Text style={{ fontSize: 14, flex: 3 }}>{I18n.t('so_luong')}</Text>
-                            <View style={{ alignItems: "center", flexDirection: "row", flex: 7 }}>
-                                <TouchableOpacity onPress={() => {
-                                    if (itemOrder.Quantity > 0) {
-                                        itemOrder.Quantity--
-                                        setItemOrder({ ...itemOrder })
-                                    }
-                                }}>
-                                    <Text style={{ borderColor: Colors.colorchinh, borderWidth: 1, color: Colors.colorchinh, fontWeight: "bold", paddingHorizontal: 15, paddingVertical: 10, borderRadius: 5 }}>-</Text>
-                                </TouchableOpacity>
-                                <TextInput
-                                    style={{ padding: 6, textAlign: "center", margin: 10, flex: 1, borderRadius: 4, borderWidth: 0.5, backgroundColor: "#D5D8DC", color: "#000" }}
-                                    value={"" + itemOrder.Quantity}
-                                    onChangeText={text => {
-                                        if (!Number.isInteger(+text) || +text > 1000) return
-                                        itemOrder.Quantity = +text
-                                        setItemOrder({ ...itemOrder })
-
-                                    }} />
-                                <TouchableOpacity onPress={() => {
-                                    if (itemOrder.Quantity < 1000) {
-                                        itemOrder.Quantity++
-                                        setItemOrder({ ...itemOrder })
-                                    }
-                                }}>
-                                    <Text style={{ borderColor: Colors.colorchinh, borderWidth: 1, color: Colors.colorchinh, fontWeight: "bold", paddingHorizontal: 15, paddingVertical: 10, borderRadius: 5 }}>+</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                        <View style={{ alignItems: "center", flexDirection: "row", justifyContent: "center", marginTop: 20 }} onPress={() => setShowModal(false)}>
-                            <Text style={{ fontSize: 14, flex: 3 }}>{I18n.t('ghi_chu')}</Text>
-                            <View style={{ flexDirection: "row", flex: 7 }}>
-                                <TextInput
-                                    onChangeText={text => {
-                                        itemOrder.Description = text
-                                        setItemOrder({ ...itemOrder })
-                                    }}
-                                    numberOfLines={3}
-                                    multiline={true}
-                                    value={itemOrder.Description}
-
-                                    style={{ height: 50, paddingLeft: 5, flex: 7, fontStyle: "italic", fontSize: 12, borderWidth: 0.5, borderRadius: 4, backgroundColor: "#D5D8DC", color: "#000" }}
-                                    placeholder={I18n.t('nhap_ghi_chu')} />
-                            </View>
-                        </View>
-                        {
-                            itemOrder.OrderQuickNotes != undefined && itemOrder.OrderQuickNotes != "" ?
-                                <View style={{ paddingVertical: 5, flexDirection: "row", justifyContent: "center", marginTop: 10 }} onPress={() => setShowModal(false)}>
-                                    <Text style={{ fontSize: 14, flex: 3 }}></Text>
-                                    <View style={{ flexDirection: "row", flex: 7 }}>
-                                        <TouchableOpacity
-                                            style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
-                                            onPress={() => {
-                                                setShowQuickNote(true)
-                                            }}>
-                                            <Image style={{ width: 20, height: 20 }} source={Images.icon_quick_note} />
-                                            {/* <Icon name="square-edit-outline" size={30} color="#2381E5" /> */}
-                                            <Text style={{ color: "#2381E5", marginLeft: 10 }}>{I18n.t('chon_ghi_chu_nhanh')}</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                </View>
-                                :
-                                null
-                        }
-                        <View style={{ alignItems: "center", justifyContent: "space-between", flexDirection: "row", marginTop: 20 }}>
-                            <TouchableOpacity onPress={() => props.setShowModal(false)} style={{ alignItems: "center", margin: 2, flex: 1, borderWidth: 1, borderColor: Colors.colorchinh, padding: 5, borderRadius: 4, backgroundColor: "#fff" }} >
-                                <Text style={{ color: Colors.colorchinh, textTransform: "uppercase" }}>{I18n.t('huy')}</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => onClickTopping()} style={{ alignItems: "center", margin: 2, flex: 1, borderWidth: 1, borderColor: Colors.colorchinh, padding: 5, borderRadius: 4, backgroundColor: "#fff" }} >
-                                <Text style={{ color: Colors.colorchinh, textTransform: "uppercase" }}>Topping</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => onClickOk()} style={{ alignItems: "center", margin: 2, flex: 1, borderWidth: 1, borderColor: Colors.colorchinh, padding: 5, borderRadius: 4, backgroundColor: Colors.colorchinh }} >
-                                <Text style={{ color: "#fff", textTransform: "uppercase", }}>{I18n.t('dong_y')}</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-            }
         </View>
     )
 }

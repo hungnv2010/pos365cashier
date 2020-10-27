@@ -118,7 +118,7 @@ export default (props) => {
 
   const onClickProduct = (item, index) => {
     console.log('onClickProduct', item);
-    item.Sid = Date.now()
+    item.index = undefined
     item.Description = getDescription(item)
     let pos = listProducts.current.map(elm => elm.Id).indexOf(item.Id);
     let pos_2 = listChangeText.current.map(elm => elm.Id).indexOf(item.Id);
@@ -160,11 +160,9 @@ export default (props) => {
   const handleButtonIncrease = (item, index) => {
     console.log('handleButtonIncrease', item, index);
     let qtt = getQuantity(item)
-    // item.Quantity += qtt
-    // let pos = listProducts.current.map(elm => elm.Id).indexOf(item.Id);
-    // listProducts.current[pos].Quantity += qtt
+    
     if (item.SplitForSalesOrder || (item.ProductType == 2 && item.IsTimer)) {
-      listProducts.current.unshift({ ...item, Quantity: qtt, Sid: Date.now() })
+      listProducts.current.unshift({ ...item, Quantity: qtt })
     } else {
       let pos = listProducts.current.map(elm => elm.Id).indexOf(item.Id);
       let pos_2 = listChangeText.current.map(elm => elm.Id).indexOf(item.Id);
@@ -174,9 +172,6 @@ export default (props) => {
         listProducts.current[pos].Quantity += qtt
       }
 
-      //   let pos = listProducts.current.map(elm => elm.Id).indexOf(item.Id);
-      // if (pos > -1)
-      //   listProducts.current[pos].Quantity += qtt
     }
     setProduct([...product])
   }

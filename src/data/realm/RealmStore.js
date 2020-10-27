@@ -48,13 +48,14 @@ class RealmStore extends RealmBase {
     }
 
     //server event
-    insertServerEvent = async (newServerEvent) => {
+    insertServerEvent = async (newServerEvent, FromServer = false) => {
         let realm = await Realm.open(databaseOption)
         return new Promise((resolve) => realm.write(() => {
             let serverEvent = realm.objectForPrimaryKey(SchemaName.SERVER_EVENT, newServerEvent.RowKey)
             if (serverEvent && serverEvent.Version > newServerEvent.Version) {
                 resolve({ result: false, serverEvent: serverEvent })
             } else {
+                newServerEvent.FromServer = FromServer
                 realm.create(SchemaName.SERVER_EVENT, newServerEvent, true)
                 resolve({ result: true, serverEvent: newServerEvent })
             }
@@ -201,7 +202,8 @@ const ServerEventSchema = {
         PartitionKey: 'string',
         RowKey: 'string',
         Timestamp: 'string',
-        ETag: 'string'
+        ETag: 'string',
+        FromServer: { type: 'bool', default: false }
     }
 }
 
@@ -335,7 +337,7 @@ const PromotionSchema = {
 const databaseOption = {
     path: 'Pos365Boss.realm',
     schema: [ServerEventSchema, RoomSchema, RoomGroupSchema, ProductSchema, CategoriesSchema, ToppingsSchema, CustomerSchema, PromotionSchema],
-    schemaVersion: 27
+    schemaVersion: 28
 }
 
 const realm = new Realm(databaseOption);

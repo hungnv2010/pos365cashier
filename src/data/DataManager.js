@@ -8,7 +8,6 @@ import signalRManager from "../common/SignalR";
 import { momentToDateUTC } from "../common/Utils";
 class DataManager {
     constructor() {
-        this.dataChoosing = [];
         this.subjectUpdateServerEvent = new Subject()
         this.subjectUpdateServerEvent.debounceTime(300)
             .map(serverEvent => {
@@ -89,12 +88,12 @@ class DataManager {
 
     syncAllDatas = async () => {
         await this.syncProduct(),
-            await this.syncTopping(),
-            await this.syncServerEvent(),
-            await this.syncRooms(),
-            await this.syncPartner(),
-            await this.syncCategories(),
-            await this.syncPromotion()
+        await this.syncTopping(),
+        await this.syncServerEvent(),
+        await this.syncRooms(),
+        await this.syncPartner(),
+        await this.syncCategories(),
+        await this.syncPromotion()
     }
 
     //calculator and send ServerEvent
@@ -117,6 +116,17 @@ class DataManager {
 
         serverEvent.JsonContent = JSON.stringify(jsonContentObject)
 
+    }
+
+    calculatateJsonContent = (JsonContent) => {
+        let totalProducts = this.totalProducts(JsonContent.OrderDetails)
+        let totalWithVAT = totalProducts + JsonContent.VAT  
+        JsonContent.Total = totalWithVAT
+        JsonContent.AmountReceived = totalWithVAT
+        if (JsonContent.ActiveDate)
+            JsonContent.ActiveDate = momentToDateUTC(moment())
+        else if (!JsonContent.OrderDetails || JsonContent.OrderDetails.length == 0)
+            JsonContent.ActiveDate = ""
     }
 
     totalProducts = (products) => {
