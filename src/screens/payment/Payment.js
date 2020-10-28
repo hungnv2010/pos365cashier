@@ -23,10 +23,11 @@ import { ApiPath } from '../../data/services/ApiPath';
 import { HTTPService, URL } from '../../data/services/HttpService';
 import dialogManager from '../../components/dialog/DialogManager';
 import dataManager from '../../data/DataManager';
+// import DateTimePicker from '@react-native-community/datetimepicker';
 
 let timeClickCash = 1000;
 
-const TYPE_MODAL = { FILTER_ACCOUNT: "FILTER_ACCOUNT", QRCODE: "QRCODE" }
+const TYPE_MODAL = { FILTER_ACCOUNT: "FILTER_ACCOUNT", QRCODE: "QRCODE", DATE: "DATE" }
 
 const CUSTOMER_DEFAULT = { Id: "", Name: I18n.t('khach_le') };
 
@@ -62,6 +63,7 @@ export default (props) => {
     const [giveMoneyBack, setGiveMoneyBack] = useState(true);
     const [itemMethod, setItemMethod] = useState(CASH);
     const [sendMethod, setSendMethod] = useState(METHOD.discount)
+    const [chosenDate, setChosenDate] = useState(new Date());
     const toolBarPaymentRef = useRef();
     const itemAccountRef = useRef();
     const typeModal = useRef();
@@ -230,7 +232,9 @@ export default (props) => {
     }
 
     const onClickNote = () => {
-        alert('ok')
+        // alert('ok')
+        typeModal.current = TYPE_MODAL.DATE
+        setShowModal(true)
     }
 
     const onClickShowListMethod = (item) => {
@@ -550,6 +554,15 @@ export default (props) => {
         console.log("calculator total ", total);
     }
 
+    // const [date, setDate] = useState(new Date(1598051730000));
+    // const [mode, setMode] = useState('date');
+
+    // const onChange = (event, selectedDate) => {
+    //     const currentDate = selectedDate || date;
+    //     setShow(Platform.OS === 'ios');
+    //     setDate(currentDate);
+    // };
+
     const renderFilter = () => {
         if (typeModal.current == TYPE_MODAL.FILTER_ACCOUNT)
             return (
@@ -595,6 +608,19 @@ export default (props) => {
                             <Text style={styles.textButtonCancel}>{I18n.t("huy")}</Text>
                         </TouchableOpacity>
                     </View>
+                </View>
+            )
+        if (typeModal.current == TYPE_MODAL.DATE)
+            return (
+                <View style={[styles.viewFilter, { justifyContent: "center", alignItems: "center" }]}>
+                    {/* <DateTimePicker
+                        testID="dateTimePicker"
+                        value={date}
+                        mode={mode}
+                        is24Hour={true}
+                        display="default"
+                        onChange={onChange}
+                    /> */}
                 </View>
             )
     }
