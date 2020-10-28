@@ -405,4 +405,6 @@ export const Constant = {
     JSONCONTENT_EMPTY: {
         OrderDetails: []
     }
+    ,
+    PRINT_KITCHEN_BARTENDER_DEFAULT: 'KitchenA'
 };
