@@ -220,7 +220,7 @@ export default (props) => {
     let {jsonContent} = props
     return (
         <View style={{ flex: 1 }}>
-            <View style={{ flexGrow: 1 }}>
+            <View style={{ flex: 1 }}>
                 {listOrder.length > 0 ?
                     <FlatList
                         data={listOrder}

@@ -113,7 +113,7 @@ export default (props) => {
     }
 
     const onClickSelectProduct = () => {
-        let list = jsonContent.OrderDetails.filter(item => item.ProductId > 0)
+        let list = jsonContent.OrderDetails ? jsonContent.OrderDetails.filter(item => item.ProductId > 0) : []
         props.navigation.navigate('SelectProduct', { _onSelect: onCallBack, listProducts: list })
     }
 
