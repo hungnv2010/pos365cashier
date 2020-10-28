@@ -133,7 +133,6 @@ const extractData = (response) => {
                 if (index401 >= 10) {
                     setFileLuuDuLieu(Constant.CURRENT_ACCOUNT, "");
                     setFileLuuDuLieu(Constant.CURRENT_BRANCH, "");
-                    dataManager.dataChoosing = []
                     navigate('Login', {}, true);
                     index401 = 0
                 } else

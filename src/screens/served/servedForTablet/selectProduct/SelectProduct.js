@@ -38,7 +38,7 @@ export default (props) => {
         searchResult.forEach(item => {
           item.Quantity = 0
           listProducts.forEach(elm => {
-            if (item.Id == elm.Id) {
+            if (item.ProductId == elm.ProductId) {
               item.Quantity += elm.Quantity
             }
           })
@@ -76,11 +76,6 @@ export default (props) => {
       
     }
     getCategories()
-    subject.current.debounceTime(300
-      ).subscribe(data => {
-      console.log(data)
-      props.outputListProducts(data, 0)
-    }, err => console.error(err))
   }, [])
 
   const getProducts = useCallback(async () => {
@@ -121,37 +116,19 @@ export default (props) => {
   }
 
   const onClickProduct = (item, index) => {
-    let qtt = getQuantity(item)
-    item.Sid = Date.now()
-    item.Description = getDescription(item)
-    console.log(item, 'onClickProduct');
-    if (item.SplitForSalesOrder) {
-      item.Quantity = qtt
-      listProducts.unshift({ ...item })
-    }
-    else {
-      let exist = false;
-      listProducts.forEach(listProduct => {
-        if (listProduct.Id === item.Id) {
-          listProduct.Quantity += qtt
-          exist = true;
-        }
-      })
-      if (!exist) {
-        item.Quantity = qtt
-        listProducts.unshift({ ...item })
-      }
-    }
-    // props.outputListProducts([...listProducts], 0)
-    console.log('onClickProduct');
-    subject.current.next(listProducts);
+    let newProduct = {...item}
+    newProduct.Description = getDescription(newProduct)
+    newProduct.Quantity = getQuantity(newProduct)
+    newProduct.ProductImages = []
+    newProduct.index = undefined
+    props.outputSelectedProduct(newProduct)
+    console.log('onClickProduct', newProduct);
   }
-
 
   const getQuantityProduct = (arrItem) => {
     let Quantity = 0
     listProducts.forEach(item => {
-      if (item.Id == arrItem.Id) {
+      if (item.ProductId == arrItem.ProductId) {
         Quantity = item.Quantity
       }
     })

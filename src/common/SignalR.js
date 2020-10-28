@@ -183,13 +183,14 @@ class SignalRManager {
     }
 
     async onReceiveServerEvent(serverEvent) {
+        console.log("onReceiveServerEvent ", serverEvent);
         // if (serverEvent.Version == version) return
         // version = serverEvent.Version
         if (serverEvent && serverEvent.Compress) {
             serverEvent.JsonContent = decodeBase64(serverEvent.JsonContent || "")
             serverEvent.Compress = false
         }
-        await realmStore.insertServerEvent(serverEvent)
+        await realmStore.insertServerEvent(serverEvent, true)
     }
 
     sendMessage = (message, type = 'SynchronizationOrder') => {

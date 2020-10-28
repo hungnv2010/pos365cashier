@@ -27,7 +27,6 @@ const KEY_FUNC = {
     SETTING_FUNC: ScreenList.PrintHtml,
     VERSION: "VERSION",
     MORE: ScreenList.More,
-    ORDER_NOW: ScreenList.OrderNow,
     HISTORY: ScreenList.History,
     ROOM_CATALOG: ScreenList.RoomCatalog,
     OVERVIEW: ScreenList.OverView,
@@ -182,7 +181,6 @@ const HeaderComponent = (props) => {
                 setFileLuuDuLieu(Constant.CURRENT_BRANCH, JSON.stringify(item));
                 setBranch(item)
                 dispatch({ type: 'ALREADY', already: false })
-                dataManager.dataChoosing = [];
                 // await realmStore.deleteAll(),
                 signalRManager.killSignalR();
                 getRetailerInfoAndNavigate();
@@ -233,7 +231,6 @@ const HeaderComponent = (props) => {
             if (res == 1) {
                 setFileLuuDuLieu(Constant.CURRENT_ACCOUNT, "");
                 setFileLuuDuLieu(Constant.CURRENT_BRANCH, "");
-                dataManager.dataChoosing = []
                 navigate('Login', {}, true);
             }
         })
@@ -349,7 +346,6 @@ const ContentComponent = (props) => {
             if (res == 1) {
                 setFileLuuDuLieu(Constant.CURRENT_ACCOUNT, "");
                 setFileLuuDuLieu(Constant.CURRENT_BRANCH, "");
-                dataManager.dataChoosing = []
                 navigate('Login', {}, true);
             }
         })
@@ -381,7 +377,7 @@ const ContentComponent = (props) => {
     const onClickItem = (chucnang, index) => {
         console.log("onClickItem props ", props);
         let params = {};
-        if (chucnang.func == ScreenList.Home || chucnang.func == ScreenList.More || chucnang.func == ScreenList.History || chucnang.func == ScreenList.OrderNow || chucnang.func == ScreenList.OverView || chucnang.func == ScreenList.RoomCatalog || chucnang.func == ScreenList.Customer) {
+        if (chucnang.func == ScreenList.Home || chucnang.func == ScreenList.More || chucnang.func == ScreenList.History || chucnang.func == ScreenList.OverView || chucnang.func == ScreenList.RoomCatalog || chucnang.func == ScreenList.Customer) {
             setCurrentItemMenu(index)
         }
         props.navigation.navigate(chucnang.func, params)

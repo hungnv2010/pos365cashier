@@ -114,7 +114,6 @@ const HeaderComponent = (props) => {
                 setFileLuuDuLieu(Constant.CURRENT_BRANCH, JSON.stringify(item));
                 setBranch(item)
                 dispatch({ type: 'ALREADY', already: false })
-                dataManager.dataChoosing = [];
                 // await realmStore.deleteAll(),
                 signalRManager.killSignalR();
                 getRetailerInfoAndNavigate();
@@ -266,7 +265,6 @@ const ContentComponent = (props) => {
             if (res == 1) {
                 setFileLuuDuLieu(Constant.CURRENT_ACCOUNT, "");
                 setFileLuuDuLieu(Constant.CURRENT_BRANCH, "");
-                dataManager.dataChoosing = []
                 navigate('Login', {}, true);
             }
         })

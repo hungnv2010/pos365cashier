@@ -1,33 +1,21 @@
-import React, { useEffect, useState, useRef, useLayoutEffect } from 'react';
-import { StyleSheet, View, Text, FlatList, TouchableWithoutFeedback, TouchableOpacity, Modal, TextInput, ImageBackground, Platform, Keyboard, Image } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { StyleSheet, View, Text, FlatList, TouchableWithoutFeedback, TouchableOpacity, Modal, ImageBackground, Platform, Keyboard, Image } from 'react-native';
 import { Colors, Images, Metrics } from '../../../../theme';
 import Menu from 'react-native-material-menu';
-import dataManager from '../../../../data/DataManager';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import { getFileDuLieuString, setFileLuuDuLieu } from '../../../../data/fileStore/FileStorage';
-import { Constant } from '../../../../common/Constant';
 import TextTicker from 'react-native-text-ticker';
 import { currencyToString } from '../../../../common/Utils'
 import I18n from "../../../../common/language/i18n"
 import { Snackbar } from 'react-native-paper';
-import { useSelector, useDispatch } from 'react-redux';
-import { Checkbox, RadioButton } from 'react-native-paper';
 import colors from '../../../../theme/Colors';
 import { ScreenList } from '../../../../common/ScreenList';
-
-
-var isClick = false;
-
-const TYPE_MODAL = {
-    UNIT: 1,
-    DETAIL: 2
-}
+import DialogProductDetail from '../../../../components/dialog/DialogProductDetail'
 
 export default (props) => {
 
     const [showModal, setShowModal] = useState(false)
-    const [list, setListOrder] = useState(() =>
+    const [listOrder, setListOrder] = useState(() =>
         (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0 )
         ? props.jsonContent.OrderDetails.filter(item => item.ProductId > 0) : []
         )
@@ -35,10 +23,7 @@ export default (props) => {
     const [toastDescription, setToastDescription] = useState("")
     const [itemOrder, setItemOrder] = useState({})
     const [marginModal, setMargin] = useState(0)
-    const [IsLargeUnit, setIsLargeUnit] = useState(false)
-    const typeModal = useRef(TYPE_MODAL.UNIT)
     const [expand, setExpand] = useState(false)
-    const dispatch = useDispatch();
 
     useEffect(() => {
 
@@ -61,24 +46,27 @@ export default (props) => {
     }
 
     useEffect(() => {
+        listOrder.forEach((elm, index) =>  elm.index = index)
+    },[listOrder])
+
+    useEffect(() => {
         if (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0) {
-            let list = props.jsonContent.OrderDetails.filter(item => item.ProductId > 0)
-            setListOrder(list)
+            let listOrder = props.jsonContent.OrderDetails.filter(item => item.ProductId > 0)
+            setListOrder(listOrder)
         } else setListOrder([])
     }, [props.jsonContent])
 
     const sendOrder = async () => {
-        console.log("sendOrder list isClick ");
         props.navigation.navigate(ScreenList.Payment, { RoomId: props.route.params.room.Id, Position: props.Position });
     }
 
-    const removeItem = (item, index) => {
-        console.log('delete ', item.Name, index);
-        list.splice(index, 1)
-        props.outputListProducts([...list])
+    const removeItem = (item) => {
+        console.log('removeItem ', item.Name, item.index);
+        listOrder.splice(item.index, 1)
+        props.outputListProducts([...listOrder])
     }
 
-    const onClickTopping = (item) => {
+    const onClickTopping = (item, index) => {
         setItemOrder(item)
         props.navigation.navigate('Topping', { _onSelect: onCallBack, itemOrder: item, Position: props.Position, IdRoom: props.route.params.room.Id })
     }
@@ -89,8 +77,8 @@ export default (props) => {
     }
 
     const mapToppingToList = (listTopping) => {
-        console.log(listTopping, 'listTopping');
-        console.log(itemOrder, 'itemOrder');
+        console.log('mapToppingToList listTopping:', listTopping);
+        console.log('mapToppingToList itemOrder ', itemOrder);
 
         const getInfoTopping = (lt) => {
             let description = '';
@@ -102,12 +90,12 @@ export default (props) => {
                     totalTopping += item.Quantity * item.Price
                     topping.push({ ExtraId: item.ExtraId, QuantityExtra: item.Quantity, Price: item.Price, Quantity: item.Quantity })
                 }
-            })
+            }) 
             return [description, totalTopping, topping]
         }
         let [description, totalTopping, topping] = getInfoTopping(listTopping)
-        list.forEach(element => {
-            if (element.ProductId == itemOrder.ProductId && element.Sid == itemOrder.Sid) {
+        listOrder.forEach((element, index) => {
+            if (element.ProductId == itemOrder.ProductId && index == itemOrder.index) {
                 element.Description = description
                 element.Topping = JSON.stringify(topping)
                 element.TotalTopping = totalTopping
@@ -116,25 +104,24 @@ export default (props) => {
                 element.Price = basePriceProduct + totalTopping
             }
         });
-        // setListOrder([...list])
-        props.outputListProducts([...list])
+        setListOrder([...listOrder])
+        props.outputListProducts([...listOrder])
     }
 
     const mapDataToList = (data) => {
-        console.log("mapDataToList(data) ", data);
-        list.forEach((element, idx, arr) => {
-            if (element.Sid == data.Sid) {
+        console.log("mapDataToList data ", data);
+        listOrder.forEach((element, index, arr) => {
+            if (element.ProductId == data.ProductId && index == itemOrder.index) {
                 if (data.Quantity == 0) {
-                    arr.splice(idx, 1)
+                    arr.splice(index, 1)
                 }
                 element.Description = data.Description
                 element.Quantity = +data.Quantity
                 element.IsLargeUnit = data.IsLargeUnit
             }
         });
-        console.log("mapDataToList(ls) ", list);
 
-        props.outputListProducts([...list])
+        props.outputListProducts([...listOrder])
     }
 
     const getTotalPrice = () => {
@@ -164,16 +151,7 @@ export default (props) => {
         _menu.show();
     };
 
-    const onClickUnit = (item) => {
-        if (item.Unit && item.Unit != "" && item.LargeUnit && item.LargeUnit != "") {
-            typeModal.current = TYPE_MODAL.UNIT;
-            setIsLargeUnit(item.IsLargeUnit)
-            setItemOrder(item)
-            setShowModal(true)
-        }
-    }
-
-    const renderForPhone = (item, index) => {
+    const renderProduct = (item, index) => {
         return (
             <TouchableOpacity key={index} onPress={() => {
                 if (item.ProductType == 2 && item.IsTimer) {
@@ -181,15 +159,13 @@ export default (props) => {
                     setShowToast(true)
                     return
                 }
-                console.log("setItemOrder ", item);
-                typeModal.current = TYPE_MODAL.DETAIL;
                 setItemOrder({ ...item })
                 setShowModal(!showModal)
             }}>
                 <View style={styles.mainItem}>
                     <TouchableOpacity
                         style={{ paddingHorizontal: 5 }}
-                        onPress={() => removeItem(item, index)}>
+                        onPress={() => removeItem(item)}>
                         <Icon name="trash-can-outline" size={40} color="black" />
                     </TouchableOpacity>
                     <View style={{ flex: 1, }}>
@@ -229,70 +205,6 @@ export default (props) => {
         )
     }
 
-    const onClickSubmitUnit = () => {
-        let array = list.map(item => {
-            if (item.Id == itemOrder.Id && item.Sid == itemOrder.Sid) {
-                item.IsLargeUnit = IsLargeUnit
-            }
-            return item;
-        })
-        console.log("onClickSubmitUnit array ", array);
-
-        setListOrder([...array])
-        setShowModal(false)
-    }
-
-    const renderViewUnit = () => {
-        return (
-            <View >
-                <View style={styles.headerModal}>
-                    <Text style={styles.headerModalText}>{I18n.t('chon_dvt')}</Text>
-                </View>
-
-                <TouchableOpacity onPress={() => {
-                    setIsLargeUnit(false)
-                }} style={{ flexDirection: "row", alignItems: "center", marginTop: 10 }}>
-                    <RadioButton.Android
-                        color="orange"
-                        status={!IsLargeUnit ? 'checked' : 'unchecked'}
-                        onPress={() => {
-                            setIsLargeUnit(false)
-                        }}
-                    />
-                    <Text style={{ marginLeft: 20, fontSize: 20 }}>{itemOrder.Unit}</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => {
-                    setIsLargeUnit(true)
-                }} style={{ flexDirection: "row", alignItems: "center", marginBottom: 5 }}>
-                    <RadioButton.Android
-                        color="orange"
-                        status={IsLargeUnit ? 'checked' : 'unchecked'}
-                        onPress={() => {
-                            setIsLargeUnit(true)
-                        }}
-                    />
-                    <Text style={{ marginLeft: 20, fontSize: 20 }}>{itemOrder.LargeUnit}</Text>
-                </TouchableOpacity>
-
-                <View style={[styles.wrapAllButtonModal, { justifyContent: "center", marginBottom: 10 }]}>
-                    <TouchableOpacity onPress={() => onClickSubmitUnit()} style={{
-                        backgroundColor: Colors.colorchinh, alignItems: "center",
-                        margin: 2,
-                        width: 100,
-                        borderWidth: 1,
-                        borderColor: Colors.colorchinh,
-                        padding: 5,
-                        borderRadius: 4,
-                    }} >
-                        <Text style={{ color: "#fff", textTransform: "uppercase", }}>{I18n.t('dong_y')}</Text>
-                    </TouchableOpacity>
-                </View>
-
-            </View >
-        )
-    }
-
     const totalPrice = (orderDetails) => {
 
         console.log('getPrice', orderDetails);
@@ -305,16 +217,15 @@ export default (props) => {
         return total
     }
 
-
     let {jsonContent} = props
     return (
         <View style={{ flex: 1 }}>
-            <View style={{ flexGrow: 1 }}>
-                {list.length > 0 ?
+            <View style={{ flex: 1 }}>
+                {listOrder.length > 0 ?
                     <FlatList
-                        data={list}
-                        extraData={list}
-                        renderItem={({ item, index }) => renderForPhone(item, index)}
+                        data={listOrder}
+                        extraData={listOrder}
+                        renderItem={({ item, index }) => renderProduct(item, index)}
                         keyExtractor={(item, index) => '' + index}
                     />
                     :
@@ -395,9 +306,6 @@ export default (props) => {
                 <TouchableOpacity onPress={sendOrder} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
                     <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('thanh_toan')}</Text>
                 </TouchableOpacity>
-                {/* <TouchableOpacity onPress={dellAll} style={{ justifyContent: "center", alignItems: "center", paddingHorizontal: 10, borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
-                    <Icon name="delete-forever" size={30} color="white" />
-                </TouchableOpacity> */}
             </View>
             <Modal
                 animationType="fade"
@@ -433,8 +341,7 @@ export default (props) => {
                             // marginBottom: Platform.OS == 'ios' ? Metrics.screenHeight / 2.5 : 0
                             marginBottom: Platform.OS == 'ios' ? marginModal : 0
                         }}>
-                            {typeModal.current == TYPE_MODAL.DETAIL ?
-                                <PopupDetail
+                            <DialogProductDetail
                                     onClickTopping={() => onClickTopping(itemOrder)}
                                     item={itemOrder}
                                     getDataOnClick={(data) => {
@@ -442,11 +349,8 @@ export default (props) => {
                                     }}
                                     setShowModal={() => {
                                         setShowModal(false)
-                                    }
-                                    } />
-                                :
-                                renderViewUnit()
-                            }
+                                    }} 
+                            />
                         </View>
                     </View>
                 </View>
@@ -460,212 +364,6 @@ export default (props) => {
             >
                 {toastDescription}
             </Snackbar>
-        </View>
-    )
-}
-
-
-//===================PopupDetail=================
-
-
-const PopupDetail = (props) => {
-
-    const [itemOrder, setItemOrder] = useState({ ...props.item })
-    const [showQuickNote, setShowQuickNote] = useState(false)
-    const [listQuickNote, setListQuickNote] = useState([])
-    const [IsLargeUnit, setIsLargeUnit] = useState(false)
-
-    useEffect(() => {
-        let list = itemOrder.OrderQuickNotes ? itemOrder.OrderQuickNotes.split(',') : []
-        let listQuickNote = []
-        list.forEach((item, idx) => {
-            if (item != '') {
-                listQuickNote.push({ name: item.trim(), status: false })
-            }
-        })
-        console.log('setListQuickNote1', list);
-        setListQuickNote([...listQuickNote])
-        setIsLargeUnit(itemOrder.IsLargeUnit)
-    }, [])
-
-    const onClickOk = () => {
-        console.log("onClickOk itemOrder1111 ", itemOrder);
-        props.getDataOnClick({ ...itemOrder, IsLargeUnit: IsLargeUnit })
-        props.setShowModal(false)
-    }
-
-    const onClickTopping = () => {
-        props.onClickTopping()
-        props.setShowModal(false)
-    }
-
-    console.log("onClickOk itemOrder1243 ", itemOrder);
-
-    return (
-        <View >
-            <View style={styles.headerModal}>
-                <Text style={styles.headerModalText}>{itemOrder.Name}</Text>
-            </View>
-            {
-                showQuickNote && listQuickNote.length > 0 ?
-                    <View style={{ padding: 20 }}>
-                        <View style={{ paddingBottom: 20 }}>
-                            {
-                                listQuickNote.map((item, index) => {
-                                    return (
-                                        <TouchableOpacity key={index} style={{ flexDirection: "row", alignItems: "center", }}
-                                            onPress={() => {
-                                                listQuickNote[index].status = !listQuickNote[index].status
-                                                setListQuickNote([...listQuickNote])
-                                            }}
-                                        >
-                                            <Checkbox.Android
-                                                color="orange"
-                                                status={item.status ? 'checked' : 'unchecked'}
-                                            />
-                                            <Text style={{ marginLeft: 20 }}>{item.name}</Text>
-                                        </TouchableOpacity>
-                                    )
-                                })
-                            }
-                        </View>
-                        <View style={styles.wrapAllButtonModal}>
-                            <TouchableOpacity onPress={() => { setShowQuickNote(false) }} style={styles.wrapButtonModal} >
-                                <Text style={styles.buttonModal}>{I18n.t('huy')}</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => {
-                                let list = []
-                                listQuickNote.forEach(item => {
-                                    if (item.status) {
-                                        list.push(item.name)
-                                    }
-                                })
-                                itemOrder.Description = list.join(', ')
-                                setItemOrder({ ...itemOrder })
-                                onClickOk()
-                            }} style={[styles.wrapButtonModal, { backgroundColor: Colors.colorchinh }]} >
-                                <Text style={{ color: "#fff", textTransform: "uppercase", }}>{I18n.t('dong_y')}</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                    :
-                    <View style={{ padding: 20 }}>
-                        <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }} onPress={() => setShowModal(false)}>
-                            <Text style={{ fontSize: 14, flex: 3 }}>{I18n.t('don_gia')}</Text>
-                            <View style={styles.wrapTextPriceModal}>
-                                <Text style={styles.textPriceModal}>{currencyToString(itemOrder.Price)}</Text>
-                            </View>
-
-                        </View>
-                        {itemOrder.Unit != undefined && itemOrder.Unit != "" && itemOrder.LargeUnit != undefined && itemOrder.LargeUnit != "" ?
-                            <View style={{ flexDirection: "row", justifyContent: "center", marginTop: 5, alignItems: "center" }} onPress={() => setShowModal(false)}>
-                                <Text style={{ fontSize: 14, flex: 3 }}>{I18n.t('chon_dvt')}</Text>
-                                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", flex: 7 }}>
-                                    <TouchableOpacity onPress={() => {
-                                        setIsLargeUnit(false)
-                                    }} style={{ flexDirection: "row", alignItems: "center", marginLeft: -10 }}>
-                                        <RadioButton.Android
-                                            color={colors.colorchinh}
-                                            status={!IsLargeUnit ? 'checked' : 'unchecked'}
-                                            onPress={() => {
-                                                setIsLargeUnit(false)
-                                            }}
-                                        />
-                                        <Text style={{ marginLeft: 0 }}>{itemOrder.Unit}</Text>
-                                    </TouchableOpacity>
-
-                                    <TouchableOpacity onPress={() => {
-                                        setIsLargeUnit(true)
-                                    }} style={{ flexDirection: "row", alignItems: "center" }}>
-                                        <RadioButton.Android
-                                            color={colors.colorchinh}
-                                            status={IsLargeUnit ? 'checked' : 'unchecked'}
-                                            onPress={() => {
-                                                setIsLargeUnit(true)
-                                            }}
-                                        />
-                                        <Text style={{ marginLeft: 0 }}>{itemOrder.LargeUnit}</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                            : null}
-                        <View style={{ padding: 0, marginTop: (itemOrder.Unit != undefined && itemOrder.Unit != "" && itemOrder.LargeUnit != undefined && itemOrder.LargeUnit != "") ? 0 : 10, flexDirection: "row", justifyContent: "center", alignItems: "center" }} >
-                            <Text style={{ fontSize: 14, flex: 3 }}>{I18n.t('so_luong')}</Text>
-                            <View style={{ alignItems: "center", flexDirection: "row", flex: 7 }}>
-                                <TouchableOpacity onPress={() => {
-                                    if (itemOrder.Quantity > 0) {
-                                        itemOrder.Quantity--
-                                        setItemOrder({ ...itemOrder })
-                                    }
-                                }}>
-                                    <Text style={styles.button}>-</Text>
-                                </TouchableOpacity>
-                                <TextInput
-                                    onChangeText={text => {
-                                        if (!Number.isInteger(+text) || +text > 1000) return
-                                        itemOrder.Quantity = text
-                                        setItemOrder({ ...itemOrder })
-                                    }}
-                                    style={styles.textQuantityModal}
-                                    value={"" + itemOrder.Quantity}
-                                    keyboardType="numeric" />
-                                <TouchableOpacity onPress={() => {
-                                    if (itemOrder.Quantity < 1000) {
-                                        itemOrder.Quantity++
-                                        setItemOrder({ ...itemOrder })
-                                    }
-                                }}>
-                                    <Text style={styles.button}>+</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                        <View style={{ padding: 0, flexDirection: "row", justifyContent: "center", alignItems: "center", marginTop: 10 }} onPress={() => setShowModal(false)}>
-                            <Text style={{ fontSize: 14, flex: 3 }}>{I18n.t('ghi_chu')}</Text>
-                            <View style={{ flexDirection: "row", flex: 7 }}>
-                                <TextInput
-                                    onChangeText={text => {
-                                        itemOrder.Description = text
-                                        setItemOrder({ ...itemOrder })
-                                    }}
-                                    numberOfLines={3}
-                                    multiline={true}
-                                    value={itemOrder.Description}
-                                    style={styles.descModal}
-                                    placeholder={I18n.t('nhap_ghi_chu')} />
-                            </View>
-                        </View>
-                        {
-                            itemOrder.OrderQuickNotes != undefined && itemOrder.OrderQuickNotes != "" ?
-                                <View style={{ paddingVertical: 5, flexDirection: "row", justifyContent: "center", marginTop: 5 }} onPress={() => setShowModal(false)}>
-                                    <Text style={{ fontSize: 14, flex: 3 }}></Text>
-                                    <View style={{ flexDirection: "row", flex: 7 }}>
-                                        <TouchableOpacity
-                                            style={{ flex: 1, flexDirection: "row", alignItems: "center", paddingVertical: 4 }}
-                                            onPress={() => {
-                                                setShowQuickNote(true)
-                                            }}>
-                                            <Image style={{ width: 20, height: 20 }} source={Images.icon_quick_note} />
-                                            {/* <Icon name="square-edit-outline" size={30} color="#2381E5" /> */}
-                                            <Text style={{ color: colors.colorLightBlue, marginLeft: 10 }}>{I18n.t('chon_ghi_chu_nhanh')}</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                </View>
-                                :
-                                null
-                        }
-                        <View style={styles.wrapAllButtonModal}>
-                            <TouchableOpacity onPress={() => props.setShowModal(false)} style={styles.wrapButtonModal} >
-                                <Text style={styles.buttonModal}>{I18n.t('huy')}</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => onClickTopping()} style={styles.wrapButtonModal} >
-                                <Text style={styles.buttonModal}>Topping</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => onClickOk()} style={[styles.wrapButtonModal, { backgroundColor: Colors.colorchinh }]} >
-                                <Text style={{ color: "#fff", textTransform: "uppercase", }}>{I18n.t('dong_y')}</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-            }
         </View>
     )
 }

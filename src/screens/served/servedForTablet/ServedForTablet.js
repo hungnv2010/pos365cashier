@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { View, NativeModules } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import ToolBarServed from '../../../components/toolbar/ToolBarServed'
 import SelectProduct from './selectProduct/SelectProduct';
 import PageServed from './pageServed/PageServed';
@@ -10,10 +10,12 @@ import { Constant } from '../../../common/Constant';
 import ViewPrint from '../../more/ViewPrint';
 const { Print } = NativeModules;
 import dataManager from '../../../data/DataManager'
+import moment from 'moment';
+import I18n from '../../../common/language/i18n';
 
 const Served = (props) => {
     let serverEvent = null;
-    const [currentServerEvent, setCurrentSeverEvent] = useState({})
+    const currentServerEvent = useRef({})
 
     const [jsonContent, setJsonContent] = useState({})
 
@@ -25,18 +27,9 @@ const Served = (props) => {
     const [position, setPosition] = useState("")
     const meMoItemOrder = useMemo(() => itemOrder, [itemOrder])
     const toolBarTabletServedRef = useRef();
-    const dispatch = useDispatch();
     const orientaition = useSelector(state => {
-        console.log("useSelector state ", state.Common.orientaition);
         return state.Common.orientaition
     });
-
-    const getProductImage = async (item) => {
-        let products = await realmStore.queryProducts()
-        let productWithId = products.filtered(`Id ==${item.Id}`)
-        productWithId = JSON.parse(JSON.stringify(productWithId))[0] ? JSON.parse(JSON.stringify(productWithId))[0] : {}
-        return productWithId.ProductImages ? productWithId.ProductImages : ""
-    }
 
     useEffect(() => {
         const getListPos = async () => {
@@ -48,19 +41,18 @@ const Served = (props) => {
             serverEvent = serverEvent.filtered(`RowKey == '${row_key}'`)
         
             if (JSON.stringify(serverEvent) != '{}' && serverEvent[0].JsonContent) {
-                setCurrentSeverEvent(serverEvent[0])
+                currentServerEvent.current = serverEvent[0]
                 let jsonContentObject = JSON.parse(serverEvent[0].JsonContent)
-                setJsonContent(jsonContentObject.OrderDetails? jsonContentObject : Constant.JSONCONTENT_EMPTY) 
+                if (!jsonContentObject.OrderDetails) jsonContentObject.OrderDetails = []
+                setJsonContent(jsonContentObject)
             } else setJsonContent(Constant.JSONCONTENT_EMPTY)
 
             serverEvent.addListener((collection, changes) => {
-                if (changes.insertions.length || changes.modifications.length) {
-                    setCurrentSeverEvent(serverEvent[0])
+                if ((changes.insertions.length || changes.modifications.length) && serverEvent[0].FromServer) {
+                    currentServerEvent.current = serverEvent[0]
                     setJsonContent(JSON.parse(serverEvent[0].JsonContent))
-
                 }
             })
-
         }
 
         getListPos()
@@ -69,60 +61,69 @@ const Served = (props) => {
         }
     }, [position])
 
-    const outputListProducts = (newList, type) => {
-        console.log(newList, 'newList start');
-        newList = newList.filter(item => item.Quantity > 0)
-        switch (type) {
-            case 0:
-                outputListProducts(newList)
-                break;
-            case 2:
-                console.log('newListnewListnewListnewListnewList', newList);
-                newList.forEach((newItem, index) => {
-                    getProductImage(newItem)
-                        .then((res) => {
-                            newItem.exist = false
-                            newItem.ProductImages = res
-                            if(!jsonContent.OrderDetails) jsonContent.OrderDetails = []
-                            jsonContent.OrderDetails.forEach((elm, idx) => {
-                                if (newItem.Id == elm.Id && !elm.SplitForSalesOrder) {
-                                    elm.Quantity += newItem.Quantity
-                                    newItem.exist = true
-                                }
-                            })
-                            newList = newList.filter(item => !item.exist)
-                            outputListProducts([...newList, ...jsonContent.OrderDetails])
-                        })
-                        .catch((e) => {
-                            newItem.exist = false
-                            if(!jsonContent.OrderDetails) jsonContent.OrderDetails = []
-                            jsonContent.OrderDetails.forEach((elm, idx) => {
-                                if (newItem.Id == elm.Id && !elm.SplitForSalesOrder) {
-                                    elm.Quantity += newItem.Quantity
-                                    newItem.exist = true
-                                }
-                            })
-                            newList = newList.filter(item => !item.exist)
-                            outputListProducts([...newList, ...jsonContent.OrderDetails])
-                        })
-                });
-                break;
-
-            default:
-                break;
+    const outputSelectedProduct = (product, replace = false) => {
+        if(product.Quantity > 0 && !replace) {
+            if (!jsonContent.OrderDetails) jsonContent.OrderDetails = []
+            if (jsonContent.OrderDetails.length == 0) {
+                let title = jsonContent.RoomName ? jsonContent.RoomName : ""
+                let body = I18n.t('gio_khach_vao') + moment().format('HH:mm dd/MM')
+                dataManager.sentNotification(title, body)
+            }
+            if (product.SplitForSalesOrder) {
+                jsonContent.OrderDetails.push(product)
+            } else {
+                let isExist = false
+                jsonContent.OrderDetails.forEach( elm => {
+                    if(elm.ProductId == product.ProductId) {
+                        isExist = true
+                        elm.Quantity += product.Quantity
+                        return;
+                    }
+                })
+                if (!isExist) jsonContent.OrderDetails.push(product)
+            }
+        } else if(replace) {
+            jsonContent.OrderDetails = jsonContent.OrderDetails.map( (elm, index) => {
+                if(elm.ProductId == product.ProductId && index == product.index) elm = product
+                return elm
+            })
+        } else {
+            jsonContent.OrderDetails = jsonContent.OrderDetails
+                .filter((elm, index) => index == product.index && elm.ProductId != product.ProductId)
         }
-        console.log(newList, 'newList');
-        checkHasItemOrder(newList)
-        checkProductId(newList, props.route.params.room.ProductId)
-
-        if(currentServerEvent)
-            updateServerEvent(JSON.parse(JSON.stringify(currentServerEvent)), newList)
+        checkRoomProductId([product], props.route.params.room.ProductId)
+        updateServerEvent()
     }
 
-    const updateServerEvent = (serverEvent, newOrderDetail) => {
-        dataManager.calculatateServerEvent(serverEvent, newOrderDetail)
-        serverEvent.Version += 1
-        dataManager.subjectUpdateServerEvent.next(serverEvent)
+    const outputListProducts = (newList, type) => {
+        console.log('outputListProducts', type, newList);
+        newList = newList.filter(item => item.Quantity > 0)
+        newList.forEach((newItem, index) => {
+            newItem.exist = false
+            if(!jsonContent.OrderDetails) jsonContent.OrderDetails = []
+            jsonContent.OrderDetails.forEach((elm, idx) => {
+                if (newItem.ProductId == elm.ProductId && !elm.SplitForSalesOrder) {
+                    elm.Quantity += newItem.Quantity
+                    newItem.exist = true
+                }
+            })
+            newList = newList.filter(item => !item.exist)
+            jsonContent.OrderDetails = [...newList, ...jsonContent.OrderDetails]
+        });
+        checkHasItemOrder(newList)
+        checkRoomProductId(newList, props.route.params.room.ProductId)
+        updateServerEvent()
+    }
+
+    const updateServerEvent = () => {
+        if(currentServerEvent) {
+            let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current))
+            dataManager.calculatateJsonContent(jsonContent)
+            setJsonContent({...jsonContent})
+            serverEvent.Version += 1
+            serverEvent.JsonContent = JSON.stringify(jsonContent)
+            dataManager.updateServerEvent(serverEvent)
+        }
     }
 
     const outputTextSearch = (text) => {
@@ -134,16 +135,12 @@ const Served = (props) => {
     }
 
     const outputPosition = (position) => {
-        console.log('outputPosition', position);
-
         setPosition(position)
     }
 
     const outputListTopping = (listTopping) => {
-        console.log('outputListTopping', listTopping);
         setListTopping(listTopping)
     }
-
 
     const outputClickProductService = async () => {
         let results = await realmStore.queryProducts()
@@ -153,30 +150,26 @@ const Served = (props) => {
                 results = JSON.parse(JSON.stringify(results))
                 console.log("outputClickProductService results ", [results["0"]]);
                 results["0"]["Quantity"] = 1;
-                results["0"]["Sid"] = Date.now();
                 outputListProducts([results["0"]], 2)
                 toolBarTabletServedRef.current.clickCheckInRef()
             }
         }
     }
 
-    const checkProductId = (listProduct, Id) => {
-        console.log("checkProductId id ", Id);
+    const checkRoomProductId = (listProduct, Id) => {
 
         if (Id != 0) {
-            let list = listProduct.filter(item => { return item.Id == Id })
-            console.log("checkProductId listProduct ", list);
+            let list = listProduct.filter(item => { return item.ProductId == Id })
             setTimeout(() => {
                 list.length > 0 ? toolBarTabletServedRef.current.clickCheckInRef(false) : toolBarTabletServedRef.current.clickCheckInRef(true)
             }, 500);
-            // listProduct.length > 0 ? toolBarTabletServedRef.current.clickCheckInRef(false) : toolBarTabletServedRef.current.clickCheckInRef(true)
         }
     }
 
     const checkHasItemOrder = (newList) => {
         let exist = false
-        newList.forEach(item => {
-            if (item.Sid == itemOrder.Sid) {
+        newList.forEach((item, index) => {
+            if (item.ProductId == itemOrder.ProductId && (itemOrder.index == undefined || index == itemOrder.index)) {
                 exist = true
             }
         })
@@ -195,17 +188,16 @@ const Served = (props) => {
         }, 500);
     }
     const viewPrintRef = useRef();
-    const renderForTablet = () => {
-        return (
-            <>
-                <ViewPrint
+
+    return (
+        <View style={{ flex: 1 }}>
+             <ViewPrint
                     ref={viewPrintRef}
                     html={data}
                     callback={(uri) => {
                         console.log("callback uri ", uri)
                         Print.printImageFromClient([uri + ""])
-                    }
-                    }
+                    }}
                 />
                 <ToolBarServed
                     {...props}
@@ -216,14 +208,15 @@ const Served = (props) => {
                     outputTextSearch={outputTextSearch} />
                 <View style={{ flex: 1, flexDirection: "row" }}>
                     <View style={{ flex: 6, }}>
-                        <View style={!itemOrder.Sid ? { flex: 1 } : { width: 0, height: 0 }}>
+                        <View style={!itemOrder.ProductId ? { flex: 1 } : { width: 0, height: 0 }}>
                             <SelectProduct
                                 valueSearch={value}
                                 numColumns={orientaition == Constant.LANDSCAPE ? 4 : 3}
-                                listProducts={[...listProducts]}
-                                outputListProducts={outputListProducts} />
+                                listProducts={ jsonContent.OrderDetails? [...jsonContent.OrderDetails]: [] }
+                                outputSelectedProduct={outputSelectedProduct}/>
                         </View>
-                        <View style={itemOrder.Sid ? { flex: 1 } : { width: 0, height: 0 }}>
+
+                        <View style={itemOrder.ProductId ? { flex: 1 } : { width: 0, height: 0 }}>
                             <Topping
                                 {...props}
                                 numColumns={orientaition == Constant.LANDSCAPE ? 2 : 1}
@@ -244,18 +237,10 @@ const Served = (props) => {
                             outputListProducts={outputListProducts}
                             outputItemOrder={outputItemOrder}
                             outputPosition={outputPosition}
+                            outputSelectedProduct={outputSelectedProduct}
                             listTopping={listTopping} />
                     </View>
                 </View>
-            </>
-        )
-    }
-
-    return (
-        <View style={{ flex: 1 }}>
-            {
-                renderForTablet()
-            }
         </View>
     );
 }

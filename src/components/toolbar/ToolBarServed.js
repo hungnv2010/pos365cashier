@@ -40,6 +40,7 @@ export default forwardRef((props, ref) => {
     }));
 
     const onCallBack = (data, type) => {
+        data.forEach(product => { if (product.Id && product.Id > 0) product.ProductId = product.Id })
         props.outputListProducts(data, type)
     }
 

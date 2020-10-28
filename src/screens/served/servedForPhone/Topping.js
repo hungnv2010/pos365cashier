@@ -1,12 +1,10 @@
 import React, { useEffect, useState, useRef, useLayoutEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import { Colors, Metrics, Images } from '../../../theme'
+import { Colors } from '../../../theme'
 import realmStore from '../../../data/realm/RealmStore';
 import I18n from '../../../common/language/i18n';
-import dataManager from '../../../data/DataManager';
 import { currencyToString } from '../../../common/Utils';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-
 
 export default (props) => {
 
@@ -15,7 +13,6 @@ export default (props) => {
     const [listCateId, setlistCateId] = useState([I18n.t('tat_ca')])
     const [itemOrder, setItemOrder] = useState(() => props.route.params.itemOrder) //current product
     const toppingRef = useRef([]) // save all toppings from db
-
 
     useEffect(() => {// initial
         console.log('initial', itemOrder);
@@ -67,11 +64,6 @@ export default (props) => {
     const getTotalPrice = () => {
         let priceTotal = topping.reduce((accumulator, currentValue) => accumulator + currentValue.Price * currentValue.Quantity, 0)
         return priceTotal
-    }
-
-    const onclose = () => {
-        saveListTopping()
-        console.log(topping);
     }
 
     const handleButtonDecrease = (item, index) => {
@@ -139,7 +131,7 @@ export default (props) => {
                     <Text style={{ color: "white", fontWeight: "bold", fontSize: 15 }}>Topping</Text>
                 </View>
                 <View style={{ flex: 1, justifyContent: "center", alignItems: "flex-end", paddingRight: 5 }}>
-                    <TouchableOpacity style={{}} onPress={() => { onclose() }}>
+                    <TouchableOpacity style={{}} onPress={() => { saveListTopping() }}>
                         <Icon name="check" size={30} color="white" style={{}} />
                     </TouchableOpacity>
                 </View>
