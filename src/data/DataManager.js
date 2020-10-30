@@ -171,9 +171,15 @@ class DataManager {
     }
 
     syncOrdersOffline = async (value) => {
-        console.log("syncOrdersOffline value ", value);
         if (value) {
             realmStore.insertOrdersOffline(value)
+        }
+    }
+
+    syncQRCode = async (value) => {
+        console.log("syncQRCode value ", value);
+        if (value) {
+            realmStore.insertQRCode(value)
         }
     }
 

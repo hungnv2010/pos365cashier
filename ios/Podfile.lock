@@ -277,6 +277,8 @@ PODS:
     - React
   - RNCMaskedView (0.1.10):
     - React
+  - RNDateTimePicker (3.0.4):
+    - React-Core
   - RNDeviceInfo (3.1.4):
     - React
   - RNExitApp (1.1.0):
@@ -352,6 +354,7 @@ DEPENDENCIES:
   - RealmJS (from `../node_modules/realm`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
+  - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
   - RNExitApp (from `../node_modules/react-native-exit-app`)
   - RNFS (from `../node_modules/react-native-fs`)
@@ -468,6 +471,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/async-storage"
   RNCMaskedView:
     :path: "../node_modules/@react-native-community/masked-view"
+  RNDateTimePicker:
+    :path: "../node_modules/@react-native-community/datetimepicker"
   RNDeviceInfo:
     :path: "../node_modules/react-native-device-info"
   RNExitApp:
@@ -543,6 +548,7 @@ SPEC CHECKSUMS:
   RealmJS: 85d246ec57ac1420faf933c282c0b379e61f38a0
   RNCAsyncStorage: f640ddf9266df777c38e112ea5881ead7188b59c
   RNCMaskedView: f5c7d14d6847b7b44853f7acb6284c1da30a3459
+  RNDateTimePicker: 88dc10d685ce961339bad3353c64db96c5abd19b
   RNDeviceInfo: 9e88577c51bd42f65275e53bb0de0a0f728ed6b8
   RNExitApp: 7d81855142a4d11eb75f4f06fdebf5a950d7aef2
   RNFS: 2bd9eb49dc82fa9676382f0585b992c424cd59df
@@ -557,4 +563,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 8c6781225775f597b268418e423b4ccb8bbcda9b
 
-COCOAPODS: 1.10.0
+COCOAPODS: 1.8.4
