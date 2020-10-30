@@ -6,6 +6,7 @@ import { Subject } from 'rxjs';
 import moment from "moment";
 import signalRManager from "../common/SignalR";
 import { momentToDateUTC, groupBy } from "../common/Utils";
+import { Constant } from "../common/Constant";
 class DataManager {
     constructor() {
         this.subjectUpdateServerEvent = new Subject()
@@ -30,9 +31,18 @@ class DataManager {
                     // let serverEvent = await realmStore.queryServerEvents()
                     // serverEvent = JSON.parse(JSON.stringify(serverEvent))
                     let newOrders = await new HTTPService().setPath(ApiPath.WAIT_FOR_COMFIRMATION_ALL).GET()
+
                     this.printCook(newOrders)
-                    let newServerEvents = this.mergeServerEvents(serverEvent, newOrders)
-                    console.log('newServerEvents', newServerEvents);
+
+                    newOrders.forEach(async (elm, idx) => {
+                        let serverEvent = await realmStore.queryServerEvents()
+                        serverEvent = serverEvent.filtered(`RowKey == '${elm.RoomId}_${elm.Position}'`)
+                        serverEvent = JSON.parse(JSON.stringify(serverEvent))[0]
+                        this.mergeServerEvents(serverEvent, elm)
+                    })
+                    // this.printCook(newOrders)
+                    // let newServerEvents = this.mergeServerEvents(serverEvent, newOrders)
+                    // console.log('newServerEvents', newServerEvents);
                     // this.updateServerEvent(newServerEvents)
                 }
             } catch (error) {
@@ -42,22 +52,57 @@ class DataManager {
     }
 
     printCook = (newOrders) => {
-        newOrders.forEach((elm, idx)=>{
-            
+        let listResult = []
+        let secondPrinter = []
+        let print3 = []
+        let print4 = []
+        let print5 = []
+        newOrders.forEach((elm, idx) => {
+            if (!elm.Printer || elm.Printer == '') {
+                elm.Printer = Constant.PRINT_KITCHEN_BARTENDER_DEFAULT
+            }
+            if (elm.SecondPrinter && elm.SecondPrinter != '') {
+                secondPrinter.push({ ...elm, Printer: elm.SecondPrinter })
+            }
+            if (elm.Printer3 && elm.Printer3 != '') {
+                print3.push({ ...elm, Printer: elm.Printer3 })
+            }
+            if (elm.Printer4 && elm.Printer4 != '') {
+                print4.push({ ...elm, Printer: elm.Printer4 })
+            }
+            if (elm.Printer5 && elm.Printer5 != '') {
+                print5.push({ ...elm, Printer: elm.Printer5 })
+            }
         })
+        listResult = [...newOrders, ...secondPrinter, ...print3, ...print4, ...print5]
+        let listResultGroupBy = groupBy(listResult, "Printer")
+        for (const property in listResultGroupBy) {
+            listResultGroupBy[property] = groupBy(listResultGroupBy[property], "RoomName")
+        }
+        console.log('printCook listResultGroupBy', listResultGroupBy);
     }
 
-    mergeServerEvents = (serverEvent, newOrders) => {
-        let listRowKey = []
-        newOrders.forEach(element => {
-            let rowKey = `${element.RoomId}_${element.Position}`;
-
-
-        });
-
-        console.log('mergeServerEvents', serverEvent, newOrders);
-        serverEvent.Version += 1;
-        return serverEvent
+    mergeServerEvents = async (serverEvent, orderItem) => {
+        if (!serverEvent.JsonContent) return
+        let exist = false;
+        let jsonContentObject = JSON.parse(serverEvent.JsonContent)
+        jsonContentObject.OrderDetails.forEach(elm => {
+            if (elm.ProductId == orderItem.ProductId) {
+                exist = true
+                elm.Quantity += 1
+                elm.Processed = elm.Quantity
+            }
+        })
+        if (!exist) {
+            let product = await realmStore.queryProducts()
+            product.filtered(`Id == '${orderItem.ProductId}'`)
+            console.log('mergeServerEvents', JSON.parse(JSON.stringify(product)));
+            jsonContentObject.OrderDetails.push(JSON.parse(JSON.stringify(product)))
+        }
+        serverEvent.JsonContent = JSON.stringify(jsonContentObject)
+        serverEvent.Version += 1
+        console.log('mergeServerEvents', serverEvent, orderItem);
+        this.updateServerEvent(serverEvent)
     }
 
     //get information (From FileStore)
