@@ -305,6 +305,8 @@ export default {
   tim_kiem: "Tìm kiếm",
   tien_khach_tra: "Tiền khách trả",
   tra_lai_tien: "Trả lại tiền",
+  thong_tin_them: "Thông tin thêm",
+  thoi_gian: "Thời gian",
   // TODO: U
 
   // TODO: V

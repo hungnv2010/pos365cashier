@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
-import { Image, View, StyleSheet, Text, TouchableOpacity, TextInput, ScrollView, Modal, TouchableWithoutFeedback } from "react-native";
+import { Image, View, StyleSheet, Button, Text, TouchableOpacity, TextInput, ScrollView, Modal, TouchableWithoutFeedback } from "react-native";
 import { Snackbar, Surface, RadioButton } from 'react-native-paper';
 import I18n from '../../common/language/i18n';
 import realmStore from '../../data/realm/RealmStore';
 import { Images, Metrics } from '../../theme';
 import { ScreenList } from '../../common/ScreenList';
-import { currencyToString } from '../../common/Utils';
+import { currencyToString, dateToStringFormatUTC } from '../../common/Utils';
 import colors from '../../theme/Colors';
 import { useSelector } from 'react-redux';
 import { Constant } from '../../common/Constant';
@@ -23,7 +23,8 @@ import { ApiPath } from '../../data/services/ApiPath';
 import { HTTPService, URL } from '../../data/services/HttpService';
 import dialogManager from '../../components/dialog/DialogManager';
 import dataManager from '../../data/DataManager';
-// import DateTimePicker from '@react-native-community/datetimepicker';
+import QRCode from 'react-native-qrcode-svg';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 let timeClickCash = 1000;
 
@@ -63,13 +64,18 @@ export default (props) => {
     const [giveMoneyBack, setGiveMoneyBack] = useState(true);
     const [itemMethod, setItemMethod] = useState(CASH);
     const [sendMethod, setSendMethod] = useState(METHOD.discount)
-    const [chosenDate, setChosenDate] = useState(new Date());
+    const [date, setDate] = useState(new Date());
+    const [noteInfo, setNoteInfo] = useState("");
+    const [showDateTime, setShowDateTime] = useState(false);
+    const dateTmp = useRef(date)
     const toolBarPaymentRef = useRef();
     const itemAccountRef = useRef();
     const typeModal = useRef();
     const qrCode = useRef();
     var currentServerEvent = useRef();
     let row_key = "";
+    let qrCodeRealm = null
+    
 
     const { deviceType } = useSelector(state => {
         return state.Common
@@ -232,7 +238,6 @@ export default (props) => {
     }
 
     const onClickNote = () => {
-        // alert('ok')
         typeModal.current = TYPE_MODAL.DATE
         setShowModal(true)
     }
@@ -427,6 +432,12 @@ export default (props) => {
         json.TotalPayment = giveMoneyBack ? json.Total : amountReceived
         json.VATRates = json.VATRates
         json.AmountReceived = amountReceived
+        if (noteInfo != '') {
+            json.Description = noteInfo;
+        }
+        if (date && dateTmp.current) {
+            json.PurchaseDate = "" + date;
+        }
         if (listMethod.length > 0)
             json.AccountId = listMethod[0].Id;
         let params = {
@@ -451,6 +462,7 @@ export default (props) => {
                     qrCode.current = order.QRCode
                     typeModal.current = TYPE_MODAL.QRCODE
                     setShowModal(true)
+                    handlerQRCode(order)
                 } else
                     props.navigation.pop()
             } else {
@@ -461,6 +473,28 @@ export default (props) => {
             console.log("onClickPay err ", err);
             handlerError({ JsonContent: json, RowKey: row_key })
         });
+    }
+
+    const handlerQRCode = async (order) => {
+        let params = {
+            Id: order.Id,
+            JsonContent: JSON.stringify(data.JsonContent),
+            Messenger: order.Messenger,
+            Status: 0,
+            HostName: URL.link,
+            BranchId: vendorSession.CurrentBranchId,
+            Code: order.Code,
+            QRCode: order.QRCode
+        }
+        console.log("handlerQRCode params ", params);
+        dataManager.syncQRCode([params]);
+
+        qrCodeRealm = await realmStore.queryQRCode()
+        qrCodeRealm.addListener((collection, changes) => {
+            if (changes.insertions.length || changes.modifications.length) {
+                console.log("handlerQRCode qrCode.addListener collection changes ", collection, changes);
+            }
+        })
     }
 
     const handlerError = (data) => {
@@ -554,20 +588,35 @@ export default (props) => {
         console.log("calculator total ", total);
     }
 
-    // const [date, setDate] = useState(new Date(1598051730000));
-    // const [mode, setMode] = useState('date');
+    const onChange = (event, selectedDate) => {
+        const currentDate = selectedDate || date;
+        console.log("onChange Date ", currentDate);
+        dateTmp.current = currentDate;
+    };
 
-    // const onChange = (event, selectedDate) => {
-    //     const currentDate = selectedDate || date;
-    //     setShow(Platform.OS === 'ios');
-    //     setDate(currentDate);
-    // };
+    const onChangeTextNote = (text) => {
+        setNoteInfo(text)
+    }
+
+    const onSelectDateTime = () => {
+        setDate(dateTmp.current)
+        setShowDateTime(false)
+    }
+
+    const onShowDateTime = (status) => {
+        setShowDateTime(status)
+    }
+
+    const onClickOkAddInfo = () => {
+        console.log("onClickOkAddInfo date noteInfo ", date, noteInfo);
+        setShowModal(false)
+    }
 
     const renderFilter = () => {
         if (typeModal.current == TYPE_MODAL.FILTER_ACCOUNT)
             return (
                 <View style={styles.viewFilter}>
-                    <Text style={styles.titleFiler}>{I18n.t('loai_hinh_thanh_toan')}</Text>
+                    <Text style={styles.titleFilter}>{I18n.t('loai_hinh_thanh_toan')}</Text>
                     <ScrollView style={{ maxHeight: Metrics.screenWidth }}>
                         {
                             vendorSession.Accounts && [CASH].concat(vendorSession.Accounts).map((item, index) => {
@@ -597,32 +646,79 @@ export default (props) => {
         if (typeModal.current == TYPE_MODAL.QRCODE)
             return (
                 <View style={[styles.viewFilter, { justifyContent: "center", alignItems: "center" }]}>
-                    <Text>{qrCode.current}</Text>
-                    <Image style={styles.logoImage}
-                        source={{
-                            uri: qrCode.current
-                            // uri: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADMAAAAzCAYAAAA6oTAqAAAAEXRFWHRTb2Z0d2FyZQBwbmdjcnVzaEB1SfMAAABQSURBVGje7dSxCQBACARB+2/ab8BEeQNhFi6WSYzYLYudDQYGBgYGBgYGBgYGBgYGBgZmcvDqYGBgmhivGQYGBgYGBgYGBgYGBgYGBgbmQw+P/eMrC5UTVAAAAABJRU5ErkJggg==',
-                        }} />
-                    <View style={styles.viewBottomFilter}>
+                    <QRCode
+                        size={250}
+                        value={qrCode.current}
+                    />
+                    <View style={[styles.viewBottomFilter, { marginTop: 20 }]}>
                         <TouchableOpacity style={styles.viewButtonCancel} onPress={onClickCancelFilter}>
                             <Text style={styles.textButtonCancel}>{I18n.t("huy")}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
             )
-        if (typeModal.current == TYPE_MODAL.DATE)
-            return (
-                <View style={[styles.viewFilter, { justifyContent: "center", alignItems: "center" }]}>
-                    {/* <DateTimePicker
-                        testID="dateTimePicker"
-                        value={date}
-                        mode={mode}
-                        is24Hour={true}
-                        display="default"
-                        onChange={onChange}
-                    /> */}
-                </View>
-            )
+        if (typeModal.current == TYPE_MODAL.DATE) {
+            if (showDateTime)
+                return (
+                    <View>
+                        <DateTimePicker
+                            value={date}
+                            mode={'date'}
+                            display="default"
+                            locale="vi-VN"
+                            onChange={onChange}
+                        />
+                        <View style={styles.line}></View>
+                        <DateTimePicker
+                            value={date}
+                            mode={'time'}
+                            display="default"
+                            locale="vi-VN"
+                            onChange={onChange}
+                        />
+                        <View style={[styles.viewBottomFilter, { padding: 7, paddingTop: 0 }]}>
+                            <TouchableOpacity style={styles.viewButtonCancel} onPress={() => onShowDateTime(false)}>
+                                <Text style={styles.textButtonCancel}>{I18n.t("huy")}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.viewButtonOk} onPress={() => onSelectDateTime()}>
+                                <Text style={styles.textButtonOk}>{I18n.t("dong_y")}</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View >)
+            else
+                return (
+                    <View style={[styles.viewFilter, { justifyContent: "center", alignItems: "center" }]}>
+                        <Text style={styles.titleFilter}>{I18n.t('thong_tin_them')}</Text>
+                        <View style={styles.viewDateTime}>
+                            <Text style={styles.textInfo}>{I18n.t('thoi_gian')}</Text>
+                            <TouchableOpacity onPress={() => onShowDateTime(true)} style={styles.inputDateTime}>
+                                <TextInput
+                                    editable={false}
+                                    onTouchStart={() => onShowDateTime(true)}
+                                    value={"" + dateToStringFormatUTC(date)}
+                                    style={{ padding: 6, flex: 1 }} />
+                                <Fontisto style={{ marginTop: -2 }} name="date" size={20} color={colors.colorchinh} />
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.viewNote}>
+                            <Text style={styles.textInfo}>{I18n.t('ghi_chu')}</Text>
+                            <TextInput
+                                value={noteInfo}
+                                onChangeText={onChangeTextNote}
+                                multiline
+                                style={styles.inputNote} />
+                        </View>
+                        <View style={styles.viewBottomFilter}>
+                            <TouchableOpacity style={styles.viewButtonCancel} onPress={() => setShowModal(false)}>
+                                <Text style={styles.textButtonCancel}>{I18n.t("huy")}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.viewButtonOk} onPress={onClickOkAddInfo}>
+                                <Text style={styles.textButtonOk}>{I18n.t("dong_y")}</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                )
+        }
     }
 
     const renderListMethod = () => {
@@ -884,6 +980,12 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff", borderRadius: 4, marginHorizontal: 20,
         width: Metrics.screenWidth * 0.8
     },
+    inputDateTime: { flexDirection: "row", alignItems: "center", paddingRight: 5, width: "70%", backgroundColor: "#eeeeee", marginLeft: 0, borderWidth: 0.5, borderRadius: 5, },
+    viewDateTime: { width: "100%", flexDirection: "row", marginTop: 10 },
+    viewNote: { width: "100%", flexDirection: "row", marginVertical: 10 },
+    textInfo: { width: "30%", paddingVertical: 7 },
+    line: { width: "100%", height: 1, backgroundColor: "#eeeeee" },
+    inputNote: { width: "70%", height: 70, backgroundColor: "#eeeeee", marginLeft: 0, borderWidth: 0.5, borderRadius: 5, padding: 6 },
     inputListMethod: { textAlign: "right", backgroundColor: "#eeeeee", marginLeft: 0, flex: 3, borderWidth: 0.5, borderRadius: 5, padding: 6.8 },
     buttonCaculatorMothod: { width: 32, height: 32, justifyContent: "center", alignItems: "center", borderRadius: 5, borderWidth: 0.5, borderColor: colors.colorchinh },
     viewCalculatorMethod: { flex: 3, justifyContent: "center", alignItems: "center", },
@@ -900,8 +1002,8 @@ const styles = StyleSheet.create({
     viewBottom: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
     viewExcessCash: { flexDirection: "row", justifyContent: "flex-end", marginRight: 10 },
     viewRadioButton: { flexDirection: "row", alignItems: "center" },
-    viewFilter: { backgroundColor: "#fff", padding: 10, },
-    titleFiler: { padding: 10, fontWeight: "bold", textTransform: "uppercase", color: colors.colorLightBlue },
+    viewFilter: { backgroundColor: "#fff", padding: 15, },
+    titleFilter: { paddingBottom: 10, fontWeight: "bold", textTransform: "uppercase", color: colors.colorLightBlue, textAlign: "left", width: "100%" },
     buttonAddAcount: { flex: 3, padding: 10, paddingTop: 5, color: colors.colorchinh },
     viewBottomFilter: { justifyContent: "center", flexDirection: "row", paddingTop: 10 },
     textButtonCancel: { textAlign: "center", color: "#000" },

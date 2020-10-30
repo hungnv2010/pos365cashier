@@ -173,6 +173,16 @@ class RealmStore extends RealmBase {
         return this.queryAll(databaseOption, SchemaName.ORDERS_OFFLINE)
     }
 
+    //QRCode
+    insertQRCode(newQRCode) {
+        console.log("insertQRCode newQRCode ", newQRCode);
+        return this.insertDatas(SchemaName.QR_CODE, newQRCode)
+    }
+
+    queryQRCode = async () => {
+        return this.queryAll(databaseOption, SchemaName.QR_CODE)
+    }
+
 }
 
 //define schema
@@ -186,6 +196,22 @@ export const SchemaName = {
     CUSTOMER: "Customer",
     PROMOTION: "Promotion",
     ORDERS_OFFLINE: "OrdersOffline",
+    QR_CODE: "QRCode"
+}
+
+const QRCode = {
+    name: SchemaName.QR_CODE,
+    primaryKey: "Id",
+    properties: {
+        Id: 'string',
+        Status: { type: 'int', default: 0 },
+        JsonContent: { type: 'string', default: '' },
+        HostName: { type: 'string', default: '' },
+        Messenger: { type: 'string', default: '' },
+        Code: { type: 'string', default: '' },
+        QRCode: { type: 'string', default: '' },
+        BranchId: { type: 'int', default: 0 },
+    }
 }
 
 const OrdersOffline = {
@@ -369,8 +395,8 @@ const PromotionSchema = {
 
 const databaseOption = {
     path: 'Pos365Boss.realm',
-    schema: [ServerEventSchema, RoomSchema, RoomGroupSchema, ProductSchema, CategoriesSchema, ToppingsSchema, CustomerSchema, PromotionSchema, OrdersOffline],
-    schemaVersion: 30
+    schema: [ServerEventSchema, RoomSchema, RoomGroupSchema, ProductSchema, CategoriesSchema, ToppingsSchema, CustomerSchema, PromotionSchema, OrdersOffline, QRCode],
+    schemaVersion: 32
 }
 
 const realm = new Realm(databaseOption);
