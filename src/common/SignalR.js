@@ -10,6 +10,7 @@ import dialogManager from '../components/dialog/DialogManager';
 import NetInfo from "@react-native-community/netinfo";
 import dataManager from '../data/DataManager';
 import { useRef } from 'react';
+import { randomUUID } from './Utils';
 
 var statusInternet = { currentStatus: false, previousStatus: false };
 // let version = 0

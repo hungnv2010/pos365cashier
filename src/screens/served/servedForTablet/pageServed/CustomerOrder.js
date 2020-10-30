@@ -13,6 +13,7 @@ import { ScreenList } from '../../../../common/ScreenList';
 import useDebounce from '../../../../customHook/useDebounce';
 import DialogProductDetail from '../../../../components/dialog/DialogProductDetail'
 import DialogProductUnit from '../../../../components/dialog/DialogProductUnit'
+import dialogManager from '../../../../components/dialog/DialogManager';
 
 const TYPE_MODAL = {
     UNIT: 1,
@@ -119,10 +120,6 @@ const CustomerOrder = (props) => {
         }
     }, [debouceWaitingList])
 
-    const sendOrder = () => {
-        props.navigation.navigate(ScreenList.Payment, { RoomId: props.route.params.room.Id, Position: props.Position });
-    }
-
     const applyDialogDetail = (product) => {
         listOrder.forEach( (elm, index) => {
             if(elm.ProductId == product.ProductId && index == product.index) elm = product
@@ -172,22 +169,11 @@ const CustomerOrder = (props) => {
 
     let _menu = null;
 
-    const setMenuRef = ref => {
-        _menu = ref;
-    };
+    const setMenuRef = ref => { _menu = ref };
 
-    const hideMenu = () => {
-        _menu.hide();
-    };
+    const hideMenu = () => { _menu.hide() };
 
-    const showMenu = () => {
-        _menu.show();
-    };
-
-    const sendNotidy = (type) => {
-        console.log("sendNotidy type ", type);
-        hideMenu();
-    }
+    const showMenu = () => { _menu.show() };
 
     const onClickUnit = (item) => {
         if (item.Unit && item.Unit != "" && item.LargeUnit && item.LargeUnit != "") {
@@ -337,6 +323,24 @@ const CustomerOrder = (props) => {
         setShowModal(false)
     }
 
+    const changTable = () => {
+        hideMenu()
+        if (listOrder && listOrder.length > 0) {
+            hideMenu()
+            props.navigation.navigate("ChangeTable", {
+                FromRoomId: props.route.params.room.Id,
+                FromPos: props.Position,
+                Name: props.route.params.room.Name
+            });
+        } else {
+            dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
+        }
+    }
+
+    const onClickPayment = () => {
+        props.navigation.navigate(ScreenList.Payment, { RoomId: props.route.params.room.Id, Position: props.Position });
+    }
+
     return (
         <View style={{ flex: 1 }}>
             <View style={{ flex: 1 }}>
@@ -373,13 +377,13 @@ const CustomerOrder = (props) => {
                         <View style={{
                             backgroundColor: "#fff", borderRadius: 4, marginHorizontal: 5,
                         }}>
-                            <TouchableOpacity onPress={() => sendNotidy(1)} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
+                            <TouchableOpacity onPress={() => changTable()} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
                                 <MaterialIcons style={{ paddingHorizontal: 7 }} name="notifications" size={26} color={Colors.colorchinh} />
-                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('yeu_cau_thanh_toan')}</Text>
+                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('chuyen_ban')}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => sendNotidy(2)} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
+                            <TouchableOpacity onPress={() => {}} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
                                 <Icon style={{ paddingHorizontal: 10 }} name="message" size={22} color={Colors.colorchinh} />
-                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('gui_thong_bao_toi_thu_ngan')}</Text>
+                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('tam_tinh')}</Text>
                             </TouchableOpacity>
                         </View>
                     </Menu>
@@ -387,7 +391,7 @@ const CustomerOrder = (props) => {
                 <TouchableOpacity onPress={() => { }} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
                     <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('bao_che_bien')}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={sendOrder} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
+                <TouchableOpacity onPress={() => onClickPayment()} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
                     <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('thanh_toan')}</Text>
                 </TouchableOpacity>
             </View>
