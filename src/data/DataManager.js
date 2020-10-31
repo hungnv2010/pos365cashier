@@ -5,7 +5,7 @@ import { getFileDuLieuString, setFileLuuDuLieu } from "../data/fileStore/FileSto
 import { Subject } from 'rxjs';
 import moment from "moment";
 import signalRManager from "../common/SignalR";
-import { momentToDateUTC, momentToStringDateLocal, groupBy, randomUUID } from "../common/Utils";
+import { momentToDateUTC, groupBy } from "../common/Utils";
 import { Constant } from "../common/Constant";
 class DataManager {
     constructor() {
@@ -15,6 +15,8 @@ class DataManager {
                 return serverEvent
             })
             .subscribe(async (serverEvent) => {
+                console.log("subjectUpdateServerEvent serverEvent ", serverEvent);
+
                 await realmStore.insertServerEvent(serverEvent)
                 signalRManager.sendMessageServerEvent(serverEvent)
             })
@@ -34,9 +36,10 @@ class DataManager {
 
                     newOrders.forEach(async (elm, idx) => {
                         let serverEvent = await realmStore.queryServerEvents()
-                        serverEvent = serverEvent.filtered(`RowKey == '${elm.RoomId}_${elm.Position}'`)
-                        serverEvent = JSON.parse(JSON.stringify(serverEvent))[0]
-                        this.mergeServerEvents(serverEvent, elm)
+                        let serverEventByRowKey = serverEvent.filtered(`RowKey == '${elm.RoomId}_${elm.Position}'`)
+                        serverEventByRowKey = JSON.parse(JSON.stringify(serverEventByRowKey))
+                        console.log('serverEvent', serverEventByRowKey[0], elm);
+                        this.mergeServerEvents(serverEventByRowKey[0], elm)
                     })
                     // this.printCook(newOrders)
                     // let newServerEvents = this.mergeServerEvents(serverEvent, newOrders)
@@ -81,9 +84,22 @@ class DataManager {
     }
 
     mergeServerEvents = async (serverEvent, orderItem) => {
-        if (!serverEvent.JsonContent) return
+        console.log('!serverEvent.JsonContent', serverEvent);
+        if (!serverEvent) {
+            serverEvent = {
+                RoomId: orderItem.RoomId,
+                Position: orderItem.Position,
+                Version: 0,
+                RowKey: `${orderItem.RoomId}_${orderItem.Position}`,
+                JsonContent: "{}"
+            }
+        }
         let exist = false;
         let jsonContentObject = JSON.parse(serverEvent.JsonContent)
+        jsonContentObject = jsonContentObject.OrderDetails ? jsonContentObject : Constant.JSONCONTENT_EMPTY
+        if(!jsonContentObject.ActiveDate){
+            
+        }
         jsonContentObject.OrderDetails.forEach(elm => {
             if (elm.ProductId == orderItem.ProductId) {
                 exist = true
@@ -92,10 +108,11 @@ class DataManager {
             }
         })
         if (!exist) {
-            let product = await realmStore.queryProducts()
-            product.filtered(`Id == '${orderItem.ProductId}'`)
-            console.log('mergeServerEvents', JSON.parse(JSON.stringify(product)));
-            jsonContentObject.OrderDetails.push(JSON.parse(JSON.stringify(product)))
+            let products = await realmStore.queryProducts()
+            let productItem = products.filtered(`Id == '${orderItem.ProductId}'`)
+            productItem = JSON.parse(JSON.stringify(productItem))[0];
+            productItem.Quantity = orderItem.Quantity
+            jsonContentObject.OrderDetails.push(productItem)
         }
         serverEvent.JsonContent = JSON.stringify(jsonContentObject)
         serverEvent.Version += 1
@@ -105,7 +122,7 @@ class DataManager {
 
     //get information (From FileStore)
     selectVendorSession = async () => {
-        return JSON.parse( await getFileDuLieuString(Constant.VENDOR_SESSION, true));
+        return await JSON.parse(getFileDuLieuString(Constant.VENDOR_SESSION, true));
     }
 
     isRestaurant = async () => {
@@ -171,36 +188,25 @@ class DataManager {
     }
 
     syncOrdersOffline = async (value) => {
+        console.log("syncOrdersOffline value ", value);
         if (value) {
             realmStore.insertOrdersOffline(value)
         }
     }
 
-    syncQRCode = async (value) => {
-        console.log("syncQRCode value ", value);
-        if (value) {
-            realmStore.insertQRCode(value)
-        }
-    }
-
     syncAllDatas = async () => {
         await this.syncProduct(),
-        await this.syncTopping(),
-        await this.syncServerEvent(),
-        await this.syncRooms(),
-        await this.syncPartner(),
-        await this.syncCategories(),
-        await this.syncPromotion()
+            await this.syncTopping(),
+            await this.syncServerEvent(),
+            await this.syncRooms(),
+            await this.syncPartner(),
+            await this.syncCategories(),
+            await this.syncPromotion()
     }
 
     //calculator and send ServerEvent
     updateServerEvent = (serverEvent) => {
         this.subjectUpdateServerEvent.next(serverEvent)
-    }
-
-    updateServerEventNow = async (serverEvent, FromServer = false) => {
-        await realmStore.insertServerEvent(serverEvent, FromServer)
-        signalRManager.sendMessageServerEvent(serverEvent)
     }
 
     calculatateServerEvent = (serverEvent, newOrderDetail) => {
@@ -222,7 +228,7 @@ class DataManager {
 
     calculatateJsonContent = (JsonContent) => {
         let totalProducts = this.totalProducts(JsonContent.OrderDetails)
-        let totalWithVAT = totalProducts + JsonContent.VAT ? JsonContent.VAT: 0
+        let totalWithVAT = totalProducts + JsonContent.VAT
         JsonContent.Total = totalWithVAT
         JsonContent.AmountReceived = totalWithVAT
         if (JsonContent.ActiveDate)
@@ -230,7 +236,7 @@ class DataManager {
         else if (!JsonContent.OrderDetails || JsonContent.OrderDetails.length == 0)
             JsonContent.ActiveDate = ""
     }
-    
+
     paymentSetServerEvent = (serverEvent, newJsonContent) => {
         if (!serverEvent.JsonContent) return
         serverEvent.JsonContent = JSON.stringify(newJsonContent)
@@ -241,7 +247,6 @@ class DataManager {
     totalProducts = (products) => {
         return products.reduce((total, product) => total + product.Price * product.Quantity, 0)
     }
-
     sentNotification = (Title, Body) => {
         let params = {
             Title: Title,
@@ -253,59 +258,6 @@ class DataManager {
 
         }
     }
-
-    changeTable = async (oldRoomId, oldPosition, newRoomId, newPosition) => {
-        console.log("changeTable ", oldRoomId, oldPosition, newRoomId, newPosition);
-        let serverEvents = await realmStore.queryServerEvents()
-
-        let oldServerEvent = serverEvents.filtered(`RowKey == '${oldRoomId}_${oldPosition}'`)
-        let newServerEvent = serverEvents.filtered(`RowKey == '${newRoomId}_${newPosition}'`)
-        
-        oldServerEvent = (JSON.stringify(oldServerEvent[0]) != '{}') ? JSON.parse(JSON.stringify(oldServerEvent[0])) 
-            : await this.createSeverEvent(oldRoomId, oldPosition)
-        oldServerEvent.JsonContent = oldServerEvent.JsonContent ? JSON.parse(oldServerEvent.JsonContent) : {}
-        if(!oldServerEvent.JsonContent.OrderDetails) oldServerEvent.JsonContent.OrderDetails = []
-    
-        newServerEvent = (JSON.stringify(newServerEvent[0]) != '{}') ? JSON.parse(JSON.stringify(newServerEvent[0])) 
-            : await this.createSeverEvent(newRoomId, newPosition)
-        if(!newServerEvent.JsonContent) {
-            newServerEvent.JsonContent = 
-                this.createJsonContent(newRoomId, newPosition, momentToDateUTC(moment()), oldServerEvent.JsonContent.OrderDetails)
-        } else {
-            newServerEvent.JsonContent = JSON.parse(newServerEvent.JsonContent)
-            let OrderDetails = newServerEvent.JsonContent.OrderDetails? 
-            [...newServerEvent.JsonContent.OrderDetails, ...oldServerEvent.JsonContent.OrderDetails]
-            : oldServerEvent.JsonContent.OrderDetails
-            newServerEvent.JsonContent.OrderDetails = [...OrderDetails]
-        }
-
-        oldServerEvent.Version += 1
-        oldServerEvent.JsonContent = JSON.stringify(this.removeJsonContent(oldServerEvent.JsonContent))
-        newServerEvent.Version += 1
-        this.calculatateJsonContent(newServerEvent.JsonContent)
-        newServerEvent.JsonContent = JSON.stringify(newServerEvent.JsonContent)
-        await this.updateServerEventNow(oldServerEvent, true)
-        await this.updateServerEventNow(newServerEvent, true)
-
-    }
-
-    createSeverEvent = async (RoomId, Position) => {
-        let vendorSession = await this.selectVendorSession()
-        let PartitionKey = `${vendorSession.CurrentBranchId}_${vendorSession.CurrentUser.RetailerId}`
-        let RowKey = `${RoomId}_${Position}`
-        return { Version: 1, RoomId: RoomId, Position: Position, PartitionKey: PartitionKey, RowKey: RowKey,
-            Timestamp: moment().format("YYYY-MM-DD'T'HH:mm:ssZ"), ETag: `W/\"datetime'${momentToStringDateLocal(moment())}'\"`}
-    }
-
-    createJsonContent = (RoomId, Position, ActiveDate, OrderDetails =[]) => {
-        return { OfflineId: randomUUID() ,RoomId: RoomId, Pos: Position, OrderDetails: OrderDetails, ActiveDate: ActiveDate }
-    }
-
-    removeJsonContent = (JsonContent) => {
-        return { OfflineId: JsonContent.OfflineId, Pos: JsonContent.Pos, RoomName: JsonContent.RoomName, OrderDetails: [], 
-        Status: 2, NumberOfGuests: 1, SoldById: JsonContent.SoldById }
-    }
-
 }
 
 const dataManager = new DataManager();
