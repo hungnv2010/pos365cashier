@@ -25,6 +25,7 @@ import dialogManager from '../../../components/dialog/DialogManager';
 import { ApiPath } from '../../../data/services/ApiPath';
 import { Snackbar } from 'react-native-paper';
 import moment from 'moment';
+import dataManager from '../../../data/DataManager';
 
 
 const _nodes = new Map();
@@ -71,8 +72,6 @@ export default (props) => {
     useEffect(() => {
         init()
     }, [])
-
-
 
     const init = async () => {
         rooms = await realmStore.queryRooms()
@@ -162,28 +161,20 @@ export default (props) => {
     }
 
 
-    const onChangeTable = () => {
+    const onChangeTable = async () => {
+        setShowModal(false)
         const { FromRoomId, FromPos } = props.route.params
-        let params = { ServeChangeTableEntities: [] }
         let toPos = listPosition.filter(item => item.checked === true)[0].position
         console.log('params', { FromRoomId: FromRoomId, FromPos: FromPos, ToRoomId: toRoomId.current.Id, toPos: toPos });
         if (toRoomId.current.Id == FromRoomId && toPos == FromPos) {
-            // dialogManager.showPopupOneButton(I18n.t('ban_dang_o_dung_vi_tri_da_chon'), I18n.t('thong_bao'))
             setToastDescription(I18n.t('ban_dang_o_dung_vi_tri_da_chon'))
             setShowToast(true)
             return
         }
-        params.ServeChangeTableEntities.push({ FromRoomId: FromRoomId, FromPos: FromPos, ToRoomId: toRoomId.current.Id, toPos: toPos })
         dialogManager.showLoading();
-        new HTTPService().setPath(ApiPath.CHANGE_TABLE).POST(params).then((res) => {
-            console.log("onChangeTable res ", res);
-            // setShowToast(!showToast)
-            dialogManager.hiddenLoading()
-        }).catch((e) => {
-            console.log("onChangeTable err ", e);
-            dialogManager.hiddenLoading()
-        })
+        await dataManager.changeTable(FromRoomId, FromPos, toRoomId.current.Id, toPos)
         props.navigation.goBack()
+        dialogManager.hiddenLoading()
     }
 
 

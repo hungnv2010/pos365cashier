@@ -89,7 +89,7 @@ const Served = (props) => {
             })
         } else {
             jsonContent.OrderDetails = jsonContent.OrderDetails
-                .filter((elm, index) => index == product.index && elm.ProductId != product.ProductId)
+                .filter((elm, index) => index != product.index)
         }
         checkRoomProductId([product], props.route.params.room.ProductId)
         updateServerEvent()
@@ -122,6 +122,7 @@ const Served = (props) => {
             setJsonContent({ ...jsonContent })
             serverEvent.Version += 1
             serverEvent.JsonContent = JSON.stringify(jsonContent)
+
             dataManager.updateServerEvent(serverEvent)
         }
     }

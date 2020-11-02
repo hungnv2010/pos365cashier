@@ -11,6 +11,7 @@ import { Snackbar } from 'react-native-paper';
 import colors from '../../../../theme/Colors';
 import { ScreenList } from '../../../../common/ScreenList';
 import DialogProductDetail from '../../../../components/dialog/DialogProductDetail'
+import dialogManager from '../../../../components/dialog/DialogManager';
 
 export default (props) => {
 
@@ -218,6 +219,20 @@ export default (props) => {
         return total
     }
 
+    const changTable = () => {
+        hideMenu()
+        if (listOrder && listOrder.length > 0) {
+            hideMenu()
+            props.navigation.navigate("ChangeTable", {
+                FromRoomId: props.route.params.room.Id,
+                FromPos: props.Position,
+                Name: props.route.params.room.Name
+            });
+        } else {
+            dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
+        }
+    }
+
     let {jsonContent} = props
     return (
         <View style={{ flex: 1 }}>
@@ -286,17 +301,13 @@ export default (props) => {
                         <View style={{
                             backgroundColor: "#fff", borderRadius: 4, marginHorizontal: 5,
                         }}>
-                            <TouchableOpacity onPress={() => { }} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
+                            <TouchableOpacity onPress={() => changTable()} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
                                 <MaterialIcons style={{ paddingHorizontal: 7 }} name="notifications" size={26} color={Colors.colorchinh} />
-                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('tach_ban')}</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => { }} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
-                                <Icon style={{ paddingHorizontal: 10 }} name="message" size={22} color={Colors.colorchinh} />
                                 <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('chuyen_ban')}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => { }} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
+                            <TouchableOpacity onPress={() => {}} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
                                 <Icon style={{ paddingHorizontal: 10 }} name="message" size={22} color={Colors.colorchinh} />
-                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('thanh_toan_nhanh')}</Text>
+                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('tam_tinh')}</Text>
                             </TouchableOpacity>
                         </View>
                     </Menu>
