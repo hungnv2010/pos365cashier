@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
-import { Image, View, StyleSheet, Button, Text, TouchableOpacity, TextInput, ScrollView, Modal, TouchableWithoutFeedback } from "react-native";
+import { Image, View, StyleSheet, Keyboard, Text, TouchableOpacity, TextInput, ScrollView, Modal, TouchableWithoutFeedback, NativeModules } from "react-native";
 import { Snackbar, Surface, RadioButton } from 'react-native-paper';
 import I18n from '../../common/language/i18n';
 import realmStore from '../../data/realm/RealmStore';
@@ -25,6 +25,10 @@ import dialogManager from '../../components/dialog/DialogManager';
 import dataManager from '../../data/DataManager';
 import QRCode from 'react-native-qrcode-svg';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import ViewPrint from '../more/ViewPrint';
+
+import HtmlDefault from '../../data/html/htmlDefault';
+import printService from '../../data/html/PrintService';
 
 let timeClickCash = 1000;
 
@@ -67,18 +71,27 @@ export default (props) => {
     const [date, setDate] = useState(new Date());
     const [noteInfo, setNoteInfo] = useState("");
     const [showDateTime, setShowDateTime] = useState(false);
-    const dateTmp = useRef(date)
+    const [marginModal, setMargin] = useState(0)
+    const [dataHtml, setDataHtml] = useState("");
+    let provisional = useRef();
+    const dateTmp = useRef("")
     const toolBarPaymentRef = useRef();
     const itemAccountRef = useRef();
     const typeModal = useRef();
     const qrCode = useRef();
     var currentServerEvent = useRef();
+    const viewPrintRef = useRef();
+    const { Print } = NativeModules;
     let row_key = "";
     let qrCodeRealm = null
-    
 
     const { deviceType } = useSelector(state => {
         return state.Common
+    });
+
+    const orientaition = useSelector(state => {
+        console.log("orientaition", state);
+        return state.Common.orientaition
     });
 
     useEffect(() => {
@@ -100,19 +113,25 @@ export default (props) => {
                 setPercent(false)
             }
             calculatorPrice(jsonContentTmp, total);
-
-            let ordersOffline = await realmStore.queryOrdersOffline()
-            console.log("useEffect ordersOffline == ", ordersOffline);
-            console.log("useEffect ordersOffline ", JSON.parse(JSON.stringify(ordersOffline)));
         }
 
         const getVendorSession = async () => {
+            provisional.current = await getFileDuLieuString(Constant.PROVISIONAL_PRINT, true);
+            console.log('provisional ', provisional.current);
             let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
             setVendorSession(JSON.parse(data));
         }
 
         getRoom()
         getVendorSession()
+
+        var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
+        var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        }
     }, [])
 
     useEffect(() => {
@@ -122,6 +141,14 @@ export default (props) => {
     useEffect(() => {
         calculatorPrice(jsonContent, totalPrice)
     }, [percent])
+
+    const _keyboardDidShow = () => {
+        setMargin(Metrics.screenWidth / 2)
+    }
+
+    const _keyboardDidHide = () => {
+        setMargin(0)
+    }
 
     const getTotalOrder = (orderDetails) => {
         let total = 0;
@@ -238,6 +265,10 @@ export default (props) => {
     }
 
     const onClickNote = () => {
+        console.log("onClickNote dateTmp.current ", dateTmp.current);
+        if (dateTmp.current == "") {
+            setDate(new Date())
+        }
         typeModal.current = TYPE_MODAL.DATE
         setShowModal(true)
     }
@@ -381,8 +412,35 @@ export default (props) => {
         setPercent(value)
     }
 
-    const onClickProvisional = () => {
-
+    const onClickProvisional = async () => {
+        console.log("onClickProvisional props.route.params ", props.route.params);
+        let getCurrentIP = await getFileDuLieuString(Constant.IPPRINT, true);
+        console.log('getCurrentIP ', getCurrentIP);
+        if (getCurrentIP && getCurrentIP != "") {
+            if (provisional.current && provisional.current == Constant.PROVISIONAL_PRINT) {
+                if (jsonContent.RoomName == undefined || jsonContent.RoomName == "") {
+                    jsonContent.RoomName = props.route.params.Name
+                }
+                console.log("onClickProvisional RoomName ", jsonContent.RoomName);
+                if (jsonContent.OrderDetails && jsonContent.OrderDetails.length > 0) {
+                    printService.GenHtml(HtmlDefault, jsonContent).then(res => {
+                        if (res && res != "") {
+                            // let html = data.replace("width: 76mm", "")
+                            setDataHtml(res)
+                        }
+                        setTimeout(() => {
+                            viewPrintRef.current.clickCaptureRef();
+                        }, 500);
+                    })
+                }
+                else
+                    dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
+            } else {
+                dialogManager.showPopupOneButton(I18n.t("ban_khong_co_quyen_su_dung_chuc_nang_nay"))
+            }
+        } else {
+            dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_may_in'), I18n.t('thong_bao'))
+        }
     }
 
     const checkQRInListMethod = () => {
@@ -784,6 +842,14 @@ export default (props) => {
 
     return (
         <View style={styles.conatiner}>
+            <ViewPrint
+                ref={viewPrintRef}
+                html={dataHtml}
+                callback={(uri) => {
+                    console.log("callback uri ", uri)
+                    Print.printImageFromClient([uri + ""])
+                }}
+            />
             <ToolBarPayment
                 ref={toolBarPaymentRef}
                 {...props}
@@ -940,7 +1006,7 @@ export default (props) => {
                     >
                         <View style={styles.view_feedback}></View>
                     </TouchableWithoutFeedback>
-                    <View style={styles.viewModalContent}>
+                    <View style={[styles.viewModalContent, { marginBottom: Platform.OS == 'ios' ? marginModal : 0 }]}>
                         <View style={styles.viewContentPopup}>
                             {renderFilter()}
                         </View>

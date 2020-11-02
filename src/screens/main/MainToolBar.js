@@ -18,11 +18,6 @@ export default function MainToolBar(props) {
     });
 
     return (
-        // <LinearGradient
-        //     start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
-        //     colors={['#FFAB40', '#FF5722']}
-        //     style={{ height: 44 }}
-        // >
         <View style={styles.toolbarContainer}>
             <View style={{
                 flex: 1,
@@ -35,9 +30,10 @@ export default function MainToolBar(props) {
                 <TouchableOpacity onPress={() => {
                     console.log("Click this.props ", props);
                     props.navigation.openDrawer();
-                }} style={[{ flex: 1, }, deviceType == Constant.TABLET ? { alignSelf: "flex-start" } : { alignItems: "center", flex: 2 }]}>
-                    <Image source={Images.logo_365_boss_white}
-                        style={{ width: 172, height: 40, resizeMode: 'contain' }} />
+                }} style={[{ marginLeft: 15 }, deviceType == Constant.TABLET ? { alignSelf: "flex-start" } : { alignItems: "center" }]}>
+                    {/* <Image source={Images.logo_365_boss_white}
+                        style={{ width: 172, height: 40, resizeMode: 'contain' }} /> */}
+                    <Icon style={{ marginTop: 0 }} name="menu" size={32} color="#fff" />
                 </TouchableOpacity>
                 <View style={{ flex: 4, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
                     <Subheading
@@ -52,7 +48,7 @@ export default function MainToolBar(props) {
                     </Subheading>
                 </View>
 
-                <View style={{ flex: 1, alignItems: "center" }}>
+                <View style={{ marginRight: 15, alignItems: "center" }}>
                     {props.clickRightIcon && props.rightIcon ?
                         <TouchableOpacity onPress={props.clickRightIcon}>
                             <Icon name={props.rightIcon} size={props.size ? props.size : 28} color="white" />
@@ -63,7 +59,6 @@ export default function MainToolBar(props) {
                 </View>
             </View>
         </View >
-        // </LinearGradient>
     )
 
 }
