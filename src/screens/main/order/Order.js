@@ -80,9 +80,7 @@ export default (props) => {
         dataRef.current = newDatas
         setData(newDatas)
 
-        let list = []
-        list = [].concat(newDatas.filter(item => item.isGroup))
-        console.log("list123456789  =======>>>>>> ", list.length);
+        let list = newDatas.filter(item => item.isGroup)
 
         setListRoom(list)
 
@@ -117,7 +115,6 @@ export default (props) => {
             })
 
             let otherGroup = { Id: 0, Name: newDatas.length > 0 ? I18n.t('khac') : I18n.t('tat_ca'), isGroup: true }
-            console.log("An test ", newDatas.length);
             let roomsInside = rooms.filtered(`RoomGroupId == ${otherGroup.Id}`)
             let lengthRoomsInside = roomsInside.length
             if (roomsInside && lengthRoomsInside > 0) {

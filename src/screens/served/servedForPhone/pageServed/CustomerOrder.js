@@ -58,7 +58,8 @@ export default (props) => {
     }, [props.jsonContent])
 
     const sendOrder = async () => {
-        props.navigation.navigate(ScreenList.Payment, { RoomId: props.route.params.room.Id, Position: props.Position });
+        console.log("sendOrder room ", props.route.params.room);
+        props.navigation.navigate(ScreenList.Payment, { RoomId: props.route.params.room.Id, Name: props.route.params.room.Name, Position: props.Position });
     }
 
     const removeItem = (item) => {

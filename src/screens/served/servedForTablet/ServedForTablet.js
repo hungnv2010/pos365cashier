@@ -39,7 +39,7 @@ const Served = (props) => {
             const row_key = `${props.route.params.room.Id}_${position}`
 
             serverEvent = serverEvent.filtered(`RowKey == '${row_key}'`)
-        
+
             if (JSON.stringify(serverEvent) != '{}' && serverEvent[0].JsonContent) {
                 currentServerEvent.current = serverEvent[0]
                 let jsonContentObject = JSON.parse(serverEvent[0].JsonContent)
@@ -62,7 +62,7 @@ const Served = (props) => {
     }, [position])
 
     const outputSelectedProduct = (product, replace = false) => {
-        if(product.Quantity > 0 && !replace) {
+        if (product.Quantity > 0 && !replace) {
             if (!jsonContent.OrderDetails) jsonContent.OrderDetails = []
             if (jsonContent.OrderDetails.length == 0) {
                 let title = jsonContent.RoomName ? jsonContent.RoomName : ""
@@ -73,8 +73,8 @@ const Served = (props) => {
                 jsonContent.OrderDetails.push(product)
             } else {
                 let isExist = false
-                jsonContent.OrderDetails.forEach( elm => {
-                    if(elm.ProductId == product.ProductId) {
+                jsonContent.OrderDetails.forEach(elm => {
+                    if (elm.ProductId == product.ProductId) {
                         isExist = true
                         elm.Quantity += product.Quantity
                         return;
@@ -82,9 +82,9 @@ const Served = (props) => {
                 })
                 if (!isExist) jsonContent.OrderDetails.push(product)
             }
-        } else if(replace) {
-            jsonContent.OrderDetails = jsonContent.OrderDetails.map( (elm, index) => {
-                if(elm.ProductId == product.ProductId && index == product.index) elm = product
+        } else if (replace) {
+            jsonContent.OrderDetails = jsonContent.OrderDetails.map((elm, index) => {
+                if (elm.ProductId == product.ProductId && index == product.index) elm = product
                 return elm
             })
         } else {
@@ -100,7 +100,7 @@ const Served = (props) => {
         newList = newList.filter(item => item.Quantity > 0)
         newList.forEach((newItem, index) => {
             newItem.exist = false
-            if(!jsonContent.OrderDetails) jsonContent.OrderDetails = []
+            if (!jsonContent.OrderDetails) jsonContent.OrderDetails = []
             jsonContent.OrderDetails.forEach((elm, idx) => {
                 if (newItem.ProductId == elm.ProductId && !elm.SplitForSalesOrder) {
                     elm.Quantity += newItem.Quantity
@@ -116,10 +116,10 @@ const Served = (props) => {
     }
 
     const updateServerEvent = () => {
-        if(currentServerEvent) {
+        if (currentServerEvent) {
             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current))
             dataManager.calculatateJsonContent(jsonContent)
-            setJsonContent({...jsonContent})
+            setJsonContent({ ...jsonContent })
             serverEvent.Version += 1
             serverEvent.JsonContent = JSON.stringify(jsonContent)
 
@@ -192,56 +192,56 @@ const Served = (props) => {
 
     return (
         <View style={{ flex: 1 }}>
-             <ViewPrint
-                    ref={viewPrintRef}
-                    html={data}
-                    callback={(uri) => {
-                        console.log("callback uri ", uri)
-                        Print.printImageFromClient([uri + ""])
-                    }}
-                />
-                <ToolBarServed
-                    {...props}
-                    ref={toolBarTabletServedRef}
-                    outputClickProductService={outputClickProductService}
-                    navigation={props.navigation}
-                    outputListProducts={outputListProducts}
-                    outputTextSearch={outputTextSearch} />
-                <View style={{ flex: 1, flexDirection: "row" }}>
-                    <View style={{ flex: 6, }}>
-                        <View style={!itemOrder.ProductId ? { flex: 1 } : { width: 0, height: 0 }}>
-                            <SelectProduct
-                                valueSearch={value}
-                                numColumns={orientaition == Constant.LANDSCAPE ? 4 : 3}
-                                listProducts={ jsonContent.OrderDetails? [...jsonContent.OrderDetails]: [] }
-                                outputSelectedProduct={outputSelectedProduct}/>
-                        </View>
-
-                        <View style={itemOrder.ProductId ? { flex: 1 } : { width: 0, height: 0 }}>
-                            <Topping
-                                {...props}
-                                numColumns={orientaition == Constant.LANDSCAPE ? 2 : 1}
-                                position={position}
-                                itemOrder={meMoItemOrder}
-                                onClose={() => { setItemOrder({}) }}
-                                outputListTopping={outputListTopping}
-                            />
-                        </View>
+            <ViewPrint
+                ref={viewPrintRef}
+                html={data}
+                callback={(uri) => {
+                    console.log("callback uri ", uri)
+                    Print.printImageFromClient([uri + ""])
+                }}
+            />
+            <ToolBarServed
+                {...props}
+                ref={toolBarTabletServedRef}
+                outputClickProductService={outputClickProductService}
+                navigation={props.navigation}
+                outputListProducts={outputListProducts}
+                outputTextSearch={outputTextSearch} />
+            <View style={{ flex: 1, flexDirection: "row" }}>
+                <View style={{ flex: 6, }}>
+                    <View style={!itemOrder.ProductId ? { flex: 1 } : { width: 0, height: 0 }}>
+                        <SelectProduct
+                            valueSearch={value}
+                            numColumns={orientaition == Constant.LANDSCAPE ? 4 : 3}
+                            listProducts={jsonContent.OrderDetails ? [...jsonContent.OrderDetails] : []}
+                            outputSelectedProduct={outputSelectedProduct} />
                     </View>
-                    <View style={{ flex: 4, marginLeft: 2 }}>
-                        <PageServed
+
+                    <View style={itemOrder.ProductId ? { flex: 1 } : { width: 0, height: 0 }}>
+                        <Topping
                             {...props}
+                            numColumns={orientaition == Constant.LANDSCAPE ? 2 : 1}
+                            position={position}
                             itemOrder={meMoItemOrder}
-                            jsonContent ={jsonContent}
-                            onClickProvisional={(res) => onClickProvisional(res)}
-                            listProducts={[...listProducts]}
-                            outputListProducts={outputListProducts}
-                            outputItemOrder={outputItemOrder}
-                            outputPosition={outputPosition}
-                            outputSelectedProduct={outputSelectedProduct}
-                            listTopping={listTopping} />
+                            onClose={() => { setItemOrder({}) }}
+                            outputListTopping={outputListTopping}
+                        />
                     </View>
                 </View>
+                <View style={{ flex: 4, marginLeft: 2 }}>
+                    <PageServed
+                        {...props}
+                        itemOrder={meMoItemOrder}
+                        jsonContent={jsonContent}
+                        onClickProvisional={(res) => onClickProvisional(res)}
+                        listProducts={[...listProducts]}
+                        outputListProducts={outputListProducts}
+                        outputItemOrder={outputItemOrder}
+                        outputPosition={outputPosition}
+                        outputSelectedProduct={outputSelectedProduct}
+                        listTopping={listTopping} />
+                </View>
+            </View>
         </View>
     );
 }
