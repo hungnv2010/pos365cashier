@@ -22,10 +22,6 @@ export default (props) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log('Main props1', props);
-  })
-
-  useEffect(() => {
     AppState.addEventListener('change', handleChangeState);
 
     const getData = async () => {
