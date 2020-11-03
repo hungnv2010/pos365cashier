@@ -116,6 +116,12 @@ export default forwardRef((props, ref) => {
             <AutoHeightWebView
                 source={{ html: data }}
                 style={{ marginTop: 0, width: Metrics.screenWidth }}
+                // onError={syntheticEvent => {
+                //     dialogManager.hiddenLoading();
+                // }}
+                // onLoadEnd={syntheticEvent => {
+                //     dialogManager.hiddenLoading();
+                // }}
             />
             <Snackbar
                 duration={5000}

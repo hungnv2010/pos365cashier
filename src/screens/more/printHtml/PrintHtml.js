@@ -4,6 +4,7 @@ import ToolBarPrintHtml from '../../../components/toolbar/ToolBarPrintHtml';
 import { Images, Colors, Metrics } from '../../../theme';
 import { WebView } from 'react-native-webview';
 import HtmlDefault from '../../../data/html/htmlDefault';
+import HtmlKitchen from '../../../data/html/htmlKitchen';
 import useDidMountEffect from '../../../customHook/useDidMountEffect';
 import dialogManager from '../../../components/dialog/DialogManager';
 import { HTTPService } from '../../../data/services/HttpService';
@@ -71,6 +72,7 @@ export default (props) => {
 
 const DefaultComponent = (props) => {
     const [contentHtml, setContentHtml] = useState(HtmlDefault);
+    // const [contentHtml, setContentHtml] = useState(HtmlKitchen);
     useEffect(() => {
         props.output(contentHtml)
     }, [])

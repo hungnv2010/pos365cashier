@@ -82,7 +82,7 @@ class PrintService {
                 HTMLBase = HTMLBase.replace("{VAT%}", JsonContent.VATRates + "%")
                 HTMLBase = HTMLBase.replace("{Tong_Cong}", currencyToString(JsonContent.Total))
                 HTMLBase = HTMLBase.replace(/{Excess_Cash_Check}/g, (JsonContent.ExcessCash != 0) &&
-                 (JsonContent.TotalPayment != undefined && JsonContent.TotalPayment != "") ? "style='visibility: unset'" : "style='visibility: collapse; display: none'")
+                    (JsonContent.TotalPayment != undefined && JsonContent.TotalPayment != "") ? "style='visibility: unset'" : "style='visibility: collapse; display: none'")
                 HTMLBase = HTMLBase.replace("{Tien_Khach_Dua}", JsonContent.TotalPayment != undefined && JsonContent.TotalPayment != "" ? currencyToString(JsonContent.TotalPayment) : "")
                 HTMLBase = HTMLBase.replace("{Tien_Thua_Tra_Khach}", currencyToString(JsonContent.ExcessCash))
                 HTMLBase = HTMLBase.replace("{Ghi_Chu_Check}", JsonContent.Description && JsonContent.Description != "" ? "style='visibility: unset'" : "style='visibility: collapse; display: none'")
@@ -108,6 +108,41 @@ class PrintService {
         console.log('getPrice', item);
         let price = item.IsLargeUnit ? item.PriceLargeUnit : item.Price
         return item.Quantity * price
+    }
+
+    GenHtmlKitchen = async (html, JsonContent) => {
+        let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
+        console.log('data', JSON.parse(vendorSession));
+        vendorSession = JSON.parse(vendorSession);
+        return new Promise((resolve, reject) => {
+            let HTMLBase = html;
+            let listHtml = HTMLBase.split("<!--Body Table-->");
+            let listTable = ""
+            JsonContent.OrderDetails.forEach((el, index) => {
+                var description = el.Description && el.Description.trim() != "" ? `<br>${el.Description?.replace(";", "<br>")}` : "";
+                let itemTable = listHtml[1];
+
+                itemTable = itemTable.replace("{STT_Hang_Hoa}", "" + (index + 1))
+                itemTable = itemTable.replace("{Ten_Hang_Hoa}", "" + el.Name)
+                itemTable = itemTable.replace("{Ghi_Chu_Hang_Hoa}", description)
+                itemTable = itemTable.replace("{So_Luong}", Math.round(el.Quantity * 1000) / 1000)
+                itemTable = itemTable.replace("{DVT_Hang_Hoa}", "Thùng")
+                listTable += itemTable;
+            });
+            HTMLBase = listHtml[0] + listTable + listHtml[2];
+            HTMLBase = HTMLBase.replace("{Ten_Phong_Ban}", JsonContent.RoomName + "[" + JsonContent.Pos + "]")
+            HTMLBase = HTMLBase.replace("{Gio_Hien_Tai}", dateToDate(JsonContent.ActiveDate, DATE_FORMAT, "DD/MM/YYYY - HH:mm"))
+            HTMLBase = HTMLBase.replace("{STT_Don_Hang}", "123")
+            HTMLBase = HTMLBase.replace("{Lien_check}", 1 != 1 ? "style='visibility: unset'" : "style='visibility: collapse; display: none'")
+            HTMLBase = HTMLBase.replace("{Lien}", "5")
+            if (vendorSession.CurrentRetailer) {
+                HTMLBase = HTMLBase.replace("{Nhan_Vien}", vendorSession.CurrentUser.Name)
+
+
+            }
+            console.log("html ", JSON.stringify(HTMLBase));
+            resolve(HTMLBase);
+        })
     }
 
 }

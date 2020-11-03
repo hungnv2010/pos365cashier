@@ -1,22 +1,35 @@
 import React, { useState, useCallback, useEffect, useImperativeHandle, forwardRef, useRef } from 'react';
 import { Image, View, StyleSheet, PixelRatio, Text, TouchableOpacity, ScrollView, NativeEventEmitter, NativeModules, Dimensions } from 'react-native';
+import { Images, Colors, Metrics } from '../../theme';
+import { WebView } from 'react-native-webview';
+import useDidMountEffect from '../../customHook/useDidMountEffect';
 import dialogManager from '../../components/dialog/DialogManager';
+import { HTTPService } from '../../data/services/HttpService';
+import { ApiPath } from '../../data/services/ApiPath';
+import ToolBarPreviewHtml from '../../components/toolbar/ToolBarPreviewHtml';
+import JsonContent1 from '../../data/json/data_print_demo'
+import { dateToDate, DATE_FORMAT, currencyToString } from '../../common/Utils';
 import { getFileDuLieuString } from '../../data/fileStore/FileStorage';
 import { Constant } from '../../common/Constant';
 import { useSelector } from 'react-redux';
+import { Snackbar } from 'react-native-paper';
 import printService from '../../data/html/PrintService';
 const { Print } = NativeModules;
 import HtmlDefault from '../../data/html/htmlDefault';
 import ViewShot, { takeSnapshot, captureRef } from "react-native-view-shot";
+import HTML from 'react-native-render-html';
 import AutoHeightWebView from 'react-native-autoheight-webview'
-import I18n from '../../common/language/i18n'
+const FOOTER_HEIGHT = 21;
+const PADDING = 16;
+const BOTTOM_MARGIN_FOR_WATERMARK = FOOTER_HEIGHT * PADDING;
+
+
+const pixelRatio = PixelRatio.get();
 
 
 export default forwardRef((props, ref) => {
 
     const [uriImg, setUriImg] = useState("")
-
-    const [dataHtml, setDataHtml] = useState(props.html)
 
     const deviceType = useSelector(state => {
         console.log("useSelector state ", state);
@@ -36,9 +49,6 @@ export default forwardRef((props, ref) => {
         clickCaptureRef() {
             console.log('clickCaptureRef');
             clickCapture()
-        },
-        checkBeforePrintRef(jsonContent) {
-            checkBeforePrint(jsonContent)
         }
     }));
 
@@ -53,54 +63,16 @@ export default forwardRef((props, ref) => {
             uri => {
                 console.log('Snapshot uri', uri);
                 // setUriImg(uri);
+                props.callback(uri)
 
-                // props.callback(uri);
-
-                Print.printImageFromClient([uri + ""])
             },
             error => console.error('Oops, snapshot failed', error)
         );
     }
 
-    const checkOrderBeforePrint = (jsonContent) => {
-        if (jsonContent.OrderDetails && jsonContent.OrderDetails.length > 0) {
-            printService.GenHtml(HtmlDefault, jsonContent).then(res => {
-                if (res && res != "") {
-                    setDataHtml(res)
-                }
-                setTimeout(() => {
-                    clickCapture()
-                }, 500);
-            })
-        }
-        else
-            dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
-    }
-
-    const checkBeforePrint = async (jsonContent, isProvisional = false) => {
-        let getCurrentIP = await getFileDuLieuString(Constant.IPPRINT, true);
-        console.log('checkBeforePrint getCurrentIP ', getCurrentIP);
-        if (getCurrentIP && getCurrentIP != "") {
-            provisional = await getFileDuLieuString(Constant.PROVISIONAL_PRINT, true);
-            console.log('checkBeforePrint provisional ', provisional);
-            if (!isProvisional) {
-                checkOrderBeforePrint(jsonContent)
-            } else {
-                if (provisional && provisional == Constant.PROVISIONAL_PRINT) {
-                    console.log("checkBeforePrint RoomName ", jsonContent.RoomName);
-                    checkOrderBeforePrint(jsonContent)
-                } else {
-                    dialogManager.showPopupOneButton(I18n.t("ban_khong_co_quyen_su_dung_chuc_nang_nay"))
-                }
-            }
-        } else {
-            dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_may_in'), I18n.t('thong_bao'))
-        }
-    }
-
     const childRef = useRef();
     return (
-        <View style={{ position: "absolute" }}>
+        <View style={{ position: "absolute"}}>
             <View style={{ opacity: 0 }}>
                 <ScrollView>
                     <View
@@ -117,7 +89,7 @@ export default forwardRef((props, ref) => {
                                 type: 'text/css',
                                 rel: 'stylesheet'
                             }]}
-                            source={{ html: dataHtml }}
+                            source={{ html: props.html }}
                             scalesPageToFit={true}
                         />
                     </View>
