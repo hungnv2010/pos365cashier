@@ -11,7 +11,6 @@ import { HTTPService } from '../../../data/services/HttpService';
 import { ApiPath } from '../../../data/services/ApiPath';
 import { useSelector } from 'react-redux';
 import { Constant } from '../../../common/Constant';
-import Preview from './Preview';
 import PrintWebview from '../PrintWebview';
 import I18n from '../../../common/language/i18n'
 
@@ -72,7 +71,6 @@ export default (props) => {
 
 const DefaultComponent = (props) => {
     const [contentHtml, setContentHtml] = useState(HtmlDefault);
-    // const [contentHtml, setContentHtml] = useState(HtmlKitchen);
     useEffect(() => {
         props.output(contentHtml)
     }, [])

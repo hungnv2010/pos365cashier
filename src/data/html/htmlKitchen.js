@@ -14,10 +14,11 @@ export default `<!DOCTYPE html>
         word-wrap: break-word;
         max-width: 0px;
       }
+      body { margin:0 auto; background-color: white;}
     </style>
   </head>
   <body>
-    <table style="width:76mm; border: none;" rules=rows>
+    <table style="width:76mm;  margin:0 auto;  border: none;" rules=rows>
       <tr>
         <td style="text-align: center; border: none;">
           <b>
@@ -36,7 +37,7 @@ export default `<!DOCTYPE html>
         </td>
       </tr>
     </table>
-    <table style="width:76mm; border: none;" rules=rows>
+    <table style="width:76mm; margin:0 auto; border: none;" rules=rows>
       <tr style="border-top:1px dashed black;border-bottom:1px dashed black;height:25px;" >
     <th style="text-align: left">Tên hàng</th>
     <th width="50">SL</th>

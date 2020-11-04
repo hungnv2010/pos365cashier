@@ -24,7 +24,7 @@ import dialogManager from '../../components/dialog/DialogManager';
 import dataManager from '../../data/DataManager';
 import QRCode from 'react-native-qrcode-svg';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import ViewPrint from '../more/ViewPrint';
+import ViewPrint, { TYPE_PRINT } from '../more/ViewPrint';
 
 let timeClickPrevious = 1000;
 
@@ -416,7 +416,8 @@ export default (props) => {
             if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
                 jsonContent.RoomName = props.route.params.Name
             }
-            viewPrintRef.current.checkBeforePrintRef(jsonContent, true);
+            viewPrintRef.current.printProvisionalRef(jsonContent)
+            // viewPrintRef.current.printKitchenRef(jsonContent)
             timeClickPrevious = newDate;
         }
     }
@@ -823,10 +824,6 @@ export default (props) => {
             <ViewPrint
                 ref={viewPrintRef}
                 html={dataHtml}
-                callback={(uri) => {
-                    console.log("callback uri ", uri)
-                    Print.printImageFromClient([uri + ""])
-                }}
             />
             <ToolBarPayment
                 ref={toolBarPaymentRef}

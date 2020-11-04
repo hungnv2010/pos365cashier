@@ -6,6 +6,7 @@ import { Constant } from '../../common/Constant';
 import { useSelector } from 'react-redux';
 import { Snackbar } from 'react-native-paper';
 import I18n from '../../common/language/i18n'
+import moment from "moment";
 const { Print } = NativeModules;
 const eventSwicthScreen = new NativeEventEmitter(Print);
 
@@ -118,7 +119,7 @@ class PrintService {
             let HTMLBase = html;
             let listHtml = HTMLBase.split("<!--Body Table-->");
             let listTable = ""
-            JsonContent.OrderDetails.forEach((el, index) => {
+            JsonContent.forEach((el, index) => {
                 var description = el.Description && el.Description.trim() != "" ? `<br>${el.Description?.replace(";", "<br>")}` : "";
                 let itemTable = listHtml[1];
 
@@ -130,8 +131,8 @@ class PrintService {
                 listTable += itemTable;
             });
             HTMLBase = listHtml[0] + listTable + listHtml[2];
-            HTMLBase = HTMLBase.replace("{Ten_Phong_Ban}", JsonContent.RoomName + "[" + JsonContent.Pos + "]")
-            HTMLBase = HTMLBase.replace("{Gio_Hien_Tai}", dateToDate(JsonContent.ActiveDate, DATE_FORMAT, "DD/MM/YYYY - HH:mm"))
+            HTMLBase = HTMLBase.replace("{Ten_Phong_Ban}", JsonContent[0].RoomName + "[" + JsonContent[0].Position + "]")
+            HTMLBase = HTMLBase.replace("{Gio_Hien_Tai}", moment(new Date()).format('DD/MM/YYYY - HH:mm'))
             HTMLBase = HTMLBase.replace("{STT_Don_Hang}", "123")
             HTMLBase = HTMLBase.replace("{Lien_check}", 1 != 1 ? "style='visibility: unset'" : "style='visibility: collapse; display: none'")
             HTMLBase = HTMLBase.replace("{Lien}", "5")

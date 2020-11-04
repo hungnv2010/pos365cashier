@@ -1,35 +1,34 @@
 import React, { useState, useCallback, useEffect, useImperativeHandle, forwardRef, useRef } from 'react';
 import { Image, View, StyleSheet, PixelRatio, Text, TouchableOpacity, ScrollView, NativeEventEmitter, NativeModules, Dimensions } from 'react-native';
-import { Images, Colors, Metrics } from '../../theme';
-import { WebView } from 'react-native-webview';
-import useDidMountEffect from '../../customHook/useDidMountEffect';
 import dialogManager from '../../components/dialog/DialogManager';
-import { HTTPService } from '../../data/services/HttpService';
-import { ApiPath } from '../../data/services/ApiPath';
-import ToolBarPreviewHtml from '../../components/toolbar/ToolBarPreviewHtml';
 import JsonContent1 from '../../data/json/data_print_demo'
-import { dateToDate, DATE_FORMAT, currencyToString } from '../../common/Utils';
 import { getFileDuLieuString } from '../../data/fileStore/FileStorage';
 import { Constant } from '../../common/Constant';
 import { useSelector } from 'react-redux';
-import { Snackbar } from 'react-native-paper';
 import printService from '../../data/html/PrintService';
 const { Print } = NativeModules;
 import HtmlDefault from '../../data/html/htmlDefault';
 import ViewShot, { takeSnapshot, captureRef } from "react-native-view-shot";
-import HTML from 'react-native-render-html';
 import AutoHeightWebView from 'react-native-autoheight-webview'
-const FOOTER_HEIGHT = 21;
-const PADDING = 16;
-const BOTTOM_MARGIN_FOR_WATERMARK = FOOTER_HEIGHT * PADDING;
+import I18n from '../../common/language/i18n'
+import htmlKitchen from '../../data/html/htmlKitchen';
 
+export const defaultKitchen = { "B.20": [{ "RowKey": "837da80565ee44d4bcd36e07061e3c9d", "PartitionKey": "80743_58128", "RoomId": 859713, "RoomName": "B.20", "Position": "A", "ProductId": 10585766, "Name": "Súp kem kiểu Paris", "Quantity": 1, "Serveby": 161528, "ServebyName": "admin", "Printer": "KitchenA", "SecondPrinter": "BartenderA", "Printer3": "KitchenB", "Printer4": "KitchenC", "Printer5": "KitchenD", "CreatedDate": "2020-11-02T10:16:00.2700000Z", "Approved": true, "IsLargeUnit": false }, { "RowKey": "9cc7552ce03d41508bded9d15f9140f7", "PartitionKey": "80743_58128", "RoomId": 859713, "RoomName": "B.20", "Position": "A", "ProductId": 10585767, "Name": "Lemon Tea", "Quantity": 1, "Serveby": 161528, "ServebyName": "admin", "Printer": "KitchenA", "CreatedDate": "2020-11-02T10:16:00.2700000Z", "Approved": true, "IsLargeUnit": false }, { "RowKey": "7a5b33f88246409b94cd60c3b6672c15", "PartitionKey": "80743_58128", "RoomId": 859713, "RoomName": "B.20", "Position": "A", "ProductId": 10585765, "Name": "Súp kém bí đỏ với sữa dừa", "Quantity": 1, "Serveby": 161528, "ServebyName": "admin", "Printer": "KitchenA", "CreatedDate": "2020-11-02T10:16:00.2700000Z", "Approved": true, "IsLargeUnit": false }], "B.21": [{ "RowKey": "32759d1d0c0b43998ac092600d8f6120", "PartitionKey": "80743_58128", "RoomId": 859712, "RoomName": "B.21", "Position": "A", "ProductId": 10585765, "Name": "Súp kém bí đỏ với sữa dừa", "Quantity": 1, "Serveby": 161528, "ServebyName": "admin", "Printer": "KitchenA", "CreatedDate": "2020-11-02T10:16:03.2430000Z", "Approved": true, "IsLargeUnit": false }] }
 
-const pixelRatio = PixelRatio.get();
-
+export const TYPE_PRINT = {
+    KITCHEN: "KITCHEN",
+    PROVISIONAL: "PROVISIONAL",
+    TEM: "TEM"
+}
 
 export default forwardRef((props, ref) => {
 
     const [uriImg, setUriImg] = useState("")
+    const [dataHtml, setDataHtml] = useState(props.html);
+
+    useEffect(() => {
+        setDataHtml(props.html)
+    }, [props.html])
 
     const deviceType = useSelector(state => {
         console.log("useSelector state ", state);
@@ -49,6 +48,12 @@ export default forwardRef((props, ref) => {
         clickCaptureRef() {
             console.log('clickCaptureRef');
             clickCapture()
+        },
+        printProvisionalRef(jsonContent) {
+            printProvisional(jsonContent)
+        },
+        printKitchenRef(jsonContent) {
+            printKitchen(jsonContent)
         }
     }));
 
@@ -63,16 +68,81 @@ export default forwardRef((props, ref) => {
             uri => {
                 console.log('Snapshot uri', uri);
                 // setUriImg(uri);
-                props.callback(uri)
-
+                // props.callback(uri)
+                Print.printImageFromClient([uri + ""])
             },
             error => console.error('Oops, snapshot failed', error)
         );
     }
 
+    const setDataHtmlPrint = (res) => {
+        setDataHtml(res)
+        setTimeout(() => {
+            clickCapture()
+        }, 200);
+    }
+
+    const printProvisional = async (jsonContent) => {
+        let status = await checkIP()
+        console.log("status ", status);
+        if (status != "") {
+            provisional = await getFileDuLieuString(Constant.PROVISIONAL_PRINT, true);
+            console.log('printProvisional provisional ', provisional);
+            if (!(provisional && provisional == Constant.PROVISIONAL_PRINT)) {
+                dialogManager.showPopupOneButton(I18n.t("ban_khong_co_quyen_su_dung_chuc_nang_nay"))
+                return;
+            }
+            if (jsonContent.OrderDetails && jsonContent.OrderDetails.length > 0) {
+                let res = await printService.GenHtml(HtmlDefault, jsonContent)
+                if (res && res != "") {
+                    setDataHtmlPrint(res)
+                }
+            }
+            else
+                dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
+        }
+    }
+
+    const printKitchen = async (jsonContent) => {
+        let status = await checkIP()
+        console.log("status ", status);
+        if (status != "") {
+            // provisional = await getFileDuLieuString(Constant.PROVISIONAL_PRINT, true);
+            // console.log('printKitchen provisional ', provisional);
+            // if (!(provisional && provisional == Constant.PROVISIONAL_PRINT)) {
+            //     dialogManager.showPopupOneButton(I18n.t("ban_khong_co_quyen_su_dung_chuc_nang_nay"))
+            //     return;
+            // }
+
+            for (const key in defaultKitchen) {
+                if (defaultKitchen.hasOwnProperty(key)) {
+                    const element = defaultKitchen[key];
+                    console.log("printKitchen key element.length ", key, element.length);
+                    let res = await printService.GenHtmlKitchen(htmlKitchen, element)
+                    if (res && res != "") {
+                        setDataHtmlPrint(res)
+                    }
+                }
+            }
+        }
+    }
+
+    const checkIP = async () => {
+        return new Promise(async (resolve, reject) => {
+            let getCurrentIP = await getFileDuLieuString(Constant.IPPRINT, true);
+            console.log('checkIP ', getCurrentIP);
+            if (getCurrentIP && getCurrentIP != "") {
+                resolve("Done")
+            } else {
+                dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_may_in'), I18n.t('thong_bao'))
+                resolve("")
+            }
+        });
+    }
+
     const childRef = useRef();
     return (
-        <View style={{ position: "absolute"}}>
+        <View style={{ position: "absolute" }}>
             <View style={{ opacity: 0 }}>
                 <ScrollView>
                     <View
@@ -89,7 +159,7 @@ export default forwardRef((props, ref) => {
                                 type: 'text/css',
                                 rel: 'stylesheet'
                             }]}
-                            source={{ html: props.html }}
+                            source={{ html: dataHtml }}
                             scalesPageToFit={true}
                         />
                     </View>
