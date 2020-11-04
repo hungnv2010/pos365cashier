@@ -122,21 +122,20 @@ RCT_EXPORT_METHOD(printImage:(NSString *)param) {
   for (int i=0, count = [images count]; i < count; i++) {
     data = [cmd GetBitMapCmd:bitmapSetting image:[images objectAtIndex:i]];
     [cmd Append:data];
-    [cmd Append:[cmd GetLFCRCmd]];
   }
-  
+  [cmd Append:[cmd GetLFCRCmd]];
   //[cmd Append:[cmd GetCutPaperCmd:CutterMode_half]];
   //[cmd Append:[cmd GetFeedAndCutPaperCmd:false FeedDistance:0]];
   [cmd Append:[cmd GetCutPaperCmd:CutterMode_half]];//for ESC
   [cmd Append:[cmd GetBeepCmd:1 interval:10]];
-  [cmd Append:[cmd GetOpenDrawerCmd:0 startTime:5 endTime:0]];
+  //    [cmd Append:[cmd GetOpenDrawerCmd:0 startTime:5 endTime:0]];
   if ([_printerManager.CurrentPrinter IsOpen]){
     NSData *data=[cmd GetCmd];
     [currentprinter Write:data];
   }
   data = nil;
   cmd=nil;
-  
+  //  }
   [_printerManager.CurrentPrinter Close];
 }
 

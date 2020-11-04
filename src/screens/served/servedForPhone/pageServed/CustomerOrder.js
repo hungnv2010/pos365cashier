@@ -62,6 +62,14 @@ export default (props) => {
         props.navigation.navigate(ScreenList.Payment, { RoomId: props.route.params.room.Id, Name: props.route.params.room.Name, Position: props.Position });
     }
 
+    const printKitchen = () => {
+        // let jsonContent = props.jsonContent;
+        // if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
+        //     jsonContent.RoomName = props.route.params.Name
+        // }
+        // viewPrintRef.current.checkBeforePrintRef(jsonContent, true);
+    }
+
     const removeItem = (item) => {
         console.log('removeItem ', item.Name, item.index);
         listOrder.splice(item.index, 1)
@@ -312,7 +320,7 @@ export default (props) => {
                         </View>
                     </Menu>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => { }} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
+                <TouchableOpacity onPress={printKitchen} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
                     <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('bao_che_bien')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={sendOrder} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
