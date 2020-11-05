@@ -22,14 +22,19 @@ class DataManager {
     }
 
     initComfirmOrder = () => {
-        const scan = setInterval(async () => {
+        this.scan = setInterval(async () => {
             try {
                 let intNewOrder = await new HTTPService().setPath(ApiPath.WAIT_FOR_COMFIRMATION).GET()
+                let changeTableComfirm = await new HTTPService().setPath(ApiPath.CHANGE_TABLE_COMFIRM).GET()
                 if (intNewOrder && intNewOrder > 0) {
                     let newOrders = await new HTTPService().setPath(ApiPath.WAIT_FOR_COMFIRMATION_ALL).GET()
                     let listRoom = []
+                    let listOrders = []
                     console.log('newOrders', newOrders);
+<<<<<<< HEAD
                     // this.printCook(newOrders)
+=======
+>>>>>>> f4d91e51782de6ba3a32d0ea313e86f68c472764
 
                     for (const newOrder of newOrders) {
                         let exist = false
@@ -37,9 +42,10 @@ class DataManager {
                         let products = await realmStore.queryProducts()
                         let productItem = products.filtered(`Id == '${newOrder.ProductId}'`)
                         productItem = JSON.parse(JSON.stringify(productItem))[0];
-                        productItem = { ...productItem, ...newOrder }
+                        productItem = { ...productItem, ...newOrder, Processed: newOrder.Quantity }
                         console.log('productItem', productItem);
-                        for (const item of listRoom) {
+                        listOrders.push({ ...productItem })
+                        for (const item of listRoom) { 
                             if (item.rowKey == rowKey) {
                                 exist = true
                                 item.products.push({ ...productItem })
@@ -50,34 +56,48 @@ class DataManager {
                         }
                     }
 
+                    let dataPrint = this.getDataPrintCook(listOrders)
+
                     for (const item of listRoom) {
                         let serverEvent = await realmStore.queryServerEvents()
                         let serverEventByRowKey = serverEvent.filtered(`RowKey == '${item.rowKey}'`)
                         serverEventByRowKey = JSON.stringify(serverEventByRowKey) != '{}' ? JSON.parse(JSON.stringify(serverEventByRowKey))[0]
                             : await this.createSeverEvent(item.RoomId, item.Position)
                         if (!serverEventByRowKey.JsonContent) {
-                            serverEventByRowKey.JsonContent = this.createJsonContent(item.RoomId, item.Position, momentToDateUTC(moment()), item.products)
+                            serverEventByRowKey.JsonContent = this.createJsonContent(item.RoomId, item.Position, moment(), item.products)
                         } else {
                             serverEventByRowKey.JsonContent = JSON.parse(serverEventByRowKey.JsonContent)
-                            let OrderDetails = serverEventByRowKey.JsonContent.OrderDetails ?
-                                [...serverEventByRowKey.JsonContent.OrderDetails, ...item.products]
-                                : item.products
-                            serverEventByRowKey.JsonContent.OrderDetails = [...OrderDetails]
-                            // if (serverEventByRowKey.JsonContent.OrderDetails && serverEventByRowKey.JsonContent.OrderDetails.length > 0) {
-                            //     serverEventByRowKey.JsonContent.OrderDetails.forEach(elm => {
-                            //         for (const product of item.products) {
-                            //             if ()
-                            //         }
-                            //     })
-                            // }else{
-                            //     serverEventByRowKey.JsonContent.OrderDetails = [...item.products]
-                            // }
+                            if (serverEventByRowKey.JsonContent.OrderDetails && serverEventByRowKey.JsonContent.OrderDetails.length > 0) {
+                                item.products.forEach(elm => {
+                                    if ((elm.SplitForSalesOrder || (elm.ProductType == 2 && elm.IsTimer))) {
+                                        serverEventByRowKey.JsonContent.OrderDetails.unshift({ ...elm })
+                                    } else {
+                                        serverEventByRowKey.JsonContent.OrderDetails.forEach(order => {
+                                            if (order.Id == elm.Id) {
+                                                order.Quantity += elm.Quantity
+                                                order.Processed = order.Quantity
+                                            }
+                                        })
+                                    }
+
+                                })
+                            } else {
+                                serverEventByRowKey.JsonContent.OrderDetails = [...item.products]
+                            }
                         }
                         serverEventByRowKey.Version += 1
                         this.calculatateJsonContent(serverEventByRowKey.JsonContent)
+                        console.log('serverEventByRowKey.JsonContent', serverEventByRowKey.JsonContent);
                         serverEventByRowKey.JsonContent = JSON.stringify(serverEventByRowKey.JsonContent)
                         this.updateServerEvent(serverEventByRowKey)
                     }
+                }
+
+                if (changeTableComfirm.length > 0) {
+                    changeTableComfirm.forEach(item => {
+                        const { FromRoomId, FromPos, ToRoomId, ToPos } = item
+                        this.changeTable(FromRoomId, FromPos, ToRoomId, ToPos)
+                    })
                 }
 
             } catch (error) {
@@ -86,7 +106,11 @@ class DataManager {
         }, 15000);
     }
 
-    printCook = (newOrders) => {
+    clearComfirmOrder = () => {
+        clearInterval(this.scan)
+    }
+
+    getDataPrintCook = (newOrders) => {
         let listResult = []
         let secondPrinter = []
         let print3 = []
@@ -114,34 +138,9 @@ class DataManager {
         for (const property in listResultGroupBy) {
             listResultGroupBy[property] = groupBy(listResultGroupBy[property], "RoomName")
         }
-        console.log('printCook listResultGroupBy', listResultGroupBy);
+        console.log('printCook listResultGroupBy', JSON.stringify(listResultGroupBy));
         return listResultGroupBy;
     }
-
-    // mergeServerEvents = async (serverEvent, orderItem) => {
-    //     console.log('!serverEvent.JsonContent', serverEvent);
-    //     let { RoomId, Position } = orderItem
-    //     if (!serverEvent) {
-    //         serverEvent = await this.createSeverEvent(RoomId, Position)
-    //         serverEvent.JsonContent = JSON.stringify(this.createJsonContent(RoomId, Position, momentToDateUTC(moment()), []))
-    //     }
-    //     let jsonContentObject = JSON.parse(serverEvent.JsonContent)
-    //     console.log('jsonContentObject', jsonContentObject);
-    //     // jsonContentObject.OrderDetails.forEach(async (elm, idx, arr) => {
-    //     let products = await realmStore.queryProducts()
-    //     let productItem = products.filtered(`Id == '${orderItem.ProductId}'`)
-    //     productItem = JSON.parse(JSON.stringify(productItem))[0];
-    //     console.log('productItem', productItem);
-    //     productItem.Quantity = orderItem.Quantity
-    //     jsonContentObject.OrderDetails.push(productItem)
-    //     // })
-    //     console.log('jsonContentObject == 2', jsonContentObject);
-    //     serverEvent.Version += 1
-    //     this.calculatateJsonContent(jsonContentObject)
-    //     serverEvent.JsonContent = JSON.stringify(jsonContentObject)
-    //     console.log('mergeServerEvents', serverEvent, orderItem);
-    //     this.updateServerEvent(serverEvent)
-    // }
 
     //get information (From FileStore)
     selectVendorSession = async () => {
@@ -262,11 +261,11 @@ class DataManager {
 
     calculatateJsonContent = (JsonContent) => {
         let totalProducts = this.totalProducts(JsonContent.OrderDetails)
-        let totalWithVAT = totalProducts + JsonContent.VAT ? JsonContent.VAT : 0
+        let totalWithVAT = totalProducts + (JsonContent.VAT ? JsonContent.VAT : 0)
         JsonContent.Total = totalWithVAT
         JsonContent.AmountReceived = totalWithVAT
-        if (JsonContent.ActiveDate)
-            JsonContent.ActiveDate = momentToDateUTC(moment())
+        if (!JsonContent.ActiveDate || JsonContent.ActiveDate == "")
+            JsonContent.ActiveDate = moment()
         else if (!JsonContent.OrderDetails || JsonContent.OrderDetails.length == 0)
             JsonContent.ActiveDate = ""
     }
@@ -301,12 +300,12 @@ class DataManager {
         let oldServerEvent = serverEvents.filtered(`RowKey == '${oldRoomId}_${oldPosition}'`)
         let newServerEvent = serverEvents.filtered(`RowKey == '${newRoomId}_${newPosition}'`)
 
-        oldServerEvent = (JSON.stringify(oldServerEvent[0]) != '{}') ? JSON.parse(JSON.stringify(oldServerEvent[0]))
+        oldServerEvent = (JSON.stringify(oldServerEvent) != '{}') ? JSON.parse(JSON.stringify(oldServerEvent))[0]
             : await this.createSeverEvent(oldRoomId, oldPosition)
         oldServerEvent.JsonContent = oldServerEvent.JsonContent ? JSON.parse(oldServerEvent.JsonContent) : {}
         if (!oldServerEvent.JsonContent.OrderDetails) oldServerEvent.JsonContent.OrderDetails = []
 
-        newServerEvent = (JSON.stringify(newServerEvent[0]) != '{}') ? JSON.parse(JSON.stringify(newServerEvent[0]))
+        newServerEvent = (JSON.stringify(newServerEvent) != '{}') ? JSON.parse(JSON.stringify(newServerEvent))[0]
             : await this.createSeverEvent(newRoomId, newPosition)
         if (!newServerEvent.JsonContent) {
             newServerEvent.JsonContent =
