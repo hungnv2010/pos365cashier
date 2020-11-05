@@ -31,10 +31,6 @@ class DataManager {
                     let listRoom = []
                     let listOrders = []
                     console.log('newOrders', newOrders);
-<<<<<<< HEAD
-                    // this.printCook(newOrders)
-=======
->>>>>>> f4d91e51782de6ba3a32d0ea313e86f68c472764
 
                     for (const newOrder of newOrders) {
                         let exist = false
