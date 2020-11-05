@@ -22,7 +22,7 @@ class DataManager {
     }
 
     initComfirmOrder = () => {
-        const scan = setInterval(async () => {
+        this.scan = setInterval(async () => {
             try {
                 let intNewOrder = await new HTTPService().setPath(ApiPath.WAIT_FOR_COMFIRMATION).GET()
                 let changeTableComfirm = await new HTTPService().setPath(ApiPath.CHANGE_TABLE_COMFIRM).GET()
@@ -32,7 +32,7 @@ class DataManager {
                     let listOrders = []
                     console.log('newOrders', newOrders);
 
-                    for (const newOrder of newOrders) { 
+                    for (const newOrder of newOrders) {
                         let exist = false
                         let rowKey = `${newOrder.RoomId}_${newOrder.Position}`;
                         let products = await realmStore.queryProducts()
@@ -41,7 +41,7 @@ class DataManager {
                         productItem = { ...productItem, ...newOrder, Processed: newOrder.Quantity }
                         console.log('productItem', productItem);
                         listOrders.push({ ...productItem })
-                        for (const item of listRoom) {
+                        for (const item of listRoom) { 
                             if (item.rowKey == rowKey) {
                                 exist = true
                                 item.products.push({ ...productItem })
@@ -100,6 +100,10 @@ class DataManager {
                 console.log('initComfirmOrder error', error);
             }
         }, 15000);
+    }
+
+    clearComfirmOrder = () => {
+        clearInterval(this.scan)
     }
 
     getDataPrintCook = (newOrders) => {
