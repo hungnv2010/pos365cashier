@@ -106,13 +106,13 @@ export default forwardRef((props, ref) => {
                             </TouchableOpacity>
                         }
                     </View>
-                    :
-                    <View style={{ flexDirection: "row", flex: 2 }}>
-                        <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+                    : // flex: 2
+                    <View style={{ flexDirection: "row", flex: 1  }}>
+                        {/* <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
                             <TouchableOpacity onPress={props.clickQRCode}>
                                 <Icon name="qrcode-scan" size={props.size ? props.size : 23} color="white" />
                             </TouchableOpacity>
-                        </View>
+                        </View> */}
                         <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
                             <TouchableOpacity onPress={props.clickNote}>
                                 <Icon name="library-books" size={props.size ? props.size : 26} color="white" />

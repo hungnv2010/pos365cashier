@@ -29,7 +29,7 @@ class DataManager {
                     let newOrders = await new HTTPService().setPath(ApiPath.WAIT_FOR_COMFIRMATION_ALL).GET()
                     let listRoom = []
                     console.log('newOrders', newOrders);
-                    this.printCook(newOrders)
+                    // this.printCook(newOrders)
 
                     for (const newOrder of newOrders) {
                         let exist = false
@@ -115,6 +115,7 @@ class DataManager {
             listResultGroupBy[property] = groupBy(listResultGroupBy[property], "RoomName")
         }
         console.log('printCook listResultGroupBy', listResultGroupBy);
+        return listResultGroupBy;
     }
 
     // mergeServerEvents = async (serverEvent, orderItem) => {
