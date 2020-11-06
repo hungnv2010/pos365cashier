@@ -7,7 +7,7 @@ import ToolBarDefault from '../../components/toolbar/ToolBarDefault'
 import dialogManager from '../../components/dialog/DialogManager';
 import I18n from '../../common/language/i18n';
 import signalRManager from '../../common/SignalR';
-import { getFileDuLieuString , setFileLuuDuLieu} from '../../data/fileStore/FileStorage';
+import { getFileDuLieuString, setFileLuuDuLieu } from '../../data/fileStore/FileStorage';
 import { Constant } from '../../common/Constant';
 import store from '../../store/configureStore';
 import { useDispatch } from 'react-redux';
@@ -18,6 +18,7 @@ import { decodeBase64 } from '../../common/Base64';
 import realmStore from '../../data/realm/RealmStore';
 
 export default (props) => {
+
 
   const dispatch = useDispatch();
 
@@ -82,10 +83,21 @@ export default (props) => {
     }
     syncAllDatas()
 
+    const getDataNewOrders = async () => {
+      let newOrders = await dataManager.initComfirmOrder()
+      console.log('getDataNewOrders', newOrders);
+    }
+
+    const scan = setInterval(() => {
+      getDataNewOrders()
+    }, 15000);
+
     return () => {
       AppState.removeEventListener('change', handleChangeState);
+      clearInterval(scan)
     }
   }, [])
+
 
   const handleChangeState = (newState) => {
     if (newState === "active") {

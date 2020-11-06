@@ -18,15 +18,16 @@ class DataManager {
                 await realmStore.insertServerEvent(serverEvent)
                 signalRManager.sendMessageServerEvent(serverEvent)
             })
-        this.initComfirmOrder()
     }
 
-    initComfirmOrder = () => {
-        this.scan = setInterval(async () => {
-            try {
-                let intNewOrder = await new HTTPService().setPath(ApiPath.WAIT_FOR_COMFIRMATION).GET()
-                let changeTableComfirm = await new HTTPService().setPath(ApiPath.CHANGE_TABLE_COMFIRM).GET()
-                if (intNewOrder && intNewOrder > 0) {
+    initComfirmOrder = async () => {
+        try {
+            let intNewOrder = await new HTTPService().setPath(ApiPath.WAIT_FOR_COMFIRMATION).GET()
+            let changeTableComfirm = await new HTTPService().setPath(ApiPath.CHANGE_TABLE_COMFIRM).GET()
+            if (intNewOrder == 0 && changeTableComfirm.length == 0) {
+                return Promise.resolve([])
+            } else {
+                if (intNewOrder > 0) {
                     let newOrders = await new HTTPService().setPath(ApiPath.WAIT_FOR_COMFIRMATION_ALL).GET()
                     let listRoom = []
                     let listOrders = []
@@ -41,7 +42,7 @@ class DataManager {
                         productItem = { ...productItem, ...newOrder, Processed: newOrder.Quantity }
                         console.log('productItem', productItem);
                         listOrders.push({ ...productItem })
-                        for (const item of listRoom) { 
+                        for (const item of listRoom) {
                             if (item.rowKey == rowKey) {
                                 exist = true
                                 item.products.push({ ...productItem })
@@ -52,7 +53,6 @@ class DataManager {
                         }
                     }
 
-                    let dataPrint = this.getDataPrintCook(listOrders)
 
                     for (const item of listRoom) {
                         let serverEvent = await realmStore.queryServerEvents()
@@ -87,6 +87,7 @@ class DataManager {
                         serverEventByRowKey.JsonContent = JSON.stringify(serverEventByRowKey.JsonContent)
                         this.updateServerEvent(serverEventByRowKey)
                     }
+                    return Promise.resolve(this.getDataPrintCook(listOrders))
                 }
 
                 if (changeTableComfirm.length > 0) {
@@ -94,12 +95,14 @@ class DataManager {
                         const { FromRoomId, FromPos, ToRoomId, ToPos } = item
                         this.changeTable(FromRoomId, FromPos, ToRoomId, ToPos)
                     })
+                    return Promise.resolve([])
                 }
-
-            } catch (error) {
-                console.log('initComfirmOrder error', error);
             }
-        }, 15000);
+
+        } catch (error) {
+            console.log('initComfirmOrder error', error);
+            return Promise.resolve([])
+        }
     }
 
     clearComfirmOrder = () => {
