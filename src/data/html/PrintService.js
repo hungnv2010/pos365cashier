@@ -127,7 +127,7 @@ class PrintService {
                 itemTable = itemTable.replace("{Ten_Hang_Hoa}", "" + el.Name)
                 itemTable = itemTable.replace("{Ghi_Chu_Hang_Hoa}", description)
                 itemTable = itemTable.replace("{So_Luong}", Math.round(el.Quantity * 1000) / 1000)
-                itemTable = itemTable.replace("{DVT_Hang_Hoa}", "Thùng")
+                itemTable = itemTable.replace("{DVT_Hang_Hoa}", (el.IsLargeUnit ? el.LargeUnit : el.Unit))
                 listTable += itemTable;
             });
             HTMLBase = listHtml[0] + listTable + listHtml[2];

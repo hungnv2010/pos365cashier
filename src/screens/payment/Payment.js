@@ -416,8 +416,8 @@ export default (props) => {
             if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
                 jsonContent.RoomName = props.route.params.Name
             }
-            viewPrintRef.current.printProvisionalRef(jsonContent)
-            // viewPrintRef.current.printKitchenRef(jsonContent)
+            // viewPrintRef.current.printProvisionalRef(jsonContent)
+            viewPrintRef.current.printKitchenRef(jsonContent)
             timeClickPrevious = newDate;
         }
     }
@@ -650,13 +650,14 @@ export default (props) => {
     }
 
     const renderFilter = () => {
-        if (typeModal.current == TYPE_MODAL.FILTER_ACCOUNT)
+        if (typeModal.current == TYPE_MODAL.FILTER_ACCOUNT) {
+            let listAccount = vendorSession.Accounts.filter(item=>item.Id != Constant.ID_VNPAY_QR)
             return (
                 <View style={styles.viewFilter}>
                     <Text style={styles.titleFilter}>{I18n.t('loai_hinh_thanh_toan')}</Text>
                     <ScrollView style={{ maxHeight: Metrics.screenWidth }}>
                         {
-                            vendorSession.Accounts && [CASH].concat(vendorSession.Accounts).map((item, index) => {
+                            listAccount && [CASH].concat(listAccount).map((item, index) => {
                                 return (
                                     <TouchableOpacity key={index.toString()} onPress={() => onSelectMethod(item)} style={styles.viewRadioButton}>
                                         <RadioButton.Android
@@ -680,6 +681,7 @@ export default (props) => {
                     </View>
                 </View>
             )
+        }
         if (typeModal.current == TYPE_MODAL.QRCODE)
             return (
                 <View style={[styles.viewFilter, { justifyContent: "center", alignItems: "center" }]}>
