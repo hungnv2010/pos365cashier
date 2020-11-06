@@ -196,7 +196,20 @@ export const SchemaName = {
     CUSTOMER: "Customer",
     PROMOTION: "Promotion",
     ORDERS_OFFLINE: "OrdersOffline",
-    QR_CODE: "QRCode"
+    QR_CODE: "QRCode",
+    PRICE_BOOK: "PriceBook"
+}
+
+const PriceBook = {
+    name: SchemaName.PRICE_BOOK,
+    primaryKey: "Id",
+    properties: {
+        Id: 'int',
+        Name: { type: 'string', default: '' },
+        IsActive: { type: 'bool', default: false },
+        StartDate: { type: 'string', default: '' },
+        EndDate: { type: 'string', default: '' },
+    }
 }
 
 const QRCode = {
@@ -395,8 +408,8 @@ const PromotionSchema = {
 
 const databaseOption = {
     path: 'Pos365Boss.realm',
-    schema: [ServerEventSchema, RoomSchema, RoomGroupSchema, ProductSchema, CategoriesSchema, ToppingsSchema, CustomerSchema, PromotionSchema, OrdersOffline, QRCode],
-    schemaVersion: 32
+    schema: [ServerEventSchema, RoomSchema, RoomGroupSchema, ProductSchema, CategoriesSchema, ToppingsSchema, CustomerSchema, PromotionSchema, OrdersOffline, QRCode, PriceBook],
+    schemaVersion: 33
 }
 
 const realm = new Realm(databaseOption);
