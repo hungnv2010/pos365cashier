@@ -11,7 +11,6 @@ import { useSelector } from 'react-redux';
 import { Constant } from '../../common/Constant';
 import Calculator from './calculator';
 import { getFileDuLieuString } from '../../data/fileStore/FileStorage';
-import images from '../../theme/Images';
 import PointVoucher from './pointVoucher';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import IconFeather from 'react-native-vector-icons/Feather';
@@ -25,12 +24,9 @@ import dialogManager from '../../components/dialog/DialogManager';
 import dataManager from '../../data/DataManager';
 import QRCode from 'react-native-qrcode-svg';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import ViewPrint from '../more/ViewPrint';
+import ViewPrint, { TYPE_PRINT } from '../more/ViewPrint';
 
-import HtmlDefault from '../../data/html/htmlDefault';
-import printService from '../../data/html/PrintService';
-
-let timeClickCash = 1000;
+let timeClickPrevious = 1000;
 
 const TYPE_MODAL = { FILTER_ACCOUNT: "FILTER_ACCOUNT", QRCODE: "QRCODE", DATE: "DATE" }
 
@@ -73,14 +69,15 @@ export default (props) => {
     const [showDateTime, setShowDateTime] = useState(false);
     const [marginModal, setMargin] = useState(0)
     const [dataHtml, setDataHtml] = useState("");
-    let provisional = useRef();
+    const provisional = useRef();
     const dateTmp = useRef("")
     const toolBarPaymentRef = useRef();
     const itemAccountRef = useRef();
     const typeModal = useRef();
     const qrCode = useRef();
-    var currentServerEvent = useRef();
+    const currentServerEvent = useRef();
     const viewPrintRef = useRef();
+    const isClick = useRef(false);
     const { Print } = NativeModules;
     let row_key = "";
     let qrCodeRealm = null
@@ -184,11 +181,11 @@ export default (props) => {
 
     const addAccount = () => {
         let newDate = new Date().getTime();
-        if (timeClickCash + 500 < newDate) {
+        if (timeClickPrevious + 500 < newDate) {
             let list = listMethod;
-            list.push({ ...CASH, Id: timeClickCash, MethodId: 0, Value: list.length > 0 ? 0 : totalPrice })
+            list.push({ ...CASH, Id: timeClickPrevious, MethodId: 0, Value: list.length > 0 ? 0 : totalPrice })
             setListMethod([...list])
-            timeClickCash = newDate;
+            timeClickPrevious = newDate;
         }
     }
 
@@ -414,32 +411,14 @@ export default (props) => {
 
     const onClickProvisional = async () => {
         console.log("onClickProvisional props.route.params ", props.route.params);
-        let getCurrentIP = await getFileDuLieuString(Constant.IPPRINT, true);
-        console.log('getCurrentIP ', getCurrentIP);
-        if (getCurrentIP && getCurrentIP != "") {
-            if (provisional.current && provisional.current == Constant.PROVISIONAL_PRINT) {
-                if (jsonContent.RoomName == undefined || jsonContent.RoomName == "") {
-                    jsonContent.RoomName = props.route.params.Name
-                }
-                console.log("onClickProvisional RoomName ", jsonContent.RoomName);
-                if (jsonContent.OrderDetails && jsonContent.OrderDetails.length > 0) {
-                    printService.GenHtml(HtmlDefault, jsonContent).then(res => {
-                        if (res && res != "") {
-                            // let html = data.replace("width: 76mm", "")
-                            setDataHtml(res)
-                        }
-                        setTimeout(() => {
-                            viewPrintRef.current.clickCaptureRef();
-                        }, 500);
-                    })
-                }
-                else
-                    dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
-            } else {
-                dialogManager.showPopupOneButton(I18n.t("ban_khong_co_quyen_su_dung_chuc_nang_nay"))
+        let newDate = new Date().getTime();
+        if (timeClickPrevious + 2000 < newDate) {
+            if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
+                jsonContent.RoomName = props.route.params.Name
             }
-        } else {
-            dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_may_in'), I18n.t('thong_bao'))
+            // viewPrintRef.current.printProvisionalRef(jsonContent)
+            viewPrintRef.current.printKitchenRef(jsonContent)
+            timeClickPrevious = newDate;
         }
     }
 
@@ -671,13 +650,14 @@ export default (props) => {
     }
 
     const renderFilter = () => {
-        if (typeModal.current == TYPE_MODAL.FILTER_ACCOUNT)
+        if (typeModal.current == TYPE_MODAL.FILTER_ACCOUNT) {
+            let listAccount = vendorSession.Accounts.filter(item=>item.Id != Constant.ID_VNPAY_QR)
             return (
                 <View style={styles.viewFilter}>
                     <Text style={styles.titleFilter}>{I18n.t('loai_hinh_thanh_toan')}</Text>
                     <ScrollView style={{ maxHeight: Metrics.screenWidth }}>
                         {
-                            vendorSession.Accounts && [CASH].concat(vendorSession.Accounts).map((item, index) => {
+                            listAccount && [CASH].concat(listAccount).map((item, index) => {
                                 return (
                                     <TouchableOpacity key={index.toString()} onPress={() => onSelectMethod(item)} style={styles.viewRadioButton}>
                                         <RadioButton.Android
@@ -701,6 +681,7 @@ export default (props) => {
                     </View>
                 </View>
             )
+        }
         if (typeModal.current == TYPE_MODAL.QRCODE)
             return (
                 <View style={[styles.viewFilter, { justifyContent: "center", alignItems: "center" }]}>
@@ -845,10 +826,6 @@ export default (props) => {
             <ViewPrint
                 ref={viewPrintRef}
                 html={dataHtml}
-                callback={(uri) => {
-                    console.log("callback uri ", uri)
-                    Print.printImageFromClient([uri + ""])
-                }}
             />
             <ToolBarPayment
                 ref={toolBarPaymentRef}

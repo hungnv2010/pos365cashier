@@ -6,7 +6,6 @@ import ServedForTablet from '../../screens/served/servedForTablet/ServedForTable
 import DrawerNavigation from '../drawer/DrawerNavigation'
 import OverView from '../../screens/overView/overView'
 import PrintHtml from '../../screens/more/printHtml/PrintHtml'
-import Preview from '../../screens/more/printHtml/Preview'
 import Main from '../../screens/main/Main';
 import QRCode from '../../screens/QRCode/QRCode';
 import NoteBook from '../../screens/noteBook/NoteBook';
@@ -42,7 +41,6 @@ export default (props) => {
                 <MainStack.Screen name={ScreenList.Home}>{props => <DrawerNavigation {...props} screenOptions={{ headerLeft: null }} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.ServedForTablet}>{props => <ServedForTablet {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.PrintHtml}>{props => <PrintHtml {...props} />}</MainStack.Screen>
-                <MainStack.Screen name={ScreenList.Preview}>{props => <Preview {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.Topping}>{props => <Topping {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.NoteBook}>{props => <NoteBook {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.DetailNoteBook}>{props => <DetailNoteBook {...props} />}</MainStack.Screen>

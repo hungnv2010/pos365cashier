@@ -19,7 +19,7 @@ import HtmlDefault from '../../data/html/htmlDefault';
 import ViewShot, { takeSnapshot, captureRef } from "react-native-view-shot";
 import HTML from 'react-native-render-html';
 import AutoHeightWebView from 'react-native-autoheight-webview/autoHeightWebView'
-import ViewPrint from './ViewPrint';
+import ViewPrint, { defaultKitchen } from './ViewPrint';
 import I18n from '../../common/language/i18n'
 
 const FOOTER_HEIGHT = 21;
@@ -69,6 +69,23 @@ export default forwardRef((props, ref) => {
                     setData(res)
                 }
             })
+            // // printService.GenHtmlKitchen(html, defaultKitchen).then(res => {
+            // //     if (res && res != "") {
+            // //         setData(res)
+            // //     }
+            // // })
+            // let i = 0;
+            // for (const key in defaultKitchen) {
+            //     if (defaultKitchen.hasOwnProperty(key)) {
+            //         const element = defaultKitchen[key];
+            //         console.log("printKitchen key element.length ", key, element.length);
+            //         let res = await printService.GenHtmlKitchen(html, element)
+            //         if (res && res != "" && i == 0) {
+            //             setData(res)
+            //         }
+            //     }
+            //     i++;
+            // }
         }
         getVendorSession()
     }, [props.data])
@@ -111,7 +128,8 @@ export default forwardRef((props, ref) => {
         if (getCurrentIP && getCurrentIP != "") {
             if (isClick.current == false) {
                 let html = data.replace("width: 76mm", "")
-                viewPrintRef.current.clickCaptureRef();
+                // viewPrintRef.current.clickCaptureRef();
+                viewPrintRef.current.printProvisionalRef(JsonContent1)
             }
             isClick.current = true;
             setTimeout(() => {
@@ -134,12 +152,6 @@ export default forwardRef((props, ref) => {
             <ViewPrint
                 ref={viewPrintRef}
                 html={data}
-                callback={(uri) => {
-                    console.log("callback uri ", uri)
-                    // setUri(uri);
-                    Print.printImageFromClient([uri + ""])
-                }
-                }
             />
             {deviceType == Constant.PHONE ? <ToolBarPreviewHtml
                 navigation={props.navigation} title="HTML"

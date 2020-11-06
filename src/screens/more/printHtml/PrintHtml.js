@@ -4,13 +4,13 @@ import ToolBarPrintHtml from '../../../components/toolbar/ToolBarPrintHtml';
 import { Images, Colors, Metrics } from '../../../theme';
 import { WebView } from 'react-native-webview';
 import HtmlDefault from '../../../data/html/htmlDefault';
+import HtmlKitchen from '../../../data/html/htmlKitchen';
 import useDidMountEffect from '../../../customHook/useDidMountEffect';
 import dialogManager from '../../../components/dialog/DialogManager';
 import { HTTPService } from '../../../data/services/HttpService';
 import { ApiPath } from '../../../data/services/ApiPath';
 import { useSelector } from 'react-redux';
 import { Constant } from '../../../common/Constant';
-import Preview from './Preview';
 import PrintWebview from '../PrintWebview';
 import I18n from '../../../common/language/i18n'
 

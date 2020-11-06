@@ -12,14 +12,15 @@ import colors from '../../../../theme/Colors';
 import { ScreenList } from '../../../../common/ScreenList';
 import DialogProductDetail from '../../../../components/dialog/DialogProductDetail'
 import dialogManager from '../../../../components/dialog/DialogManager';
+import dataManager from '../../../../data/DataManager';
 
 export default (props) => {
 
     const [showModal, setShowModal] = useState(false)
     const [listOrder, setListOrder] = useState(() =>
-        (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0 )
-        ? props.jsonContent.OrderDetails.filter(item => item.ProductId > 0) : []
-        )
+        (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0)
+            ? props.jsonContent.OrderDetails.filter(item => item.ProductId > 0) : []
+    )
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
     const [itemOrder, setItemOrder] = useState({})
@@ -47,8 +48,8 @@ export default (props) => {
     }
 
     useEffect(() => {
-        listOrder.forEach((elm, index) =>  elm.index = index)
-    },[listOrder])
+        listOrder.forEach((elm, index) => elm.index = index)
+    }, [listOrder])
 
     useEffect(() => {
         if (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0) {
@@ -60,6 +61,18 @@ export default (props) => {
     const sendOrder = async () => {
         console.log("sendOrder room ", props.route.params.room);
         props.navigation.navigate(ScreenList.Payment, { RoomId: props.route.params.room.Id, Name: props.route.params.room.Name, Position: props.Position });
+    }
+
+    const printKitchen = () => {
+        // let jsonContent = props.jsonContent;
+        // if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
+        //     jsonContent.RoomName = props.route.params.Name
+        // }
+        // viewPrintRef.current.checkBeforePrintRef(jsonContent, true);
+        let jsonContent = props.jsonContent;
+        console.log("printKitchen jsonContent ", jsonContent);
+        let data = dataManager.printCook([jsonContent])
+        console.log("printKitchen data ", data);
     }
 
     const removeItem = (item) => {
@@ -92,7 +105,7 @@ export default (props) => {
                     totalTopping += item.Quantity * item.Price
                     topping.push({ ExtraId: item.ExtraId, QuantityExtra: item.Quantity, Price: item.Price, Quantity: item.Quantity })
                 }
-            }) 
+            })
             return [description, totalTopping, topping]
         }
         let [description, totalTopping, topping] = getInfoTopping(listTopping)
@@ -233,7 +246,7 @@ export default (props) => {
         }
     }
 
-    let {jsonContent} = props
+    let { jsonContent } = props
     return (
         <View style={{ flex: 1 }}>
             <View style={{ flex: 1 }}>
@@ -252,44 +265,44 @@ export default (props) => {
                 }
             </View>
             <View>
-    
-            <TouchableOpacity
-                onPress={() => { setExpand(!expand) }}
-                style={{ borderTopWidth: .5, borderTopColor: "red", paddingVertical: 3, backgroundColor: "white", marginLeft: 10 }}>
-                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
-                    <Text style={{ fontWeight: "bold" }}>{I18n.t('tong_thanh_tien')}</Text>
-                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                        <Text style={{ fontWeight: "bold", fontSize: 16, color: colors.colorchinh }}>{currencyToString(totalPrice(jsonContent.OrderDetails))}đ</Text>
-                        {expand ?
-                            <Icon style={{}} name="chevron-up" size={30} color="black" />
-                            :
-                            <Icon style={{}} name="chevron-down" size={30} color="black" />
-                        }
-                    </View>
-                </View>
-                {expand ?
-                    <View style={{ marginLeft: 0 }}>
-                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
-                            <Text>{I18n.t('tong_chiet_khau')}</Text>
-                            <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>- {currencyToString(jsonContent.Discount)}đ</Text>
-                        </View>
-                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
-                            <Text>VAT ({jsonContent.VATRates}%)</Text>
-                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                                <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(jsonContent.VAT ? jsonContent.VAT : 0)}đ</Text>
-                            </View>
-                        </View>
-                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
-                            <Text style={{ fontWeight: "bold" }}>{I18n.t('khach_phai_tra')}</Text>
-                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                                <Text style={{ fontWeight: "bold", fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(jsonContent.Total)}đ</Text>
-                            </View>
+
+                <TouchableOpacity
+                    onPress={() => { setExpand(!expand) }}
+                    style={{ borderTopWidth: .5, borderTopColor: "red", paddingVertical: 3, backgroundColor: "white", marginLeft: 10 }}>
+                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+                        <Text style={{ fontWeight: "bold" }}>{I18n.t('tong_thanh_tien')}</Text>
+                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
+                            <Text style={{ fontWeight: "bold", fontSize: 16, color: colors.colorchinh }}>{currencyToString(totalPrice(jsonContent.OrderDetails))}đ</Text>
+                            {expand ?
+                                <Icon style={{}} name="chevron-up" size={30} color="black" />
+                                :
+                                <Icon style={{}} name="chevron-down" size={30} color="black" />
+                            }
                         </View>
                     </View>
-                    :
-                    null
-                }
-            </TouchableOpacity>
+                    {expand ?
+                        <View style={{ marginLeft: 0 }}>
+                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+                                <Text>{I18n.t('tong_chiet_khau')}</Text>
+                                <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>- {currencyToString(jsonContent.Discount)}đ</Text>
+                            </View>
+                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+                                <Text>VAT ({jsonContent.VATRates}%)</Text>
+                                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
+                                    <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(jsonContent.VAT ? jsonContent.VAT : 0)}đ</Text>
+                                </View>
+                            </View>
+                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+                                <Text style={{ fontWeight: "bold" }}>{I18n.t('khach_phai_tra')}</Text>
+                                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
+                                    <Text style={{ fontWeight: "bold", fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(jsonContent.Total)}đ</Text>
+                                </View>
+                            </View>
+                        </View>
+                        :
+                        null
+                    }
+                </TouchableOpacity>
             </View>
             <View style={styles.footerMenu}>
                 <TouchableOpacity
@@ -305,14 +318,14 @@ export default (props) => {
                                 <MaterialIcons style={{ paddingHorizontal: 7 }} name="notifications" size={26} color={Colors.colorchinh} />
                                 <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('chuyen_ban')}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => {}} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
+                            <TouchableOpacity onPress={() => { }} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
                                 <Icon style={{ paddingHorizontal: 10 }} name="message" size={22} color={Colors.colorchinh} />
                                 <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('tam_tinh')}</Text>
                             </TouchableOpacity>
                         </View>
                     </Menu>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => { }} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
+                <TouchableOpacity onPress={printKitchen} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
                     <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('bao_che_bien')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={sendOrder} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
@@ -354,14 +367,14 @@ export default (props) => {
                             marginBottom: Platform.OS == 'ios' ? marginModal : 0
                         }}>
                             <DialogProductDetail
-                                    onClickTopping={() => onClickTopping(itemOrder)}
-                                    item={itemOrder}
-                                    getDataOnClick={(data) => {
-                                        mapDataToList(data)
-                                    }}
-                                    setShowModal={() => {
-                                        setShowModal(false)
-                                    }} 
+                                onClickTopping={() => onClickTopping(itemOrder)}
+                                item={itemOrder}
+                                getDataOnClick={(data) => {
+                                    mapDataToList(data)
+                                }}
+                                setShowModal={() => {
+                                    setShowModal(false)
+                                }}
                             />
                         </View>
                     </View>
