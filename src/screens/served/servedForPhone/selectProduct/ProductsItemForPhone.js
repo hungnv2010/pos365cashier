@@ -47,7 +47,10 @@ const ProductsItemForPhone = ({ item, index, onClickProduct, handleButtonDecreas
                             textAlign="center"
                             value={"" + Math.round(value * 1000) / 1000}
                             onChangeText={(numb) => {
-                                if (!Number.isInteger(+numb) || +numb > 1000) return
+                                if (isNaN(numb) || +numb.length > 4) return
+                                if (item.SplitForSalesOrder || (item.ProductType == 2 && item.IsTimer)) {
+                                    numb = Math.round(+numb)
+                                }
                                 setValue(numb)
                                 onChangeText(numb, item)
                             }}

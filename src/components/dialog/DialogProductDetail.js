@@ -136,11 +136,15 @@ export default (props) => {
                                     style={{ padding: 6, textAlign: "center", margin: 10, flex: 1, borderRadius: 4, borderWidth: 0.5, backgroundColor: "#D5D8DC", color: "#000" }}
                                     value={"" + itemOrder.Quantity}
                                     onChangeText={text => {
-                                        if (!Number.isInteger(+text) || +text > 1000) return
-                                        itemOrder.Quantity = +text
+                                        if (isNaN(text) || text.length > 4) return
+                                        if (itemOrder.SplitForSalesOrder || (itemOrder.ProductType == 2 && itemOrder.IsTimer)) {
+                                            itemOrder.Quantity = Math.round(+text)
+                                        } else {
+                                            itemOrder.Quantity = text
+                                        }
                                         setItemOrder({ ...itemOrder })
-
-                                    }} />
+                                    }}
+                                    />
                                 <TouchableOpacity onPress={() => {
                                     if (itemOrder.Quantity < 1000) {
                                         itemOrder.Quantity++

@@ -396,7 +396,7 @@ const PromotionSchema = {
 const databaseOption = {
     path: 'Pos365Boss.realm',
     schema: [ServerEventSchema, RoomSchema, RoomGroupSchema, ProductSchema, CategoriesSchema, ToppingsSchema, CustomerSchema, PromotionSchema, OrdersOffline, QRCode],
-    schemaVersion: 35
+    schemaVersion: 41
 }
 
 const realm = new Realm(databaseOption);
