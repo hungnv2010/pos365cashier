@@ -12,6 +12,7 @@ import { Constant } from '../../common/Constant';
 import { getFileDuLieuString } from '../../data/fileStore/FileStorage';
 import moment from 'moment';
 import DateRangePicker from 'react-native-daterange-picker';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { HTTPService } from '../../data/services/HttpService';
 import { ApiPath } from '../../data/services/ApiPath';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
@@ -22,15 +23,13 @@ export default (props) => {
 
     const [customerDetail, setCustomerDetail] = useState({})
     const [listGroup, setListGroup] = useState([])
-    const [dateTimePicker, setDateTimePicker] = useState({
-        startDate: null,
-        displayedDate: moment(),
-    })
+    const [date, setDate] = useState(new Date());
     const [showToast, setShowToast] = useState(false);
 
     const [showModal, setShowModal] = useState(false)
     const typeModal = useRef(null)
     const toastDescription = useRef('')
+    const dateTmp = useRef()
 
     useEffect(() => {
         const getListGroup = async () => {
@@ -76,10 +75,6 @@ export default (props) => {
         setListGroup([...listGroup])
     }
 
-    const setDates = (dates) => {
-        console.log('setDates', dates);
-        setDateTimePicker({ ...dateTimePicker, ...dates })
-    }
 
     const resetCustomer = () => {
         setCustomerDetail({
@@ -136,7 +131,8 @@ export default (props) => {
                 setCustomerDetail({ ...customerDetail, Phone: text })
                 break;
             case 3:
-                setCustomerDetail({ ...customerDetail, DOB: text })
+                text = moment(text).format('DD-MM-YYYY')
+                console.log(text);
                 break;
             case 4:
                 setCustomerDetail({ ...customerDetail, Email: text })
@@ -174,43 +170,35 @@ export default (props) => {
     }
 
     const onDone = () => {
-        console.log('onDone', dateTimePicker);
-        const { startDate } = dateTimePicker;
-        if (!startDate) {
-            toastDescription.current = I18n.t('vui_long_chon_ngay_sinh')
-            showToast(true)
-        } else {
-            console.log(momentToStringDateLocal(startDate));
-            setCustomerDetail({ ...customerDetail, DOB: momentToStringDateLocal(startDate) })
-        }
+        setDate(dateTmp.current)
         setShowModal(false)
+    }
+
+    const onChange = (event, selectedDate) => {
+        const currentDate = selectedDate || date;
+        dateTmp.current = currentDate;
     }
 
     const renderModalContent = () => {
         return typeModal.current == 1 ?
-            <View style={{
-                alignItems: "center",
-                justifyContent: "center",
-            }}>
-                <DateRangePicker
-                    visible={true}
-                    onChange={(dates) => setDates(dates)}
-                    startDate={dateTimePicker.startDate}
-                    displayedDate={dateTimePicker.displayedDate}
-                    maxDate={moment()}
-                    range
-                    onlyStartDate={true}
-                    action={<View style={{ flexDirection: "row", margin: 10, alignItems: "center", justifyContent: "center" }}>
-                        <TouchableOpacity onPress={onCancel} style={{ marginHorizontal: 20, paddingHorizontal: 30, borderColor: colors.colorchinh, borderWidth: 1, paddingVertical: 10, borderRadius: 5 }}>
-                            <Text style={{ color: colors.colorchinh, textTransform: "uppercase" }}>{I18n.t("huy")}</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={onDone} style={{ marginHorizontal: 20, paddingHorizontal: 30, paddingVertical: 10, backgroundColor: colors.colorchinh, borderRadius: 5, borderWidth: 0 }}>
-                            <Text style={{ color: "#fff", textTransform: "uppercase" }}>{I18n.t("xong")}</Text>
-                        </TouchableOpacity>
-                    </View>}
-                >
-                </DateRangePicker>
-            </View>
+            <View style={{ backgroundColor: "#fff", borderRadius: 4 }}>
+                <DateTimePicker
+                    value={date}
+                    mode={'date'}
+                    display="default"
+                    locale="vi-VN"
+                    onChange={onChange}
+                />
+
+                <View style={[styles.viewBottomFilter, { padding: 7, paddingTop: 0 }]}>
+                    <TouchableOpacity style={styles.viewButtonCancel} onPress={onCancel}>
+                        <Text style={styles.textButtonCancel}>{I18n.t("huy")}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.viewButtonOk} onPress={onDone}>
+                        <Text style={styles.textButtonOk}>{I18n.t("dong_y")}</Text>
+                    </TouchableOpacity>
+                </View>
+            </View >
             :
             typeModal.current == 2 ?
                 <View style={{
@@ -425,7 +413,7 @@ export default (props) => {
     return (
         <View style={{ flex: 1 }}>
             <View style={{ backgroundColor: colors.colorchinh, marginLeft: 15, paddingVertical: 10 }}>
-                <Text style={{ textAlign: "center", color: "white", fontSize: 15, textTransform: "uppercase" }}>{props.customerDetail.Id == -1 ? 'Add customer' : 'Update Customer'}</Text>
+                <Text style={{ textAlign: "center", color: "white", fontSize: 15, textTransform: "uppercase", fontWeight: "bold" }}>{props.customerDetail.Id == -1 ? 'Add customer' : 'Update Customer'}</Text>
             </View>
             <ScrollView style={{ flex: 1, padding: 10 }}>
                 <Surface style={styles.surface}>
@@ -471,14 +459,19 @@ export default (props) => {
                         <View style={{ flexDirection: "row", flex: 1 }}>
                             <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
                                 <TextInput
+                                    value={"" + dateToString(date)}
+                                    onTouchStart={() => {
+                                        typeModal.current = 1
+                                        setShowModal(true)
+                                    }}
                                     placeholder='dd/mm/yyyy'
-                                    value={(customerDetail.DOB)}
+                                    value={dateToString(customerDetail.DOB)}
                                     style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1 }}
-                                    onChangeText={(text) => { onChangeText(text, 3) }}
+                                // onChangeText={(text) => { onChangeText(text, 3) }}
                                 />
                                 <Image source={Images.icon_arrow_down} style={{ width: 20, height: 20, position: "absolute", right: 15 }} />
                             </View>
-                            <TouchableOpacity
+                            {/* <TouchableOpacity
                                 onPress={() => {
                                     typeModal.current = 1
                                     setDateTimePicker({ ...dateTimePicker, startDate: null })
@@ -486,7 +479,7 @@ export default (props) => {
                                 }}
                                 style={{ marginLeft: 20, justifyContent: "center", backgroundColor: colors.colorLightBlue, borderRadius: 5 }}>
                                 <Text style={{ textAlign: "center" }}>button</Text>
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
                         </View>
                     </View>
                     {
@@ -658,5 +651,11 @@ const styles = StyleSheet.create({
     surface: {
         margin: 5,
         elevation: 4,
-    }
+    },
+    viewBottomFilter: { justifyContent: "center", flexDirection: "row", paddingTop: 10 },
+    viewButtonCancel: { flex: 1, backgroundColor: "#fff", borderRadius: 4, borderWidth: 1, borderColor: colors.colorchinh, paddingHorizontal: 20, paddingVertical: 10, justifyContent: "flex-end" },
+    textButtonCancel: { textAlign: "center", color: "#000" },
+    viewButtonOk: { marginLeft: 10, flex: 1, backgroundColor: colors.colorchinh, borderRadius: 4, paddingHorizontal: 20, paddingVertical: 10, justifyContent: "flex-end" },
+    textButtonOk: { textAlign: "center", color: "#fff" },
+
 })
