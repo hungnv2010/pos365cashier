@@ -6,7 +6,7 @@ const Tab = createMaterialBottomTabNavigator();
 import Main from '../../screens/main/Main';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-import More from '../../screens/more/More'
+import More from '../../screens/more/More'
 import { useSelector } from 'react-redux';
 import History from '../../screens/history/History'
 import OverView from '../../screens/overView/overView'

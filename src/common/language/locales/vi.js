@@ -334,4 +334,74 @@ export default {
   tuy_chon: "Tuỳ chọn",
   yeu_cau_thanh_toan: "Yêu cầu thanh toán",
 
+  //Vuong
+  am_bao_thanh_toan:"Âm báo thanh toán",
+
+  bao_che_bien_sau_khi_thanh_toan: "Báo chế biến sau khi thanh toán",
+
+  chon_cong_nghe_in: "Chọn công nghệ in",
+  cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang:"Cho phép thay đổi tên hàng hóa khi bán hàng?",
+  cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang: "Cho phép nhân viên thay đổi giá khi bán hàng?",
+  cai_dat_the_cung: "Cài đặt thẻ cứng",
+  chan_trang: "Chân trang",
+
+  don_vi_tien_te: "Đơn vị tiền tệ",
+  dollar_my: "Dollar Mỹ",
+  dia_chi: "Địa chỉ",
+
+  giu_man_hinh_luon_sang: "Giữ màn hình luôn sáng",
+
+  hien_thanh_dieu_huong: "Hiện thanh điều hướng",
+
+  in_sau_khi_thanh_toan: "In sau khi thanh toán",
+  in_hai_lien_cho_hoa_don: "In 2 liên cho hóa đơn",
+  in_hai_lien_cho_che_bien: "In 2 liên cho chế biến",
+  in_tem_truoc_thanh_toan: "In tem trước khi thanh toán",
+  in_sunmi: "In Sunmi",
+  in_qua_mang_lan: "In qua mạng LAN",
+  in_qua_bluetooth: "In qua Bluetooth",
+  in_qua_usb: "In qua USB",
+  in_hoa_don_truoc_khi_thanh_toan_VNPAYQR_thanh_cong:"In hóa đơn trước khi thanh toán VNPAY-QR thành công? ",
+
+  khong_cho_phep_ban_hang_khi_het_ton_kho: "Không cho phép bán hàng khi hết tồn kho",
+  khong_in: "Không in",
+  khong_hien_thi: "Không hiển thị",
+
+  link_dang_nhap: "Link đăng nhập",
+
+  may_in_thu_ngan: "Máy in thu ngân",
+  may_in_bao_bep_a: "Máy in báo bếp A",
+  may_in_bao_bep_b: "Máy in báo bếp B",
+  may_in_bao_bep_c: "Máy in báo bếp C",
+  may_in_bao_bep_d: "Máy in báo bếp D",
+  may_in_bao_pha_che_a: "Máy in pha chế A",
+  may_in_bao_pha_che_b: "Máy in pha chế B",
+  may_in_bao_pha_che_c: "Máy in pha chế C",
+  may_in_bao_pha_che_d: "Máy in pha chế D",
+  may_in_tem: "Máy in tem",
+  mo_cashbox_sau_khi_thanh_toan: "Mở cashbox sau khi thanh toán",
+
+  nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: "Nhận tin nhắn/ thông báo từ phục vụ, quản lý?",
+  nhap_so_luong_the: "Nhập số lượng thẻ",
+  nhap_dia_chi_ip_may: "Bạn hãy nhập địa chỉ IP của máy ",
+  nhap_chieu_rong_kho_giay: "Nhập chiều rộng khổ giấy",
+
+  setting:'Thiết lập',
+
+  so_the_cung: "Số thẻ cứng",
+  su_dung_hai_man_hinh:"Sử dụng hai màn hình",
+  so_dien_thoai: "Số điện thoại",
+  
+  tien_khach_tra: "Tiền khách trả",
+  thiet_lap_thanh_toan_vnpay: "Thiết lập thanh toán VNPAY",
+  thong_tin_cua_hang: "Thông tin cửa hàng",
+  tu_dong_in_bao_bep: "Tự động in báo bếp",
+  thiet_lap_he_thong:"Thiết lập hệ thống",
+  thiet_lap_tinh_nang: "Thiết lập tính năng",
+  ten: "Tên",
+  thanh_toan_vnpayqr: "Thanh toán VNPAY-QR?",
+  thanh_toan_vnpaypos_qua_may_pos:"Thanh toán VNPAY-POS qua máy POS?",
+
+  vnd: "VND"
+
 };

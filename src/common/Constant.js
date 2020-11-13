@@ -15,6 +15,19 @@ export const Constant = {
     ALREADY_INSERT_PRODUCT: 'ALREADY_INSERT_PRODUCT',
     HISTORY_ORDER: "HISTORY_ORDER",
     ID_VNPAY_QR: 978,
+    OBJECT_SETTING: 'OBJECT_SETTING',
+    KEY_PRINTER: {
+        CashierKey: 'CashierPrint',
+        KitchenAKey: 'KitchenA',
+        KitchenBKey: 'KitchenB',
+        KitchenCKey: 'KitchenC',
+        KitchenDKey: 'KitchenD',
+        BartenderAKey: 'BartenderA',
+        BartenderBKey: 'BartenderB',
+        BartenderCKey: 'BartenderC',
+        BartenderDKey: 'BartenderD',
+        StampPrintKey: 'StamPrintKey',
+    },
     TIME_SELECT: [
         {
             type: 4,
@@ -402,6 +415,47 @@ export const Constant = {
 
     ]
     ,
+    CATYGORY_PRINT: [
+        // {
+        //     name: "khong_in",
+        //     key: ''
+        // },
+        {
+            name: "in_qua_mang_lan",
+            key: 1
+        },
+        {
+            name: "in_qua_bluetooth",
+            key: 2
+        },
+        {
+            name: "in_qua_usb",
+            key: 3
+        }
+    ],
+    STAMP_PRINTER: [
+        {
+            name: "in_qua_mang_lan",
+            key: 1
+        },
+        {
+            name: "in_qua_usb",
+            key: 2
+        }
+    ],
+    CURRENTCY_UNIT: [
+        {
+            name: "Dollar Mỹ",
+            key: 1,
+            value: '$'
+        },
+        {
+            name: "Không hiển thị",
+            key: 2,
+            value: 'không hiển thị'
+        }
+
+    ],
     JSONCONTENT_EMPTY: {
         OrderDetails: []
     }
