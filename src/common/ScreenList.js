@@ -55,6 +55,8 @@ export const ScreenList = {
   Customer: "Customer",
   CustomerDetailForPhone: "CustomerDetailForPhone",
   PointVoucher: "PointVoucher",
-  SearchVoucher: "SearchVoucher"
+  SearchVoucher: "SearchVoucher",
+  Settings:"Settings",
+  VNPayPaymentSetting:"VNPayPaymentSetting",  
 }
 

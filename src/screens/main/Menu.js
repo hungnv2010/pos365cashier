@@ -24,14 +24,14 @@ const IP_DEFAULT = "192.168.99.";
 const KEY_FUNC = {
     HOME: ScreenList.Home,
     CUSTOMER: ScreenList.Customer,
-    SETTING_FUNC: ScreenList.PrintHtml,
+    SETTING_FUNC: ScreenList.Settings,
     VERSION: "VERSION",
     MORE: ScreenList.More,
     HISTORY: ScreenList.History,
     ROOM_CATALOG: ScreenList.RoomCatalog,
     OVERVIEW: ScreenList.OverView,
     INVOICE: ScreenList.Invoice,
-    CASH_FLOW: ScreenList.CashFlow
+    CASH_FLOW: ScreenList.CashFlow,
 }
 
 const LIST_FUNCITION = [
@@ -90,7 +90,7 @@ const LIST_FUNCITION = [
         func: KEY_FUNC.VERSION,
         icon: Images.icon_version,
         title: "phien_ban_ngay"
-    }
+    },
 ]
 
 export default (props) => {

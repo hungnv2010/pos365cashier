@@ -26,6 +26,8 @@ import InvoiceDetailForPhone from '../../screens/invoice/invoiceDetailForPhone';
 import { ScreenList } from '../../common/ScreenList';
 import Customer from '../../screens/customer/Customer';
 import CustomerDetailForPhone from '../../screens/customer/CustomerDetailForPhone';
+import Settings from '../../screens/settings/Settings';
+import VNPayPaymentSetting from '../../screens/settings/VNPAYPaymentSetting';
 
 
 const MainStack = createStackNavigator();
@@ -63,6 +65,8 @@ export default (props) => {
                 <MainStack.Screen name={ScreenList.InvoiceDetailForPhone}>{props => <InvoiceDetailForPhone {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.PointVoucher}>{props => <PointVoucher {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.SearchVoucher}>{props => <SearchVoucher {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.Settings}>{props => <Settings />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.VNPayPaymentSetting}>{props => <VNPayPaymentSetting />}</MainStack.Screen>
             </MainStack.Navigator>
         </Animated.View>
     );
