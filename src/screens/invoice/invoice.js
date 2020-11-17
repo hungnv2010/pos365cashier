@@ -16,6 +16,7 @@ import DateTime from '../../components/filter/DateTime';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import useDebounce from '../../customHook/useDebounce';
 import { ScreenList } from '../../common/ScreenList';
+import dialogManager from '../../components/dialog/DialogManager';
 
 const Invoice = (props) => {
 
@@ -33,6 +34,7 @@ const Invoice = (props) => {
     const count = useRef(0)
     const currentCount = useRef(0)
     const onEndReachedCalledDuringMomentum = useRef(false)
+    const flatlistRef = useRef(null)
     const deviceType = useSelector(state => {
         console.log("useSelector state ", state);
         return state.Common.deviceType
@@ -53,11 +55,8 @@ const Invoice = (props) => {
             }
         }
         getBranch()
+        getInvoice(true)
     }, [])
-
-    // useEffect(() => {
-    //     console.log('filterRef.current', filterRef.current);
-    // }, [filter])
 
 
     useEffect(() => {
@@ -68,8 +67,16 @@ const Invoice = (props) => {
                     IncludeSummary: true,
                     filter: `(substringof('${textSearch}', Code) and BranchId eq ${currentBranch.current.Id})`
                 };
+                dialogManager.showLoading()
                 new HTTPService().setPath(ApiPath.INVOICE).GET(params).then((res) => {
                     console.log('getInvoiceBySearch', res);
+                    count.current = res.__count;
+                    currentCount.current = res.results.length
+                    setInvoiceData([...res.results])
+                    dialogManager.hiddenLoading()
+                }).catch(err => {
+                    console.log('getInvoiceBySearch', err);
+                    dialogManager.hiddenLoading()
                 })
             }
         }
@@ -77,13 +84,10 @@ const Invoice = (props) => {
     }, [debounceTextSearch])
 
 
-    useEffect(() => {
-        getInvoice()
-    }, [])
-
     const getInvoice = (reset = false) => {
         let params = genParams();
         params = { ...params, includes: ['Room', 'Partner'], IncludeSummary: true };
+        dialogManager.showLoading()
         new HTTPService().setPath(ApiPath.INVOICE).GET(params).then((res) => {
             console.log("getInvoicesData res ", res);
             let results = res.results.filter(item => item.Id > 0);
@@ -96,8 +100,10 @@ const Invoice = (props) => {
                 setInvoiceData([...invoiceData, ...results])
             }
             setLoadMore(false)
+            dialogManager.hiddenLoading()
         }).catch((e) => {
             console.log("getInvoicesData err  ======= ", e);
+            dialogManager.hiddenLoading()
         })
     }
 
@@ -130,11 +136,6 @@ const Invoice = (props) => {
     }
 
 
-    const onReset = () => {
-        onRefresh()
-        setInvoiceData([])
-    }
-
     const outputDateTime = (item) => {
         console.log('outputDateTime', item);
         setFilter({
@@ -142,7 +143,7 @@ const Invoice = (props) => {
             time: item
         })
         filterRef.current = { ...filterRef.current, time: item }
-        getInvoice(true)
+        onRefresh()
         setShowModal(false)
     }
 
@@ -150,6 +151,7 @@ const Invoice = (props) => {
         console.log('onRefresh', count.current);
         filterRef.current.skip = 0
         getInvoice(true)
+        console.log(flatlistRef.current.scrollToOffset({ animated: true, offset: 0 }));
     }
 
     const onLoadMore = () => {
@@ -182,7 +184,7 @@ const Invoice = (props) => {
             status: item
         })
         filterRef.current = { ...filterRef.current, status: item }
-        getInvoice(true)
+        onRefresh()
         setShowModal(false)
     }
 
@@ -279,8 +281,8 @@ const Invoice = (props) => {
     }
 
     const onClickFilter = (type) => {
-        setShowModal(true)
         typeModal.current = type
+        setShowModal(true)
     }
 
     const onChangeText = (text) => {
@@ -339,7 +341,7 @@ const Invoice = (props) => {
                             :
                             null
                     }
-                    <View style={{ marginVertical: 5, padding: 10, backgroundColor: "white" }}>
+                    <View style={{ paddingLeft: 15, paddingBottom: 5 }}>
                         <Text style={{ fontSize: 10 }}>{invoiceData.length} / {count.current}</Text>
                     </View>
                     <FlatList
@@ -356,6 +358,7 @@ const Invoice = (props) => {
                         }
                         ListFooterComponent={loadMore ? <ActivityIndicator color={colors.colorchinh} /> : null}
                         onMomentumScrollBegin={() => { onEndReachedCalledDuringMomentum.current = false }}
+                        ref={flatlistRef}
                     />
                 </View>
                 {

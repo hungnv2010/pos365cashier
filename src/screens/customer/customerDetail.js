@@ -16,6 +16,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { HTTPService } from '../../data/services/HttpService';
 import { ApiPath } from '../../data/services/ApiPath';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import dialogManager from '../../components/dialog/DialogManager';
 
 
@@ -170,20 +171,20 @@ export default (props) => {
     }
 
     const onDone = () => {
-        setDate(dateTmp.current)
+        const currentDate = momentToStringDateLocal(dateTmp.current ? dateTmp.current : moment())
+        setCustomerDetail({ ...customerDetail, DOB: currentDate })
         setShowModal(false)
     }
 
     const onChange = (event, selectedDate) => {
-        const currentDate = selectedDate || date;
-        dateTmp.current = currentDate;
+        dateTmp.current = selectedDate;
     }
 
     const renderModalContent = () => {
         return typeModal.current == 1 ?
             <View style={{ backgroundColor: "#fff", borderRadius: 4 }}>
                 <DateTimePicker
-                    value={date}
+                    value={moment()}
                     mode={'date'}
                     display="default"
                     locale="vi-VN"
@@ -227,10 +228,14 @@ export default (props) => {
                 </View>
                 :
                 <View style={{
-                    backgroundColor: "#fff", borderRadius: 4, padding: 20
+                    backgroundColor: "#fff", borderRadius: 4,
+                    height: Metrics.screenHeight * 0.6
                 }}>
-                    <View>
-                        <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", paddingVertical: 10, color: colors.colorLightBlue }}>{I18n.t('chon_nhom')}</Text>
+                    <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", paddingVertical: 15, color: colors.colorLightBlue, textTransform: "uppercase" }}>{I18n.t('chon_nhom')}</Text>
+                    <ScrollView
+                        contentContainerStyle={{ paddingLeft: 20 }}
+                        showsVerticalScrollIndicator={false}
+                    >
                         {
                             listGroup.map((item, index) => {
                                 return (
@@ -254,14 +259,14 @@ export default (props) => {
                                 )
                             })
                         }
-                        <View style={{ flexDirection: "row", paddingVertical: 10, alignItems: "center", justifyContent: "flex-end" }}>
-                            <TouchableOpacity onPress={onClickCancelGroupName} style={{ paddingHorizontal: 20 }}>
-                                <Text style={{ fontSize: 16, color: "red", fontWeight: "bold" }}>CANCEL</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={onClickOkGroupName}>
-                                <Text style={{ fontSize: 16, color: colors.colorLightBlue, fontWeight: "bold" }}>OK</Text>
-                            </TouchableOpacity>
-                        </View>
+                    </ScrollView>
+                    <View style={{ flexDirection: "row", paddingVertical: 15, justifyContent: "flex-end" }}>
+                        <TouchableOpacity onPress={onClickCancelGroupName} style={{ paddingHorizontal: 20 }}>
+                            <Text style={{ fontSize: 16, color: "red", fontWeight: "bold" }}>CANCEL</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={onClickOkGroupName} style={{ paddingHorizontal: 20 }}>
+                            <Text style={{ fontSize: 16, color: colors.colorLightBlue, fontWeight: "bold" }}>OK</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
     }
@@ -310,9 +315,6 @@ export default (props) => {
             toastDescription.current = I18n.t("vui_long_nhap_day_du_thong_tin_truoc_khi_luu")
             setShowToast(true)
             return
-        }
-        if (customerDetail.DOB) {
-
         }
         let PartnerGroupMembers = []
         listGroup.forEach(item => {
@@ -415,7 +417,7 @@ export default (props) => {
             <View style={{ backgroundColor: colors.colorchinh, marginLeft: 15, paddingVertical: 10 }}>
                 <Text style={{ textAlign: "center", color: "white", fontSize: 15, textTransform: "uppercase", fontWeight: "bold" }}>{props.customerDetail.Id == -1 ? 'Add customer' : 'Update Customer'}</Text>
             </View>
-            <ScrollView style={{ flex: 1, padding: 10 }}>
+            <KeyboardAwareScrollView style={{ flexGrow: 1 }}>
                 <Surface style={styles.surface}>
                     <View style={{ height: Metrics.screenHeight / 6, flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 15 }}>
                         <View style={{ flex: 1, marginRight: 20, borderRadius: 20 }}>
@@ -459,27 +461,19 @@ export default (props) => {
                         <View style={{ flexDirection: "row", flex: 1 }}>
                             <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
                                 <TextInput
-                                    value={"" + dateToString(date)}
+                                    editable={false}
+                                    value={dateToString(customerDetail.DOB)}
                                     onTouchStart={() => {
                                         typeModal.current = 1
                                         setShowModal(true)
                                     }}
                                     placeholder='dd/mm/yyyy'
-                                    value={dateToString(customerDetail.DOB)}
+                                    // value={dateToString(customerDetail.DOB)}
                                     style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1 }}
                                 // onChangeText={(text) => { onChangeText(text, 3) }}
                                 />
                                 <Image source={Images.icon_arrow_down} style={{ width: 20, height: 20, position: "absolute", right: 15 }} />
                             </View>
-                            {/* <TouchableOpacity
-                                onPress={() => {
-                                    typeModal.current = 1
-                                    setDateTimePicker({ ...dateTimePicker, startDate: null })
-                                    setShowModal(true)
-                                }}
-                                style={{ marginLeft: 20, justifyContent: "center", backgroundColor: colors.colorLightBlue, borderRadius: 5 }}>
-                                <Text style={{ textAlign: "center" }}>button</Text>
-                            </TouchableOpacity> */}
                         </View>
                     </View>
                     {
@@ -488,6 +482,7 @@ export default (props) => {
                     <View style={{ padding: 15 }}>
                         <Text style={{ paddingBottom: 10 }}>Email</Text>
                         <TextInput
+                            keyboardType="email-address"
                             placeholder="Email"
                             value={customerDetail.Email}
                             style={{ borderWidth: 0.5, padding: 10, borderRadius: 5 }}
@@ -530,17 +525,17 @@ export default (props) => {
                                 <TextInput
                                     placeholder={I18n.t('tinh_thanh')}
                                     value={customerDetail.Province}
+                                    editable={false}
                                     style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1 }}
-                                    onChangeText={(text) => { onChangeText(text, 7) }}
+                                    // onChangeText={(text) => { onChangeText(text, 7) }}
+                                    onTouchStart={() => {
+                                        typeModal.current = 2
+                                        setShowModal(true)
+                                    }}
                                 />
                                 <Image source={Images.icon_arrow_down} style={{ width: 20, height: 20, position: "absolute", right: 15 }} />
                             </View>
-                            <TouchableOpacity onPress={() => {
-                                typeModal.current = 2
-                                setShowModal(true)
-                            }} style={{ marginLeft: 20, justifyContent: "center", backgroundColor: colors.colorLightBlue, borderRadius: 5 }}>
-                                <Text style={{ textAlign: "center" }}>button</Text>
-                            </TouchableOpacity>
+
                         </View>
                     </View>
 
@@ -581,7 +576,7 @@ export default (props) => {
                         />
                     </View>
                 </Surface>
-            </ScrollView>
+            </KeyboardAwareScrollView>
             <View style={{ flexDirection: "row", margin: 10, }}>
                 {
                     props.customerDetail.Id == -1 ?

@@ -99,7 +99,9 @@ export default (props) => {
                 <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center", }}>
                     <Image source={images.icon_bell_blue} style={{ height: 50, width: 50, marginRight: 10 }} />
                     <View style={{ flex: 1.3 }}>
-                        <Text style={{ fontSize: 15, fontWeight: "bold" }}>{item.Name}</Text>
+                        <Text
+                            numberOfLines={1}
+                            style={{ fontSize: 15, fontWeight: "bold", }}>{item.Name}</Text>
                         <Text style={{ paddingVertical: 5 }}>{item.Code}</Text>
                         <Text style={{}}>Reward Point: {currencyToString(item.Point)}</Text>
                     </View>
@@ -154,10 +156,6 @@ export default (props) => {
                         title={I18n.t('khach_hang')}
                     />
             }
-            {/* <MainToolBar
-                navigation={props.navigation}
-                title={I18n.t('khach_hang')}
-            /> */}
             <View style={{ flexDirection: "row", flex: 1 }}>
                 <View style={{ flex: 1, }}>
                     <FlatList

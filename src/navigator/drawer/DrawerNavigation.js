@@ -9,7 +9,7 @@ import BottomTabNavigation from '../bottomTab/BottomTabNavigation';
 
 import OverView from '../../screens/overView/overView'
 import History from '../../screens/history/History'
-import More from '../../screens/more/More'
+import More from '../../screens/more/More'
 import RoomCatalog from '../../screens/room/RoomCatalog'
 import { ScreenList } from '../../common/ScreenList';
 import Invoice from '../../screens/invoice/invoice';
