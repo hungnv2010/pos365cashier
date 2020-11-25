@@ -11,10 +11,6 @@ import { getFileDuLieuString, setFileLuuDuLieu } from '../../data/fileStore/File
 import { Constant } from '../../common/Constant';
 import store from '../../store/configureStore';
 import { useDispatch } from 'react-redux';
-import NetInfo from "@react-native-community/netinfo";
-import signalr from 'react-native-signalr';
-import { Subject } from 'rxjs';
-import { decodeBase64 } from '../../common/Base64';
 import realmStore from '../../data/realm/RealmStore';
 
 export default (props) => {
