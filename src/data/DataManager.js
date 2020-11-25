@@ -215,6 +215,14 @@ class DataManager {
         }
     }
 
+    syncPriceBook = async () => {
+        let res = await new HTTPService().setPath(ApiPath.SYNC_PRICE_BOOK).GET()
+        if (res.results && res.results.length > 0) {
+            res.results.unshift({Name: "Giá niêm yết", Id: 0})
+            await realmStore.insertDatas(SchemaName.PRICE_BOOK, res.results)
+        }    
+    }
+
     syncAllDatas = async () => {
         await this.syncProduct(),
             await this.syncTopping(),
@@ -222,7 +230,8 @@ class DataManager {
             await this.syncRooms(),
             await this.syncPartner(),
             await this.syncCategories(),
-            await this.syncPromotion()
+            await this.syncPromotion(),
+            await this.syncPriceBook()
     }
 
     //calculator and send ServerEvent
