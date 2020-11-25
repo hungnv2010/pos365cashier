@@ -50,6 +50,7 @@ export default {
   chon_dvt: "Unit",
   chon: "Choose",
   chon_tinh_thanh: "Choose province",
+  chon_bang_gia: "Choose pricebook",
 
   // TODO: D
   dang_dung: "Serving",

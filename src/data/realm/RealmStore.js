@@ -128,6 +128,7 @@ class RealmStore extends RealmBase {
             newProducts.map(product => {
                 product.ProductId = product.Id
                 product.BasePrice = product.Price;
+                product.UnitPrice = product.Price;
                 product.NameLatin = change_alias(product.Name)
                 product.ProductImages = JSON.stringify(product.ProductImages);
                 realm.create(SchemaName.PRODUCT, product, true);
@@ -161,6 +162,10 @@ class RealmStore extends RealmBase {
 
     querryPromotion() {
         return this.queryAll(databaseOption, SchemaName.PROMOTION)
+    }
+
+    queryPricebook() {
+        return this.queryAll(databaseOption, SchemaName.PRICE_BOOK)
     }
 
     //OrdersOffline
