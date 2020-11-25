@@ -271,5 +271,72 @@ export default {
 
   // TODO: Y
   yeu_cau_thanh_toan: "Payment request",
+  //vuong
+  am_bao_thanh_toan: "Payments notification",
+
+  bao_che_bien_sau_khi_thanh_toan: "Report processing after payment",
+
+  cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang: "Allows to change the name of good when selling",
+  cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang:"Allows employees change prices when selling",
+  chon_cong_nghe_in: "Select the print technology",
+  cai_dat_the_cung: "Setting card",
+  chan_trang: "Footer",
+
+  don_vi_tien_te: "Currency unit",
+  dollar_my: "Dollar",
+  dia_chi: "Address",
+
+  giu_man_hinh_luon_sang: "Keep the screen on",
+
+  hien_thanh_dieu_huong: "Show navigation bar",
+
+  in_sau_khi_thanh_toan: "Print after payment",
+  in_hai_lien_cho_hoa_don: "Print twice for the invoice",
+  in_hai_lien_cho_che_bien: "Print twice for processing",
+  in_tem_truoc_thanh_toan: "Print stamp before payment",
+  in_sunmi: "Print Sunmi",
+  in_qua_mang_lan: "In qua mạng LAN",
+  in_qua_bluetooth: "In qua Bluetooth",
+  in_qua_usb: "In qua USB",
+  in_hoa_don_truoc_khi_thanh_toan_VNPAYQR_thanh_cong:"Print bill before successfull payment VNPAY-QR? ",
+
+  khong_cho_phep_ban_hang_khi_het_ton_kho: "Sales are not allowed when out of stock?",
+  khong_in: "Don't print",
+  khong_hien_thi: "Not displayed",
+
+  link_dang_nhap: "Link login",
+
+  may_in_thu_ngan: "Cashier printer",
+  may_in_bao_bep_a: "Printer report kitchen A",
+  may_in_bao_bep_b: "Printer report kitchen B",
+  may_in_bao_bep_c: "Printer report kitchen C",
+  may_in_bao_bep_d: "Printer report kitchen D",
+  may_in_bao_pha_che_a: "Printer report preparation A",
+  may_in_bao_pha_che_b: "Printer report preparation B",
+  may_in_bao_pha_che_c: "Printer report preparation C",
+  may_in_bao_pha_che_d: "Printer report preparation D",
+  may_in_tem: "Stamp printer",
+  mo_cashbox_sau_khi_thanh_toan: "Open cashbox after payment",
+
+  nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: "Receive messages / notifications from waiter, manager?",
+  nhap_so_luong_the: "Enter the number of cards",
+  nhap_dia_chi_ip_may: "Enter the IP address of the machine ",
+  nhap_chieu_rong_kho_giay: "Enter the paper width",
+
+  so_the_cung: "Card number",
+  su_dung_hai_man_hinh: "Using two screen",
+  setting: "Setting",
+  so_dien_thoai: "Phone number",
+  
+  thiet_lap_thanh_toan_vnpay: "Payments setting VNPAY",
+  thong_tin_cua_hang: "Store informations",
+  tu_dong_in_bao_bep: "Auto print report kitchen",
+  thiet_lap_tinh_nang: "Setting feature",
+  thiet_lap_he_thong: "System settings",
+  ten: "Name",
+  thanh_toan_vnpayqr: "Payment VNPAY-QR?",
+  thanh_toan_vnpaypos_qua_may_pos:"VNPAY-POS payment via POS machine?",
+
+  vnd: "VND"
 
 };

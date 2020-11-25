@@ -59,7 +59,7 @@ export const ReturnProduct = (props) => {
                         <TextInput
                             onChangeText={text => {
                                 console.log("text ", text);
-                                if (!Number.isInteger(+text)) return
+                                if (isNaN(text) || text.length > 4) return
                                 if (Number(text) <= Number(Quantity))
                                     setQuantityChange(text)
                             }}

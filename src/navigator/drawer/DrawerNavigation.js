@@ -9,11 +9,13 @@ import BottomTabNavigation from '../bottomTab/BottomTabNavigation';
 
 import OverView from '../../screens/overView/overView'
 import History from '../../screens/history/History'
-import More from '../../screens/more/More'
+import More from '../../screens/more/More'
 import RoomCatalog from '../../screens/room/RoomCatalog'
 import { ScreenList } from '../../common/ScreenList';
 import Invoice from '../../screens/invoice/invoice';
 import Customer from '../../screens/customer/Customer';
+import Settings from '../../screens/settings/Settings';
+import VNPayPaymentSetting from '../../screens/settings/VNPAYPaymentSetting'
 
 const Drawer = createDrawerNavigator();
 export default (propsFunc) => {
@@ -58,6 +60,12 @@ export default (propsFunc) => {
         </Drawer.Screen>
         <Drawer.Screen name={ScreenList.Customer} options={{ title: ScreenList.Customer }}>
           {props => <Customer {...props} />}
+        </Drawer.Screen>
+        <Drawer.Screen name={ScreenList.Settings} options={{title:ScreenList.Settings}}>
+          {props => <Settings {...props}/>}
+        </Drawer.Screen>
+        <Drawer.Screen name={ScreenList.VNPayPaymentSetting} options={{title:ScreenList.Settings}}>
+          {props => <VNPayPaymentSetting{...props}/>}
         </Drawer.Screen>
       </Drawer.Navigator>
     </LinearGradient>
