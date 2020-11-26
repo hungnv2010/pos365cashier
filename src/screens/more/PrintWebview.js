@@ -101,7 +101,6 @@ export default forwardRef((props, ref) => {
 
     function clickCheck() {
         console.log("clickCheck vendorSession ", vendorSession)
-        console.log("clickCheck vendorSession ", vendorSession)
         let params = {
             printTemplate: {
                 Content: deviceType != Constant.PHONE ? props.data : props.route.params.data,
@@ -121,23 +120,23 @@ export default forwardRef((props, ref) => {
         })
     }
 
-    async function clickPrint() {
+    function clickPrint() {
         console.log("clickPrint data ", data)
-        let getCurrentIP = await getFileDuLieuString(Constant.IPPRINT, true);
-        console.log('getCurrentIP ', getCurrentIP);
-        if (getCurrentIP && getCurrentIP != "") {
+        // let getCurrentIP = await getFileDuLieuString(Constant.IPPRINT, true);
+        // console.log('getCurrentIP ', getCurrentIP);
+        // if (getCurrentIP && getCurrentIP != "") {
             if (isClick.current == false) {
                 let html = data.replace("width: 76mm", "")
                 // viewPrintRef.current.clickCaptureRef();
                 viewPrintRef.current.printProvisionalRef(JsonContent1)
             }
-            isClick.current = true;
-            setTimeout(() => {
-                isClick.current = false;
-            }, 2000);
-        } else {
-            dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_may_in'), I18n.t('thong_bao'))
-        }
+            // isClick.current = true;
+            // setTimeout(() => {
+            //     isClick.current = false;
+            // }, 2000);
+        // } else {
+        //     dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_may_in'), I18n.t('thong_bao'))
+        // }
     }
 
     onCapture = uri => {

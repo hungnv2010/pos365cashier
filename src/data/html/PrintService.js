@@ -18,6 +18,8 @@ const CONTENT_FOOTER_POS365 = "Powered by POS365.VN"
 
 class PrintService {
 
+    listWaiting = [{html, printer},{}]
+
     GenHtml = async (html, JsonContent) => {
         let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
         console.log('data', JSON.parse(vendorSession));
@@ -111,11 +113,11 @@ class PrintService {
         return item.Quantity * price
     }
 
-    GenHtmlKitchen = async (html, JsonContent) => {
-        let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
-        console.log('data', JSON.parse(vendorSession));
-        vendorSession = JSON.parse(vendorSession);
-        return new Promise((resolve, reject) => {
+    GenHtmlKitchen = (html, JsonContent) => {
+        // let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
+        // console.log('data', JSON.parse(vendorSession));
+        // vendorSession = JSON.parse(vendorSession);
+        // return new Promise((resolve, reject) => {
             let HTMLBase = html;
             let listHtml = HTMLBase.split("<!--Body Table-->");
             let listTable = ""
@@ -136,14 +138,14 @@ class PrintService {
             HTMLBase = HTMLBase.replace("{STT_Don_Hang}", "123")
             HTMLBase = HTMLBase.replace("{Lien_check}", 1 != 1 ? "style='visibility: unset'" : "style='visibility: collapse; display: none'")
             HTMLBase = HTMLBase.replace("{Lien}", "5")
-            if (vendorSession.CurrentRetailer) {
-                HTMLBase = HTMLBase.replace("{Nhan_Vien}", vendorSession.CurrentUser.Name)
+            // if (vendorSession.CurrentRetailer) {
+            //     HTMLBase = HTMLBase.replace("{Nhan_Vien}", vendorSession.CurrentUser.Name)
 
 
-            }
+            // }
             console.log("html ", JSON.stringify(HTMLBase));
-            resolve(HTMLBase);
-        })
+            return HTMLBase;
+        // })
     }
 
 }

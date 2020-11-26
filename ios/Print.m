@@ -57,6 +57,7 @@ RCT_EXPORT_METHOD(printImageFromClient:(NSArray *)param) {
     
     imagePrintClient = [[UIImage alloc] initWithData:imgData];
     NSLog(@"printImageFromClient imagePrintClient %@", imagePrintClient);
+    [self printClient];
     
   }
   if(imagePrintClient)
@@ -147,7 +148,7 @@ RCT_EXPORT_METHOD(printImage:(NSString *)param) {
       if (self->isConnectAndPrint) {
         NSLog(@"isConnectAndPrint");
         if (self->PrintImageClient) {
-          [self printClient];
+          // [self printClient];
           [self SendSwicthScreen: @"Ok"];
         } else {
           //          [self loadWebview];
