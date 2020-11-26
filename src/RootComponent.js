@@ -39,15 +39,22 @@ export default () => {
         return (aspectRatio <= 1.6) ? Constant.TABLET : Constant.PHONE;
     }
 
-    useEffect(()=>{
-        const savePrinter = async()=>{
-            let setting = await getFileDuLieuString(Constant.OBJECT_SETTING,true)
+    useEffect(() => {
+        const savePrinter = async () => {
+            let setting = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
             // dispatch({type:'SETTING_OBJECT',printerObject:JSON.parse(setting).Printer})
-            dispatch({type:'SETTING_OBJECT',printerObject:JSON.parse(setting).Printer})
-
+            // dispatch({type:'SETTING_OBJECT',printerObject:JSON.parse(setting).Printer})
+            setting = JSON.parse(setting);
+            console.log("savePrinter setting ", setting);
+            let objectPrint = {}
+            setting.Printer.forEach(element => {
+                objectPrint[element.key] = element.ip;
+            });
+            console.log("savePrinter objectPrint ", objectPrint);
+            dispatch({ type: 'SETTING_OBJECT', printerObject: objectPrint })
         }
         savePrinter()
-    },[])
+    }, [])
 
     useEffect(() => {
         // signalRManager.init()

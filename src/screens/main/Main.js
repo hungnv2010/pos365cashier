@@ -13,14 +13,21 @@ import store from '../../store/configureStore';
 import { useDispatch, useSelector } from 'react-redux';
 import realmStore from '../../data/realm/RealmStore';
 import Customer from '../customer/Customer';
+import ViewPrint, { TYPE_PRINT } from '../more/ViewPrint';
 
 export default (props) => {
 
   const [isFNB, setIsFNB] = useState(false)
+  const viewPrintRef = useRef();
   const dispatch = useDispatch();
 
   useSelector(state => {
     console.log("useSelector Main ", state);
+  });
+
+  const printObject = useSelector(state => {
+    console.log("useSelector Main ", state);
+    return state.Common.printerObject;
   });
 
   useLayoutEffect(() => {
@@ -87,6 +94,10 @@ export default (props) => {
     const getDataNewOrders = async () => {
       let newOrders = await dataManager.initComfirmOrder()
       console.log('getDataNewOrders', newOrders);
+
+      if (newOrders != null)
+        viewPrintRef.current.printKitchenRef(newOrders)
+
     }
 
     const scan = setInterval(() => {
@@ -122,6 +133,9 @@ export default (props) => {
 
   return (
     <View style={{ flex: 1 }}>
+      <ViewPrint
+        ref={viewPrintRef}
+      />
       <MainToolBar
         navigation={props.navigation}
         title={I18n.t('phong_ban')}

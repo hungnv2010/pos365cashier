@@ -21,7 +21,7 @@ export default (props)=>{
     },[])
 
     const getRoomHistoryData = async()=>{
-        let res = {Includes='Product',Includes='Room'} 
+        let res = {}
         await new HTTPService().setPath(ApiPath.ROOM_HISTORY).GET()
         console.log("res history",res);
         setRoomHistoryData(res.results)

@@ -18,6 +18,7 @@ const CONTENT_FOOTER_POS365 = "Powered by POS365.VN"
 
 class PrintService {
 
+    // [html: "", ip: ""]
     listWaiting = []
 
     GenHtml = async (html, JsonContent) => {
@@ -113,38 +114,36 @@ class PrintService {
         return item.Quantity * price
     }
 
-    GenHtmlKitchen = (html, JsonContent) => {
+    GenHtmlKitchen = (html, JsonContent, i, vendorSession) => {
         // let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
         // console.log('data', JSON.parse(vendorSession));
         // vendorSession = JSON.parse(vendorSession);
         // return new Promise((resolve, reject) => {
-            let HTMLBase = html;
-            let listHtml = HTMLBase.split("<!--Body Table-->");
-            let listTable = ""
-            JsonContent.forEach((el, index) => {
-                var description = el.Description && el.Description.trim() != "" ? `<br>${el.Description?.replace(";", "<br>")}` : "";
-                let itemTable = listHtml[1];
+        let HTMLBase = html;
+        let listHtml = HTMLBase.split("<!--Body Table-->");
+        let listTable = ""
+        JsonContent.forEach((el, index) => {
+            var description = el.Description && el.Description.trim() != "" ? `<br>${el.Description?.replace(";", "<br>")}` : "";
+            let itemTable = listHtml[1];
 
-                itemTable = itemTable.replace("{STT_Hang_Hoa}", "" + (index + 1))
-                itemTable = itemTable.replace("{Ten_Hang_Hoa}", "" + el.Name)
-                itemTable = itemTable.replace("{Ghi_Chu_Hang_Hoa}", description)
-                itemTable = itemTable.replace("{So_Luong}", Math.round(el.Quantity * 1000) / 1000)
-                itemTable = itemTable.replace("{DVT_Hang_Hoa}", (el.IsLargeUnit ? el.LargeUnit : el.Unit))
-                listTable += itemTable;
-            });
-            HTMLBase = listHtml[0] + listTable + listHtml[2];
-            HTMLBase = HTMLBase.replace("{Ten_Phong_Ban}", JsonContent[0].RoomName + "[" + JsonContent[0].Position + "]")
-            HTMLBase = HTMLBase.replace("{Gio_Hien_Tai}", moment(new Date()).format('DD/MM/YYYY - HH:mm'))
-            HTMLBase = HTMLBase.replace("{STT_Don_Hang}", "123")
-            HTMLBase = HTMLBase.replace("{Lien_check}", 1 != 1 ? "style='visibility: unset'" : "style='visibility: collapse; display: none'")
-            HTMLBase = HTMLBase.replace("{Lien}", "5")
-            // if (vendorSession.CurrentRetailer) {
-            //     HTMLBase = HTMLBase.replace("{Nhan_Vien}", vendorSession.CurrentUser.Name)
-
-
-            // }
-            console.log("html ", JSON.stringify(HTMLBase));
-            return HTMLBase;
+            itemTable = itemTable.replace("{STT_Hang_Hoa}", "" + (index + 1))
+            itemTable = itemTable.replace("{Ten_Hang_Hoa}", "" + el.Name)
+            itemTable = itemTable.replace("{Ghi_Chu_Hang_Hoa}", description)
+            itemTable = itemTable.replace("{So_Luong}", Math.round(el.Quantity * 1000) / 1000)
+            itemTable = itemTable.replace("{DVT_Hang_Hoa}", (el.IsLargeUnit ? el.LargeUnit : el.Unit))
+            listTable += itemTable;
+        });
+        HTMLBase = listHtml[0] + listTable + listHtml[2];
+        HTMLBase = HTMLBase.replace("{Ten_Phong_Ban}", JsonContent[0].RoomName + "[" + JsonContent[0].Position + "]")
+        HTMLBase = HTMLBase.replace("{Gio_Hien_Tai}", moment(new Date()).format('DD/MM/YYYY - HH:mm'))
+        HTMLBase = HTMLBase.replace("{STT_Don_Hang}", i)
+        HTMLBase = HTMLBase.replace("{Lien_check}", 1 != 1 ? "style='visibility: unset'" : "style='visibility: collapse; display: none'")
+        HTMLBase = HTMLBase.replace("{Lien}", "5")
+        if (vendorSession.CurrentRetailer) {
+            HTMLBase = HTMLBase.replace("{Nhan_Vien}", vendorSession.CurrentUser.Name)
+        }
+        console.log("html ", JSON.stringify(HTMLBase));
+        return HTMLBase;
         // })
     }
 
