@@ -34,16 +34,6 @@ export default () => {
                 tabBarIcon: ({ color }) => (
                     <View>
                         <Icon name="home" size={22} color={color} />
-                        {/* {color == colors.colorchinh ?
-                            // <Image style={{ width: 20, height: 20, padding: 5 }} color={color} source={Images.icon_home_active} />
-                            :
-                            // <Image style={{ width: 20, height: 20, padding: 5 }} color={color} source={Images.icon_home} />
-                        } */}
-                        {/* <View style={{ top: -5, right: -10, position: "absolute" }}>
-                            <View style={{ backgroundColor: Colors.colorchinh, width: 18, height: 18, borderRadius: 9, borderColor: "#ffffff", borderWidth: 1, justifyContent: "center", alignItems: "center" }}>
-                                <Text style={{ color: "#fff" }}>2</Text>
-                            </View>
-                        </View> */}
                     </View>
                 ),
             }} />

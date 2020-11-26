@@ -16,7 +16,6 @@ import { saveDeviceInfoToStore } from "../../actions/Common";
 import { getFileDuLieuString, setFileLuuDuLieu } from "../../data/fileStore/FileStorage";
 import dialogManager from '../../components/dialog/DialogManager';
 import { CommonActions } from '@react-navigation/native';
-import dataManager from '../../data/DataManager'
 import realmStore from '../../data/realm/RealmStore';
 
 
@@ -139,12 +138,14 @@ const LoginScreen = (props) => {
                     setFileLuuDuLieu(Constant.REMEMBER_ACCOUNT, JSON.stringify(account));
                 }
 
-                if (res.CurrentRetailer && (res.CurrentRetailer.FieldId == 3 || res.CurrentRetailer.FieldId == 11)) {
-                    navigateToHome()
-                } else {
-                    dialogManager.showPopupOneButton(I18n.t("vui_long_chon_linh_vuc_ban_le_ho_tro_shop_thoi_trang_sieu_thi"), I18n.t('thong_bao'));
-                }
+                // if (res.CurrentRetailer && (res.CurrentRetailer.FieldId == 3 || res.CurrentRetailer.FieldId == 11)) {
+                //     dispatch({ type: 'IS_FNB', isFNB: true })
+                // } else {
+                //     // dialogManager.showPopupOneButton(I18n.t("vui_long_chon_li÷nh_vuc_ban_le_ho_tro_shop_thoi_trang_sieu_thi"), I18n.t('thong_bao'));
+                //     dispatch({ type: 'IS_FNB', isFNB: false })
+                // }
 
+                navigateToHome()
             } else {
                 dialogManager.showPopupOneButton(I18n.t('ban_khong_co_quyen_truy_cap'), I18n.t('thong_bao'));
             }

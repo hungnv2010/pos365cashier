@@ -17,10 +17,12 @@ const initState = {
 	currentBranch: "",
 	deviceType: "",
 	orientaition: "",
-	numberOrder: 0,
 	already: false,
+
 	historyOrder: [],
-	printerObject:{}
+	printerObject:{},
+
+	isFNB: false
 }
 
 const commonReducer = (state = initState, action = {}) => {
@@ -78,26 +80,33 @@ const commonReducer = (state = initState, action = {}) => {
 				...state,
 				orientaition: action.orientaition
 			}
-		case "NUMBER_ORDER":
-			return {
-				...state,
-				numberOrder: action.numberOrder
-			}
+		// case "NUMBER_ORDER":
+		// 	return {
+		// 		...state,
+		// 		numberOrder: action.numberOrder
+		// 	}
 		case "ALREADY":
 			return {
 				...state,
 				already: action.already
 			}
-		case "HISTORY_ORDER":
+
+		case "IS_FNB":
 			return {
 				...state,
-				historyOrder: action.historyOrder
+				isFNB: action.isFNB
 			}
 		case "SETTING_OBJECT":
 			return {
 				...state,
 				printerObject: action.printerObject
 			}
+
+		// case "HISTORY_ORDER":
+		// 	return {
+		// 		...state,
+		// 		historyOrder: action.historyOrder
+		// 	}
 		default:
 			return state
 	}

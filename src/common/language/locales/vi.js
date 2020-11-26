@@ -56,6 +56,7 @@ export default {
   chon: "Chọn",
   chon_tinh_thanh: "Chọn tỉnh thành",
   cong_vao_khoan_no: "Cộng vào khoản nợ",
+  chon_bang_gia: "Chọn bảng giá",
 
   // TODO: D
   dang_dung: "Đang dùng",

@@ -128,6 +128,7 @@ class RealmStore extends RealmBase {
             newProducts.map(product => {
                 product.ProductId = product.Id
                 product.BasePrice = product.Price;
+                product.UnitPrice = product.Price;
                 product.NameLatin = change_alias(product.Name)
                 product.ProductImages = JSON.stringify(product.ProductImages);
                 realm.create(SchemaName.PRODUCT, product, true);
@@ -161,6 +162,10 @@ class RealmStore extends RealmBase {
 
     querryPromotion() {
         return this.queryAll(databaseOption, SchemaName.PROMOTION)
+    }
+
+    queryPricebook() {
+        return this.queryAll(databaseOption, SchemaName.PRICE_BOOK)
     }
 
     //OrdersOffline
@@ -409,7 +414,7 @@ const PromotionSchema = {
 const databaseOption = {
     path: 'Pos365Boss.realm',
     schema: [ServerEventSchema, RoomSchema, RoomGroupSchema, ProductSchema, CategoriesSchema, ToppingsSchema, CustomerSchema, PromotionSchema, OrdersOffline, QRCode, PriceBook],
-    schemaVersion: 1
+    schemaVersion: 36
 }
 
 const realm = new Realm(databaseOption);
