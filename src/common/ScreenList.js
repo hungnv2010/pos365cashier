@@ -57,6 +57,7 @@ export const ScreenList = {
   PointVoucher: "PointVoucher",
   SearchVoucher: "SearchVoucher",
   Settings:"Settings",
-  VNPayPaymentSetting:"VNPayPaymentSetting",  
+  VNPayPaymentSetting:"VNPayPaymentSetting",
+  RoomHistory:"RoomHistory",  
 }
 

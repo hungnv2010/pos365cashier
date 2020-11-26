@@ -19,7 +19,8 @@ const initState = {
 	orientaition: "",
 	numberOrder: 0,
 	already: false,
-	historyOrder: []
+	historyOrder: [],
+	printerObject:{}
 }
 
 const commonReducer = (state = initState, action = {}) => {
@@ -91,6 +92,11 @@ const commonReducer = (state = initState, action = {}) => {
 			return {
 				...state,
 				historyOrder: action.historyOrder
+			}
+		case "SETTING_OBJECT":
+			return {
+				...state,
+				printerObject: action.printerObject
 			}
 		default:
 			return state

@@ -408,6 +408,9 @@ export default (props) => {
     const selectPercent = (value) => {
         setPercent(value)
     }
+    const printerObject = useSelector(state => {
+        return state.Common.printerObject
+    });
 
     const onClickProvisional = async () => {
         console.log("onClickProvisional props.route.params ", props.route.params);
@@ -416,9 +419,10 @@ export default (props) => {
             if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
                 jsonContent.RoomName = props.route.params.Name
             }
-            // viewPrintRef.current.printProvisionalRef(jsonContent)
+            //viewPrintRef.current.printProvisionalRef(jsonContent)
             viewPrintRef.current.printKitchenRef(jsonContent)
             timeClickPrevious = newDate;
+            //console.log("Printer ojjjjj",printerObject);
         }
     }
 

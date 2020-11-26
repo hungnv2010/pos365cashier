@@ -22,8 +22,8 @@ export default function PrintConnect(props) {
     return (
         <TouchableOpacity onPress={onClick}>
             <View style={{ flex: 1 }} >
-                <Text style={{ fontSize: 18, marginLeft: 20, marginTop: 20 }} onPress={onClick}>{namePrint}</Text>
-                <Text style={{ fontSize: 18, marginLeft: 20, color: 'grey' }} onPress={onClick} >{stylePrint}</Text>
+                <Text style={{ fontSize: 16, marginLeft: 20, marginTop: 20 }} onPress={onClick}>{namePrint}</Text>
+                <Text style={{ fontSize: 16, marginLeft: 20, color: 'grey' }} onPress={onClick} >{stylePrint}</Text>
             </View>
         </TouchableOpacity>
     )
