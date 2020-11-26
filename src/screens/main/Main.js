@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, createRef } from 'react';
+import React, { useEffect, useState, useRef, createRef, useLayoutEffect } from 'react';
 import { View, AppState } from 'react-native';
 import MainToolBar from './MainToolBar';
 import dataManager from '../../data/DataManager'
@@ -10,46 +10,47 @@ import signalRManager from '../../common/SignalR';
 import { getFileDuLieuString, setFileLuuDuLieu } from '../../data/fileStore/FileStorage';
 import { Constant } from '../../common/Constant';
 import store from '../../store/configureStore';
-import { useDispatch } from 'react-redux';
-import NetInfo from "@react-native-community/netinfo";
-import signalr from 'react-native-signalr';
-import { Subject } from 'rxjs';
-import { decodeBase64 } from '../../common/Base64';
+import { useDispatch, useSelector } from 'react-redux';
 import realmStore from '../../data/realm/RealmStore';
+import Customer from '../customer/Customer';
 
 export default (props) => {
 
-
+  const [isFNB, setIsFNB] = useState(false)
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    AppState.addEventListener('change', handleChangeState);
+  useSelector(state => {
+    console.log("useSelector Main ", state);
+  });
 
-    const getData = async () => {
-      let data = await getFileDuLieuString(Constant.HISTORY_ORDER, true);
-      if (data) {
-        console.log("HISTORY_ORDER === ", data);
-        data = JSON.parse(data);
-        dispatch({ type: 'HISTORY_ORDER', historyOrder: data })
-      }
-    }
-    getData()
-
+  useLayoutEffect(() => {
     const getVendorSession = async () => {
+      dialogManager.showLoading()
       let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
       console.log('getVendorSession data ====', JSON.parse(data));
       data = JSON.parse(data);
       if (data) {
-        console.log('this.info data.BID ', data.BID);
-        let state = store.getState();
-        signalRManager.init({ ...data, SessionId: state.Common.info.SessionId }, true)
+        if (data.CurrentRetailer && (data.CurrentRetailer.FieldId == 3 || data.CurrentRetailer.FieldId == 11)) {
+          let state = store.getState();
+          signalRManager.init({ ...data, SessionId: state.Common.info.SessionId }, true)
+          setIsFNB(true)
+          dispatch({ type: 'IS_FNB', isFNB: true })
+        } else {
+          setIsFNB(false)
+          dispatch({ type: 'IS_FNB', isFNB: false })
+        }
+
       }
-      let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
-      if (!branch && data.Branchs.length > 0) {
-        setFileLuuDuLieu(Constant.CURRENT_BRANCH, JSON.stringify(data.Branchs[0]));
-      }
+      dialogManager.hiddenLoading()
     }
     getVendorSession()
+  }, [])
+
+  useEffect(() => {
+
+    AppState.addEventListener('change', handleChangeState);
+
+
 
 
     const syncAllDatas = async () => {
@@ -127,7 +128,12 @@ export default (props) => {
         rightIcon="refresh"
         clickRightIcon={clickRightIcon}
       />
-      <Order {...props}></Order>
+      {
+        isFNB ?
+          <Order {...props} />
+          :
+          <Order {...props} />
+      }
     </View>
   );
 };

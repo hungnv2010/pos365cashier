@@ -4,6 +4,7 @@ import { Colors, Images, Metrics } from '../../../../theme';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import CustomerOrder from './CustomerOrder';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Entypo from 'react-native-vector-icons/Entypo';
 import ToolBarPhoneServed from '../../../../components/toolbar/ToolBarPhoneServed';
 import I18n from '../../../../common/language/i18n';
 import signalRManager from '../../../../common/SignalR';
@@ -13,6 +14,9 @@ import realmStore from '../../../../data/realm/RealmStore';
 import { useDispatch } from 'react-redux';
 import colors from '../../../../theme/Colors';
 import dataManager from '../../../../data/DataManager';
+import Pricebook from '../../Pricebook';
+import { ApiPath } from '../../../../data/services/ApiPath';
+import { HTTPService } from '../../../../data/services/HttpService';
 
 export default (props) => {
 
@@ -25,6 +29,10 @@ export default (props) => {
     const [position, setPosition] = useState('A')
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
+    const [showPriceBook, setShowPriceBook] = useState(false)
+    const [currentPriceBook, setCurrentPriceBook] = useState({Name: "Giá niêm yết", Id: 0})
+
+    const pricebooksRef = useRef()
     const toolBarPhoneServedRef = useRef();
     const [listPosition, setListPosition] = useState([
         { name: "A", status: false },
@@ -33,6 +41,18 @@ export default (props) => {
         { name: "D", status: false },
     ])
     const dispatch = useDispatch();
+
+    useEffect(() => { 
+        const initPricebook = async () => {
+            let newPricebooks = []
+            let results = await realmStore.queryPricebook()
+            results.forEach(item => {
+                newPricebooks.push({ ...JSON.parse(JSON.stringify(item))})
+            })
+            pricebooksRef.current = newPricebooks    
+        }
+        initPricebook()
+    },[])
 
     useEffect(() => {
         const getListPos = async () => {
@@ -49,6 +69,8 @@ export default (props) => {
                 setJsonContent(jsonContentObject.OrderDetails? jsonContentObject : Constant.JSONCONTENT_EMPTY)     
             } else setJsonContent(Constant.JSONCONTENT_EMPTY)
 
+            setPriceBookId(jsonContent.PriceBookId)
+
             serverEvent.addListener((collection, changes) => {
                 if ((changes.insertions.length || changes.modifications.length) && serverEvent[0].FromServer) {
                     currentServerEvent.current = serverEvent[0]
@@ -64,7 +86,75 @@ export default (props) => {
         }
     }, [position])
 
-    const outputListProducts = (list) => {
+    useEffect(() => {
+        const getOtherPrice = async() => {
+            if(jsonContent.OrderDetails && currentPriceBook){
+                let apiPath = ApiPath.PRICE_BOOK + `/${currentPriceBook.Id}/manyproductprice`
+                let params = {"pricebookId": currentPriceBook.Id, "ProductIds": jsonContent.OrderDetails.map( (product) => product.ProductId) }
+                let res = await new HTTPService().setPath(apiPath).POST(params)
+                if (res && res.PriceList && res.PriceList.length > 0) {
+                    jsonContent.OrderDetails.map( (product) => {
+                        res.PriceList.forEach((priceBook) => {
+                            if (priceBook.ProductId == product.ProductId) {
+                                product.DiscountRatio = 0.0
+                                if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
+                                if (!priceBook.Price) priceBook.Price = product.UnitPrice
+                                let newBasePrice = (product.IsLargeUnit)? priceBook.PriceLargeUnit : priceBook.Price
+                                product.Price = newBasePrice + product.TotalTopping
+                            }
+                        })
+                    })
+                    updateServerEvent()
+                }
+            }
+        }
+
+        const getBasePrice = () => {
+            jsonContent.OrderDetails.map( (product) => {
+                product.DiscountRatio = 0.0
+                let basePrice = (product.IsLargeUnit)? product.PriceLargeUnit : product.UnitPrice
+                product.Price = basePrice + product.TotalTopping
+            })
+            updateServerEvent()
+        }
+        if(jsonContent.OrderDetails) {
+            if(currentPriceBook && currentPriceBook.Id) getOtherPrice() 
+            else getBasePrice()
+        }
+    },[currentPriceBook])
+
+    const getOtherPrice = async(list) => {
+        if(currentPriceBook.Id){
+            if(jsonContent.OrderDetails && currentPriceBook){
+                let apiPath = ApiPath.PRICE_BOOK + `/${currentPriceBook.Id}/manyproductprice`
+                let params = {"pricebookId": currentPriceBook.Id, "ProductIds": list.map( (product) => product.ProductId) }
+                let res = await new HTTPService().setPath(apiPath).POST(params)
+                if (res && res.PriceList && res.PriceList.length > 0) {
+                    list.map( (product) => {
+                        res.PriceList.forEach((priceBook) => {
+                            if (priceBook.ProductId == product.ProductId) {
+                                product.DiscountRatio = 0.0
+                                if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
+                                if (!priceBook.Price) priceBook.Price = product.UnitPrice
+                                let newBasePrice = (product.IsLargeUnit)? priceBook.PriceLargeUnit : priceBook.Price
+                                product.Price = newBasePrice + product.TotalTopping
+                            }
+                        })
+                    })
+                    return list
+                } else                     
+                return list
+            }
+        } else
+        return list
+    } 
+
+    const setPriceBookId = (pricebookId) => {
+        let filters = pricebooksRef.current.filter(item => item.Id == pricebookId)
+        if(filters.length > 0) setCurrentPriceBook(filters[0])
+    }
+
+    const outputListProducts = async (list) => {
         console.log("outputListProducts ", list);
         if (props.route.params.room.ProductId) {
             let ischeck = false;
@@ -75,6 +165,7 @@ export default (props) => {
             });
             toolBarPhoneServedRef.current.clickCheckInRef(!ischeck)
         }
+        list = await getOtherPrice(list)
         jsonContent.OrderDetails = [...list]
         updateServerEvent()
     }
@@ -191,13 +282,21 @@ export default (props) => {
     }
 
     const onClickListedPrice = () => {
+        outputClickPriceBook()
+    }
 
+    const outputClickPriceBook = () => {
+        setShowPriceBook(true)
     }
 
     const onClickRetailCustomer = () => {
-
+        console.log('onClickRetailCustomer');
     }
 
+    const outputPriceBookSelected = (pricebook) => {
+        if(pricebook) setCurrentPriceBook(pricebook) 
+        setShowPriceBook(false)
+    }
 
     return (
         <View style={{ flex: 1, backgroundColor: "#fff" }}>
@@ -213,6 +312,20 @@ export default (props) => {
                 clickProductService={onClickProductService}
                 clickRightIcon={onClickSelectProduct} />
             <View style={{ backgroundColor: Colors.colorchinh, alignItems: "center", flexDirection: "row", justifyContent: "space-between", paddingBottom: 5 }}>
+                <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={showPriceBook}
+                    supportedOrientations={['portrait', 'landscape']}
+                    onRequestClose={() => {}}>
+                    <Pricebook
+                        currentPriceBook = {currentPriceBook}
+                        outputPriceBookSelected = {outputPriceBookSelected}
+                        listPricebook = {pricebooksRef.current}
+                    >
+                    </Pricebook>
+                </Modal>     
+
                 <View style={{ flex: 1, justifyContent: "center" }}>
                     <Text style={{ paddingLeft: 20, textTransform: "uppercase", color: "white", fontWeight: "bold" }}>{props.route && props.route.params && props.route.params.room && props.route.params.room.Name ? props.route.params.room.Name : ""}</Text>
                 </View>
@@ -234,8 +347,8 @@ export default (props) => {
                 <TouchableOpacity
                     style={{ flexDirection: "row", alignItems: "center" }}
                     onPress={onClickListedPrice}>
-                    <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} color={colors.colorchinh} />
-                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{I18n.t('gia_niem_yet')}</Text>
+                    <Entypo style={{ paddingHorizontal: 5 }} name="price-ribbon" size={25} color={colors.colorchinh} />
+                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{currentPriceBook.Name? currentPriceBook.Name: I18n.t('gia_niem_yet')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={{ flexDirection: "row", alignItems: "center" }}

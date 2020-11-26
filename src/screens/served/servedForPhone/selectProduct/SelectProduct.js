@@ -32,7 +32,7 @@ export default (props) => {
     const getCategories = async () => {
       let newCategories = [{ Id: -1, Name: I18n.t('tat_ca') }];
       let results = await realmStore.queryCategories()
-      results = results.sorted('Name')
+      // results = results.sorted('Name')
       results.forEach(item => {
         newCategories.push(item)
       })
