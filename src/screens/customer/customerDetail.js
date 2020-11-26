@@ -171,7 +171,7 @@ export default (props) => {
     }
 
     const onDone = () => {
-        const currentDate = momentToStringDateLocal(dateTmp.current ? dateTmp.current : moment())
+        const currentDate = momentToStringDateLocal(dateTmp.current ? dateTmp.current : new Date())
         setCustomerDetail({ ...customerDetail, DOB: currentDate })
         setShowModal(false)
     }
@@ -184,7 +184,7 @@ export default (props) => {
         return typeModal.current == 1 ?
             <View style={{ backgroundColor: "#fff", borderRadius: 4 }}>
                 <DateTimePicker
-                    value={moment()}
+                    value={new Date()}
                     mode={'date'}
                     display="default"
                     locale="vi-VN"
@@ -414,7 +414,7 @@ export default (props) => {
 
     return (
         <View style={{ flex: 1 }}>
-            <View style={{ backgroundColor: colors.colorchinh, marginLeft: 15, paddingVertical: 10 }}>
+            <View style={{ backgroundColor: colors.colorchinh, marginLeft: 5, paddingVertical: 10 }}>
                 <Text style={{ textAlign: "center", color: "white", fontSize: 15, textTransform: "uppercase", fontWeight: "bold" }}>{props.customerDetail.Id == -1 ? 'Add customer' : 'Update Customer'}</Text>
             </View>
             <KeyboardAwareScrollView style={{ flexGrow: 1 }}>

@@ -85,6 +85,7 @@ const Served = (props) => {
             const row_key = `${props.route.params.room.Id}_${position}`
 
             serverEvent = serverEvent.filtered(`RowKey == '${row_key}'`)
+            console.log('serverEventserverEvent', JSON.parse(JSON.stringify(serverEvent)));
 
             if (JSON.stringify(serverEvent) != '{}' && serverEvent[0].JsonContent) {
                 currentServerEvent.current = serverEvent[0]

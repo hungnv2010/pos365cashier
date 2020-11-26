@@ -18,7 +18,7 @@ const CONTENT_FOOTER_POS365 = "Powered by POS365.VN"
 
 class PrintService {
 
-    listWaiting = [{html, printer},{}]
+    listWaiting = []
 
     GenHtml = async (html, JsonContent) => {
         let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);

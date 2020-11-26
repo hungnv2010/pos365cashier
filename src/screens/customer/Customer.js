@@ -44,7 +44,11 @@ export default (props) => {
 
     const onClickAddCustomer = () => {
         console.log('onClickAddCustomer');
-        setCustomerItem(GUEST)
+        if (deviceType == Constant.TABLET) {
+            setCustomerItem(GUEST)
+        } else {
+            props.navigation.navigate(ScreenList.CustomerDetailForPhone, { item: GUEST })
+        }
     }
 
     const getCustomer = async () => {
@@ -95,7 +99,7 @@ export default (props) => {
     const renderListItem = (item, index) => {
         return (
             <TouchableOpacity onPress={() => onClickCustomerItem(item)} key={index.toString()}
-                style={[{ flexDirection: "row", alignItems: "center", borderBottomColor: "#ddd", borderBottomWidth: 1, padding: 10 }, item.Id == customerItem.Id ? { backgroundColor: "#F6DFCE" } : { backgroundColor: "white" }]}>
+                style={[{ flexDirection: "row", alignItems: "center", borderBottomColor: "#ddd", borderBottomWidth: 1, padding: 10 }, item.Id == customerItem.Id && deviceType == Constant.TABLET ? { backgroundColor: "#F6DFCE" } : { backgroundColor: "white" }]}>
                 <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center", }}>
                     <Image source={images.icon_bell_blue} style={{ height: 50, width: 50, marginRight: 10 }} />
                     <View style={{ flex: 1.3 }}>
