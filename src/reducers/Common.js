@@ -20,9 +20,11 @@ const initState = {
 	already: false,
 
 	historyOrder: [],
-	printerObject:{},
+	printerObject: {},
 
-	isFNB: false
+	isFNB: false,
+
+	listPrint: "",
 }
 
 const commonReducer = (state = initState, action = {}) => {
@@ -101,7 +103,11 @@ const commonReducer = (state = initState, action = {}) => {
 				...state,
 				printerObject: action.printerObject
 			}
-
+		case "LIST_PRINT":
+			return {
+				...state,
+				listPrint: action.listPrint
+			}
 		// case "HISTORY_ORDER":
 		// 	return {
 		// 		...state,

@@ -20,7 +20,7 @@ export const defaultKitchen = {
     "B.22": [{ "RowKey": "32759d1d0c0b43998ac092600d8f6120", "PartitionKey": "80745_58128", "RoomId": 859716, "RoomName": "B.22", "Position": "A", "ProductId": 10585765, "Name": "Súp kém bí đỏ với sữa dừa 3", "Quantity": 1, "Serveby": 161528, "ServebyName": "admin", "Printer": "KitchenA", "CreatedDate": "2020-11-02T10:16:03.2430000Z", "Approved": true, "IsLargeUnit": true, "Unit": "Cái", "LargeUnit": "Thùng" }],
     "B.23": [{ "RowKey": "32759d1d0c0b43998ac092600d8f6120", "PartitionKey": "80746_58128", "RoomId": 859717, "RoomName": "B.23", "Position": "A", "ProductId": 10585765, "Name": "Súp kém bí đỏ với sữa dừa 4", "Quantity": 1, "Serveby": 161528, "ServebyName": "admin", "Printer": "KitchenA", "CreatedDate": "2020-11-02T10:16:03.2430000Z", "Approved": true, "IsLargeUnit": true, "Unit": "Cái", "LargeUnit": "Thùng" }]
 }
-export const defaultMultiKitchen = { "MayA": { "B.20": [{ "RowKey": "837da80565ee44d4bcd36e07061e3c9d", "PartitionKey": "80743_58128", "RoomId": 859713, "RoomName": "B.20", "Position": "A", "ProductId": 10585766, "Name": "Súp kem kiểu Paris", "Quantity": 1, "Serveby": 161528, "ServebyName": "admin", "Printer": "KitchenA", "SecondPrinter": "BartenderA", "Printer3": "KitchenB", "Printer4": "KitchenC", "Printer5": "KitchenD", "CreatedDate": "2020-11-02T10:16:00.2700000Z", "Approved": true, "IsLargeUnit": false, "Unit": "Cái", "LargeUnit": "Thùng" }, { "RowKey": "9cc7552ce03d41508bded9d15f9140f7", "PartitionKey": "80743_58128", "RoomId": 859713, "RoomName": "B.20", "Position": "A", "ProductId": 10585767, "Name": "Lemon Tea", "Quantity": 1, "Serveby": 161528, "ServebyName": "admin", "Printer": "KitchenA", "CreatedDate": "2020-11-02T10:16:00.2700000Z", "Approved": true, "IsLargeUnit": false, "Unit": "Cái", "LargeUnit": "Thùng" }, { "RowKey": "7a5b33f88246409b94cd60c3b6672c15", "PartitionKey": "80743_58128", "RoomId": 859713, "RoomName": "B.20", "Position": "A", "ProductId": 10585765, "Name": "Súp kém bí đỏ với sữa dừa", "Quantity": 1, "Serveby": 161528, "ServebyName": "admin", "Printer": "KitchenA", "CreatedDate": "2020-11-02T10:16:00.2700000Z", "Approved": true, "IsLargeUnit": false, "Unit": "Cái", "LargeUnit": "Thùng" }], "B.21": [{ "RowKey": "32759d1d0c0b43998ac092600d8f6120", "PartitionKey": "80743_58128", "RoomId": 859712, "RoomName": "B.21", "Position": "A", "ProductId": 10585765, "Name": "Súp kém bí đỏ với sữa dừa", "Quantity": 1, "Serveby": 161528, "ServebyName": "admin", "Printer": "KitchenA", "CreatedDate": "2020-11-02T10:16:03.2430000Z", "Approved": true, "IsLargeUnit": true, "Unit": "Cái", "LargeUnit": "Thùng" }] }, "MayB": { "B.22": [{ "RowKey": "32759d1d0c0b43998ac09260d8f61201", "PartitionKey": "80743_58128", "RoomId": 859712, "RoomName": "B.22", "Position": "A", "ProductId": 10585765, "Name": "Súp kém bí đỏ với sữa dừa 123", "Quantity": 1, "Serveby": 161528, "ServebyName": "admin", "Printer": "KitchenB", "CreatedDate": "2020-11-02T10:16:03.2430000Z", "Approved": true, "IsLargeUnit": true, "Unit": "Cái", "LargeUnit": "Thùng" }] } }
+export const defaultMultiKitchen = { "KitchenA": { "B.20": [{ "RowKey": "837da80565ee44d4bcd36e07061e3c9d", "PartitionKey": "80743_58128", "RoomId": 859713, "RoomName": "B.20", "Position": "A", "ProductId": 10585766, "Name": "Súp kem kiểu Paris", "Quantity": 1, "Serveby": 161528, "ServebyName": "admin", "Printer": "KitchenA", "SecondPrinter": "BartenderA", "Printer3": "KitchenB", "Printer4": "KitchenC", "Printer5": "KitchenD", "CreatedDate": "2020-11-02T10:16:00.2700000Z", "Approved": true, "IsLargeUnit": false, "Unit": "Cái", "LargeUnit": "Thùng" }, { "RowKey": "9cc7552ce03d41508bded9d15f9140f7", "PartitionKey": "80743_58128", "RoomId": 859713, "RoomName": "B.20", "Position": "A", "ProductId": 10585767, "Name": "Lemon Tea", "Quantity": 1, "Serveby": 161528, "ServebyName": "admin", "Printer": "KitchenA", "CreatedDate": "2020-11-02T10:16:00.2700000Z", "Approved": true, "IsLargeUnit": false, "Unit": "Cái", "LargeUnit": "Thùng" }, { "RowKey": "7a5b33f88246409b94cd60c3b6672c15", "PartitionKey": "80743_58128", "RoomId": 859713, "RoomName": "B.20", "Position": "A", "ProductId": 10585765, "Name": "Súp kém bí đỏ với sữa dừa", "Quantity": 1, "Serveby": 161528, "ServebyName": "admin", "Printer": "KitchenA", "CreatedDate": "2020-11-02T10:16:00.2700000Z", "Approved": true, "IsLargeUnit": false, "Unit": "Cái", "LargeUnit": "Thùng" }], "B.21": [{ "RowKey": "32759d1d0c0b43998ac092600d8f6120", "PartitionKey": "80743_58128", "RoomId": 859712, "RoomName": "B.21", "Position": "A", "ProductId": 10585765, "Name": "Súp kém bí đỏ với sữa dừa", "Quantity": 1, "Serveby": 161528, "ServebyName": "admin", "Printer": "KitchenA", "CreatedDate": "2020-11-02T10:16:03.2430000Z", "Approved": true, "IsLargeUnit": true, "Unit": "Cái", "LargeUnit": "Thùng" }] }, "KitchenB": { "B.22": [{ "RowKey": "32759d1d0c0b43998ac09260d8f61201", "PartitionKey": "80743_58128", "RoomId": 859712, "RoomName": "B.22", "Position": "A", "ProductId": 10585765, "Name": "Súp kém bí đỏ với sữa dừa 123", "Quantity": 1, "Serveby": 161528, "ServebyName": "admin", "Printer": "KitchenB", "CreatedDate": "2020-11-02T10:16:03.2430000Z", "Approved": true, "IsLargeUnit": true, "Unit": "Cái", "LargeUnit": "Thùng" }] } }
 export const TYPE_PRINT = {
     KITCHEN: "KITCHEN",
     PROVISIONAL: "PROVISIONAL",
@@ -44,17 +44,14 @@ export default forwardRef((props, ref) => {
     }, [props.html])
 
     const deviceType = useSelector(state => {
-        console.log("useSelector state ", state);
         return state.Common.deviceType
     });
 
     const orientation = useSelector(state => {
-        console.log("useSelector state ", state);
         return state.Common.orientaition
     });
 
     const printObject = useSelector(state => {
-        console.log("useSelector Main ", state);
         return state.Common.printerObject;
     });
 
@@ -86,8 +83,6 @@ export default forwardRef((props, ref) => {
         }).then(
             uri => {
                 console.log('Snapshot uri', uri);
-                // setUriImg(uri);
-                // props.callback(uri)
                 Print.printImageFromClient(uri, currentHtml.current.ip, (a, b) => {
                     console.log("printImageFromClient ab ", a, b);
                 })
@@ -95,7 +90,6 @@ export default forwardRef((props, ref) => {
                     alert("print ")
                     setDataHtmlPrint()
                 }, 1000);
-
             },
             error => console.error('Oops, snapshot failed', error)
         );
@@ -138,57 +132,13 @@ export default forwardRef((props, ref) => {
         }
     }
 
-    // const printProvisional = (jsonContent) => {
-    //     // let status = await checkIP()
-    //     console.log("status ", status);
-    //     let status = "Done"
-    //     if (status != "") {
-    //         // provisional = await getFileDuLieuString(Constant.PROVISIONAL_PRINT, true);
-    //         // console.log('printKitchen provisional ', provisional);
-    //         // if (!(provisional && provisional == Constant.PROVISIONAL_PRINT)) {
-    //         //     dialogManager.showPopupOneButton(I18n.t("ban_khong_co_quyen_su_dung_chuc_nang_nay"))
-    //         //     return;
-    //         // }
-
-    //         // for (const key in defaultKitchen) {
-    //         //     if (defaultKitchen.hasOwnProperty(key)) {
-    //         //         const element = defaultKitchen[key];
-    //         //         let res = printService.GenHtmlKitchen(htmlKitchen, element)
-    //         //         if (res && res != "") {
-    //         //             printService.listWaiting.push({html: res, ip: })
-    //         //         }
-    //         //     }
-    //         // }
-
-
-    //         for (const value in defaultMultiKitchen) {
-    //             if (defaultMultiKitchen.hasOwnProperty(value)) {
-    //                 const item = defaultMultiKitchen[value];
-    //                 for (const key in item) {
-    //                     if (item.hasOwnProperty(key)) {
-    //                         const element = item[key];
-    //                         let res = printService.GenHtmlKitchen(htmlKitchen, element)
-    //                         if (res && res != "") {
-    //                             printService.listWaiting.push({ html: res, ip: KITCHEN_PRINT[value] })
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //         console.log("printService.listWaiting ", printService.listWaiting);
-    //         setDataHtmlPrint()
-    //     }
-    // }
-
     const printKitchen = async (data) => {
-        // let status = await checkIP()
+        let status = await checkIP()
+        let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
+        vendorSession = JSON.parse(vendorSession);
         console.log("data ", data);
         console.log("printObject ", printObject);
-        let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
-        console.log('data', JSON.parse(vendorSession));
-        vendorSession = JSON.parse(vendorSession);
-        let status = "Done"
-
+        console.log('vendorSession ', vendorSession);
         if (status != "") {
             for (const value in data) {
                 if (data.hasOwnProperty(value)) {
@@ -224,7 +174,8 @@ export default forwardRef((props, ref) => {
         });
     }
 
-    const checkHtmlPrint = () => {
+    const checkHtmlPrint = (e) => {
+        console.log("checkHtmlPrint currentHtml e ", currentHtml, e);
         if (currentHtml.current && currentHtml.current.html && currentHtml.current.html != "")
             clickCapture()
     }
@@ -250,7 +201,7 @@ export default forwardRef((props, ref) => {
                             }]}
                             source={{ html: dataHtml }}
                             scalesPageToFit={true}
-                            onLoadEnd={e => checkHtmlPrint()}
+                            onLoadEnd={e => checkHtmlPrint(e)}
                         />
                     </View>
                 </ScrollView>

@@ -22,13 +22,19 @@ export default (props) => {
   const dispatch = useDispatch();
 
   useSelector(state => {
-    console.log("useSelector Main ", state);
-  });
+    console.log("useSelector Main state ", state);
 
-  const printObject = useSelector(state => {
-    console.log("useSelector Main ", state);
-    return state.Common.printerObject;
+    if(state.Common.listPrint != ""){
+      viewPrintRef.current.printKitchenRef(state.Common.listPrint)
+      dispatch({ type: 'LIST_PRINT', listPrint: "" })
+    }
+
   });
+  // dispatch({ type: 'LIST_PRINT', listPrint: data })
+  // const listPrint = useSelector(state => {
+  //   console.log("useSelector Main listPrint ", state);
+  //   return state.Common.listPrint;
+  // });
 
   useLayoutEffect(() => {
     const getVendorSession = async () => {

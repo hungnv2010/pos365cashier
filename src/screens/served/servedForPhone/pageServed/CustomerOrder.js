@@ -13,9 +13,12 @@ import { ScreenList } from '../../../../common/ScreenList';
 import DialogProductDetail from '../../../../components/dialog/DialogProductDetail'
 import dialogManager from '../../../../components/dialog/DialogManager';
 import dataManager from '../../../../data/DataManager';
+import { useDispatch, useSelector } from 'react-redux';
+import { defaultMultiKitchen } from '../../../more/ViewPrint';
 
 export default (props) => {
 
+    const dispatch = useDispatch();
     const [showModal, setShowModal] = useState(false)
     const [listOrder, setListOrder] = useState(() =>
         (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0)
@@ -64,15 +67,35 @@ export default (props) => {
     }
 
     const printKitchen = () => {
-        // let jsonContent = props.jsonContent;
-        // if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
-        //     jsonContent.RoomName = props.route.params.Name
-        // }
-        // viewPrintRef.current.checkBeforePrintRef(jsonContent, true);
         let jsonContent = props.jsonContent;
-        console.log("printKitchen jsonContent ", jsonContent);
-        let data = dataManager.printCook([jsonContent])
-        console.log("printKitchen data ", data);
+        if (!checkProcessedQuantityProduct(jsonContent)) {
+            let data = dataManager.getDataPrintCook(jsonContent.OrderDetails)
+            console.log("printKitchen data ", data);
+            jsonContent.OrderDetails.forEach(element => {
+                element.Processed = element.Quantity
+            });
+            console.log("printKitchen jsonContent ", jsonContent);
+            props.handlerProcessedProduct(jsonContent)
+            dispatch({ type: 'LIST_PRINT', listPrint: data })
+            notification(I18n.t("bao_che_bien_thanh_cong"));
+        } else {
+            notification(I18n.t("cac_mon_ban_chon_dang_duoc_nha_bep_chuan_bi"));
+        }
+    }
+
+    const notification = (content) => {
+        setToastDescription(content);
+        setShowToast(true)
+    }
+
+    const checkProcessedQuantityProduct = (jsonContent) => {
+        let isProcessed = true;
+        jsonContent.OrderDetails.forEach(element => {
+            if (element.Processed < element.Quantity) {
+                isProcessed = false;
+            }
+        });
+        return isProcessed;
     }
 
     const removeItem = (item) => {
