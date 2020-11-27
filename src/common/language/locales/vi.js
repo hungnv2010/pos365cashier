@@ -26,6 +26,7 @@ export default {
   bay_ngay: "Bảy ngày",
   ban: "bàn",
   bao_che_bien: "Báo chế biến",
+  bao_che_bien_thanh_cong: "Báo chế biến thành công",
 
   // TODO: C
   cai_dat: "Cài đặt",
@@ -57,6 +58,7 @@ export default {
   chon_tinh_thanh: "Chọn tỉnh thành",
   cong_vao_khoan_no: "Cộng vào khoản nợ",
   chon_bang_gia: "Chọn bảng giá",
+  cac_mon_ban_chon_dang_duoc_nha_bep_chuan_bi: "Các món bạn chọn đang được nhà bếp và bartender chuẩn bị. Vui lòng đợi.",
 
   // TODO: D
   dang_dung: "Đang dùng",

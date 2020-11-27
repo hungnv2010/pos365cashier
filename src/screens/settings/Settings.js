@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ScrollView } from 'react-native';
 import { Switch } from 'react-native';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, PermissionsAndroid } from 'react-native';
 import ToolBarDefault from '../../components/toolbar/ToolBarDefault'
 import I18n from '../../common/language/i18n'
 import MainToolBar from '../main/MainToolBar';
@@ -16,9 +16,13 @@ import { useFocusEffect } from '@react-navigation/native';
 import { ApiPath } from "../../data/services/ApiPath";
 import { HTTPService } from "../../data/services/HttpService";
 import { ScreenList } from '../../common/ScreenList';
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
+import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 
 
 export default (props) => {
+    const dispatch = useDispatch();
     const PrintType = {
         id: 0,
         printTypeId: 0,
@@ -34,70 +38,70 @@ export default (props) => {
         am_bao_thanh_toan: true,
         Printer: [
             {
-                key:Constant.KEY_PRINTER.CashierKey,
+                key: Constant.KEY_PRINTER.CashierKey,
                 title: 'may_in_thu_ngan',
                 type: '',
                 size: '',
                 ip: ''
             },
             {
-                key:Constant.KEY_PRINTER.KitchenAKey,
+                key: Constant.KEY_PRINTER.KitchenAKey,
                 title: 'may_in_bao_bep_a',
                 type: '',
                 size: '',
                 ip: ''
             },
             {
-                key:Constant.KEY_PRINTER.KitchenBKey,
+                key: Constant.KEY_PRINTER.KitchenBKey,
                 title: 'may_in_bao_bep_b',
                 type: '',
                 size: '',
                 ip: ''
             },
             {
-                key:Constant.KEY_PRINTER.KitchenCKey,
+                key: Constant.KEY_PRINTER.KitchenCKey,
                 title: 'may_in_bao_bep_c',
                 type: '',
                 size: '',
                 ip: ''
             },
             {
-                key:Constant.KEY_PRINTER.KitchenDKey,
+                key: Constant.KEY_PRINTER.KitchenDKey,
                 title: 'may_in_bao_bep_d',
                 type: '',
                 size: '',
                 ip: ''
             },
             {
-                key:Constant.KEY_PRINTER.BartenderAKey,
+                key: Constant.KEY_PRINTER.BartenderAKey,
                 title: 'may_in_bao_pha_che_a',
                 type: '',
                 size: '',
                 ip: ''
             },
             {
-                key:Constant.KEY_PRINTER.BartenderBKey,
+                key: Constant.KEY_PRINTER.BartenderBKey,
                 title: 'may_in_bao_pha_che_b',
                 type: '',
                 size: '',
                 ip: ''
             },
             {
-                key:Constant.KEY_PRINTER.BartenderCKey,
+                key: Constant.KEY_PRINTER.BartenderCKey,
                 title: 'may_in_bao_pha_che_c',
                 type: '',
                 size: '',
                 ip: ''
             },
             {
-                key:Constant.KEY_PRINTER.BartenderDKey,
+                key: Constant.KEY_PRINTER.BartenderDKey,
                 title: 'may_in_bao_pha_che_d',
                 type: '',
                 size: '',
                 ip: ''
             },
             {
-                key:Constant.KEY_PRINTER.StampPrintKey,
+                key: Constant.KEY_PRINTER.StampPrintKey,
                 title: 'may_in_tem',
                 type: '',
                 size: '',
@@ -114,45 +118,70 @@ export default (props) => {
         in_tam_tinh: false,
         in_tem_truoc_thanh_toan: false,
         bao_che_bien_sau_thanh_toan: false,
-        NumberCard: 0,
         cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang: false,
         cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang: false,
         khong_cho_phep_ban_hang_khi_het_ton_kho: false,
         mo_cashbox_sau_khi_thanh_toan: false,
         nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: false,
-        su_dung_hai_man_hinh: false,
-        hien_thanh_dieu_huong: true,
         giu_man_hinh_luon_sang: false,
         CurrencyUnit: 'đ',
     }
     const [settingObject, setSettingObject] = useState(DefaultSetting)
+    const [inforStore, setInforStore] = useState({})
     useFocusEffect(useCallback(() => {
         const getSetting = async () => {
             let data = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
             let res = await new HTTPService().setPath(ApiPath.VENDOR_SESSION).GET()
-            console.log("setting res",res.Settings);
             if (data.length == 0) {
                 setSettingObject(DefaultSetting)
-                console.log("setting", JSON.stringify(settingObject))
             } else {
                 setSettingObject(JSON.parse(data))
-                setSettingObject({...settingObject,strings:JSON.parse(res.Settings)})
+                setSettingObject({ ...settingObject, strings: JSON.parse(res.Settings) })
+
             }
         }
+
         getSetting()
     }, []))
+    useFocusEffect(useCallback(() => {
+        const getCurentRetailer = async () => {
+            let res = await new HTTPService().setPath(ApiPath.VENDOR_SESSION).GET()
+            setInforStore(res.CurrentRetailer)
+        }
+        getCurentRetailer()
+    }, []))
+    const printerObject = useSelector(state => {
+        return state.Common.printerObject
+    });
     useEffect(() => {
-        console.log("useEfect settingObject", settingObject.Printer)
+        console.log("Printer Object", (printerObject));
     }, [settingObject])
+
     const saveState = (object) => {
-        console.log("object", object)
         setSettingObject(object)
         setFileLuuDuLieu(Constant.OBJECT_SETTING, JSON.stringify(object))
+    }
+    const updateSetting = (key, value) => {
+        let params = {
+            Key: key,
+            Value: value
+        }
+        new HTTPService().setPath(ApiPath.UPDATE_SETTING).POST(params)
+            .then(res => {
+                if (res) {
+                    console.log("res");
+                } else {
+                    console.log('aaa');
+                }
+            })
+            .catch(err => {
+                console.log('onClickApply err', err);
+            })
     }
     const onSwitchTone = (data) => {
         switch (data.title) {
             case 'am_bao_thanh_toan':
-                saveState({ ...settingObject, am_bao_thanh_toan: data.stt})
+                saveState({ ...settingObject, am_bao_thanh_toan: data.stt })
                 break
             case 'tu_dong_in_bao_bep':
                 saveState({ ...settingObject, tu_dong_in_bao_bep: data.stt })
@@ -167,22 +196,26 @@ export default (props) => {
                 saveState({ ...settingObject, in_hai_lien_cho_che_bien: data.stt })
                 break
             case 'in_tam_tinh':
-                saveState({ ...settingObject, in_tam_tinh: data.stt, strings:{...settingObject.strings,AllowPrintPreview:data.stt}})
+                saveState({ ...settingObject, in_tam_tinh: data.stt })
+                updateSetting('AllowPrintPreview', data.stt)
                 break
             case 'in_tem_truoc_thanh_toan':
                 saveState({ ...settingObject, in_tem_truoc_thanh_toan: data.stt })
                 break
             case 'bao_che_bien_sau_thanh_toan':
-                saveState({ ...settingObject, bao_che_bien_sau_thanh_toan: data.stt ,strings:{...settingObject.strings, PrintKitchenAfterSave:settingObject.bao_che_bien_sau_thanh_toan }})
+                saveState({ ...settingObject, bao_che_bien_sau_thanh_toan: data.stt })
+                updateSetting('PrintKitchenAfterSave', data.stt)
                 break
             case 'cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang':
                 saveState({ ...settingObject, cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang: data.stt })
                 break
             case 'cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang':
-                saveState({ ...settingObject, cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang: data.stt,strings:{...settingObject.strings,AllowChangePrice:settingObject.cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang }})
+                saveState({ ...settingObject, cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang: data.stt })
+                updateSetting('AllowChangePrice', data.stt)
                 break
             case 'khong_cho_phep_ban_hang_khi_het_ton_kho':
-                saveState({ ...settingObject, khong_cho_phep_ban_hang_khi_het_ton_kho: data.stt,strings:{...settingObject.strings, StockControlWhenSelling:settingObject.khong_cho_phep_ban_hang_khi_het_ton_kho}})
+                saveState({ ...settingObject, khong_cho_phep_ban_hang_khi_het_ton_kho: data.stt })
+                updateSetting('StockControlWhenSelling', data.stt)
                 break
             case 'mo_cashbox_sau_khi_thanh_toan':
                 saveState({ ...settingObject, mo_cashbox_sau_khi_thanh_toan: data.stt })
@@ -190,14 +223,8 @@ export default (props) => {
             case 'nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly':
                 saveState({ ...settingObject, nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: data.stt })
                 break
-            case 'su_dung_hai_man_hinh':
-                saveState({ ...settingObject, su_dung_hai_man_hinh: data.stt })
-                break
-            case 'hien_thanh_dieu_huong':
-                saveState({ ...settingObject, hien_thanh_dieu_huong: data.stt })
-                break
             case 'giu_man_hinh_luon_sang':
-                saveState({ ...settingObject, giu_man_hinh_luon_sang: data.stt  })
+                saveState({ ...settingObject, giu_man_hinh_luon_sang: data.stt })
                 break
         }
     }
@@ -211,7 +238,7 @@ export default (props) => {
         setTitlePrint(data.title)
         setPositionPrint(data.index)
         setDefautlType(settingObject.Printer[data.index].type)
-        
+
     }
     const savePrint = (object) => {
         setSettingObject(object)
@@ -226,6 +253,9 @@ export default (props) => {
             setStateMoalSize(false)
             settingObject.Printer[positionPrint] = { ...settingObject.Printer[positionPrint], type: defaultType, size: '', ip: '' }
             savePrint({ ...settingObject })
+            // dispatch({ type: 'SETTING_OBJECT', printerObject: JSON.stringify(settingObject.Printer) })
+
+            savePrintRedux(settingObject.Printer)
         }
         else {
             setStateMoalSize(!showModalSize)
@@ -242,13 +272,6 @@ export default (props) => {
     const funSetModalCurrentcy = (data) => {
         setStateCurrentcy(data.stt)
         setCurrentcy(data.currency)
-    }
-    const [cardNumber, setCardNumber] = useState(0)
-    const [numberState, setNumberState] = useState(0)
-    const onChangeCardNumber = (number) => {
-        saveState({ ...settingObject, NumberCard: number })
-        setNumberState(0)
-        setStateModalNumberCard(!stateModalNumberCard)
     }
     const [stateCurrentcy, setStateCurrentcy] = useState(false)
     const onChangeStateCurrentcy = () => {
@@ -280,12 +303,14 @@ export default (props) => {
         } else {
             settingObject.Printer[positionPrint] = { ...settingObject.Printer[positionPrint], type: defaultType, size: defaultSize, ip: '' }
             savePrint({ ...settingObject })
+            savePrintRedux(settingObject.Printer)
         }
     }
     const setIpLANPrint = () => {
         setStateValueIp('192.168.99.')
         settingObject.Printer[positionPrint] = { ...settingObject.Printer[positionPrint], type: defaultType, size: defaultSize, ip: defaultIpLAN }
         savePrint({ ...settingObject })
+        savePrintRedux(settingObject.Printer)
         setStateModalLAN(!stateModalLAN)
     }
     const [stateValueIp, setStateValueIp] = useState('192.168.99.')
@@ -307,11 +332,21 @@ export default (props) => {
     const [defaultIpLAN, setDefaultIpLAN] = useState('')
     const [positionPrint, setPositionPrint] = useState()
 
-    const screenSwitch = (nameFun,pr)=>{
+    const screenSwitch = (nameFun, pr) => {
         let params = pr
-        props.navigation.navigate(nameFun,params)
+        props.navigation.navigate(nameFun, params)
         props.navigation.closeDrawer();
     }
+
+    const savePrintRedux = (Printer) => {
+        let objectPrint = {}
+        Printer.forEach(element => {
+            objectPrint[element.key] = element.ip;
+        });
+        console.log("savePrinter objectPrint ", objectPrint);
+        dispatch({ type: 'SETTING_OBJECT', printerObject: objectPrint })
+    }
+
     return (
         <View style={{ flex: 1 }}>
             {
@@ -329,9 +364,9 @@ export default (props) => {
                         title={I18n.t('setting')}
                     />
             }
-            <ScrollView style={{ marginBottom: 30 }}>
+            <ScrollView style={{ marginBottom: 1 }}>
                 <View style={{ flex: 1, flexDirection: 'column' }}>
-                    <TouchableOpacity onPress={()=>screenSwitch(ScreenList.VNPayPaymentSetting,settingObject)}>
+                    <TouchableOpacity onPress={() => screenSwitch(ScreenList.VNPayPaymentSetting, settingObject)}>
                         <Text style={styles.textTitleItem}>{I18n.t("thiet_lap_thanh_toan_vnpay")}</Text>
                     </TouchableOpacity>
                     <View style={styles.viewLine}></View>
@@ -349,7 +384,7 @@ export default (props) => {
                         {
                             settingObject.Printer.map((item, index) => {
                                 return (
-                                    <PrintConnect title={I18n.t(item.title)} onSet={index == 9 ? onShowModalStampPrint : onShowModal} stylePrinter={(item.type?I18n.t(item.type):I18n.t('khong_in')) + (item.size ? ', size ' + item.size + ' mm ' : '') + (item.ip ? '(' + item.ip + ')' : '')} pos={index} status={showModal} />
+                                    <PrintConnect title={I18n.t(item.title)} onSet={index == 9 ? onShowModalStampPrint : onShowModal} stylePrinter={(item.type ? I18n.t(item.type) : I18n.t('khong_in')) + (item.size ? ', size ' + item.size + ' mm ' : '') + (item.ip ? '(' + item.ip + ')' : '')} pos={index} status={showModal} />
                                 )
                             })
                         }
@@ -360,10 +395,10 @@ export default (props) => {
                         <TouchableOpacity onPress={onShowModalStoreInfor}>
                             <Text style={styles.textTitleItem}>{I18n.t("thong_tin_cua_hang")}</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={()=>screenSwitch(ScreenList.PrintHtml)}>
+                        <TouchableOpacity onPress={() => screenSwitch(ScreenList.PrintHtml)}>
                             <Text style={styles.textTitleItem}>HTML print</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={()=>screenSwitch(ScreenList.PrintWebview)}>
+                        <TouchableOpacity onPress={() => screenSwitch(ScreenList.PrintWebview)}>
                             <Text style={styles.textTitleItem}>Temp print</Text>
                         </TouchableOpacity>
                         <SettingSwitch title={"tu_dong_in_bao_bep"} output={onSwitchTone} isStatus={settingObject.tu_dong_in_bao_bep} />
@@ -373,7 +408,6 @@ export default (props) => {
                         <SettingSwitch title={"in_tam_tinh"} output={onSwitchTone} isStatus={settingObject.in_tam_tinh} />
                         <SettingSwitch title={"in_tem_truoc_thanh_toan"} output={onSwitchTone} isStatus={settingObject.in_tem_truoc_thanh_toan} />
                         <SettingSwitch title={"bao_che_bien_sau_thanh_toan"} output={onSwitchTone} isStatus={settingObject.bao_che_bien_sau_thanh_toan} />
-                        <CardNumber onSetModal={funSetStateModal} number={settingObject.NumberCard} />
                     </View>
                     <View style={styles.viewLine}></View>
                     <View>
@@ -387,8 +421,6 @@ export default (props) => {
                     <View style={styles.viewLine}></View>
                     <View>
                         <Text style={styles.textTitle}>{I18n.t("thiet_lap_he_thong")}</Text>
-                        <SettingSwitch title={"su_dung_hai_man_hinh"} output={onSwitchTone} isStatus={settingObject.su_dung_hai_man_hinh} />
-                        <SettingSwitch title={"hien_thanh_dieu_huong"} output={onSwitchTone} isStatus={settingObject.hien_thanh_dieu_huong} />
                         <SettingSwitch title={"giu_man_hinh_luon_sang"} output={onSwitchTone} isStatus={settingObject.giu_man_hinh_luon_sang} />
                         <CurrencyUnit onSetModalCurrency={funSetModalCurrentcy} currencyUnit={settingObject.CurrencyUnit} />
                     </View>
@@ -426,12 +458,12 @@ export default (props) => {
                                     {
                                         Constant.CATYGORY_PRINT && [PrintType].concat(Constant.CATYGORY_PRINT).map((item, index) => {
                                             return (
-                                                <TouchableOpacity style={{ flexDirection: "row", alignItems: "center" }} onPress={() => onSelectPrintType(item)}>
+                                                <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", marginLeft: 20 }} onPress={() => onSelectPrintType(item)}>
                                                     <RadioButton.Android
                                                         style={{ padding: 0, margin: 0 }}
-                                                        color='orangered'
+                                                        color='#FF4500'
                                                         onPress={() => onSelectPrintType(item)}
-                                                        status={(defaultType?defaultType:'khong_in') == item.name ? 'checked' : 'unchecked'}
+                                                        status={(defaultType ? defaultType : 'khong_in') == item.name ? 'checked' : 'unchecked'}
                                                     />
                                                     <Text style={{ marginLeft: 0 }}>{I18n.t(item.name)}</Text>
                                                 </TouchableOpacity>
@@ -440,10 +472,10 @@ export default (props) => {
                                     }
                                     <View style={{ justifyContent: "center", flexDirection: "row", paddingTop: 10 }}>
                                         <TouchableOpacity style={styles.styleButtonHuy} onPress={() => setShowModal(false)} >
-                                            <Text style={{ textAlign: "center", color: "orangered" }}>{I18n.t("huy")}</Text>
+                                            <Text style={styles.styleTextBtnHuy}>{I18n.t("huy")}</Text>
                                         </TouchableOpacity>
                                         <TouchableOpacity style={styles.styleButtonOK} onPress={onShowModalSize}>
-                                            <Text style={{ textAlign: "center", color: "#fff" }}>{I18n.t("dong_y")}</Text>
+                                            <Text style={styles.styleTextBtnOk}>{I18n.t("dong_y")}</Text>
                                         </TouchableOpacity>
                                     </View>
                                 </View>
@@ -478,49 +510,10 @@ export default (props) => {
                             <View style={styles.styleViewModal} >
                                 <View style={{ width: Metrics.screenWidth * 0.8, }}>
                                     <Text style={styles.titleModal}>{I18n.t('thong_tin_cua_hang')}</Text>
-                                    <Text style={{ fontSize: 18, justifyContent: 'center', marginTop: 10 }}>{I18n.t('nhap_chieu_rong_kho_giay')}</Text>
+                                    <Text style={{ fontSize: 18, justifyContent: 'center', marginTop: 10, marginLeft: 20 }}>{I18n.t('nhap_chieu_rong_kho_giay')}</Text>
                                     <TextInput style={styles.textInputStyle} placeholder='58..80' keyboardType='numeric' onChangeText={text => setDefaultSize(text)}></TextInput>
                                     <TouchableOpacity style={{ justifyContent: 'flex-end', alignItems: 'flex-end', marginTop: 10, marginBottom: 10 }} onPress={changePrintTypeKitchenA}>
-                                        <Text style={{ textAlign: 'center', color: '#FF6600' }} >{I18n.t("dong_y")}</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                        </View>
-                    </Modal>
-                    <Modal animationType='fade'
-                        transparent={true}
-                        visible={stateModalNumberCard}
-                        supportedOrientations={['portrait', 'landscape']}
-                    >
-                        <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
-                            <TouchableWithoutFeedback
-                                onPress={() => {
-                                    setStateModalNumberCard(false)
-                                    setCardNumber(cardNumber)
-                                }}
-                                style={{
-                                    position: 'absolute',
-                                    top: 0,
-                                    left: 0,
-                                    right: 0,
-                                    bottom: 0
-                                }}>
-                                <View style={{
-                                    backgroundColor: 'rgba(0,0,0,0.5)', position: 'absolute',
-                                    top: 0,
-                                    left: 0,
-                                    right: 0,
-                                    bottom: 0
-                                }}></View>
-
-                            </TouchableWithoutFeedback>
-                            <View style={styles.styleViewModal} >
-                                <View style={{ width: Metrics.screenWidth * 0.8, }}>
-                                    <Text style={styles.titleModal}>{I18n.t('cai_dat_the_cung')}</Text>
-                                    <Text style={{ fontSize: 18, justifyContent: 'center', marginTop: 10 }}>{I18n.t('nhap_so_luong_the')}</Text>
-                                    <TextInput style={styles.textInputStyle} placeholder='00~99' keyboardType='numeric' onChangeText={text => setNumberState(text)}></TextInput>
-                                    <TouchableOpacity style={{ justifyContent: 'flex-end', alignItems: 'flex-end', marginTop: 10, marginBottom: 10 }} onPress={() => onChangeCardNumber(numberState)}>
-                                        <Text style={{ textAlign: 'center', color: '#FF6600' }} >{I18n.t("dong_y")}</Text>
+                                        <Text style={{ textAlign: 'center', color: '#FF4500', marginRight: 50 }} >{I18n.t("dong_y")}</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -558,10 +551,10 @@ export default (props) => {
                                     {
                                         Constant.CURRENTCY_UNIT && [Currentcy].concat(Constant.CURRENTCY_UNIT).map((item, index) => {
                                             return (
-                                                <TouchableOpacity style={{ flexDirection: "row", alignItems: "center" }} onPress={() => onSelectCurrentcy(item)}>
+                                                <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", marginLeft: 20 }} onPress={() => onSelectCurrentcy(item)}>
                                                     <RadioButton.Android
                                                         style={{ padding: 0, margin: 0 }}
-                                                        color='orangered'
+                                                        color='#FF4500'
                                                         onPress={() => onSelectCurrentcy(item)}
                                                         status={currentcy == item.value ? 'checked' : 'unchecked'}
                                                     />
@@ -572,10 +565,10 @@ export default (props) => {
                                     }
                                     <View style={{ justifyContent: "center", flexDirection: "row", paddingTop: 10 }}>
                                         <TouchableOpacity style={styles.styleButtonHuy} onPress={onChangeStateCurrentcy} >
-                                            <Text style={{ textAlign: "center", color: "orangered" }}>{I18n.t("huy")}</Text>
+                                            <Text style={styles.styleTextBtnHuy}>{I18n.t("huy")}</Text>
                                         </TouchableOpacity>
                                         <TouchableOpacity style={styles.styleButtonOK} onPress={onSelectTypeCurrentcy}>
-                                            <Text style={{ textAlign: "center", color: "#fff" }}>{I18n.t("dong_y")}</Text>
+                                            <Text style={styles.styleTextBtnOk}>{I18n.t("dong_y")}</Text>
                                         </TouchableOpacity>
                                     </View>
                                 </View>
@@ -612,10 +605,10 @@ export default (props) => {
                             <View style={styles.styleViewModal} >
                                 <View style={{ width: Metrics.screenWidth * 0.8, }}>
                                     <Text style={styles.titleModal}>{titlePrint}</Text>
-                                    <Text style={{ fontSize: 18, justifyContent: 'center', marginTop: 10 }}>{I18n.t('nhap_dia_chi_ip_may')}</Text>
-                                    <TextInput style={styles.textInputStyle} value={stateValueIp} keyboardType='phone-pad' onChangeText={text => changeValueIp(text)} ></TextInput>
+                                    <Text style={{ fontSize: 18, justifyContent: 'center', marginTop: 10, marginLeft: 20 }}>{I18n.t('nhap_dia_chi_ip_may')}</Text>
+                                    <TextInput style={styles.textInputStyle} value={stateValueIp} keyboardType='decimal-pad' onChangeText={text => changeValueIp(text)} ></TextInput>
                                     <TouchableOpacity style={{ justifyContent: 'flex-end', alignItems: 'flex-end', marginTop: 10, marginBottom: 10 }} onPress={setIpLANPrint}>
-                                        <Text style={{ textAlign: 'center', color: '#FF6600' }} >{I18n.t("dong_y")}</Text>
+                                        <Text style={{ textAlign: 'center', color: '#FF4500', marginRight: 50 }} >{I18n.t("dong_y")}</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -657,7 +650,7 @@ export default (props) => {
                                                 <TouchableOpacity style={{ flexDirection: "row", alignItems: "center" }} onPress={() => onSelectPrintType(item)}>
                                                     <RadioButton.Android
                                                         style={{ padding: 0, margin: 0 }}
-                                                        color='orangered'
+                                                        color='#FF4500'
                                                         onPress={() => onSelectPrintType(item)}
                                                         status={defaultType == item.name ? 'checked' : 'unchecked'}
                                                     />
@@ -668,10 +661,10 @@ export default (props) => {
                                     }
                                     <View style={{ justifyContent: "center", flexDirection: "row", paddingTop: 10 }}>
                                         <TouchableOpacity style={styles.styleButtonHuy} onPress={() => setModalStampPrint(false)} >
-                                            <Text style={{ textAlign: "center", color: "orangered" }}>{I18n.t("huy")}</Text>
+                                            <Text style={styles.styleTextBtnHuy}>{I18n.t("huy")}</Text>
                                         </TouchableOpacity>
                                         <TouchableOpacity style={styles.styleButtonOK} onPress={onShowModalSize}>
-                                            <Text style={{ textAlign: "center", color: "#fff" }}>{I18n.t("dong_y")}</Text>
+                                            <Text style={styles.styleTextBtnOk}>{I18n.t("dong_y")}</Text>
                                         </TouchableOpacity>
                                     </View>
                                 </View>
@@ -706,14 +699,14 @@ export default (props) => {
                             </TouchableWithoutFeedback>
                             <View style={styles.styleViewModal} >
                                 <View style={{ width: Metrics.screenWidth * 0.8, height: Metrics.screenHeight * 0.85 }}>
-                                    <Text style={styles.textTitle}>{I18n.t('thong_tin_cua_hang')}</Text>
-                                    <StoreInformation />
+                                    <Text style={styles.titleModal}>{I18n.t('thong_tin_cua_hang')}</Text>
+                                    <StoreInformation code={inforStore.Code} name={inforStore.Name} address={inforStore.Address} phoneNumber={inforStore.Phone} />
                                     <View style={{ justifyContent: "center", flexDirection: "row", paddingTop: 10 }}>
                                         <TouchableOpacity style={styles.styleButtonHuy} onPress={() => setModalStoreInfor(false)} >
-                                            <Text style={{ textAlign: "center", color: "orangered" }}>{I18n.t("huy")}</Text>
+                                            <Text style={styles.styleTextBtnHuy}>{I18n.t("huy")}</Text>
                                         </TouchableOpacity>
                                         <TouchableOpacity style={styles.styleButtonOK} onPress={onShowModalSize}>
-                                            <Text style={{ textAlign: "center", color: "#fff" }}>{I18n.t("dong_y")}</Text>
+                                            <Text style={styles.styleTextBtnOk}>{I18n.t("dong_y")}</Text>
                                         </TouchableOpacity>
                                     </View>
                                 </View>
@@ -737,73 +730,72 @@ const CurrencyUnit = (props) => {
         </TouchableOpacity>
     )
 }
-const CardNumber = (props) => {
-    const onCLickNumberCard = () => {
-        props.onSetModal(true)
-    }
-    return (
-        <TouchableOpacity onPress={onCLickNumberCard}>
-            <Text style={styles.textTitleItem}>{I18n.t('so_the_cung')}</Text>
-            <Text style={styles.textTitleItemHint}>{props.number ? props.number : 0}</Text>
-        </TouchableOpacity>
-    )
-}
 const StoreInformation = (props) => {
     return (
-        <ScrollView >
+        <ScrollView style={{ marginTop: 10 }} >
             <View style={{ flex: 1, justifyContent: 'center', alignContent: 'center' }}>
                 <Text style={styles.textTitleItemHint}>{I18n.t('link_dang_nhap')}</Text>
-                <Text style={styles.textTitleItem}></Text>
+                <Text style={{ fontSize: 16, marginLeft: 20, marginTop: 10 }}>https://{props.code}.pos365.vn</Text>
             </View>
-            <ItemStoreInfor title={I18n.t('ten')}></ItemStoreInfor>
-            <ItemStoreInfor title={I18n.t('dia_chi')}></ItemStoreInfor>
-            <ItemStoreInfor title={I18n.t('so_dien_thoai')}></ItemStoreInfor>
-            <ItemStoreInfor title={I18n.t('chan_trang')} titleHint='Xin cám ơn, hẹn gặp lại quý khách!'></ItemStoreInfor>
-            <ItemStoreInfor title='Banner Ads1' titleHint='https://www.pos365.vn/wp-content'></ItemStoreInfor>
-            <ItemStoreInfor title='Banner Ads2' titleHint='https://www.pos365.vn/wp-content'></ItemStoreInfor>
-            <ItemStoreInfor title='Slideshow1' titleHint='https://www.pos365.vn/wp-content'></ItemStoreInfor>
-            <ItemStoreInfor title='Slideshow2' titleHint='https://www.pos365.vn/wp-content'></ItemStoreInfor>
-            <ItemStoreInfor title='Slideshow3' titleHint='https://www.pos365.vn/wp-content'></ItemStoreInfor>
+            <ItemStoreInfor title={I18n.t('ten')} titleHint={props.name}></ItemStoreInfor>
+            <ItemStoreInfor title={I18n.t('dia_chi')} titleHint={props.address}></ItemStoreInfor>
+            <ItemStoreInfor title={I18n.t('so_dien_thoai')} titleHint={props.phoneNumber}></ItemStoreInfor>
+            <Footer title={I18n.t('chan_trang')} titleHint='Xin cám ơn, hẹn gặp lại quý khách!'></Footer>
+            <Footer title='Banner Ads1' titleHint='https://www.pos365.vn/wp-content'></Footer>
+            <Footer title='Banner Ads2' titleHint='https://www.pos365.vn/wp-content'></Footer>
+            <Footer title='Slideshow1' titleHint='https://www.pos365.vn/wp-content'></Footer>
+            <Footer title='Slideshow2' titleHint='https://www.pos365.vn/wp-content'></Footer>
+            <Footer title='Slideshow3' titleHint='https://www.pos365.vn/wp-content'></Footer>
         </ScrollView>
     )
 }
 const ItemStoreInfor = (props) => {
     return (
-        <View style={{ flex: 1, marginTop: 10 }}>
+        <View style={{ flex: 1, marginTop: 15 }}>
             <Text style={styles.textTitleItemHint}>{props.title}</Text>
-            <TextInput style={styles.textInputStyle} placeholder={props.titleHint}></TextInput>
+            <TextInput style={styles.textInputStyle} value={props.titleHint}></TextInput>
+        </View>
+    )
+}
+const Footer = (props) => {
+    return (
+        <View style={{ flex: 1, marginTop: 15 }}>
+            <Text style={styles.textTitleItemHint}>{props.title}</Text>
+            <TextInput style={{ height: 45, borderBottomWidth: 1, marginTop: 5, padding: 10, marginLeft: 20, marginRight: 20, fontSize: 16, color: 'silver' }} placeholder={props.titleHint}></TextInput>
         </View>
     )
 }
 const styles = StyleSheet.create({
     textTitle: {
-        fontSize: 24,color: '#FF6600',marginLeft: 20
+        fontSize: 16, color: '#FF4500', marginLeft: 20
     },
     textTitleItem: {
-        flex: 6,fontSize: 18,marginLeft: 20,marginTop: 20
+        flex: 6, fontSize: 16, marginLeft: 20, marginTop: 20
     },
     textTitleItemHint: {
-        flex: 1,fontSize: 18,color: 'silver',marginLeft: 20
+        flex: 1, fontSize: 16, color: 'silver', marginLeft: 20
     },
     switchButton: {
         flex: 2,
     },
     viewLine: {
-        height: 1,width: '100%',alignSelf: 'center',backgroundColor: 'silver',marginVertical: 10
+        height: 1, width: '100%', alignSelf: 'center', backgroundColor: 'silver', marginVertical: 10
     },
     styleButtonOK: {
-        flex: 1, backgroundColor: "#FF6600", borderRadius: 4, borderWidth: 1, paddingHorizontal: 20, paddingVertical: 10, justifyContent: "flex-end", marginLeft: 5, marginRight: 10, marginBottom: 10
+        flex: 1, backgroundColor: "#FF4500", borderRadius: 4, paddingHorizontal: 20, paddingVertical: 10, justifyContent: "flex-end", marginLeft: 10, marginRight: 20, marginBottom: 10
     },
     styleButtonHuy: {
-        flex: 1, backgroundColor: "#fff", borderWidth: 1, borderRadius: 4, justifyContent: 'flex-start', paddingVertical: 10, paddingHorizontal: 20, marginLeft: 10, marginRight: 5, marginBottom: 10
+        flex: 1, backgroundColor: "#fff", borderWidth: 1, borderColor: "#FF4500", borderRadius: 4, justifyContent: 'flex-start', paddingVertical: 10, paddingHorizontal: 20, marginLeft: 20, marginRight: 10, marginBottom: 10
     },
     styleViewModal: {
-        alignItems: 'center', justifyContent: 'center', backgroundColor: "#fff", borderWidth: 1, borderRadius: 5,
+        alignItems: 'center', justifyContent: 'center', backgroundColor: "#fff", borderRadius: 5,
     },
     titleModal: {
-        fontSize: 20, fontWeight: "bold", textAlign: "center", paddingVertical: 10, color: '#FF6600'
+        fontSize: 18, fontWeight: "bold", textAlign: "center", paddingVertical: 10, color: '#FF4500'
     },
     textInputStyle: {
-        height: 45, borderWidth: 1, marginTop: 20, padding: 10, marginLeft: 5, marginRight: 5, borderRadius: 5, fontSize: 20
+        height: 45, borderBottomWidth: 1, marginTop: 5, padding: 10, marginLeft: 20, marginRight: 20, fontSize: 16
     },
+    styleTextBtnHuy: { textAlign: "center", color: "#FF4500", fontSize: 16 },
+    styleTextBtnOk: { textAlign: "center", color: "#fff", fontSize: 16 },
 })

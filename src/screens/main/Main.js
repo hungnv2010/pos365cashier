@@ -13,17 +13,31 @@ import { useDispatch, useSelector } from 'react-redux';
 import realmStore from '../../data/realm/RealmStore';
 import MainRetail from './retail/Main';
 import RetailToolBar from './retail/retailToolbar';
+import Customer from '../customer/Customer';
+import ViewPrint, { TYPE_PRINT } from '../more/ViewPrint';
 
 export default (props) => {
 
   const [isFNB, setIsFNB] = useState(false)
   const [value, setValue] = useState('');
 
+  const viewPrintRef = useRef();
   const dispatch = useDispatch();
 
   useSelector(state => {
-    console.log("useSelector Main ", state);
+    console.log("useSelector Main state ", state);
+
+    if(state.Common.listPrint != ""){
+      viewPrintRef.current.printKitchenRef(state.Common.listPrint)
+      dispatch({ type: 'LIST_PRINT', listPrint: "" })
+    }
+
   });
+  // dispatch({ type: 'LIST_PRINT', listPrint: data })
+  // const listPrint = useSelector(state => {
+  //   console.log("useSelector Main listPrint ", state);
+  //   return state.Common.listPrint;
+  // });
 
   useEffect(() => {
     const getVendorSession = async () => {
@@ -86,6 +100,10 @@ export default (props) => {
     const getDataNewOrders = async () => {
       let newOrders = await dataManager.initComfirmOrder()
       console.log('getDataNewOrders', newOrders);
+
+      if (newOrders != null)
+        viewPrintRef.current.printKitchenRef(newOrders)
+
     }
 
     const scan = setInterval(() => {
@@ -126,6 +144,15 @@ export default (props) => {
 
   return (
     <View style={{ flex: 1 }}>
+      <ViewPrint
+        ref={viewPrintRef}
+      />
+      <MainToolBar
+        navigation={props.navigation}
+        title={I18n.t('phong_ban')}
+        rightIcon="refresh"
+        clickRightIcon={clickRightIcon}
+      />
       {
         isFNB ?
           <>

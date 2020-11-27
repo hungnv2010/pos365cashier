@@ -17,6 +17,10 @@
   PrinterManager * _printerManager;
   UIImage *imagePrint;
   UIImage *imagePrintClient;
+  
+  UIImage *imagePrint1;
+  UIImage *imagePrint2;
+  UIImage *imagePrint3;
 }
 @end
 
@@ -30,6 +34,9 @@
   NSMutableArray *imageArray;
   bool PrintImageClient;
   NSMutableArray *images;
+  
+  bool isHtml;
+  
 }
 
 RCT_EXPORT_MODULE();
@@ -46,28 +53,30 @@ RCT_EXPORT_METHOD(registerPrint:(NSString *)param) {
   [_printerManager AddConnectObserver:self selector:@selector(handleNotification:)];//Add
 }
 
-RCT_EXPORT_METHOD(printImageFromClient:(NSArray *)param) {
-  NSLog(@"printImageFromClient param %@", param);
+RCT_EXPORT_METHOD(printImageFromClient:(NSString *)param ip:(NSString *)ip callback:(RCTResponseSenderBlock)callback) {
+  NSLog(@"printImageFromClient param %@ ip %@", param, ip);
   PrintImageClient = YES;
   isConnectAndPrint = YES;
-  for (id tempObject in param) {
-    NSURL *URL = [RCTConvert NSURL:tempObject];
-    NSLog(@"printImageFromClient URL %@", URL);
-    NSData *imgData = [[NSData alloc] initWithContentsOfURL:URL];
-    
-    imagePrintClient = [[UIImage alloc] initWithData:imgData];
-    NSLog(@"printImageFromClient imagePrintClient %@", imagePrintClient);
-    
-  }
-  if(imagePrintClient)
-    [_printerManager DoConnectwifi:IP Port:9100];
+  isHtml = NO;
+  [_printerManager DoConnectwifi:ip Port:9100];
   
+  NSURL *URL = [RCTConvert NSURL:param];
+  NSLog(@"printImageFromClient URL %@", URL);
+  NSData *imgData = [[NSData alloc] initWithContentsOfURL:URL];
+  
+  imagePrintClient = [[UIImage alloc] initWithData:imgData];
+  NSLog(@"printImageFromClient imagePrintClient %@", imagePrintClient);
+  [self printClient];
+  callback(@[[NSNull null], @"Done"]);
 }
 
 RCT_EXPORT_METHOD(printImage:(NSString *)param) {
   NSLog(@"printImage param %@", param);
   html = param;
+//  html =  @"Hung ok";
+  NSLog(@"printImage html %@", html);
   isConnectAndPrint = YES;
+  isHtml = YES;
   [_printerManager DoConnectwifi:IP Port:9100];
   
 }
@@ -147,7 +156,7 @@ RCT_EXPORT_METHOD(printImage:(NSString *)param) {
       if (self->isConnectAndPrint) {
         NSLog(@"isConnectAndPrint");
         if (self->PrintImageClient) {
-          [self printClient];
+          // [self printClient];
           [self SendSwicthScreen: @"Ok"];
         } else {
           //          [self loadWebview];

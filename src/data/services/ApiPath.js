@@ -38,6 +38,8 @@ export const ApiPath = {
     WAIT_FOR_COMFIRMATION: "api/serve/waitforconfirmation",
     WAIT_FOR_COMFIRMATION_ALL: "api/serve/waitforconfirmationall",
     CHANGE_TABLE_COMFIRM: "api/serve/changetableconfirmationall",
+    UPDATE_SETTING: "api/setting/updatesinglefeatureconfiguration",
+    ROOM_HISTORY: "api/rooms/history",
     SYNC_PRICE_BOOK: "api/pricebooks?format=json",
     PRICE_BOOK: "api/pricebooks"
 }

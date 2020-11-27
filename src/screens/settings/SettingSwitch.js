@@ -18,7 +18,7 @@ export default function SettingSwitch(props) {
     }
     const setThumbColor = (a) => {
         if (a == true) {
-            return "#FF6600"
+            return "#FF4500"
         } else {
             return "silver"
         }
@@ -26,8 +26,8 @@ export default function SettingSwitch(props) {
     return (
         <TouchableOpacity onPress={() => onSwitchClick()}>
             <View style={styles.styleItemSwitch}>
-                <Text style={{ fontSize: 18, flex: 6, marginLeft: 20, marginTop: 20 }}>{I18n.t(props.title)}</Text>
-                <Switch style={{ flex: 1, marginTop:20 }} value={stateSwitch} onValueChange={() => onSwitchClick()} trackColor={{ false: "silver", true: "#FF6600" }}
+                <Text style={{ fontSize: 16, flex: 6, marginLeft: 20, marginTop: 20 }}>{I18n.t(props.title)}</Text>
+                <Switch style={{ flex: 1, marginTop:20 }} value={stateSwitch} onValueChange={() => onSwitchClick()} trackColor={{ false: "silver", true: "#FFA07A" }}
                     thumbColor={setThumbColor(stateSwitch)}
                 ></Switch>
             </View>

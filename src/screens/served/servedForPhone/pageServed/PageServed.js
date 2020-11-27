@@ -30,7 +30,7 @@ export default (props) => {
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
     const [showPriceBook, setShowPriceBook] = useState(false)
-    const [currentPriceBook, setCurrentPriceBook] = useState({Name: "Giá niêm yết", Id: 0})
+    const [currentPriceBook, setCurrentPriceBook] = useState({ Name: "Giá niêm yết", Id: 0 })
 
     const pricebooksRef = useRef()
     const toolBarPhoneServedRef = useRef();
@@ -42,17 +42,17 @@ export default (props) => {
     ])
     const dispatch = useDispatch();
 
-    useEffect(() => { 
+    useEffect(() => {
         const initPricebook = async () => {
             let newPricebooks = []
             let results = await realmStore.queryPricebook()
             results.forEach(item => {
-                newPricebooks.push({ ...JSON.parse(JSON.stringify(item))})
+                newPricebooks.push({ ...JSON.parse(JSON.stringify(item)) })
             })
-            pricebooksRef.current = newPricebooks    
+            pricebooksRef.current = newPricebooks
         }
         initPricebook()
-    },[])
+    }, [])
 
     useEffect(() => {
         const getListPos = async () => {
@@ -62,11 +62,11 @@ export default (props) => {
             const row_key = `${props.route.params.room.Id}_${position}`
 
             serverEvent = serverEvent.filtered(`RowKey == '${row_key}'`)
-        
+
             if (JSON.stringify(serverEvent) != '{}' && serverEvent[0].JsonContent) {
                 currentServerEvent.current = serverEvent[0]
                 let jsonContentObject = JSON.parse(serverEvent[0].JsonContent)
-                setJsonContent(jsonContentObject.OrderDetails? jsonContentObject : Constant.JSONCONTENT_EMPTY)     
+                setJsonContent(jsonContentObject.OrderDetails ? jsonContentObject : Constant.JSONCONTENT_EMPTY)
             } else setJsonContent(Constant.JSONCONTENT_EMPTY)
 
             setPriceBookId(jsonContent.PriceBookId)
@@ -87,19 +87,19 @@ export default (props) => {
     }, [position])
 
     useEffect(() => {
-        const getOtherPrice = async() => {
-            if(jsonContent.OrderDetails && currentPriceBook){
+        const getOtherPrice = async () => {
+            if (jsonContent.OrderDetails && currentPriceBook) {
                 let apiPath = ApiPath.PRICE_BOOK + `/${currentPriceBook.Id}/manyproductprice`
-                let params = {"pricebookId": currentPriceBook.Id, "ProductIds": jsonContent.OrderDetails.map( (product) => product.ProductId) }
+                let params = { "pricebookId": currentPriceBook.Id, "ProductIds": jsonContent.OrderDetails.map((product) => product.ProductId) }
                 let res = await new HTTPService().setPath(apiPath).POST(params)
                 if (res && res.PriceList && res.PriceList.length > 0) {
-                    jsonContent.OrderDetails.map( (product) => {
+                    jsonContent.OrderDetails.map((product) => {
                         res.PriceList.forEach((priceBook) => {
                             if (priceBook.ProductId == product.ProductId) {
                                 product.DiscountRatio = 0.0
                                 if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
                                 if (!priceBook.Price) priceBook.Price = product.UnitPrice
-                                let newBasePrice = (product.IsLargeUnit)? priceBook.PriceLargeUnit : priceBook.Price
+                                let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price
                                 product.Price = newBasePrice + product.TotalTopping
                             }
                         })
@@ -110,48 +110,48 @@ export default (props) => {
         }
 
         const getBasePrice = () => {
-            jsonContent.OrderDetails.map( (product) => {
+            jsonContent.OrderDetails.map((product) => {
                 product.DiscountRatio = 0.0
-                let basePrice = (product.IsLargeUnit)? product.PriceLargeUnit : product.UnitPrice
+                let basePrice = (product.IsLargeUnit) ? product.PriceLargeUnit : product.UnitPrice
                 product.Price = basePrice + product.TotalTopping
             })
             updateServerEvent()
         }
-        if(jsonContent.OrderDetails) {
-            if(currentPriceBook && currentPriceBook.Id) getOtherPrice() 
+        if (jsonContent.OrderDetails) {
+            if (currentPriceBook && currentPriceBook.Id) getOtherPrice()
             else getBasePrice()
         }
-    },[currentPriceBook])
+    }, [currentPriceBook])
 
-    const getOtherPrice = async(list) => {
-        if(currentPriceBook.Id){
-            if(jsonContent.OrderDetails && currentPriceBook){
+    const getOtherPrice = async (list) => {
+        if (currentPriceBook.Id) {
+            if (jsonContent.OrderDetails && currentPriceBook) {
                 let apiPath = ApiPath.PRICE_BOOK + `/${currentPriceBook.Id}/manyproductprice`
-                let params = {"pricebookId": currentPriceBook.Id, "ProductIds": list.map( (product) => product.ProductId) }
+                let params = { "pricebookId": currentPriceBook.Id, "ProductIds": list.map((product) => product.ProductId) }
                 let res = await new HTTPService().setPath(apiPath).POST(params)
                 if (res && res.PriceList && res.PriceList.length > 0) {
-                    list.map( (product) => {
+                    list.map((product) => {
                         res.PriceList.forEach((priceBook) => {
                             if (priceBook.ProductId == product.ProductId) {
                                 product.DiscountRatio = 0.0
                                 if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
                                 if (!priceBook.Price) priceBook.Price = product.UnitPrice
-                                let newBasePrice = (product.IsLargeUnit)? priceBook.PriceLargeUnit : priceBook.Price
+                                let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price
                                 product.Price = newBasePrice + product.TotalTopping
                             }
                         })
                     })
                     return list
-                } else                     
-                return list
+                } else
+                    return list
             }
         } else
-        return list
-    } 
+            return list
+    }
 
     const setPriceBookId = (pricebookId) => {
         let filters = pricebooksRef.current.filter(item => item.Id == pricebookId)
-        if(filters.length > 0) setCurrentPriceBook(filters[0])
+        if (filters.length > 0) setCurrentPriceBook(filters[0])
     }
 
     const outputListProducts = async (list) => {
@@ -171,10 +171,10 @@ export default (props) => {
     }
 
     const updateServerEvent = () => {
-        if(currentServerEvent) {
+        if (currentServerEvent) {
             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current))
             dataManager.calculatateJsonContent(jsonContent)
-            setJsonContent({...jsonContent})
+            setJsonContent({ ...jsonContent })
             serverEvent.Version += 1
             serverEvent.JsonContent = JSON.stringify(jsonContent)
             dataManager.updateServerEvent(serverEvent)
@@ -229,7 +229,7 @@ export default (props) => {
 
                     newItem.exist = false
                     newItem.ProductImages = ProductImages
-                    if(!jsonContent.OrderDetails) jsonContent.OrderDetails = []
+                    if (!jsonContent.OrderDetails) jsonContent.OrderDetails = []
                     jsonContent.OrderDetails.forEach((elm, idx) => {
                         if (newItem.Id == elm.Id && !newItem.SplitForSalesOrder) {
                             elm.Quantity += newItem.Quantity
@@ -294,8 +294,20 @@ export default (props) => {
     }
 
     const outputPriceBookSelected = (pricebook) => {
-        if(pricebook) setCurrentPriceBook(pricebook) 
+        if (pricebook) setCurrentPriceBook(pricebook)
         setShowPriceBook(false)
+    }
+
+    const handlerProcessedProduct = (jsonContent) => {
+        console.log("handlerProcessedProduct jsonContent ", jsonContent);
+        if (currentServerEvent) {
+            let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current))
+            // dataManager.calculatateJsonContent(jsonContent)
+            setJsonContent({...jsonContent})
+            serverEvent.Version += 1
+            serverEvent.JsonContent = JSON.stringify(jsonContent)
+            dataManager.updateServerEvent(serverEvent)
+        }
     }
 
     return (
@@ -317,14 +329,14 @@ export default (props) => {
                     transparent={true}
                     visible={showPriceBook}
                     supportedOrientations={['portrait', 'landscape']}
-                    onRequestClose={() => {}}>
+                    onRequestClose={() => { }}>
                     <Pricebook
-                        currentPriceBook = {currentPriceBook}
-                        outputPriceBookSelected = {outputPriceBookSelected}
-                        listPricebook = {pricebooksRef.current}
+                        currentPriceBook={currentPriceBook}
+                        outputPriceBookSelected={outputPriceBookSelected}
+                        listPricebook={pricebooksRef.current}
                     >
                     </Pricebook>
-                </Modal>     
+                </Modal>
 
                 <View style={{ flex: 1, justifyContent: "center" }}>
                     <Text style={{ paddingLeft: 20, textTransform: "uppercase", color: "white", fontWeight: "bold" }}>{props.route && props.route.params && props.route.params.room && props.route.params.room.Name ? props.route.params.room.Name : ""}</Text>
@@ -338,7 +350,7 @@ export default (props) => {
                         {
                             listPosition.map(item => <MenuItem key={item.name} onPress={() => hideMenu(item.name)}>{item.name} {item.status ? <Text style={{ color: Colors.colorchinh }}>*</Text> : null}</MenuItem>)
                         }
-                     
+
                     </Menu>
                     <Icon style={{}} name="chevron-down" size={20} color="white" />
                 </TouchableOpacity>
@@ -348,7 +360,7 @@ export default (props) => {
                     style={{ flexDirection: "row", alignItems: "center" }}
                     onPress={onClickListedPrice}>
                     <Entypo style={{ paddingHorizontal: 5 }} name="price-ribbon" size={25} color={colors.colorchinh} />
-                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{currentPriceBook.Name? currentPriceBook.Name: I18n.t('gia_niem_yet')}</Text>
+                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{currentPriceBook.Name ? currentPriceBook.Name : I18n.t('gia_niem_yet')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={{ flexDirection: "row", alignItems: "center" }}
@@ -361,7 +373,8 @@ export default (props) => {
                 {...props}
                 Position={position}
                 jsonContent={jsonContent}
-                outputListProducts={outputListProducts} />
+                outputListProducts={outputListProducts}
+                handlerProcessedProduct={(jsonContent) => handlerProcessedProduct(jsonContent)} />
             <Snackbar
                 duration={5000}
                 visible={showToast}

@@ -25,7 +25,7 @@ class DataManager {
             let intNewOrder = await new HTTPService().setPath(ApiPath.WAIT_FOR_COMFIRMATION).GET()
             let changeTableComfirm = await new HTTPService().setPath(ApiPath.CHANGE_TABLE_COMFIRM).GET()
             if (intNewOrder == 0 && changeTableComfirm.length == 0) {
-                return Promise.resolve([])
+                return Promise.resolve(null)
             } else {
                 if (intNewOrder > 0) {
                     let newOrders = await new HTTPService().setPath(ApiPath.WAIT_FOR_COMFIRMATION_ALL).GET()
@@ -92,13 +92,13 @@ class DataManager {
                         const { FromRoomId, FromPos, ToRoomId, ToPos } = item
                         this.changeTable(FromRoomId, FromPos, ToRoomId, ToPos)
                     })
-                    return Promise.resolve([])
+                    return Promise.resolve(null)
                 }
             }
 
         } catch (error) {
             console.log('initComfirmOrder error', error);
-            return Promise.resolve([])
+            return Promise.resolve(null)
         }
     }
 
@@ -218,9 +218,9 @@ class DataManager {
     syncPriceBook = async () => {
         let res = await new HTTPService().setPath(ApiPath.SYNC_PRICE_BOOK).GET()
         if (res.results && res.results.length > 0) {
-            res.results.unshift({Name: "Giá niêm yết", Id: 0})
+            res.results.unshift({ Name: "Giá niêm yết", Id: 0 })
             await realmStore.insertDatas(SchemaName.PRICE_BOOK, res.results)
-        }    
+        }
     }
 
     syncAllDatas = async () => {

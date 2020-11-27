@@ -58,6 +58,9 @@ export const ScreenList = {
   SearchVoucher: "SearchVoucher",
   Settings: "Settings",
   VNPayPaymentSetting: "VNPayPaymentSetting",
-  CommodityWaiting: "CommodityWaiting"
+  CommodityWaiting: "CommodityWaiting",
+  Settings:"Settings",
+  VNPayPaymentSetting:"VNPayPaymentSetting",
+  RoomHistory:"RoomHistory",  
 }
 
