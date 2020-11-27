@@ -80,6 +80,7 @@ export default {
   diem_voucher: "Điểm/Voucher",
   diem_hien_tai: "Điểm hiện có",
   diem_thuong: "Điểm thưởng",
+  don_hang_moi:"Đơn hàng mới",
 
   // TODO: E
 

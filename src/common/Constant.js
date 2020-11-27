@@ -460,5 +460,5 @@ export const Constant = {
         OrderDetails: []
     }
     ,
-    PRINT_KITCHEN_BARTENDER_DEFAULT: 'KitchenA'
+    PRINT_KITCHEN_DEFAULT: 'KitchenA'
 };

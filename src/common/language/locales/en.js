@@ -72,6 +72,7 @@ export default {
   diem_voucher: "Point/Voucher",
   diem_thuong: "Reward Points",
   diem_hien_tai: "Current Point",
+  don_hang_moi:"New orders",
   // TODO: E
 
 

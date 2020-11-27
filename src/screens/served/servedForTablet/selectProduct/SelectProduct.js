@@ -21,7 +21,6 @@ export default (props) => {
   const [valueSearch, setValueSearch] = useState(() => props.valueSearch)
   const count = useRef(0)
   const debouncedVal = useDebounce(valueSearch)
-  const subject = useRef(new Subject())
 
   useEffect(() => {
     const getSearchResult = async () => {

@@ -21,6 +21,7 @@ import { Colors } from '../../../theme';
 import CustomerOrder from './pageServed/CustomerOrder';
 import { ApiPath } from '../../../data/services/ApiPath';
 import { HTTPService } from '../../../data/services/HttpService';
+import { ScreenList } from '../../../common/ScreenList';
 
 const Served = (props) => {
     let serverEvent = null;
@@ -41,7 +42,8 @@ const Served = (props) => {
     const [itemOrder, setItemOrder] = useState({})
     const [listTopping, setListTopping] = useState([])
     const [showPriceBook, setShowPriceBook] = useState(false)
-    const [currentPriceBook, setCurrentPriceBook] = useState({Name: "Giá niêm yết", Id: 0})
+    const [currentPriceBook, setCurrentPriceBook] = useState({ Name: "Giá niêm yết", Id: 0 })
+    const [currentCustomer, setCurrentCustomer] = useState({ Name: "Khách hàng", Id: 0 })
     const meMoItemOrder = useMemo(() => itemOrder, [itemOrder])
 
     const pricebooksRef = useRef()
@@ -65,17 +67,17 @@ const Served = (props) => {
         _menu.show();
     };
 
-    useEffect(() => { 
+    useEffect(() => {
         const initPricebook = async () => {
             let newPricebooks = []
             let results = await realmStore.queryPricebook()
             results.forEach(item => {
-                newPricebooks.push({ ...JSON.parse(JSON.stringify(item))})
+                newPricebooks.push({ ...JSON.parse(JSON.stringify(item)) })
             })
-            pricebooksRef.current = newPricebooks    
+            pricebooksRef.current = newPricebooks
         }
         initPricebook()
-    },[])
+    }, [])
 
     useEffect(() => {
         const getListPos = async () => {
@@ -111,19 +113,19 @@ const Served = (props) => {
     }, [position])
 
     useEffect(() => {
-        const getOtherPrice = async() => {
-            if(jsonContent.OrderDetails && currentPriceBook){
+        const getOtherPrice = async () => {
+            if (jsonContent.OrderDetails && currentPriceBook) {
                 let apiPath = ApiPath.PRICE_BOOK + `/${currentPriceBook.Id}/manyproductprice`
-                let params = {"pricebookId": currentPriceBook.Id, "ProductIds": jsonContent.OrderDetails.map( (product) => product.ProductId) }
+                let params = { "pricebookId": currentPriceBook.Id, "ProductIds": jsonContent.OrderDetails.map((product) => product.ProductId) }
                 let res = await new HTTPService().setPath(apiPath).POST(params)
                 if (res && res.PriceList && res.PriceList.length > 0) {
-                    jsonContent.OrderDetails.map( (product) => {
+                    jsonContent.OrderDetails.map((product) => {
                         res.PriceList.forEach((priceBook) => {
                             if (priceBook.ProductId == product.ProductId) {
                                 product.DiscountRatio = 0.0
                                 if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
                                 if (!priceBook.Price) priceBook.Price = product.UnitPrice
-                                let newBasePrice = (product.IsLargeUnit)? priceBook.PriceLargeUnit : priceBook.Price
+                                let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price
                                 product.Price = newBasePrice + product.TotalTopping
                             }
                         })
@@ -134,23 +136,23 @@ const Served = (props) => {
         }
 
         const getBasePrice = () => {
-            jsonContent.OrderDetails.map( (product) => {
+            jsonContent.OrderDetails.map((product) => {
                 product.DiscountRatio = 0.0
-                let basePrice = (product.IsLargeUnit)? product.PriceLargeUnit : product.UnitPrice
+                let basePrice = (product.IsLargeUnit) ? product.PriceLargeUnit : product.UnitPrice
                 product.Price = basePrice + product.TotalTopping
             })
             updateServerEvent()
         }
-        if(jsonContent.OrderDetails) {
-            if(currentPriceBook && currentPriceBook.Id) getOtherPrice() 
+        if (jsonContent.OrderDetails) {
+            if (currentPriceBook && currentPriceBook.Id) getOtherPrice()
             else getBasePrice()
         }
-    },[currentPriceBook])
+    }, [currentPriceBook])
 
-    const getOtherPrice = async(product) => {
-        if(currentPriceBook.Id){
+    const getOtherPrice = async (product) => {
+        if (currentPriceBook.Id) {
             let apiPath = ApiPath.PRICE_BOOK + `/${currentPriceBook.Id}/manyproductprice`
-            let params = {"pricebookId": currentPriceBook.Id, "ProductIds": [product.ProductId] }
+            let params = { "pricebookId": currentPriceBook.Id, "ProductIds": [product.ProductId] }
             let res = await new HTTPService().setPath(apiPath).POST(params)
             if (res && res.PriceList && res.PriceList.length > 0) {
                 res.PriceList.forEach((priceBook) => {
@@ -158,20 +160,20 @@ const Served = (props) => {
                         product.DiscountRatio = 0.0
                         if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
                         if (!priceBook.Price) priceBook.Price = product.UnitPrice
-                        let newBasePrice = (product.IsLargeUnit)? priceBook.PriceLargeUnit : priceBook.Price
+                        let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price
                         product.Price = newBasePrice + product.TotalTopping
                     }
                 })
                 return product
-            } else                 
+            } else
                 return product
-        } else 
+        } else
             return product
-    } 
+    }
 
     const setPriceBookId = (pricebookId) => {
         let filters = pricebooksRef.current.filter(item => item.Id == pricebookId)
-        if(filters.length > 0) setCurrentPriceBook(filters[0])
+        if (filters.length > 0) setCurrentPriceBook(filters[0])
     }
 
     const outputSelectedProduct = async (product, replace = false) => {
@@ -270,10 +272,15 @@ const Served = (props) => {
 
     const onClickRetailCustomer = () => {
         console.log('onClickRetailCustomer');
+        props.navigation.navigate(ScreenList.Customer, { _onSelect: onCallBackCustomer })
+    }
+
+    const onCallBackCustomer = (data) => {
+        console.log('onCallBackCustomer', data);
     }
 
     const outputPriceBookSelected = (pricebook) => {
-        if(pricebook) setCurrentPriceBook(pricebook) 
+        if (pricebook) setCurrentPriceBook(pricebook)
         setShowPriceBook(false)
     }
 
@@ -347,14 +354,14 @@ const Served = (props) => {
                     transparent={true}
                     visible={showPriceBook}
                     supportedOrientations={['portrait', 'landscape']}
-                    onRequestClose={() => {}}>
+                    onRequestClose={() => { }}>
                     <Pricebook
-                        currentPriceBook = {currentPriceBook}
-                        outputPriceBookSelected = {outputPriceBookSelected}
-                        listPricebook = {pricebooksRef.current}
+                        currentPriceBook={currentPriceBook}
+                        outputPriceBookSelected={outputPriceBookSelected}
+                        listPricebook={pricebooksRef.current}
                     >
                     </Pricebook>
-                </Modal>                 
+                </Modal>
 
 
                 <View style={{ flex: 6, }}>
@@ -378,55 +385,55 @@ const Served = (props) => {
                     </View>
                 </View>
                 <View style={{ flex: 4, marginLeft: 2 }}>
-                <View style={{ flex: 1, backgroundColor: "#fff" }}>
-            
-                    <View style={{ backgroundColor: colors.colorchinh, alignItems: "center", flexDirection: "row", justifyContent: "space-between", borderTopColor: "#EAECEE", borderTopWidth: 1.5, height: 35 }}>
-                        <View style={{ flex: 1, justifyContent: "center", }}>
-                            <Text style={{ paddingLeft: 20, textTransform: "uppercase", color: "white", fontWeight: "bold" }}>{props.route && props.route.params && props.route.params.room && props.route.params.room.Name ? props.route.params.room.Name : ""}</Text>
-                        </View>
-                        <TouchableOpacity onPress={showMenu} style={{ flex: 1, paddingHorizontal: 20, flexDirection: "row", justifyContent: "flex-end", alignItems: "center" }}>
-                            <Menu
-                                style={{ width: 50 }}
-                                ref={setMenuRef}
-                                button={<Text style={{ color: "white", fontWeight: "bold" }} onPress={showMenu}>{position}</Text>}
-                            >
-                                {
-                                    listPosition.map(item => <MenuItem key={item.name} onPress={() => hideMenu(item.name)}>{item.name} {item.status ? <Text style={{ color: Colors.colorchinh }}>*</Text> : null}</MenuItem>)
-                                }
-                            </Menu>
-                            <Icon style={{}} name="chevron-down" size={20} color="white" />
-                        </TouchableOpacity>
-                    </View>
-                    <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 2, borderBottomColor: Colors.colorchinh, borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5 }}>
-                        <TouchableOpacity
-                            style={{ flexDirection: "row", alignItems: "center" }}
-                            onPress={onClickListedPrice}>
-                            <Entypo style={{ paddingHorizontal: 5 }} name="price-ribbon" size={25} color={colors.colorchinh} />
-                            <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{currentPriceBook.Name? currentPriceBook.Name: I18n.t('gia_niem_yet')}</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={{ flexDirection: "row", alignItems: "center" }}
-                            onPress={onClickRetailCustomer}>
-                            <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{I18n.t('khach_hang')}</Text>
-                            <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} color={Colors.colorchinh} />
-                        </TouchableOpacity>
-                    </View>
+                    <View style={{ flex: 1, backgroundColor: "#fff" }}>
 
-                    <CustomerOrder
-                        {...props}
-                        itemOrder={meMoItemOrder}
-                        jsonContent={jsonContent}
-                        onClickProvisional={(res) => onClickProvisional(res)}
-                        listProducts={[...listProducts]}
-                        outputListProducts={outputListProducts}
-                        outputItemOrder={outputItemOrder}
-                        outputPosition={outputPosition}
-                        outputSelectedProduct={outputSelectedProduct}
-                        listTopping={listTopping} 
-                        currentPriceBook = {currentPriceBook}
-                        outputClickPriceBook = {outputClickPriceBook}
-                        Position={position}/>
-                </View > 
+                        <View style={{ backgroundColor: colors.colorchinh, alignItems: "center", flexDirection: "row", justifyContent: "space-between", borderTopColor: "#EAECEE", borderTopWidth: 1.5, height: 35 }}>
+                            <View style={{ flex: 1, justifyContent: "center", }}>
+                                <Text style={{ paddingLeft: 20, textTransform: "uppercase", color: "white", fontWeight: "bold" }}>{props.route && props.route.params && props.route.params.room && props.route.params.room.Name ? props.route.params.room.Name : ""}</Text>
+                            </View>
+                            <TouchableOpacity onPress={showMenu} style={{ flex: 1, paddingHorizontal: 20, flexDirection: "row", justifyContent: "flex-end", alignItems: "center" }}>
+                                <Menu
+                                    style={{ width: 50 }}
+                                    ref={setMenuRef}
+                                    button={<Text style={{ color: "white", fontWeight: "bold" }} onPress={showMenu}>{position}</Text>}
+                                >
+                                    {
+                                        listPosition.map(item => <MenuItem key={item.name} onPress={() => hideMenu(item.name)}>{item.name} {item.status ? <Text style={{ color: Colors.colorchinh }}>*</Text> : null}</MenuItem>)
+                                    }
+                                </Menu>
+                                <Icon style={{}} name="chevron-down" size={20} color="white" />
+                            </TouchableOpacity>
+                        </View>
+                        <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 2, borderBottomColor: Colors.colorchinh, borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5 }}>
+                            <TouchableOpacity
+                                style={{ flexDirection: "row", alignItems: "center" }}
+                                onPress={onClickListedPrice}>
+                                <Entypo style={{ paddingHorizontal: 5 }} name="price-ribbon" size={25} color={colors.colorchinh} />
+                                <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{currentPriceBook.Name ? currentPriceBook.Name : I18n.t('gia_niem_yet')}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={{ flexDirection: "row", alignItems: "center" }}
+                                onPress={onClickRetailCustomer}>
+                                <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{currentCustomer.Name ? currentCustomer.Name : I18n.t('khach_hang')}</Text>
+                                <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} color={Colors.colorchinh} />
+                            </TouchableOpacity>
+                        </View>
+
+                        <CustomerOrder
+                            {...props}
+                            itemOrder={meMoItemOrder}
+                            jsonContent={jsonContent}
+                            onClickProvisional={(res) => onClickProvisional(res)}
+                            listProducts={[...listProducts]}
+                            outputListProducts={outputListProducts}
+                            outputItemOrder={outputItemOrder}
+                            outputPosition={outputPosition}
+                            outputSelectedProduct={outputSelectedProduct}
+                            listTopping={listTopping}
+                            currentPriceBook={currentPriceBook}
+                            outputClickPriceBook={outputClickPriceBook}
+                            Position={position} />
+                    </View >
 
                 </View>
             </View>

@@ -1,9 +1,8 @@
 import React, { useEffect, useState, useRef, createRef, useLayoutEffect } from 'react';
-import { View, AppState } from 'react-native';
+import { View, AppState, Text } from 'react-native';
 import MainToolBar from './MainToolBar';
 import dataManager from '../../data/DataManager'
 import Order from './order/Order';
-import ToolBarDefault from '../../components/toolbar/ToolBarDefault'
 import dialogManager from '../../components/dialog/DialogManager';
 import I18n from '../../common/language/i18n';
 import signalRManager from '../../common/SignalR';
@@ -12,18 +11,21 @@ import { Constant } from '../../common/Constant';
 import store from '../../store/configureStore';
 import { useDispatch, useSelector } from 'react-redux';
 import realmStore from '../../data/realm/RealmStore';
-import Customer from '../customer/Customer';
+import MainRetail from './retail/Main';
+import RetailToolBar from './retail/retailToolbar';
 
 export default (props) => {
 
   const [isFNB, setIsFNB] = useState(false)
+  const [value, setValue] = useState('');
+
   const dispatch = useDispatch();
 
   useSelector(state => {
     console.log("useSelector Main ", state);
   });
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const getVendorSession = async () => {
       dialogManager.showLoading()
       let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
@@ -49,9 +51,6 @@ export default (props) => {
   useEffect(() => {
 
     AppState.addEventListener('change', handleChangeState);
-
-
-
 
     const syncAllDatas = async () => {
       dispatch({ type: 'ALREADY', already: false })
@@ -120,20 +119,36 @@ export default (props) => {
     dialogManager.hiddenLoading()
   }
 
+  const outputTextSearch = (text) => {
+    console.log('outputTextSearch text', text);
+    setValue(text)
+  }
+
   return (
     <View style={{ flex: 1 }}>
-      <MainToolBar
-        navigation={props.navigation}
-        title={I18n.t('phong_ban')}
-        rightIcon="refresh"
-        clickRightIcon={clickRightIcon}
-      />
       {
         isFNB ?
-          <Order {...props} />
+          <>
+            <MainToolBar
+              navigation={props.navigation}
+              title={I18n.t('phong_ban')}
+              rightIcon="refresh"
+              clickRightIcon={clickRightIcon}
+            />
+            <Order {...props} />
+          </>
           :
-          <Order {...props} />
+          <>
+            <RetailToolBar
+              {...props}
+              outputTextSearch={outputTextSearch} />
+            <MainRetail
+              {...props}
+              value={value} />
+          </>
       }
     </View>
   );
 };
+
+

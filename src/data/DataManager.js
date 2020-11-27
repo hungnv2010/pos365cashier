@@ -111,7 +111,7 @@ class DataManager {
         let print5 = []
         newOrders.forEach((elm, idx) => {
             if (!elm.Printer || elm.Printer == '') {
-                elm.Printer = Constant.PRINT_KITCHEN_BARTENDER_DEFAULT
+                elm.Printer = Constant.PRINT_KITCHEN_DEFAULT
             }
             if (elm.SecondPrinter && elm.SecondPrinter != '') {
                 secondPrinter.push({ ...elm, Printer: elm.SecondPrinter })
@@ -233,6 +233,18 @@ class DataManager {
             await this.syncPromotion(),
             await this.syncPriceBook()
     }
+
+    syncAllDatasForRetail = async () => {
+        await this.syncProduct(),
+            // await this.syncTopping(),
+            // await this.syncServerEvent(),
+            await this.syncRooms(),
+            await this.syncPartner(),
+            await this.syncCategories(),
+            await this.syncPromotion(),
+            await this.syncPriceBook()
+    }
+
 
     //calculator and send ServerEvent
     updateServerEvent = (serverEvent) => {

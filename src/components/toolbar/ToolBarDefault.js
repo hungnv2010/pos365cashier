@@ -15,7 +15,6 @@ import PropTypes from 'prop-types';
 
 export default function ToolBarDefault(props) {
 
-    let blockClick = false;
 
     return (
         <View style={styles.toolbarContainer}>
@@ -27,13 +26,7 @@ export default function ToolBarDefault(props) {
                     </TouchableOpacity>
                     :
                     <TouchableOpacity onPress={() => {
-                        if (blockClick == false) {
-                            blockClick = true;
-                            props.navigation.pop()
-                            setTimeout(() => {
-                                blockClick = false;
-                            }, 1000);
-                        }
+                        props.navigation.pop()
                     }}>
                         <Icon name="keyboard-backspace" size={props.size ? props.size : 30} color="white" />
                     </TouchableOpacity>
