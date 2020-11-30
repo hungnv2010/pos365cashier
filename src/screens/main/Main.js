@@ -12,7 +12,7 @@ import store from '../../store/configureStore';
 import { useDispatch, useSelector } from 'react-redux';
 import realmStore from '../../data/realm/RealmStore';
 import MainRetail from './retail/Main';
-import RetailToolBar from './retail/retailToolbar';
+import RetailToolBar from '../main/retail/retailToolbar';
 import Customer from '../customer/Customer';
 import ViewPrint, { TYPE_PRINT } from '../more/ViewPrint';
 
@@ -146,12 +146,6 @@ export default (props) => {
     <View style={{ flex: 1 }}>
       <ViewPrint
         ref={viewPrintRef}
-      />
-      <MainToolBar
-        navigation={props.navigation}
-        title={I18n.t('phong_ban')}
-        rightIcon="refresh"
-        clickRightIcon={clickRightIcon}
       />
       {
         isFNB ?

@@ -8,13 +8,17 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import PropTypes from 'prop-types';
 import I18n from '../../../common/language/i18n'
+import { useSelector } from 'react-redux'
+import { Constant } from '../../../common/Constant';
 
 export default forwardRef((props, ref) => {
 
     const [value, onChangeText] = useState('');
     const [isSearch, setIsSearch] = useState(false);
 
-
+    const { deviceType } = useSelector(state => {
+        return state.Common
+    });
 
     useEffect(() => {
         props.outputTextSearch(value)
@@ -40,12 +44,12 @@ export default forwardRef((props, ref) => {
                         <Icon name="menu" size={28} color="white" />
                     </TouchableOpacity>
                 </View>
-                <View style={{ flex: 2, justifyContent: 'center', alignItems: 'flex-start', }}>
+                <View style={{ flex: 1.5, justifyContent: 'center', alignItems: 'flex-start', }}>
                     <Subheading numberOfLines={1} style={{ color: 'white', fontSize: 18, fontWeight: "bold" }} >
                         {I18n.t('don_hang')}
                     </Subheading>
                 </View>
-                <View style={{ flex: 5, marginRight: 10 }}>
+                <View style={{ flex: 3, marginRight: 10 }}>
                     {isSearch ?
                         <View style={{ borderRadius: 3, borderColor: "#fff", borderWidth: 1, backgroundColor: "#fff", flexDirection: "row", marginRight: 2, height: "80%" }}>
                             <TextInput
@@ -59,15 +63,20 @@ export default forwardRef((props, ref) => {
                         null}
                 </View>
 
-                <View style={{ flex: 2, alignItems: "center", flexDirection: "row", justifyContent: "space-around", }}>
-                    <TouchableOpacity style={styles.button} onPress={() => {
-                        if (value != '') onChangeText('')
-                        else setIsSearch(!isSearch)
-                    }} >
-                        <View style={{}}>
-                            <Ionicons name={!isSearch ? "md-search" : "md-close"} size={30} color="white" style={{}} />
-                        </View>
-                    </TouchableOpacity>
+                <View style={{ flex: deviceType == Constant.TABLET ? 3 : 4, alignItems: "center", flexDirection: "row", justifyContent: "space-around", }}>
+                    {
+                        deviceType == Constant.TABLET ?
+                            <TouchableOpacity style={styles.button} onPress={() => {
+                                if (value != '') onChangeText('')
+                                else setIsSearch(!isSearch)
+                            }} >
+                                <View style={{}}>
+                                    <Ionicons name={!isSearch ? "md-search" : "md-close"} size={30} color="white" style={{}} />
+                                </View>
+                            </TouchableOpacity>
+                            :
+                            null
+                    }
 
                     <TouchableOpacity style={styles.button} onPress={() => { props.navigation.navigate('QRCode', { _onSelect: onCallBack }) }} >
                         <View style={{}}>
@@ -80,12 +89,22 @@ export default forwardRef((props, ref) => {
                             <Icon name="library-books" size={28} color="white" style={{}} />
                         </View>
                     </TouchableOpacity>
-
                     <TouchableOpacity style={styles.button} onPress={() => { }} >
                         <View style={{}}>
                             <Icon name="refresh" size={25} color="white" style={{}} />
                         </View>
                     </TouchableOpacity>
+
+                    {
+                        deviceType == Constant.TABLET ?
+                            null
+                            :
+                            <TouchableOpacity style={styles.button} onPress={() => {props.navigation.navigate('RetailSelectProduct', { _onSelect: onCallBack }) }} >
+                                <View style={{}}>
+                                    <Icon name="check" size={25} color="white" style={{}} />
+                                </View>
+                            </TouchableOpacity>
+                    }
                 </View>
 
             </View>
