@@ -10,6 +10,7 @@ import { Images, Metrics } from '../../../../theme';
 import colors from '../../../../theme/Colors';
 import I18n from '../../../../common/language/i18n'
 import { currencyToString } from '../../../../common/Utils';
+import { Snackbar, FAB } from 'react-native-paper';
 
 export default (props) => {
 
@@ -73,9 +74,31 @@ export default (props) => {
                     </ImageBackground>
                 </View>
             }
+            <FAB
+                style={styles.fab}
+                big
+                icon="plus"
+                color="#fff"
+                onPress={() => {
+
+                }}
+            />
         </View>
     )
 
 }
 
+const styles = StyleSheet.create({
+    conatiner: { flex: 1 },
+    fab: {
+        position: 'absolute',
+        margin: 16,
+        right: 0,
+        bottom: 0,
+        backgroundColor: colors.colorLightBlue
+    },
+    fill: {
+        flex: 1, backgroundColor: "#fff",
+    },
+})
 
