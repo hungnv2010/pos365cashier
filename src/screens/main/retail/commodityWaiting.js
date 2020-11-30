@@ -2,8 +2,8 @@ import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'rea
 import {
     View, Text, TouchableOpacity, Image, StyleSheet, TextInput
 } from 'react-native';
-import ToolBarDefault from '../../../../components/toolbar/ToolBarDefault';
-import realmStore from '../../../../data/realm/RealmStore';
+import ToolBarDefault from '../../../components/toolbar/ToolBarDefault';
+import realmStore from '../../../data/realm/RealmStore';
 
 
 export default (props) => {
