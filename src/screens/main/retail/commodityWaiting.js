@@ -2,14 +2,14 @@ import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'rea
 import {
     View, Text, TouchableOpacity, Image, StyleSheet, TextInput, ImageBackground, Dimensions, FlatList
 } from 'react-native';
-import ToolBarDefault from '../../../../components/toolbar/ToolBarDefault';
-import realmStore from '../../../../data/realm/RealmStore';
+import ToolBarDefault from '../../../components/toolbar/ToolBarDefault';
+import realmStore from '../../../data/realm/RealmStore';
 import { useSelector } from 'react-redux'
-import { Constant } from '../../../../common/Constant';
-import { Images, Metrics } from '../../../../theme';
-import colors from '../../../../theme/Colors';
-import I18n from '../../../../common/language/i18n'
-import { currencyToString } from '../../../../common/Utils';
+import { Constant } from '../../../common/Constant';
+import { Images, Metrics } from '../../../theme';
+import colors from '../../../theme/Colors';
+import I18n from '../../../common/language/i18n'
+import { currencyToString } from '../../../common/Utils';
 
 export default (props) => {
 
