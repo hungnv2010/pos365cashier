@@ -5,24 +5,17 @@ import {
 import ToolBarDefault from '../../../components/toolbar/ToolBarDefault';
 import realmStore from '../../../data/realm/RealmStore';
 import { useSelector } from 'react-redux'
-<<<<<<< HEAD:src/screens/main/retail/commodityWaiting/commodityWaiting.js
-import { Constant } from '../../../../common/Constant';
-import { Images, Metrics } from '../../../../theme';
-import colors from '../../../../theme/Colors';
-import I18n from '../../../../common/language/i18n'
-import { currencyToString } from '../../../../common/Utils';
-import { Snackbar, FAB } from 'react-native-paper';
-=======
 import { Constant } from '../../../common/Constant';
 import { Images, Metrics } from '../../../theme';
 import colors from '../../../theme/Colors';
 import I18n from '../../../common/language/i18n'
 import { currencyToString } from '../../../common/Utils';
->>>>>>> db2178b81e80bcbeb455036cafdeff0758e003b5:src/screens/main/retail/commodityWaiting.js
+import { Snackbar, FAB } from 'react-native-paper';
+import dialogManager from '../../../components/dialog/DialogManager';
 
 export default (props) => {
 
-    const [listCommodity, setListCommodity] = useState([{ Price: 125000 }, { Price: 620000 }, { Price: 125000 }, { Price: 620000 }, { Price: 125000 }, { Price: 620000 }, { Price: 125000 }, { Price: 620000 }]);
+    const [listCommodity, setListCommodity] = useState([{ id: 1, Price: 125000 }, { id: 2, Price: 620000 }, { id: 3, Price: 125000 }, { id: 4, Price: 620000 }, { id: 5, Price: 125000 }, { id: 6, Price: 620000 }, { id: 7, Price: 125000 }, { id: 8, Price: 620000 }]);
     const numberColumn = useSelector(state => {
         console.log("useSelector state ", state);
         let numberColumn = (state.Common.orientaition == Constant.LANDSCAPE) ? 6 : 4
@@ -44,6 +37,19 @@ export default (props) => {
         props.navigation.pop()
     }
 
+    const onLongClickCommodity = (item) => {
+        dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_xoa_hoa_don'), I18n.t("thong_bao"), res => {
+            if (res == 1) {
+                let list = listCommodity.filter(el => item.id != el.id);
+                setListCommodity(list)
+            }
+        })
+    }
+
+    const onClickCreateCommodity = () => {
+
+    }
+
     const renderList = () => {
         return <FlatList
             style={{ padding: 2 }}
@@ -51,6 +57,7 @@ export default (props) => {
             renderItem={({ item, index }) => (
                 <TouchableOpacity
                     onPress={() => onClickCommodity(item)}
+                    onLongPress={() => onLongClickCommodity(item)}
                     key={item.Id}
                     style={{ borderRadius: 5, margin: numberColumn == 4 ? 2 : 2, padding: 0, width: widthRoom - (numberColumn == 4 ? 5 : 4.67), height: widthRoom - (numberColumn == 4 ? 5 : 4.67), backgroundColor: colors.colorLightBlue, borderWidth: 0, alignItems: "center" }}>
                     <View style={{ height: "35%", justifyContent: "center", alignItems: "center" }}>
@@ -77,8 +84,8 @@ export default (props) => {
             {listCommodity.length > 0 ?
                 renderList()
                 :
-                <View style={{ alignItems: "center", flex: 1 }}>
-                    <ImageBackground resizeMode="contain" source={Images.logo_365_long_color} style={{ flex: 1, opacity: 0.8, margin: 20, width: Metrics.screenWidth / 1.5 }}>
+                <View style={styles.viewListEmtry}>
+                    <ImageBackground resizeMode="contain" source={Images.logo_365_long_color} style={styles.backGroundLogo}>
                     </ImageBackground>
                 </View>
             }
@@ -87,9 +94,7 @@ export default (props) => {
                 big
                 icon="plus"
                 color="#fff"
-                onPress={() => {
-
-                }}
+                onPress={onClickCreateCommodity}
             />
         </View>
     )
@@ -108,5 +113,7 @@ const styles = StyleSheet.create({
     fill: {
         flex: 1, backgroundColor: "#fff",
     },
+    viewListEmtry : { alignItems: "center", flex: 1 },
+    backGroundLogo: { flex: 1, opacity: 0.8, margin: 20, width: Metrics.screenWidth / 1.5 },
 })
 

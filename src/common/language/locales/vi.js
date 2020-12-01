@@ -27,6 +27,7 @@ export default {
   ban: "bàn",
   bao_che_bien: "Báo chế biến",
   bao_che_bien_thanh_cong: "Báo chế biến thành công",
+  ban_co_chac_chan_muon_xoa_hoa_don: "Hoá đơn đang được sử dụng. Bạn có chắc chắn muốn xoá hoá hơn?",
 
   // TODO: C
   cai_dat: "Cài đặt",

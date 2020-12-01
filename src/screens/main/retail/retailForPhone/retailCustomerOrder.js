@@ -351,7 +351,12 @@ export default (props) => {
                         </View>
                     </Menu>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => { }} style={{ flex: .5, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%", flexDirection: 'row' }}>
+                <TouchableOpacity onPress={() => { 
+                     props.navigation.navigate(ScreenList.CommodityWaiting, {
+                        // RoomId: props.route.params.room.Id,
+                        // Position: props.Position
+                    });
+                }} style={{ flex: .5, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%", flexDirection: 'row' }}>
                     {/* <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('bao_che_bien')}</Text> */}
                     <Icon name="delete-forever" size={30} color="white" />
                     <View style={{ backgroundColor: Colors.colorchinh, borderRadius: 40, position: "absolute", right: 0, top: -5 }}>
