@@ -26,13 +26,15 @@ export default (props) => {
     useEffect(() => {
         const getCommodityWaiting = async () => {
             let serverEvents = await realmStore.queryServerEvents()
-            console.log('commodityWaiting serverEvents', JSON.parse(JSON.stringify(serverEvents)));
+            console.log('commodityWaiting serverEventsfg ', JSON.parse(JSON.stringify(serverEvents)));
         }
         getCommodityWaiting()
     }, [])
 
     const onClickCommodity = (item) => {
-        props.navigation.pop()
+        // props.navigation.pop()
+        console.log(item);
+        // props.navigation.navigate(ScreenList.MainRetail) 
     }
 
     const renderList = () => {
