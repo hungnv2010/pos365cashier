@@ -10,7 +10,6 @@ import { Images, Metrics } from '../../../theme';
 import colors from '../../../theme/Colors';
 import I18n from '../../../common/language/i18n'
 import { currencyToString } from '../../../common/Utils';
-import { Snackbar, FAB } from 'react-native-paper';
 import dialogManager from '../../../components/dialog/DialogManager';
 
 export default (props) => {
@@ -28,13 +27,15 @@ export default (props) => {
     useEffect(() => {
         const getCommodityWaiting = async () => {
             let serverEvents = await realmStore.queryServerEvents()
-            console.log('commodityWaiting serverEvents', JSON.parse(JSON.stringify(serverEvents)));
+            console.log('commodityWaiting serverEventsfg ', JSON.parse(JSON.stringify(serverEvents)));
         }
         getCommodityWaiting()
     }, [])
 
     const onClickCommodity = (item) => {
-        props.navigation.pop()
+        // props.navigation.pop()
+        console.log(item);
+        // props.navigation.navigate(ScreenList.MainRetail) 
     }
 
     const onLongClickCommodity = (item) => {
@@ -89,13 +90,6 @@ export default (props) => {
                     </ImageBackground>
                 </View>
             }
-            <FAB
-                style={styles.fab}
-                big
-                icon="plus"
-                color="#fff"
-                onPress={onClickCreateCommodity}
-            />
         </View>
     )
 

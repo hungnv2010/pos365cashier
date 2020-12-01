@@ -18,8 +18,7 @@ import ViewPrint, { TYPE_PRINT } from '../more/ViewPrint';
 
 export default (props) => {
 
-  const [isFNB, setIsFNB] = useState(false)
-  const [value, setValue] = useState('');
+  const [isFNB, setIsFNB] = useState(null)
 
   const viewPrintRef = useRef();
   const dispatch = useDispatch();
@@ -27,7 +26,7 @@ export default (props) => {
   useSelector(state => {
     console.log("useSelector Main state ", state);
 
-    if(state.Common.listPrint != ""){
+    if (state.Common.listPrint != "") {
       viewPrintRef.current.printKitchenRef(state.Common.listPrint)
       dispatch({ type: 'LIST_PRINT', listPrint: "" })
     }
@@ -159,14 +158,8 @@ export default (props) => {
             <Order {...props} />
           </>
           :
-          <>
-            <RetailToolBar
-              {...props}
-              outputTextSearch={outputTextSearch} />
-            <MainRetail
-              {...props}
-              value={value} />
-          </>
+          <MainRetail
+            {...props} />
       }
     </View>
   );

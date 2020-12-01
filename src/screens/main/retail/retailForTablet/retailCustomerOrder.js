@@ -54,6 +54,15 @@ const RetailCustomerOrder = (props) => {
         }
     }, [])
 
+    useEffect(() => {
+        setListOrder(props.listProducts)
+        updateServerEvent(props.listProducts)
+    }, [props.listProducts])
+
+    const updateServerEvent = (listProducts) => {
+        console.log('updateServerEvent', listProducts);
+    }
+
     const _keyboardDidShow = () => {
         if (orientaition != Constant.PORTRAIT)
             setMargin(Metrics.screenWidth / 2)
@@ -63,65 +72,6 @@ const RetailCustomerOrder = (props) => {
         setMargin(0)
     }
 
-    useEffect(() => {
-        listOrder.forEach((elm, index) => elm.index = index)
-    }, [listOrder])
-
-    // useEffect(() => {
-    //     setItemOrder(props.itemOrder)
-    // }, [props.itemOrder])
-
-
-    // useEffect(() => {
-    //     props.outputPosition(props.Position)
-    // }, [props.Position])
-
-    // useEffect(() => {
-    //     if (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0) {
-    //         let listOrder = props.jsonContent.OrderDetails.filter(item => item.ProductId > 0)
-    //         setListOrder(listOrder)
-    //     } else setListOrder([])
-    // }, [props.jsonContent])
-
-    // useEffect(() => {
-    //     console.log(props.listTopping, 'props.listTopping');
-    //     console.log(props.itemOrder, 'props.itemOrder');
-
-    //     const getInfoTopping = (listTopping) => {
-    //         let description = '';
-    //         let totalPrice = 0;
-    //         let topping = []
-    //         listTopping.forEach(item => {
-    //             if (item.Quantity > 0) {
-    //                 description += ` -${item.Name} x${item.Quantity} = ${currencyToString(item.Quantity * item.Price)};\n `
-    //                 totalPrice += item.Quantity * item.Price
-    //                 topping.push({ ExtraId: item.ExtraId, QuantityExtra: item.Quantity, Price: item.Price, Quantity: item.Quantity })
-    //             }
-    //         })
-    //         return [description, totalPrice, topping]
-    //     }
-    //     let [description, totalPrice, topping] = getInfoTopping(props.listTopping)
-    //     let indexFind = -1
-    //     listOrder.forEach((element, index) => {
-    //         if (element.ProductId == props.itemOrder.ProductId && index == props.itemOrder.index) {
-    //             indexFind = index
-    //             element.Description = description
-    //             element.Topping = JSON.stringify(topping)
-    //             element.TotalTopping = totalPrice
-    //         }
-    //     });
-    //     setListOrder([...listOrder])
-    //     if (indexFind >= 0 && listOrder.length >= indexFind) mapDataToList(listOrder[indexFind], false)
-
-    // }, [props.listTopping])
-
-    // useEffect(() => { 
-    //     if (debouceWaitingList.length > 0) {
-    //         debouceWaitingList.forEach( product => props.outputSelectedProduct(product, true))
-    //         setWaitingList([])
-    //     }
-    // }, [debouceWaitingList])
-
     const applyDialogDetail = (product) => {
         listOrder.forEach((elm, index) => {
             if (elm.ProductId == product.ProductId && index == product.index) elm = product
@@ -130,20 +80,7 @@ const RetailCustomerOrder = (props) => {
         mapDataToList(product, true)
     }
 
-    // const mapDataToList = (product, isNow = true) => {
-    //     if (isNow) props.outputSelectedProduct(product, true)
-    //     else {
-    //         let isExist = false
-    //         waitingList.forEach(elm => {
-    //             if (elm.ProductId == product.ProductId) {
-    //                 isExist = true
-    //                 elm = product
-    //             }
-    //         })
-    //         if(!isExist) waitingList.push(product)
-    //         setWaitingList([...waitingList])
-    //     }
-    // }
+
 
     // const removeItem = (product, index) => {
     //     console.log('removeItem', index, product);
@@ -165,9 +102,6 @@ const RetailCustomerOrder = (props) => {
         return total
     }
 
-    // const onClickTopping = (item) => {
-    //     props.outputItemOrder(item)
-    // }
 
     let _menu = null;
 
@@ -340,10 +274,7 @@ const RetailCustomerOrder = (props) => {
     }
 
     const onClickPayment = () => {
-        props.navigation.navigate(ScreenList.Payment, {
-            // RoomId: props.route.params.room.Id,
-            // Position: props.Position
-        });
+        props.navigation.navigate(ScreenList.Payment);
     }
 
     const onClickListedPrice = () => {
@@ -357,9 +288,12 @@ const RetailCustomerOrder = (props) => {
     const getCommodityWaiting = () => {
         console.log('getCommodityWaiting');
         props.navigation.navigate(ScreenList.CommodityWaiting, {
-            // RoomId: props.route.params.room.Id,
-            // Position: props.Position
+            _onSelect: onCallBack
         });
+    }
+
+    const onCallBack = (data) => {
+        console.log('onCallBack', data);
     }
 
     return (
@@ -436,7 +370,7 @@ const RetailCustomerOrder = (props) => {
                 <TouchableOpacity onPress={onClickPayment} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
                     <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('thanh_toan')}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => { }} style={{ justifyContent: "center", alignItems: "center", paddingHorizontal: 10, borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
+                <TouchableOpacity onPress={() => { setListOrder([]) }} style={{ justifyContent: "center", alignItems: "center", paddingHorizontal: 10, borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
                     <Icon name="delete-forever" size={30} color="white" />
                 </TouchableOpacity>
             </View>

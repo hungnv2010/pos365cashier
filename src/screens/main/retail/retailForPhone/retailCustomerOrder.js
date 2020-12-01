@@ -10,10 +10,6 @@ import I18n from "../../../../common/language/i18n"
 import { Snackbar } from 'react-native-paper';
 import colors from '../../../../theme/Colors';
 import { ScreenList } from '../../../../common/ScreenList';
-import DialogProductDetail from '../../../../components/dialog/DialogProductDetail'
-import dialogManager from '../../../../components/dialog/DialogManager';
-import dataManager from '../../../../data/DataManager';
-import { useDispatch, useSelector } from 'react-redux';
 import Entypo from 'react-native-vector-icons/Entypo';
 
 export default (props) => {
@@ -107,8 +103,8 @@ export default (props) => {
     // }
 
     const onCallBack = (data) => {
-        console.log('onCallBack from topping', data);
-        mapToppingToList(data)
+        console.log('onCallBack from commodity waiting', data);
+        // mapToppingToList(data)
     }
 
     // const mapToppingToList = (listTopping) => {
@@ -349,15 +345,11 @@ export default (props) => {
                                 <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('tam_tinh')}</Text>
                             </TouchableOpacity>
                         </View>
-                    </Menu>
+                    </Menu> 
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => { 
-                     props.navigation.navigate(ScreenList.CommodityWaiting, {
-                        // RoomId: props.route.params.room.Id,
-                        // Position: props.Position
-                    });
+                <TouchableOpacity onPress={() => {
+                    props.navigation.navigate(ScreenList.CommodityWaiting,{_onSelect: onCallBack})
                 }} style={{ flex: .5, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%", flexDirection: 'row' }}>
-                    {/* <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('bao_che_bien')}</Text> */}
                     <Icon name="delete-forever" size={30} color="white" />
                     <View style={{ backgroundColor: Colors.colorchinh, borderRadius: 40, position: "absolute", right: 0, top: -5 }}>
                         <Text style={{ fontWeight: "bold", padding: 4, color: "white", fontSize: 14 }}>{numberNewOrder}</Text>
