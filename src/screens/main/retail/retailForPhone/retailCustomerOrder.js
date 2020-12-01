@@ -23,6 +23,7 @@ export default (props) => {
     const [marginModal, setMargin] = useState(0)
     const [expand, setExpand] = useState(false)
     const [customer, setCustomer] = useState("")
+    const [isQuickPayment, setIsQuickPayment] = useState(false)
 
     useEffect(() => {
 
@@ -263,6 +264,14 @@ export default (props) => {
         props.navigation.navigate(ScreenList.Customer, { _onSelect: onCallBackCustomer })
     }
 
+    const onClickPrint = () => {
+
+    }
+
+    const onClickOptionQuickPayment = () => {
+        setIsQuickPayment(!isQuickPayment)
+    }
+
     return (
         <View style={{ flex: 1 }}>
             <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 2, borderBottomColor: Colors.colorchinh, borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5 }}>
@@ -338,25 +347,26 @@ export default (props) => {
                 <TouchableOpacity
                     onPress={showMenu}>
                     <Menu
+                        style={{ width: 220 }}
                         ref={setMenuRef}
                         button={<Icon style={{ paddingHorizontal: 5 }} name="menu" size={30} color="white" />}
                     >
                         <View style={{
-                            backgroundColor: "#fff", borderRadius: 4, marginHorizontal: 5,
+                            backgroundColor: "#fff", borderRadius: 4, marginHorizontal: 5
                         }}>
-                            <TouchableOpacity onPress={() => { }} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
-                                <MaterialIcons style={{ paddingHorizontal: 7 }} name="notifications" size={26} color={Colors.colorchinh} />
-                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('chuyen_ban')}</Text>
+                            <TouchableOpacity onPress={() => onClickPrint()} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
+                                <Icon style={{ paddingHorizontal: 10 }} name="printer" size={26} color={Colors.colorchinh} />
+                                <Text style={{ padding: 15, fontSize: 16, flex: 1 }}>{I18n.t('in_tam_tinh')}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => { }} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
-                                <Icon style={{ paddingHorizontal: 10 }} name="message" size={22} color={Colors.colorchinh} />
-                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('tam_tinh')}</Text>
+                            <TouchableOpacity onPress={() => onClickOptionQuickPayment()} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
+                                <Icon style={{ paddingHorizontal: 10 }} name={isQuickPayment ? "check-box-outline" : "close-box-outline"} size={26} color={isQuickPayment ? Colors.colorchinh : "#000"} />
+                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('thanh_toan_nhanh')}</Text>
                             </TouchableOpacity>
                         </View>
-                    </Menu> 
+                    </Menu>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => {
-                    props.navigation.navigate(ScreenList.CommodityWaiting,{_onSelect: onCallBack})
+                    props.navigation.navigate(ScreenList.CommodityWaiting, { _onSelect: onCallBack })
                 }} style={{ flex: .5, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%", flexDirection: 'row' }}>
                     <Icon name="file-document-edit-outline" size={30} color="white" />
                     <View style={{ backgroundColor: Colors.colorchinh, borderRadius: 40, position: "absolute", right: 10, top: -5 }}>
@@ -367,7 +377,7 @@ export default (props) => {
                     <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('don_hang_moi')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => { }} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
-                    <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('thanh_toan')}</Text>
+                    <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase", textAlign: "center" }}>{isQuickPayment ? I18n.t('thanh_toan_nhanh') : I18n.t('thanh_toan')}</Text>
                 </TouchableOpacity>
             </View>
             {/* <Modal
