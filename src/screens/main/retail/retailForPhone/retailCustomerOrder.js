@@ -22,6 +22,7 @@ export default (props) => {
     const [itemOrder, setItemOrder] = useState({})
     const [marginModal, setMargin] = useState(0)
     const [expand, setExpand] = useState(false)
+    const [customer, setCustomer] = useState("")
 
     useEffect(() => {
 
@@ -252,9 +253,16 @@ export default (props) => {
         console.log('onClickListedPrice');
     }
 
+    const onCallBackCustomer = (data) => {
+        console.log("onCallBackCustomer data ", data);
+        setCustomer(data);
+    }
+
     const onClickRetailCustomer = () => {
         console.log('onClickRetailCustomer');
+        props.navigation.navigate(ScreenList.Customer, { _onSelect: onCallBackCustomer })
     }
+
     return (
         <View style={{ flex: 1 }}>
             <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 2, borderBottomColor: Colors.colorchinh, borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5 }}>
@@ -267,7 +275,7 @@ export default (props) => {
                 <TouchableOpacity
                     style={{ flexDirection: "row", alignItems: "center" }}
                     onPress={onClickRetailCustomer}>
-                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{I18n.t('khach_hang')}</Text>
+                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{customer != "" ? customer.Name : I18n.t('khach_hang')}</Text>
                     <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} color={Colors.colorchinh} />
                 </TouchableOpacity>
             </View>
@@ -350,8 +358,8 @@ export default (props) => {
                 <TouchableOpacity onPress={() => {
                     props.navigation.navigate(ScreenList.CommodityWaiting,{_onSelect: onCallBack})
                 }} style={{ flex: .5, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%", flexDirection: 'row' }}>
-                    <Icon name="delete-forever" size={30} color="white" />
-                    <View style={{ backgroundColor: Colors.colorchinh, borderRadius: 40, position: "absolute", right: 0, top: -5 }}>
+                    <Icon name="file-document-edit-outline" size={30} color="white" />
+                    <View style={{ backgroundColor: Colors.colorchinh, borderRadius: 40, position: "absolute", right: 10, top: -5 }}>
                         <Text style={{ fontWeight: "bold", padding: 4, color: "white", fontSize: 14 }}>{numberNewOrder}</Text>
                     </View>
                 </TouchableOpacity>
@@ -360,9 +368,6 @@ export default (props) => {
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => { }} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
                     <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('thanh_toan')}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => { }} style={{ justifyContent: "center", alignItems: "center", paddingHorizontal: 10, borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
-                    <Icon name="delete-forever" size={30} color="white" />
                 </TouchableOpacity>
             </View>
             {/* <Modal
