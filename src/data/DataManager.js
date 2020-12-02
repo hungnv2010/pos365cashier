@@ -367,6 +367,49 @@ class DataManager {
         }
     }
 
+    createJsonContentForRetail = (RoomId) => {
+        return {
+            OfflineId: randomUUID(),
+            Status: 2,
+            Discount: 0,
+            TotalPayment: 0,
+            AmountReceive: 0,
+            AmountReceived: 0,
+            Total: 0,
+            OrderDetails: [],
+            SoldById: 0,
+            ExcessCashType: 0,
+            ExcessCash: 0,
+            RoomId: RoomId,
+            RoomName: "",
+            Pos: "A",
+            NumberOfGuests: 0,
+            SyncStatus: 0,
+            VATRates: "",
+            DiscountValue: 0,
+            Voucher: 0,
+            DiscountToView: "",
+            VAT: 0,
+            Description: "",
+            ActiveDate: "",
+            PartnerId: 0,
+            OldDebt: 0,
+            DiscountRatio: 0,
+            Id: 0,
+            Code: "",
+            initializingTotalPayment: false,
+            ShippingCost: "0",
+            ShippingCostForPartner: 0,
+            PurchaseDate: "",
+            PriceBookId: "0",
+            Topping: "",
+            MoreAttributes: "",
+            Printed: false,
+        }
+    }
+
+
+
     removeJsonContent = (JsonContent) => {
         return {
             OfflineId: JsonContent.OfflineId, Pos: JsonContent.Pos, RoomName: JsonContent.RoomName, OrderDetails: [],

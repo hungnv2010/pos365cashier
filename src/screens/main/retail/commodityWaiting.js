@@ -3,7 +3,7 @@ import {
     View, Text, TouchableOpacity, Image, StyleSheet, TextInput, ImageBackground, Dimensions, FlatList
 } from 'react-native';
 import ToolBarDefault from '../../../components/toolbar/ToolBarDefault';
-import realmStore from '../../../data/realm/RealmStore';
+import realmStore, { SchemaName } from '../../../data/realm/RealmStore';
 import { useSelector } from 'react-redux'
 import { Constant } from '../../../common/Constant';
 import { Images, Metrics } from '../../../theme';
@@ -11,10 +11,11 @@ import colors from '../../../theme/Colors';
 import I18n from '../../../common/language/i18n'
 import { currencyToString } from '../../../common/Utils';
 import dialogManager from '../../../components/dialog/DialogManager';
+import dataManager from '../../../data/DataManager';
 
 export default (props) => {
 
-    const [listCommodity, setListCommodity] = useState([{ id: 1, Price: 125000 }, { id: 2, Price: 620000 }, { id: 3, Price: 125000 }, { id: 4, Price: 620000 }, { id: 5, Price: 125000 }, { id: 6, Price: 620000 }, { id: 7, Price: 125000 }, { id: 8, Price: 620000 }]);
+    const [listCommodity, setListCommodity] = useState([]);
     const numberColumn = useSelector(state => {
         console.log("useSelector state ", state);
         let numberColumn = (state.Common.orientaition == Constant.LANDSCAPE) ? 6 : 4
@@ -24,12 +25,9 @@ export default (props) => {
 
     const widthRoom = Dimensions.get('screen').width / numberColumn;
 
+
     useEffect(() => {
-        const getCommodityWaiting = async () => {
-            let serverEvents = await realmStore.queryServerEvents()
-            console.log('commodityWaiting serverEventsfg ', JSON.parse(JSON.stringify(serverEvents)));
-        }
-        getCommodityWaiting()
+       setListCommodity(props.route.params.listCommodity)
     }, [])
 
     const onClickCommodity = (item) => {
@@ -47,8 +45,10 @@ export default (props) => {
         })
     }
 
-    const onClickCreateCommodity = () => {
 
+
+    const clickLeftIcon = async () => {
+        props.navigation.pop()
     }
 
     const renderList = () => {
@@ -81,6 +81,8 @@ export default (props) => {
         <View style={{ flex: 1, }}>
             <ToolBarDefault
                 {...props}
+                leftIcon="keyboard-backspace"
+                clickLeftIcon={clickLeftIcon}
                 title="Commodity waiting for payment" />
             {listCommodity.length > 0 ?
                 renderList()
@@ -107,7 +109,7 @@ const styles = StyleSheet.create({
     fill: {
         flex: 1, backgroundColor: "#fff",
     },
-    viewListEmtry : { alignItems: "center", flex: 1 },
+    viewListEmtry: { alignItems: "center", flex: 1 },
     backGroundLogo: { flex: 1, opacity: 0.8, margin: 20, width: Metrics.screenWidth / 1.5 },
 })
 

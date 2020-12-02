@@ -15,6 +15,7 @@ const MainRetail = (props) => {
         return state.Common
     });
 
+
     const outputSelectedProduct = (product) => {
         let isExist = false
         console.log('outputSelectedProduct product', product);
@@ -35,7 +36,7 @@ const MainRetail = (props) => {
         setListProducts([...listProducts])
     }
 
-    
+
 
     const outputTextSearch = () => {
 

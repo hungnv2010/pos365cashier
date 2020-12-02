@@ -20,6 +20,20 @@ class RealmStore extends RealmBase {
         return super.insertDatas(databaseOption, schema, datas);
     }
 
+    // insertData(scheme, data) {
+    //     console.log("insertData ", datas);
+    //     return super.insertData(databaseOption, scheme, data)
+    // }
+
+    insertServerEventForRetail = async (newSE) => {
+        console.log('insertServerEventForRetail', newSE);
+        let realm = await Realm.open(databaseOption)
+        return new Promise((resolve) => realm.write(() => {
+            realm.create(SchemaName.SERVER_EVENT, newSE, true)
+            resolve(newSE)
+        }))
+    }
+
     deleteAll = async () => {
         let realm = await Realm.open(databaseOption)
         return new Promise((resolve) => realm.write(() => {

@@ -17,7 +17,7 @@ const initState = {
 	currentBranch: "",
 	deviceType: "",
 	orientaition: "",
-	already: false,
+	already: null,
 
 	historyOrder: [],
 	printerObject: {},

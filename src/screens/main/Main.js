@@ -65,37 +65,6 @@ export default (props) => {
 
     AppState.addEventListener('change', handleChangeState);
 
-    const syncAllDatas = async () => {
-      dispatch({ type: 'ALREADY', already: false })
-
-      if (props.params && props.params.index) {
-        dialogManager.showLoading()
-        await realmStore.deleteAll()
-        await dataManager.syncAllDatas()
-          .then(() => {
-            dispatch({ type: 'ALREADY', already: true })
-          })
-          .catch((e) => {
-            dispatch({ type: 'ALREADY', already: true })
-            console.log(e);
-          })
-        dialogManager.hiddenLoading()
-      } else {
-        dialogManager.showLoading()
-        await dataManager.syncAllDatas()
-          .then(() => {
-            dispatch({ type: 'ALREADY', already: true })
-          })
-          .catch((e) => {
-            dispatch({ type: 'ALREADY', already: true })
-            console.log(e);
-          })
-        dialogManager.hiddenLoading()
-      }
-
-    }
-    syncAllDatas()
-
     const getDataNewOrders = async () => {
       let newOrders = await dataManager.initComfirmOrder()
       console.log('getDataNewOrders', newOrders);
@@ -114,6 +83,40 @@ export default (props) => {
       clearInterval(scan)
     }
   }, [])
+
+  useEffect(() => {
+    const syncAllDatas = async () => {
+      dialogManager.showLoading()
+      dispatch({ type: 'ALREADY', already: null })
+
+      if (props.params && props.params.index) {
+        await realmStore.deleteAll()
+      }
+
+      if (isFNB) {
+        await dataManager.syncAllDatas()
+          .then(() => {
+            dispatch({ type: 'ALREADY', already: true })
+          })
+          .catch((e) => {
+            dispatch({ type: 'ALREADY', already: true })
+            console.log(e);
+          })
+      } else {
+        await dataManager.syncAllDatasForRetail()
+          .then(() => {
+            dispatch({ type: 'ALREADY', already: true })
+          })
+          .catch((e) => {
+            dispatch({ type: 'ALREADY', already: true })
+            console.log(e);
+          })
+      }
+      dialogManager.hiddenLoading()
+
+    }
+    syncAllDatas()
+  }, [isFNB])
 
 
   const handleChangeState = (newState) => {

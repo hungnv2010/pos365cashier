@@ -7,7 +7,7 @@ import I18n from '../../../../common/language/i18n';
 import { change_alias } from '../../../../common/Utils';
 import useDebounce from '../../../../customHook/useDebounce';
 import { Colors, Metrics, Images } from '../../../../theme'
-import { Subject } from 'rxjs';
+import { useSelector } from 'react-redux';
 
 export default (props) => {
   const [isLoadMore, setIsLoadMore] = useState(false)
@@ -22,9 +22,13 @@ export default (props) => {
   const count = useRef(0)
   const debouncedVal = useDebounce(valueSearch)
 
+  const { already } = useSelector(state => {
+    return state.Common
+  });
+
   useEffect(() => {
     const getSearchResult = async () => {
-      
+
       if (debouncedVal) {
         setHasProducts(false)
         setIsSearching(true)
@@ -50,7 +54,7 @@ export default (props) => {
       }
     }
     getSearchResult()
-    
+
   }, [debouncedVal])
 
   useEffect(() => {
@@ -64,37 +68,41 @@ export default (props) => {
   }, [props.listProducts])
 
   useEffect(() => {
-    const getCategories = async () => {
-      let newCategories = [{ Id: -1, Name: I18n.t('tat_ca') }];
-      let results = await realmStore.queryCategories()
-      // results = results.sorted('Name')
-      results.forEach(item => {
-        newCategories.push(item)
-      })
-      setCategory(newCategories)
-      
+    if (already) {
+      const getCategories = async () => {
+        let newCategories = [{ Id: -1, Name: I18n.t('tat_ca') }];
+        let results = await realmStore.queryCategories()
+        // results = results.sorted('Name')
+        results.forEach(item => {
+          newCategories.push(item)
+        })
+        setCategory(newCategories)
+
+      }
+      getCategories()
     }
-    getCategories()
-  }, [])
+  }, [already])
 
   const getProducts = useCallback(async () => {
-    console.log('getProducts');
-    
-    let results = await realmStore.queryProducts()
-    results = results.sorted('Name')
-    if (listCateId[0] != -1) {
-      results = results.filtered(`CategoryId == ${listCateId[0]}`)
+    if (already) {
+      console.log('getProducts');
+
+      let results = await realmStore.queryProducts()
+      results = results.sorted('Name')
+      if (listCateId[0] != -1) {
+        results = results.filtered(`CategoryId == ${listCateId[0]}`)
+      }
+      let productsRes = results.slice(skip, skip + Constant.LOAD_LIMIT)
+      productsRes = JSON.parse(JSON.stringify(productsRes))
+      count.current = productsRes.length
+      setProduct([...product, ...productsRes])
+      setHasProducts(true)
+      setIsLoadMore(false)
     }
-    let productsRes = results.slice(skip, skip + Constant.LOAD_LIMIT)
-    productsRes = JSON.parse(JSON.stringify(productsRes))
-    count.current = productsRes.length
-    setProduct([...product, ...productsRes])
-    setHasProducts(true)
-    setIsLoadMore(false)
     return () => {
       count.current = 0
     }
-  }, [skip, listCateId])
+  }, [skip, listCateId, already])
 
 
   useEffect(() => {
@@ -115,7 +123,7 @@ export default (props) => {
   }
 
   const onClickProduct = (item, index) => {
-    let newProduct = {...item}
+    let newProduct = { ...item }
     newProduct.Description = getDescription(newProduct)
     newProduct.Quantity = getQuantity(newProduct)
     newProduct.ProductImages = []

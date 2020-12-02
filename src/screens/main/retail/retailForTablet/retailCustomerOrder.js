@@ -16,6 +16,8 @@ import DialogProductUnit from '../../../../components/dialog/DialogProductUnit'
 import dialogManager from '../../../../components/dialog/DialogManager';
 import Entypo from 'react-native-vector-icons/Entypo';
 import { Badge } from 'react-native-paper';
+import realmStore from '../../../../data/realm/RealmStore';
+import dataManager from '../../../../data/DataManager';
 
 
 
@@ -26,6 +28,8 @@ const TYPE_MODAL = {
 
 const RetailCustomerOrder = (props) => {
 
+    const [listCommodity, setListCommodity] = useState([]);
+    const [currentCommodity, setCurrentCommodity] = useState({})
     const [showModal, setShowModal] = useState(false)
     const [listOrder, setListOrder] = useState([])
     const [itemOrder, setItemOrder] = useState({})
@@ -45,6 +49,22 @@ const RetailCustomerOrder = (props) => {
     });
 
     useEffect(() => {
+        const getCommodityWaiting = async () => {
+            let serverEvents = await realmStore.queryServerEvents()
+            serverEvents = JSON.parse(JSON.stringify(serverEvents))
+            serverEvents = Object.values(serverEvents)
+            console.log('serverEventsserverEventsserverEvents', serverEvents);
+            if (serverEvents.length == 0) {
+                let newSE = await createNewServerEvent()
+                console.log('createNewServerEventcreateNewServerEvent', newSE);
+                setListCommodity([...newSE])
+                setCurrentCommodity(newSE)
+            } else {
+                setListCommodity(serverEvents)
+                setCurrentCommodity(serverEvents[serverEvents.length - 1])
+            }
+        }
+        getCommodityWaiting()
         var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
         var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
 
@@ -53,6 +73,14 @@ const RetailCustomerOrder = (props) => {
             keyboardDidHideListener.remove();
         }
     }, [])
+
+    const createNewServerEvent = async () => {
+        let newServerEvent = await dataManager.createSeverEvent(Date.now(), "A")
+        newServerEvent.JsonContent = JSON.stringify(dataManager.createJsonContentForRetail(newServerEvent.RoomId))
+        console.log('newServerEvent', newServerEvent);
+        return realmStore.insertServerEventForRetail(newServerEvent)
+    }
+
 
     useEffect(() => {
         setListOrder(props.listProducts)
@@ -72,13 +100,13 @@ const RetailCustomerOrder = (props) => {
         setMargin(0)
     }
 
-    const applyDialogDetail = (product) => {
-        listOrder.forEach((elm, index) => {
-            if (elm.ProductId == product.ProductId && index == product.index) elm = product
-        })
-        setListOrder([...listOrder])
-        mapDataToList(product, true)
-    }
+    // const applyDialogDetail = (product) => {
+    //     listOrder.forEach((elm, index) => {
+    //         if (elm.ProductId == product.ProductId && index == product.index) elm = product
+    //     })
+    //     setListOrder([...listOrder])
+    //     mapDataToList(product, true)
+    // }
 
 
 
@@ -288,13 +316,10 @@ const RetailCustomerOrder = (props) => {
     const getCommodityWaiting = () => {
         console.log('getCommodityWaiting');
         props.navigation.navigate(ScreenList.CommodityWaiting, {
-            _onSelect: onCallBack
+            listCommodity: listCommodity
         });
     }
 
-    const onCallBack = (data) => {
-        console.log('onCallBack', data);
-    }
 
     return (
         <View style={{ flex: 1 }}>
