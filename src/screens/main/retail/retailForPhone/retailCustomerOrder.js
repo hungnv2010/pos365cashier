@@ -11,22 +11,41 @@ import { Snackbar } from 'react-native-paper';
 import colors from '../../../../theme/Colors';
 import { ScreenList } from '../../../../common/ScreenList';
 import Entypo from 'react-native-vector-icons/Entypo';
+import realmStore from '../../../../data/realm/RealmStore';
+import dataManager from '../../../../data/DataManager';
 
 export default (props) => {
 
+
+    const [listCommodity, setListCommodity] = useState([]);
+    const [currentCommodity, setCurrentCommodity] = useState({})
     const [numberNewOrder, setNumberNewOrder] = useState(0)
     const [showModal, setShowModal] = useState(false)
     const [listOrder, setListOrder] = useState([])
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
-    const [itemOrder, setItemOrder] = useState({})
     const [marginModal, setMargin] = useState(0)
     const [expand, setExpand] = useState(false)
     const [customer, setCustomer] = useState("")
     const [isQuickPayment, setIsQuickPayment] = useState(false)
 
     useEffect(() => {
-
+        const getCommodityWaiting = async () => {
+            let serverEvents = await realmStore.queryServerEvents()
+            serverEvents = JSON.parse(JSON.stringify(serverEvents))
+            serverEvents = Object.values(serverEvents)
+            console.log('serverEventsserverEventsserverEvents', serverEvents);
+            if (serverEvents.length == 0) {
+                let newSE = await createNewServerEvent()
+                console.log('createNewServerEventcreateNewServerEvent', newSE);
+                setListCommodity([...listCommodity])
+                setCurrentCommodity(newSE)
+            } else {
+                setListCommodity(serverEvents)
+                setCurrentCommodity(serverEvents[serverEvents.length - 1])
+            }
+        }
+        getCommodityWaiting()
         var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
         var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
 
@@ -48,6 +67,13 @@ export default (props) => {
     useEffect(() => {
         listOrder.forEach((elm, index) => elm.index = index)
     }, [listOrder])
+
+    const createNewServerEvent = async () => {
+        let newServerEvent = await dataManager.createSeverEvent(Date.now(), "A")
+        newServerEvent.JsonContent = JSON.stringify(dataManager.createJsonContentForRetail(newServerEvent.RoomId))
+        console.log('newServerEvent', newServerEvent);
+        return realmStore.insertServerEventForRetail(newServerEvent)
+    }
 
     // useEffect(() => {
     //     if (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0) {
@@ -104,10 +130,6 @@ export default (props) => {
     //     props.navigation.navigate('Topping', { _onSelect: onCallBack, itemOrder: item, Position: props.Position, IdRoom: props.route.params.room.Id })
     // }
 
-    const onCallBack = (data) => {
-        console.log('onCallBack from commodity waiting', data);
-        // mapToppingToList(data)
-    }
 
     // const mapToppingToList = (listTopping) => {
     //     console.log('mapToppingToList listTopping:', listTopping);
@@ -192,7 +214,6 @@ export default (props) => {
                     setShowToast(true)
                     return
                 }
-                setItemOrder({ ...item })
                 setShowModal(!showModal)
             }}>
                 <View style={styles.mainItem}>
@@ -366,7 +387,7 @@ export default (props) => {
                     </Menu>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => {
-                    props.navigation.navigate(ScreenList.CommodityWaiting, { _onSelect: onCallBack })
+                    props.navigation.navigate(ScreenList.CommodityWaiting, { listCommodity: listCommodity })
                 }} style={{ flex: .5, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%", flexDirection: 'row' }}>
                     <Icon name="file-document-edit-outline" size={30} color="white" />
                     <View style={{ backgroundColor: Colors.colorchinh, borderRadius: 40, position: "absolute", right: 10, top: -5 }}>
