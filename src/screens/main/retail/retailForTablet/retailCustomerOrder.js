@@ -15,7 +15,6 @@ import DialogProductDetail from '../../../../components/dialog/DialogProductDeta
 import DialogProductUnit from '../../../../components/dialog/DialogProductUnit'
 import dialogManager from '../../../../components/dialog/DialogManager';
 import Entypo from 'react-native-vector-icons/Entypo';
-import { Badge } from 'react-native-paper';
 import realmStore from '../../../../data/realm/RealmStore';
 import dataManager from '../../../../data/DataManager';
 
@@ -28,51 +27,74 @@ const TYPE_MODAL = {
 
 const RetailCustomerOrder = (props) => {
 
-    const [listCommodity, setListCommodity] = useState([]);
-    const [currentCommodity, setCurrentCommodity] = useState({})
     const [showModal, setShowModal] = useState(false)
     const [listOrder, setListOrder] = useState([])
-    const [itemOrder, setItemOrder] = useState({})
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
     const [marginModal, setMargin] = useState(0)
     const [IsLargeUnit, setIsLargeUnit] = useState(false)
     const [numberNewOrder, setNumberNewOrder] = useState(0)
+    const [expand, setExpand] = useState(false)
     const typeModal = useRef(TYPE_MODAL.UNIT)
-
-    const [waitingList, setWaitingList] = useState([])
-    const debouceWaitingList = useDebounce(waitingList)
+    const currentCommodity = useRef({})
 
     const orientaition = useSelector(state => {
         console.log("orientaition", state);
         return state.Common.orientaition
     });
 
+    let serverEvents = null;
+
+
     useEffect(() => {
-        const getCommodityWaiting = async () => {
-            let serverEvents = await realmStore.queryServerEvents()
-            serverEvents = JSON.parse(JSON.stringify(serverEvents))
-            serverEvents = Object.values(serverEvents)
-            console.log('serverEventsserverEventsserverEvents', serverEvents);
-            if (serverEvents.length == 0) {
-                let newSE = await createNewServerEvent()
-                console.log('createNewServerEventcreateNewServerEvent', newSE);
-                setListCommodity([...newSE])
-                setCurrentCommodity(newSE)
-            } else {
-                setListCommodity(serverEvents)
-                setCurrentCommodity(serverEvents[serverEvents.length - 1])
-            }
-        }
         getCommodityWaiting()
         var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
         var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
 
         return () => {
+            if (serverEvents) serverEvents.removeAllListeners()
             keyboardDidShowListener.remove();
             keyboardDidHideListener.remove();
         }
     }, [])
+
+    useEffect(() => {
+        setListOrder(props.listProducts)
+    }, [props.listProducts])
+
+
+    useEffect(() => {
+        updateServerEvent(listOrder, currentCommodity.current)
+    }, [listOrder])
+
+
+    const getCommodityWaiting = async () => {
+        serverEvents = await realmStore.queryServerEvents()
+        let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
+        newServerEvents = Object.values(newServerEvents)
+        setNumberNewOrder(newServerEvents.length)
+        if (newServerEvents.length == 0) {
+            let newSE = await createNewServerEvent()
+            currentCommodity.current = newSE
+        } else {
+            currentCommodity.current = newServerEvents[newServerEvents.length - 1]
+            let jsonContent = JSON.parse(currentCommodity.current.JsonContent)
+            setListOrder(jsonContent.OrderDetails)
+        }
+
+        serverEvents.addListener((collection, changes) => {
+            if (changes.insertions.length || changes.modifications.length) {
+                let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
+                newServerEvents = Object.values(newServerEvents)
+                setNumberNewOrder(newServerEvents.length)
+            }
+        })
+    }
+
+    const syncListProducts = (data) => {
+        props.outputSelectedProduct(data, 2)
+        setListOrder(data)
+    }
 
     const createNewServerEvent = async () => {
         let newServerEvent = await dataManager.createSeverEvent(Date.now(), "A")
@@ -82,13 +104,15 @@ const RetailCustomerOrder = (props) => {
     }
 
 
-    useEffect(() => {
-        setListOrder(props.listProducts)
-        updateServerEvent(props.listProducts)
-    }, [props.listProducts])
-
-    const updateServerEvent = (listProducts) => {
-        console.log('updateServerEvent', listProducts);
+    const updateServerEvent = (data, serverEvent) => {
+        console.log('updateServerEvent', data, serverEvent);
+        if (!serverEvent.JsonContent) return
+        let jsonContent = JSON.parse(serverEvent.JsonContent)
+        jsonContent.OrderDetails = [...data]
+        dataManager.calculatateJsonContent(jsonContent)
+        console.log('updateServerEvent jsonContent', jsonContent);
+        serverEvent.JsonContent = JSON.stringify(jsonContent)
+        realmStore.insertServerEventForRetail(serverEvent)
     }
 
     const _keyboardDidShow = () => {
@@ -106,17 +130,17 @@ const RetailCustomerOrder = (props) => {
     //     })
     //     setListOrder([...listOrder])
     //     mapDataToList(product, true)
-    // }
+    // }`
 
 
 
-    // const removeItem = (product, index) => {
-    //     console.log('removeItem', index, product);
-    //     product.Quantity = 0
-    //     product.index = index
-    //     listOrder.splice(index, 1)
-    //     props.outputSelectedProduct(product)
-    // }
+    const removeItem = (product, index) => {
+        console.log('removeItem', index, product);
+        listOrder.splice(index, 1)
+        // props.outputSelectedProduct(listOrder, 2)
+        // setListOrder([...listOrder])
+        syncListProducts(listOrder)
+    }
 
     const getTotalPrice = () => {
         let total = 0;
@@ -130,6 +154,18 @@ const RetailCustomerOrder = (props) => {
         return total
     }
 
+    const onClickNewOrder = async () => {
+        if (listOrder.length == 0) {
+            setToastDescription(I18n.t("moi_chon_mon_truoc"))
+            setShowToast(true)
+            return
+        }
+        let newSE = await createNewServerEvent()
+        currentCommodity.current = newSE
+        props.outputSelectedProduct([], 2)
+        setListOrder([])
+    }
+
 
     let _menu = null;
 
@@ -139,14 +175,14 @@ const RetailCustomerOrder = (props) => {
 
     const showMenu = () => { _menu.show() };
 
-    const onClickUnit = (item) => {
-        if (item.Unit && item.Unit != "" && item.LargeUnit && item.LargeUnit != "") {
-            typeModal.current = TYPE_MODAL.UNIT;
-            setIsLargeUnit(item.IsLargeUnit)
-            setItemOrder(item)
-            setShowModal(true)
-        }
-    }
+    // const onClickUnit = (item) => {
+    //     if (item.Unit && item.Unit != "" && item.LargeUnit && item.LargeUnit != "") {
+    //         typeModal.current = TYPE_MODAL.UNIT;
+    //         setIsLargeUnit(item.IsLargeUnit)
+    //         setItemOrder(item)
+    //         setShowModal(true)
+    //     }
+    // }
 
     const renderForTablet = (item, index) => {
         return (
@@ -158,7 +194,6 @@ const RetailCustomerOrder = (props) => {
                 }
                 console.log("setItemOrder ", item);
                 typeModal.current = TYPE_MODAL.DETAIL;
-                setItemOrder({ ...item })
                 setShowModal(!showModal)
             }}>
                 <View style={{
@@ -275,17 +310,17 @@ const RetailCustomerOrder = (props) => {
         )
     }
 
-    const onClickSubmitUnit = () => {
-        let array = listOrder.map((item, index) => {
-            if (item.ProductId == itemOrder.ProductId && index == itemOrder.index) {
-                item.IsLargeUnit = IsLargeUnit
-            }
-            return item;
-        })
+    // const onClickSubmitUnit = () => {
+    //     let array = listOrder.map((item, index) => {
+    //         if (item.ProductId == itemOrder.ProductId && index == itemOrder.index) {
+    //             item.IsLargeUnit = IsLargeUnit
+    //         }
+    //         return item;
+    //     })
 
-        setListOrder([...array])
-        setShowModal(false)
-    }
+    //     setListOrder([...array])
+    //     setShowModal(false)
+    // }
 
     const changTable = () => {
         hideMenu()
@@ -313,11 +348,26 @@ const RetailCustomerOrder = (props) => {
         console.log('onClickRetailCustomer');
     }
 
-    const getCommodityWaiting = () => {
-        console.log('getCommodityWaiting');
+    const onCLickCommodity = () => {
+        console.log('onCLickCommodity');
         props.navigation.navigate(ScreenList.CommodityWaiting, {
-            listCommodity: listCommodity
+            _onSelect: onCallBack
         });
+    }
+
+    const onCallBack = (data, type) => {
+        console.log('onCallBackonCallBackonCallBack', data, type);
+        switch (type) {
+            case 3: // from commodity waiting
+                currentCommodity.current = data
+                let jsonContent = JSON.parse(currentCommodity.current.JsonContent)
+                // setListOrder(jsonContent.OrderDetails)
+                syncListProducts(jsonContent.OrderDetails)
+                break;
+
+            default:
+                break;
+        }
     }
 
 
@@ -352,14 +402,45 @@ const RetailCustomerOrder = (props) => {
                     </View>
                 }
             </View>
-            <View
-                style={{ borderTopWidth: .5, borderTopColor: "red", paddingVertical: 3, backgroundColor: "white" }}>
-                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 5 }}>
-                    <Text style={{ fontWeight: "bold" }}>{I18n.t('tam_tinh')}</Text>
-                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                        <Text style={{ fontWeight: "bold", fontSize: 18, color: "#0072bc" }}>{currencyToString(getTotalPrice())}đ</Text>
+            <View>
+
+                <TouchableOpacity
+                    onPress={() => { setExpand(!expand) }}
+                    style={{ borderTopWidth: .5, borderTopColor: "red", paddingVertical: 3, backgroundColor: "white", marginLeft: 10 }}>
+                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+                        <Text style={{ fontWeight: "bold" }}>{I18n.t('tong_thanh_tien')}</Text>
+                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
+                            <Text style={{ fontWeight: "bold", fontSize: 16, color: Colors.colorchinh }}></Text>
+                            {expand ?
+                                <Icon style={{}} name="chevron-up" size={30} color="black" />
+                                :
+                                <Icon style={{}} name="chevron-down" size={30} color="black" />
+                            }
+                        </View>
                     </View>
-                </View>
+                    {expand ?
+                        <View style={{ marginLeft: 0 }}>
+                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+                                <Text>{I18n.t('tong_chiet_khau')}</Text>
+                                <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>- {}đ</Text>
+                            </View>
+                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+                                <Text>VAT (%)</Text>
+                                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
+                                    <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>{}đ</Text>
+                                </View>
+                            </View>
+                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+                                <Text style={{ fontWeight: "bold" }}>{I18n.t('khach_phai_tra')}</Text>
+                                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
+                                    <Text style={{ fontWeight: "bold", fontSize: 16, color: "#0072bc", marginRight: 30 }}>{}đ</Text>
+                                </View>
+                            </View>
+                        </View>
+                        :
+                        null
+                    }
+                </TouchableOpacity>
             </View>
             <View style={{ height: 40, flexDirection: "row", backgroundColor: "#0072bc", alignItems: "center" }}>
                 <TouchableOpacity
@@ -382,22 +463,22 @@ const RetailCustomerOrder = (props) => {
                         </View>
                     </Menu>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={getCommodityWaiting} style={{ flex: .5, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%", flexDirection: 'row' }}>
+                <TouchableOpacity onPress={onCLickCommodity} style={{ flex: .5, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%", flexDirection: 'row' }}>
                     {/* <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('bao_che_bien')}</Text> */}
-                    <Icon name="delete-forever" size={30} color="white" />
+                    <Icon name="file-document-edit-outline" size={30} color="white" />
                     <View style={{ backgroundColor: Colors.colorchinh, borderRadius: 40, position: "absolute", right: 0, top: -5 }}>
                         <Text style={{ fontWeight: "bold", padding: 4, color: "white", fontSize: 14 }}>{numberNewOrder}</Text>
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => { }} style={{ flex: .8, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
+                <TouchableOpacity onPress={onClickNewOrder} style={{ flex: .8, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
                     <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('don_hang_moi')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={onClickPayment} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
                     <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('thanh_toan')}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => { setListOrder([]) }} style={{ justifyContent: "center", alignItems: "center", paddingHorizontal: 10, borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
+                {/* <TouchableOpacity onPress={() => { setListOrder([]) }} style={{ justifyContent: "center", alignItems: "center", paddingHorizontal: 10, borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
                     <Icon name="delete-forever" size={30} color="white" />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </View>
             {/* <Modal
                 animationType="fade"

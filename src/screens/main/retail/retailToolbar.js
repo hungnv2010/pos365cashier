@@ -10,6 +10,7 @@ import PropTypes from 'prop-types';
 import I18n from '../../../common/language/i18n'
 import { useSelector } from 'react-redux'
 import { Constant } from '../../../common/Constant';
+import { ScreenList } from '../../../common/ScreenList';
 
 export default forwardRef((props, ref) => {
 
@@ -78,18 +79,18 @@ export default forwardRef((props, ref) => {
                             null
                     }
 
-                    <TouchableOpacity style={styles.button} onPress={() => { props.navigation.navigate('QRCode', { _onSelect: onCallBack }) }} >
+                    <TouchableOpacity style={styles.button} onPress={props.onCLickQR} >
                         <View style={{}}>
                             <Icon name="qrcode-scan" size={25} color="white" style={{}} />
                         </View>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.button} onPress={() => { props.navigation.navigate('NoteBook', { _onSelect: onCallBack }) }} >
+                    <TouchableOpacity style={styles.button} onPress={props.onCLickNoteBook} >
                         <View style={{}}>
                             <Icon name="library-books" size={28} color="white" style={{}} />
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={() => { }} >
+                    <TouchableOpacity style={styles.button} onPress={props.onClickSync} >
                         <View style={{}}>
                             <Icon name="refresh" size={25} color="white" style={{}} />
                         </View>
@@ -99,9 +100,9 @@ export default forwardRef((props, ref) => {
                         deviceType == Constant.TABLET ?
                             null
                             :
-                            <TouchableOpacity style={styles.button} onPress={() => {props.navigation.navigate('RetailSelectProduct', { _onSelect: onCallBack }) }} >
+                            <TouchableOpacity style={styles.button} onPress={props.onClickSelect} >
                                 <View style={{}}>
-                                    <Icon name="check" size={25} color="white" style={{}} />
+                                    <Icon name="plus" size={30} color="white" style={{}} />
                                 </View>
                             </TouchableOpacity>
                     }
