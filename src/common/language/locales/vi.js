@@ -61,6 +61,7 @@ export default {
   chon_bang_gia: "Chọn bảng giá",
   cac_mon_ban_chon_dang_duoc_nha_bep_chuan_bi: "Các món bạn chọn đang được nhà bếp và bartender chuẩn bị. Vui lòng đợi.",
   cap_nhat_khach_hang: "Cập nhật khách hàng",
+  moi_chon_mon_truoc: "Mời bạn chọn hàng hóa trước",
 
   // TODO: D
   dang_dung: "Đang dùng",
@@ -86,6 +87,7 @@ export default {
   diem_thuong: "Điểm thưởng",
   don_hang_moi:"Đơn mới",
   du_no: "Dư nợ",
+  don_hang_moi: "Đơn mới",
 
   // TODO: E
 
@@ -349,12 +351,12 @@ export default {
   yeu_cau_thanh_toan: "Yêu cầu thanh toán",
 
   //Vuong
-  am_bao_thanh_toan:"Âm báo thanh toán",
+  am_bao_thanh_toan: "Âm báo thanh toán",
 
   bao_che_bien_sau_khi_thanh_toan: "Báo chế biến sau khi thanh toán",
 
   chon_cong_nghe_in: "Chọn công nghệ in",
-  cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang:"Cho phép thay đổi tên hàng hóa khi bán hàng?",
+  cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang: "Cho phép thay đổi tên hàng hóa khi bán hàng?",
   cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang: "Cho phép nhân viên thay đổi giá khi bán hàng?",
   cai_dat_the_cung: "Cài đặt thẻ cứng",
   chan_trang: "Chân trang",
@@ -375,7 +377,7 @@ export default {
   in_qua_mang_lan: "In qua mạng LAN",
   in_qua_bluetooth: "In qua Bluetooth",
   in_qua_usb: "In qua USB",
-  in_hoa_don_truoc_khi_thanh_toan_VNPAYQR_thanh_cong:"In hóa đơn trước khi thanh toán VNPAY-QR thành công? ",
+  in_hoa_don_truoc_khi_thanh_toan_VNPAYQR_thanh_cong: "In hóa đơn trước khi thanh toán VNPAY-QR thành công? ",
 
   khong_cho_phep_ban_hang_khi_het_ton_kho: "Không cho phép bán hàng khi hết tồn kho",
   khong_in: "Không in",
@@ -400,21 +402,21 @@ export default {
   nhap_dia_chi_ip_may: "Bạn hãy nhập địa chỉ IP của máy ",
   nhap_chieu_rong_kho_giay: "Nhập chiều rộng khổ giấy",
 
-  setting:'Thiết lập',
+  setting: 'Thiết lập',
 
   so_the_cung: "Số thẻ cứng",
-  su_dung_hai_man_hinh:"Sử dụng hai màn hình",
+  su_dung_hai_man_hinh: "Sử dụng hai màn hình",
   so_dien_thoai: "Số điện thoại",
-  
+
   tien_khach_tra: "Tiền khách trả",
   thiet_lap_thanh_toan_vnpay: "Thiết lập thanh toán VNPAY",
   thong_tin_cua_hang: "Thông tin cửa hàng",
   tu_dong_in_bao_bep: "Tự động in báo bếp",
-  thiet_lap_he_thong:"Thiết lập hệ thống",
+  thiet_lap_he_thong: "Thiết lập hệ thống",
   thiet_lap_tinh_nang: "Thiết lập tính năng",
   ten: "Tên",
   thanh_toan_vnpayqr: "Thanh toán VNPAY-QR?",
-  thanh_toan_vnpaypos_qua_may_pos:"Thanh toán VNPAY-POS qua máy POS?",
+  thanh_toan_vnpaypos_qua_may_pos: "Thanh toán VNPAY-POS qua máy POS?",
 
   vnd: "VND"
 

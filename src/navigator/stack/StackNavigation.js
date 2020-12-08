@@ -31,7 +31,7 @@ import VNPayPaymentSetting from '../../screens/settings/VNPAYPaymentSetting';
 import CommodityWaiting from '../../screens/main/retail/commodityWaiting'
 import RoomHistory from '../../screens/roomHistory/RoomHistory'
 import RetailSelectProduct from '../../screens/main/retail/retailForPhone/retailSelectProducts'
-import MainRetail from '../../screens/main/retail/Main'
+import MainRetail from '../../screens/main/retail/MainRetail'
 
 
 const MainStack = createStackNavigator();

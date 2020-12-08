@@ -12,6 +12,7 @@ import I18n from '../../../common/language/i18n'
 import { currencyToString } from '../../../common/Utils';
 import dialogManager from '../../../components/dialog/DialogManager';
 import dataManager from '../../../data/DataManager';
+import { ScreenList } from '../../../common/ScreenList';
 
 export default (props) => {
 
@@ -27,6 +28,7 @@ export default (props) => {
 
 
     useEffect(() => {
+<<<<<<< HEAD
         setListCommodity(props.route.params.listCommodity)
         
         const getDataRealm = async () => {
@@ -35,24 +37,43 @@ export default (props) => {
             console.log("promotion ===", promotion);
         }
         getDataRealm();
+=======
+        const getCommodityWaiting = async () => {
+            try {
+                // dialogManager.showLoading()
+                let serverEvents = await realmStore.queryServerEvents()
+                serverEvents = JSON.parse(JSON.stringify(serverEvents))
+                serverEvents = Object.values(serverEvents)
+                console.log('serverEventsserverEventsserverEvents', serverEvents);
+                setListCommodity(serverEvents)
+                // dialogManager.hiddenLoading()
+            } catch (error) {
+                console.log('getCommodityWaiting err', error);
+                // dialogManager.hiddenLoading()
+            }
+        }
+        getCommodityWaiting()
+>>>>>>> 9d06a06bee3e60ab6e8a68110f6220a398c188da
     }, [])
 
     const onClickCommodity = (item) => {
-        // props.navigation.pop()
-        console.log(item);
-        // props.navigation.navigate(ScreenList.MainRetail) 
+        props.navigation.pop()
+        props.route.params._onSelect(item, 3);
     }
 
     const onLongClickCommodity = (item) => {
         dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_xoa_hoa_don'), I18n.t("thong_bao"), res => {
             if (res == 1) {
-                let list = listCommodity.filter(el => item.id != el.id);
+                let list = listCommodity.filter(el => item.RoomId != el.RoomId);
+                deleteServerEvent(item)
                 setListCommodity(list)
             }
         })
     }
 
-
+    const deleteServerEvent = (item) => {
+        console.log('deleteServerEvent', item);
+    }
 
     const clickLeftIcon = async () => {
         props.navigation.pop()
@@ -74,7 +95,7 @@ export default (props) => {
                     <View style={{ backgroundColor: "#fff", height: 0.5, width: "100%" }}></View>
                     <View style={{ flex: 1, justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
                         <Text style={{ textAlign: "center", color: "#fff", marginTop: 0, fontSize: 10 }}>Retail customers</Text>
-                        <Text style={{ textAlign: "center", color: "#fff", marginTop: 10, fontSize: 10 }}>{currencyToString(item.Price)}</Text>
+                        <Text style={{ textAlign: "center", color: "#fff", marginTop: 10, fontSize: 10 }}>{currencyToString(JSON.parse(item.JsonContent).Total)}</Text>
                     </View>
                 </TouchableOpacity>
             )}

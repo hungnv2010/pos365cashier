@@ -88,7 +88,7 @@ export default (props) => {
       console.log('getProducts');
 
       let results = await realmStore.queryProducts()
-      results = results.sorted('Name')
+      // results = results.sorted('Name')
       if (listCateId[0] != -1) {
         results = results.filtered(`CategoryId == ${listCateId[0]}`)
       }

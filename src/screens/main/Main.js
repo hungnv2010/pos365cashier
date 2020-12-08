@@ -11,7 +11,7 @@ import { Constant } from '../../common/Constant';
 import store from '../../store/configureStore';
 import { useDispatch, useSelector } from 'react-redux';
 import realmStore from '../../data/realm/RealmStore';
-import MainRetail from './retail/Main';
+import MainRetail from './retail/MainRetail';
 import RetailToolBar from '../main/retail/retailToolbar';
 import Customer from '../customer/Customer';
 import ViewPrint, { TYPE_PRINT } from '../more/ViewPrint';
@@ -74,13 +74,13 @@ export default (props) => {
 
     }
 
-    const scan = setInterval(() => {
-      getDataNewOrders()
-    }, 15000);
+    // const scan = setInterval(() => {
+    //   getDataNewOrders()
+    // }, 15000);
 
     return () => {
       AppState.removeEventListener('change', handleChangeState);
-      clearInterval(scan)
+      // clearInterval(scan)
     }
   }, [])
 

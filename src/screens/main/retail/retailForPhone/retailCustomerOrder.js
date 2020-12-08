@@ -13,12 +13,12 @@ import { ScreenList } from '../../../../common/ScreenList';
 import Entypo from 'react-native-vector-icons/Entypo';
 import realmStore from '../../../../data/realm/RealmStore';
 import dataManager from '../../../../data/DataManager';
+import RetailToolbar from '../retailToolbar';
 
 export default (props) => {
 
 
-    const [listCommodity, setListCommodity] = useState([]);
-    const [currentCommodity, setCurrentCommodity] = useState({})
+    // const [currentCommodity, setCurrentCommodity] = useState({})
     const [numberNewOrder, setNumberNewOrder] = useState(0)
     const [showModal, setShowModal] = useState(false)
     const [listOrder, setListOrder] = useState([])
@@ -28,32 +28,51 @@ export default (props) => {
     const [expand, setExpand] = useState(false)
     const [customer, setCustomer] = useState("")
     const [isQuickPayment, setIsQuickPayment] = useState(false)
+    const currentCommodity = useRef({})
+
+    let serverEvents = null;
 
     useEffect(() => {
-        const getCommodityWaiting = async () => {
-            let serverEvents = await realmStore.queryServerEvents()
-            serverEvents = JSON.parse(JSON.stringify(serverEvents))
-            serverEvents = Object.values(serverEvents)
-            console.log('serverEventsserverEventsserverEvents', serverEvents);
-            if (serverEvents.length == 0) {
-                let newSE = await createNewServerEvent()
-                console.log('createNewServerEventcreateNewServerEvent', newSE);
-                setListCommodity([...listCommodity])
-                setCurrentCommodity(newSE)
-            } else {
-                setListCommodity(serverEvents)
-                setCurrentCommodity(serverEvents[serverEvents.length - 1])
-            }
-        }
+        console.log('retailCUstomeroder', props);
         getCommodityWaiting()
         var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
         var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
 
+
         return () => {
+            if (serverEvents) serverEvents.removeAllListeners()
             keyboardDidShowListener.remove();
             keyboardDidHideListener.remove();
         }
     }, [])
+
+    // useEffect(() => {
+    //     updateServerEvent(listOrder, currentCommodity.current)
+    // }, [listOrder])
+
+
+    const getCommodityWaiting = async () => {
+        serverEvents = await realmStore.queryServerEvents()
+        let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
+        newServerEvents = Object.values(newServerEvents)
+        setNumberNewOrder(newServerEvents.length)
+        if (newServerEvents.length == 0) {
+            let newSE = await createNewServerEvent()
+            currentCommodity.current = newSE
+        } else {
+            currentCommodity.current = newServerEvents[newServerEvents.length - 1]
+            let jsonContent = JSON.parse(currentCommodity.current.JsonContent)
+            setListOrder(jsonContent.OrderDetails)
+        }
+
+        serverEvents.addListener((collection, changes) => {
+            if (changes.insertions.length || changes.modifications.length) {
+                let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
+                newServerEvents = Object.values(newServerEvents)
+                setNumberNewOrder(newServerEvents.length)
+            }
+        })
+    }
 
     const _keyboardDidShow = () => {
         // if (orientaition != Constant.PORTRAIT)
@@ -64,9 +83,6 @@ export default (props) => {
         setMargin(0)
     }
 
-    useEffect(() => {
-        listOrder.forEach((elm, index) => elm.index = index)
-    }, [listOrder])
 
     const createNewServerEvent = async () => {
         let newServerEvent = await dataManager.createSeverEvent(Date.now(), "A")
@@ -75,12 +91,6 @@ export default (props) => {
         return realmStore.insertServerEventForRetail(newServerEvent)
     }
 
-    // useEffect(() => {
-    //     if (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0) {
-    //         let listOrder = props.jsonContent.OrderDetails.filter(item => item.ProductId > 0)
-    //         setListOrder(listOrder)
-    //     } else setListOrder([])
-    // }, [props.jsonContent])
 
     // const sendOrder = async () => {
     //     console.log("sendOrder room ", props.route.params.room);
@@ -119,65 +129,13 @@ export default (props) => {
         return isProcessed;
     }
 
-    // const removeItem = (item) => {
-    //     console.log('removeItem ', item.Name, item.index);
-    //     listOrder.splice(item.index, 1)
-    //     props.outputListProducts([...listOrder])
-    // }
+    const removeItem = (item) => {
+        console.log('removeItem ', item.Name, item.index);
+        listOrder.splice(item.index, 1)
+        updateServerEvent(listOrder, currentCommodity.current)
+        setListOrder([...listOrder])
+    }
 
-    // const onClickTopping = (item, index) => {
-    //     setItemOrder(item)
-    //     props.navigation.navigate('Topping', { _onSelect: onCallBack, itemOrder: item, Position: props.Position, IdRoom: props.route.params.room.Id })
-    // }
-
-
-    // const mapToppingToList = (listTopping) => {
-    //     console.log('mapToppingToList listTopping:', listTopping);
-    //     console.log('mapToppingToList itemOrder ', itemOrder);
-
-    //     const getInfoTopping = (lt) => {
-    //         let description = '';
-    //         let totalTopping = 0;
-    //         let topping = []
-    //         lt.forEach(item => {
-    //             if (item.Quantity > 0) {
-    //                 description += ` -${item.Name} x${item.Quantity} = ${currencyToString(item.Quantity * item.Price)};\n `
-    //                 totalTopping += item.Quantity * item.Price
-    //                 topping.push({ ExtraId: item.ExtraId, QuantityExtra: item.Quantity, Price: item.Price, Quantity: item.Quantity })
-    //             }
-    //         })
-    //         return [description, totalTopping, topping]
-    //     }
-    //     let [description, totalTopping, topping] = getInfoTopping(listTopping)
-    //     listOrder.forEach((element, index) => {
-    //         if (element.ProductId == itemOrder.ProductId && index == itemOrder.index) {
-    //             element.Description = description
-    //             element.Topping = JSON.stringify(topping)
-    //             element.TotalTopping = totalTopping
-
-    //             let basePriceProduct = element.Price > element.TotalTopping ? element.Price - element.TotalTopping : 0
-    //             element.Price = basePriceProduct + totalTopping
-    //         }
-    //     });
-    //     setListOrder([...listOrder])
-    //     props.outputListProducts([...listOrder])
-    // }
-
-    // const mapDataToList = (data) => {
-    //     console.log("mapDataToList data ", data);
-    //     listOrder.forEach((element, index, arr) => {
-    //         if (element.ProductId == data.ProductId && index == itemOrder.index) {
-    //             if (data.Quantity == 0) {
-    //                 arr.splice(index, 1)
-    //             }
-    //             element.Description = data.Description
-    //             element.Quantity = +data.Quantity
-    //             element.IsLargeUnit = data.IsLargeUnit
-    //         }
-    //     });
-
-    //     props.outputListProducts([...listOrder])
-    // }
 
     const getTotalPrice = () => {
         let total = 0;
@@ -293,8 +251,83 @@ export default (props) => {
         setIsQuickPayment(!isQuickPayment)
     }
 
+    const onCLickQR = () => {
+        props.navigation.navigate("QRCode", { _onSelect: onCallBack })
+    }
+
+    const onCLickNoteBook = () => {
+        props.navigation.navigate("NoteBook", { _onSelect: onCallBack })
+    }
+
+    const onClickSync = () => {
+
+    }
+
+    const outputTextSearch = (text) => {
+        console.log('outputTextSearch', text);
+    }
+
+    const onClickSelect = () => {
+        props.navigation.navigate(ScreenList.RetailSelectProduct, { _onSelect: onCallBack, listProducts: listOrder })
+    }
+
+    const onCallBack = (data, type) => {
+        switch (type) {
+            case 1:
+                updateServerEvent(data, currentCommodity.current)
+                setListOrder(data)
+                break;
+
+            case 3:
+                console.log('onCallBackonCallBack', data);
+                currentCommodity.current = data
+                let jsonContent = JSON.parse(currentCommodity.current.JsonContent)
+                setListOrder(jsonContent.OrderDetails)
+                break
+            default:
+                break;
+        }
+    }
+
+    const updateServerEvent = (data, serverEvent) => {
+        console.log('updateServerEvent', data, serverEvent);
+        let jsonContent = JSON.parse(serverEvent.JsonContent)
+        jsonContent.OrderDetails = [...data]
+        dataManager.calculatateJsonContent(jsonContent)
+        serverEvent.JsonContent = JSON.stringify(jsonContent)
+        realmStore.insertServerEventForRetail(serverEvent)
+    }
+
+    const onClickNewOrder = async () => {
+        if (listOrder.length == 0) {
+            setToastDescription(I18n.t("moi_chon_mon_truoc"))
+            setShowToast(true)
+            return
+        }
+        let newSE = await createNewServerEvent()
+        console.log('createNewServerEventcreateNewServerEvent', newSE);
+        currentCommodity.current = newSE
+        setListOrder([])
+    }
+
+    const onClickPayment = () => {
+        console.log('onClickPayment', currentCommodity.current);
+        if (isQuickPayment) {
+
+        } else {
+
+        }
+    }
+
     return (
         <View style={{ flex: 1 }}>
+            <RetailToolbar
+                {...props}
+                onClickSelect={onClickSelect}
+                onCLickQR={onCLickQR}
+                onCLickNoteBook={onCLickNoteBook}
+                onClickSync={onClickSync}
+                outputTextSearch={outputTextSearch} />
             <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 2, borderBottomColor: Colors.colorchinh, borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5 }}>
                 <TouchableOpacity
                     style={{ flexDirection: "row", alignItems: "center" }}
@@ -332,7 +365,7 @@ export default (props) => {
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                         <Text style={{ fontWeight: "bold" }}>{I18n.t('tong_thanh_tien')}</Text>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                            <Text style={{ fontWeight: "bold", fontSize: 16, color: colors.colorchinh }}>đ</Text>
+                            <Text style={{ fontWeight: "bold", fontSize: 16, color: Colors.colorchinh }}>{currencyToString(currentCommodity.current.jsonContent.Total)}đ</Text>
                             {expand ?
                                 <Icon style={{}} name="chevron-up" size={30} color="black" />
                                 :
@@ -340,28 +373,28 @@ export default (props) => {
                             }
                         </View>
                     </View>
-                    {/* {expand ?
+                    {expand ?
                         <View style={{ marginLeft: 0 }}>
                             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                                 <Text>{I18n.t('tong_chiet_khau')}</Text>
-                                <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>- {currencyToString(jsonContent.Discount)}đ</Text>
+                                <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>- {currencyToString(currentCommodity.current.jsonContent.Discount)}đ</Text>
                             </View>
                             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
-                                <Text>VAT ({jsonContent.VATRates}%)</Text>
+                                <Text>VAT ({currentCommodity.current.jsonContent.VATRates}%)</Text>
                                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                                    <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(jsonContent.VAT ? jsonContent.VAT : 0)}đ</Text>
+                                    <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(currentCommodity.current.jsonContent.VAT ? currentCommodity.current.jsonContent.VAT : 0)}đ</Text>
                                 </View>
                             </View>
                             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                                 <Text style={{ fontWeight: "bold" }}>{I18n.t('khach_phai_tra')}</Text>
                                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                                    <Text style={{ fontWeight: "bold", fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(jsonContent.Total)}đ</Text>
+                                    <Text style={{ fontWeight: "bold", fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(currentCommodity.current.jsonContent.Total)}đ</Text>
                                 </View>
                             </View>
                         </View>
                         :
                         null
-                    } */}
+                    }
                 </TouchableOpacity>
             </View>
             <View style={{ height: 40, flexDirection: "row", backgroundColor: "#0072bc", alignItems: "center" }}>
@@ -387,17 +420,17 @@ export default (props) => {
                     </Menu>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => {
-                    props.navigation.navigate(ScreenList.CommodityWaiting, { listCommodity: listCommodity })
+                    props.navigation.navigate(ScreenList.CommodityWaiting, { _onSelect: onCallBack })
                 }} style={{ flex: .5, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%", flexDirection: 'row' }}>
                     <Icon name="file-document-edit-outline" size={30} color="white" />
                     <View style={{ backgroundColor: Colors.colorchinh, borderRadius: 40, position: "absolute", right: 10, top: -5 }}>
                         <Text style={{ fontWeight: "bold", padding: 4, color: "white", fontSize: 14 }}>{numberNewOrder}</Text>
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => { }} style={{ flex: .8, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
+                <TouchableOpacity onPress={onClickNewOrder} style={{ flex: .8, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
                     <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('don_hang_moi')}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => { }} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
+                <TouchableOpacity onPress={onClickPayment} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
                     <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase", textAlign: "center" }}>{isQuickPayment ? I18n.t('thanh_toan_nhanh') : I18n.t('thanh_toan')}</Text>
                 </TouchableOpacity>
             </View>
