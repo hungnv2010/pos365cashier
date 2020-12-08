@@ -15,6 +15,15 @@ import dialogManager from '../../../../components/dialog/DialogManager';
 import dataManager from '../../../../data/DataManager';
 import { useDispatch, useSelector } from 'react-redux';
 import { defaultMultiKitchen } from '../../../more/ViewPrint';
+import { color } from 'react-native-reanimated';
+import { getFileDuLieuString } from '../../../../data/fileStore/FileStorage';
+import { Constant } from '../../../../common/Constant';
+import { ReturnProduct } from '../../ReturnProduct';
+
+const TYPE_MODAL = {
+    DETAIL: 0,
+    DELETE: 1
+}
 
 export default (props) => {
 
@@ -29,8 +38,21 @@ export default (props) => {
     const [itemOrder, setItemOrder] = useState({})
     const [marginModal, setMargin] = useState(0)
     const [expand, setExpand] = useState(false)
+    const [vendorSession, setVendorSession] = useState({});
+    const typeModal = useRef(TYPE_MODAL.DETAIL)
+
+    const isFNB = useSelector(state => {
+        console.log("useSelector CustomerOrder state ", state);
+        return state.Common.isFNB;
+    });
 
     useEffect(() => {
+        const getVendorSession = async () => {
+            let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
+            console.log('ReturnProduct data', JSON.parse(data));
+            setVendorSession(JSON.parse(data))
+        }
+        getVendorSession();
 
         var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
         var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
@@ -100,8 +122,14 @@ export default (props) => {
 
     const removeItem = (item) => {
         console.log('removeItem ', item.Name, item.index);
-        listOrder.splice(item.index, 1)
-        props.outputListProducts([...listOrder])
+        if (isFNB) {
+            setItemOrder(item)
+            typeModal.current = TYPE_MODAL.DELETE
+            setShowModal(true)
+        } else {
+            listOrder.splice(item.index, 1)
+            props.outputListProducts([...listOrder])
+        }
     }
 
     const onClickTopping = (item, index) => {
@@ -190,56 +218,70 @@ export default (props) => {
     };
 
     const renderProduct = (item, index) => {
+        const isPromotion = !(item.IsPromotion == undefined || (item.IsPromotion == false))
         return (
-            <TouchableOpacity key={index} onPress={() => {
-                if (item.ProductType == 2 && item.IsTimer) {
-                    setToastDescription(I18n.t("ban_khong_co_quyen_dieu_chinh_mat_hang_thoi_gian"))
-                    setShowToast(true)
-                    return
-                }
-                setItemOrder({ ...item })
-                setShowModal(!showModal)
-            }}>
-                <View style={styles.mainItem}>
-                    <TouchableOpacity
-                        style={{ paddingHorizontal: 5 }}
-                        onPress={() => removeItem(item)}>
-                        <Icon name="trash-can-outline" size={40} color="black" />
-                    </TouchableOpacity>
-                    <View style={{ flex: 1, }}>
-                        <TextTicker
-                            style={{ fontWeight: "bold", marginBottom: 7 }}
-                            duration={6000}
-                            marqueeDelay={1000}>
-                            {item.Name}
-                        </TextTicker>
-                        <View style={{ flexDirection: "row" }}>
-                            <Text style={{}}>{item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : currencyToString(item.Price)} x </Text>
-                            <View>
-                                <Text style={{ color: Colors.colorchinh }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text>
-                            </View>
+            <>
+                {
+                    isPromotion && item.FisrtPromotion != undefined ?
+                        <View style={{ backgroundColor: "#ffedd6", padding: 7, paddingHorizontal: 10 }}>
+                            <Text style={{ color: colors.colorchinh, fontWeight: "bold" }}>{I18n.t('khuyen_mai')}</Text>
                         </View>
+                        : null
+                }
+                <TouchableOpacity key={index} onPress={() => {
+                    if (isPromotion) return;
+                    if (item.ProductType == 2 && item.IsTimer) {
+                        setToastDescription(I18n.t("ban_khong_co_quyen_dieu_chinh_mat_hang_thoi_gian"))
+                        setShowToast(true)
+                        return
+                    }
+                    setItemOrder({ ...item })
+                    typeModal.current = TYPE_MODAL.DETAIL
+                    setShowModal(!showModal)
+                }}>
+                    <View style={styles.mainItem}>
+                        <TouchableOpacity
+                            style={{ paddingVertical: 10, paddingHorizontal: 5}}
+                            onPress={() => { if (!isPromotion) removeItem(item) }}>
+                            <Icon name={!isPromotion ? "trash-can-outline" : "gift"} size={40} color={!isPromotion ? "black" : colors.colorLightBlue} />
+                        </TouchableOpacity>
+                        <View style={{ flex: 1, }}>
+                            <TextTicker
+                                style={{ fontWeight: "bold", marginBottom: 7 }}
+                                duration={6000}
+                                marqueeDelay={1000}>
+                                {item.Name}
+                            </TextTicker>
+                            <View style={{ flexDirection: "row" }}>
+                                <Text style={{}}>{isPromotion ? 0 : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : currencyToString(item.Price))} x </Text>
+                                <View>
+                                    <Text style={{ color: Colors.colorchinh }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text>
+                                </View>
+                            </View>
 
-                        {item.Description != "" ?
-                            <Text
-                                style={{ fontStyle: "italic", fontSize: 11, color: "gray" }}>
-                                {item.Description}
-                            </Text>
-                            :
-                            null}
-                    </View>
-                    <Icon style={{ paddingHorizontal: 5 }} name="bell-ring" size={20} color="grey" />
-                    {item.ProductType == 2 && item.IsTimer ?
+                            {item.Description != "" ?
+                                <Text
+                                    style={{ fontStyle: "italic", fontSize: 11, color: "gray" }}>
+                                    {item.Description}
+                                </Text>
+                                :
+                                null}
+                        </View>
+                        <Icon style={{ paddingHorizontal: 5 }} name="bell-ring" size={20} color="grey" />
+                        {/* {item.ProductType == 2 && item.IsTimer ?
                         null
                         :
-                        <TouchableOpacity
-                            style={{ marginRight: 5, borderWidth: 1, borderRadius: 50, padding: 3, borderColor: Colors.colorchinh }}
-                            onPress={() => onClickTopping(item)}>
-                            <Icon name="puzzle" size={25} color={Colors.colorchinh} />
-                        </TouchableOpacity>
-                    }
-                </View>
-            </TouchableOpacity>
+                        !isPromotion ?
+                            <TouchableOpacity
+                                style={{ marginRight: 5, borderWidth: 1, borderRadius: 50, padding: 3, borderColor: Colors.colorchinh }}
+                                onPress={() => onClickTopping(item)}>
+                                <Icon name="puzzle" size={25} color={Colors.colorchinh} />
+                            </TouchableOpacity>
+                            : null
+                    } */}
+                    </View>
+                </TouchableOpacity>
+            </>
         )
     }
 
@@ -253,6 +295,13 @@ export default (props) => {
                 total += (item.Price) * item.Quantity
             });
         return total
+    }
+
+    const saveOrder = (data) => {
+        console.log('saveOrder data ', data);
+
+        listOrder.splice(itemOrder.index, 1)
+        props.outputListProducts([...listOrder])
     }
 
     const changTable = () => {
@@ -389,16 +438,30 @@ export default (props) => {
                             // marginBottom: Platform.OS == 'ios' ? Metrics.screenHeight / 2.5 : 0
                             marginBottom: Platform.OS == 'ios' ? marginModal : 0
                         }}>
-                            <DialogProductDetail
-                                onClickTopping={() => onClickTopping(itemOrder)}
-                                item={itemOrder}
-                                getDataOnClick={(data) => {
-                                    mapDataToList(data)
-                                }}
-                                setShowModal={() => {
-                                    setShowModal(false)
-                                }}
-                            />
+                            {
+                                typeModal.current == TYPE_MODAL.DETAIL ?
+                                    <DialogProductDetail
+                                        onClickTopping={() => onClickTopping(itemOrder)}
+                                        item={itemOrder}
+                                        getDataOnClick={(data) => {
+                                            mapDataToList(data)
+                                        }}
+                                        setShowModal={() => {
+                                            setShowModal(false)
+                                        }}
+                                    />
+                                    :
+                                    <ReturnProduct
+                                        Name={itemOrder.Name}
+                                        Quantity={itemOrder.Quantity}
+                                        vendorSession={vendorSession}
+                                        getDataOnClick={(data) => saveOrder(data)}
+                                        setShowModal={() => {
+                                            setShowModal(false)
+                                        }
+                                        } />
+                            }
+                            {/* */}
                         </View>
                     </View>
                 </View>
@@ -422,7 +485,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-evenly",
-        paddingVertical: 10,
+        // paddingVertical: 10,
         borderBottomColor: "#ABB2B9",
         borderBottomWidth: 0.5,
     },

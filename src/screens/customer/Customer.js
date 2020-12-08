@@ -20,10 +20,14 @@ import { ApiPath } from '../../data/services/ApiPath';
 import dataManager from '../../data/DataManager';
 import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
 import dialogManager from '../../components/dialog/DialogManager';
+import IconFeather from 'react-native-vector-icons/Feather';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Fontisto from 'react-native-vector-icons/Fontisto';
+import TextTicker from 'react-native-text-ticker';
 
 let GUEST = {
     Id: -1,
-    Name: "khach_le",
+    Name: I18n.t("khach_le"),
     Code: "KH_khach_le",
     Point: 0,
 }
@@ -101,22 +105,24 @@ export default (props) => {
             <TouchableOpacity onPress={() => onClickCustomerItem(item)} key={index.toString()}
                 style={[{ flexDirection: "row", alignItems: "center", borderBottomColor: "#ddd", borderBottomWidth: 1, padding: 10 }, item.Id == customerItem.Id && deviceType == Constant.TABLET ? { backgroundColor: "#F6DFCE" } : { backgroundColor: "white" }]}>
                 <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center", }}>
-                    <Image source={images.icon_bell_blue} style={{ height: 50, width: 50, marginRight: 10 }} />
+                    <View style={{ width: 60, height: 60, justifyContent: "center", alignItems: "center", backgroundColor: index % 2 == 0 ? colors.colorPhu : colors.colorLightBlue, borderRadius: 30, marginRight: 10 }}>
+                        <Text style={{ color: "#fff", fontSize: 24, textTransform: "uppercase" }}>{item.Name[0]}</Text>
+                    </View>
                     <View style={{ flex: 1.3 }}>
                         <Text
                             numberOfLines={1}
                             style={{ fontSize: 15, fontWeight: "bold", }}>{item.Name}</Text>
                         <Text style={{ paddingVertical: 5 }}>{item.Code}</Text>
-                        <Text style={{}}>Reward Point: {currencyToString(item.Point)}</Text>
+                        <Text style={{}}>{I18n.t('diem_thuong')}: {currencyToString(item.Point)}</Text>
                     </View>
                     <View style={{ flex: 1 }}>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
-                            <Image source={images.icon_bell_blue} style={{ height: 15, width: 15, }} />
-                            <Text>{item.Phone && item.Phone != '' ? item.Phone : "No information"}</Text>
+                            <Icon name="phone" size={24} color={colors.colorchinh} style={{}} />
+                            <Text>{item.Phone && item.Phone != '' ? item.Phone : I18n.t('chua_cap_nhat')}</Text>
                         </View>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-                            <Image source={images.icon_bell_blue} style={{ height: 15, width: 15, }} />
-                            <Text>{item.Address && item.Address != '' ? item.Address : "No information"}</Text>
+                            <Icon name="home" size={24} color={colors.colorchinh} style={{}} />
+                            <TextTicker>{item.Address && item.Address != '' ? item.Address : I18n.t('chua_cap_nhat')}</TextTicker>
                         </View>
                     </View>
                 </View>
