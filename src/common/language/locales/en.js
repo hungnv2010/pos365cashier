@@ -103,7 +103,8 @@ export default {
   ho_tro: "Support",
 
   // TODO: I
-  in_tam_tinh: "Printing temporary",
+  in_tam_tinh: "Print provisional",
+  in_tem: "Print temp",
   in: "Print",
 
   // TODO: K

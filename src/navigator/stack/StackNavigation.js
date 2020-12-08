@@ -32,6 +32,7 @@ import CommodityWaiting from '../../screens/main/retail/commodityWaiting'
 import RoomHistory from '../../screens/roomHistory/RoomHistory'
 import RetailSelectProduct from '../../screens/main/retail/retailForPhone/retailSelectProducts'
 import MainRetail from '../../screens/main/retail/MainRetail'
+import Pricebook from '../../screens/served/Pricebook';
 
 
 const MainStack = createStackNavigator();
@@ -75,6 +76,7 @@ export default (props) => {
                 <MainStack.Screen name={ScreenList.RoomHistory}>{props=><RoomHistory/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.RetailSelectProduct}>{props => <RetailSelectProduct {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.MainRetail}>{props => <MainRetail {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.PriceBook}>{props => <Pricebook {...props} />}</MainStack.Screen>
             </MainStack.Navigator>
         </Animated.View>
     );

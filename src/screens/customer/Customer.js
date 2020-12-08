@@ -74,7 +74,7 @@ export default (props) => {
 
     const onClickCustomerItem = (item) => {
         if (props.route.params._onSelect) {
-            props.route.params._onSelect(item);
+            props.route.params._onSelect(item ? item : { Name: "Khách hàng", Id: 0 }, 2);
             props.navigation.goBack()
         } else {
             if (item.Id == -1) {

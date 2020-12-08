@@ -15,7 +15,6 @@ import dataManager from '../../../data/DataManager'
 import moment from 'moment';
 import I18n from '../../../common/language/i18n';
 import { Modal } from 'react-native';
-import Pricebook from '../Pricebook';
 import colors from '../../../theme/Colors';
 import { Colors } from '../../../theme';
 import CustomerOrder from './pageServed/CustomerOrder';
@@ -263,6 +262,7 @@ const Served = (props) => {
     }
 
     const onClickListedPrice = () => {
+        props.navigation.navigate(ScreenList.PriceBook, { _onSelect: onCallBack, currentPriceBook: currentPriceBook, listPricebook: pricebooksRef.current })
         outputClickPriceBook()
     }
 
@@ -272,17 +272,24 @@ const Served = (props) => {
 
     const onClickRetailCustomer = () => {
         console.log('onClickRetailCustomer');
-        props.navigation.navigate(ScreenList.Customer, { _onSelect: onCallBackCustomer })
+        props.navigation.navigate(ScreenList.Customer, { _onSelect: onCallBack })
     }
 
-    const onCallBackCustomer = (data) => {
-        console.log('onCallBackCustomer', data);
+    const onCallBack = (data, type) => {
+        console.log('onCallBackCustomer', data); 
+        switch (type) {
+            case 1:
+                if (data) setCurrentPriceBook(data)
+                break;
+            case 2:
+                if (data) setCurrentCustomer(data)
+                break;
+
+            default:
+                break;
+        }
     }
 
-    const outputPriceBookSelected = (pricebook) => {
-        if (pricebook) setCurrentPriceBook(pricebook)
-        setShowPriceBook(false)
-    }
 
     const outputClickProductService = async () => {
         let results = await realmStore.queryProducts()
@@ -349,21 +356,6 @@ const Served = (props) => {
                 outputListProducts={outputListProducts}
                 outputTextSearch={outputTextSearch} />
             <View style={{ flex: 1, flexDirection: "row" }}>
-                <Modal
-                    animationType="fade"
-                    transparent={true}
-                    visible={showPriceBook}
-                    supportedOrientations={['portrait', 'landscape']}
-                    onRequestClose={() => { }}>
-                    <Pricebook
-                        currentPriceBook={currentPriceBook}
-                        outputPriceBookSelected={outputPriceBookSelected}
-                        listPricebook={pricebooksRef.current}
-                    >
-                    </Pricebook>
-                </Modal>
-
-
                 <View style={{ flex: 6, }}>
                     <View style={!itemOrder.ProductId ? { flex: 1 } : { width: 0, height: 0 }}>
                         <SelectProduct

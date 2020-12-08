@@ -24,8 +24,8 @@ const CustomerOrder = (props) => {
 
     const [showModal, setShowModal] = useState(false)
     const [listOrder, setListOrder] = useState(() =>
-    (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0 )
-    ? props.jsonContent.OrderDetails.filter(item => item.ProductId > 0) : []
+        (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0)
+            ? props.jsonContent.OrderDetails.filter(item => item.ProductId > 0) : []
     )
     const [itemOrder, setItemOrder] = useState({})
     const [showToast, setShowToast] = useState(false);
@@ -33,10 +33,10 @@ const CustomerOrder = (props) => {
     const [marginModal, setMargin] = useState(0)
     const [IsLargeUnit, setIsLargeUnit] = useState(false)
     const typeModal = useRef(TYPE_MODAL.UNIT)
-
+    const [expand, setExpand] = useState(false)
     const [waitingList, setWaitingList] = useState([])
     const debouceWaitingList = useDebounce(waitingList)
-
+    const [isQuickPayment, setIsQuickPayment] = useState(false)
     const orientaition = useSelector(state => {
         console.log("orientaition", state);
         return state.Common.orientaition
@@ -62,8 +62,8 @@ const CustomerOrder = (props) => {
     }
 
     useEffect(() => {
-        listOrder.forEach((elm, index) =>  elm.index = index)
-    },[listOrder])
+        listOrder.forEach((elm, index) => elm.index = index)
+    }, [listOrder])
 
     useEffect(() => {
         setItemOrder(props.itemOrder)
@@ -113,16 +113,16 @@ const CustomerOrder = (props) => {
 
     }, [props.listTopping])
 
-    useEffect(() => { 
+    useEffect(() => {
         if (debouceWaitingList.length > 0) {
-            debouceWaitingList.forEach( product => props.outputSelectedProduct(product, true))
+            debouceWaitingList.forEach(product => props.outputSelectedProduct(product, true))
             setWaitingList([])
         }
     }, [debouceWaitingList])
 
     const applyDialogDetail = (product) => {
-        listOrder.forEach( (elm, index) => {
-            if(elm.ProductId == product.ProductId && index == product.index) elm = product
+        listOrder.forEach((elm, index) => {
+            if (elm.ProductId == product.ProductId && index == product.index) elm = product
         })
         setListOrder([...listOrder])
         mapDataToList(product, true)
@@ -138,7 +138,7 @@ const CustomerOrder = (props) => {
                     elm = product
                 }
             })
-            if(!isExist) waitingList.push(product)
+            if (!isExist) waitingList.push(product)
             setWaitingList([...waitingList])
         }
     }
@@ -151,17 +151,6 @@ const CustomerOrder = (props) => {
         props.outputSelectedProduct(product)
     }
 
-    const getTotalPrice = () => {
-        let total = 0;
-        listOrder.forEach(item => {
-            if (!(item.ProductType == 2 && item.IsTimer)) {
-                let price = item.IsLargeUnit ? item.PriceLargeUnit : item.Price
-                let totalTopping = item.TotalTopping ? item.TotalTopping : 0
-                total += (price + totalTopping) * item.Quantity
-            }
-        })
-        return total
-    }
 
     const onClickTopping = (item) => {
         props.outputItemOrder(item)
@@ -194,12 +183,12 @@ const CustomerOrder = (props) => {
                 }
                 console.log("setItemOrder ", item);
                 typeModal.current = TYPE_MODAL.DETAIL;
-                setItemOrder({ ...item})
+                setItemOrder({ ...item })
                 setShowModal(!showModal)
             }}>
                 <View style={{
                     borderBottomColor: "#ddd", borderBottomWidth: 0.5,
-                    flexDirection: "row", flex: 1, alignItems: "center", justifyContent: "space-evenly", padding: 5, 
+                    flexDirection: "row", flex: 1, alignItems: "center", justifyContent: "space-evenly", padding: 5,
                     backgroundColor: index == props.itemOrder.index ? "#EED6A7" : 'white', borderRadius: 10, marginBottom: 2
                 }}>
                     <TouchableOpacity
@@ -211,7 +200,7 @@ const CustomerOrder = (props) => {
                         <Text style={{ fontWeight: "bold", marginBottom: 7 }}>{item.Name}</Text>
                         <View style={{ flexDirection: "row" }}>
                             <Text style={{}}>{item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : currencyToString(item.Price)} x </Text>
-                            <View onPress={() => onClickUnit({...item})}>
+                            <View onPress={() => onClickUnit({ ...item })}>
                                 {
                                     orientaition == Constant.PORTRAIT ?
                                         <Text style={{ color: Colors.colorchinh, }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text>
@@ -255,7 +244,7 @@ const CustomerOrder = (props) => {
                                                     if (item.Quantity == 1) {
                                                         removeItem(item, index)
                                                     } else {
-                                                        item.Quantity --
+                                                        item.Quantity--
                                                         setListOrder([...listOrder])
                                                         mapDataToList(item, false)
                                                     }
@@ -338,7 +327,15 @@ const CustomerOrder = (props) => {
     }
 
     const onClickPayment = () => {
-        props.navigation.navigate(ScreenList.Payment, { RoomId: props.route.params.room.Id, Position: props.Position });
+        if (isQuickPayment) {
+
+        } else {
+            props.navigation.navigate(ScreenList.Payment, { RoomId: props.route.params.room.Id, Position: props.Position });
+        }
+    }
+
+    const onClickOptionQuickPayment = () => {
+        setIsQuickPayment(!isQuickPayment)
     }
 
     return (
@@ -358,14 +355,46 @@ const CustomerOrder = (props) => {
                     </View>
                 }
             </View>
-            <View
-                style={{ borderTopWidth: .5, borderTopColor: "red", paddingVertical: 3, backgroundColor: "white" }}>
-                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 5 }}>
-                    <Text style={{ fontWeight: "bold" }}>{I18n.t('tam_tinh')}</Text>
-                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                        <Text style={{ fontWeight: "bold", fontSize: 18, color: "#0072bc" }}>{currencyToString(getTotalPrice())}đ</Text>
+
+            <View>
+
+                <TouchableOpacity
+                    onPress={() => { setExpand(!expand) }}
+                    style={{ borderTopWidth: .5, borderTopColor: "red", paddingVertical: 3, backgroundColor: "white", marginLeft: 10 }}>
+                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+                        <Text style={{ fontWeight: "bold" }}>{I18n.t('tong_thanh_tien')}</Text>
+                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
+                            <Text style={{ fontWeight: "bold", fontSize: 16, color: Colors.colorchinh }}>{currencyToString(props.jsonContent.Total)}</Text>
+                            {expand ?
+                                <Icon style={{}} name="chevron-up" size={30} color="black" />
+                                :
+                                <Icon style={{}} name="chevron-down" size={30} color="black" />
+                            }
+                        </View>
                     </View>
-                </View>
+                    {expand ?
+                        <View style={{ marginLeft: 0 }}>
+                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+                                <Text>{I18n.t('tong_chiet_khau')}</Text>
+                                <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>- {currencyToString(props.jsonContent.Discount)}đ</Text>
+                            </View>
+                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+                                <Text>VAT ({props.jsonContent.VATRates}%)</Text>
+                                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
+                                    <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(props.jsonContent.VAT ? props.jsonContent.VAT : 0)}đ</Text>
+                                </View>
+                            </View>
+                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+                                <Text style={{ fontWeight: "bold" }}>{I18n.t('khach_phai_tra')}</Text>
+                                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
+                                    <Text style={{ fontWeight: "bold", fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(props.jsonContent.AmountReceived)}</Text>
+                                </View>
+                            </View>
+                        </View>
+                        :
+                        null
+                    }
+                </TouchableOpacity>
             </View>
             <View style={{ height: 40, flexDirection: "row", backgroundColor: "#0072bc", alignItems: "center" }}>
                 <TouchableOpacity
@@ -377,13 +406,25 @@ const CustomerOrder = (props) => {
                         <View style={{
                             backgroundColor: "#fff", borderRadius: 4, marginHorizontal: 5,
                         }}>
-                            <TouchableOpacity onPress={() => changTable()} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
+                            <TouchableOpacity onPress={() => { }} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
+                                <MaterialIcons style={{ paddingHorizontal: 7 }} name="notifications" size={26} color={Colors.colorchinh} />
+                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('tach_ban')}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={changTable} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
                                 <MaterialIcons style={{ paddingHorizontal: 7 }} name="notifications" size={26} color={Colors.colorchinh} />
                                 <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('chuyen_ban')}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => {}} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
+                            <TouchableOpacity onPress={() => { }} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
+                                <MaterialIcons style={{ paddingHorizontal: 7 }} name="notifications" size={26} color={Colors.colorchinh} />
+                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('in_tam_tinh')}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => { }} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
                                 <Icon style={{ paddingHorizontal: 10 }} name="message" size={22} color={Colors.colorchinh} />
-                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('tam_tinh')}</Text>
+                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('in_tem')}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={onClickOptionQuickPayment} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
+                                <Icon style={{ paddingHorizontal: 10 }} name={isQuickPayment ? "check-box-outline" : "close-box-outline"} size={26} color={isQuickPayment ? Colors.colorchinh : "#000"} />
+                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('thanh_toan_nhanh')}</Text>
                             </TouchableOpacity>
                         </View>
                     </Menu>
@@ -392,7 +433,7 @@ const CustomerOrder = (props) => {
                     <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('bao_che_bien')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => onClickPayment()} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
-                    <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('thanh_toan')}</Text>
+                    <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{isQuickPayment ? I18n.t('thanh_toan_nhanh') : I18n.t('thanh_toan')}</Text>
                 </TouchableOpacity>
             </View>
             <Modal
@@ -437,12 +478,12 @@ const CustomerOrder = (props) => {
                                     }}
                                     setShowModal={() => {
                                         setShowModal(false)
-                                    }} 
+                                    }}
                                 />
                                 :
                                 <DialogProductUnit
-                                    setIsLargeUnit = {(IsLargeUnit) => setIsLargeUnit(IsLargeUnit)}
-                                    onClickSubmitUnit = {() => onClickSubmitUnit()}
+                                    setIsLargeUnit={(IsLargeUnit) => setIsLargeUnit(IsLargeUnit)}
+                                    onClickSubmitUnit={() => onClickSubmitUnit()}
                                 />
                             }
                         </View>

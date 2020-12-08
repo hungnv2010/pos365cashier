@@ -275,9 +275,11 @@ class DataManager {
 
     calculatateJsonContent = (JsonContent) => {
         let totalProducts = this.totalProducts(JsonContent.OrderDetails)
+        let discount = this.totalDiscountProducts(JsonContent.OrderDetails)
         let totalWithVAT = totalProducts + (JsonContent.VAT ? JsonContent.VAT : 0)
         JsonContent.Total = totalWithVAT
-        JsonContent.AmountReceived = totalWithVAT
+        JsonContent.AmountReceived = totalWithVAT - discount
+        JsonContent.Discount = discount
         if (!JsonContent.ActiveDate || JsonContent.ActiveDate == "")
             JsonContent.ActiveDate = moment()
         else if (!JsonContent.OrderDetails || JsonContent.OrderDetails.length == 0)
@@ -293,6 +295,15 @@ class DataManager {
 
     totalProducts = (products) => {
         return products.reduce((total, product) => total + product.Price * product.Quantity, 0)
+    }
+
+    totalDiscountProducts = (products) => {
+        let totalDiscount = 0
+        products.forEach(product => {
+            let discount = product.Discount > 0 ? product.Discount : 0
+            totalDiscount = product.Percent ? product.Price * discount / 100 : discount
+        })
+        return totalDiscount
     }
 
     sentNotification = (Title, Body) => {

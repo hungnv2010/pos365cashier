@@ -21,7 +21,7 @@ import dataManager from '../../../../data/DataManager';
 
 
 const TYPE_MODAL = {
-    UNIT: 1,
+    // UNIT: 1,
     DETAIL: 2
 }
 
@@ -32,11 +32,13 @@ const RetailCustomerOrder = (props) => {
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
     const [marginModal, setMargin] = useState(0)
-    const [IsLargeUnit, setIsLargeUnit] = useState(false)
+    // const [IsLargeUnit, setIsLargeUnit] = useState(false)
     const [numberNewOrder, setNumberNewOrder] = useState(0)
     const [expand, setExpand] = useState(false)
-    const typeModal = useRef(TYPE_MODAL.UNIT)
-    const currentCommodity = useRef({})
+    const typeModal = useRef(TYPE_MODAL.DETAIL)
+    const [itemOrder, setItemOrder] = useState({})
+    const [currentCommodity, setCurrentCommodity] = useState({})
+    const [jsonContent, setJsonContent] = useState({})
 
     const orientaition = useSelector(state => {
         console.log("orientaition", state);
@@ -64,8 +66,14 @@ const RetailCustomerOrder = (props) => {
 
 
     useEffect(() => {
-        updateServerEvent(listOrder, currentCommodity.current)
+        listOrder.forEach((elm, index) => elm.index = index)
+        updateServerEvent(listOrder, currentCommodity)
     }, [listOrder])
+
+    useEffect(() => {
+        let jsonObject = currentCommodity.JsonContent ? JSON.parse(currentCommodity.JsonContent) : {}
+        setJsonContent({ ...jsonObject })
+    }, [currentCommodity])
 
 
     const getCommodityWaiting = async () => {
@@ -75,10 +83,10 @@ const RetailCustomerOrder = (props) => {
         setNumberNewOrder(newServerEvents.length)
         if (newServerEvents.length == 0) {
             let newSE = await createNewServerEvent()
-            currentCommodity.current = newSE
+            setCurrentCommodity(newSE)
         } else {
-            currentCommodity.current = newServerEvents[newServerEvents.length - 1]
-            let jsonContent = JSON.parse(currentCommodity.current.JsonContent)
+            setCurrentCommodity(newServerEvents[newServerEvents.length - 1])
+            let jsonContent = JSON.parse(newServerEvents[newServerEvents.length - 1].JsonContent)
             setListOrder(jsonContent.OrderDetails)
         }
 
@@ -86,6 +94,7 @@ const RetailCustomerOrder = (props) => {
             if (changes.insertions.length || changes.modifications.length) {
                 let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
                 newServerEvents = Object.values(newServerEvents)
+                setCurrentCommodity(newServerEvents[newServerEvents.length - 1])
                 setNumberNewOrder(newServerEvents.length)
             }
         })
@@ -124,34 +133,26 @@ const RetailCustomerOrder = (props) => {
         setMargin(0)
     }
 
-    // const applyDialogDetail = (product) => {
-    //     listOrder.forEach((elm, index) => {
-    //         if (elm.ProductId == product.ProductId && index == product.index) elm = product
-    //     })
-    //     setListOrder([...listOrder])
-    //     mapDataToList(product, true)
-    // }`
+    const applyDialogDetail = (product) => {
+        console.log('applyDialogDetail', product);
+        listOrder.forEach((elm, index) => {
+            if (elm.ProductId == product.ProductId && index == product.index) {
+                elm.Quantity = product.Quantity
+                elm.Description = product.Description
+                elm.Discount = product.Discount
+                elm.Percent = product.Percent
+                elm.PriceWithDiscount = product.PriceWithDiscount
+            }
+        })
+        setListOrder([...listOrder])
+    }
 
 
 
     const removeItem = (product, index) => {
         console.log('removeItem', index, product);
         listOrder.splice(index, 1)
-        // props.outputSelectedProduct(listOrder, 2)
-        // setListOrder([...listOrder])
         syncListProducts(listOrder)
-    }
-
-    const getTotalPrice = () => {
-        let total = 0;
-        listOrder.forEach(item => {
-            if (!(item.ProductType == 2 && item.IsTimer)) {
-                let price = item.IsLargeUnit ? item.PriceLargeUnit : item.Price
-                let totalTopping = item.TotalTopping ? item.TotalTopping : 0
-                total += (price + totalTopping) * item.Quantity
-            }
-        })
-        return total
     }
 
     const onClickNewOrder = async () => {
@@ -161,9 +162,8 @@ const RetailCustomerOrder = (props) => {
             return
         }
         let newSE = await createNewServerEvent()
-        currentCommodity.current = newSE
-        props.outputSelectedProduct([], 2)
-        setListOrder([])
+        setCurrentCommodity(newSE)
+        syncListProducts([])
     }
 
 
@@ -175,23 +175,12 @@ const RetailCustomerOrder = (props) => {
 
     const showMenu = () => { _menu.show() };
 
-    // const onClickUnit = (item) => {
-    //     if (item.Unit && item.Unit != "" && item.LargeUnit && item.LargeUnit != "") {
-    //         typeModal.current = TYPE_MODAL.UNIT;
-    //         setIsLargeUnit(item.IsLargeUnit)
-    //         setItemOrder(item)
-    //         setShowModal(true)
-    //     }
-    // }
+
 
     const renderForTablet = (item, index) => {
         return (
             <TouchableOpacity key={index} onPress={() => {
-                if (item.ProductType == 2 && item.IsTimer) {
-                    setToastDescription(I18n.t("ban_khong_co_quyen_dieu_chinh_mat_hang_thoi_gian"))
-                    setShowToast(true)
-                    return
-                }
+                setItemOrder(item)
                 console.log("setItemOrder ", item);
                 typeModal.current = TYPE_MODAL.DETAIL;
                 setShowModal(!showModal)
@@ -209,7 +198,7 @@ const RetailCustomerOrder = (props) => {
                     <View style={{ flexDirection: "column", flex: 1, }}>
                         <Text style={{ fontWeight: "bold", marginBottom: 7 }}>{item.Name}</Text>
                         <View style={{ flexDirection: "row" }}>
-                            <Text style={{}}>{item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : currencyToString(item.Price)} x </Text>
+                            <Text style={{}}>{item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : item.Discount > 0 ? currencyToString(item.PriceWithDiscount) : currencyToString(item.Price)} x </Text>
                             <View onPress={() => onClickUnit({ ...item })}>
                                 {
                                     orientaition == Constant.PORTRAIT ?
@@ -230,97 +219,52 @@ const RetailCustomerOrder = (props) => {
                         orientaition == Constant.PORTRAIT ?
                             null
                             :
-                            <View style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                                {
-                                    item.ProductType == 2 && item.IsTimer ?
-                                        <View style={{
-                                            flex: 1 / 2, alignItems: "center", paddingVertical: 10,
-                                            shadowColor: "#000",
-                                            shadowOffset: {
-                                                width: 0,
-                                                height: 1,
-                                            },
-                                            shadowOpacity: 0.18,
-                                            shadowRadius: 1.00,
-                                            elevation: 2,
-                                            borderRadius: 2
-                                        }}>
-                                            <Text style={{}}>{Math.round(item.Quantity * 1000) / 1000}</Text>
-                                        </View>
-                                        :
-                                        <View style={{ alignItems: "center", flexDirection: "row", }}>
-                                            <TouchableOpacity
-                                                onPress={() => {
-                                                    if (item.Quantity == 1) {
-                                                        removeItem(item, index)
-                                                    } else {
-                                                        item.Quantity--
-                                                        setListOrder([...listOrder])
-                                                        mapDataToList(item, false)
-                                                    }
-                                                }}>
-                                                <Icon name="minus-box" size={40} color={Colors.colorchinh} />
-                                            </TouchableOpacity>
-                                            <View style={{
-                                                width: 60,
-                                                height: 35,
-                                                shadowColor: "#000",
-                                                shadowOffset: {
-                                                    width: 0,
-                                                    height: 1,
-                                                },
-                                                shadowOpacity: 0.18,
-                                                shadowRadius: 1.00,
-                                                elevation: 2,
-                                                borderRadius: 2,
-                                                justifyContent: "center",
-                                                alignItems: "center"
-                                            }}>
-                                                <Text
-                                                    style={{
-                                                        fontSize: 16,
-                                                        fontWeight: "bold",
-                                                    }}>{item.Quantity}</Text>
-                                            </View>
-                                            <TouchableOpacity onPress={() => {
-                                                item.Quantity++
-                                                setListOrder([...listOrder])
-                                                mapDataToList(item, false)
-                                            }}>
-                                                <Icon name="plus-box" size={40} color={Colors.colorchinh} />
-                                            </TouchableOpacity>
-                                        </View>
-                                }
+                            <View style={{ alignItems: "center", flexDirection: "row", }}>
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        if (item.Quantity == 1) {
+                                            removeItem(item, index)
+                                        } else {
+                                            item.Quantity--
+                                            setListOrder([...listOrder])
+                                        }
+                                    }}>
+                                    <Icon name="minus-box" size={40} color={Colors.colorchinh} />
+                                </TouchableOpacity>
+                                <View style={{
+                                    width: 60,
+                                    height: 35,
+                                    shadowColor: "#000",
+                                    shadowOffset: {
+                                        width: 0,
+                                        height: 1,
+                                    },
+                                    shadowOpacity: 0.18,
+                                    shadowRadius: 1.00,
+                                    elevation: 2,
+                                    borderRadius: 2,
+                                    justifyContent: "center",
+                                    alignItems: "center"
+                                }}>
+                                    <Text
+                                        style={{
+                                            fontSize: 16,
+                                            fontWeight: "bold",
+                                        }}>{item.Quantity}</Text>
+                                </View>
+                                <TouchableOpacity onPress={() => {
+                                    item.Quantity++
+                                    setListOrder([...listOrder])
+                                }}>
+                                    <Icon name="plus-box" size={40} color={Colors.colorchinh} />
+                                </TouchableOpacity>
                             </View>
                     }
-                    {
-                        item.ProductType == 2 && item.IsTimer ?
-                            null
-                            :
-                            <TouchableOpacity
-                                style={{ borderWidth: 1, borderRadius: 50, borderColor: Colors.colorchinh, }}
-                                onPress={() => {
-                                    // props.outputItemOrder(item, index)
-                                }}>
-                                <Icon name="puzzle" size={25} color={Colors.colorchinh} style={{ padding: 5 }} />
-                            </TouchableOpacity>
-                    }
+
                 </View>
             </TouchableOpacity>
         )
     }
-
-    // const onClickSubmitUnit = () => {
-    //     let array = listOrder.map((item, index) => {
-    //         if (item.ProductId == itemOrder.ProductId && index == itemOrder.index) {
-    //             item.IsLargeUnit = IsLargeUnit
-    //         }
-    //         return item;
-    //     })
-
-    //     setListOrder([...array])
-    //     setShowModal(false)
-    // }
 
     const changTable = () => {
         hideMenu()
@@ -359,8 +303,8 @@ const RetailCustomerOrder = (props) => {
         console.log('onCallBackonCallBackonCallBack', data, type);
         switch (type) {
             case 3: // from commodity waiting
-                currentCommodity.current = data
-                let jsonContent = JSON.parse(currentCommodity.current.JsonContent)
+                setCurrentCommodity(data)
+                let jsonContent = JSON.parse(data.JsonContent)
                 // setListOrder(jsonContent.OrderDetails)
                 syncListProducts(jsonContent.OrderDetails)
                 break;
@@ -410,7 +354,7 @@ const RetailCustomerOrder = (props) => {
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                         <Text style={{ fontWeight: "bold" }}>{I18n.t('tong_thanh_tien')}</Text>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                            <Text style={{ fontWeight: "bold", fontSize: 16, color: Colors.colorchinh }}></Text>
+                            <Text style={{ fontWeight: "bold", fontSize: 16, color: Colors.colorchinh }}>{currencyToString(jsonContent.Total)}</Text>
                             {expand ?
                                 <Icon style={{}} name="chevron-up" size={30} color="black" />
                                 :
@@ -422,18 +366,18 @@ const RetailCustomerOrder = (props) => {
                         <View style={{ marginLeft: 0 }}>
                             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                                 <Text>{I18n.t('tong_chiet_khau')}</Text>
-                                <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>- {}đ</Text>
+                                <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>- {currencyToString(jsonContent.Discount)}đ</Text>
                             </View>
                             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
-                                <Text>VAT (%)</Text>
+                                <Text>VAT ({jsonContent.VATRates}%)</Text>
                                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                                    <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>{}đ</Text>
+                                    <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(jsonContent.VAT ? jsonContent.VAT : 0)}đ</Text>
                                 </View>
                             </View>
                             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                                 <Text style={{ fontWeight: "bold" }}>{I18n.t('khach_phai_tra')}</Text>
                                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                                    <Text style={{ fontWeight: "bold", fontSize: 16, color: "#0072bc", marginRight: 30 }}>{}đ</Text>
+                                    <Text style={{ fontWeight: "bold", fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(jsonContent.AmountReceived)}</Text>
                                 </View>
                             </View>
                         </View>
@@ -480,7 +424,7 @@ const RetailCustomerOrder = (props) => {
                     <Icon name="delete-forever" size={30} color="white" />
                 </TouchableOpacity> */}
             </View>
-            {/* <Modal
+            <Modal
                 animationType="fade"
                 transparent={true}
                 visible={showModal}
@@ -515,25 +459,20 @@ const RetailCustomerOrder = (props) => {
                         }}>
                             {typeModal.current == TYPE_MODAL.DETAIL ?
                                 <DialogProductDetail
-                                    onClickTopping={() => onClickTopping(itemOrder)}
+                                    fromRetail={true}
                                     item={itemOrder}
-                                    getDataOnClick={(data) => {
-                                        applyDialogDetail(data)
-                                    }}
+                                    onClickSubmit={data => { applyDialogDetail(data) }}
                                     setShowModal={() => {
                                         setShowModal(false)
                                     }}
                                 />
                                 :
-                                <DialogProductUnit
-                                    setIsLargeUnit={(IsLargeUnit) => setIsLargeUnit(IsLargeUnit)}
-                                    onClickSubmitUnit={() => onClickSubmitUnit()}
-                                />
+                                null
                             }
                         </View>
                     </View>
                 </View>
-            </Modal> */}
+            </Modal>
             <Snackbar
                 duration={5000}
                 visible={showToast}

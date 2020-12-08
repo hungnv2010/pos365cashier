@@ -118,6 +118,7 @@ export default {
 
   // TODO: I
   in_tam_tinh: "In tạm tính",
+  in_tem: "In tem",
   in: "in",
 
   // TODO: K

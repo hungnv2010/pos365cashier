@@ -1,26 +1,27 @@
 import React, { useEffect, useState, useRef, useLayoutEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import { Colors, Metrics, Images } from '../../theme'
 import colors from '../../theme/Colors';
-import realmStore from '../../data/realm/RealmStore';
 import I18n from '../../common/language/i18n';
-import { currencyToString } from '../../common/Utils'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
+
 
 export default (props) => {
 
-    const [currentPriceId, setCurrentPriceId] = useState((props.currentPriceBook.Id? props.currentPriceBook.Id : 0))
+    const [currentPriceId, setCurrentPriceId] = useState((props.route.params.currentPriceBook.Id ? props.route.params.currentPriceBook.Id : 0))
 
     useEffect(() => {
-        setCurrentPriceId(props.currentPriceBook.Id? props.currentPriceBook.Id : 0)
-    }, [props.currentPriceBook])
+        setCurrentPriceId(props.route.params.currentPriceBook.Id ? props.route.params.currentPriceBook.Id : 0)
+    }, [props.route.params.currentPriceBook])
 
     const renderPriceBook = (item, index) => {
         let isSelected = currentPriceId == item.Id
         return (
-            <TouchableOpacity onPress ={() => props.outputPriceBookSelected(item ? item : {Name: "Giá niêm yết", Id: 0})}>
-                <View key={item.Id} style={{...styles.Item, backgroundColor: index % 2 == 0 ? "#f9f2e4" : "white", flex: 1}}>
-                        <Text numberOfLines={2} style={{ color: isSelected? colors.colorchinh : "black"}}>{item.Name}</Text>
+            <TouchableOpacity onPress={() => {
+                props.route.params._onSelect(item ? item : { Name: "Giá niêm yết", Id: 0 }, 1)
+                props.navigation.pop()
+            }}>
+                <View key={item.Id} style={{ ...styles.Item, backgroundColor: index % 2 == 0 ? "#f9f2e4" : "white", flex: 1 }}>
+                    <Text numberOfLines={2} style={{ color: isSelected ? colors.colorchinh : "black" }}>{item.Name}</Text>
                 </View >
             </TouchableOpacity>
         )
@@ -28,26 +29,23 @@ export default (props) => {
 
     return (
         <View style={{ flex: 1 }}>
-            <View style={{ height: 45, backgroundColor: Colors.colorchinh, flexDirection: "row" }}>
-                <View style={{ alignItems: "flex-start" }}>
-                    <TouchableOpacity onPress={() => props.outputPriceBookSelected() }>
-                        <Icon name="keyboard-backspace" size={35} color="white" />
-                    </TouchableOpacity>
-                </View>
-                <View style={{ flex: 2, justifyContent: "center", alignItems: "center" }}>
-                    <Text style={{ color: "white", fontWeight: "bold", fontSize: 15 }}>{I18n.t("chon_bang_gia")}</Text>
-                </View>
-            </View>
-            <View style={{ flex: 1 , backgroundColor: "white"}}>
+            <ToolBarDefault
+                {...props}
+                navigation={props.navigation}
+                clickLeftIcon={() => {
+                    props.navigation.goBack()
+                }}
+                title={I18n.t('danh_sach_gia')} />
+            <View style={{ flex: 1, backgroundColor: "white" }}>
                 <View style={{ flex: 1 }}>
                     <FlatList
-                        data={props.listPricebook}
+                        data={props.route.params.listPricebook}
                         showsVerticalScrollIndicator={false}
                         renderItem={({ item, index }) => renderPriceBook(item, index)}
                         keyExtractor={(item, index) => '' + index}
-                        extraData={props.listPricebook}
-                        key={props.numColumns}
-                        numColumns={props.numColumns} />
+                        extraData={props.route.params.listPricebook}
+                        key={props.route.params.numColumns}
+                        numColumns={props.route.params.numColumns} />
                 </View>
             </View>
         </View>
