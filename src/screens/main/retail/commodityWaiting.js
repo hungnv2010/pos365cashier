@@ -28,16 +28,6 @@ export default (props) => {
 
 
     useEffect(() => {
-<<<<<<< HEAD
-        setListCommodity(props.route.params.listCommodity)
-        
-        const getDataRealm = async () => {
-            let promotion = await realmStore.querryPromotion();
-            // currentServerEvent.current = serverEvents.filtered(`RowKey == '${row_key}'`)[0]
-            console.log("promotion ===", promotion);
-        }
-        getDataRealm();
-=======
         const getCommodityWaiting = async () => {
             try {
                 // dialogManager.showLoading()
@@ -53,7 +43,6 @@ export default (props) => {
             }
         }
         getCommodityWaiting()
->>>>>>> 9d06a06bee3e60ab6e8a68110f6220a398c188da
     }, [])
 
     const onClickCommodity = (item) => {
