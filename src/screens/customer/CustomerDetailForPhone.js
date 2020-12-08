@@ -13,6 +13,7 @@ import { ApiPath } from '../../data/services/ApiPath';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import dialogManager from '../../components/dialog/DialogManager';
 import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
+import { useSelector } from 'react-redux';
 
 
 export default (props) => {
@@ -25,6 +26,10 @@ export default (props) => {
     const toastDescription = useRef('')
     const dateTmp = useRef()
 
+    const { deviceType } = useSelector(state => {
+        console.log("useSelector state ", state);
+        return state.Common
+    });
 
     useEffect(() => {
         const getListGroup = async () => {
@@ -95,7 +100,7 @@ export default (props) => {
         console.log('renderGender', item);
         return (
             <View style={{ padding: 15 }}>
-                <Text style={{ paddingBottom: 10 }}>Sex</Text>
+                <Text style={{ paddingBottom: 10 }}>{I18n.t('gioi_tinh')}</Text>
                 <View style={{ height: 50, flexDirection: "row", borderWidth: 1, borderColor: colors.colorchinh, borderRadius: 5 }}>
                     <TouchableOpacity onPress={() => {
                         setCustomerDetail({ ...customerDetail, Gender: 2 })
@@ -411,7 +416,7 @@ export default (props) => {
             </View> */}
             <ToolBarDefault
                 {...props}
-                title={props.route.params.item.Id == -1 ? 'Add customer' : 'Update Customer'} />
+                title={props.route.params.item.Id == -1 ? I18n.t('them_khach_hang') : I18n.t('cap_nhat_khach_hang')} />
             <ScrollView style={{ flex: 1, padding: 10 }}>
                 <Surface style={styles.surface}>
                     <View style={{ height: Metrics.screenHeight / 6, flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 15 }}>
@@ -419,7 +424,7 @@ export default (props) => {
                             <Image source={getIcon(customerDetail.Gender, customerDetail.Image)} style={{ height: 100, width: 100, alignSelf: "center" }} />
                         </View>
                         <View style={{ flex: 2, }}>
-                            <Text style={{ fontWeight: "bold" }}>Customer Code</Text>
+                            <Text style={{ fontWeight: "bold" }}>{I18n.t('ma_khach_hang')}</Text>
                             <View style={{ paddingVertical: 20 }}>
                                 <TextInput
                                     placeholder={I18n.t('tu_dong_tao_ma')}
@@ -433,7 +438,7 @@ export default (props) => {
                 </Surface>
                 <Surface style={styles.surface}>
                     <View style={{ padding: 15 }}>
-                        <Text style={{ paddingBottom: 10 }}>Name <Text style={{ color: "red" }}>*</Text></Text>
+                        <Text style={{ paddingBottom: 10 }}>{I18n.t('ten')} <Text style={{ color: "red" }}>*</Text></Text>
                         <TextInput
                             placeholder={I18n.t('ten')}
                             value={customerDetail.Name}
@@ -442,9 +447,9 @@ export default (props) => {
                         />
                     </View>
                     <View style={{ padding: 15 }}>
-                        <Text style={{ paddingBottom: 10 }}>Phone</Text>
+                        <Text style={{ paddingBottom: 10 }}>{I18n.t('so_dien_thoai')}</Text>
                         <TextInput
-                            placeholder={I18n.t('dien_thoai')}
+                            placeholder={I18n.t('so_dien_thoai')}
                             keyboardType="numeric"
                             value={customerDetail.Phone}
                             style={{ borderWidth: 0.5, padding: 10, borderRadius: 5 }}
@@ -452,7 +457,7 @@ export default (props) => {
                         />
                     </View>
                     <View style={{ padding: 15 }}>
-                        <Text style={{ paddingBottom: 10 }}>Birthday</Text>
+                        <Text style={{ paddingBottom: 10 }}>{I18n.t('ngay_sinh')}</Text>
                         <View style={{ flexDirection: "row", flex: 1 }}>
                             <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
                                 <TextInput
@@ -492,7 +497,7 @@ export default (props) => {
                         />
                     </View>
                     <View style={{ padding: 15 }}>
-                        <Text style={{ paddingBottom: 10 }}>Group name</Text>
+                        <Text style={{ paddingBottom: 10 }}>{I18n.t('ten_nhom')}</Text>
                         <View style={{ flexDirection: "row", alignItems: "center" }}>
                             <TextInput
                                 placeholder={I18n.t('ten_nhom')}
@@ -512,7 +517,7 @@ export default (props) => {
                 </Surface>
                 <Surface style={styles.surface}>
                     <View style={{ padding: 15 }}>
-                        <Text style={{ paddingBottom: 10 }}>Address</Text>
+                        <Text style={{ paddingBottom: 10 }}>{I18n.t('dia_chi')}</Text>
                         <TextInput
                             placeholder={I18n.t('dia_chi')}
                             value={customerDetail.Address}
@@ -521,7 +526,7 @@ export default (props) => {
                         />
                     </View>
                     <View style={{ padding: 15 }}>
-                        <Text style={{ paddingBottom: 10 }}>City</Text>
+                        <Text style={{ paddingBottom: 10 }}>{I18n.t('tinh_thanh')}</Text>
                         <View style={{ flexDirection: "row", flex: 1 }}>
                             <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
                                 <TextInput
@@ -549,7 +554,7 @@ export default (props) => {
                 </Surface>
                 <Surface style={styles.surface}>
                     <View style={{ padding: 15 }}>
-                        <Text style={{ paddingBottom: 10 }}>Debt</Text>
+                        <Text style={{ paddingBottom: 10 }}>{I18n.t('du_no')}</Text>
                         <TextInput
                             placeholder={I18n.t('du_no')}
                             keyboardType="numeric"
@@ -559,7 +564,7 @@ export default (props) => {
                         />
                     </View>
                     <View style={{ padding: 15 }}>
-                        <Text style={{ paddingBottom: 10 }}>Reward point</Text>
+                        <Text style={{ paddingBottom: 10 }}>{I18n.t('diem_thuong')}</Text>
                         <TextInput
                             placeholder={I18n.t('diem_thuong')}
                             keyboardType="numeric"
@@ -572,7 +577,7 @@ export default (props) => {
                 </Surface>
                 <Surface style={styles.surface}>
                     <View style={{ padding: 15 }}>
-                        <Text style={{ paddingBottom: 10 }}>Note</Text>
+                        <Text style={{ paddingBottom: 10 }}>{I18n.t('ghi_chu')}</Text>
                         <TextInput
                             placeholder={I18n.t('ghi_chu')}
                             value={customerDetail.Description}

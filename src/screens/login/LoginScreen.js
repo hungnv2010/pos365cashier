@@ -245,7 +245,7 @@ const LoginScreen = (props) => {
                                     Keyboard.dismiss();
                                     setLogIn(!logIn)
                                 }}>
-                                <Text style={{ color: "#fff", fontWeight: 'bold' }}>{I18n.t("nhan_vien_order").toUpperCase()}</Text>
+                                <Text style={{ color: "#fff", fontWeight: 'bold' }}>{I18n.t("thu_ngan").toUpperCase()}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>

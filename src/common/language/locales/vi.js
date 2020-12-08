@@ -28,7 +28,7 @@ export default {
   bao_che_bien: "Báo chế biến",
   bao_che_bien_thanh_cong: "Báo chế biến thành công",
   ban_co_chac_chan_muon_xoa_hoa_don: "Hoá đơn đang được sử dụng. Bạn có chắc chắn muốn xoá hoá hơn?",
-
+  
   // TODO: C
   cai_dat: "Cài đặt",
   chon_chi_nhanh: "Chọn chi nhánh",
@@ -60,6 +60,7 @@ export default {
   cong_vao_khoan_no: "Cộng vào khoản nợ",
   chon_bang_gia: "Chọn bảng giá",
   cac_mon_ban_chon_dang_duoc_nha_bep_chuan_bi: "Các món bạn chọn đang được nhà bếp và bartender chuẩn bị. Vui lòng đợi.",
+  cap_nhat_khach_hang: "Cập nhật khách hàng",
 
   // TODO: D
   dang_dung: "Đang dùng",
@@ -84,6 +85,7 @@ export default {
   diem_hien_tai: "Điểm hiện có",
   diem_thuong: "Điểm thưởng",
   don_hang_moi:"Đơn mới",
+  du_no: "Dư nợ",
 
   // TODO: E
 
@@ -135,6 +137,8 @@ export default {
   ket_qua_ban_hang: "Kết quả bán hàng",
   khach_thanh_toan: "Khách thanh toán",
   khong_ho_tro_nhieu_tai_khoan_cho_qr: "Không hỗ trợ nhiều tài khoản thanh toán cho QR",
+  khuyen_mai: "Khuyễn mãi",
+  khuyen_mai_: "khuyễn mãi",
 
   // TODO: H
   hoa_don: "Hoá đơn",
@@ -176,6 +180,7 @@ export default {
   mon_da_xac_nhan: "Món đã xác nhận",
   mac_dinh: "Mặc định",
   mat_hang: "Mặt hàng",
+  ma_khach_hang: "Mã khách hàng",
 
   // TODO: N
   no: "Nợ",
@@ -312,6 +317,10 @@ export default {
   tra_lai_tien: "Trả lại tiền",
   thong_tin_them: "Thông tin thêm",
   thoi_gian: "Thời gian",
+  thu_ngan: "Thu ngân",
+  them_khach_hang: "Thêm khách hàng",
+  tu_dong_tao_ma: "Tự động tạo mã",
+
   // TODO: U
 
   // TODO: V

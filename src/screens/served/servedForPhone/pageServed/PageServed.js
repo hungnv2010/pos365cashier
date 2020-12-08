@@ -17,6 +17,7 @@ import dataManager from '../../../../data/DataManager';
 import Pricebook from '../../Pricebook';
 import { ApiPath } from '../../../../data/services/ApiPath';
 import { HTTPService } from '../../../../data/services/HttpService';
+import _, { map } from 'underscore';
 
 export default (props) => {
 
@@ -24,7 +25,7 @@ export default (props) => {
     const currentServerEvent = useRef({})
 
     const [jsonContent, setJsonContent] = useState({})
-
+    const [promotions, setPromotions] = useState([])
     const [showModal, setShowModal] = useState(false)
     const [position, setPosition] = useState('A')
     const [showToast, setShowToast] = useState(false);
@@ -79,6 +80,13 @@ export default (props) => {
             })
 
         }
+
+        const getDataRealm = async () => {
+            let promotions = await realmStore.querryPromotion();
+            console.log("promotions === ", promotions);
+            setPromotions(promotions)
+        }
+        getDataRealm();
 
         getListPos()
         return () => {
@@ -166,8 +174,117 @@ export default (props) => {
             toolBarPhoneServedRef.current.clickCheckInRef(!ischeck)
         }
         list = await getOtherPrice(list)
+        list = await addPromotion(list);
+        console.log("outputListProducts addPromotion list ", list);
         jsonContent.OrderDetails = [...list]
         updateServerEvent()
+    }
+
+    const addPromotion = async (list) => {
+        console.log("addPromotion list ", list);
+        // console.log("addPromotion promotions ", promotions);
+        let listNewOrder = list.filter(element => (element.IsPromotion == undefined || (element.IsPromotion == false)))
+        // list.forEach(element => {
+        //     console.log("element.hasOwnProperty(isPromotion) ", element.isPromotion);
+        //     if (element.IsPromotion == undefined || (element.IsPromotion == false)) {
+        //         listNewOrder.push({ ...element, IsPromotion: false })
+        //     }
+        //     promotions.forEach(item => {
+        //         if (element.Id == item.ProductId && checkEndDate(item.EndDate) && (item.QuantityCondition <= element.Quantity)) {
+        //             console.log("addPromotion ok ==== ", item);
+        //             let promotion = JSON.parse(item.Promotion)
+        //             promotion.IsPromotion = true;
+        //             promotion.ProductId = promotion.Id
+        //             promotion.Quantity = Math.floor(element.Quantity / promotion.QuantityCondition)
+        //             listNewOrder.push(promotion)
+        //         }
+        //     });
+        // });
+
+        var DataGrouper = (function () {
+            var has = function (obj, target) {
+                return _.any(obj, function (value) {
+                    return _.isEqual(value, target);
+                });
+            };
+
+            var keys = function (data, names) {
+                return _.reduce(data, function (memo, item) {
+                    var key = _.pick(item, names);
+                    if (!has(memo, key)) {
+                        memo.push(key);
+                    }
+                    return memo;
+                }, []);
+            };
+
+            var group = function (data, names) {
+                var stems = keys(data, names);
+                return _.map(stems, function (stem) {
+                    return {
+                        key: stem,
+                        vals: _.map(_.where(data, stem), function (item) {
+                            return _.omit(item, names);
+                        })
+                    };
+                });
+            };
+
+            group.register = function (name, converter) {
+                return group[name] = function (data, names) {
+                    return _.map(group(data, names), converter);
+                };
+            };
+
+            return group;
+        }());
+
+        DataGrouper.register("sum", function (item) {
+            console.log("register item ", item);
+
+            return _.extend({ ...item.vals[0] }, item.key, {
+                Quantity: _.reduce(item.vals, function (memo, node) {
+                    return memo + Number(node.Quantity);
+                }, 0)
+            });
+        });
+
+        let listGroupByQuantity = DataGrouper.sum(list, ["Id"])
+
+        console.log("listGroupByQuantity == ", listGroupByQuantity);
+
+        let listPromotion = [];
+        let index = 0;
+        listGroupByQuantity.forEach(element => {
+            promotions.forEach(item => {
+                if ((element.IsPromotion == undefined || (element.IsPromotion == false)) && element.Id == item.ProductId && checkEndDate(item.EndDate) && element.Quantity >= item.QuantityCondition) {
+                    let promotion = JSON.parse(item.Promotion)
+                    if (index == 0) {
+                        promotion.FisrtPromotion = true;
+                    }
+                    promotion.IsPromotion = true;
+                    promotion.ProductId = promotion.Id
+                    promotion.Description = element.Quantity + " " + element.Name + ` ${I18n.t('khuyen_mai_')} ` + Math.floor(element.Quantity / item.QuantityCondition);
+                    promotion.Quantity = Math.floor(element.Quantity / item.QuantityCondition)
+                    console.log("addPromotion promotion ", promotion, index);
+                    listPromotion.push(promotion)
+                    index++;
+                }
+            });
+        });
+        listNewOrder = listNewOrder.concat(listPromotion);
+        console.log("addPromotion listNewOrder:: ", listNewOrder);
+        return listNewOrder;
+    }
+
+    const checkEndDate = (date) => {
+        let endDate = new Date(date)
+        let currentDate = new Date();
+        console.log("currentDate endDate ", currentDate, endDate);
+        if (endDate.getTime() > currentDate.getTime()) {
+            return true;
+        }
+        return true;
     }
 
     const updateServerEvent = () => {
@@ -303,7 +420,7 @@ export default (props) => {
         if (currentServerEvent) {
             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current))
             // dataManager.calculatateJsonContent(jsonContent)
-            setJsonContent({...jsonContent})
+            setJsonContent({ ...jsonContent })
             serverEvent.Version += 1
             serverEvent.JsonContent = JSON.stringify(jsonContent)
             dataManager.updateServerEvent(serverEvent)

@@ -27,7 +27,14 @@ export default (props) => {
 
 
     useEffect(() => {
-       setListCommodity(props.route.params.listCommodity)
+        setListCommodity(props.route.params.listCommodity)
+        
+        const getDataRealm = async () => {
+            let promotion = await realmStore.querryPromotion();
+            // currentServerEvent.current = serverEvents.filtered(`RowKey == '${row_key}'`)[0]
+            console.log("promotion ===", promotion);
+        }
+        getDataRealm();
     }, [])
 
     const onClickCommodity = (item) => {
