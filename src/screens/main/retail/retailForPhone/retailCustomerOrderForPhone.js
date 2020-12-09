@@ -8,17 +8,17 @@ import TextTicker from 'react-native-text-ticker';
 import { currencyToString } from '../../../../common/Utils'
 import I18n from "../../../../common/language/i18n"
 import { Snackbar } from 'react-native-paper';
-import colors from '../../../../theme/Colors';
 import { ScreenList } from '../../../../common/ScreenList';
 import Entypo from 'react-native-vector-icons/Entypo';
 import realmStore from '../../../../data/realm/RealmStore';
 import dataManager from '../../../../data/DataManager';
 import RetailToolbar from '../retailToolbar';
+import DialogProductDetail from '../../../../components/dialog/DialogProductDetail';
 
 export default (props) => {
 
 
-    // const [currentCommodity, setCurrentCommodity] = useState({})
+    const [currentCommodity, setCurrentCommodity] = useState({})
     const [numberNewOrder, setNumberNewOrder] = useState(0)
     const [showModal, setShowModal] = useState(false)
     const [listOrder, setListOrder] = useState([])
@@ -26,18 +26,30 @@ export default (props) => {
     const [toastDescription, setToastDescription] = useState("")
     const [marginModal, setMargin] = useState(0)
     const [expand, setExpand] = useState(false)
-    const [customer, setCustomer] = useState("")
     const [isQuickPayment, setIsQuickPayment] = useState(false)
-    const currentCommodity = useRef({})
+    const [itemOrder, setItemOrder] = useState({})
+    const [jsonContent, setJsonContent] = useState({})
+    const [currentPriceBook, setCurrentPriceBook] = useState({ Name: "Giá niêm yết", Id: 0 })
+    const [currentCustomer, setCurrentCustomer] = useState({ Name: "Khách hàng", Id: 0 })
+    const pricebooksRef = useState()
 
     let serverEvents = null;
 
     useEffect(() => {
-        console.log('retailCUstomeroder', props);
         getCommodityWaiting()
         var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
         var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
 
+        const initPricebook = async () => {
+            let newPricebooks = []
+            let results = await realmStore.queryPricebook()
+            results.forEach(item => {
+                newPricebooks.push({ ...JSON.parse(JSON.stringify(item)) })
+            })
+            pricebooksRef.current = newPricebooks
+            console.log('pricebooksRef.current', pricebooksRef.current);
+        }
+        initPricebook()
 
         return () => {
             if (serverEvents) serverEvents.removeAllListeners()
@@ -46,9 +58,52 @@ export default (props) => {
         }
     }, [])
 
-    // useEffect(() => {
-    //     updateServerEvent(listOrder, currentCommodity.current)
-    // }, [listOrder])
+
+    useEffect(() => {
+        listOrder.forEach((elm, index) => elm.index = index)
+    }, [listOrder])
+
+    useEffect(() => {
+        let jsonObject = currentCommodity.JsonContent ? JSON.parse(currentCommodity.JsonContent) : {}
+        setJsonContent({ ...jsonObject })
+    }, [currentCommodity])
+
+    useEffect(() => {
+        const getOtherPrice = async () => {
+            if (jsonContent.OrderDetails && currentPriceBook) {
+                let apiPath = ApiPath.PRICE_BOOK + `/${currentPriceBook.Id}/manyproductprice`
+                let params = { "pricebookId": currentPriceBook.Id, "ProductIds": jsonContent.OrderDetails.map((product) => product.ProductId) }
+                let res = await new HTTPService().setPath(apiPath).POST(params)
+                if (res && res.PriceList && res.PriceList.length > 0) {
+                    jsonContent.OrderDetails.map((product) => {
+                        res.PriceList.forEach((priceBook) => {
+                            if (priceBook.ProductId == product.ProductId) {
+                                product.DiscountRatio = 0.0
+                                if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
+                                if (!priceBook.Price) priceBook.Price = product.UnitPrice
+                                let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price
+                                product.Price = newBasePrice + product.TotalTopping
+                            }
+                        })
+                    })
+                    // updateServerEvent()
+                }
+            }
+        }
+
+        const getBasePrice = () => {
+            jsonContent.OrderDetails.map((product) => {
+                product.DiscountRatio = 0.0
+                let basePrice = (product.IsLargeUnit) ? product.PriceLargeUnit : product.UnitPrice
+                product.Price = basePrice + product.TotalTopping
+            })
+            // updateServerEvent()
+        }
+        if (jsonContent.OrderDetails) {
+            if (currentPriceBook && currentPriceBook.Id) getOtherPrice()
+            else getBasePrice()
+        }
+    }, [currentPriceBook])
 
 
     const getCommodityWaiting = async () => {
@@ -58,10 +113,10 @@ export default (props) => {
         setNumberNewOrder(newServerEvents.length)
         if (newServerEvents.length == 0) {
             let newSE = await createNewServerEvent()
-            currentCommodity.current = newSE
+            setCurrentCommodity(newSE)
         } else {
-            currentCommodity.current = newServerEvents[newServerEvents.length - 1]
-            let jsonContent = JSON.parse(currentCommodity.current.JsonContent)
+            setCurrentCommodity(newServerEvents[newServerEvents.length - 1])
+            let jsonContent = JSON.parse(newServerEvents[newServerEvents.length - 1].JsonContent)
             setListOrder(jsonContent.OrderDetails)
         }
 
@@ -69,6 +124,7 @@ export default (props) => {
             if (changes.insertions.length || changes.modifications.length) {
                 let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
                 newServerEvents = Object.values(newServerEvents)
+                setCurrentCommodity(newServerEvents[newServerEvents.length - 1])
                 setNumberNewOrder(newServerEvents.length)
             }
         })
@@ -97,57 +153,19 @@ export default (props) => {
     //     props.navigation.navigate(ScreenList.Payment, { RoomId: props.route.params.room.Id, Name: props.route.params.room.Name, Position: props.Position });
     // }
 
-    // const printKitchen = () => {
-    //     let jsonContent = props.jsonContent;
-    //     if (!checkProcessedQuantityProduct(jsonContent)) {
-    //         let data = dataManager.getDataPrintCook(jsonContent.OrderDetails)
-    //         console.log("printKitchen data ", data);
-    //         jsonContent.OrderDetails.forEach(element => {
-    //             element.Processed = element.Quantity
-    //         });
-    //         console.log("printKitchen jsonContent ", jsonContent);
-    //         props.handlerProcessedProduct(jsonContent)
-    //         dispatch({ type: 'LIST_PRINT', listPrint: data })
-    //         notification(I18n.t("bao_che_bien_thanh_cong"));
-    //     } else {
-    //         notification(I18n.t("cac_mon_ban_chon_dang_duoc_nha_bep_chuan_bi"));
-    //     }
-    // }
 
     const notification = (content) => {
         setToastDescription(content);
         setShowToast(true)
     }
 
-    // const checkProcessedQuantityProduct = (jsonContent) => {
-    //     let isProcessed = true;
-    //     jsonContent.OrderDetails.forEach(element => {
-    //         if (element.Processed < element.Quantity) {
-    //             isProcessed = false;
-    //         }
-    //     });
-    //     return isProcessed;
-    // }
 
-    const removeItem = (item) => {
+    const removeItem = (item, index) => {
         console.log('removeItem ', item.Name, item.index);
-        listOrder.splice(item.index, 1)
-        updateServerEvent(listOrder, currentCommodity.current)
+        listOrder.splice(index, 1)
+        updateServerEvent(listOrder, currentCommodity)
         setListOrder([...listOrder])
     }
-
-
-    // const getTotalPrice = () => {
-    //     let total = 0;
-    //     list.forEach(item => {
-    //         if (!(item.ProductType == 2 && item.IsTimer)) {
-    //             let price = item.IsLargeUnit ? item.PriceLargeUnit : item.Price
-    //             let totalTopping = item.TotalTopping ? item.TotalTopping : 0
-    //             total += (price + totalTopping) * item.Quantity
-    //         }
-    //     })
-    //     return total
-    // }
 
 
     let _menu = null;
@@ -167,17 +185,13 @@ export default (props) => {
     const renderProduct = (item, index) => {
         return (
             <TouchableOpacity key={index} onPress={() => {
-                if (item.ProductType == 2 && item.IsTimer) {
-                    setToastDescription(I18n.t("ban_khong_co_quyen_dieu_chinh_mat_hang_thoi_gian"))
-                    setShowToast(true)
-                    return
-                }
+                setItemOrder(item)
                 setShowModal(!showModal)
             }}>
                 <View style={styles.mainItem}>
                     <TouchableOpacity
                         style={{ paddingHorizontal: 5 }}
-                        onPress={() => removeItem(item)}>
+                        onPress={() => removeItem(item, index)}>
                         <Icon name="trash-can-outline" size={40} color="black" />
                     </TouchableOpacity>
                     <View style={{ flex: 1, }}>
@@ -203,44 +217,22 @@ export default (props) => {
                             null}
                     </View>
                     <Icon style={{ paddingHorizontal: 5 }} name="bell-ring" size={20} color="grey" />
-                    {item.ProductType == 2 && item.IsTimer ?
-                        null
-                        :
-                        <TouchableOpacity
-                            style={{ marginRight: 5, borderWidth: 1, borderRadius: 50, padding: 3, borderColor: Colors.colorchinh }}
-                            onPress={() => onClickTopping(item)}>
-                            <Icon name="puzzle" size={25} color={Colors.colorchinh} />
-                        </TouchableOpacity>
-                    }
                 </View>
             </TouchableOpacity>
         )
     }
 
-    const totalPrice = (orderDetails) => {
-
-        console.log('getPrice', orderDetails);
-
-        let total = 0;
-        if (orderDetails && orderDetails.length > 0)
-            orderDetails.forEach(item => {
-                total += (item.Price) * item.Quantity
-            });
-        return total
-    }
 
     const onClickListedPrice = () => {
-        console.log('onClickListedPrice');
+        console.log('onClickListedPrice', pricebooksRef.current);
+        props.navigation.navigate(ScreenList.PriceBook, { _onSelect: onCallBack, currentPriceBook: currentPriceBook, listPricebook: pricebooksRef.current })
     }
 
-    const onCallBackCustomer = (data) => {
-        console.log("onCallBackCustomer data ", data);
-        setCustomer(data);
-    }
+
 
     const onClickRetailCustomer = () => {
         console.log('onClickRetailCustomer');
-        props.navigation.navigate(ScreenList.Customer, { _onSelect: onCallBackCustomer })
+        props.navigation.navigate(ScreenList.Customer, { _onSelect: onCallBack })
     }
 
     const onClickPrint = () => {
@@ -273,16 +265,25 @@ export default (props) => {
 
     const onCallBack = (data, type) => {
         switch (type) {
-            case 1:
-                updateServerEvent(data, currentCommodity.current)
+            case 1: //from select products
+                updateServerEvent(data, currentCommodity)
                 setListOrder(data)
                 break;
 
-            case 3:
+            case 2: //from customer
+                if (data) setCurrentCustomer(data)
+                break
+
+            case 3: //from commodity
                 console.log('onCallBackonCallBack', data);
-                currentCommodity.current = data
-                let jsonContent = JSON.parse(currentCommodity.current.JsonContent)
+                setCurrentCommodity(data)
+                let jsonContent = JSON.parse(data.JsonContent)
                 setListOrder(jsonContent.OrderDetails)
+                break
+            case 4: //from listPrice
+                if (data) setCurrentPriceBook(data)
+                break
+            case 5:
                 break
             default:
                 break;
@@ -290,6 +291,7 @@ export default (props) => {
     }
 
     const updateServerEvent = (data, serverEvent) => {
+        if (!serverEvent.JsonContent) return
         console.log('updateServerEvent', data, serverEvent);
         let jsonContent = JSON.parse(serverEvent.JsonContent)
         jsonContent.OrderDetails = [...data]
@@ -311,12 +313,25 @@ export default (props) => {
     }
 
     const onClickPayment = () => {
-        console.log('onClickPayment', currentCommodity.current);
         if (isQuickPayment) {
 
         } else {
-
+            props.navigation.navigate(ScreenList.Payment);
         }
+    }
+
+    const applyDialogDetail = (product) => {
+        console.log('applyDialogDetail', product);
+        listOrder.forEach((elm, index) => {
+            if (elm.ProductId == product.ProductId && index == product.index) {
+                elm.Quantity = product.Quantity
+                elm.Description = product.Description
+                elm.Discount = product.Discount
+                elm.Percent = product.Percent
+                elm.PriceWithDiscount = product.PriceWithDiscount
+            }
+        })
+        setListOrder([...listOrder])
     }
 
     return (
@@ -333,12 +348,12 @@ export default (props) => {
                     style={{ flexDirection: "row", alignItems: "center" }}
                     onPress={onClickListedPrice}>
                     <Entypo style={{ paddingHorizontal: 5 }} name="price-ribbon" size={25} color={Colors.colorchinh} />
-                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{I18n.t('gia_niem_yet')}</Text>
+                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{currentPriceBook.Name ? currentPriceBook.Name : I18n.t('gia_niem_yet')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={{ flexDirection: "row", alignItems: "center" }}
                     onPress={onClickRetailCustomer}>
-                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{customer != "" ? customer.Name : I18n.t('khach_hang')}</Text>
+                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{currentCustomer.Name ? currentCustomer.Name : I18n.t('khach_hang')}</Text>
                     <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} color={Colors.colorchinh} />
                 </TouchableOpacity>
             </View>
@@ -365,7 +380,7 @@ export default (props) => {
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                         <Text style={{ fontWeight: "bold" }}>{I18n.t('tong_thanh_tien')}</Text>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                            <Text style={{ fontWeight: "bold", fontSize: 16, color: Colors.colorchinh }}>{}đ</Text>
+                            <Text style={{ fontWeight: "bold", fontSize: 16, color: Colors.colorchinh }}>{currencyToString(jsonContent.Total)}đ</Text>
                             {expand ?
                                 <Icon style={{}} name="chevron-up" size={30} color="black" />
                                 :
@@ -377,18 +392,18 @@ export default (props) => {
                         <View style={{ marginLeft: 0 }}>
                             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                                 <Text>{I18n.t('tong_chiet_khau')}</Text>
-                                <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>- {}đ</Text>
+                                <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>- {currencyToString(jsonContent.Discount)}đ</Text>
                             </View>
                             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
-                                <Text>VAT ({}%)</Text>
+                                <Text>VAT ({jsonContent.VATRates}%)</Text>
                                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                                    <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>{}đ</Text>
+                                    <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(jsonContent.VAT ? jsonContent.VAT : 0)}đ</Text>
                                 </View>
                             </View>
                             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                                 <Text style={{ fontWeight: "bold" }}>{I18n.t('khach_phai_tra')}</Text>
                                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                                    <Text style={{ fontWeight: "bold", fontSize: 16, color: "#0072bc", marginRight: 30 }}>{}đ</Text>
+                                    <Text style={{ fontWeight: "bold", fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(jsonContent.AmountReceived)}đ</Text>
                                 </View>
                             </View>
                         </View>
@@ -434,7 +449,7 @@ export default (props) => {
                     <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase", textAlign: "center" }}>{isQuickPayment ? I18n.t('thanh_toan_nhanh') : I18n.t('thanh_toan')}</Text>
                 </TouchableOpacity>
             </View>
-            {/* <Modal
+            <Modal
                 animationType="fade"
                 transparent={true}
                 visible={showModal}
@@ -469,11 +484,9 @@ export default (props) => {
                             marginBottom: Platform.OS == 'ios' ? marginModal : 0
                         }}>
                             <DialogProductDetail
-                                onClickTopping={() => onClickTopping(itemOrder)}
+                                fromRetail={true}
                                 item={itemOrder}
-                                getDataOnClick={(data) => {
-                                    mapDataToList(data)
-                                }}
+                                onClickSubmit={data => { applyDialogDetail(data) }}
                                 setShowModal={() => {
                                     setShowModal(false)
                                 }}
@@ -481,7 +494,7 @@ export default (props) => {
                         </View>
                     </View>
                 </View>
-            </Modal> */}
+            </Modal>
             <Snackbar
                 duration={5000}
                 visible={showToast}

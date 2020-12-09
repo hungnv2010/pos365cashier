@@ -426,21 +426,14 @@ export default (props) => {
     }
 
     const onClickListedPrice = () => {
-        outputClickPriceBook()
+        
     }
 
-    const outputClickPriceBook = () => {
-        setShowPriceBook(true)
-    }
 
     const onClickRetailCustomer = () => {
         console.log('onClickRetailCustomer');
     }
 
-    const outputPriceBookSelected = (pricebook) => {
-        if (pricebook) setCurrentPriceBook(pricebook)
-        setShowPriceBook(false)
-    }
 
     const handlerProcessedProduct = (jsonContent) => {
         console.log("handlerProcessedProduct jsonContent ", jsonContent);
@@ -468,19 +461,6 @@ export default (props) => {
                 clickProductService={onClickProductService}
                 clickRightIcon={onClickSelectProduct} />
             <View style={{ backgroundColor: Colors.colorchinh, alignItems: "center", flexDirection: "row", justifyContent: "space-between", paddingBottom: 5 }}>
-                <Modal
-                    animationType="fade"
-                    transparent={true}
-                    visible={showPriceBook}
-                    supportedOrientations={['portrait', 'landscape']}
-                    onRequestClose={() => { }}>
-                    <Pricebook
-                        currentPriceBook={currentPriceBook}
-                        outputPriceBookSelected={outputPriceBookSelected}
-                        listPricebook={pricebooksRef.current}
-                    >
-                    </Pricebook>
-                </Modal>
 
                 <View style={{ flex: 1, justifyContent: "center" }}>
                     <Text style={{ paddingLeft: 20, textTransform: "uppercase", color: "white", fontWeight: "bold" }}>{props.route && props.route.params && props.route.params.room && props.route.params.room.Name ? props.route.params.room.Name : ""}</Text>

@@ -122,14 +122,9 @@ export default (props) => {
 
     const removeItem = (item) => {
         console.log('removeItem ', item.Name, item.index);
-        if (isFNB) {
             setItemOrder(item)
             typeModal.current = TYPE_MODAL.DELETE
             setShowModal(true)
-        } else {
-            listOrder.splice(item.index, 1)
-            props.outputListProducts([...listOrder])
-        }
     }
 
     const onClickTopping = (item, index) => {

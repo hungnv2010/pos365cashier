@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import SelectProduct from '../../served/servedForTablet/selectProduct/SelectProduct';
 import { Constant } from '../../../common/Constant';
 import RetailCustomerOrder from './retailForTablet/retailCustomerOrder';
-import RetailCustomerOrderForPhone from './retailForPhone/retailCustomerOrder';
+import RetailCustomerOrderForPhone from './retailForPhone/retailCustomerOrderForPhone';
 import RetailToolbar from './retailToolbar';
 import { ScreenList } from '../../../common/ScreenList';
 
@@ -13,6 +13,8 @@ const MainRetail = (props) => {
 
     const [listProducts, setListProducts] = useState([])
     const [text, setText] = useState("")
+    const [currentPriceBook, setCurrentPriceBook] = useState({ Name: "Giá niêm yết", Id: 0 })
+    const [currentCustomer, setCurrentCustomer] = useState({ Name: "Khách hàng", Id: 0 })
     const { orientaition, deviceType } = useSelector(state => {
         return state.Common
     });
@@ -21,7 +23,6 @@ const MainRetail = (props) => {
         switch (type) {
             case 1:
                 let isExist = false
-                console.log('outputSelectedProduct product', product);
                 if (product.SplitForSalesOrder) {
                     listProducts.push(product)
                 } else {
@@ -92,6 +93,8 @@ const MainRetail = (props) => {
                             <View style={{ flex: 4, marginLeft: 2 }}>
                                 <RetailCustomerOrder
                                     {...props}
+                                    currentPriceBook={currentPriceBook}
+                                    currentCustomer={currentCustomer}
                                     listProducts={[...listProducts]}
                                     outputSelectedProduct={outputSelectedProduct} />
                             </View>
