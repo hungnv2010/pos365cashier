@@ -32,13 +32,14 @@ const RetailCustomerOrder = (props) => {
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
     const [marginModal, setMargin] = useState(0)
-    // const [IsLargeUnit, setIsLargeUnit] = useState(false)
     const [numberNewOrder, setNumberNewOrder] = useState(0)
     const [expand, setExpand] = useState(false)
     const typeModal = useRef(TYPE_MODAL.DETAIL)
     const [itemOrder, setItemOrder] = useState({})
     const [currentCommodity, setCurrentCommodity] = useState({})
     const [jsonContent, setJsonContent] = useState({})
+    const [isQuickPayment, setIsQuickPayment] = useState(false)
+
 
     const orientaition = useSelector(state => {
         console.log("orientaition", state);
@@ -266,22 +267,13 @@ const RetailCustomerOrder = (props) => {
         )
     }
 
-    const changTable = () => {
-        hideMenu()
-        if (listOrder && listOrder.length > 0) {
-            hideMenu()
-            props.navigation.navigate("ChangeTable", {
-                FromRoomId: props.route.params.room.Id,
-                FromPos: props.Position,
-                Name: props.route.params.room.Name
-            });
-        } else {
-            dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
-        }
-    }
 
     const onClickPayment = () => {
-        props.navigation.navigate(ScreenList.Payment);
+        if (isQuickPayment) {
+
+        } else {
+            props.navigation.navigate(ScreenList.Payment);
+        }
     }
 
     const onClickListedPrice = () => {
@@ -314,6 +306,9 @@ const RetailCustomerOrder = (props) => {
         }
     }
 
+    const onClickOptionQuickPayment = () => {
+        setIsQuickPayment(!isQuickPayment)
+    }
 
     return (
         <View style={{ flex: 1 }}>
@@ -396,19 +391,18 @@ const RetailCustomerOrder = (props) => {
                         <View style={{
                             backgroundColor: "#fff", borderRadius: 4, marginHorizontal: 5,
                         }}>
-                            <TouchableOpacity onPress={() => changTable()} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
-                                <MaterialIcons style={{ paddingHorizontal: 7 }} name="notifications" size={26} color={Colors.colorchinh} />
-                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('chuyen_ban')}</Text>
-                            </TouchableOpacity>
                             <TouchableOpacity onPress={() => { }} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
-                                <Icon style={{ paddingHorizontal: 10 }} name="message" size={22} color={Colors.colorchinh} />
-                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('tam_tinh')}</Text>
+                                <MaterialIcons style={{ paddingHorizontal: 7 }} name="notifications" size={26} color={Colors.colorchinh} />
+                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('in_tam_tinh')}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={onClickOptionQuickPayment} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
+                                <Icon style={{ paddingHorizontal: 10 }} name={isQuickPayment ? "check-box-outline" : "close-box-outline"} size={22} color={isQuickPayment ? Colors.colorchinh : "#000"} />
+                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('thanh_toan_nhanh')}</Text>
                             </TouchableOpacity>
                         </View>
                     </Menu>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={onCLickCommodity} style={{ flex: .5, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%", flexDirection: 'row' }}>
-                    {/* <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('bao_che_bien')}</Text> */}
                     <Icon name="file-document-edit-outline" size={30} color="white" />
                     <View style={{ backgroundColor: Colors.colorchinh, borderRadius: 40, position: "absolute", right: 0, top: -5 }}>
                         <Text style={{ fontWeight: "bold", padding: 4, color: "white", fontSize: 14 }}>{numberNewOrder}</Text>
@@ -418,11 +412,9 @@ const RetailCustomerOrder = (props) => {
                     <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('don_hang_moi')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={onClickPayment} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
-                    <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('thanh_toan')}</Text>
+                    <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{isQuickPayment ? I18n.t('thanh_toan_nhanh') : I18n.t('thanh_toan')}</Text>
                 </TouchableOpacity>
-                {/* <TouchableOpacity onPress={() => { setListOrder([]) }} style={{ justifyContent: "center", alignItems: "center", paddingHorizontal: 10, borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
-                    <Icon name="delete-forever" size={30} color="white" />
-                </TouchableOpacity> */}
+
             </View>
             <Modal
                 animationType="fade"

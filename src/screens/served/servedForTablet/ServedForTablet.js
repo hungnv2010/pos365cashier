@@ -14,7 +14,6 @@ const { Print } = NativeModules;
 import dataManager from '../../../data/DataManager'
 import moment from 'moment';
 import I18n from '../../../common/language/i18n';
-import { Modal } from 'react-native';
 import colors from '../../../theme/Colors';
 import { Colors } from '../../../theme';
 import CustomerOrder from './pageServed/CustomerOrder';
@@ -36,11 +35,9 @@ const Served = (props) => {
     const [jsonContent, setJsonContent] = useState({})
 
     const [data, setData] = useState("");
-    const [listProducts, setListProducts] = useState([])
     const [value, setValue] = useState('');
     const [itemOrder, setItemOrder] = useState({})
     const [listTopping, setListTopping] = useState([])
-    const [showPriceBook, setShowPriceBook] = useState(false)
     const [currentPriceBook, setCurrentPriceBook] = useState({ Name: "Giá niêm yết", Id: 0 })
     const [currentCustomer, setCurrentCustomer] = useState({ Name: "Khách hàng", Id: 0 })
     const meMoItemOrder = useMemo(() => itemOrder, [itemOrder])
@@ -58,8 +55,8 @@ const Served = (props) => {
     };
 
     const hideMenu = (position) => {
+        setPosition(position)
         _menu.hide();
-        selectPosition(position)
     };
 
     const showMenu = () => {
@@ -95,6 +92,7 @@ const Served = (props) => {
                 setJsonContent(jsonContentObject)
             } else setJsonContent(Constant.JSONCONTENT_EMPTY)
 
+            console.log('jsonContentjsonContentjsonContentjsonContentjsonContent', jsonContent);
             setPriceBookId(jsonContent.PriceBookId)
 
             serverEvent.addListener((collection, changes) => {
@@ -171,6 +169,7 @@ const Served = (props) => {
     }
 
     const setPriceBookId = (pricebookId) => {
+        console.log('setPriceBookId', pricebookId);
         let filters = pricebooksRef.current.filter(item => item.Id == pricebookId)
         if (filters.length > 0) setCurrentPriceBook(filters[0])
     }
@@ -263,12 +262,8 @@ const Served = (props) => {
 
     const onClickListedPrice = () => {
         props.navigation.navigate(ScreenList.PriceBook, { _onSelect: onCallBack, currentPriceBook: currentPriceBook, listPricebook: pricebooksRef.current })
-        outputClickPriceBook()
     }
 
-    const outputClickPriceBook = () => {
-        setShowPriceBook(true)
-    }
 
     const onClickRetailCustomer = () => {
         console.log('onClickRetailCustomer');
@@ -276,7 +271,6 @@ const Served = (props) => {
     }
 
     const onCallBack = (data, type) => {
-        console.log('onCallBackCustomer', data); 
         switch (type) {
             case 1:
                 if (data) setCurrentPriceBook(data)
@@ -416,14 +410,10 @@ const Served = (props) => {
                             itemOrder={meMoItemOrder}
                             jsonContent={jsonContent}
                             onClickProvisional={(res) => onClickProvisional(res)}
-                            listProducts={[...listProducts]}
-                            outputListProducts={outputListProducts}
                             outputItemOrder={outputItemOrder}
                             outputPosition={outputPosition}
                             outputSelectedProduct={outputSelectedProduct}
                             listTopping={listTopping}
-                            currentPriceBook={currentPriceBook}
-                            outputClickPriceBook={outputClickPriceBook}
                             Position={position} />
                     </View >
 

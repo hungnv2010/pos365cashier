@@ -136,7 +136,7 @@ export default (props) => {
 
   const getQuantity = (item) => {
     let Quantity = 1
-    if (item.IsPriceForBlock) {
+    if (item.IsPriceForBlock || (item.ProductType == 2 && item.IsTimer)) {
       Quantity = item.BlockOfTimeToUseService / 60
     }
     return Quantity
@@ -160,7 +160,7 @@ export default (props) => {
   const handleButtonIncrease = (item, index) => {
     console.log('handleButtonIncrease', item, index);
     let qtt = getQuantity(item)
-    
+
     if (item.SplitForSalesOrder || (item.ProductType == 2 && item.IsTimer)) {
       listProducts.current.unshift({ ...item, Quantity: qtt })
     } else {
