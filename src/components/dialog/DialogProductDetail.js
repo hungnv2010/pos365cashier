@@ -14,7 +14,7 @@ export default (props) => {
     const [IsLargeUnit, setIsLargeUnit] = useState(false)
     const [percent, selectPercent] = useState(props.item.Percent ? props.item.Percent : false)
     const [discount, setDiscount] = useState(props.item.Discount ? props.item.Discount : 0)
-    const [price, setPrice] = useState(props.item.Price)
+    const [price, setPrice] = useState(props.item.IsLargeUnit == true ? props.item.PriceLargeUnit : props.item.Price)
 
     useEffect(() => {
         let listOrder = itemOrder.OrderQuickNotes ? itemOrder.OrderQuickNotes.split(',') : [];
@@ -26,6 +26,7 @@ export default (props) => {
         })
         setListQuickNote([...listQuickNote])
         setIsLargeUnit(itemOrder.IsLargeUnit)
+        setPrice(itemOrder.IsLargeUnit == true ? itemOrder.PriceLargeUnit : itemOrder.Price)
     }, [])
 
     useEffect(() => {
@@ -45,6 +46,14 @@ export default (props) => {
     const onClickTopping = () => {
         props.onClickTopping()
         props.setShowModal(false)
+    }
+
+    const selectRadioButton = (status) => {
+        setIsLargeUnit(status)
+        if (status)
+            setPrice(itemOrder.PriceLargeUnit)
+        else
+            setPrice(itemOrder.UnitPrice)
     }
 
     return (
@@ -106,26 +115,26 @@ export default (props) => {
                                 <Text style={{ fontSize: 14, flex: 3 }}>{I18n.t('chon_dvt')}</Text>
                                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", flex: 7 }}>
                                     <TouchableOpacity onPress={() => {
-                                        setIsLargeUnit(false)
+                                        selectRadioButton(false)
                                     }} style={{ flexDirection: "row", alignItems: "center", marginLeft: -10 }}>
                                         <RadioButton.Android
                                             color={colors.colorchinh}
                                             status={!IsLargeUnit ? 'checked' : 'unchecked'}
                                             onPress={() => {
-                                                setIsLargeUnit(false)
+                                                selectRadioButton(false)
                                             }}
                                         />
                                         <Text style={{ marginLeft: 0 }}>{itemOrder.Unit}</Text>
                                     </TouchableOpacity>
 
                                     <TouchableOpacity onPress={() => {
-                                        setIsLargeUnit(true)
+                                        selectRadioButton(true)
                                     }} style={{ flexDirection: "row", alignItems: "center" }}>
                                         <RadioButton.Android
                                             color={colors.colorchinh}
                                             status={IsLargeUnit ? 'checked' : 'unchecked'}
                                             onPress={() => {
-                                                setIsLargeUnit(true)
+                                                selectRadioButton(true)
                                             }}
                                         />
                                         <Text style={{ marginLeft: 0 }}>{itemOrder.LargeUnit}</Text>

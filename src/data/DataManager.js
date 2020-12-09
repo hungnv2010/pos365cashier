@@ -294,7 +294,7 @@ class DataManager {
     }
 
     totalProducts = (products) => {
-        return products.reduce((total, product) => total + product.Price * product.Quantity, 0)
+        return products.reduce((total, product) => total + (product.IsPromotion == true ? product.Price * product.Quantity : (product.IsLargeUnit ? product.PriceLargeUnit : product.UnitPrice) * product.Quantity), 0)
     }
 
     totalDiscountProducts = (products) => {

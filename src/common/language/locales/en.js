@@ -121,6 +121,8 @@ export default {
   khach_yeu_cau: "Guest request",
   khong_xac_dinh: "Không xác định",
   ket_qua_ban_hang: "Sales results",
+  khuyen_mai: "Khuyễn mãi",
+  khuyen_mai_: "khuyễn mãi",
 
   // TODO: H
   hoa_don: "Invoice",
