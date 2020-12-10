@@ -368,51 +368,53 @@ const RetailCustomerOrder = (props) => {
                         </View>
 
                         {
-                            orientaition == Constant.PORTRAIT && !isPromotion ?
+                            orientaition == Constant.PORTRAIT ?
                                 null
                                 :
-                                <View style={{ alignItems: "center", flexDirection: "row", }}>
-                                    <TouchableOpacity
-                                        onPress={() => {
-                                            if (item.Quantity == 1) {
-                                                removeItem(item, index)
-                                            } else {
-                                                item.Quantity--
-                                                // setListOrder([...listOrder])
-                                                setDataOrder([...listOrder])
-                                            }
+                                (isPromotion ? null :
+                                    <View style={{ alignItems: "center", flexDirection: "row", }}>
+                                        <TouchableOpacity
+                                            onPress={() => {
+                                                if (item.Quantity == 1) {
+                                                    removeItem(item, index)
+                                                } else {
+                                                    item.Quantity--
+                                                    // setListOrder([...listOrder])
+                                                    setDataOrder([...listOrder])
+                                                }
+                                            }}>
+                                            <Icon name="minus-box" size={40} color={Colors.colorchinh} />
+                                        </TouchableOpacity>
+                                        <View style={{
+                                            width: 60,
+                                            height: 35,
+                                            shadowColor: "#000",
+                                            shadowOffset: {
+                                                width: 0,
+                                                height: 1,
+                                            },
+                                            shadowOpacity: 0.18,
+                                            shadowRadius: 1.00,
+                                            elevation: 2,
+                                            borderRadius: 2,
+                                            justifyContent: "center",
+                                            alignItems: "center"
                                         }}>
-                                        <Icon name="minus-box" size={40} color={Colors.colorchinh} />
-                                    </TouchableOpacity>
-                                    <View style={{
-                                        width: 60,
-                                        height: 35,
-                                        shadowColor: "#000",
-                                        shadowOffset: {
-                                            width: 0,
-                                            height: 1,
-                                        },
-                                        shadowOpacity: 0.18,
-                                        shadowRadius: 1.00,
-                                        elevation: 2,
-                                        borderRadius: 2,
-                                        justifyContent: "center",
-                                        alignItems: "center"
-                                    }}>
-                                        <Text
-                                            style={{
-                                                fontSize: 16,
-                                                fontWeight: "bold",
-                                            }}>{item.Quantity}</Text>
+                                            <Text
+                                                style={{
+                                                    fontSize: 16,
+                                                    fontWeight: "bold",
+                                                }}>{item.Quantity}</Text>
+                                        </View>
+                                        <TouchableOpacity onPress={() => {
+                                            item.Quantity++
+                                            // setListOrder([...listOrder])
+                                            setDataOrder([...listOrder])
+                                        }}>
+                                            <Icon name="plus-box" size={40} color={Colors.colorchinh} />
+                                        </TouchableOpacity>
                                     </View>
-                                    <TouchableOpacity onPress={() => {
-                                        item.Quantity++
-                                        // setListOrder([...listOrder])
-                                        setDataOrder([...listOrder])
-                                    }}>
-                                        <Icon name="plus-box" size={40} color={Colors.colorchinh} />
-                                    </TouchableOpacity>
-                                </View>
+                                )
                         }
 
                     </View>
