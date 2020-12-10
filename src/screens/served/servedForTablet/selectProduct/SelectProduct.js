@@ -129,7 +129,7 @@ export default (props) => {
     newProduct.ProductImages = []
     newProduct.index = undefined
     props.outputSelectedProduct(newProduct)
-    console.log('onClickProduct', newProduct);
+    console.log('onClickProduct :: ', newProduct);
   }
 
   const getQuantityProduct = (arrItem) => {

@@ -175,6 +175,7 @@ export default (props) => {
                 element.Description = data.Description
                 element.Quantity = +data.Quantity
                 element.IsLargeUnit = data.IsLargeUnit
+                element.Price = data.IsLargeUnit ? data.PriceLargeUnit : data.UnitPrice
             }
         });
 
@@ -210,12 +211,14 @@ export default (props) => {
                 <TouchableOpacity key={index} onPress={() => {
                     if (isPromotion) return;
                     setItemOrder({ ...item })
+                    console.log("onClickProduct item ", item);
+
                     typeModal.current = TYPE_MODAL.DETAIL
                     setShowModal(!showModal)
                 }}>
                     <View style={styles.mainItem}>
                         <TouchableOpacity
-                            style={{ paddingVertical: 10, paddingHorizontal: 5}}
+                            style={{ paddingVertical: 10, paddingHorizontal: 5 }}
                             onPress={() => { if (!isPromotion) removeItem(item) }}>
                             <Icon name={!isPromotion ? "trash-can-outline" : "gift"} size={40} color={!isPromotion ? "black" : colors.colorLightBlue} />
                         </TouchableOpacity>
@@ -227,7 +230,7 @@ export default (props) => {
                                 {item.Name}
                             </TextTicker>
                             <View style={{ flexDirection: "row" }}>
-                                <Text style={{}}>{isPromotion ? 0 : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : currencyToString(item.Price))} x </Text>
+                                <Text style={{}}>{isPromotion ? currencyToString(item.Price) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : currencyToString(item.Price))} x </Text>
                                 <View>
                                     <Text style={{ color: Colors.colorchinh }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text>
                                 </View>
@@ -241,7 +244,13 @@ export default (props) => {
                                 :
                                 null}
                         </View>
-                        <Icon style={{ paddingHorizontal: 5 }} name="bell-ring" size={20} color="grey" />
+                        <View style={{ alignItems: "flex-end" }}>
+                            <Icon style={{ paddingHorizontal: 5 }} name="bell-ring" size={20} color="grey" />
+                            <Text
+                                style={{ color: colors.colorchinh, marginRight: 5 }}>
+                                {isPromotion ? currencyToString(item.Price * item.Quantity) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit * item.Quantity) : currencyToString(item.Price * item.Quantity))}
+                            </Text>
+                        </View>
                         {/* {item.ProductType == 2 && item.IsTimer ?
                         null
                         :

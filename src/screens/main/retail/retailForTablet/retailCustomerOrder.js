@@ -17,7 +17,7 @@ import dialogManager from '../../../../components/dialog/DialogManager';
 import Entypo from 'react-native-vector-icons/Entypo';
 import realmStore from '../../../../data/realm/RealmStore';
 import dataManager from '../../../../data/DataManager';
-
+import _, { map } from 'underscore';
 
 
 const TYPE_MODAL = {
@@ -39,7 +39,7 @@ const RetailCustomerOrder = (props) => {
     const [currentCommodity, setCurrentCommodity] = useState({})
     const [jsonContent, setJsonContent] = useState({})
     const [isQuickPayment, setIsQuickPayment] = useState(false)
-
+    const [promotions, setPromotions] = useState([])
 
     const orientaition = useSelector(state => {
         console.log("orientaition", state);
@@ -53,7 +53,12 @@ const RetailCustomerOrder = (props) => {
         getCommodityWaiting()
         var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
         var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
-
+        const getDataRealm = async () => {
+            let promotions = await realmStore.querryPromotion();
+            console.log("promotions === ", promotions);
+            setPromotions(promotions)
+        }
+        getDataRealm();
         return () => {
             if (serverEvents) serverEvents.removeAllListeners()
             keyboardDidShowListener.remove();
@@ -62,7 +67,8 @@ const RetailCustomerOrder = (props) => {
     }, [])
 
     useEffect(() => {
-        setListOrder(props.listProducts)
+        // setListOrder(props.listProducts)
+        setDataOrder([...props.listProducts])
     }, [props.listProducts])
 
 
@@ -88,7 +94,8 @@ const RetailCustomerOrder = (props) => {
         } else {
             setCurrentCommodity(newServerEvents[newServerEvents.length - 1])
             let jsonContent = JSON.parse(newServerEvents[newServerEvents.length - 1].JsonContent)
-            setListOrder(jsonContent.OrderDetails)
+            // setListOrder(jsonContent.OrderDetails)
+            setDataOrder(jsonContent.OrderDetails)
         }
 
         serverEvents.addListener((collection, changes) => {
@@ -104,7 +111,8 @@ const RetailCustomerOrder = (props) => {
 
     const syncListProducts = (data) => {
         props.outputSelectedProduct(data, 2)
-        setListOrder(data)
+        // setListOrder(data)
+        setDataOrder(data)
     }
 
     const createNewServerEvent = async () => {
@@ -146,11 +154,20 @@ const RetailCustomerOrder = (props) => {
                 elm.PriceWithDiscount = product.PriceWithDiscount
             }
         })
-        console.log('applyDialogDetail', listOrder);
-        setListOrder([...listOrder])
+        setDataOrder([...listOrder])
+        // let list = addPromotion([...listOrder])
+        // setListOrder([...list])
+        // setListOrder([...listOrder])
     }
 
+    const setDataOrder = async (listOrder) => {
+        let list = [];
+        if (listOrder && listOrder.length > 0)
+            list = await addPromotion([...listOrder])
+        console.log("setDataOrder listOrder list ", listOrder, list);
 
+        setListOrder([...list])
+    }
 
     const removeItem = (product, index) => {
         console.log('removeItem', index, product);
@@ -169,6 +186,119 @@ const RetailCustomerOrder = (props) => {
         syncListProducts([])
     }
 
+    const addPromotion = async (list) => {
+        console.log("addPromotion list ", list);
+        console.log("addPromotion promotions ", promotions);
+        let listProduct = await realmStore.queryProducts()
+        // console.log("addPromotion listProduct:::: ", listProduct);
+
+        let listNewOrder = list.filter(element => (element.IsPromotion == undefined || (element.IsPromotion == false)))
+        let listOldPromotion = list.filter(element => (element.IsPromotion != undefined && (element.IsPromotion == true)))
+        console.log("listNewOrder listOldPromotion ==:: ", listNewOrder, listOldPromotion);
+
+        var DataGrouper = (function () {
+            var has = function (obj, target) {
+                return _.any(obj, function (value) {
+                    return _.isEqual(value, target);
+                });
+            };
+
+            var keys = function (data, names) {
+                return _.reduce(data, function (memo, item) {
+                    var key = _.pick(item, names);
+                    if (!has(memo, key)) {
+                        memo.push(key);
+                    }
+                    return memo;
+                }, []);
+            };
+
+            var group = function (data, names) {
+                var stems = keys(data, names);
+                return _.map(stems, function (stem) {
+                    return {
+                        key: stem,
+                        vals: _.map(_.where(data, stem), function (item) {
+                            return _.omit(item, names);
+                        })
+                    };
+                });
+            };
+
+            group.register = function (name, converter) {
+                return group[name] = function (data, names) {
+                    return _.map(group(data, names), converter);
+                };
+            };
+
+            return group;
+        }());
+
+        DataGrouper.register("sum", function (item) {
+            console.log("register item ", item);
+
+            return _.extend({ ...item.vals[0] }, item.key, {
+                Quantity: _.reduce(item.vals, function (memo, node) {
+                    return memo + Number(node.Quantity);
+                }, 0)
+            });
+        });
+
+        let listGroupByQuantity = DataGrouper.sum(listNewOrder, ["Id", "IsLargeUnit"])
+
+        console.log("listGroupByQuantity === ", listGroupByQuantity);
+
+        let listPromotion = [];
+        let index = 0;
+        listGroupByQuantity.forEach(element => {
+            promotions.forEach(async (item) => {
+                if ((element.IsPromotion == undefined || (element.IsPromotion == false)) && element.Id == item.ProductId && checkEndDate(item.EndDate) && (item.IsLargeUnit == element.IsLargeUnit && element.Quantity >= item.QuantityCondition)) {
+                    let promotion = listProduct.filtered(`Id == ${item.ProductPromotionId}`)
+                    promotion = JSON.parse(JSON.stringify(promotion[0]));
+                    // let promotion = JSON.parse(item.Promotion)
+                    console.log("addPromotion item:::: ", promotion);
+                    if (index == 0) {
+                        promotion.FisrtPromotion = true;
+                    }
+
+                    let quantity = Math.floor(element.Quantity / item.QuantityCondition)
+                    promotion.Quantity = quantity
+
+                    if (listOldPromotion.length > 0) {
+                        let oldPromotion = listOldPromotion.filter(el => promotion.Id == el.Id)
+                        if (oldPromotion.length == 1) {
+                            promotion = oldPromotion[0];
+                            promotion.Quantity = quantity;
+                        }
+                    }
+
+                    promotion.Price = item.PricePromotion;
+                    promotion.IsLargeUnit = item.ProductPromotionIsLargeUnit;
+                    promotion.IsPromotion = true;
+                    promotion.ProductId = promotion.Id
+                    promotion.Description = element.Quantity + " " + element.Name + ` ${I18n.t('khuyen_mai_')} ` + Math.floor(element.Quantity / item.QuantityCondition);
+
+                    console.log("addPromotion promotion ", promotion, index);
+                    listPromotion.push(promotion)
+                    index++;
+                }
+            });
+        });
+        console.log("addPromotion listPromotion:: ", listPromotion);
+        listNewOrder = listNewOrder.concat(listPromotion);
+        console.log("addPromotion listNewOrder::::: ", listNewOrder);
+        return listNewOrder;
+    }
+
+    const checkEndDate = (date) => {
+        let endDate = new Date(date)
+        let currentDate = new Date();
+        console.log("currentDate endDate ", currentDate, endDate);
+        if (endDate.getTime() > currentDate.getTime()) {
+            return true;
+        }
+        return true;
+    }
 
     let _menu = null;
 
@@ -181,91 +311,113 @@ const RetailCustomerOrder = (props) => {
 
 
     const renderForTablet = (item, index) => {
+        const isPromotion = !(item.IsPromotion == undefined || (item.IsPromotion == false))
         return (
-            <TouchableOpacity key={index} onPress={() => {
-                setItemOrder(item)
-                console.log("setItemOrder ", item);
-                typeModal.current = TYPE_MODAL.DETAIL;
-                setShowModal(!showModal)
-            }}>
-                <View style={{
-                    borderBottomColor: "#ddd", borderBottomWidth: 0.5,
-                    flexDirection: "row", flex: 1, alignItems: "center", justifyContent: "space-evenly", padding: 5,
-                    backgroundColor: 'white', borderRadius: 10, marginBottom: 2
-                }}>
-                    <TouchableOpacity
-                        style={{ marginRight: 5 }}
-                        onPress={() => removeItem(item, index)}>
-                        <Icon name="trash-can-outline" size={40} color="black" />
-                    </TouchableOpacity>
-                    <View style={{ flexDirection: "column", flex: 1, }}>
-                        <Text style={{ fontWeight: "bold", marginBottom: 7 }}>{item.Name}</Text>
-                        <View style={{ flexDirection: "row" }}>
-                            <Text style={{}}>{item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : item.Discount > 0 ? currencyToString(item.PriceWithDiscount) : currencyToString(item.Price)} x </Text>
-                            <View onPress={() => onClickUnit({ ...item })}>
-                                {
-                                    orientaition == Constant.PORTRAIT ?
-                                        <Text style={{ color: Colors.colorchinh, }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text>
-                                        :
-                                        <View>
-                                            <Text style={{ color: Colors.colorchinh, }}>{item.IsLargeUnit ? (item.LargeUnit ? "/" + item.LargeUnit : "") : (item.Unit ? "/" + item.Unit : "")}</Text>
-                                        </View>
-                                }
-                            </View>
+            <>
+                {
+                    isPromotion && item.FisrtPromotion != undefined ?
+                        <View style={{ backgroundColor: "#ffedd6", padding: 7, paddingHorizontal: 10 }}>
+                            <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{I18n.t('khuyen_mai')}</Text>
                         </View>
-                        <Text
-                            style={{ fontStyle: "italic", fontSize: 11, color: "gray" }}>
-                            {item.Description}
-                        </Text>
-                    </View>
-                    {
-                        orientaition == Constant.PORTRAIT ?
-                            null
-                            :
-                            <View style={{ alignItems: "center", flexDirection: "row", }}>
-                                <TouchableOpacity
-                                    onPress={() => {
-                                        if (item.Quantity == 1) {
-                                            removeItem(item, index)
-                                        } else {
-                                            item.Quantity--
-                                            setListOrder([...listOrder])
-                                        }
-                                    }}>
-                                    <Icon name="minus-box" size={40} color={Colors.colorchinh} />
-                                </TouchableOpacity>
-                                <View style={{
-                                    width: 60,
-                                    height: 35,
-                                    shadowColor: "#000",
-                                    shadowOffset: {
-                                        width: 0,
-                                        height: 1,
-                                    },
-                                    shadowOpacity: 0.18,
-                                    shadowRadius: 1.00,
-                                    elevation: 2,
-                                    borderRadius: 2,
-                                    justifyContent: "center",
-                                    alignItems: "center"
-                                }}>
-                                    <Text
-                                        style={{
-                                            fontSize: 16,
-                                            fontWeight: "bold",
-                                        }}>{item.Quantity}</Text>
+                        : null
+                }
+                <TouchableOpacity key={index} onPress={() => {
+                    if (isPromotion) return;
+                    setItemOrder(item)
+                    console.log("setItemOrder ", item);
+                    typeModal.current = TYPE_MODAL.DETAIL;
+                    setShowModal(!showModal)
+                }}>
+                    <View style={{
+                        borderBottomColor: "#ddd", borderBottomWidth: 0.5,
+                        flexDirection: "row", flex: 1, alignItems: "center", justifyContent: "space-evenly", padding: 5,
+                        backgroundColor: 'white', borderRadius: 10, marginBottom: 2
+                    }}>
+                        <TouchableOpacity
+                            style={{ marginRight: 5 }}
+                            onPress={() => { if (!isPromotion) removeItem(item, index) }}>
+                            <Icon name={!isPromotion ? "trash-can-outline" : "gift"} size={40} color={!isPromotion ? "black" : Colors.colorLightBlue} />
+                        </TouchableOpacity>
+                        <View style={{ flexDirection: "column", flex: 1, }}>
+                            <Text style={{ fontWeight: "bold", marginBottom: 7 }}>{item.Name}</Text>
+                            <View style={{ flexDirection: "row" }}>
+                                <Text style={{}}>{isPromotion ? currencyToString(item.Price) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : item.Discount > 0 ? currencyToString(item.PriceWithDiscount) : currencyToString(item.Price))} x </Text>
+                                <View onPress={() => onClickUnit({ ...item })}>
+                                    {
+                                        orientaition == Constant.PORTRAIT ?
+                                            <Text style={{ color: Colors.colorchinh, }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text>
+                                            :
+                                            <View>
+                                                <Text style={{ color: Colors.colorchinh, }}>{item.IsLargeUnit ? (item.LargeUnit ? "/" + item.LargeUnit : "") : (item.Unit ? "/" + item.Unit : "")}</Text>
+                                            </View>
+                                    }
                                 </View>
-                                <TouchableOpacity onPress={() => {
-                                    item.Quantity++
-                                    setListOrder([...listOrder])
-                                }}>
-                                    <Icon name="plus-box" size={40} color={Colors.colorchinh} />
-                                </TouchableOpacity>
                             </View>
-                    }
+                            <Text
+                                style={{ fontStyle: "italic", fontSize: 11, color: "gray" }}>
+                                {item.Description}
+                            </Text>
+                        </View>
 
-                </View>
-            </TouchableOpacity>
+                        <View style={{ alignItems: "flex-end" }}>
+                            <Icon style={{ paddingHorizontal: 5 }} name="bell-ring" size={20} color="grey" />
+                            <Text
+                                style={{ color: Colors.colorchinh, marginRight: 5 }}>
+                                {isPromotion ? currencyToString(item.Price * item.Quantity) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit * item.Quantity) : currencyToString(item.Price * item.Quantity))}
+                            </Text>
+                        </View>
+
+                        {
+                            orientaition == Constant.PORTRAIT ?
+                                null
+                                :
+                                <View style={{ alignItems: "center", flexDirection: "row", }}>
+                                    <TouchableOpacity
+                                        onPress={() => {
+                                            if (item.Quantity == 1) {
+                                                removeItem(item, index)
+                                            } else {
+                                                item.Quantity--
+                                                // setListOrder([...listOrder])
+                                                setDataOrder([...listOrder])
+                                            }
+                                        }}>
+                                        <Icon name="minus-box" size={40} color={Colors.colorchinh} />
+                                    </TouchableOpacity>
+                                    <View style={{
+                                        width: 60,
+                                        height: 35,
+                                        shadowColor: "#000",
+                                        shadowOffset: {
+                                            width: 0,
+                                            height: 1,
+                                        },
+                                        shadowOpacity: 0.18,
+                                        shadowRadius: 1.00,
+                                        elevation: 2,
+                                        borderRadius: 2,
+                                        justifyContent: "center",
+                                        alignItems: "center"
+                                    }}>
+                                        <Text
+                                            style={{
+                                                fontSize: 16,
+                                                fontWeight: "bold",
+                                            }}>{item.Quantity}</Text>
+                                    </View>
+                                    <TouchableOpacity onPress={() => {
+                                        item.Quantity++
+                                        // setListOrder([...listOrder])
+                                        setDataOrder([...listOrder])
+                                    }}>
+                                        <Icon name="plus-box" size={40} color={Colors.colorchinh} />
+                                    </TouchableOpacity>
+                                </View>
+                        }
+
+                    </View>
+                </TouchableOpacity>
+            </>
         )
     }
 

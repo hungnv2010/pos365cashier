@@ -32,7 +32,7 @@ const KEY_FUNC = {
     OVERVIEW: ScreenList.OverView,
     INVOICE: ScreenList.Invoice,
     CASH_FLOW: ScreenList.CashFlow,
-    ROOM_HISTORY:ScreenList.RoomHistory
+    ROOM_HISTORY: ScreenList.RoomHistory
 }
 
 const LIST_FUNCITION = [
@@ -42,26 +42,26 @@ const LIST_FUNCITION = [
         title: "man_hinh_thu_ngan"
     },
 
-    {
-        func: KEY_FUNC.ORDER_NOW,
-        icon: Images.icon_inventory,
-        title: "dang_goi_mon"
-    },
-    {
-        func: KEY_FUNC.HISTORY,
-        icon: Images.icon_customer,
-        title: "lich_su_goi_mon"
-    },
+    // {
+    //     func: KEY_FUNC.ORDER_NOW,
+    //     icon: Images.icon_inventory,
+    //     title: "dang_goi_mon"
+    // },
+    // {
+    //     func: KEY_FUNC.HISTORY,
+    //     icon: Images.icon_customer,
+    //     title: "lich_su_goi_mon"
+    // },
     {
         func: KEY_FUNC.ROOM_CATALOG,
         icon: Images.icon_customer,
         title: "danh_muc_phong_ban"
     },
-    {
-        func: KEY_FUNC.MORE,
-        icon: Images.icon_star,
-        title: "them"
-    },
+    // {
+    //     func: KEY_FUNC.MORE,
+    //     icon: Images.icon_star,
+    //     title: "them"
+    // },
     {
         func: KEY_FUNC.OVERVIEW,
         icon: Images.icon_inventory,
@@ -85,7 +85,7 @@ const LIST_FUNCITION = [
     {
         func: KEY_FUNC.ROOM_HISTORY,
         icon: Images.icon_history,
-        title:'lich_su_huy_tra_do'
+        title: 'lich_su_huy_tra_do'
     },
     {
         func: KEY_FUNC.SETTING_FUNC,
@@ -383,7 +383,7 @@ const ContentComponent = (props) => {
     const onClickItem = (chucnang, index) => {
         console.log("onClickItem props ", props);
         let params = {};
-        if (chucnang.func == ScreenList.Home || chucnang.func == ScreenList.More || chucnang.func == ScreenList.History || chucnang.func == ScreenList.OverView || chucnang.func == ScreenList.RoomCatalog || chucnang.func == ScreenList.Customer) {
+        if (chucnang.func == ScreenList.Home || chucnang.func == ScreenList.Customer || chucnang.func == ScreenList.Settings || chucnang.func == ScreenList.Invoice || chucnang.func == ScreenList.OverView || chucnang.func == ScreenList.RoomCatalog || chucnang.func == ScreenList.Customer) {
             setCurrentItemMenu(index)
         }
         props.navigation.navigate(chucnang.func, params)

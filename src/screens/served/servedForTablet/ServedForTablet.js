@@ -20,6 +20,7 @@ import CustomerOrder from './pageServed/CustomerOrder';
 import { ApiPath } from '../../../data/services/ApiPath';
 import { HTTPService } from '../../../data/services/HttpService';
 import { ScreenList } from '../../../common/ScreenList';
+import _, { map } from 'underscore';
 
 const Served = (props) => {
     let serverEvent = null;
@@ -41,8 +42,7 @@ const Served = (props) => {
     const [currentPriceBook, setCurrentPriceBook] = useState({ Name: "Giá niêm yết", Id: 0 })
     const [currentCustomer, setCurrentCustomer] = useState({ Name: "Khách hàng", Id: 0 })
     const meMoItemOrder = useMemo(() => itemOrder, [itemOrder])
-
-    const pricebooksRef = useRef()
+    const [promotions, setPromotions] = useState([])
     const toolBarTabletServedRef = useRef();
     const orientaition = useSelector(state => {
         return state.Common.orientaition
@@ -63,6 +63,15 @@ const Served = (props) => {
         _menu.show();
     };
 
+    useEffect(() => {
+
+        const getDataRealm = async () => {
+            let promotions = await realmStore.querryPromotion();
+            console.log("promotions === ", promotions);
+            setPromotions(promotions)
+        }
+        getDataRealm();
+    }, [])
 
     useEffect(() => {
         const getListPos = async () => {
@@ -198,13 +207,16 @@ const Served = (props) => {
                 .filter((elm, index) => index != product.index)
         }
         checkRoomProductId([product], props.route.params.room.ProductId)
+
+        console.log("outputSelectedProduct jsonContent.OrderDetails ", jsonContent.OrderDetails);
+        jsonContent.OrderDetails = await addPromotion(jsonContent.OrderDetails);
         updateServerEvent()
     }
 
     const outputListProducts = (newList, type) => {
-        console.log('outputListProducts', type, newList);
+        console.log('outputListProducts=======', type, newList);
         newList = newList.filter(item => item.Quantity > 0)
-        newList.forEach((newItem, index) => {
+        newList.forEach(async (newItem, index) => {
             newItem.exist = false
             if (!jsonContent.OrderDetails) jsonContent.OrderDetails = []
             jsonContent.OrderDetails.forEach((elm, idx) => {
@@ -215,10 +227,125 @@ const Served = (props) => {
             })
             newList = newList.filter(item => !item.exist)
             jsonContent.OrderDetails = [...newList, ...jsonContent.OrderDetails]
+
+
         });
         checkHasItemOrder(newList)
         checkRoomProductId(newList, props.route.params.room.ProductId)
         updateServerEvent()
+    }
+
+    const addPromotion = async (list) => {
+        console.log("addPromotion list ", list);
+        console.log("addPromotion promotions ", promotions);
+        let listProduct = await realmStore.queryProducts()
+        console.log("addPromotion listProduct:::: ", listProduct);
+        let listNewOrder = list.filter(element => (element.IsPromotion == undefined || (element.IsPromotion == false)))
+        let listOldPromotion = list.filter(element => (element.IsPromotion != undefined && (element.IsPromotion == true)))
+        console.log("listNewOrder listOldPromotion ==:: ", listNewOrder, listOldPromotion);
+
+        var DataGrouper = (function () {
+            var has = function (obj, target) {
+                return _.any(obj, function (value) {
+                    return _.isEqual(value, target);
+                });
+            };
+
+            var keys = function (data, names) {
+                return _.reduce(data, function (memo, item) {
+                    var key = _.pick(item, names);
+                    if (!has(memo, key)) {
+                        memo.push(key);
+                    }
+                    return memo;
+                }, []);
+            };
+
+            var group = function (data, names) {
+                var stems = keys(data, names);
+                return _.map(stems, function (stem) {
+                    return {
+                        key: stem,
+                        vals: _.map(_.where(data, stem), function (item) {
+                            return _.omit(item, names);
+                        })
+                    };
+                });
+            };
+
+            group.register = function (name, converter) {
+                return group[name] = function (data, names) {
+                    return _.map(group(data, names), converter);
+                };
+            };
+
+            return group;
+        }());
+
+        DataGrouper.register("sum", function (item) {
+            console.log("register item ", item);
+
+            return _.extend({ ...item.vals[0] }, item.key, {
+                Quantity: _.reduce(item.vals, function (memo, node) {
+                    return memo + Number(node.Quantity);
+                }, 0)
+            });
+        });
+
+        let listGroupByQuantity = DataGrouper.sum(listNewOrder, ["Id", "IsLargeUnit"])
+
+        console.log("listGroupByQuantity === ", listGroupByQuantity);
+
+        let listPromotion = [];
+        let index = 0;
+        listGroupByQuantity.forEach(element => {
+            promotions.forEach(async (item) => {
+                if ((element.IsPromotion == undefined || (element.IsPromotion == false)) && element.Id == item.ProductId && checkEndDate(item.EndDate) && (item.IsLargeUnit == element.IsLargeUnit && element.Quantity >= item.QuantityCondition)) {
+                    let promotion = listProduct.filtered(`Id == ${item.ProductPromotionId}`)
+                    promotion = JSON.parse(JSON.stringify(promotion[0]));
+                    // let promotion = JSON.parse(item.Promotion)
+                    console.log("addPromotion item:::: ", promotion);
+                    if (index == 0) {
+                        promotion.FisrtPromotion = true;
+                    }
+
+                    let quantity = Math.floor(element.Quantity / item.QuantityCondition)
+                    promotion.Quantity = quantity
+
+                    if (listOldPromotion.length > 0) {
+                        let oldPromotion = listOldPromotion.filter(el => promotion.Id == el.Id)
+                        if (oldPromotion.length == 1) {
+                            promotion = oldPromotion[0];
+                            promotion.Quantity = quantity;
+                        }
+                    }
+
+                    promotion.Price = item.PricePromotion;
+                    promotion.IsLargeUnit = item.ProductPromotionIsLargeUnit;
+                    promotion.IsPromotion = true;
+                    promotion.ProductId = promotion.Id
+                    promotion.Description = element.Quantity + " " + element.Name + ` ${I18n.t('khuyen_mai_')} ` + Math.floor(element.Quantity / item.QuantityCondition);
+
+                    console.log("addPromotion promotion ", promotion, index);
+                    listPromotion.push(promotion)
+                    index++;
+                }
+            });
+        });
+        console.log("addPromotion listPromotion:: ", listPromotion);
+        listNewOrder = listNewOrder.concat(listPromotion);
+        console.log("addPromotion listNewOrder:::: ", listNewOrder);
+        return listNewOrder;
+    }
+
+    const checkEndDate = (date) => {
+        let endDate = new Date(date)
+        let currentDate = new Date();
+        console.log("currentDate endDate ", currentDate, endDate);
+        if (endDate.getTime() > currentDate.getTime()) {
+            return true;
+        }
+        return true;
     }
 
     const updateServerEvent = () => {
@@ -250,7 +377,7 @@ const Served = (props) => {
     }
 
     const onClickListedPrice = () => {
-        props.navigation.navigate(ScreenList.PriceBook, { _onSelect: onCallBack, currentPriceBook: currentPriceBook})
+        props.navigation.navigate(ScreenList.PriceBook, { _onSelect: onCallBack, currentPriceBook: currentPriceBook })
     }
 
 

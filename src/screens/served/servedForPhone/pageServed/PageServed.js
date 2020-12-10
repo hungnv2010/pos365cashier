@@ -170,24 +170,16 @@ export default (props) => {
 
     const addPromotion = async (list) => {
         console.log("addPromotion list ", list);
-        // console.log("addPromotion promotions ", promotions);
+        console.log("addPromotion promotions ", promotions);
+        let listProduct = await realmStore.queryProducts()
+        console.log("addPromotion listProduct:::: ", listProduct);
+        // promotion1 = promotion1.filtered(`Id == ${item.ProductId}`)
+        // promotion1 = JSON.parse(JSON.stringify(promotion1[0]));
+        // console.log("addPromotion promotion1:::: ", promotion1);
+
         let listNewOrder = list.filter(element => (element.IsPromotion == undefined || (element.IsPromotion == false)))
-        // list.forEach(element => {
-        //     console.log("element.hasOwnProperty(isPromotion) ", element.isPromotion);
-        //     if (element.IsPromotion == undefined || (element.IsPromotion == false)) {
-        //         listNewOrder.push({ ...element, IsPromotion: false })
-        //     }
-        //     promotions.forEach(item => {
-        //         if (element.Id == item.ProductId && checkEndDate(item.EndDate) && (item.QuantityCondition <= element.Quantity)) {
-        //             console.log("addPromotion ok ==== ", item);
-        //             let promotion = JSON.parse(item.Promotion)
-        //             promotion.IsPromotion = true;
-        //             promotion.ProductId = promotion.Id
-        //             promotion.Quantity = Math.floor(element.Quantity / promotion.QuantityCondition)
-        //             listNewOrder.push(promotion)
-        //         }
-        //     });
-        // });
+        let listOldPromotion = list.filter(element => (element.IsPromotion != undefined && (element.IsPromotion == true)))
+        console.log("listNewOrder listOldPromotion ==:: ", listNewOrder, listOldPromotion);
 
         var DataGrouper = (function () {
             var has = function (obj, target) {
@@ -237,31 +229,49 @@ export default (props) => {
             });
         });
 
-        let listGroupByQuantity = DataGrouper.sum(list, ["Id"])
+        let listGroupByQuantity = DataGrouper.sum(listNewOrder, ["Id", "IsLargeUnit"])
 
-        console.log("listGroupByQuantity == ", listGroupByQuantity);
+        console.log("listGroupByQuantity === ", listGroupByQuantity);
 
         let listPromotion = [];
         let index = 0;
         listGroupByQuantity.forEach(element => {
-            promotions.forEach(item => {
-                if ((element.IsPromotion == undefined || (element.IsPromotion == false)) && element.Id == item.ProductId && checkEndDate(item.EndDate) && element.Quantity >= item.QuantityCondition) {
-                    let promotion = JSON.parse(item.Promotion)
+            promotions.forEach(async (item) => {
+                if ((element.IsPromotion == undefined || (element.IsPromotion == false)) && element.Id == item.ProductId && checkEndDate(item.EndDate) && (item.IsLargeUnit == element.IsLargeUnit && element.Quantity >= item.QuantityCondition)) {
+                    let promotion = listProduct.filtered(`Id == ${item.ProductPromotionId}`)
+                    promotion = JSON.parse(JSON.stringify(promotion[0]));
+                    // let promotion = JSON.parse(item.Promotion)
+                    console.log("addPromotion item:::: ", promotion);
                     if (index == 0) {
                         promotion.FisrtPromotion = true;
                     }
+
+                    let quantity = Math.floor(element.Quantity / item.QuantityCondition)
+                    promotion.Quantity = quantity
+
+                    if (listOldPromotion.length > 0) {
+                        let oldPromotion = listOldPromotion.filter(el => promotion.Id == el.Id)
+                        if (oldPromotion.length == 1) {
+                            promotion = oldPromotion[0];
+                            promotion.Quantity = quantity;
+                        }
+                    }
+
+                    promotion.Price = item.PricePromotion;
+                    promotion.IsLargeUnit = item.ProductPromotionIsLargeUnit;
                     promotion.IsPromotion = true;
                     promotion.ProductId = promotion.Id
                     promotion.Description = element.Quantity + " " + element.Name + ` ${I18n.t('khuyen_mai_')} ` + Math.floor(element.Quantity / item.QuantityCondition);
-                    promotion.Quantity = Math.floor(element.Quantity / item.QuantityCondition)
+
                     console.log("addPromotion promotion ", promotion, index);
                     listPromotion.push(promotion)
                     index++;
                 }
             });
         });
+        console.log("addPromotion listPromotion:: ", listPromotion);
         listNewOrder = listNewOrder.concat(listPromotion);
-        console.log("addPromotion listNewOrder:: ", listNewOrder);
+        console.log("addPromotion listNewOrder::::: ", listNewOrder);
         return listNewOrder;
     }
 
@@ -309,7 +319,7 @@ export default (props) => {
     }
 
     const onClickSelectProduct = () => {
-        let list = jsonContent.OrderDetails ? jsonContent.OrderDetails.filter(item => item.ProductId > 0) : []
+        let list = jsonContent.OrderDetails ? jsonContent.OrderDetails.filter(item => (item.ProductId > 0 && (item.IsPromotion == undefined || (item.IsPromotion == false)))) : []
         props.navigation.navigate('SelectProduct', { _onSelect: onCallBack, listProducts: list })
     }
 
