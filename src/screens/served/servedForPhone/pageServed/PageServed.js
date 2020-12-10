@@ -34,7 +34,6 @@ export default (props) => {
     const [currentPriceBook, setCurrentPriceBook] = useState({ Name: "Giá niêm yết", Id: 0 })
 
     const pricebooksRef = useRef()
-    const listPromotionOld = useRef([])
     const toolBarPhoneServedRef = useRef();
     const [listPosition, setListPosition] = useState([
         { name: "A", status: false },
@@ -193,22 +192,6 @@ export default (props) => {
         let listNewOrder = list.filter(element => (element.IsPromotion == undefined || (element.IsPromotion == false)))
         let listOldPromotion = list.filter(element => (element.IsPromotion != undefined && (element.IsPromotion == true)))
         console.log("listNewOrder listOldPromotion ==:: ", listNewOrder, listOldPromotion);
-        // list.forEach(element => {
-        //     console.log("element.hasOwnProperty(isPromotion) ", element.isPromotion);
-        //     if (element.IsPromotion == undefined || (element.IsPromotion == false)) {
-        //         listNewOrder.push({ ...element, IsPromotion: false })
-        //     }
-        //     promotions.forEach(item => {
-        //         if (element.Id == item.ProductId && checkEndDate(item.EndDate) && (item.QuantityCondition <= element.Quantity)) {
-        //             console.log("addPromotion ok ==== ", item);
-        //             let promotion = JSON.parse(item.Promotion)
-        //             promotion.IsPromotion = true;
-        //             promotion.ProductId = promotion.Id
-        //             promotion.Quantity = Math.floor(element.Quantity / promotion.QuantityCondition)
-        //             listNewOrder.push(promotion)
-        //         }
-        //     });
-        // });
 
         var DataGrouper = (function () {
             var has = function (obj, target) {
@@ -267,7 +250,7 @@ export default (props) => {
         listGroupByQuantity.forEach(element => {
             promotions.forEach(async (item) => {
                 if ((element.IsPromotion == undefined || (element.IsPromotion == false)) && element.Id == item.ProductId && checkEndDate(item.EndDate) && (item.IsLargeUnit == element.IsLargeUnit && element.Quantity >= item.QuantityCondition)) {
-                    let promotion = listProduct.filtered(`Id == ${item.ProductId}`)
+                    let promotion = listProduct.filtered(`Id == ${item.ProductPromotionId}`)
                     promotion = JSON.parse(JSON.stringify(promotion[0]));
                     // let promotion = JSON.parse(item.Promotion)
                     console.log("addPromotion item:::: ", promotion);
@@ -300,7 +283,7 @@ export default (props) => {
         });
         console.log("addPromotion listPromotion:: ", listPromotion);
         listNewOrder = listNewOrder.concat(listPromotion);
-        console.log("addPromotion listNewOrder:: ", listNewOrder);
+        console.log("addPromotion listNewOrder::::: ", listNewOrder);
         return listNewOrder;
     }
 

@@ -311,7 +311,7 @@ const Served = (props) => {
         listGroupByQuantity.forEach(element => {
             promotions.forEach(async (item) => {
                 if ((element.IsPromotion == undefined || (element.IsPromotion == false)) && element.Id == item.ProductId && checkEndDate(item.EndDate) && (item.IsLargeUnit == element.IsLargeUnit && element.Quantity >= item.QuantityCondition)) {
-                    let promotion = listProduct.filtered(`Id == ${item.ProductId}`)
+                    let promotion = listProduct.filtered(`Id == ${item.ProductPromotionId}`)
                     promotion = JSON.parse(JSON.stringify(promotion[0]));
                     // let promotion = JSON.parse(item.Promotion)
                     console.log("addPromotion item:::: ", promotion);
