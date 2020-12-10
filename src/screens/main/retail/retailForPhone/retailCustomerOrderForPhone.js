@@ -16,6 +16,7 @@ import RetailToolbar from '../retailToolbar';
 import DialogProductDetail from '../../../../components/dialog/DialogProductDetail';
 import { ApiPath } from '../../../../data/services/ApiPath';
 import { HTTPService } from '../../../../data/services/HttpService';
+import _, { map } from 'underscore';
 
 export default (props) => {
 
@@ -33,6 +34,7 @@ export default (props) => {
     const [jsonContent, setJsonContent] = useState({})
     const [currentPriceBook, setCurrentPriceBook] = useState({ Name: "Giá niêm yết", Id: 0 })
     const [currentCustomer, setCurrentCustomer] = useState({ Name: "Khách hàng", Id: 0 })
+    const [promotions, setPromotions] = useState([])
 
     let serverEvents = null;
 
@@ -40,7 +42,12 @@ export default (props) => {
         getCommodityWaiting()
         var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
         var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
-
+        const getDataRealm = async () => {
+            let promotions = await realmStore.querryPromotion();
+            console.log("promotions === ", promotions);
+            setPromotions(promotions)
+        }
+        getDataRealm();
 
         return () => {
             if (serverEvents) serverEvents.removeAllListeners()
@@ -79,7 +86,8 @@ export default (props) => {
                         })
                     })
                     // updateServerEvent()
-                    setListOrder([...listOrder])
+                    // setListOrder([...listOrder])
+                    setDataOrder([...listOrder])
                 }
             }
         }
@@ -91,7 +99,8 @@ export default (props) => {
                 product.Price = basePrice + product.TotalTopping
             })
             // updateServerEvent()
-            setListOrder([...listOrder])
+            // setListOrder([...listOrder])
+            setDataOrder([...listOrder])
         }
         if (listOrder) {
             if (currentPriceBook && currentPriceBook.Id) getOtherPrice()
@@ -138,7 +147,8 @@ export default (props) => {
         } else {
             setCurrentCommodity(newServerEvents[newServerEvents.length - 1])
             let jsonContent = JSON.parse(newServerEvents[newServerEvents.length - 1].JsonContent)
-            setListOrder(jsonContent.OrderDetails)
+            // setListOrder(jsonContent.OrderDetails)
+            setDataOrder(jsonContent.OrderDetails)
         }
 
         serverEvents.addListener((collection, changes) => {
@@ -185,9 +195,132 @@ export default (props) => {
         console.log('removeItem ', item.Name, item.index);
         listOrder.splice(index, 1)
         updateServerEvent(listOrder, currentCommodity)
-        setListOrder([...listOrder])
+        // setListOrder([...listOrder])
+        setDataOrder([...listOrder])
     }
 
+    const setDataOrder = async (listOrder) => {
+        let list = [];
+        if (listOrder && listOrder.length > 0)
+            list = await addPromotion([...listOrder])
+        console.log("setDataOrder listOrder list ", listOrder, list);
+
+        setListOrder([...list])
+    }
+
+    const addPromotion = async (list) => {
+        console.log("addPromotion list ", list);
+        console.log("addPromotion promotions ", promotions);
+        let listProduct = await realmStore.queryProducts()
+        // console.log("addPromotion listProduct:::: ", listProduct);
+
+        let listNewOrder = list.filter(element => (element.IsPromotion == undefined || (element.IsPromotion == false)))
+        let listOldPromotion = list.filter(element => (element.IsPromotion != undefined && (element.IsPromotion == true)))
+        console.log("listNewOrder listOldPromotion ==:: ", listNewOrder, listOldPromotion);
+
+        var DataGrouper = (function () {
+            var has = function (obj, target) {
+                return _.any(obj, function (value) {
+                    return _.isEqual(value, target);
+                });
+            };
+
+            var keys = function (data, names) {
+                return _.reduce(data, function (memo, item) {
+                    var key = _.pick(item, names);
+                    if (!has(memo, key)) {
+                        memo.push(key);
+                    }
+                    return memo;
+                }, []);
+            };
+
+            var group = function (data, names) {
+                var stems = keys(data, names);
+                return _.map(stems, function (stem) {
+                    return {
+                        key: stem,
+                        vals: _.map(_.where(data, stem), function (item) {
+                            return _.omit(item, names);
+                        })
+                    };
+                });
+            };
+
+            group.register = function (name, converter) {
+                return group[name] = function (data, names) {
+                    return _.map(group(data, names), converter);
+                };
+            };
+
+            return group;
+        }());
+
+        DataGrouper.register("sum", function (item) {
+            console.log("register item ", item);
+
+            return _.extend({ ...item.vals[0] }, item.key, {
+                Quantity: _.reduce(item.vals, function (memo, node) {
+                    return memo + Number(node.Quantity);
+                }, 0)
+            });
+        });
+
+        let listGroupByQuantity = DataGrouper.sum(listNewOrder, ["Id", "IsLargeUnit"])
+
+        console.log("listGroupByQuantity === ", listGroupByQuantity);
+
+        let listPromotion = [];
+        let index = 0;
+        listGroupByQuantity.forEach(element => {
+            promotions.forEach(async (item) => {
+                if ((element.IsPromotion == undefined || (element.IsPromotion == false)) && element.Id == item.ProductId && checkEndDate(item.EndDate) && (item.IsLargeUnit == element.IsLargeUnit && element.Quantity >= item.QuantityCondition)) {
+                    let promotion = listProduct.filtered(`Id == ${item.ProductPromotionId}`)
+                    promotion = JSON.parse(JSON.stringify(promotion[0]));
+                    // let promotion = JSON.parse(item.Promotion)
+                    console.log("addPromotion item:::: ", promotion);
+                    if (index == 0) {
+                        promotion.FisrtPromotion = true;
+                    }
+
+                    let quantity = Math.floor(element.Quantity / item.QuantityCondition)
+                    promotion.Quantity = quantity
+
+                    if (listOldPromotion.length > 0) {
+                        let oldPromotion = listOldPromotion.filter(el => promotion.Id == el.Id)
+                        if (oldPromotion.length == 1) {
+                            promotion = oldPromotion[0];
+                            promotion.Quantity = quantity;
+                        }
+                    }
+
+                    promotion.Price = item.PricePromotion;
+                    promotion.IsLargeUnit = item.ProductPromotionIsLargeUnit;
+                    promotion.IsPromotion = true;
+                    promotion.ProductId = promotion.Id
+                    promotion.Description = element.Quantity + " " + element.Name + ` ${I18n.t('khuyen_mai_')} ` + Math.floor(element.Quantity / item.QuantityCondition);
+
+                    console.log("addPromotion promotion ", promotion, index);
+                    listPromotion.push(promotion)
+                    index++;
+                }
+            });
+        });
+        console.log("addPromotion listPromotion:: ", listPromotion);
+        listNewOrder = listNewOrder.concat(listPromotion);
+        console.log("addPromotion listNewOrder::::: ", listNewOrder);
+        return listNewOrder;
+    }
+
+    const checkEndDate = (date) => {
+        let endDate = new Date(date)
+        let currentDate = new Date();
+        console.log("currentDate endDate ", currentDate, endDate);
+        if (endDate.getTime() > currentDate.getTime()) {
+            return true;
+        }
+        return true;
+    }
 
     let _menu = null;
 
@@ -204,42 +337,59 @@ export default (props) => {
     };
 
     const renderProduct = (item, index) => {
+        const isPromotion = !(item.IsPromotion == undefined || (item.IsPromotion == false))
         return (
-            <TouchableOpacity key={index} onPress={() => {
-                setItemOrder(item)
-                setShowModal(!showModal)
-            }}>
-                <View style={styles.mainItem}>
-                    <TouchableOpacity
-                        style={{ paddingHorizontal: 5 }}
-                        onPress={() => removeItem(item, index)}>
-                        <Icon name="trash-can-outline" size={40} color="black" />
-                    </TouchableOpacity>
-                    <View style={{ flex: 1, }}>
-                        <TextTicker
-                            style={{ fontWeight: "bold", marginBottom: 7 }}
-                            duration={6000}
-                            marqueeDelay={1000}>
-                            {item.Name}
-                        </TextTicker>
-                        <View style={{ flexDirection: "row" }}>
-                            <Text style={{}}>{item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : currencyToString(item.Price)} x </Text>
-                            <View>
-                                <Text style={{ color: Colors.colorchinh }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text>
-                            </View>
+            <>
+                {
+                    isPromotion && item.FisrtPromotion != undefined ?
+                        <View style={{ backgroundColor: "#ffedd6", padding: 7, paddingHorizontal: 10 }}>
+                            <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{I18n.t('khuyen_mai')}</Text>
                         </View>
+                        : null
+                }
+                <TouchableOpacity key={index} onPress={() => {
+                    if (isPromotion) return;
+                    setItemOrder(item)
+                    setShowModal(!showModal)
+                }}>
+                    <View style={styles.mainItem}>
+                        <TouchableOpacity
+                            style={{ paddingHorizontal: 5 }}
+                            onPress={() => { if (!isPromotion) removeItem(item, index) }}>
+                            <Icon name={!isPromotion ? "trash-can-outline" : "gift"} size={40} color={!isPromotion ? "black" : Colors.colorLightBlue} />
+                        </TouchableOpacity>
+                        <View style={{ flex: 1, }}>
+                            <TextTicker
+                                style={{ fontWeight: "bold", marginBottom: 7 }}
+                                duration={6000}
+                                marqueeDelay={1000}>
+                                {item.Name}
+                            </TextTicker>
+                            <View style={{ flexDirection: "row" }}>
+                                <Text style={{}}>{isPromotion ? currencyToString(item.Price) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : currencyToString(item.Price))} x </Text>
+                                <View>
+                                    <Text style={{ color: Colors.colorchinh }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text>
+                                </View>
+                            </View>
 
-                        {item.Description != "" ?
+                            {item.Description != "" ?
+                                <Text
+                                    style={{ fontStyle: "italic", fontSize: 11, color: "gray" }}>
+                                    {item.Description}
+                                </Text>
+                                :
+                                null}
+                        </View>
+                        <View style={{ alignItems: "flex-end" }}>
+                            <Icon style={{ paddingHorizontal: 5 }} name="bell-ring" size={20} color="grey" />
                             <Text
-                                style={{ fontStyle: "italic", fontSize: 11, color: "gray" }}>
-                                {item.Description}
+                                style={{ color: Colors.colorchinh, marginRight: 5 }}>
+                                {isPromotion ? currencyToString(item.Price * item.Quantity) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit * item.Quantity) : currencyToString(item.Price * item.Quantity))}
                             </Text>
-                            :
-                            null}
+                        </View>
                     </View>
-                    <Icon style={{ paddingHorizontal: 5 }} name="bell-ring" size={20} color="grey" />
-                </View>
-            </TouchableOpacity>
+                </TouchableOpacity>
+            </>
         )
     }
 
@@ -302,7 +452,8 @@ export default (props) => {
                 break
             case 4: //from select products
                 data = await getOtherPrice(data)
-                setListOrder(data)
+                // setListOrder(data)
+                setDataOrder(data)
                 updateServerEvent(data, currentCommodity)
                 break;
             case 5:
@@ -331,7 +482,8 @@ export default (props) => {
         let newSE = await createNewServerEvent()
         console.log('createNewServerEventcreateNewServerEvent', newSE);
         currentCommodity.current = newSE
-        setListOrder([])
+        // setListOrder([])
+        setDataOrder([])
     }
 
     const onClickPayment = () => {
@@ -353,7 +505,8 @@ export default (props) => {
                 elm.PriceWithDiscount = product.PriceWithDiscount
             }
         })
-        setListOrder([...listOrder])
+        // setListOrder([...listOrder])
+        setDataOrder([...listOrder])
     }
 
     return (

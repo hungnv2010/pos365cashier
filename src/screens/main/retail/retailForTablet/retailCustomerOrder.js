@@ -368,7 +368,7 @@ const RetailCustomerOrder = (props) => {
                         </View>
 
                         {
-                            orientaition == Constant.PORTRAIT ?
+                            orientaition == Constant.PORTRAIT && !isPromotion ?
                                 null
                                 :
                                 <View style={{ alignItems: "center", flexDirection: "row", }}>
