@@ -3,11 +3,29 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native
 import colors from '../../theme/Colors';
 import I18n from '../../common/language/i18n';
 import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
+import dialogManager from '../../components/dialog/DialogManager';
+import realmStore from '../../data/realm/RealmStore';
 
 
 export default (props) => {
 
     const [currentPriceId, setCurrentPriceId] = useState((props.route.params.currentPriceBook.Id ? props.route.params.currentPriceBook.Id : 0))
+    const [listPricebook, setListPricebook] = useState([])
+
+    useEffect(() => {
+        const initPricebook = async () => {
+            dialogManager.showLoading()
+            let newPricebooks = []
+            let results = await realmStore.queryPricebook()
+            results.forEach(item => {
+                newPricebooks.push({ ...JSON.parse(JSON.stringify(item)) })
+            })
+            console.log('newPricebooks', newPricebooks);
+            setListPricebook(newPricebooks)
+            dialogManager.hiddenLoading()
+        }
+        initPricebook()
+    }, [])
 
     useEffect(() => {
         setCurrentPriceId(props.route.params.currentPriceBook.Id ? props.route.params.currentPriceBook.Id : 0)
@@ -39,11 +57,11 @@ export default (props) => {
             <View style={{ flex: 1, backgroundColor: "white" }}>
                 <View style={{ flex: 1 }}>
                     <FlatList
-                        data={props.route.params.listPricebook}
+                        data={listPricebook}
                         showsVerticalScrollIndicator={false}
                         renderItem={({ item, index }) => renderPriceBook(item, index)}
                         keyExtractor={(item, index) => '' + index}
-                        extraData={props.route.params.listPricebook}
+                        extraData={listPricebook}
                         key={props.route.params.numColumns}
                         numColumns={props.route.params.numColumns} />
                 </View>

@@ -18,6 +18,7 @@ import Pricebook from '../../Pricebook';
 import { ApiPath } from '../../../../data/services/ApiPath';
 import { HTTPService } from '../../../../data/services/HttpService';
 import _, { map } from 'underscore';
+import { ScreenList } from '../../../../common/ScreenList';
 
 export default (props) => {
 
@@ -30,8 +31,9 @@ export default (props) => {
     const [position, setPosition] = useState('A')
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
-    const [showPriceBook, setShowPriceBook] = useState(false)
     const [currentPriceBook, setCurrentPriceBook] = useState({ Name: "Giá niêm yết", Id: 0 })
+    const [currentCustomer, setCurrentCustomer] = useState({ Name: "Khách hàng", Id: 0 })
+
 
     const pricebooksRef = useRef()
     const toolBarPhoneServedRef = useRef();
@@ -43,17 +45,6 @@ export default (props) => {
     ])
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        const initPricebook = async () => {
-            let newPricebooks = []
-            let results = await realmStore.queryPricebook()
-            results.forEach(item => {
-                newPricebooks.push({ ...JSON.parse(JSON.stringify(item)) })
-            })
-            pricebooksRef.current = newPricebooks
-        }
-        initPricebook()
-    }, [])
 
     useEffect(() => {
         const getListPos = async () => {
@@ -70,7 +61,7 @@ export default (props) => {
                 setJsonContent(jsonContentObject.OrderDetails ? jsonContentObject : Constant.JSONCONTENT_EMPTY)
             } else setJsonContent(Constant.JSONCONTENT_EMPTY)
 
-            setPriceBookId(jsonContent.PriceBookId)
+            // setPriceBookId(jsonContent.PriceBookId)
 
             serverEvent.addListener((collection, changes) => {
                 if ((changes.insertions.length || changes.modifications.length) && serverEvent[0].FromServer) {
@@ -100,6 +91,7 @@ export default (props) => {
                 let apiPath = ApiPath.PRICE_BOOK + `/${currentPriceBook.Id}/manyproductprice`
                 let params = { "pricebookId": currentPriceBook.Id, "ProductIds": jsonContent.OrderDetails.map((product) => product.ProductId) }
                 let res = await new HTTPService().setPath(apiPath).POST(params)
+                console.log('getOtherPrice res', res);
                 if (res && res.PriceList && res.PriceList.length > 0) {
                     jsonContent.OrderDetails.map((product) => {
                         res.PriceList.forEach((priceBook) => {
@@ -157,10 +149,6 @@ export default (props) => {
             return list
     }
 
-    const setPriceBookId = (pricebookId) => {
-        let filters = pricebooksRef.current.filter(item => item.Id == pricebookId)
-        if (filters.length > 0) setCurrentPriceBook(filters[0])
-    }
 
     const outputListProducts = async (list) => {
         console.log("outputListProducts ", list);
@@ -399,14 +387,28 @@ export default (props) => {
     }
 
     const onClickListedPrice = () => {
-        
+        props.navigation.navigate(ScreenList.PriceBook, { _onSelect: onCallBackPriceCustomer, currentPriceBook: currentPriceBook })
     }
 
 
     const onClickRetailCustomer = () => {
         console.log('onClickRetailCustomer');
+        props.navigation.navigate(ScreenList.Customer, { _onSelect: onCallBackPriceCustomer })
     }
 
+    const onCallBackPriceCustomer = (data, type) => {
+        switch (type) {
+            case 1:
+                console.log('onCallBackPriceCustomer ', type, data);
+                setCurrentPriceBook(data)
+                break;
+            case 2:
+                setCurrentCustomer(data)
+                break;
+            default:
+                break;
+        }
+    }
 
     const handlerProcessedProduct = (jsonContent) => {
         console.log("handlerProcessedProduct jsonContent ", jsonContent);
@@ -462,7 +464,7 @@ export default (props) => {
                 <TouchableOpacity
                     style={{ flexDirection: "row", alignItems: "center" }}
                     onPress={onClickRetailCustomer}>
-                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{I18n.t('khach_hang')}</Text>
+                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{currentCustomer.Name ? currentCustomer.Name : I18n.t('khach_hang')}</Text>
                     <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} color={colors.colorchinh} />
                 </TouchableOpacity>
             </View>

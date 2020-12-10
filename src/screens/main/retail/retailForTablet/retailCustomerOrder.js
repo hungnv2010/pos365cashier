@@ -93,6 +93,7 @@ const RetailCustomerOrder = (props) => {
 
         serverEvents.addListener((collection, changes) => {
             if (changes.insertions.length || changes.modifications.length) {
+                console.log('changes.insertions.length ');
                 let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
                 newServerEvents = Object.values(newServerEvents)
                 setCurrentCommodity(newServerEvents[newServerEvents.length - 1])
@@ -145,6 +146,7 @@ const RetailCustomerOrder = (props) => {
                 elm.PriceWithDiscount = product.PriceWithDiscount
             }
         })
+        console.log('applyDialogDetail', listOrder);
         setListOrder([...listOrder])
     }
 
@@ -278,10 +280,12 @@ const RetailCustomerOrder = (props) => {
 
     const onClickListedPrice = () => {
         console.log('onClickListedPrice');
+        props.navigation.navigate(ScreenList.PriceBook, { _onSelect: onCallBack, currentPriceBook: props.currentPriceBook })
     }
 
     const onClickRetailCustomer = () => {
         console.log('onClickRetailCustomer');
+        props.navigation.navigate(ScreenList.Customer, { _onSelect: onCallBack })
     }
 
     const onCLickCommodity = () => {
@@ -292,12 +296,16 @@ const RetailCustomerOrder = (props) => {
     }
 
     const onCallBack = (data, type) => {
-        console.log('onCallBackonCallBackonCallBack', data, type);
         switch (type) {
+            case 1:
+                props.outputCurrentPriceBook(data)
+                break
+            case 2:
+                props.outputCurrentCustomer(data)
+                break
             case 3: // from commodity waiting
                 setCurrentCommodity(data)
                 let jsonContent = JSON.parse(data.JsonContent)
-                // setListOrder(jsonContent.OrderDetails)
                 syncListProducts(jsonContent.OrderDetails)
                 break;
 
@@ -317,12 +325,12 @@ const RetailCustomerOrder = (props) => {
                     style={{ flexDirection: "row", alignItems: "center" }}
                     onPress={onClickListedPrice}>
                     <Entypo style={{ paddingHorizontal: 5 }} name="price-ribbon" size={25} color={Colors.colorchinh} />
-                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{I18n.t('gia_niem_yet')}</Text>
+                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{props.currentPriceBook.Name ? props.currentPriceBook.Name : I18n.t('gia_niem_yet')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={{ flexDirection: "row", alignItems: "center" }}
                     onPress={onClickRetailCustomer}>
-                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{I18n.t('khach_hang')}</Text>
+                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{props.currentCustomer.Name ? props.currentCustomer.Name : I18n.t('khach_hang')}</Text>
                     <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} color={Colors.colorchinh} />
                 </TouchableOpacity>
             </View>
@@ -372,7 +380,7 @@ const RetailCustomerOrder = (props) => {
                             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                                 <Text style={{ fontWeight: "bold" }}>{I18n.t('khach_phai_tra')}</Text>
                                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                                    <Text style={{ fontWeight: "bold", fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(jsonContent.AmountReceived)}</Text>
+                                    <Text style={{ fontWeight: "bold", fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(jsonContent.Total)}</Text>
                                 </View>
                             </View>
                         </View>

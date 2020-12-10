@@ -7,6 +7,8 @@ import RetailCustomerOrder from './retailForTablet/retailCustomerOrder';
 import RetailCustomerOrderForPhone from './retailForPhone/retailCustomerOrderForPhone';
 import RetailToolbar from './retailToolbar';
 import { ScreenList } from '../../../common/ScreenList';
+import { ApiPath } from '../../../data/services/ApiPath';
+import { HTTPService } from '../../../data/services/HttpService';
 
 
 const MainRetail = (props) => {
@@ -19,11 +21,53 @@ const MainRetail = (props) => {
         return state.Common
     });
 
-    const outputSelectedProduct = (product, type = 1) => {
+    useEffect(() => {
+        const getOtherPrice = async () => {
+            if (listProducts && currentPriceBook) {
+                let apiPath = ApiPath.PRICE_BOOK + `/${currentPriceBook.Id}/manyproductprice`
+                let params = { "pricebookId": currentPriceBook.Id, "ProductIds": listProducts.map((product) => product.ProductId) }
+                console.log('getOtherPrice params', params);
+                let res = await new HTTPService().setPath(apiPath).POST(params)
+                if (res && res.PriceList && res.PriceList.length > 0) {
+                    console.log('getOtherPrice res', res);
+                    listProducts.map((product) => {
+                        res.PriceList.forEach((priceBook) => {
+                            if (priceBook.ProductId == product.ProductId) {
+                                product.DiscountRatio = 0.0
+                                if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
+                                if (!priceBook.Price) priceBook.Price = product.UnitPrice
+                                let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price
+                                product.Price = newBasePrice + product.TotalTopping
+                            }
+                        })
+                    })
+                    // updateServerEvent()
+                    setListProducts([...listProducts])
+                }
+            }
+        }
+
+        const getBasePrice = () => {
+            listProducts.map((product) => {
+                product.DiscountRatio = 0.0
+                let basePrice = (product.IsLargeUnit) ? product.PriceLargeUnit : product.UnitPrice
+                product.Price = basePrice + product.TotalTopping
+            })
+            // updateServerEvent()
+            setListProducts([...listProducts])
+        }
+        if (listProducts) {
+            if (currentPriceBook && currentPriceBook.Id) getOtherPrice()
+            else getBasePrice()
+        }
+    }, [currentPriceBook])
+    
+    const outputSelectedProduct = async (product, type = 1) => {
         switch (type) {
             case 1:
                 let isExist = false
                 if (product.SplitForSalesOrder) {
+                    product = await getOtherPrice(product)
                     listProducts.push(product)
                 } else {
                     listProducts.forEach(elm => {
@@ -35,6 +79,7 @@ const MainRetail = (props) => {
                         }
                     })
                     if (!isExist) {
+                        product = await getOtherPrice(product)
                         listProducts.push(product)
                     }
                 }
@@ -48,6 +93,29 @@ const MainRetail = (props) => {
             default:
                 break;
         }
+    }
+
+
+    const getOtherPrice = async (product) => {
+        if (currentPriceBook.Id) {
+            let apiPath = ApiPath.PRICE_BOOK + `/${currentPriceBook.Id}/manyproductprice`
+            let params = { "pricebookId": currentPriceBook.Id, "ProductIds": [product.ProductId] }
+            let res = await new HTTPService().setPath(apiPath).POST(params)
+            if (res && res.PriceList && res.PriceList.length > 0) {
+                res.PriceList.forEach((priceBook) => {
+                    if (priceBook.ProductId == product.ProductId) {
+                        product.DiscountRatio = 0.0
+                        if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
+                        if (!priceBook.Price) priceBook.Price = product.UnitPrice
+                        let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price
+                        product.Price = newBasePrice + product.TotalTopping
+                    }
+                })
+                return product
+            } else
+                return product
+        } else
+            return product
     }
 
     const onCLickQR = () => {
@@ -69,6 +137,14 @@ const MainRetail = (props) => {
 
     const onCallBack = (data, type) => {
 
+    }
+
+    const outputCurrentPriceBook = (data) => {
+        setCurrentPriceBook(data)
+    }
+
+    const outputCurrentCustomer = (data) => {
+        setCurrentCustomer(data)
     }
 
     return (
@@ -94,7 +170,9 @@ const MainRetail = (props) => {
                                 <RetailCustomerOrder
                                     {...props}
                                     currentPriceBook={currentPriceBook}
+                                    outputCurrentPriceBook={outputCurrentPriceBook}
                                     currentCustomer={currentCustomer}
+                                    outputCurrentCustomer={outputCurrentCustomer}
                                     listProducts={[...listProducts]}
                                     outputSelectedProduct={outputSelectedProduct} />
                             </View>

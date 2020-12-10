@@ -14,6 +14,8 @@ import realmStore from '../../../../data/realm/RealmStore';
 import dataManager from '../../../../data/DataManager';
 import RetailToolbar from '../retailToolbar';
 import DialogProductDetail from '../../../../components/dialog/DialogProductDetail';
+import { ApiPath } from '../../../../data/services/ApiPath';
+import { HTTPService } from '../../../../data/services/HttpService';
 
 export default (props) => {
 
@@ -31,7 +33,6 @@ export default (props) => {
     const [jsonContent, setJsonContent] = useState({})
     const [currentPriceBook, setCurrentPriceBook] = useState({ Name: "Giá niêm yết", Id: 0 })
     const [currentCustomer, setCurrentCustomer] = useState({ Name: "Khách hàng", Id: 0 })
-    const pricebooksRef = useState()
 
     let serverEvents = null;
 
@@ -40,16 +41,6 @@ export default (props) => {
         var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
         var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
 
-        const initPricebook = async () => {
-            let newPricebooks = []
-            let results = await realmStore.queryPricebook()
-            results.forEach(item => {
-                newPricebooks.push({ ...JSON.parse(JSON.stringify(item)) })
-            })
-            pricebooksRef.current = newPricebooks
-            console.log('pricebooksRef.current', pricebooksRef.current);
-        }
-        initPricebook()
 
         return () => {
             if (serverEvents) serverEvents.removeAllListeners()
@@ -70,12 +61,13 @@ export default (props) => {
 
     useEffect(() => {
         const getOtherPrice = async () => {
-            if (jsonContent.OrderDetails && currentPriceBook) {
+            if (listOrder && currentPriceBook) {
                 let apiPath = ApiPath.PRICE_BOOK + `/${currentPriceBook.Id}/manyproductprice`
-                let params = { "pricebookId": currentPriceBook.Id, "ProductIds": jsonContent.OrderDetails.map((product) => product.ProductId) }
+                let params = { "pricebookId": currentPriceBook.Id, "ProductIds": listOrder.map((product) => product.ProductId) }
                 let res = await new HTTPService().setPath(apiPath).POST(params)
+                console.log('getOtherPrice res', res);
                 if (res && res.PriceList && res.PriceList.length > 0) {
-                    jsonContent.OrderDetails.map((product) => {
+                    listOrder.map((product) => {
                         res.PriceList.forEach((priceBook) => {
                             if (priceBook.ProductId == product.ProductId) {
                                 product.DiscountRatio = 0.0
@@ -87,24 +79,53 @@ export default (props) => {
                         })
                     })
                     // updateServerEvent()
+                    setListOrder([...listOrder])
                 }
             }
         }
 
         const getBasePrice = () => {
-            jsonContent.OrderDetails.map((product) => {
+            listOrder.map((product) => {
                 product.DiscountRatio = 0.0
                 let basePrice = (product.IsLargeUnit) ? product.PriceLargeUnit : product.UnitPrice
                 product.Price = basePrice + product.TotalTopping
             })
             // updateServerEvent()
+            setListOrder([...listOrder])
         }
-        if (jsonContent.OrderDetails) {
+        if (listOrder) {
             if (currentPriceBook && currentPriceBook.Id) getOtherPrice()
             else getBasePrice()
         }
     }, [currentPriceBook])
 
+
+    const getOtherPrice = async (list) => {
+        if (currentPriceBook.Id) {
+            if (jsonContent.OrderDetails && currentPriceBook) {
+                let apiPath = ApiPath.PRICE_BOOK + `/${currentPriceBook.Id}/manyproductprice`
+                let params = { "pricebookId": currentPriceBook.Id, "ProductIds": list.map((product) => product.ProductId) }
+                let res = await new HTTPService().setPath(apiPath).POST(params)
+                console.log('getOtherPrice list', res);
+                if (res && res.PriceList && res.PriceList.length > 0) {
+                    list.map((product) => {
+                        res.PriceList.forEach((priceBook) => {
+                            if (priceBook.ProductId == product.ProductId) {
+                                product.DiscountRatio = 0.0
+                                if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
+                                if (!priceBook.Price) priceBook.Price = product.UnitPrice
+                                let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price
+                                product.Price = newBasePrice + product.TotalTopping
+                            }
+                        })
+                    })
+                    return list
+                } else
+                    return list
+            }
+        } else
+            return list
+    }
 
     const getCommodityWaiting = async () => {
         serverEvents = await realmStore.queryServerEvents()
@@ -224,8 +245,8 @@ export default (props) => {
 
 
     const onClickListedPrice = () => {
-        console.log('onClickListedPrice', pricebooksRef.current);
-        props.navigation.navigate(ScreenList.PriceBook, { _onSelect: onCallBack, currentPriceBook: currentPriceBook, listPricebook: pricebooksRef.current })
+        console.log('onClickListedPrice');
+        props.navigation.navigate(ScreenList.PriceBook, { _onSelect: onCallBack, currentPriceBook: currentPriceBook })
     }
 
 
@@ -263,12 +284,11 @@ export default (props) => {
         props.navigation.navigate(ScreenList.RetailSelectProduct, { _onSelect: onCallBack, listProducts: listOrder })
     }
 
-    const onCallBack = (data, type) => {
+    const onCallBack = async (data, type) => {
         switch (type) {
-            case 1: //from select products
-                updateServerEvent(data, currentCommodity)
-                setListOrder(data)
-                break;
+            case 1: //from listPrice
+                if (data) setCurrentPriceBook(data)
+                break
 
             case 2: //from customer
                 if (data) setCurrentCustomer(data)
@@ -280,9 +300,11 @@ export default (props) => {
                 let jsonContent = JSON.parse(data.JsonContent)
                 setListOrder(jsonContent.OrderDetails)
                 break
-            case 4: //from listPrice
-                if (data) setCurrentPriceBook(data)
-                break
+            case 4: //from select products
+                data = await getOtherPrice(data)
+                setListOrder(data)
+                updateServerEvent(data, currentCommodity)
+                break;
             case 5:
                 break
             default:

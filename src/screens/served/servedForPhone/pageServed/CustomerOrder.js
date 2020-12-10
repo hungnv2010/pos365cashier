@@ -41,10 +41,6 @@ export default (props) => {
     const [vendorSession, setVendorSession] = useState({});
     const typeModal = useRef(TYPE_MODAL.DETAIL)
 
-    const isFNB = useSelector(state => {
-        console.log("useSelector CustomerOrder state ", state);
-        return state.Common.isFNB;
-    });
 
     useEffect(() => {
         const getVendorSession = async () => {
@@ -185,18 +181,6 @@ export default (props) => {
         props.outputListProducts([...listOrder])
     }
 
-    const getTotalPrice = () => {
-        let total = 0;
-        list.forEach(item => {
-            if (!(item.ProductType == 2 && item.IsTimer)) {
-                let price = item.IsLargeUnit ? item.PriceLargeUnit : item.Price
-                let totalTopping = item.TotalTopping ? item.TotalTopping : 0
-                total += (price + totalTopping) * item.Quantity
-            }
-        })
-        return total
-    }
-
 
     let _menu = null;
 
@@ -225,11 +209,6 @@ export default (props) => {
                 }
                 <TouchableOpacity key={index} onPress={() => {
                     if (isPromotion) return;
-                    if (item.ProductType == 2 && item.IsTimer) {
-                        setToastDescription(I18n.t("ban_khong_co_quyen_dieu_chinh_mat_hang_thoi_gian"))
-                        setShowToast(true)
-                        return
-                    }
                     setItemOrder({ ...item })
                     typeModal.current = TYPE_MODAL.DETAIL
                     setShowModal(!showModal)
@@ -280,17 +259,7 @@ export default (props) => {
         )
     }
 
-    const totalPrice = (orderDetails) => {
 
-        console.log('getPrice', orderDetails);
-
-        let total = 0;
-        if (orderDetails && orderDetails.length > 0)
-            orderDetails.forEach(item => {
-                total += (item.Price) * item.Quantity
-            });
-        return total
-    }
 
     const saveOrder = (data) => {
         console.log('saveOrder data ', data);
@@ -339,7 +308,7 @@ export default (props) => {
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                         <Text style={{ fontWeight: "bold" }}>{I18n.t('tong_thanh_tien')}</Text>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                            <Text style={{ fontWeight: "bold", fontSize: 16, color: colors.colorchinh }}>{currencyToString(totalPrice(jsonContent.OrderDetails))}đ</Text>
+                            <Text style={{ fontWeight: "bold", fontSize: 16, color: colors.colorchinh }}>{currencyToString(jsonContent.Total)}đ</Text>
                             {expand ?
                                 <Icon style={{}} name="chevron-up" size={30} color="black" />
                                 :

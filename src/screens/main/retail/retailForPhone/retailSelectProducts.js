@@ -243,7 +243,7 @@ export default (props) => {
     })
     listProducts.current = [...listProducts.current, ...listChangeText.current]
     console.log('onClickDone listProducts', listProducts.current);
-    props.route.params._onSelect(listProducts.current, 1);
+    props.route.params._onSelect(listProducts.current, 4);
   }
 
   const clickLeftIcon = () => {
