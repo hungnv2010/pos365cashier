@@ -479,6 +479,10 @@ export default (props) => {
         if (date && dateTmp.current) {
             json.PurchaseDate = "" + date;
         }
+        delete json.Pos;
+        delete json.RoomName;
+        delete json.RoomId;
+
         if (listMethod.length > 0)
             json.AccountId = listMethod[0].Id;
         let params = {
@@ -487,8 +491,15 @@ export default (props) => {
             MerchantName: vendorSession.Settings.MerchantName,
             DontSetTime: true,
             ExcessCashType: 0,
+
             Order: json,
         };
+
+        if (props.route.params.Screen != undefined && props.route.params.Screen == ScreenList.MainRetail) {
+            params.DeliveryBy = null;//by retain
+            params.ShippingCost = 0;//by retain
+            params.LadingCode = "";//by retain
+        }
         console.log("onClickPay params ", params);
         dialogManager.showLoading();
         new HTTPService().setPath(ApiPath.ORDERS).POST(params).then(order => {
@@ -499,6 +510,11 @@ export default (props) => {
                 dataManager.subjectUpdateServerEvent.next(serverEvent)
                 dataManager.sentNotification(jsonContent.RoomName, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
                 dialogManager.hiddenLoading()
+
+                if (props.route.params.Screen != undefined && props.route.params.Screen == ScreenList.MainRetail) {
+                    props.route.params.onCallBack("success")
+                }
+
                 if (order.QRCode != "") {
                     qrCode.current = order.QRCode
                     typeModal.current = TYPE_MODAL.QRCODE
@@ -540,6 +556,7 @@ export default (props) => {
 
     const handlerError = (data) => {
         console.log("handlerError data ", data);
+        dialogManager.hiddenLoading()
         let params = {
             Id: "OFFLINE" + Math.floor(Math.random() * 9999999),
             Orders: JSON.stringify(data.JsonContent),
@@ -655,7 +672,7 @@ export default (props) => {
 
     const renderFilter = () => {
         if (typeModal.current == TYPE_MODAL.FILTER_ACCOUNT) {
-            let listAccount = vendorSession.Accounts.filter(item=>item.Id != Constant.ID_VNPAY_QR)
+            let listAccount = vendorSession.Accounts.filter(item => item.Id != Constant.ID_VNPAY_QR)
             return (
                 <View style={styles.viewFilter}>
                     <Text style={styles.titleFilter}>{I18n.t('loai_hinh_thanh_toan')}</Text>

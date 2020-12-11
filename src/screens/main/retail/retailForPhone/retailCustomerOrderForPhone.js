@@ -58,7 +58,8 @@ export default (props) => {
 
 
     useEffect(() => {
-        listOrder.forEach((elm, index) => elm.index = index)
+        if (listOrder != undefined && listOrder.length > 0)
+            listOrder.forEach((elm, index) => elm.index = index)
     }, [listOrder])
 
     useEffect(() => {
@@ -194,18 +195,19 @@ export default (props) => {
     const removeItem = (item, index) => {
         console.log('removeItem ', item.Name, item.index);
         listOrder.splice(index, 1)
-        updateServerEvent(listOrder, currentCommodity)
+        // updateServerEvent(listOrder, currentCommodity)
         // setListOrder([...listOrder])
         setDataOrder([...listOrder])
     }
 
     const setDataOrder = async (listOrder) => {
         let list = [];
-        if (listOrder && listOrder.length > 0)
+        if (listOrder != undefined && listOrder.length > 0)
             list = await addPromotion([...listOrder])
         console.log("setDataOrder listOrder list ", listOrder, list);
 
         setListOrder([...list])
+        updateServerEvent(list, currentCommodity)
     }
 
     const addPromotion = async (list) => {
@@ -274,6 +276,8 @@ export default (props) => {
         let index = 0;
         listGroupByQuantity.forEach(element => {
             promotions.forEach(async (item) => {
+                console.log("addPromotion item1:::: ", element.Id, item.ProductId);
+                console.log("addPromotion item2:::: ", (item.IsLargeUnit == element.IsLargeUnit && element.Quantity >= item.QuantityCondition));
                 if ((element.IsPromotion == undefined || (element.IsPromotion == false)) && element.Id == item.ProductId && checkEndDate(item.EndDate) && (item.IsLargeUnit == element.IsLargeUnit && element.Quantity >= item.QuantityCondition)) {
                     let promotion = listProduct.filtered(`Id == ${item.ProductPromotionId}`)
                     promotion = JSON.parse(JSON.stringify(promotion[0]));
@@ -454,7 +458,7 @@ export default (props) => {
                 data = await getOtherPrice(data)
                 // setListOrder(data)
                 setDataOrder(data)
-                updateServerEvent(data, currentCommodity)
+                // updateServerEvent(data, currentCommodity)
                 break;
             case 5:
                 break
@@ -486,16 +490,22 @@ export default (props) => {
         setDataOrder([])
     }
 
+    const onCallBackPayment = (data) => {
+        console.log("onCallBackPayment data ", data);
+        setListOrder([])
+    }
+
     const onClickPayment = () => {
         if (isQuickPayment) {
 
         } else {
-            props.navigation.navigate(ScreenList.Payment);
+            console.log('onClickPayment jsonContent ', jsonContent);
+            props.navigation.navigate(ScreenList.Payment, { onCallBack: onCallBackPayment, Screen: ScreenList.MainRetail, RoomId: jsonContent.RoomId, Name: jsonContent.RoomName ? jsonContent.RoomName : I18n.t('app_name'), Position: jsonContent.Pos });
         }
     }
 
     const applyDialogDetail = (product) => {
-        console.log('applyDialogDetail', product);
+        console.log('applyDialogDetail listOrder ', product, listOrder);
         listOrder.forEach((elm, index) => {
             if (elm.ProductId == product.ProductId && index == product.index) {
                 elm.Quantity = product.Quantity
@@ -533,7 +543,7 @@ export default (props) => {
                 </TouchableOpacity>
             </View>
             <View style={{ flex: 1 }}>
-                {listOrder.length > 0 ?
+                {listOrder != undefined && listOrder.length > 0 ?
                     <FlatList
                         data={listOrder}
                         extraData={listOrder}

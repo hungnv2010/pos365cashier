@@ -162,11 +162,12 @@ const RetailCustomerOrder = (props) => {
 
     const setDataOrder = async (listOrder) => {
         let list = [];
-        if (listOrder && listOrder.length > 0)
+        if (listOrder != undefined && listOrder.length > 0)
             list = await addPromotion([...listOrder])
         console.log("setDataOrder listOrder list ", listOrder, list);
 
         setListOrder([...list])
+        // updateServerEvent(list, currentCommodity)
     }
 
     const removeItem = (product, index) => {
@@ -423,12 +424,16 @@ const RetailCustomerOrder = (props) => {
         )
     }
 
+    const onCallBackPayment = (data) => {
+        console.log("onCallBackPayment data ", data);
+        setListOrder([])
+    }
 
     const onClickPayment = () => {
         if (isQuickPayment) {
 
         } else {
-            props.navigation.navigate(ScreenList.Payment);
+            props.navigation.navigate(ScreenList.Payment, { onCallBack: onCallBackPayment, Screen: ScreenList.MainRetail, RoomId: jsonContent.RoomId, Name: jsonContent.RoomName ? jsonContent.RoomName : I18n.t('app_name'), Position: jsonContent.Pos });
         }
     }
 
