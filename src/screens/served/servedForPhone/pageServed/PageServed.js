@@ -33,9 +33,6 @@ export default (props) => {
     const [toastDescription, setToastDescription] = useState("")
     const [currentPriceBook, setCurrentPriceBook] = useState({ Name: "Giá niêm yết", Id: 0 })
     const [currentCustomer, setCurrentCustomer] = useState({ Name: "Khách hàng", Id: 0 })
-
-
-    const pricebooksRef = useRef()
     const toolBarPhoneServedRef = useRef();
     const [listPosition, setListPosition] = useState([
         { name: "A", status: false },

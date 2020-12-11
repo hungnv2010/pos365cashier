@@ -22,7 +22,7 @@ const initState = {
 	historyOrder: [],
 	printerObject: {},
 
-	isFNB: false,
+	isFNB: null,
 
 	listPrint: "",
 }
