@@ -162,11 +162,12 @@ const RetailCustomerOrder = (props) => {
 
     const setDataOrder = async (listOrder) => {
         let list = [];
-        if (listOrder && listOrder.length > 0)
+        if (listOrder != undefined && listOrder.length > 0)
             list = await addPromotion([...listOrder])
         console.log("setDataOrder listOrder list ", listOrder, list);
 
         setListOrder([...list])
+        // updateServerEvent(list, currentCommodity)
     }
 
     const removeItem = (product, index) => {
@@ -371,48 +372,50 @@ const RetailCustomerOrder = (props) => {
                             orientaition == Constant.PORTRAIT ?
                                 null
                                 :
-                                <View style={{ alignItems: "center", flexDirection: "row", }}>
-                                    <TouchableOpacity
-                                        onPress={() => {
-                                            if (item.Quantity == 1) {
-                                                removeItem(item, index)
-                                            } else {
-                                                item.Quantity--
-                                                // setListOrder([...listOrder])
-                                                setDataOrder([...listOrder])
-                                            }
+                                (isPromotion ? null :
+                                    <View style={{ alignItems: "center", flexDirection: "row", }}>
+                                        <TouchableOpacity
+                                            onPress={() => {
+                                                if (item.Quantity == 1) {
+                                                    removeItem(item, index)
+                                                } else {
+                                                    item.Quantity--
+                                                    // setListOrder([...listOrder])
+                                                    setDataOrder([...listOrder])
+                                                }
+                                            }}>
+                                            <Icon name="minus-box" size={40} color={Colors.colorchinh} />
+                                        </TouchableOpacity>
+                                        <View style={{
+                                            width: 60,
+                                            height: 35,
+                                            shadowColor: "#000",
+                                            shadowOffset: {
+                                                width: 0,
+                                                height: 1,
+                                            },
+                                            shadowOpacity: 0.18,
+                                            shadowRadius: 1.00,
+                                            elevation: 2,
+                                            borderRadius: 2,
+                                            justifyContent: "center",
+                                            alignItems: "center"
                                         }}>
-                                        <Icon name="minus-box" size={40} color={Colors.colorchinh} />
-                                    </TouchableOpacity>
-                                    <View style={{
-                                        width: 60,
-                                        height: 35,
-                                        shadowColor: "#000",
-                                        shadowOffset: {
-                                            width: 0,
-                                            height: 1,
-                                        },
-                                        shadowOpacity: 0.18,
-                                        shadowRadius: 1.00,
-                                        elevation: 2,
-                                        borderRadius: 2,
-                                        justifyContent: "center",
-                                        alignItems: "center"
-                                    }}>
-                                        <Text
-                                            style={{
-                                                fontSize: 16,
-                                                fontWeight: "bold",
-                                            }}>{item.Quantity}</Text>
+                                            <Text
+                                                style={{
+                                                    fontSize: 16,
+                                                    fontWeight: "bold",
+                                                }}>{item.Quantity}</Text>
+                                        </View>
+                                        <TouchableOpacity onPress={() => {
+                                            item.Quantity++
+                                            // setListOrder([...listOrder])
+                                            setDataOrder([...listOrder])
+                                        }}>
+                                            <Icon name="plus-box" size={40} color={Colors.colorchinh} />
+                                        </TouchableOpacity>
                                     </View>
-                                    <TouchableOpacity onPress={() => {
-                                        item.Quantity++
-                                        // setListOrder([...listOrder])
-                                        setDataOrder([...listOrder])
-                                    }}>
-                                        <Icon name="plus-box" size={40} color={Colors.colorchinh} />
-                                    </TouchableOpacity>
-                                </View>
+                                )
                         }
 
                     </View>
@@ -421,12 +424,16 @@ const RetailCustomerOrder = (props) => {
         )
     }
 
+    const onCallBackPayment = (data) => {
+        console.log("onCallBackPayment data ", data);
+        setListOrder([])
+    }
 
     const onClickPayment = () => {
         if (isQuickPayment) {
 
         } else {
-            props.navigation.navigate(ScreenList.Payment);
+            props.navigation.navigate(ScreenList.Payment, { onCallBack: onCallBackPayment, Screen: ScreenList.MainRetail, RoomId: jsonContent.RoomId, Name: jsonContent.RoomName ? jsonContent.RoomName : I18n.t('app_name'), Position: jsonContent.Pos });
         }
     }
 
