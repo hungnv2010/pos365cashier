@@ -61,7 +61,7 @@ const MainRetail = (props) => {
             else getBasePrice()
         }
     }, [currentPriceBook])
-    
+
     const outputSelectedProduct = async (product, type = 1) => {
         switch (type) {
             case 1:
@@ -127,7 +127,8 @@ const MainRetail = (props) => {
     }
 
     const onClickSync = () => {
-
+        console.log('onClickSync');
+        props.syncForRetail()
     }
 
     const outputTextSearch = (text) => {

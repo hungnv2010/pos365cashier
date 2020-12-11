@@ -278,6 +278,7 @@ class DataManager {
         let discount = this.totalDiscountProducts(JsonContent.OrderDetails)
         let totalWithVAT = totalProducts + (JsonContent.VAT ? JsonContent.VAT : 0)
         JsonContent.Total = totalWithVAT - discount
+        JsonContent.AmountReceived = totalWithVAT - discount
         JsonContent.Discount = discount
         if (!JsonContent.ActiveDate || JsonContent.ActiveDate == "")
             JsonContent.ActiveDate = moment()
@@ -398,23 +399,34 @@ class DataManager {
             VATRates: "",
             DiscountValue: 0,
             Voucher: 0,
-            DiscountToView: "",
+            DiscountToView: 0,
             VAT: 0,
             Description: "",
             ActiveDate: "",
-            PartnerId: 0,
+            Partner: null,
+            PartnerId: null,
             OldDebt: 0,
             DiscountRatio: 0,
+            VoucherCode: null,
+            VoucherId: null,
             Id: 0,
             Code: "",
             initializingTotalPayment: false,
+            tmpDeliveryById: null,
+            AccountId: null,
             ShippingCost: "0",
             ShippingCostForPartner: 0,
+            tmpDeliveryBy: null,
             PurchaseDate: "",
-            PriceBookId: "0",
+            PriceBookId: null,
             Topping: "",
+            PointToValue: 0,
             MoreAttributes: "",
             Printed: false,
+            ChannelId: null,
+            CardNumber: null,
+            tmpLadingCode: "",
+            tmpShippingCost: 0
         }
     }
 

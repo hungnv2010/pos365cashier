@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, createRef, useLayoutEffect } from 'react';
-import { View, AppState, Text } from 'react-native';
+import { View, AppState, Text, ActivityIndicator } from 'react-native';
 import MainToolBar from './MainToolBar';
 import dataManager from '../../data/DataManager'
 import Order from './order/Order';
@@ -15,23 +15,27 @@ import MainRetail from './retail/MainRetail';
 import RetailToolBar from '../main/retail/retailToolbar';
 import Customer from '../customer/Customer';
 import ViewPrint, { TYPE_PRINT } from '../more/ViewPrint';
+import { Colors } from '../../theme';
 
 export default (props) => {
 
-  const [isFNB, setIsFNB] = useState(null)
 
   const viewPrintRef = useRef();
   const dispatch = useDispatch();
 
-  useSelector(state => {
-    console.log("useSelector Main state ", state);
+  const { listPrint, isFNB } = useSelector(state => {
+    return state.Common
+  })
 
-    if (state.Common.listPrint != "") {
-      viewPrintRef.current.printKitchenRef(state.Common.listPrint)
-      dispatch({ type: 'LIST_PRINT', listPrint: "" })
-    }
+  // useSelector(state => {
+  //   console.log("useSelector Main state ", state);
 
-  });
+  //   if (state.Common.listPrint != "") {
+  //     viewPrintRef.current.printKitchenRef(state.Common.listPrint)
+  //     dispatch({ type: 'LIST_PRINT', listPrint: "" })
+  //   }
+
+  // });
   // dispatch({ type: 'LIST_PRINT', listPrint: data })
   // const listPrint = useSelector(state => {
   //   console.log("useSelector Main listPrint ", state);
@@ -39,26 +43,56 @@ export default (props) => {
   // });
 
   useEffect(() => {
-    const getVendorSession = async () => {
-      dialogManager.showLoading()
-      let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
-      console.log('getVendorSession data ====', JSON.parse(data));
-      data = JSON.parse(data);
-      if (data) {
-        if (data.CurrentRetailer && (data.CurrentRetailer.FieldId == 3 || data.CurrentRetailer.FieldId == 11)) {
-          let state = store.getState();
-          signalRManager.init({ ...data, SessionId: state.Common.info.SessionId }, true)
-          setIsFNB(true)
-          dispatch({ type: 'IS_FNB', isFNB: true })
-        } else {
-          setIsFNB(false)
-          dispatch({ type: 'IS_FNB', isFNB: false })
-        }
-
-      }
-      dialogManager.hiddenLoading()
+    if (listPrint != "") {
+      viewPrintRef.current.printKitchenRef(state.Common.listPrint)
+      dispatch({ type: 'LIST_PRINT', listPrint: "" })
     }
-    getVendorSession()
+  }, [listPrint])
+
+  useEffect(() => {
+    // const getVendorSession = async () => {
+    //   let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
+    //   console.log('getVendorSession data ====', JSON.parse(data));
+    //   data = JSON.parse(data);
+    //   if (data) {
+    //     if (data.CurrentRetailer && (data.CurrentRetailer.FieldId == 3 || data.CurrentRetailer.FieldId == 11)) {
+    //       let state = store.getState()
+    //       signalRManager.init({ ...data, SessionId: state.Common.info.SessionId }, true)
+    //       dispatch({ type: 'IS_FNB', isFNB: true })
+    //     } else {
+    //       dispatch({ type: 'IS_FNB', isFNB: false })
+    //     }
+
+    //   }
+    // }
+    const getCurrentBranch = async () => {
+      let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
+      vendorSession = JSON.parse(vendorSession)
+      let currentBranch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
+      currentBranch = JSON.parse(currentBranch)
+      console.log('getCurrentBranch', currentBranch);
+      if (vendorSession) {
+        if (currentBranch && currentBranch.FieldId) {
+          if (currentBranch.FieldId == 3 || currentBranch.FieldId == 11) {
+            let state = store.getState()
+            signalRManager.init({ ...vendorSession, SessionId: state.Common.info.SessionId }, true)
+            dispatch({ type: 'IS_FNB', isFNB: true })
+          } else {
+            dispatch({ type: 'IS_FNB', isFNB: false })
+          }
+        } else {
+          if (data.CurrentRetailer && (data.CurrentRetailer.FieldId == 3 || data.CurrentRetailer.FieldId == 11)) {
+            let state = store.getState()
+            signalRManager.init({ ...data, SessionId: state.Common.info.SessionId }, true)
+            dispatch({ type: 'IS_FNB', isFNB: true })
+          } else {
+            dispatch({ type: 'IS_FNB', isFNB: false })
+            //     }
+          }
+        }
+      }
+    }
+    getCurrentBranch()
   }, [])
 
   useEffect(() => {
@@ -85,38 +119,42 @@ export default (props) => {
   }, [])
 
   useEffect(() => {
-    const syncAllDatas = async () => {
-      dialogManager.showLoading()
+    const syncDatas = async () => {
       dispatch({ type: 'ALREADY', already: null })
+      await realmStore.deleteAll()
 
-      if (props.params && props.params.index) {
-        await realmStore.deleteAll()
-      }
-
-      if (isFNB) {
-        await dataManager.syncAllDatas()
-          .then(() => {
-            dispatch({ type: 'ALREADY', already: true })
-          })
-          .catch((e) => {
-            dispatch({ type: 'ALREADY', already: true })
-            console.log(e);
-          })
+      if (isFNB === null) {
+        return
+      } else if (isFNB === true) {
+        await syncForFNB()
       } else {
-        await dataManager.syncAllDatasForRetail()
-          .then(() => {
-            dispatch({ type: 'ALREADY', already: true })
-          })
-          .catch((e) => {
-            dispatch({ type: 'ALREADY', already: true })
-            console.log(e);
-          })
+        await syncForRetail()
       }
-      dialogManager.hiddenLoading()
-
     }
-    syncAllDatas()
+    syncDatas()
   }, [isFNB])
+
+  const syncForFNB = async () => {
+    await dataManager.syncAllDatas()
+      .then(() => {
+        dispatch({ type: 'ALREADY', already: true })
+      })
+      .catch((e) => {
+        dispatch({ type: 'ALREADY', already: true })
+        console.log(e);
+      })
+  }
+
+  const syncForRetail = async () => {
+    await dataManager.syncAllDatasForRetail()
+      .then(() => {
+        dispatch({ type: 'ALREADY', already: true })
+      })
+      .catch((e) => {
+        dispatch({ type: 'ALREADY', already: true })
+        console.log(e);
+      })
+  }
 
 
   const handleChangeState = (newState) => {
@@ -126,8 +164,8 @@ export default (props) => {
   }
 
   const clickRightIcon = async () => {
-    dispatch({ type: 'ALREADY', already: false })
     dialogManager.showLoading()
+    dispatch({ type: 'ALREADY', already: null })
     await dataManager.syncAllDatas()
       .then(() => {
         dispatch({ type: 'ALREADY', already: true })
@@ -139,10 +177,6 @@ export default (props) => {
     dialogManager.hiddenLoading()
   }
 
-  const outputTextSearch = (text) => {
-    console.log('outputTextSearch text', text);
-    setValue(text)
-  }
 
   return (
     <View style={{ flex: 1 }}>
@@ -150,19 +184,29 @@ export default (props) => {
         ref={viewPrintRef}
       />
       {
-        isFNB ?
-          <>
-            <MainToolBar
-              navigation={props.navigation}
-              title={I18n.t('phong_ban')}
-              rightIcon="refresh"
-              clickRightIcon={clickRightIcon}
-            />
-            <Order {...props} />
-          </>
+        isFNB === null ?
+          null
           :
-          <MainRetail
-            {...props} />
+          isFNB === true ?
+            <>
+              <MainToolBar
+                navigation={props.navigation}
+                title={I18n.t('phong_ban')}
+                rightIcon="refresh"
+                clickRightIcon={clickRightIcon}
+              />
+              <Order {...props} />
+            </>
+            :
+            <MainRetail
+              {...props}
+              syncForRetail={() => {
+                dialogManager.showLoading()
+                dispatch({ type: 'ALREADY', already: null })
+                syncForRetail()
+                dialogManager.hiddenLoading()
+              }} />
+
       }
     </View>
   );
