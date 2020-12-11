@@ -426,7 +426,7 @@ const RetailCustomerOrder = (props) => {
 
     const onCallBackPayment = (data) => {
         console.log("onCallBackPayment data ", data);
-        setListOrder([])
+        syncListProducts([])
     }
 
     const onClickPayment = () => {

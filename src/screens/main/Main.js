@@ -81,9 +81,9 @@ export default (props) => {
             dispatch({ type: 'IS_FNB', isFNB: false })
           }
         } else {
-          if (data.CurrentRetailer && (data.CurrentRetailer.FieldId == 3 || data.CurrentRetailer.FieldId == 11)) {
+          if (vendorSession.CurrentRetailer && (vendorSession.CurrentRetailer.FieldId == 3 || vendorSession.CurrentRetailer.FieldId == 11)) {
             let state = store.getState()
-            signalRManager.init({ ...data, SessionId: state.Common.info.SessionId }, true)
+            signalRManager.init({ ...vendorSession, SessionId: state.Common.info.SessionId }, true)
             dispatch({ type: 'IS_FNB', isFNB: true })
           } else {
             dispatch({ type: 'IS_FNB', isFNB: false })

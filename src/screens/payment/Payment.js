@@ -505,14 +505,15 @@ export default (props) => {
         new HTTPService().setPath(ApiPath.ORDERS).POST(params).then(order => {
             console.log("onClickPay order ", order);
             if (order) {
-                let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
-                dataManager.paymentSetServerEvent(serverEvent, {});
-                dataManager.subjectUpdateServerEvent.next(serverEvent)
                 dataManager.sentNotification(jsonContent.RoomName, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
                 dialogManager.hiddenLoading()
 
                 if (props.route.params.Screen != undefined && props.route.params.Screen == ScreenList.MainRetail) {
                     props.route.params.onCallBack("success")
+                } else {
+                    let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
+                    dataManager.paymentSetServerEvent(serverEvent, {});
+                    dataManager.subjectUpdateServerEvent.next(serverEvent)
                 }
 
                 if (order.QRCode != "") {
