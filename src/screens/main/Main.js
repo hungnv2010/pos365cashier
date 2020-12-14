@@ -50,22 +50,8 @@ export default (props) => {
   }, [listPrint])
 
   useEffect(() => {
-    // const getVendorSession = async () => {
-    //   let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
-    //   console.log('getVendorSession data ====', JSON.parse(data));
-    //   data = JSON.parse(data);
-    //   if (data) {
-    //     if (data.CurrentRetailer && (data.CurrentRetailer.FieldId == 3 || data.CurrentRetailer.FieldId == 11)) {
-    //       let state = store.getState()
-    //       signalRManager.init({ ...data, SessionId: state.Common.info.SessionId }, true)
-    //       dispatch({ type: 'IS_FNB', isFNB: true })
-    //     } else {
-    //       dispatch({ type: 'IS_FNB', isFNB: false })
-    //     }
-
-    //   }
-    // }
     const getCurrentBranch = async () => {
+      dialogManager.showLoading()
       let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
       vendorSession = JSON.parse(vendorSession)
       let currentBranch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
@@ -87,7 +73,6 @@ export default (props) => {
             dispatch({ type: 'IS_FNB', isFNB: true })
           } else {
             dispatch({ type: 'IS_FNB', isFNB: false })
-            //     }
           }
         }
       }
@@ -120,16 +105,14 @@ export default (props) => {
 
   useEffect(() => {
     const syncDatas = async () => {
-      dispatch({ type: 'ALREADY', already: null })
-      await realmStore.deleteAll()
-
-      if (isFNB === null) {
-        return
-      } else if (isFNB === true) {
+      if (isFNB === null) return
+      // await realmStore.deleteAll()
+      if (isFNB === true) {
         await syncForFNB()
       } else {
         await syncForRetail()
       }
+      dialogManager.hiddenLoading()
     }
     syncDatas()
   }, [isFNB])
@@ -166,14 +149,14 @@ export default (props) => {
   const clickRightIcon = async () => {
     dialogManager.showLoading()
     dispatch({ type: 'ALREADY', already: null })
-    await dataManager.syncAllDatas()
-      .then(() => {
-        dispatch({ type: 'ALREADY', already: true })
-      })
-      .catch((e) => {
-        dispatch({ type: 'ALREADY', already: true })
-        console.log(e);
-      })
+    await syncForFNB()
+    dialogManager.hiddenLoading()
+  }
+
+  const clickSyncForRetail = async () => {
+    dialogManager.showLoading()
+    dispatch({ type: 'ALREADY', already: null })
+    await syncForRetail()
     dialogManager.hiddenLoading()
   }
 
@@ -185,7 +168,9 @@ export default (props) => {
       />
       {
         isFNB === null ?
-          null
+          <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <ActivityIndicator size="large" style={{}} color={Colors.colorchinh} />
+          </View>
           :
           isFNB === true ?
             <>
@@ -200,12 +185,7 @@ export default (props) => {
             :
             <MainRetail
               {...props}
-              syncForRetail={() => {
-                dialogManager.showLoading()
-                dispatch({ type: 'ALREADY', already: null })
-                syncForRetail()
-                dialogManager.hiddenLoading()
-              }} />
+              syncForRetail={clickSyncForRetail} />
 
       }
     </View>

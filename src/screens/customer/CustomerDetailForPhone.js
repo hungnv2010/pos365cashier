@@ -26,10 +26,6 @@ export default (props) => {
     const toastDescription = useRef('')
     const dateTmp = useRef()
 
-    const { deviceType } = useSelector(state => {
-        console.log("useSelector state ", state);
-        return state.Common
-    });
 
     useEffect(() => {
         const getListGroup = async () => {
@@ -347,8 +343,8 @@ export default (props) => {
                 .then(res => {
                     console.log('onClickDone res', res);
                     if (res) {
-                        props.route.params.onCallBack('add')
-                        resetCustomer()
+                        props.route.params.onCallBack('them')
+                        props.navigation.pop()
                     }
                     dialogManager.hiddenLoading()
                 })
@@ -364,8 +360,8 @@ export default (props) => {
                 .then(res => {
                     console.log('onClickDone res', res);
                     if (res) {
-                        props.route.params.onCallBack('update')
-                        resetCustomer()
+                        props.route.params.onCallBack('sua')
+                       props.navigation.pop()
                     }
                     dialogManager.hiddenLoading()
                 })
@@ -381,7 +377,8 @@ export default (props) => {
         new HTTPService().setPath(`${ApiPath.CUSTOMER}/${customerDetail.Id}`).DELETE()
             .then(res => {
                 console.log('onClickDelete', res)
-                if (res) props.route.params.onCallBack('delete')
+                if (res) props.route.params.onCallBack('xoa')
+                props.navigation.pop()
             })
             .catch(err => console.log('onClickDelete err', err))
     }

@@ -28,7 +28,7 @@ export default {
   bao_che_bien: "Báo chế biến",
   bao_che_bien_thanh_cong: "Báo chế biến thành công",
   ban_co_chac_chan_muon_xoa_hoa_don: "Hoá đơn đang được sử dụng. Bạn có chắc chắn muốn xoá hoá hơn?",
-  
+
   // TODO: C
   cai_dat: "Cài đặt",
   chon_chi_nhanh: "Chọn chi nhánh",
@@ -85,7 +85,7 @@ export default {
   diem_voucher: "Điểm/Voucher",
   diem_hien_tai: "Điểm hiện có",
   diem_thuong: "Điểm thưởng",
-  don_hang_moi:"Đơn mới",
+  don_hang_moi: "Đơn mới",
   du_no: "Dư nợ",
   don_hang_moi: "Đơn mới",
 
@@ -247,6 +247,7 @@ export default {
   so_luong_ban: "Số lượng bàn",
   su_dung_diem: "Sử dụng điểm",
   so_tien_quy_doi: "Số tiền quy đổi",
+  sua: "Sửa",
 
   // TODO: T
   thong_bao_quet_van_tay: "Quý khách vui lòng quét dấu vân tay đã đăng ký trên thiết bị.",
@@ -277,7 +278,7 @@ export default {
   tong_so_luong: "Tổng số lượng",
   trang_thai: "Trạng thái",
   thanh_toan: "Thanh toán",
-  them: "Thêm",
+  them: "Thêm mới",
   ten_hang: "Tên",
   TT: "TT",
   trieu: "triệu",
@@ -294,6 +295,7 @@ export default {
   tra_hang: "Trả hàng",
   tong_thu: "Tổng thu",
   tong_cong: "Tổng cộng",
+  them: "Thêm",
   tong_giao_dich: "Tổng giao dịch",
   tinh_thanh: "Tỉnh thành",
   tong_giao_dich_theo_thoi_gian: "TỔNG GIAO DỊCH THEO THỜI GIAN",
@@ -323,6 +325,7 @@ export default {
   thu_ngan: "Thu ngân",
   them_khach_hang: "Thêm khách hàng",
   tu_dong_tao_ma: "Tự động tạo mã",
+  thanh_cong:"thành công",
 
   // TODO: U
 
@@ -341,6 +344,7 @@ export default {
   xac_thuc_loi_nhieu_lan: "Quá nhiều lần thử. Hãy thử lại sau",
   xong: "Xong",
   xin_cam_on: "Xin cảm ơn, hẹn gặp lại quý khách!",
+  xoa: "Xóa",
 
   // TODO: Y
 

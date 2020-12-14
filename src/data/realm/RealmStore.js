@@ -56,8 +56,8 @@ class RealmStore extends RealmBase {
         console.log("deletePartnerItem ");
         let realm = await Realm.open(databaseOption)
         return new Promise((resolve) => realm.write(() => {
-            let room = realm.objects(SchemaName.CUSTOMER)
-            realm.delete(room)
+            let partner = realm.objects(SchemaName.CUSTOMER)
+            realm.delete(partner)
             resolve()
         }))
     }
