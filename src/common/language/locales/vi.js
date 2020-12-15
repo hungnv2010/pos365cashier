@@ -28,7 +28,9 @@ export default {
   bao_che_bien: "Báo chế biến",
   bao_che_bien_thanh_cong: "Báo chế biến thành công",
   ban_co_chac_chan_muon_xoa_hoa_don: "Hoá đơn đang được sử dụng. Bạn có chắc chắn muốn xoá hoá hơn?",
-
+  ban_chua_chon_mon_an_de_tach: "Bạn chưa chọn món để tách.",
+  ban_dang_o_dung_vi_tri_da_chon_se_khong_co_thay_doi: "Bạn đang ở đúng vị trí đã chọn. Sẽ không có thay đổi nào được thực hiện.",
+  
   // TODO: C
   cai_dat: "Cài đặt",
   chon_chi_nhanh: "Chọn chi nhánh",
@@ -62,6 +64,7 @@ export default {
   cac_mon_ban_chon_dang_duoc_nha_bep_chuan_bi: "Các món bạn chọn đang được nhà bếp và bartender chuẩn bị. Vui lòng đợi.",
   cap_nhat_khach_hang: "Cập nhật khách hàng",
   moi_chon_mon_truoc: "Mời bạn chọn hàng hóa trước",
+  chon_vi_tri: "Chọn vị trí",
 
   // TODO: D
   dang_dung: "Đang dùng",
@@ -329,6 +332,8 @@ export default {
   thu_ngan: "Thu ngân",
   them_khach_hang: "Thêm khách hàng",
   tu_dong_tao_ma: "Tự động tạo mã",
+  tach_ban: "Tách bàn",
+  tach_tai_ban: "Tách tại bàn",
   thanh_cong:"thành công",
 
   // TODO: U
