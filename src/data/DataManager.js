@@ -378,21 +378,28 @@ class DataManager {
             newServerEvent.JsonContent.OrderDetails = [...OrderDetails]
         }
 
+
         oldServerEvent.Version += 1
         oldServerEvent.JsonContent.OrderDetails = ListOldSplit
-        if (ListOldSplit == undefined || ListOldSplit.length == 0)
-            oldServerEvent.JsonContent = JSON.stringify(this.removeJsonContent(oldServerEvent.JsonContent))
-        else
-            oldServerEvent.JsonContent = JSON.stringify(oldServerEvent.JsonContent)
+        this.calculatateJsonContent(oldServerEvent.JsonContent)
+        oldServerEvent.JsonContent = JSON.stringify(oldServerEvent.JsonContent)
+        // oldServerEvent.JsonContent.OrderDetails = ListOldSplit
+        // if (ListOldSplit == undefined || ListOldSplit.length == 0)
+        //     oldServerEvent.JsonContent = JSON.stringify(this.removeJsonContent(oldServerEvent.JsonContent))
+        // else
+        //     oldServerEvent.JsonContent = JSON.stringify(oldServerEvent.JsonContent)
         newServerEvent.Version += 1
         this.calculatateJsonContent(newServerEvent.JsonContent)
         newServerEvent.JsonContent = JSON.stringify(newServerEvent.JsonContent)
 
         console.log("splitTable oldServerEvent:: ", oldServerEvent)
         console.log("splitTable newServerEvent:: ", newServerEvent)
-
-        await this.updateServerEventNow(oldServerEvent, true)
-        await this.updateServerEventNow(newServerEvent, true)
+        setTimeout(async () => {
+            await this.updateServerEventNow(oldServerEvent, true)
+            setTimeout(async () => {
+                await this.updateServerEventNow(newServerEvent, true)
+            }, 1000);
+        }, 500);
 
     }
 

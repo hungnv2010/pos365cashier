@@ -139,7 +139,7 @@ export default forwardRef((props, ref) => {
         console.log("data ", data);
         console.log("printObject ", printObject);
         console.log('vendorSession ', vendorSession);
-        if (status != "") {
+        // if (status != "") {
             for (const value in data) {
                 if (data.hasOwnProperty(value)) {
                     const item = data[value];
@@ -158,7 +158,7 @@ export default forwardRef((props, ref) => {
             }
             console.log("printService.listWaiting ", printService.listWaiting);
             setDataHtmlPrint()
-        }
+        // }
     }
 
     const checkIP = async () => {

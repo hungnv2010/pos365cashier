@@ -59,8 +59,17 @@ const Served = (props) => {
         _menu.hide();
     };
 
-    const showMenu = () => {
+    const showMenu = async () => {
         _menu.show();
+        let serverEvent = await realmStore.queryServerEvents()
+        listPosition.forEach((item, index) => {
+            const row_key = `${props.route.params.room.Id}_${item.name}`
+            let serverEventPos = serverEvent.filtered(`RowKey == '${row_key}'`)
+            if (JSON.stringify(serverEventPos) != "{}" && JSON.parse(serverEventPos[0].JsonContent).OrderDetails.length > 0) {
+                item.status = true
+            }
+        })
+        setListPosition([...listPosition])
     };
 
     useEffect(() => {
