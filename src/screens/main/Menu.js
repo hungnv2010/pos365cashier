@@ -186,8 +186,8 @@ const HeaderComponent = (props) => {
             if (res) {
                 setFileLuuDuLieu(Constant.CURRENT_BRANCH, JSON.stringify(item));
                 setBranch(item)
-                // dispatch({ type: 'ALREADY', already: null })
-                // await realmStore.deleteAll(),
+                dispatch({ type: 'IS_FNB', isFNB: null })
+                dispatch({ type: 'ALREADY', already: null })
                 signalRManager.killSignalR();
                 getRetailerInfoAndNavigate();
                 dialogManager.hiddenLoading();
@@ -268,12 +268,15 @@ const HeaderComponent = (props) => {
                     }
                     <Text style={{ marginTop: 10, color: "#fff" }}>{Name}</Text>
                 </View>
-                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 15 }}>
-                    <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", }} onPress={() => onClickBranh()}>
+                <View style={{ marginTop: 15, }}>
+                    <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }} onPress={() => onClickBranh()}>
                         <Icon name="location-on" size={20} color="#fff" />
-                        <Text style={{ color: "#fff" }}>{Branch.Name && Branch.Name != "" ? Branch.Name : I18n.t('chi_nhanh')}</Text>
+                        <Text numberOfLines={2} style={{ color: "#fff" }}>{Branch.Name && Branch.Name != "" ? Branch.Name : I18n.t('chi_nhanh')}</Text>
+
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => onClickLogOut()}>
+                    <TouchableOpacity
+                        style={{alignItems:"flex-end"}}
+                        onPress={() => onClickLogOut()}>
                         <Text style={{ textDecorationLine: "underline", color: "#fff" }}>{I18n.t('logout')}</Text>
                     </TouchableOpacity>
                 </View>

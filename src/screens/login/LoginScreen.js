@@ -58,8 +58,8 @@ const LoginScreen = (props) => {
                     setHasLogin(false)
                 }
                 dialogManager.hiddenLoading()
-                dispatch({ type: 'ALREADY', already: false })
-                await realmStore.deleteAll()
+                // dispatch({ type: 'ALREADY', already: null })
+                // await realmStore.deleteAll()
             }
         }
         getCurrentAccount()

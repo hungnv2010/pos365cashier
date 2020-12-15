@@ -52,6 +52,8 @@ export default {
   chon_tinh_thanh: "Choose province",
   chon_bang_gia: "Choose pricebook",
   moi_chon_mon_truoc: "choose your products first",
+  chua_cap_nhat: "No infomation",
+  cap_nhat_khach_hang: "Update customer",
 
   // TODO: D
   dang_dung: "Serving",
@@ -74,6 +76,7 @@ export default {
   diem_thuong: "Reward Points",
   diem_hien_tai: "Current Point",
   don_hang_moi: "New orders",
+  du_no: "Debt",
   // TODO: E
 
 
@@ -162,6 +165,8 @@ export default {
   mon_da_xac_nhan: "Menu confirmed",
   mac_dinh: "Default",
   mat_hang: "Item",
+  ma_khach_hang: "Customer Code",
+
 
 
   // TODO: N
@@ -177,6 +182,7 @@ export default {
   ngay: "days",
   ngay_ban: "Sold date",
   nhap_tu_khoa_tim_kiem: "Enter search keywords",
+  ngay_sinh: "Date of birth",
 
   // TODO: O
 
@@ -208,6 +214,7 @@ export default {
   SL: "Qty",
   su_dung_diem: "Use Point",
   so_tien_quy_doi: "Money Discount",
+  sua: "Update",
 
   // TODO: T
   thong_bao: "Notification",
@@ -232,6 +239,7 @@ export default {
   them: "More",
   ten_hang: "Name",
   TT: "TT",
+  them_khach_hang: "Add new customer",
   trieu: "milions",
   tat_ca_san_pham: "All products",
   tong_dai_ho_tro: "Support",
@@ -261,6 +269,12 @@ export default {
   tach_ban: "Split table",
   tien_thua: "Excess cash",
   tim_kiem: "Search",
+  them: "Add",
+  thanh_cong: "success",
+  tu_dong_tao_ma: "Automatically Generate Code",
+  ten_nhom: "Group Name",
+  tinh_thanh: "Province",
+
 
   // TODO: U
 
@@ -273,6 +287,7 @@ export default {
   xac_nhan: 'Comfirm',
   xong: "Done",
   xin_cam_on: "Thank you, see you again!",
+  xoa: "Delete",
 
   // TODO: Y
   yeu_cau_thanh_toan: "Payment request",

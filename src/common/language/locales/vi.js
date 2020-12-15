@@ -28,9 +28,13 @@ export default {
   bao_che_bien: "Báo chế biến",
   bao_che_bien_thanh_cong: "Báo chế biến thành công",
   ban_co_chac_chan_muon_xoa_hoa_don: "Hoá đơn đang được sử dụng. Bạn có chắc chắn muốn xoá hoá hơn?",
+<<<<<<< HEAD
   ban_chua_chon_mon_an_de_tach: "Bạn chưa chọn món để tách.",
   ban_dang_o_dung_vi_tri_da_chon_se_khong_co_thay_doi: "Bạn đang ở đúng vị trí đã chọn. Sẽ không có thay đổi nào được thực hiện.",
   
+=======
+
+>>>>>>> 52b5c07845dccd5228ee9de4474a8d0b7cb77bbe
   // TODO: C
   cai_dat: "Cài đặt",
   chon_chi_nhanh: "Chọn chi nhánh",
@@ -250,6 +254,7 @@ export default {
   so_luong_ban: "Số lượng bàn",
   su_dung_diem: "Sử dụng điểm",
   so_tien_quy_doi: "Số tiền quy đổi",
+  sua: "Sửa",
 
   // TODO: T
   thong_bao_quet_van_tay: "Quý khách vui lòng quét dấu vân tay đã đăng ký trên thiết bị.",
@@ -280,7 +285,7 @@ export default {
   tong_so_luong: "Tổng số lượng",
   trang_thai: "Trạng thái",
   thanh_toan: "Thanh toán",
-  them: "Thêm",
+  them: "Thêm mới",
   ten_hang: "Tên",
   TT: "TT",
   trieu: "triệu",
@@ -297,6 +302,7 @@ export default {
   tra_hang: "Trả hàng",
   tong_thu: "Tổng thu",
   tong_cong: "Tổng cộng",
+  them: "Thêm",
   tong_giao_dich: "Tổng giao dịch",
   tinh_thanh: "Tỉnh thành",
   tong_giao_dich_theo_thoi_gian: "TỔNG GIAO DỊCH THEO THỜI GIAN",
@@ -326,8 +332,12 @@ export default {
   thu_ngan: "Thu ngân",
   them_khach_hang: "Thêm khách hàng",
   tu_dong_tao_ma: "Tự động tạo mã",
+<<<<<<< HEAD
   tach_ban: "Tách bàn",
   tach_tai_ban: "Tách tại bàn",
+=======
+  thanh_cong:"thành công",
+>>>>>>> 52b5c07845dccd5228ee9de4474a8d0b7cb77bbe
 
   // TODO: U
 
@@ -346,6 +356,7 @@ export default {
   xac_thuc_loi_nhieu_lan: "Quá nhiều lần thử. Hãy thử lại sau",
   xong: "Xong",
   xin_cam_on: "Xin cảm ơn, hẹn gặp lại quý khách!",
+  xoa: "Xóa",
 
   // TODO: Y
 
