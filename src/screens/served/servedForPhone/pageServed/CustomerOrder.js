@@ -118,9 +118,9 @@ export default (props) => {
 
     const removeItem = (item) => {
         console.log('removeItem ', item.Name, item.index);
-            setItemOrder(item)
-            typeModal.current = TYPE_MODAL.DELETE
-            setShowModal(true)
+        setItemOrder(item)
+        typeModal.current = TYPE_MODAL.DELETE
+        setShowModal(true)
     }
 
     const onClickTopping = (item, index) => {
@@ -182,6 +182,14 @@ export default (props) => {
         props.outputListProducts([...listOrder])
     }
 
+    const splitTable = () => {
+        hideMenu()
+        if (listOrder && listOrder.length > 0) {
+            props.navigation.navigate(ScreenList.SplitTable, props.jsonContent);
+        } else {
+            dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
+        }
+    }
 
     let _menu = null;
 
@@ -359,6 +367,10 @@ export default (props) => {
                         <View style={{
                             backgroundColor: "#fff", borderRadius: 4, marginHorizontal: 5,
                         }}>
+                            <TouchableOpacity onPress={() => splitTable()} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
+                                <MaterialIcons style={{ paddingHorizontal: 7 }} name="call-split" size={26} color={Colors.colorchinh} />
+                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('tach_ban')}</Text>
+                            </TouchableOpacity>
                             <TouchableOpacity onPress={() => changTable()} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
                                 <MaterialIcons style={{ paddingHorizontal: 7 }} name="notifications" size={26} color={Colors.colorchinh} />
                                 <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('chuyen_ban')}</Text>

@@ -353,6 +353,49 @@ class DataManager {
 
     }
 
+    splitTable = async (RoomId, OldPosition, NewPosition, ListOldSplit, ListNewSplit) => {
+        console.log("splitTable ", RoomId, OldPosition, NewPosition, ListOldSplit, ListNewSplit);
+        let serverEvents = await realmStore.queryServerEvents()
+
+        let oldServerEvent = serverEvents.filtered(`RowKey == '${RoomId}_${OldPosition}'`)
+        let newServerEvent = serverEvents.filtered(`RowKey == '${RoomId}_${NewPosition}'`)
+
+        oldServerEvent = (JSON.stringify(oldServerEvent) != '{}') ? JSON.parse(JSON.stringify(oldServerEvent))[0]
+            : await this.createSeverEvent(RoomId, OldPosition)
+        oldServerEvent.JsonContent = oldServerEvent.JsonContent ? JSON.parse(oldServerEvent.JsonContent) : {}
+        if (!oldServerEvent.JsonContent.OrderDetails) oldServerEvent.JsonContent.OrderDetails = []
+
+        newServerEvent = (JSON.stringify(newServerEvent) != '{}') ? JSON.parse(JSON.stringify(newServerEvent))[0]
+            : await this.createSeverEvent(RoomId, NewPosition)
+        if (!newServerEvent.JsonContent) {
+            newServerEvent.JsonContent =
+                this.createJsonContent(RoomId, NewPosition, momentToDateUTC(moment()), ListNewSplit)
+        } else {
+            newServerEvent.JsonContent = JSON.parse(newServerEvent.JsonContent)
+            let OrderDetails = newServerEvent.JsonContent.OrderDetails ?
+                [...newServerEvent.JsonContent.OrderDetails, ...ListNewSplit]
+                : ListNewSplit
+            newServerEvent.JsonContent.OrderDetails = [...OrderDetails]
+        }
+
+        oldServerEvent.Version += 1
+        oldServerEvent.JsonContent.OrderDetails = ListOldSplit
+        if (ListOldSplit == undefined || ListOldSplit.length == 0)
+            oldServerEvent.JsonContent = JSON.stringify(this.removeJsonContent(oldServerEvent.JsonContent))
+        else
+            oldServerEvent.JsonContent = JSON.stringify(oldServerEvent.JsonContent)
+        newServerEvent.Version += 1
+        this.calculatateJsonContent(newServerEvent.JsonContent)
+        newServerEvent.JsonContent = JSON.stringify(newServerEvent.JsonContent)
+
+        console.log("splitTable oldServerEvent:: ", oldServerEvent)
+        console.log("splitTable newServerEvent:: ", newServerEvent)
+
+        await this.updateServerEventNow(oldServerEvent, true)
+        await this.updateServerEventNow(newServerEvent, true)
+
+    }
+
     createSeverEvent = async (RoomId, Position) => {
         let vendorSession = await this.selectVendorSession()
         let PartitionKey = `${vendorSession.CurrentBranchId}_${vendorSession.CurrentUser.RetailerId}`
