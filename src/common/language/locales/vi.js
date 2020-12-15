@@ -142,6 +142,7 @@ export default {
   khong_ho_tro_nhieu_tai_khoan_cho_qr: "Không hỗ trợ nhiều tài khoản thanh toán cho QR",
   khuyen_mai: "Khuyến mãi",
   khuyen_mai_: "khuyến mãi",
+  khong_tim_thay_hoa_don_nao_phu_hop:"Không tìm thấy hóa đơn nào phù hợp",
 
   // TODO: H
   hoa_don: "Hoá đơn",
@@ -209,6 +210,7 @@ export default {
   nhom_phong_ban: "Nhóm phòng bàn",
   nhap_tu_khoa_tim_kiem: "Nhập tự khóa tìm kiếm",
   ngay: "Ngày",
+  nhap_ma_hoa_don_tim_kiem:"nhập mã hóa đơn tìm kiếm",
 
   // TODO: O
 
@@ -221,6 +223,7 @@ export default {
   phuong_thuc: "Phương thức",
   phut: "phút",
   phien_ban_ngay: "Phiên bản",
+  phuong_thuc_khac:"Phương thức khác",
 
   // TODO: Q
   quy_dau_ky: "Quỹ đầu kỳ",
@@ -282,6 +285,7 @@ export default {
   ten_hang: "Tên",
   TT: "TT",
   trieu: "triệu",
+  tong_so_hoa_don:"Tổng số hóa đơn",
   tat_ca_san_pham: "Tất cả sản phẩm",
   thong_bao_chon_lich_sai: "Vui lòng không chọn quá thời gian hiện tại!",
   tong_dai_ho_tro: "Tổng đài hỗ trợ",

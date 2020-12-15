@@ -126,6 +126,8 @@ export default {
   ket_qua_ban_hang: "Sales results",
   khuyen_mai: "Khuyễn mãi",
   khuyen_mai_: "khuyễn mãi",
+  khong_tim_thay_hoa_don_nao_phu_hop: "No matching invoice was found",
+
 
   // TODO: H
   hoa_don: "Invoice",
@@ -183,6 +185,9 @@ export default {
   ngay_ban: "Sold date",
   nhap_tu_khoa_tim_kiem: "Enter search keywords",
   ngay_sinh: "Date of birth",
+  ngay_sua: "Modified date",
+  nhap_ma_hoa_don_tim_kiem: "enter your search invoice code",
+
 
   // TODO: O
 
@@ -195,6 +200,7 @@ export default {
   phuong_thuc: "Method",
   phut: "minutes",
   phien_ban_ngay: "Version",
+  phuong_thuc_khac:"Other method",
 
   // TODO: Q
   quy_khach_vui_long_nhap_mat_khau: "Please enter your password",
@@ -218,6 +224,7 @@ export default {
 
   // TODO: T
   thong_bao: "Notification",
+  tong_so_hoa_don:"Total invoice",
   tieng_anh: "English",
   tieng_viet: "Vietnamese",
   tong_quan: "Overview",

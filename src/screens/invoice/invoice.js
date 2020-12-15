@@ -30,11 +30,11 @@ const Invoice = (props) => {
     const [loadMore, setLoadMore] = useState(false)
     const [textSearch, setTextSearch] = useState("")
     const currentBranch = useRef({})
+    const listAccount = useRef([])
     const typeModal = useRef(null)
     const count = useRef(0)
     const currentCount = useRef(0)
     const onEndReachedCalledDuringMomentum = useRef(false)
-    const flatlistRef = useRef(null)
     const deviceType = useSelector(state => {
         console.log("useSelector state ", state);
         return state.Common.deviceType
@@ -54,9 +54,19 @@ const Invoice = (props) => {
                 currentBranch.current = JSON.parse(branch)
             }
         }
+        const getAccount = async () => {
+            let results = await new HTTPService().setPath(ApiPath.ACCOUNT).GET()
+            listAccount.current = results
+
+        }
+        getAccount()
         getBranch()
         getInvoice(true)
     }, [])
+
+    useEffect(() => {
+        setCurrentItem({})
+    }, [invoiceData])
 
 
     useEffect(() => {
@@ -72,7 +82,8 @@ const Invoice = (props) => {
                     console.log('getInvoiceBySearch', res);
                     count.current = res.__count;
                     currentCount.current = res.results.length
-                    setInvoiceData([...res.results])
+                    let results = res.results.filter(item => item.Id > 0);
+                    setInvoiceData([...results])
                     dialogManager.hiddenLoading()
                 }).catch(err => {
                     console.log('getInvoiceBySearch', err);
@@ -138,20 +149,23 @@ const Invoice = (props) => {
 
     const outputDateTime = (item) => {
         console.log('outputDateTime', item);
-        setFilter({
-            ...filter,
-            time: item
-        })
-        filterRef.current = { ...filterRef.current, time: item }
-        onRefresh()
-        setShowModal(false)
+        if (item.key == 'custom' && !item.startDate) {
+            setShowModal(false)
+        } else {
+            setFilter({
+                ...filter,
+                time: item
+            })
+            filterRef.current = { ...filterRef.current, time: item }
+            onRefresh()
+            setShowModal(false)
+        }
     }
 
     const onRefresh = () => {
         console.log('onRefresh', count.current);
         filterRef.current.skip = 0
         getInvoice(true)
-        console.log(flatlistRef.current.scrollToOffset({ animated: true, offset: 0 }));
     }
 
     const onLoadMore = () => {
@@ -220,6 +234,13 @@ const Invoice = (props) => {
         return HasTemporaryPrints ? MoreAttributes : false
     }
 
+    const getPaymentMethod = (accountId) => {
+        if (listAccount.current) {
+            let account = listAccount.current.filter(item => item.Id == accountId)
+            return account[0].Name
+        }
+    }
+
     const renderItemList = (item, index) => {
         return (
             <TouchableOpacity
@@ -230,14 +251,14 @@ const Invoice = (props) => {
                         <Image source={renderIcon(item.Status)} style={{ width: 30, height: 30, marginRight: 10, alignSelf: "center" }}></Image>
                         <View style={{ flex: 1 }}>
                             <Text style={{ fontSize: 15, }}>{item.Code}</Text>
-                            <Text style={{ fontSize: 12, color: "#1565C0" }}>{I18n.t("khach_le")}</Text>
+                            <Text style={{ fontSize: 12, color: "#1565C0" }}>{item.Partner ? item.Partner.Name : I18n.t("khach_le")}</Text>
                             <Text>{item.Room ? item.Room.Name : ''}</Text>
                         </View>
 
                         <View style={{ alignItems: "flex-end" }}>
                             <Text style={{ fontSize: 14, color: checkColor(item) ? "black" : "red" }}>{currencyToString(item.TotalPayment)}</Text>
-                            <Text style={{ color: '#689f38', fontSize: 13 }}>{item.AccountId ? (item.AccountId) : I18n.t("tien_mat")}</Text>
-                            <Text style={{ color: "#0072bc", fontSize: 12 }}>{dateToString(item.CreatedDate)}</Text>
+                            <Text style={{ color: '#689f38', fontSize: 13 }}>{item.AccountId ? getPaymentMethod(item.AccountId) : I18n.t("tien_mat")}</Text>
+                            <Text style={{ color: "#0072bc", fontSize: 12 }}>{dateToString(item.CreatedDate, "HH:mm DD/MM/YYYY")}</Text>
                         </View>
                     </View>
                     {
@@ -309,57 +330,59 @@ const Invoice = (props) => {
                         <TouchableOpacity
                             style={{ flexDirection: "row", alignItems: "center" }}
                             onPress={() => onClickFilter(2)}>
-                            <Image source={Images.icon_calendar} style={{ width: 20, height: 20 }} />
+                            <Image source={Images.icon_filter} style={{ width: 20, height: 20 }} />
                             <Text style={{ marginHorizontal: 10 }}>{I18n.t(filter.status.name)}</Text>
                             <Image source={Images.icon_arrow_down} style={{ width: 14, height: 14, marginLeft: 5 }} />
                         </TouchableOpacity>
                     </View>
+
+                    <View style={{ alignItems: "center", justifyContent: "center", backgroundColor: "#f2f2f2", height: 60, }}>
+                        <View style={{ backgroundColor: "white", height: 40, width: " 95%", borderRadius: 10, flexDirection: "row", alignItems: "center", paddingHorizontal: 10 }}>
+                            <Ionicons name="md-search" size={20} color="black" style={{marginRight: 20}}/>
+                            <TextInput
+                                style={{ flex: 1, height: 35 }}
+                                value={textSearch}
+                                onChangeText={text => onChangeText(text)}
+                                placeholder={I18n.t('nhap_ma_hoa_don_tim_kiem')}
+                            />
+                            {
+                                textSearch != "" ?
+                                    <TouchableOpacity onPress={() => {
+                                        setTextSearch('')
+                                        getInvoice(true)
+                                        Keyboard.dismiss()
+                                    }}>
+                                        <Ionicons name="md-close" size={20} color="black" />
+                                    </TouchableOpacity>
+                                    :
+                                    null
+                            }
+                        </View>
+                    </View>
+
+                    <View style={{ paddingLeft: 15, paddingBottom: 5 }}>
+                        <Text style={{ fontSize: 10 }}>{I18n.t('tong_so_hoa_don')} {invoiceData.length} / {count.current}</Text>
+                    </View>
                     {
                         invoiceData.length > 0 ?
-                            <View style={{ alignItems: "center", justifyContent: "center", backgroundColor: "#f2f2f2", height: 60, }}>
-                                <View style={{ backgroundColor: "white", height: 40, width: " 95%", borderRadius: 10, flexDirection: "row", alignItems: "center", paddingHorizontal: 10 }}>
-                                    <Image source={Images.icon_waiting} style={{ height: 20, width: 20, marginRight: 20 }} />
-                                    <TextInput
-                                        style={{ flex: 1, height: 35 }}
-                                        value={textSearch}
-                                        onChangeText={text => onChangeText(text)}
-                                        placeholder={I18n.t('nhap_tu_khoa_tim_kiem')}
-                                    />
-                                    {
-                                        textSearch != "" ?
-                                            <TouchableOpacity onPress={() => {
-                                                setTextSearch('')
-                                                Keyboard.dismiss()
-                                            }}>
-                                                <Ionicons name="md-close" size={20} color="black" />
-                                            </TouchableOpacity>
-                                            :
-                                            null
-                                    }
-                                </View>
-                            </View>
+                            <FlatList
+                                refreshControl={
+                                    <RefreshControl colors={[colors.colorchinh]} refreshing={false} onRefresh={onRefresh} />
+                                }
+                                style={{ flex: 1, paddingBottom: 0 }}
+                                onEndReachedThreshold={0.1}
+                                onEndReached={onLoadMore}
+                                keyExtractor={(item, index) => index.toString()}
+                                data={invoiceData}
+                                renderItem={({ item, index }) =>
+                                    renderItemList(item, index)
+                                }
+                                ListFooterComponent={loadMore ? <ActivityIndicator color={colors.colorchinh} /> : null}
+                                onMomentumScrollBegin={() => { onEndReachedCalledDuringMomentum.current = false }}
+                            />
                             :
-                            null
+                            <Text style={{ textAlign: "center" }}>{I18n.t('khong_tim_thay_hoa_don_nao_phu_hop')}</Text>
                     }
-                    <View style={{ paddingLeft: 15, paddingBottom: 5 }}>
-                        <Text style={{ fontSize: 10 }}>{invoiceData.length} / {count.current}</Text>
-                    </View>
-                    <FlatList
-                        refreshControl={
-                            <RefreshControl colors={[colors.colorchinh]} refreshing={false} onRefresh={onRefresh} />
-                        }
-                        style={{ flex: 1, paddingBottom: 0 }}
-                        onEndReachedThreshold={0.1}
-                        onEndReached={onLoadMore}
-                        keyExtractor={(item, index) => index.toString()}
-                        data={invoiceData}
-                        renderItem={({ item, index }) =>
-                            renderItemList(item, index)
-                        }
-                        ListFooterComponent={loadMore ? <ActivityIndicator color={colors.colorchinh} /> : null}
-                        onMomentumScrollBegin={() => { onEndReachedCalledDuringMomentum.current = false }}
-                        ref={flatlistRef}
-                    />
                 </View>
                 {
                     deviceType == Constant.TABLET ?

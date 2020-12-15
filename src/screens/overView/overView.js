@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, createRef, useCallback } from 'react';
-import { View, Text, Modal, TouchableOpacity, TouchableWithoutFeedback, ScrollView, Image } from 'react-native';
+import { View, Text, Modal, TouchableOpacity, TouchableWithoutFeedback, ScrollView, Image, RefreshControl } from 'react-native';
 import I18n from '../../common/language/i18n';
 import MainToolBar from '../main/MainToolBar';
 import { Metrics, Images } from '../../theme';
@@ -26,6 +26,7 @@ export default (props) => {
     })
     const [timeForRevenue, setTimeForRevenue] = useState(Constant.TIME_SELECT_CUSTOM_TIME[0])
     const [timeForTopSell, setTimeForTopSell] = useState(Constant.TIME_SELECT[0])
+    const [refreshing, setRefreshing] = useState(false);
     const [showModal, setShowModal] = useState(false)
     const currentBranch = useRef({})
     const timeFormat = useRef("")
@@ -47,56 +48,57 @@ export default (props) => {
     }, [])
 
     useEffect(() => {
-        const getDataDashBoard = () => {
-            let params = genParams(timeForRevenue)
-            console.log("getDataDashBoard params ", params);
-            new HTTPService().setPath(ApiPath.DASHBOARD).GET(params).then((res) => {
-                console.log("getDataDashBoard res ", res);
-                if (res)
-                    setDataDashBoard(res)
-            }).catch((e) => {
-                console.log("getDataDashBoard err ", e);
-            })
-        }
-        const getRevunue = () => {
-            let params = genParams(timeForRevenue, true)
-            new HTTPService().setPath(ApiPath.REVENUE).GET(params).then(async (res) => {
-                console.log("getRevunue res ", res);
-                if (res) {
-                    let array = [];
-                    res.forEach(element => {
-                        let obj = { ...element, time: parseInt(dateToString(element.Subject.trim(), "YYYYMMDDHHmmss")) }
-                        array.push(obj);
-                    });
-                    array = array.sort(compareValues('time'));
-
-                    let input = {
-                        res: array,
-                        showHour: params.TimeRange == "today" || params.TimeRange == "yesterday" ? true : false
-                    }
-                    getDataChart(input)
-                }
-
-            }).catch((e) => {
-                console.log("getRevunue err ", e);
-            })
-        }
         getDataDashBoard()
         getRevunue()
     }, [timeForRevenue.key])
 
     useEffect(() => {
-        const getListTopSell = () => {
-            let params = { TimeRange: timeForTopSell.key }
-            new HTTPService().setPath(ApiPath.TOP_SELL).GET(params).then(res => {
-                console.log('getListTopSell', res);
-                if (res) {
-                    setListTopSell([...res])
-                }
-            })
-        }
         getListTopSell()
     }, [timeForTopSell])
+
+    const getListTopSell = () => {
+        let params = { TimeRange: timeForTopSell.key }
+        new HTTPService().setPath(ApiPath.TOP_SELL).GET(params).then(res => {
+            console.log('getListTopSell', res);
+            if (res) {
+                setListTopSell([...res])
+            }
+        })
+    }
+
+    const getDataDashBoard = () => {
+        let params = {}
+        new HTTPService().setPath(ApiPath.DASHBOARD).GET(params).then((res) => {
+            console.log("getDataDashBoard res ", res);
+            if (res)
+                setDataDashBoard(res)
+        }).catch((e) => {
+            console.log("getDataDashBoard err ", e);
+        })
+    }
+    const getRevunue = () => {
+        let params = genParams(timeForRevenue, true)
+        new HTTPService().setPath(ApiPath.REVENUE).GET(params).then(async (res) => {
+            console.log("getRevunue res ", res);
+            if (res) {
+                let array = [];
+                res.forEach(element => {
+                    let obj = { ...element, time: parseInt(dateToString(element.Subject.trim(), "YYYYMMDDHHmmss")) }
+                    array.push(obj);
+                });
+                array = array.sort(compareValues('time'));
+
+                let input = {
+                    res: array,
+                    showHour: params.TimeRange == "today" || params.TimeRange == "yesterday" ? true : false
+                }
+                getDataChart(input)
+            }
+
+        }).catch((e) => {
+            console.log("getRevunue err ", e);
+        })
+    }
 
     const genParams = (data, allType = false) => {
         const { startDate, endDate, key } = data
@@ -175,8 +177,12 @@ export default (props) => {
 
     const outputForRevenue = (item) => {
         console.log('outputDateTime', item);
-        setTimeForRevenue(item)
-        setShowModal(false)
+        if (item.key == 'custom' && !item.startDate) {
+            setShowModal(false)
+        } else {
+            setTimeForRevenue(item)
+            setShowModal(false)
+        }
     }
 
     const outputForTopSell = (item) => {
@@ -184,7 +190,11 @@ export default (props) => {
         setShowModal(false)
     }
 
-
+    const onRefresh = () => {
+        getDataDashBoard()
+        getRevunue()
+        getListTopSell()
+    }
 
     return (
         <View style={{ flex: 1, backgroundColor: "#fff" }}>
@@ -193,12 +203,13 @@ export default (props) => {
                 title={I18n.t('tong_quan')}
 
             />
-            <ScrollView>
+            <ScrollView
+                refreshControl={<RefreshControl refreshing={false} onRefresh={onRefresh} />}>
                 <View style={{ padding: 20 }}>
                     <View>
                         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingBottom: 10 }}>
                             <Text style={{ fontSize: 20, fontWeight: "bold", }}>{I18n.t('ket_qua_ban_hang')}</Text>
-                            <TouchableOpacity
+                            {/* <TouchableOpacity
                                 onPress={() => {
                                     setShowModal(true);
                                     typeDateTime.current = 1
@@ -206,7 +217,7 @@ export default (props) => {
                                 style={{ flexDirection: "row", backgroundColor: "#E6EAEF", borderRadius: 10, padding: 10 }}>
                                 <Text style={{ marginRight: 10, fontSize: 17, }}>{timeForRevenue.name.includes('-') ? timeForRevenue.name : I18n.t(timeForRevenue.name)}</Text>
                                 <Image style={{ width: 10, height: 10 }} source={Images.icon_path_4203} />
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
                         </View>
                         <View style={deviceType == Constant.TABLET ? { flexDirection: "row", } : {}}>
                             <View style={{ flex: 1 }}>
@@ -214,14 +225,14 @@ export default (props) => {
                                     <Image style={{ width: 55, height: 55 }} source={Images.icon_circle} />
                                     <View style={{ marginLeft: 20, justifyContent: "space-between" }}>
                                         <Text style={{ fontSize: 17, color: "gray" }}>{I18n.t('ban_dang_dung')}</Text>
-                                        <Text style={{ fontSize: 23, color: "#36a3f7", fontWeight: "bold" }}>{dataDashBoard.Table ? dataDashBoard.Table : ""} / {dataDashBoard.TableCount ? dataDashBoard.TableCount : ""} </Text>
+                                        <Text style={{ fontSize: 23, color: "#36a3f7", fontWeight: "bold" }}>{dataDashBoard.TableCount} / {dataDashBoard.Table} </Text>
                                     </View>
                                 </View>
                                 <View style={{ flexDirection: "row", paddingVertical: 10 }}>
                                     <Image style={{ width: 55, height: 55 }} source={Images.icon_value_return} />
                                     <View style={{ marginLeft: 20, justifyContent: "space-between" }}>
                                         <Text style={{ fontSize: 17, color: "gray" }}>{I18n.t('gia_tri_tra_lai')}</Text>
-                                        <Text style={{ fontSize: 23, color: "#ff5959", fontWeight: "bold" }}>{dataDashBoard.AllReturn ? currencyToString(dataDashBoard.AllReturn) : "0"}</Text>
+                                        <Text style={{ fontSize: 23, color: "#ff5959", fontWeight: "bold" }}>{currencyToString(dataDashBoard.Return)}</Text>
                                     </View>
                                 </View>
                             </View>
@@ -230,14 +241,14 @@ export default (props) => {
                                     <Image style={{ width: 55, height: 55 }} source={Images.icon_invoice_overview} />
                                     <View style={{ marginLeft: 20, justifyContent: "space-between" }}>
                                         <Text style={{ fontSize: 17, color: "gray" }}>{I18n.t('don_hang')}</Text>
-                                        <Text style={{ fontSize: 23, color: "#36a3f7", fontWeight: "bold" }}>{dataDashBoard.AllOrders ? dataDashBoard.AllOrders : "0"}</Text>
+                                        <Text style={{ fontSize: 23, color: "#36a3f7", fontWeight: "bold" }}>{dataDashBoard.Orders}</Text>
                                     </View>
                                 </View>
                                 <View style={{ flexDirection: "row", paddingVertical: 10 }}>
                                     <Image style={{ width: 55, height: 55 }} source={Images.icon_return_good} />
                                     <View style={{ marginLeft: 20, justifyContent: "space-between" }}>
                                         <Text style={{ fontSize: 17, color: "gray" }}>{I18n.t('huy_tra')}</Text>
-                                        <Text style={{ fontSize: 23, color: "#ff5959", fontWeight: "bold" }}>{dataDashBoard.Return ? dataDashBoard.Return : "0"}</Text>
+                                        <Text style={{ fontSize: 23, color: "#ff5959", fontWeight: "bold" }}>{dataDashBoard.ReturnCount}</Text>
                                     </View>
                                 </View>
                             </View>
@@ -249,34 +260,46 @@ export default (props) => {
                             <Image style={{ width: 55, height: 55 }} source={Images.icon_revenue_overview} />
                             <View style={{ marginLeft: 20, justifyContent: "space-between" }}>
                                 <Text style={{ fontSize: 17, color: "gray" }}>{I18n.t('doanh_thu_VND')}</Text>
-                                <Text style={{ fontSize: 23, color: "#00c75f", fontWeight: "bold" }}>{dataDashBoard.AllRevenue ? currencyToString(dataDashBoard.AllRevenue) : "0"}</Text>
+                                <Text style={{ fontSize: 23, color: "#00c75f", fontWeight: "bold" }}>{currencyToString(dataDashBoard.Revenue)}</Text>
                             </View>
                         </View>
                         <View style={{ flexDirection: "row", }}>
                             <View style={{ flex: 1 }}>
                                 <View style={{ paddingVertical: 10, }}>
                                     <Text style={{ fontSize: 17, color: "gray", paddingVertical: 7 }}>{I18n.t('tien_mat')}</Text>
-                                    <Text style={{ fontSize: 23, color: "#34bfa3", fontWeight: "bold" }}>{dataDashBoard.AllCash ? currencyToString(dataDashBoard.AllCash) : "0"}</Text>
+                                    <Text style={{ fontSize: 23, color: "#34bfa3", fontWeight: "bold" }}>{currencyToString(dataDashBoard.Cash)}</Text>
                                 </View>
                             </View>
                             <View style={{ flex: 1 }}>
                                 <View style={{ paddingVertical: 10 }}>
-                                    <Text style={{ fontSize: 17, color: "gray", paddingVertical: 7 }}>{I18n.t('khac')}</Text>
-                                    <Text style={{ fontSize: 23, color: "#ff5959", fontWeight: "bold" }}>{dataDashBoard.AllOther ? currencyToString(dataDashBoard.AllOther) : "0"}</Text>
+                                    <Text style={{ fontSize: 17, color: "gray", paddingVertical: 7 }}>{I18n.t('phuong_thuc_khac')}</Text>
+                                    <Text style={{ fontSize: 23, color: "#ff5959", fontWeight: "bold" }}>{currencyToString(dataDashBoard.Other)}</Text>
                                 </View>
                             </View>
                         </View>
                         <View style={{ paddingVertical: 10, }}>
                             <Text style={{ fontSize: 17, color: "gray", paddingVertical: 7 }}>{I18n.t('ghi_no')}</Text>
-                            <Text style={{ fontSize: 23, color: "#f6871e", fontWeight: "bold" }}>{dataDashBoard.AllDebt ? currencyToString(dataDashBoard.AllDebt) : "0"}</Text>
+                            <Text style={{ fontSize: 23, color: "#f6871e", fontWeight: "bold" }}>{dataDashBoard.Debt}</Text>
                         </View>
                     </View>
                 </View>
                 <View style={{ height: 5, width: "100%", alignSelf: "center", backgroundColor: "#E6EAEF", marginVertical: 15 }}></View>
                 <View style={{ padding: 20 }}>
-                    <View>
-                        <Text style={{ fontSize: 20, fontWeight: "bold", paddingBottom: 20 }}>{I18n.t('doanh_thu_VND')}</Text>
-                        <Text style={{ fontSize: 17, color: "gray" }}>{I18n.t('bieu_do_doanh_thu')}</Text>
+
+                    <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingBottom: 10 }}>
+                        <View>
+                            <Text style={{ fontSize: 20, fontWeight: "bold", paddingBottom: 20 }}>{I18n.t('doanh_thu_VND')}</Text>
+                            <Text style={{ fontSize: 17, color: "gray" }}>{I18n.t('bieu_do_doanh_thu')}</Text>
+                        </View>
+                        <TouchableOpacity
+                            onPress={() => {
+                                setShowModal(true);
+                                typeDateTime.current = 1
+                            }}
+                            style={{ flexDirection: "row", backgroundColor: "#E6EAEF", borderRadius: 10, padding: 10 }}>
+                            <Text style={{ marginRight: 10, fontSize: 17, }}>{timeForRevenue.name.includes('-') ? timeForRevenue.name : I18n.t(timeForRevenue.name)}</Text>
+                            <Image style={{ width: 10, height: 10 }} source={Images.icon_path_4203} />
+                        </TouchableOpacity>
                     </View>
                     {dataChart.totalBranchs.length > 0 ?
                         <View style={{ flexDirection: "row", paddingVertical: 20 }}>
@@ -319,7 +342,7 @@ export default (props) => {
                     />
                         :
                         null}
-                    <Text style={{ textAlign: "center", paddingTop: 20, fontSize: 20, fontWeight: "bold" }}> Tổng (VND): {dataDashBoard.AllRevenue ? currencyToString(dataDashBoard.AllRevenue) : "0"}</Text>
+                    <Text style={{ textAlign: "center", paddingTop: 20, fontSize: 20, fontWeight: "bold" }}> {I18n.t('tong')} (VND): {currencyToString(dataDashBoard.Revenue)}</Text>
                 </View>
                 <View style={{ height: 5, width: "100%", alignSelf: "center", backgroundColor: "#E6EAEF", marginVertical: 15 }}></View>
                 <View style={{ padding: 20 }}>
