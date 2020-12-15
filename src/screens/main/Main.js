@@ -27,24 +27,10 @@ export default (props) => {
     return state.Common
   })
 
-  // useSelector(state => {
-  //   console.log("useSelector Main state ", state);
-
-  //   if (state.Common.listPrint != "") {
-  //     viewPrintRef.current.printKitchenRef(state.Common.listPrint)
-  //     dispatch({ type: 'LIST_PRINT', listPrint: "" })
-  //   }
-
-  // });
-  // dispatch({ type: 'LIST_PRINT', listPrint: data })
-  // const listPrint = useSelector(state => {
-  //   console.log("useSelector Main listPrint ", state);
-  //   return state.Common.listPrint;
-  // });
 
   useEffect(() => {
     if (listPrint != "") {
-      viewPrintRef.current.printKitchenRef(state.Common.listPrint)
+      viewPrintRef.current.printKitchenRef(listPrint)
       dispatch({ type: 'LIST_PRINT', listPrint: "" })
     }
   }, [listPrint])
@@ -106,7 +92,7 @@ export default (props) => {
   useEffect(() => {
     const syncDatas = async () => {
       if (isFNB === null) return
-      // await realmStore.deleteAll()
+      await realmStore.deleteAll()
       if (isFNB === true) {
         await syncForFNB()
       } else {
