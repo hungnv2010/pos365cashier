@@ -524,7 +524,7 @@ export default (props) => {
                 } else
                     props.navigation.pop()
             } else {
-                alert("err")
+                // alert("err")
                 handlerError({ JsonContent: json, RowKey: row_key })
             }
         }).catch(err => {
