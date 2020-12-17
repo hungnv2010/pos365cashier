@@ -26,7 +26,11 @@ export default {
   bay_ngay: "Bảy ngày",
   ban: "bàn",
   bao_che_bien: "Báo chế biến",
-
+  bao_che_bien_thanh_cong: "Báo chế biến thành công",
+  ban_co_chac_chan_muon_xoa_hoa_don: "Hoá đơn đang được sử dụng. Bạn có chắc chắn muốn xoá hoá hơn?",
+  ban_chua_chon_mon_an_de_tach: "Bạn chưa chọn món để tách.",
+  ban_dang_o_dung_vi_tri_da_chon_se_khong_co_thay_doi: "Bạn đang ở đúng vị trí đã chọn. Sẽ không có thay đổi nào được thực hiện.",
+  
   // TODO: C
   cai_dat: "Cài đặt",
   chon_chi_nhanh: "Chọn chi nhánh",
@@ -57,6 +61,10 @@ export default {
   chon_tinh_thanh: "Chọn tỉnh thành",
   cong_vao_khoan_no: "Cộng vào khoản nợ",
   chon_bang_gia: "Chọn bảng giá",
+  cac_mon_ban_chon_dang_duoc_nha_bep_chuan_bi: "Các món bạn chọn đang được nhà bếp và bartender chuẩn bị. Vui lòng đợi.",
+  cap_nhat_khach_hang: "Cập nhật khách hàng",
+  moi_chon_mon_truoc: "Mời bạn chọn hàng hóa trước",
+  chon_vi_tri: "Chọn vị trí",
 
   // TODO: D
   dang_dung: "Đang dùng",
@@ -80,6 +88,9 @@ export default {
   diem_voucher: "Điểm/Voucher",
   diem_hien_tai: "Điểm hiện có",
   diem_thuong: "Điểm thưởng",
+  don_hang_moi: "Đơn mới",
+  du_no: "Dư nợ",
+  don_hang_moi: "Đơn mới",
 
   // TODO: E
 
@@ -113,6 +124,7 @@ export default {
 
   // TODO: I
   in_tam_tinh: "In tạm tính",
+  in_tem: "In tem",
   in: "in",
 
   // TODO: K
@@ -131,6 +143,9 @@ export default {
   ket_qua_ban_hang: "Kết quả bán hàng",
   khach_thanh_toan: "Khách thanh toán",
   khong_ho_tro_nhieu_tai_khoan_cho_qr: "Không hỗ trợ nhiều tài khoản thanh toán cho QR",
+  khuyen_mai: "Khuyến mãi",
+  khuyen_mai_: "khuyến mãi",
+  khong_tim_thay_hoa_don_nao_phu_hop:"Không tìm thấy hóa đơn nào phù hợp",
 
   // TODO: H
   hoa_don: "Hoá đơn",
@@ -172,6 +187,7 @@ export default {
   mon_da_xac_nhan: "Món đã xác nhận",
   mac_dinh: "Mặc định",
   mat_hang: "Mặt hàng",
+  ma_khach_hang: "Mã khách hàng",
 
   // TODO: N
   no: "Nợ",
@@ -197,6 +213,7 @@ export default {
   nhom_phong_ban: "Nhóm phòng bàn",
   nhap_tu_khoa_tim_kiem: "Nhập tự khóa tìm kiếm",
   ngay: "Ngày",
+  nhap_ma_hoa_don_tim_kiem:"nhập mã hóa đơn tìm kiếm",
 
   // TODO: O
 
@@ -209,6 +226,7 @@ export default {
   phuong_thuc: "Phương thức",
   phut: "phút",
   phien_ban_ngay: "Phiên bản",
+  phuong_thuc_khac:"Phương thức khác",
 
   // TODO: Q
   quy_dau_ky: "Quỹ đầu kỳ",
@@ -235,6 +253,7 @@ export default {
   so_luong_ban: "Số lượng bàn",
   su_dung_diem: "Sử dụng điểm",
   so_tien_quy_doi: "Số tiền quy đổi",
+  sua: "Sửa",
 
   // TODO: T
   thong_bao_quet_van_tay: "Quý khách vui lòng quét dấu vân tay đã đăng ký trên thiết bị.",
@@ -265,10 +284,11 @@ export default {
   tong_so_luong: "Tổng số lượng",
   trang_thai: "Trạng thái",
   thanh_toan: "Thanh toán",
-  them: "Thêm",
+  them: "Thêm mới",
   ten_hang: "Tên",
   TT: "TT",
   trieu: "triệu",
+  tong_so_hoa_don:"Tổng số hóa đơn",
   tat_ca_san_pham: "Tất cả sản phẩm",
   thong_bao_chon_lich_sai: "Vui lòng không chọn quá thời gian hiện tại!",
   tong_dai_ho_tro: "Tổng đài hỗ trợ",
@@ -282,6 +302,7 @@ export default {
   tra_hang: "Trả hàng",
   tong_thu: "Tổng thu",
   tong_cong: "Tổng cộng",
+  them: "Thêm",
   tong_giao_dich: "Tổng giao dịch",
   tinh_thanh: "Tỉnh thành",
   tong_giao_dich_theo_thoi_gian: "TỔNG GIAO DỊCH THEO THỜI GIAN",
@@ -308,6 +329,13 @@ export default {
   tra_lai_tien: "Trả lại tiền",
   thong_tin_them: "Thông tin thêm",
   thoi_gian: "Thời gian",
+  thu_ngan: "Thu ngân",
+  them_khach_hang: "Thêm khách hàng",
+  tu_dong_tao_ma: "Tự động tạo mã",
+  tach_ban: "Tách bàn",
+  tach_tai_ban: "Tách tại bàn",
+  thanh_cong:"thành công",
+
   // TODO: U
 
   // TODO: V
@@ -325,6 +353,7 @@ export default {
   xac_thuc_loi_nhieu_lan: "Quá nhiều lần thử. Hãy thử lại sau",
   xong: "Xong",
   xin_cam_on: "Xin cảm ơn, hẹn gặp lại quý khách!",
+  xoa: "Xóa",
 
   // TODO: Y
 
@@ -336,12 +365,12 @@ export default {
   yeu_cau_thanh_toan: "Yêu cầu thanh toán",
 
   //Vuong
-  am_bao_thanh_toan:"Âm báo thanh toán",
+  am_bao_thanh_toan: "Âm báo thanh toán",
 
   bao_che_bien_sau_khi_thanh_toan: "Báo chế biến sau khi thanh toán",
 
   chon_cong_nghe_in: "Chọn công nghệ in",
-  cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang:"Cho phép thay đổi tên hàng hóa khi bán hàng?",
+  cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang: "Cho phép thay đổi tên hàng hóa khi bán hàng?",
   cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang: "Cho phép nhân viên thay đổi giá khi bán hàng?",
   cai_dat_the_cung: "Cài đặt thẻ cứng",
   chan_trang: "Chân trang",
@@ -364,7 +393,7 @@ export default {
   in_qua_mang_lan: "In qua mạng LAN",
   in_qua_bluetooth: "In qua Bluetooth",
   in_qua_usb: "In qua USB",
-  in_hoa_don_truoc_khi_thanh_toan_VNPAYQR_thanh_cong:"In hóa đơn trước khi thanh toán VNPAY-QR thành công? ",
+  in_hoa_don_truoc_khi_thanh_toan_VNPAYQR_thanh_cong: "In hóa đơn trước khi thanh toán VNPAY-QR thành công? ",
 
   khong_cho_phep_ban_hang_khi_het_ton_kho: "Không cho phép bán hàng khi hết tồn kho",
   khong_in: "Không in",
@@ -393,23 +422,24 @@ export default {
   nhan_vien:"Nhân viên",
   ngay_huy_tra:"Ngày hủy/trả",
 
-  setting:'Thiết lập',
+  setting: 'Thiết lập',
 
   so_the_cung: "Số thẻ cứng",
-  su_dung_hai_man_hinh:"Sử dụng hai màn hình",
+  su_dung_hai_man_hinh: "Sử dụng hai màn hình",
   so_dien_thoai: "Số điện thoại",
-  
+
   tien_khach_tra: "Tiền khách trả",
   thiet_lap_thanh_toan_vnpay: "Thiết lập thanh toán VNPAY",
   thong_tin_cua_hang: "Thông tin cửa hàng",
   tu_dong_in_bao_bep: "Tự động in báo bếp",
-  thiet_lap_he_thong:"Thiết lập hệ thống",
+  thiet_lap_he_thong: "Thiết lập hệ thống",
   thiet_lap_tinh_nang: "Thiết lập tính năng",
   ten: "Tên",
   thanh_toan_vnpayqr: "Thanh toán VNPAY-QR?",
   thanh_toan_vnpaypos_qua_may_pos:"Thanh toán VNPAY-POS qua máy POS?",
   ten_hang_hoa:"Tên hàng hóa",
   thanh_tien:"Thành tiền",
+  thanh_toan_vnpaypos_qua_may_pos: "Thanh toán VNPAY-POS qua máy POS?",
 
   vnd: "VND"
 

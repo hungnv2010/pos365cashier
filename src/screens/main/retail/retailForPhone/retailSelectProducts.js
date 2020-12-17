@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback, forwardRef, useImperativeHandle } from 'react';
 import { ActivityIndicator, View, StyleSheet, Text, TouchableOpacity, FlatList } from 'react-native';
 import realmStore from '../../../../data/realm/RealmStore';
-import ProductsItemForPhone from './ProductsItemForPhone';
+import ProductsItemForPhone from '../../../served/servedForPhone/selectProduct/ProductsItemForPhone';
 import { Constant } from '../../../../common/Constant';
 import I18n from '../../../../common/language/i18n';
 import { change_alias } from '../../../../common/Utils';
@@ -136,7 +136,7 @@ export default (props) => {
 
   const getQuantity = (item) => {
     let Quantity = 1
-    if (item.IsPriceForBlock) {
+    if (item.IsPriceForBlock || (item.ProductType == 2 && item.IsTimer)) {
       Quantity = item.BlockOfTimeToUseService / 60
     }
     return Quantity
@@ -160,7 +160,7 @@ export default (props) => {
   const handleButtonIncrease = (item, index) => {
     console.log('handleButtonIncrease', item, index);
     let qtt = getQuantity(item)
-    
+
     if (item.SplitForSalesOrder || (item.ProductType == 2 && item.IsTimer)) {
       listProducts.current.unshift({ ...item, Quantity: qtt })
     } else {
@@ -243,7 +243,7 @@ export default (props) => {
     })
     listProducts.current = [...listProducts.current, ...listChangeText.current]
     console.log('onClickDone listProducts', listProducts.current);
-    props.route.params._onSelect(listProducts.current, 1);
+    props.route.params._onSelect(listProducts.current, 4);
   }
 
   const clickLeftIcon = () => {

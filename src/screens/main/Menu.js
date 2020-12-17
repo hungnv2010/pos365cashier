@@ -32,7 +32,7 @@ const KEY_FUNC = {
     OVERVIEW: ScreenList.OverView,
     INVOICE: ScreenList.Invoice,
     CASH_FLOW: ScreenList.CashFlow,
-    ROOM_HISTORY:ScreenList.RoomHistory
+    ROOM_HISTORY: ScreenList.RoomHistory
 }
 
 const LIST_FUNCITION = [
@@ -42,26 +42,26 @@ const LIST_FUNCITION = [
         title: "man_hinh_thu_ngan"
     },
 
-    {
-        func: KEY_FUNC.ORDER_NOW,
-        icon: Images.icon_inventory,
-        title: "dang_goi_mon"
-    },
-    {
-        func: KEY_FUNC.HISTORY,
-        icon: Images.icon_customer,
-        title: "lich_su_goi_mon"
-    },
+    // {
+    //     func: KEY_FUNC.ORDER_NOW,
+    //     icon: Images.icon_inventory,
+    //     title: "dang_goi_mon"
+    // },
+    // {
+    //     func: KEY_FUNC.HISTORY,
+    //     icon: Images.icon_customer,
+    //     title: "lich_su_goi_mon"
+    // },
     {
         func: KEY_FUNC.ROOM_CATALOG,
         icon: Images.icon_customer,
         title: "danh_muc_phong_ban"
     },
-    {
-        func: KEY_FUNC.MORE,
-        icon: Images.icon_star,
-        title: "them"
-    },
+    // {
+    //     func: KEY_FUNC.MORE,
+    //     icon: Images.icon_star,
+    //     title: "them"
+    // },
     {
         func: KEY_FUNC.OVERVIEW,
         icon: Images.icon_inventory,
@@ -85,7 +85,7 @@ const LIST_FUNCITION = [
     {
         func: KEY_FUNC.ROOM_HISTORY,
         icon: Images.icon_history,
-        title:'lich_su_huy_tra_do'
+        title: 'lich_su_huy_tra_do'
     },
     {
         func: KEY_FUNC.SETTING_FUNC,
@@ -138,7 +138,7 @@ const HeaderComponent = (props) => {
     useLayoutEffect(() => {
         const getVendorSession = async () => {
             let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
-            console.log('HeaderComponent data', props);
+            console.log('HeaderComponent data', data);
             data = JSON.parse(data)
             setVendorSession(data);
             if (data.CurrentRetailer && data.CurrentRetailer.Logo) {
@@ -186,10 +186,11 @@ const HeaderComponent = (props) => {
             if (res) {
                 setFileLuuDuLieu(Constant.CURRENT_BRANCH, JSON.stringify(item));
                 setBranch(item)
-                dispatch({ type: 'ALREADY', already: false })
-                // await realmStore.deleteAll(),
+                dispatch({ type: 'IS_FNB', isFNB: null })
+                dispatch({ type: 'ALREADY', already: null })
                 signalRManager.killSignalR();
                 getRetailerInfoAndNavigate();
+                dialogManager.hiddenLoading();
             } else {
                 dialogManager.hiddenLoading();
             }
@@ -212,24 +213,35 @@ const HeaderComponent = (props) => {
     }
 
     const getRetailerInfoAndNavigate = () => {
-        let inforParams = {};
-        new HTTPService().setPath(ApiPath.VENDOR_SESSION).GET(inforParams, getHeaders()).then((res) => {
-            console.log("getDataRetailerInfo res ", res);
-            if (res && res.CurrentUser) {
-                if (res.CurrentRetailer && (res.CurrentRetailer.FieldId == 3 || res.CurrentRetailer.FieldId == 11)) {
-                    setFileLuuDuLieu(Constant.VENDOR_SESSION, JSON.stringify(res))
-                    navigateToHome()
-                } else {
-                    dialogManager.showPopupOneButton(I18n.t("vui_long_chon_linh_vuc_ban_le_ho_tro_shop_thoi_trang_sieu_thi"), I18n.t('thong_bao'));
-                }
-            } else {
-                dialogManager.showPopupOneButton(I18n.t('ban_khong_co_quyen_truy_cap'), I18n.t('thong_bao'));
-            }
-            dialogManager.hiddenLoading();
-        }).catch((e) => {
-            dialogManager.hiddenLoading();
-            console.log("getDataRetailerInfo err ", e);
-        })
+        // console.log('getRetailerInfoAndNavigate', item.FieldId);
+        // if (item.FieldId && (item.FieldId == 3 || item.FieldId == 11)) {
+        //     dispatch({ type: 'IS_FNB', isFNB: true })
+        // } else {
+        //     if (vendorSession.CurrentRetailer && (vendorSession.CurrentRetailer.FieldId == 3 || vendorSession.CurrentRetailer.FieldId == 11)) {
+        //         dispatch({ type: 'IS_FNB', isFNB: true })
+        //     } else {
+        //         dispatch({ type: 'IS_FNB', isFNB: false })
+        //     }
+        // }
+        navigateToHome()
+        // let inforParams = {};
+        // new HTTPService().setPath(ApiPath.VENDOR_SESSION).GET(inforParams, getHeaders()).then((res) => {
+        //     console.log("getDataRetailerInfo getDataRetailerInfores ", res);
+        //     if (res && res.CurrentUser) {
+        //         if (res.CurrentRetailer && (res.CurrentRetailer.FieldId == 3 || res.CurrentRetailer.FieldId == 11)) {
+        //             setFileLuuDuLieu(Constant.VENDOR_SESSION, JSON.stringify(res))
+        //             navigateToHome()
+        //         } else {
+        //             dialogManager.showPopupOneButton(I18n.t("vui_long_chon_linh_vuc_ban_le_ho_tro_shop_thoi_trang_sieu_thi"), I18n.t('thong_bao'));
+        //         }
+        //     } else {
+        //         dialogManager.showPopupOneButton(I18n.t('ban_khong_co_quyen_truy_cap'), I18n.t('thong_bao'));
+        //     }
+        //     dialogManager.hiddenLoading();
+        // }).catch((e) => {
+        //     dialogManager.hiddenLoading();
+        //     console.log("getDataRetailerInfo err ", e);
+        // })
     }
 
     const onClickLogOut = () => {
@@ -256,12 +268,15 @@ const HeaderComponent = (props) => {
                     }
                     <Text style={{ marginTop: 10, color: "#fff" }}>{Name}</Text>
                 </View>
-                <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 15 }}>
-                    <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", }} onPress={() => onClickBranh()}>
+                <View style={{ marginTop: 15, }}>
+                    <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }} onPress={() => onClickBranh()}>
                         <Icon name="location-on" size={20} color="#fff" />
-                        <Text style={{ color: "#fff" }}>{Branch.Name && Branch.Name != "" ? Branch.Name : I18n.t('chi_nhanh')}</Text>
+                        <Text numberOfLines={2} style={{ color: "#fff" }}>{Branch.Name && Branch.Name != "" ? Branch.Name : I18n.t('chi_nhanh')}</Text>
+
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => onClickLogOut()}>
+                    <TouchableOpacity
+                        style={{alignItems:"flex-end"}}
+                        onPress={() => onClickLogOut()}>
                         <Text style={{ textDecorationLine: "underline", color: "#fff" }}>{I18n.t('logout')}</Text>
                     </TouchableOpacity>
                 </View>
@@ -383,7 +398,7 @@ const ContentComponent = (props) => {
     const onClickItem = (chucnang, index) => {
         console.log("onClickItem props ", props);
         let params = {};
-        if (chucnang.func == ScreenList.Home || chucnang.func == ScreenList.More || chucnang.func == ScreenList.History || chucnang.func == ScreenList.OverView || chucnang.func == ScreenList.RoomCatalog || chucnang.func == ScreenList.Customer) {
+        if (chucnang.func == ScreenList.Home || chucnang.func == ScreenList.Customer || chucnang.func == ScreenList.Settings || chucnang.func == ScreenList.Invoice || chucnang.func == ScreenList.OverView || chucnang.func == ScreenList.RoomCatalog || chucnang.func == ScreenList.Customer) {
             setCurrentItemMenu(index)
         }
         props.navigation.navigate(chucnang.func, params)

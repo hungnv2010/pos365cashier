@@ -56,9 +56,16 @@ export const ScreenList = {
   CustomerDetailForPhone: "CustomerDetailForPhone",
   PointVoucher: "PointVoucher",
   SearchVoucher: "SearchVoucher",
+  Settings: "Settings",
+  VNPayPaymentSetting: "VNPayPaymentSetting",
+  CommodityWaiting: "CommodityWaiting",
   Settings:"Settings",
   VNPayPaymentSetting:"VNPayPaymentSetting",
-  RoomHistory:"RoomHistory",
   RoomHistoryDetailForPhone:"RoomHistoryDetailForPhone",  
+  RoomHistory:"RoomHistory",  
+  RetailSelectProduct:"RetailSelectProduct",
+  MainRetail:"MainRetail",
+  PriceBook:"PriceBook",
+  SplitTable: "SplitTable"
 }
 

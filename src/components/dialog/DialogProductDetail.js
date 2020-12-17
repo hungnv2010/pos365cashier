@@ -12,6 +12,9 @@ export default (props) => {
     const [showQuickNote, setShowQuickNote] = useState(false)
     const [listQuickNote, setListQuickNote] = useState([])
     const [IsLargeUnit, setIsLargeUnit] = useState(false)
+    const [percent, selectPercent] = useState(props.item.Percent ? props.item.Percent : false)
+    const [discount, setDiscount] = useState(props.item.Discount ? props.item.Discount : 0)
+    const [price, setPrice] = useState(props.item.IsLargeUnit == true ? props.item.PriceLargeUnit : props.item.Price)
 
     useEffect(() => {
         let listOrder = itemOrder.OrderQuickNotes ? itemOrder.OrderQuickNotes.split(',') : [];
@@ -23,16 +26,34 @@ export default (props) => {
         })
         setListQuickNote([...listQuickNote])
         setIsLargeUnit(itemOrder.IsLargeUnit)
+        setPrice(itemOrder.IsLargeUnit == true ? itemOrder.PriceLargeUnit : itemOrder.Price)
     }, [])
 
+    useEffect(() => {
+        let totalDiscount = percent ? itemOrder.Price * discount / 100 : discount
+        setPrice(itemOrder.Price - totalDiscount > 0 ? itemOrder.Price - totalDiscount : 0)
+    }, [discount, percent])
+
     const onClickOk = () => {
-        props.getDataOnClick({ ...itemOrder, IsLargeUnit: IsLargeUnit })
+        if (props.fromRetail) {
+            props.onClickSubmit({ ...itemOrder, Discount: discount, Percent: percent, PriceWithDiscount: price })
+        } else {
+            props.getDataOnClick({ ...itemOrder, IsLargeUnit: IsLargeUnit })
+        }
         props.setShowModal(false)
     }
 
     const onClickTopping = () => {
         props.onClickTopping()
         props.setShowModal(false)
+    }
+
+    const selectRadioButton = (status) => {
+        setIsLargeUnit(status)
+        if (status)
+            setPrice(itemOrder.PriceLargeUnit)
+        else
+            setPrice(itemOrder.UnitPrice)
     }
 
     return (
@@ -86,7 +107,7 @@ export default (props) => {
                         <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }} onPress={() => setShowModal(false)}>
                             <Text style={{ fontSize: 14, flex: 3 }}>{I18n.t('don_gia')}</Text>
                             <View style={{ alignItems: "center", flexDirection: "row", flex: 7, backgroundColor: "#D5D8DC" }}>
-                                <Text style={{ padding: 7, flex: 1, fontSize: 14, borderWidth: 0.5, borderRadius: 4 }}>{currencyToString(itemOrder.Price)}</Text>
+                                <Text style={{ padding: 7, flex: 1, fontSize: 14, borderWidth: 0.5, borderRadius: 4 }}>{currencyToString(price)}</Text>
                             </View>
                         </View>
                         {itemOrder.Unit != undefined && itemOrder.Unit != "" && itemOrder.LargeUnit != undefined && itemOrder.LargeUnit != "" ?
@@ -94,26 +115,26 @@ export default (props) => {
                                 <Text style={{ fontSize: 14, flex: 3 }}>{I18n.t('chon_dvt')}</Text>
                                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", flex: 7 }}>
                                     <TouchableOpacity onPress={() => {
-                                        setIsLargeUnit(false)
+                                        selectRadioButton(false)
                                     }} style={{ flexDirection: "row", alignItems: "center", marginLeft: -10 }}>
                                         <RadioButton.Android
                                             color={colors.colorchinh}
                                             status={!IsLargeUnit ? 'checked' : 'unchecked'}
                                             onPress={() => {
-                                                setIsLargeUnit(false)
+                                                selectRadioButton(false)
                                             }}
                                         />
                                         <Text style={{ marginLeft: 0 }}>{itemOrder.Unit}</Text>
                                     </TouchableOpacity>
 
                                     <TouchableOpacity onPress={() => {
-                                        setIsLargeUnit(true)
+                                        selectRadioButton(true)
                                     }} style={{ flexDirection: "row", alignItems: "center" }}>
                                         <RadioButton.Android
                                             color={colors.colorchinh}
                                             status={IsLargeUnit ? 'checked' : 'unchecked'}
                                             onPress={() => {
-                                                setIsLargeUnit(true)
+                                                selectRadioButton(true)
                                             }}
                                         />
                                         <Text style={{ marginLeft: 0 }}>{itemOrder.LargeUnit}</Text>
@@ -121,7 +142,36 @@ export default (props) => {
                                 </View>
                             </View>
                             : null}
-                        <View style={{ alignItems: "center", flexDirection: "row", justifyContent: "center", marginTop: (itemOrder.Unit != undefined && itemOrder.Unit != "" && itemOrder.LargeUnit != undefined && itemOrder.LargeUnit != "") ? 10 : 20 }} >
+
+                        {
+                            props.fromRetail ?
+                                <View style={{ alignItems: "center", flexDirection: "row", justifyContent: "center", marginTop: 20 }} >
+                                    <Text style={{ fontSize: 14, flex: 3 }}>{I18n.t('chiet_khau')}</Text>
+                                    <View style={{ alignItems: "center", flexDirection: "row", flex: 7 }}>
+                                        <View style={{ flexDirection: "row", flex: 1 }}>
+                                            <TouchableOpacity onPress={() => selectPercent(false)} style={{ flex: 1, width: 55, alignItems: "center", borderWidth: 0.5, borderTopLeftRadius: 5, borderBottomLeftRadius: 5, paddingVertical: 7, borderColor: colors.colorchinh, backgroundColor: !percent ? colors.colorchinh : "#fff" }}>
+                                                <Text style={{ color: !percent ? "#fff" : "#000" }}>VNĐ</Text>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity onPress={() => selectPercent(true)} style={{ flex: 1, width: 55, alignItems: "center", borderWidth: 0.5, borderColor: colors.colorchinh, borderTopRightRadius: 5, borderBottomRightRadius: 5, paddingVertical: 7, backgroundColor: !percent ? "#fff" : colors.colorchinh }}>
+                                                <Text style={{ color: percent ? "#fff" : "#000" }}>%</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                        <TextInput
+                                            keyboardType="numeric"
+                                            value={currencyToString(discount)}
+                                            onChangeText={text => {
+                                                text = text.replace(/,/g, "");
+                                                if (isNaN(text)) return
+                                                setDiscount(text)
+                                            }}
+                                            style={{ textAlign: "right", backgroundColor: "#D5D8DC", marginLeft: 10, flex: 1, borderWidth: 0.5, borderRadius: 5, padding: 6.8 }} />
+                                    </View>
+                                </View>
+                                :
+                                null
+                        }
+
+                        <View style={{ alignItems: "center", flexDirection: "row", justifyContent: "center", marginTop: 20 }} >
                             <Text style={{ fontSize: 14, flex: 3 }}>{I18n.t('so_luong')}</Text>
                             <View style={{ alignItems: "center", flexDirection: "row", flex: 7 }}>
                                 <TouchableOpacity onPress={() => {
@@ -144,7 +194,7 @@ export default (props) => {
                                         }
                                         setItemOrder({ ...itemOrder })
                                     }}
-                                    />
+                                />
                                 <TouchableOpacity onPress={() => {
                                     if (itemOrder.Quantity < 1000) {
                                         itemOrder.Quantity++
@@ -155,6 +205,7 @@ export default (props) => {
                                 </TouchableOpacity>
                             </View>
                         </View>
+
                         <View style={{ alignItems: "center", flexDirection: "row", justifyContent: "center", marginTop: 20 }} onPress={() => setShowModal(false)}>
                             <Text style={{ fontSize: 14, flex: 3 }}>{I18n.t('ghi_chu')}</Text>
                             <View style={{ flexDirection: "row", flex: 7 }}>
@@ -194,9 +245,14 @@ export default (props) => {
                             <TouchableOpacity onPress={() => props.setShowModal(false)} style={{ alignItems: "center", margin: 2, flex: 1, borderWidth: 1, borderColor: Colors.colorchinh, padding: 5, borderRadius: 4, backgroundColor: "#fff" }} >
                                 <Text style={{ color: Colors.colorchinh, textTransform: "uppercase" }}>{I18n.t('huy')}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => onClickTopping()} style={{ alignItems: "center", margin: 2, flex: 1, borderWidth: 1, borderColor: Colors.colorchinh, padding: 5, borderRadius: 4, backgroundColor: "#fff" }} >
-                                <Text style={{ color: Colors.colorchinh, textTransform: "uppercase" }}>Topping</Text>
-                            </TouchableOpacity>
+                            {
+                                props.fromRetail ?
+                                    null
+                                    :
+                                    <TouchableOpacity onPress={() => onClickTopping()} style={{ alignItems: "center", margin: 2, flex: 1, borderWidth: 1, borderColor: Colors.colorchinh, padding: 5, borderRadius: 4, backgroundColor: "#fff" }} >
+                                        <Text style={{ color: Colors.colorchinh, textTransform: "uppercase" }}>Topping</Text>
+                                    </TouchableOpacity>
+                            }
                             <TouchableOpacity onPress={() => onClickOk()} style={{ alignItems: "center", margin: 2, flex: 1, borderWidth: 1, borderColor: Colors.colorchinh, padding: 5, borderRadius: 4, backgroundColor: Colors.colorchinh }} >
                                 <Text style={{ color: "#fff", textTransform: "uppercase", }}>{I18n.t('dong_y')}</Text>
                             </TouchableOpacity>

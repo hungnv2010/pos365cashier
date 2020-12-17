@@ -20,10 +20,14 @@ import { ApiPath } from '../../data/services/ApiPath';
 import dataManager from '../../data/DataManager';
 import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
 import dialogManager from '../../components/dialog/DialogManager';
+import IconFeather from 'react-native-vector-icons/Feather';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Fontisto from 'react-native-vector-icons/Fontisto';
+import TextTicker from 'react-native-text-ticker';
 
 let GUEST = {
     Id: -1,
-    Name: "khach_le",
+    Name: I18n.t("khach_le"),
     Code: "KH_khach_le",
     Point: 0,
 }
@@ -36,7 +40,6 @@ export default (props) => {
         console.log("useSelector state ", state);
         return state.Common
     });
-    const customerRef = useRef(null)
 
     useEffect(() => {
         getCustomer()
@@ -47,7 +50,7 @@ export default (props) => {
         if (deviceType == Constant.TABLET) {
             setCustomerItem(GUEST)
         } else {
-            props.navigation.navigate(ScreenList.CustomerDetailForPhone, { item: GUEST })
+            props.navigation.navigate(ScreenList.CustomerDetailForPhone, { item: GUEST, onCallBack: handleSuccess })
         }
     }
 
@@ -73,8 +76,8 @@ export default (props) => {
 
 
     const onClickCustomerItem = (item) => {
-        if (props.route.params._onSelect) {
-            props.route.params._onSelect(item);
+        if (props.route.params._onSelect) { //from customerOrder
+            props.route.params._onSelect(item, 2);
             props.navigation.goBack()
         } else {
             if (item.Id == -1) {
@@ -101,22 +104,24 @@ export default (props) => {
             <TouchableOpacity onPress={() => onClickCustomerItem(item)} key={index.toString()}
                 style={[{ flexDirection: "row", alignItems: "center", borderBottomColor: "#ddd", borderBottomWidth: 1, padding: 10 }, item.Id == customerItem.Id && deviceType == Constant.TABLET ? { backgroundColor: "#F6DFCE" } : { backgroundColor: "white" }]}>
                 <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center", }}>
-                    <Image source={images.icon_bell_blue} style={{ height: 50, width: 50, marginRight: 10 }} />
+                    <View style={{ width: 60, height: 60, justifyContent: "center", alignItems: "center", backgroundColor: index % 2 == 0 ? colors.colorPhu : colors.colorLightBlue, borderRadius: 30, marginRight: 10 }}>
+                        <Text style={{ color: "#fff", fontSize: 24, textTransform: "uppercase" }}>{item.Name[0]}</Text>
+                    </View>
                     <View style={{ flex: 1.3 }}>
                         <Text
                             numberOfLines={1}
                             style={{ fontSize: 15, fontWeight: "bold", }}>{item.Name}</Text>
                         <Text style={{ paddingVertical: 5 }}>{item.Code}</Text>
-                        <Text style={{}}>Reward Point: {currencyToString(item.Point)}</Text>
+                        <Text style={{}}>{I18n.t('diem_thuong')}: {currencyToString(item.Point)}</Text>
                     </View>
                     <View style={{ flex: 1 }}>
-                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
-                            <Image source={images.icon_bell_blue} style={{ height: 15, width: 15, }} />
-                            <Text>{item.Phone && item.Phone != '' ? item.Phone : "No information"}</Text>
+                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-start", marginBottom: 10 }}>
+                            <Icon name="phone" size={24} color={colors.colorchinh} style={{ marginRight: 10 }} />
+                            <Text>{item.Phone ? item.Phone : I18n.t('chua_cap_nhat')}</Text>
                         </View>
-                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-                            <Image source={images.icon_bell_blue} style={{ height: 15, width: 15, }} />
-                            <Text>{item.Address && item.Address != '' ? item.Address : "No information"}</Text>
+                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-start" }}>
+                            <Icon name="home" size={24} color={colors.colorchinh} style={{ marginRight: 10 }} />
+                            <TextTicker>{item.Address ? item.Address : I18n.t('chua_cap_nhat')}</TextTicker>
                         </View>
                     </View>
                 </View>
@@ -127,15 +132,10 @@ export default (props) => {
     const handleSuccess = async (type) => {
         dialogManager.showLoading()
         try {
-            if (type != 'delete') {
-                console.log('handleSuccess');
-                await dataManager.syncPartner()
-                getCustomer()
-            } else {
-                await realmStore.deletePartner()
-                await dataManager.syncPartner()
-                getCustomer()
-            }
+            if (type == 'xoa') await realmStore.deletePartner()
+            await dataManager.syncPartner()
+            getCustomer()
+            dialogManager.showPopupOneButton(`${I18n.t(type)} ${I18n.t('thanh_cong')}`, I18n.t('thong_bao'))
             dialogManager.hiddenLoading()
         } catch (error) {
             console.log('handleSuccess err', error);
@@ -166,7 +166,6 @@ export default (props) => {
                         data={customerData}
                         renderItem={({ item, index }) => renderListItem(item, index)}
                         keyExtractor={(item, index) => index.toString()}
-                        ref={refs => customerRef.current = refs}
                     />
                     <FAB
                         style={styles.fab}

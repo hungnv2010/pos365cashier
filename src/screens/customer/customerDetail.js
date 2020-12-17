@@ -347,7 +347,7 @@ export default (props) => {
                 .then(res => {
                     console.log('onClickApply res', res);
                     if (res) {
-                        props.handleSuccess('add')
+                        props.handleSuccess('them')
                         resetCustomer()
                     } else {
                         toastDescription.current = `${customerDetail.Code} ${I18n.t('da_ton_tai_trong_he_thong')}`
@@ -367,7 +367,7 @@ export default (props) => {
                 .then(res => {
                     console.log('onClickApply res', res);
                     if (res) {
-                        props.handleSuccess('update')
+                        props.handleSuccess('sua')
                         resetCustomer()
                     }
                     dialogManager.hiddenLoading()
@@ -384,7 +384,7 @@ export default (props) => {
         new HTTPService().setPath(`${ApiPath.CUSTOMER}/${customerDetail.Id}`).DELETE()
             .then(res => {
                 console.log('onClickDelete', res)
-                if (res) props.handleSuccess('delete')
+                if (res) props.handleSuccess('xoa')
             })
             .catch(err => console.log('onClickDelete err', err))
     }

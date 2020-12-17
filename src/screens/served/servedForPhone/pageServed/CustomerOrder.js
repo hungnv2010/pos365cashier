@@ -13,9 +13,21 @@ import { ScreenList } from '../../../../common/ScreenList';
 import DialogProductDetail from '../../../../components/dialog/DialogProductDetail'
 import dialogManager from '../../../../components/dialog/DialogManager';
 import dataManager from '../../../../data/DataManager';
+import { useDispatch, useSelector } from 'react-redux';
+import { defaultMultiKitchen } from '../../../more/ViewPrint';
+import { color } from 'react-native-reanimated';
+import { getFileDuLieuString } from '../../../../data/fileStore/FileStorage';
+import { Constant } from '../../../../common/Constant';
+import { ReturnProduct } from '../../ReturnProduct';
+
+const TYPE_MODAL = {
+    DETAIL: 0,
+    DELETE: 1
+}
 
 export default (props) => {
 
+    const dispatch = useDispatch();
     const [showModal, setShowModal] = useState(false)
     const [listOrder, setListOrder] = useState(() =>
         (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0)
@@ -26,8 +38,17 @@ export default (props) => {
     const [itemOrder, setItemOrder] = useState({})
     const [marginModal, setMargin] = useState(0)
     const [expand, setExpand] = useState(false)
+    const [vendorSession, setVendorSession] = useState({});
+    const typeModal = useRef(TYPE_MODAL.DETAIL)
+
 
     useEffect(() => {
+        const getVendorSession = async () => {
+            let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
+            console.log('ReturnProduct data', JSON.parse(data));
+            setVendorSession(JSON.parse(data))
+        }
+        getVendorSession();
 
         var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
         var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
@@ -64,21 +85,42 @@ export default (props) => {
     }
 
     const printKitchen = () => {
-        // let jsonContent = props.jsonContent;
-        // if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
-        //     jsonContent.RoomName = props.route.params.Name
-        // }
-        // viewPrintRef.current.checkBeforePrintRef(jsonContent, true);
         let jsonContent = props.jsonContent;
-        console.log("printKitchen jsonContent ", jsonContent);
-        let data = dataManager.printCook([jsonContent])
-        console.log("printKitchen data ", data);
+        if (!checkProcessedQuantityProduct(jsonContent)) {
+            let data = dataManager.getDataPrintCook(jsonContent.OrderDetails)
+            console.log("printKitchen data ", data);
+            jsonContent.OrderDetails.forEach(element => {
+                element.Processed = element.Quantity
+            });
+            console.log("printKitchen jsonContent ", jsonContent);
+            props.handlerProcessedProduct(jsonContent)
+            dispatch({ type: 'LIST_PRINT', listPrint: data })
+            notification(I18n.t("bao_che_bien_thanh_cong"));
+        } else {
+            notification(I18n.t("cac_mon_ban_chon_dang_duoc_nha_bep_chuan_bi"));
+        }
+    }
+
+    const notification = (content) => {
+        setToastDescription(content);
+        setShowToast(true)
+    }
+
+    const checkProcessedQuantityProduct = (jsonContent) => {
+        let isProcessed = true;
+        jsonContent.OrderDetails.forEach(element => {
+            if (element.Processed < element.Quantity) {
+                isProcessed = false;
+            }
+        });
+        return isProcessed;
     }
 
     const removeItem = (item) => {
         console.log('removeItem ', item.Name, item.index);
-        listOrder.splice(item.index, 1)
-        props.outputListProducts([...listOrder])
+        setItemOrder(item)
+        typeModal.current = TYPE_MODAL.DELETE
+        setShowModal(true)
     }
 
     const onClickTopping = (item, index) => {
@@ -133,24 +175,21 @@ export default (props) => {
                 element.Description = data.Description
                 element.Quantity = +data.Quantity
                 element.IsLargeUnit = data.IsLargeUnit
+                element.Price = data.IsLargeUnit ? data.PriceLargeUnit : data.UnitPrice
             }
         });
 
         props.outputListProducts([...listOrder])
     }
 
-    const getTotalPrice = () => {
-        let total = 0;
-        list.forEach(item => {
-            if (!(item.ProductType == 2 && item.IsTimer)) {
-                let price = item.IsLargeUnit ? item.PriceLargeUnit : item.Price
-                let totalTopping = item.TotalTopping ? item.TotalTopping : 0
-                total += (price + totalTopping) * item.Quantity
-            }
-        })
-        return total
+    const splitTable = () => {
+        hideMenu()
+        if (listOrder && listOrder.length > 0) {
+            props.navigation.navigate(ScreenList.SplitTable, props.jsonContent);
+        } else {
+            dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
+        }
     }
-
 
     let _menu = null;
 
@@ -167,69 +206,83 @@ export default (props) => {
     };
 
     const renderProduct = (item, index) => {
+        const isPromotion = !(item.IsPromotion == undefined || (item.IsPromotion == false))
         return (
-            <TouchableOpacity key={index} onPress={() => {
-                if (item.ProductType == 2 && item.IsTimer) {
-                    setToastDescription(I18n.t("ban_khong_co_quyen_dieu_chinh_mat_hang_thoi_gian"))
-                    setShowToast(true)
-                    return
-                }
-                setItemOrder({ ...item })
-                setShowModal(!showModal)
-            }}>
-                <View style={styles.mainItem}>
-                    <TouchableOpacity
-                        style={{ paddingHorizontal: 5 }}
-                        onPress={() => removeItem(item)}>
-                        <Icon name="trash-can-outline" size={40} color="black" />
-                    </TouchableOpacity>
-                    <View style={{ flex: 1, }}>
-                        <TextTicker
-                            style={{ fontWeight: "bold", marginBottom: 7 }}
-                            duration={6000}
-                            marqueeDelay={1000}>
-                            {item.Name}
-                        </TextTicker>
-                        <View style={{ flexDirection: "row" }}>
-                            <Text style={{}}>{item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : currencyToString(item.Price)} x </Text>
-                            <View>
-                                <Text style={{ color: Colors.colorchinh }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text>
-                            </View>
+            <>
+                {
+                    isPromotion && item.FisrtPromotion != undefined ?
+                        <View style={{ backgroundColor: "#ffedd6", padding: 7, paddingHorizontal: 10 }}>
+                            <Text style={{ color: colors.colorchinh, fontWeight: "bold" }}>{I18n.t('khuyen_mai')}</Text>
                         </View>
+                        : null
+                }
+                <TouchableOpacity key={index} onPress={() => {
+                    if (isPromotion) return;
+                    setItemOrder({ ...item })
+                    console.log("onClickProduct item ", item);
 
-                        {item.Description != "" ?
+                    typeModal.current = TYPE_MODAL.DETAIL
+                    setShowModal(!showModal)
+                }}>
+                    <View style={styles.mainItem}>
+                        <TouchableOpacity
+                            style={{ paddingVertical: 10, paddingHorizontal: 5 }}
+                            onPress={() => { if (!isPromotion) removeItem(item) }}>
+                            <Icon name={!isPromotion ? "trash-can-outline" : "gift"} size={40} color={!isPromotion ? "black" : colors.colorLightBlue} />
+                        </TouchableOpacity>
+                        <View style={{ flex: 1, }}>
+                            <TextTicker
+                                style={{ fontWeight: "bold", marginBottom: 7 }}
+                                duration={6000}
+                                marqueeDelay={1000}>
+                                {item.Name}
+                            </TextTicker>
+                            <View style={{ flexDirection: "row" }}>
+                                <Text style={{}}>{isPromotion ? currencyToString(item.Price) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : currencyToString(item.Price))} x </Text>
+                                <View>
+                                    <Text style={{ color: Colors.colorchinh }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text>
+                                </View>
+                            </View>
+
+                            {item.Description != "" ?
+                                <Text
+                                    style={{ fontStyle: "italic", fontSize: 11, color: "gray" }}>
+                                    {item.Description}
+                                </Text>
+                                :
+                                null}
+                        </View>
+                        <View style={{ alignItems: "flex-end" }}>
+                            <Icon style={{ paddingHorizontal: 5 }} name="bell-ring" size={20} color={item.Quantity == item.Processed ? Colors.colorLightBlue : "gray"}  />
                             <Text
-                                style={{ fontStyle: "italic", fontSize: 11, color: "gray" }}>
-                                {item.Description}
+                                style={{ color: colors.colorchinh, marginRight: 5 }}>
+                                {isPromotion ? currencyToString(item.Price * item.Quantity) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit * item.Quantity) : currencyToString(item.Price * item.Quantity))}
                             </Text>
-                            :
-                            null}
-                    </View>
-                    <Icon style={{ paddingHorizontal: 5 }} name="bell-ring" size={20} color="grey" />
-                    {item.ProductType == 2 && item.IsTimer ?
+                        </View>
+                        {/* {item.ProductType == 2 && item.IsTimer ?
                         null
                         :
-                        <TouchableOpacity
-                            style={{ marginRight: 5, borderWidth: 1, borderRadius: 50, padding: 3, borderColor: Colors.colorchinh }}
-                            onPress={() => onClickTopping(item)}>
-                            <Icon name="puzzle" size={25} color={Colors.colorchinh} />
-                        </TouchableOpacity>
-                    }
-                </View>
-            </TouchableOpacity>
+                        !isPromotion ?
+                            <TouchableOpacity
+                                style={{ marginRight: 5, borderWidth: 1, borderRadius: 50, padding: 3, borderColor: Colors.colorchinh }}
+                                onPress={() => onClickTopping(item)}>
+                                <Icon name="puzzle" size={25} color={Colors.colorchinh} />
+                            </TouchableOpacity>
+                            : null
+                    } */}
+                    </View>
+                </TouchableOpacity>
+            </>
         )
     }
 
-    const totalPrice = (orderDetails) => {
 
-        console.log('getPrice', orderDetails);
 
-        let total = 0;
-        if (orderDetails && orderDetails.length > 0)
-            orderDetails.forEach(item => {
-                total += (item.Price) * item.Quantity
-            });
-        return total
+    const saveOrder = (data) => {
+        console.log('saveOrder data ', data);
+
+        listOrder.splice(itemOrder.index, 1)
+        props.outputListProducts([...listOrder])
     }
 
     const changTable = () => {
@@ -272,7 +325,7 @@ export default (props) => {
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                         <Text style={{ fontWeight: "bold" }}>{I18n.t('tong_thanh_tien')}</Text>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                            <Text style={{ fontWeight: "bold", fontSize: 16, color: colors.colorchinh }}>{currencyToString(totalPrice(jsonContent.OrderDetails))}đ</Text>
+                            <Text style={{ fontWeight: "bold", fontSize: 16, color: colors.colorchinh }}>{currencyToString(jsonContent.Total)}đ</Text>
                             {expand ?
                                 <Icon style={{}} name="chevron-up" size={30} color="black" />
                                 :
@@ -314,6 +367,10 @@ export default (props) => {
                         <View style={{
                             backgroundColor: "#fff", borderRadius: 4, marginHorizontal: 5,
                         }}>
+                            <TouchableOpacity onPress={() => splitTable()} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
+                                <MaterialIcons style={{ paddingHorizontal: 7 }} name="call-split" size={26} color={Colors.colorchinh} />
+                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('tach_ban')}</Text>
+                            </TouchableOpacity>
                             <TouchableOpacity onPress={() => changTable()} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
                                 <MaterialIcons style={{ paddingHorizontal: 7 }} name="notifications" size={26} color={Colors.colorchinh} />
                                 <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('chuyen_ban')}</Text>
@@ -366,16 +423,30 @@ export default (props) => {
                             // marginBottom: Platform.OS == 'ios' ? Metrics.screenHeight / 2.5 : 0
                             marginBottom: Platform.OS == 'ios' ? marginModal : 0
                         }}>
-                            <DialogProductDetail
-                                onClickTopping={() => onClickTopping(itemOrder)}
-                                item={itemOrder}
-                                getDataOnClick={(data) => {
-                                    mapDataToList(data)
-                                }}
-                                setShowModal={() => {
-                                    setShowModal(false)
-                                }}
-                            />
+                            {
+                                typeModal.current == TYPE_MODAL.DETAIL ?
+                                    <DialogProductDetail
+                                        onClickTopping={() => onClickTopping(itemOrder)}
+                                        item={itemOrder}
+                                        getDataOnClick={(data) => {
+                                            mapDataToList(data)
+                                        }}
+                                        setShowModal={() => {
+                                            setShowModal(false)
+                                        }}
+                                    />
+                                    :
+                                    <ReturnProduct
+                                        Name={itemOrder.Name}
+                                        Quantity={itemOrder.Quantity}
+                                        vendorSession={vendorSession}
+                                        getDataOnClick={(data) => saveOrder(data)}
+                                        setShowModal={() => {
+                                            setShowModal(false)
+                                        }
+                                        } />
+                            }
+                            {/* */}
                         </View>
                     </View>
                 </View>
@@ -399,7 +470,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-evenly",
-        paddingVertical: 10,
+        // paddingVertical: 10,
         borderBottomColor: "#ABB2B9",
         borderBottomWidth: 0.5,
     },

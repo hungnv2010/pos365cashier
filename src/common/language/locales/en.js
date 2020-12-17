@@ -51,6 +51,9 @@ export default {
   chon: "Choose",
   chon_tinh_thanh: "Choose province",
   chon_bang_gia: "Choose pricebook",
+  moi_chon_mon_truoc: "choose your products first",
+  chua_cap_nhat: "No infomation",
+  cap_nhat_khach_hang: "Update customer",
 
   // TODO: D
   dang_dung: "Serving",
@@ -72,6 +75,8 @@ export default {
   diem_voucher: "Point/Voucher",
   diem_thuong: "Reward Points",
   diem_hien_tai: "Current Point",
+  don_hang_moi: "New orders",
+  du_no: "Debt",
   // TODO: E
 
 
@@ -101,7 +106,8 @@ export default {
   ho_tro: "Support",
 
   // TODO: I
-  in_tam_tinh: "Printing temporary",
+  in_tam_tinh: "Print provisional",
+  in_tem: "Print temp",
   in: "Print",
 
   // TODO: K
@@ -118,6 +124,10 @@ export default {
   khach_yeu_cau: "Guest request",
   khong_xac_dinh: "Không xác định",
   ket_qua_ban_hang: "Sales results",
+  khuyen_mai: "Khuyễn mãi",
+  khuyen_mai_: "khuyễn mãi",
+  khong_tim_thay_hoa_don_nao_phu_hop: "No matching invoice was found",
+
 
   // TODO: H
   hoa_don: "Invoice",
@@ -157,6 +167,8 @@ export default {
   mon_da_xac_nhan: "Menu confirmed",
   mac_dinh: "Default",
   mat_hang: "Item",
+  ma_khach_hang: "Customer Code",
+
 
 
   // TODO: N
@@ -172,6 +184,10 @@ export default {
   ngay: "days",
   ngay_ban: "Sold date",
   nhap_tu_khoa_tim_kiem: "Enter search keywords",
+  ngay_sinh: "Date of birth",
+  ngay_sua: "Modified date",
+  nhap_ma_hoa_don_tim_kiem: "enter your search invoice code",
+
 
   // TODO: O
 
@@ -184,6 +200,7 @@ export default {
   phuong_thuc: "Method",
   phut: "minutes",
   phien_ban_ngay: "Version",
+  phuong_thuc_khac:"Other method",
 
   // TODO: Q
   quy_khach_vui_long_nhap_mat_khau: "Please enter your password",
@@ -203,9 +220,11 @@ export default {
   SL: "Qty",
   su_dung_diem: "Use Point",
   so_tien_quy_doi: "Money Discount",
+  sua: "Update",
 
   // TODO: T
   thong_bao: "Notification",
+  tong_so_hoa_don:"Total invoice",
   tieng_anh: "English",
   tieng_viet: "Vietnamese",
   tong_quan: "Overview",
@@ -227,6 +246,7 @@ export default {
   them: "More",
   ten_hang: "Name",
   TT: "TT",
+  them_khach_hang: "Add new customer",
   trieu: "milions",
   tat_ca_san_pham: "All products",
   tong_dai_ho_tro: "Support",
@@ -256,6 +276,12 @@ export default {
   tach_ban: "Split table",
   tien_thua: "Excess cash",
   tim_kiem: "Search",
+  them: "Add",
+  thanh_cong: "success",
+  tu_dong_tao_ma: "Automatically Generate Code",
+  ten_nhom: "Group Name",
+  tinh_thanh: "Province",
+
 
   // TODO: U
 
@@ -268,6 +294,7 @@ export default {
   xac_nhan: 'Comfirm',
   xong: "Done",
   xin_cam_on: "Thank you, see you again!",
+  xoa: "Delete",
 
   // TODO: Y
   yeu_cau_thanh_toan: "Payment request",
@@ -277,7 +304,7 @@ export default {
   bao_che_bien_sau_khi_thanh_toan: "Report processing after payment",
 
   cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang: "Allows to change the name of good when selling",
-  cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang:"Allows employees change prices when selling",
+  cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang: "Allows employees change prices when selling",
   chon_cong_nghe_in: "Select the print technology",
   cai_dat_the_cung: "Setting card",
   chan_trang: "Footer",
@@ -300,7 +327,7 @@ export default {
   in_qua_mang_lan: "In qua mạng LAN",
   in_qua_bluetooth: "In qua Bluetooth",
   in_qua_usb: "In qua USB",
-  in_hoa_don_truoc_khi_thanh_toan_VNPAYQR_thanh_cong:"Print bill before successfull payment VNPAY-QR? ",
+  in_hoa_don_truoc_khi_thanh_toan_VNPAYQR_thanh_cong: "Print bill before successfull payment VNPAY-QR? ",
 
   khong_cho_phep_ban_hang_khi_het_ton_kho: "Sales are not allowed when out of stock?",
   khong_in: "Don't print",
@@ -333,7 +360,7 @@ export default {
   su_dung_hai_man_hinh: "Using two screen",
   setting: "Setting",
   so_dien_thoai: "Phone number",
-  
+
   thiet_lap_thanh_toan_vnpay: "Payments setting VNPAY",
   thong_tin_cua_hang: "Store informations",
   tu_dong_in_bao_bep: "Auto print report kitchen",
@@ -344,6 +371,7 @@ export default {
   thanh_toan_vnpaypos_qua_may_pos:"VNPAY-POS payment via POS machine?",
   ten_hang_hoa:'Product name',
   thanh_tien:'Total',
+  thanh_toan_vnpaypos_qua_may_pos: "VNPAY-POS payment via POS machine?",
 
   vnd: "VND"
 

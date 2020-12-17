@@ -28,9 +28,14 @@ import Customer from '../../screens/customer/Customer';
 import CustomerDetailForPhone from '../../screens/customer/CustomerDetailForPhone';
 import Settings from '../../screens/settings/Settings';
 import VNPayPaymentSetting from '../../screens/settings/VNPAYPaymentSetting';
+import CommodityWaiting from '../../screens/main/retail/commodityWaiting'
 import RoomHistory from '../../screens/roomHistory/RoomHistory'
 import RoomHistoryDetailForPhone from '../../screens/roomHistory/RoomHistoryDetailForPhone';
 
+import RetailSelectProduct from '../../screens/main/retail/retailForPhone/retailSelectProducts'
+import MainRetail from '../../screens/main/retail/MainRetail'
+import Pricebook from '../../screens/served/Pricebook';
+import SplitTable from '../../screens/splitTable/SplitTable'
 
 
 const MainStack = createStackNavigator();
@@ -72,6 +77,11 @@ export default (props) => {
                 <MainStack.Screen name={ScreenList.VNPayPaymentSetting}>{props => <VNPayPaymentSetting />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.RoomHistory}>{props => <RoomHistory {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.RoomHistoryDetailForPhone}>{props => <RoomHistoryDetailForPhone {...props}/>}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.CommodityWaiting}>{props => <CommodityWaiting {...props}/>}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.RetailSelectProduct}>{props => <RetailSelectProduct {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.MainRetail}>{props => <MainRetail {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.SplitTable}>{props => <SplitTable {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.PriceBook}>{props => <Pricebook {...props} />}</MainStack.Screen>
             </MainStack.Navigator>
         </Animated.View>
     );

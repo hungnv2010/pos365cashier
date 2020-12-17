@@ -25,7 +25,7 @@ class DataManager {
             let intNewOrder = await new HTTPService().setPath(ApiPath.WAIT_FOR_COMFIRMATION).GET()
             let changeTableComfirm = await new HTTPService().setPath(ApiPath.CHANGE_TABLE_COMFIRM).GET()
             if (intNewOrder == 0 && changeTableComfirm.length == 0) {
-                return Promise.resolve([])
+                return Promise.resolve(null)
             } else {
                 if (intNewOrder > 0) {
                     let newOrders = await new HTTPService().setPath(ApiPath.WAIT_FOR_COMFIRMATION_ALL).GET()
@@ -92,13 +92,13 @@ class DataManager {
                         const { FromRoomId, FromPos, ToRoomId, ToPos } = item
                         this.changeTable(FromRoomId, FromPos, ToRoomId, ToPos)
                     })
-                    return Promise.resolve([])
+                    return Promise.resolve(null)
                 }
             }
 
         } catch (error) {
             console.log('initComfirmOrder error', error);
-            return Promise.resolve([])
+            return Promise.resolve(null)
         }
     }
 
@@ -111,7 +111,7 @@ class DataManager {
         let print5 = []
         newOrders.forEach((elm, idx) => {
             if (!elm.Printer || elm.Printer == '') {
-                elm.Printer = Constant.PRINT_KITCHEN_BARTENDER_DEFAULT
+                elm.Printer = Constant.PRINT_KITCHEN_DEFAULT
             }
             if (elm.SecondPrinter && elm.SecondPrinter != '') {
                 secondPrinter.push({ ...elm, Printer: elm.SecondPrinter })
@@ -218,9 +218,9 @@ class DataManager {
     syncPriceBook = async () => {
         let res = await new HTTPService().setPath(ApiPath.SYNC_PRICE_BOOK).GET()
         if (res.results && res.results.length > 0) {
-            res.results.unshift({Name: "Giá niêm yết", Id: 0})
+            res.results.unshift({ Name: "Giá niêm yết", Id: 0 })
             await realmStore.insertDatas(SchemaName.PRICE_BOOK, res.results)
-        }    
+        }
     }
 
     syncAllDatas = async () => {
@@ -233,6 +233,18 @@ class DataManager {
             await this.syncPromotion(),
             await this.syncPriceBook()
     }
+
+    syncAllDatasForRetail = async () => {
+        await this.syncProduct(),
+            // await this.syncTopping(),
+            // await this.syncServerEvent(),
+            await this.syncRooms(),
+            await this.syncPartner(),
+            await this.syncCategories(),
+            await this.syncPromotion(),
+            await this.syncPriceBook()
+    }
+
 
     //calculator and send ServerEvent
     updateServerEvent = (serverEvent) => {
@@ -263,9 +275,11 @@ class DataManager {
 
     calculatateJsonContent = (JsonContent) => {
         let totalProducts = this.totalProducts(JsonContent.OrderDetails)
+        let discount = this.totalDiscountProducts(JsonContent.OrderDetails)
         let totalWithVAT = totalProducts + (JsonContent.VAT ? JsonContent.VAT : 0)
-        JsonContent.Total = totalWithVAT
-        JsonContent.AmountReceived = totalWithVAT
+        JsonContent.Total = totalWithVAT - discount
+        JsonContent.AmountReceived = totalWithVAT - discount
+        JsonContent.Discount = discount
         if (!JsonContent.ActiveDate || JsonContent.ActiveDate == "")
             JsonContent.ActiveDate = moment()
         else if (!JsonContent.OrderDetails || JsonContent.OrderDetails.length == 0)
@@ -280,7 +294,16 @@ class DataManager {
     }
 
     totalProducts = (products) => {
-        return products.reduce((total, product) => total + product.Price * product.Quantity, 0)
+        return products.reduce((total, product) => total + (product.IsPromotion == true ? product.Price * product.Quantity : (product.IsLargeUnit ? product.PriceLargeUnit : product.UnitPrice) * product.Quantity), 0)
+    }
+
+    totalDiscountProducts = (products) => {
+        let totalDiscount = 0
+        products.forEach(product => {
+            let discount = product.Discount > 0 ? product.Discount : 0
+            totalDiscount = product.Percent ? (product.Price * discount / 100) * product.Quantity : discount * product.Quantity
+        })
+        return totalDiscount
     }
 
     sentNotification = (Title, Body) => {
@@ -330,6 +353,56 @@ class DataManager {
 
     }
 
+    splitTable = async (RoomId, OldPosition, NewPosition, ListOldSplit, ListNewSplit) => {
+        console.log("splitTable ", RoomId, OldPosition, NewPosition, ListOldSplit, ListNewSplit);
+        let serverEvents = await realmStore.queryServerEvents()
+
+        let oldServerEvent = serverEvents.filtered(`RowKey == '${RoomId}_${OldPosition}'`)
+        let newServerEvent = serverEvents.filtered(`RowKey == '${RoomId}_${NewPosition}'`)
+
+        oldServerEvent = (JSON.stringify(oldServerEvent) != '{}') ? JSON.parse(JSON.stringify(oldServerEvent))[0]
+            : await this.createSeverEvent(RoomId, OldPosition)
+        oldServerEvent.JsonContent = oldServerEvent.JsonContent ? JSON.parse(oldServerEvent.JsonContent) : {}
+        if (!oldServerEvent.JsonContent.OrderDetails) oldServerEvent.JsonContent.OrderDetails = []
+
+        newServerEvent = (JSON.stringify(newServerEvent) != '{}') ? JSON.parse(JSON.stringify(newServerEvent))[0]
+            : await this.createSeverEvent(RoomId, NewPosition)
+        if (!newServerEvent.JsonContent) {
+            newServerEvent.JsonContent =
+                this.createJsonContent(RoomId, NewPosition, momentToDateUTC(moment()), ListNewSplit)
+        } else {
+            newServerEvent.JsonContent = JSON.parse(newServerEvent.JsonContent)
+            let OrderDetails = newServerEvent.JsonContent.OrderDetails ?
+                [...newServerEvent.JsonContent.OrderDetails, ...ListNewSplit]
+                : ListNewSplit
+            newServerEvent.JsonContent.OrderDetails = [...OrderDetails]
+        }
+
+
+        oldServerEvent.Version += 1
+        oldServerEvent.JsonContent.OrderDetails = ListOldSplit
+        this.calculatateJsonContent(oldServerEvent.JsonContent)
+        oldServerEvent.JsonContent = JSON.stringify(oldServerEvent.JsonContent)
+        // oldServerEvent.JsonContent.OrderDetails = ListOldSplit
+        // if (ListOldSplit == undefined || ListOldSplit.length == 0)
+        //     oldServerEvent.JsonContent = JSON.stringify(this.removeJsonContent(oldServerEvent.JsonContent))
+        // else
+        //     oldServerEvent.JsonContent = JSON.stringify(oldServerEvent.JsonContent)
+        newServerEvent.Version += 1
+        this.calculatateJsonContent(newServerEvent.JsonContent)
+        newServerEvent.JsonContent = JSON.stringify(newServerEvent.JsonContent)
+
+        console.log("splitTable oldServerEvent:: ", oldServerEvent)
+        console.log("splitTable newServerEvent:: ", newServerEvent)
+        setTimeout(async () => {
+            await this.updateServerEventNow(oldServerEvent, true)
+            setTimeout(async () => {
+                await this.updateServerEventNow(newServerEvent, true)
+            }, 1000);
+        }, 500);
+
+    }
+
     createSeverEvent = async (RoomId, Position) => {
         let vendorSession = await this.selectVendorSession()
         let PartitionKey = `${vendorSession.CurrentBranchId}_${vendorSession.CurrentUser.RetailerId}`
@@ -354,6 +427,142 @@ class DataManager {
             ActiveDate: ActiveDate
         }
     }
+
+    createJsonContentForRetail = (RoomId) => {
+        return {
+            // OfflineId: randomUUID(),
+            // Status: 2,
+            // Discount: 0,
+            // TotalPayment: 0,
+            // AmountReceive: 0,
+            // AmountReceived: 0,
+            // Total: 0,
+            // OrderDetails: [],
+            // SoldById: 0,
+            // ExcessCashType: 0,
+            // ExcessCash: 0,
+            // RoomId: RoomId,
+            // RoomName: "",
+            // Pos: "A",
+            // NumberOfGuests: 0,
+            // SyncStatus: 0,
+            // VATRates: "",
+            // DiscountValue: 0,
+            // Voucher: 0,
+            // DiscountToView: "",
+            // VAT: 0,
+            // Description: "",
+            // ActiveDate: "",
+            // PartnerId: 0,
+            // OldDebt: 0,
+            // DiscountRatio: 0,
+            // Id: 0,
+            // Code: "",
+            // initializingTotalPayment: false,
+            // ShippingCost: "0",
+            // ShippingCostForPartner: 0,
+            // PurchaseDate: "",
+            // PriceBookId: "0",
+            // Topping: "",
+            // MoreAttributes: "",
+            // Printed: false,
+
+            // OfflineId: randomUUID(),
+            // Status: 2,
+            // Discount: 0,
+            // TotalPayment: 0,
+            // AmountReceive: 0,
+            // AmountReceived: 0,
+            // Total: 0,
+            // OrderDetails: [],
+            // // SoldById: 0,
+            // ExcessCashType: 0,
+            // ExcessCash: 0,
+            // RoomId: RoomId,
+            // RoomName: "",
+            // Pos: "A",
+            // NumberOfGuests: 0,
+            // SyncStatus: 0,
+            // VATRates: "",
+            // DiscountValue: 0,
+            // Voucher: 0,
+            // DiscountToView: "",
+            // VAT: 0,
+            // Description: "",
+            // ActiveDate: "",
+            // PartnerId: null,
+            // OldDebt: 0,
+            // DiscountRatio: 0,
+            // // VoucherCode: null,
+            // // VoucherId: null,
+            // Id: 0,
+            // Code: "",
+            // initializingTotalPayment: false,
+            // DeliveryById: null,
+            // AccountId: null,
+            // ShippingCost: "0",
+            // // ShippingCostForPartner: 0,
+            // DeliveryBy: null,
+            // PurchaseDate: "",
+            // PriceBookId: "0",
+            // // Topping: "",
+            // PointToValue: 0,
+            // MoreAttributes: "",
+            // Printed: false,
+            // ChannelId: null,
+            // CardNumber: null
+
+            OfflineId: randomUUID(),
+            Status: 2,
+            Discount: 0,
+            TotalPayment: 0,
+            AmountReceive: 0,
+            AmountReceived: 0,
+            Total: 0,
+            OrderDetails: [],
+            SoldById: 0,
+            ExcessCashType: 0,
+            ExcessCash: 0,
+            RoomId: RoomId,
+            RoomName: "",
+            Pos: "A",
+            NumberOfGuests: 0,
+            SyncStatus: 0,
+            VATRates: "",
+            DiscountValue: 0,
+            Voucher: 0,
+            DiscountToView: 0,
+            VAT: 0,
+            Description: "",
+            ActiveDate: "",
+            Partner: null,
+            PartnerId: null,
+            OldDebt: 0,
+            DiscountRatio: 0,
+            VoucherCode: null,
+            VoucherId: null,
+            Id: 0,
+            Code: "",
+            initializingTotalPayment: false,
+            tmpDeliveryById: null,
+            AccountId: null,
+            ShippingCost: "0",
+            ShippingCostForPartner: 0,
+            tmpDeliveryBy: null,
+            PurchaseDate: "",
+            PriceBookId: null,
+            Topping: "",
+            PointToValue: 0,
+            MoreAttributes: "",
+            Printed: false,
+            ChannelId: null,
+            CardNumber: null,
+            tmpLadingCode: "",
+            tmpShippingCost: 0
+        }
+    }
+
+
 
     removeJsonContent = (JsonContent) => {
         return {

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback, useLayoutEffect } from 'react';
 import {
     View, Text, Image,
-    StyleSheet, TouchableOpacity, TextInput, Keyboard
+    StyleSheet, TouchableOpacity, TextInput, Keyboard, Linking
 } from "react-native";
 import { Snackbar, } from "react-native-paper";
 import I18n from '../../common/language/i18n';
@@ -58,8 +58,8 @@ const LoginScreen = (props) => {
                     setHasLogin(false)
                 }
                 dialogManager.hiddenLoading()
-                dispatch({ type: 'ALREADY', already: false })
-                await realmStore.deleteAll()
+                // dispatch({ type: 'ALREADY', already: null })
+                // await realmStore.deleteAll()
             }
         }
         getCurrentAccount()
@@ -138,12 +138,6 @@ const LoginScreen = (props) => {
                     setFileLuuDuLieu(Constant.REMEMBER_ACCOUNT, JSON.stringify(account));
                 }
 
-                // if (res.CurrentRetailer && (res.CurrentRetailer.FieldId == 3 || res.CurrentRetailer.FieldId == 11)) {
-                //     dispatch({ type: 'IS_FNB', isFNB: true })
-                // } else {
-                //     // dialogManager.showPopupOneButton(I18n.t("vui_long_chon_li÷nh_vuc_ban_le_ho_tro_shop_thoi_trang_sieu_thi"), I18n.t('thong_bao'));
-                //     dispatch({ type: 'IS_FNB', isFNB: false })
-                // }
 
                 navigateToHome()
             } else {
@@ -168,6 +162,10 @@ const LoginScreen = (props) => {
         }
     }
 
+    const actionPhone = async () => {
+        let phone_number = "tel: " + Constant.HOTLINE;
+        Linking.openURL(phone_number);
+    }
 
     const checkDataLogin = () => {
         if (shop == '') {
@@ -192,6 +190,7 @@ const LoginScreen = (props) => {
             </View>
         );
     }
+
 
     return (
         <LinearGradient
@@ -245,13 +244,13 @@ const LoginScreen = (props) => {
                                     Keyboard.dismiss();
                                     setLogIn(!logIn)
                                 }}>
-                                <Text style={{ color: "#fff", fontWeight: 'bold' }}>{I18n.t("nhan_vien_order").toUpperCase()}</Text>
+                                <Text style={{ color: "#fff", fontWeight: 'bold' }}>{I18n.t("thu_ngan").toUpperCase()}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
                     <View style={{ justifyContent: "center", alignItems: "center", marginBottom: 0 }}>
                         <Text style={{ color: "#fff" }}>{I18n.t("tong_dai_ho_tro")} 24/7</Text>
-                        <TouchableOpacity onPress={() => { }} style={{ flexDirection: "row", marginTop: 7, marginBottom: 10 }}>
+                        <TouchableOpacity onPress={actionPhone} style={{ flexDirection: "row", marginTop: 7, marginBottom: 10 }}>
                             <Image source={Images.icon_phone_header} style={{ width: 20, height: 20, marginRight: 7 }} />
                             <Text style={{ color: "#fff", fontWeight: "bold" }}>{Constant.HOTLINE}</Text>
                         </TouchableOpacity>

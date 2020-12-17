@@ -48,15 +48,15 @@ export default (props) => {
                 title={I18n.t('danh_muc_phong_ban')}
             />
 
-            <TouchableOpacity onPress={() => onClickRoomCategori()} style={styles.view_item}>
+            {/* <TouchableOpacity onPress={() => onClickRoomCategori()} style={styles.view_item}>
                 <Image style={styles.image} source={Images.icon_product} />
                 <View style={styles.view_info}>
                     <Text style={styles.title}>{I18n.t('nhom_phong_ban')}</Text>
                     <Text>{I18n.t('so_luong_nhom')}: {roomGroups.length}</Text>
                 </View>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
-            <TouchableOpacity onPress={() => onClickRoomList()} style={[styles.view_item, { marginTop: 0 }]}>
+            <TouchableOpacity onPress={() => onClickRoomList()} style={[styles.view_item, { marginTop: 10 }]}>
                 <Image style={styles.image} source={Images.icon_product} />
                 <View style={styles.view_info}>
                     <Text style={styles.title}>{I18n.t('danh_sach_phong_ban')}</Text>

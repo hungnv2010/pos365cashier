@@ -28,7 +28,6 @@ const _nodes = new Map();
 
 export default (props) => {
 
-    const [listOrder, setListOrder] = useState([])
     const [indexRoom, setIndexRoom] = useState(0)
     const [loadDone, setLoadDone] = useState(false)
     const already = useSelector(state => {
@@ -187,7 +186,7 @@ export default (props) => {
             (<View style={{ width: widthRoom - 5 }}></View>)
             :
             (<TouchableOpacity onPress={() => { onItemPress(item) }} key={item.Id}
-                style={[styles.room, { width: widthRoom - 5, height: widthRoom, backgroundColor: item.IsActive ? colors.colorLightBlue : 'white', borderColor: listOrder.includes(item.Id) ? colors.colorchinh : "#fff", borderWidth: listOrder.includes(item.Id) ? 1 : 0 }]}>
+                style={[styles.room, { width: widthRoom - 5, height: widthRoom, backgroundColor: item.IsActive ? colors.colorLightBlue : 'white', }]}>
                 <View style={{ flex: 1, flexDirection: 'column', justifyContent: "center", alignItems: "center" }}>
                     <View style={{ alignItems: "center", padding: 0, flex: 1 }}>
                         <View style={{ justifyContent: "center", alignItems: "center", flex: 1, height: "90%" }}>

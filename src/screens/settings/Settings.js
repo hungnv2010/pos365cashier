@@ -253,7 +253,9 @@ export default (props) => {
             setStateMoalSize(false)
             settingObject.Printer[positionPrint] = { ...settingObject.Printer[positionPrint], type: defaultType, size: '', ip: '' }
             savePrint({ ...settingObject })
-            dispatch({ type: 'SETTING_OBJECT', printerObject: JSON.stringify(settingObject.Printer) })
+            // dispatch({ type: 'SETTING_OBJECT', printerObject: JSON.stringify(settingObject.Printer) })
+
+            savePrintRedux(settingObject.Printer)
         }
         else {
             setStateMoalSize(!showModalSize)
@@ -301,14 +303,14 @@ export default (props) => {
         } else {
             settingObject.Printer[positionPrint] = { ...settingObject.Printer[positionPrint], type: defaultType, size: defaultSize, ip: '' }
             savePrint({ ...settingObject })
-            dispatch({ type: 'SETTING_OBJECT', printerObject: JSON.stringify(settingObject.Printer) })
+            savePrintRedux(settingObject.Printer)
         }
     }
     const setIpLANPrint = () => {
         setStateValueIp('192.168.99.')
         settingObject.Printer[positionPrint] = { ...settingObject.Printer[positionPrint], type: defaultType, size: defaultSize, ip: defaultIpLAN }
         savePrint({ ...settingObject })
-        dispatch({ type: 'SETTING_OBJECT', printerObject: JSON.stringify(settingObject.Printer) })
+        savePrintRedux(settingObject.Printer)
         setStateModalLAN(!stateModalLAN)
     }
     const [stateValueIp, setStateValueIp] = useState('192.168.99.')
@@ -334,6 +336,15 @@ export default (props) => {
         let params = pr
         props.navigation.navigate(nameFun, params)
         props.navigation.closeDrawer();
+    }
+
+    const savePrintRedux = (Printer) => {
+        let objectPrint = {}
+        Printer.forEach(element => {
+            objectPrint[element.key] = element.ip;
+        });
+        console.log("savePrinter objectPrint ", objectPrint);
+        dispatch({ type: 'SETTING_OBJECT', printerObject: objectPrint })
     }
 
     return (
@@ -750,7 +761,7 @@ const Footer = (props) => {
     return (
         <View style={{ flex: 1, marginTop: 15 }}>
             <Text style={styles.textTitleItemHint}>{props.title}</Text>
-            <TextInput style={{height: 45, borderBottomWidth: 1, marginTop: 5, padding: 10, marginLeft: 20, marginRight: 20, fontSize: 16, color:'silver'}} placeholder={props.titleHint}></TextInput>
+            <TextInput style={{ height: 45, borderBottomWidth: 1, marginTop: 5, padding: 10, marginLeft: 20, marginRight: 20, fontSize: 16, color: 'silver' }} placeholder={props.titleHint}></TextInput>
         </View>
     )
 }
