@@ -30,6 +30,8 @@ import Settings from '../../screens/settings/Settings';
 import VNPayPaymentSetting from '../../screens/settings/VNPAYPaymentSetting';
 import CommodityWaiting from '../../screens/main/retail/commodityWaiting'
 import RoomHistory from '../../screens/roomHistory/RoomHistory'
+import RoomHistoryDetailForPhone from '../../screens/roomHistory/RoomHistoryDetailForPhone';
+
 import RetailSelectProduct from '../../screens/main/retail/retailForPhone/retailSelectProducts'
 import MainRetail from '../../screens/main/retail/MainRetail'
 import Pricebook from '../../screens/served/Pricebook';
@@ -73,8 +75,9 @@ export default (props) => {
                 <MainStack.Screen name={ScreenList.SearchVoucher}>{props => <SearchVoucher {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.Settings}>{props => <Settings />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.VNPayPaymentSetting}>{props => <VNPayPaymentSetting />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.RoomHistory}>{props => <RoomHistory {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.RoomHistoryDetailForPhone}>{props => <RoomHistoryDetailForPhone {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.CommodityWaiting}>{props => <CommodityWaiting {...props}/>}</MainStack.Screen>
-                <MainStack.Screen name={ScreenList.RoomHistory}>{props=><RoomHistory/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.RetailSelectProduct}>{props => <RetailSelectProduct {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.MainRetail}>{props => <MainRetail {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.SplitTable}>{props => <SplitTable {...props} />}</MainStack.Screen>

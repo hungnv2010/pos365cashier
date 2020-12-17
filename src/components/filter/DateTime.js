@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, createRef, useCallback } from 'react';
-import { View, Text, Modal, TouchableOpacity, TouchableWithoutFeedback, ScrollView, Image } from 'react-native';
+import { View, Text, Modal, Switch, TouchableOpacity, TouchableWithoutFeedback, ScrollView, Image, StyleSheet } from 'react-native';
 import I18n from '../../common/language/i18n';
 import { Metrics, Images } from '../../theme';
 import colors from '../../theme/Colors';
@@ -7,6 +7,8 @@ import { Constant } from '../../common/Constant';
 import DateRangePicker from "react-native-daterange-picker";
 import moment from "moment";
 import { dateToString } from '../../common/Utils';
+import { RadioButton } from 'react-native-paper'
+import { check } from 'react-native-permissions';
 
 
 export default (props) => {
@@ -49,7 +51,7 @@ export default (props) => {
             padding: 0,
             backgroundColor: "#fff", borderRadius: 4, marginHorizontal: 0,
             // width: !isSelectCustom ? Metrics.screenWidth * 0.5 : null,
-            justifyContent: 'center', alignItems: 'center',
+            justifyContent: 'center',
         }}>
             {
                 !isSelectCustom ?
@@ -57,7 +59,9 @@ export default (props) => {
                         {props.header ?
                             props.header
                             :
-                            <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", paddingVertical: 10 }}>{I18n.t('chon_khoang_thoi_gian')}</Text>
+                            <View style={{ backgroundColor: "#FF4500" }}>
+                                <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", paddingVertical: 10, color: "#FFFFFF" }}>{I18n.t('chon_khoang_thoi_gian')}</Text>
+                            </View>
                         }
                         {
                             props.timeCustom ?
@@ -72,16 +76,7 @@ export default (props) => {
                                 })
                                 :
                                 props.timeAll ?
-
-                                    Constant.TIME_SELECT_ALL_TIME.map((item, index) => {
-                                        return (
-                                            <TouchableOpacity
-                                                onPress={() => onClickSelectTime(item)}
-                                                key={index} style={{ paddingVertical: 15, }}>
-                                                <Text style={{ textAlign: "center" }}>{I18n.t(item.name)}</Text>
-                                            </TouchableOpacity>
-                                        )
-                                    })
+                                    <CustomTime onClick={onClickSelectTime} onButtonCancel={onCancel}></CustomTime>
                                     :
                                     Constant.TIME_SELECT.map((item, index) => {
                                         return (
@@ -92,6 +87,7 @@ export default (props) => {
                                             </TouchableOpacity>
                                         )
                                     })
+
                         }
                     </View>
                     :
@@ -122,3 +118,61 @@ export default (props) => {
         </View>
     );
 };
+
+const CustomTime = (props) => {
+    const [itemFilter, setItemFilter] = useState({})
+    const [defaut, setDefault] = useState('')
+
+    const onClickRadioButton = (item) => {
+        setItemFilter(item)
+        setDefault(item.name)
+    }
+    const onClickOk = () => {
+        props.onClick(itemFilter)
+    }
+    const onClickCancel = () =>{
+        props.onButtonCancel()
+    }
+
+    return (
+        <View>
+            { Constant.TIME_SELECT_ALL_TIME.map((item, index) => {
+                return (
+                    <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", marginLeft: 20 }} onPress={() => onClickRadioButton(item)}>
+                        <RadioButton.Android
+                            style={{ padding: 0, margin: 0 }}
+                            color='#FF4500'
+                            onPress={() => onClickRadioButton(item)}
+                            status={defaut == item.name ? 'checked' : 'unchecked'}
+                        />
+                        <Text style={{ marginLeft: 0 }}>{I18n.t(item.name)}</Text>
+                    </TouchableOpacity>
+                )
+            })
+            }
+            <View style={{ justifyContent: "center", flexDirection: "row", paddingTop: 10 }}>
+                <TouchableOpacity style={styles.styleButtonHuy} onPress={()=>onClickCancel()} >
+                    <Text style={styles.styleTextBtnHuy}>{I18n.t("huy")}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.styleButtonOK} onPress={() => onClickOk()}>
+                    <Text style={styles.styleTextBtnOk}>{I18n.t("dong_y")}</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
+    )
+}
+const styles = StyleSheet.create({
+    styleButtonOK: {
+        flex: 1, backgroundColor: "#FF4500", borderRadius: 4, paddingHorizontal: 20, paddingVertical: 10, justifyContent: "flex-end", marginLeft: 10, marginRight: 20, marginBottom: 10
+    },
+    styleButtonHuy: {
+        flex: 1, backgroundColor: "#fff", borderWidth: 1, borderColor: "#FF4500", borderRadius: 4, justifyContent: 'flex-start', paddingVertical: 10, paddingHorizontal: 20, marginLeft: 20, marginRight: 10, marginBottom: 10
+    },
+    styleTextBtnHuy: { textAlign: "center", color: "#FF4500", fontSize: 16 },
+    styleTextBtnOk: { textAlign: "center", color: "#fff", fontSize: 16 },
+    styleItemSwitch: {
+        flex: 1,
+        flexDirection: 'row',
+        marginTop: 10
+    },
+})

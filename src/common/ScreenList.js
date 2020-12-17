@@ -61,6 +61,7 @@ export const ScreenList = {
   CommodityWaiting: "CommodityWaiting",
   Settings:"Settings",
   VNPayPaymentSetting:"VNPayPaymentSetting",
+  RoomHistoryDetailForPhone:"RoomHistoryDetailForPhone",  
   RoomHistory:"RoomHistory",  
   RetailSelectProduct:"RetailSelectProduct",
   MainRetail:"MainRetail",

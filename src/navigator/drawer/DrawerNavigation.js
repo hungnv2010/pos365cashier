@@ -17,7 +17,7 @@ import Customer from '../../screens/customer/Customer';
 import Settings from '../../screens/settings/Settings';
 import VNPayPaymentSetting from '../../screens/settings/VNPAYPaymentSetting'
 import RoomHistory from '../../screens/roomHistory/RoomHistory';
-
+import RoomHistoryDetail from '../../screens/roomHistory/RoomHistoryDetailForPhone';
 const Drawer = createDrawerNavigator();
 export default (propsFunc) => {
 

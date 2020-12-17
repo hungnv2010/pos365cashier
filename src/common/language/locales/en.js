@@ -309,12 +309,14 @@ export default {
   chon_cong_nghe_in: "Select the print technology",
   cai_dat_the_cung: "Setting card",
   chan_trang: "Footer",
+  chi_tiet_huy_tra_hang:"Room History Detail",
 
   don_vi_tien_te: "Currency unit",
   dollar_my: "Dollar",
   dia_chi: "Address",
 
   giu_man_hinh_luon_sang: "Keep the screen on",
+  gia:"Price",
 
   hien_thanh_dieu_huong: "Show navigation bar",
 
@@ -333,6 +335,7 @@ export default {
   khong_hien_thi: "Not displayed",
 
   link_dang_nhap: "Link login",
+  ly_do:"Reason",
 
   may_in_thu_ngan: "Cashier printer",
   may_in_bao_bep_a: "Printer report kitchen A",
@@ -345,11 +348,14 @@ export default {
   may_in_bao_pha_che_d: "Printer report preparation D",
   may_in_tem: "Stamp printer",
   mo_cashbox_sau_khi_thanh_toan: "Open cashbox after payment",
+  ma_san_pham:'Product code',
 
   nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: "Receive messages / notifications from waiter, manager?",
   nhap_so_luong_the: "Enter the number of cards",
   nhap_dia_chi_ip_may: "Enter the IP address of the machine ",
   nhap_chieu_rong_kho_giay: "Enter the paper width",
+  nhan_vien:'Staff',
+  ngay_huy_tra:'Cancellation date',
 
   so_the_cung: "Card number",
   su_dung_hai_man_hinh: "Using two screen",
@@ -363,6 +369,9 @@ export default {
   thiet_lap_he_thong: "System settings",
   ten: "Name",
   thanh_toan_vnpayqr: "Payment VNPAY-QR?",
+  thanh_toan_vnpaypos_qua_may_pos:"VNPAY-POS payment via POS machine?",
+  ten_hang_hoa:'Product name',
+  thanh_tien:'Total',
   thanh_toan_vnpaypos_qua_may_pos: "VNPAY-POS payment via POS machine?",
 
   vnd: "VND"

@@ -374,12 +374,14 @@ export default {
   cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang: "Cho phép nhân viên thay đổi giá khi bán hàng?",
   cai_dat_the_cung: "Cài đặt thẻ cứng",
   chan_trang: "Chân trang",
+  chi_tiet_huy_tra_hang:"Chi tiết hủy trả hàng",
 
   don_vi_tien_te: "Đơn vị tiền tệ",
   dollar_my: "Dollar Mỹ",
   dia_chi: "Địa chỉ",
 
   giu_man_hinh_luon_sang: "Giữ màn hình luôn sáng",
+  gia:"Giá",
 
   hien_thanh_dieu_huong: "Hiện thanh điều hướng",
 
@@ -398,6 +400,7 @@ export default {
   khong_hien_thi: "Không hiển thị",
 
   link_dang_nhap: "Link đăng nhập",
+  ly_do:"Lý do",
 
   may_in_thu_ngan: "Máy in thu ngân",
   may_in_bao_bep_a: "Máy in báo bếp A",
@@ -410,11 +413,14 @@ export default {
   may_in_bao_pha_che_d: "Máy in pha chế D",
   may_in_tem: "Máy in tem",
   mo_cashbox_sau_khi_thanh_toan: "Mở cashbox sau khi thanh toán",
+  ma_san_pham:"Mã sản phẩm",
 
   nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: "Nhận tin nhắn/ thông báo từ phục vụ, quản lý?",
   nhap_so_luong_the: "Nhập số lượng thẻ",
   nhap_dia_chi_ip_may: "Bạn hãy nhập địa chỉ IP của máy ",
   nhap_chieu_rong_kho_giay: "Nhập chiều rộng khổ giấy",
+  nhan_vien:"Nhân viên",
+  ngay_huy_tra:"Ngày hủy/trả",
 
   setting: 'Thiết lập',
 
@@ -430,6 +436,9 @@ export default {
   thiet_lap_tinh_nang: "Thiết lập tính năng",
   ten: "Tên",
   thanh_toan_vnpayqr: "Thanh toán VNPAY-QR?",
+  thanh_toan_vnpaypos_qua_may_pos:"Thanh toán VNPAY-POS qua máy POS?",
+  ten_hang_hoa:"Tên hàng hóa",
+  thanh_tien:"Thành tiền",
   thanh_toan_vnpaypos_qua_may_pos: "Thanh toán VNPAY-POS qua máy POS?",
 
   vnd: "VND"
