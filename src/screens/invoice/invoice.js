@@ -246,8 +246,6 @@ const Invoice = (props) => {
                             : null
                     }
                 </View>
-
-
             </TouchableOpacity>
         )
     }
@@ -261,10 +259,12 @@ const Invoice = (props) => {
             <View style={{
                 padding: 0,
                 backgroundColor: "#fff", borderRadius: 4, marginHorizontal: 0,
-                justifyContent: 'center', alignItems: 'center',
+                justifyContent: 'center',
             }}>
                 <View>
-                    <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", paddingVertical: 10 }}>{I18n.t('chon_khoang_thoi_gian')}</Text>
+                    <View style={{backgroundColor:"#FF4500"}}>
+                    <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", paddingVertical: 10,color:'white' }}>{I18n.t('chon_khoang_thoi_gian')}</Text>
+                    </View>
                     {
                         Constant.STATUS_FILTER.map((item, index) => {
                             return (

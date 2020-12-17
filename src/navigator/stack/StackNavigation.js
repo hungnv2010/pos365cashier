@@ -29,6 +29,8 @@ import CustomerDetailForPhone from '../../screens/customer/CustomerDetailForPhon
 import Settings from '../../screens/settings/Settings';
 import VNPayPaymentSetting from '../../screens/settings/VNPAYPaymentSetting';
 import RoomHistory from '../../screens/roomHistory/RoomHistory'
+import RoomHistoryDetailForPhone from '../../screens/roomHistory/RoomHistoryDetailForPhone';
+
 
 
 const MainStack = createStackNavigator();
@@ -68,7 +70,8 @@ export default (props) => {
                 <MainStack.Screen name={ScreenList.SearchVoucher}>{props => <SearchVoucher {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.Settings}>{props => <Settings />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.VNPayPaymentSetting}>{props => <VNPayPaymentSetting />}</MainStack.Screen>
-                <MainStack.Screen name={ScreenList.RoomHistory}>{props=><RoomHistory/>}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.RoomHistory}>{props => <RoomHistory {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.RoomHistoryDetailForPhone}>{props => <RoomHistoryDetailForPhone {...props}/>}</MainStack.Screen>
             </MainStack.Navigator>
         </Animated.View>
     );
