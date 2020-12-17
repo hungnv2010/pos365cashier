@@ -254,6 +254,7 @@ export default {
   thoat_tat_ca: "Logout all account",
   tuy_chinh: "More",
   ten_dang_nhap: "User name",
+  thu_ngan: "Cashier",
   ten_cua_hang: "Store name",
   thong_bao_xoa_tai_khoan: "Are you sure you want to delete this profile?",
   thong_bao_thoat_toan_bo_tai_khoan: "Are you sure you want to logout all account?",

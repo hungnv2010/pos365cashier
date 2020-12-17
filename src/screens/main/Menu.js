@@ -11,7 +11,7 @@ import { HTTPService, getHeaders } from '../../data/services/HttpService';
 import { ApiPath } from '../../data/services/ApiPath';
 import { CommonActions } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import colors from '../../theme/Colors';
+import { Checkbox, RadioButton } from 'react-native-paper';
 import dataManager from '../../data/DataManager';
 import { navigate } from '../../navigator/NavigationService';
 import { useDispatch } from 'react-redux';
@@ -131,11 +131,12 @@ const HeaderComponent = (props) => {
     const [Logo, setLogo] = useState("");
     const [Name, setName] = useState("");
     const [Branch, setBranch] = useState({});
+    const [listBranch, setListBranch] = useState([]);
     const [vendorSession, setVendorSession] = useState({});
     const [showModal, setShowModal] = useState(false);
     const dispatch = useDispatch();
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         const getVendorSession = async () => {
             let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
             console.log('HeaderComponent data', data);
@@ -147,22 +148,35 @@ const HeaderComponent = (props) => {
             if (data.CurrentRetailer && data.CurrentRetailer.Name) {
                 setName(data.CurrentRetailer.Name)
             }
+            if (data.Branchs.length > 0) {
+                let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
+                branch = JSON.parse(branch)
+                if (branch) {
+                    data.Branchs.forEach(item => {
+                        item.checked = false
+                        if (item.Id == branch.Id) {
+                            item.checked = true
+                        }
+                    })
+                    setBranch(branch)
+                } else {
+                    data.Branchs.forEach((item, index) => {
+                        item.checked = false
+                        if (index == 0) {
+                            item.checked = true
+                        }
+                    })
+                    setBranch(data.Branchs([0]))
+                }
 
-            let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
-            if (branch) {
-                console.log('HeaderComponent branch', JSON.parse(branch));
-                setBranch(JSON.parse(branch))
-            } else {
-                if (data.Branchs.length > 0)
-                    setBranch(data.Branchs[0])
+                setListBranch(data.Branchs)
             }
+
         }
         getVendorSession()
     }, [])
 
-    useEffect(() => {
 
-    }, [Logo])
 
     const onClickBranh = () => {
         console.log("onClickBranh ", vendorSession);
@@ -174,18 +188,54 @@ const HeaderComponent = (props) => {
     }
 
     const onClickItemBranch = (item) => {
-        console.log("onClickItemBranch ", props);
-        setShowModal(false)
-        if (Branch.Id == item.Id) {
+        listBranch.forEach(lp => {
+            lp.checked = false
+            if (lp.Id == item.Id) {
+                lp.checked = true
+            }
+        })
+        setListBranch([...listBranch])
+        // console.log("onClickItemBranch ", props);
+        // setShowModal(false)
+        // if (Branch.Id == item.Id) {
+        //     return;
+        // }
+        // let params = { branchId: item.Id }
+        // dialogManager.showLoading();
+        // new HTTPService().setPath(ApiPath.CHANGE_BRANCH).GET(params).then(async (res) => {
+        //     console.log("onClickItemBranch res ", res);
+        //     if (res) {
+        //         setFileLuuDuLieu(Constant.CURRENT_BRANCH, JSON.stringify(item));
+        //         setBranch(item)
+        //         dispatch({ type: 'IS_FNB', isFNB: null })
+        //         dispatch({ type: 'ALREADY', already: null })
+        //         signalRManager.killSignalR();
+        //         getRetailerInfoAndNavigate();
+        //         dialogManager.hiddenLoading();
+        //     } else {
+        //         dialogManager.hiddenLoading();
+        //     }
+        // }).catch((e) => {
+        //     dialogManager.hiddenLoading();
+        //     console.log("onClickItemBranch err ", e);
+        //     dialogManager.hiddenLoading()
+        // })
+    }
+
+    const onDoneClickItemBranch = () => {
+        let selectBranch = listBranch.filter(item => item.checked)
+        selectBranch = selectBranch.length > 0 ? selectBranch[0] : {}
+        if (Branch.Id == selectBranch.Id) {
+            setShowModal(false)
             return;
         }
-        let params = { branchId: item.Id }
+        let params = { branchId: selectBranch.Id }
         dialogManager.showLoading();
         new HTTPService().setPath(ApiPath.CHANGE_BRANCH).GET(params).then(async (res) => {
             console.log("onClickItemBranch res ", res);
             if (res) {
-                setFileLuuDuLieu(Constant.CURRENT_BRANCH, JSON.stringify(item));
-                setBranch(item)
+                setFileLuuDuLieu(Constant.CURRENT_BRANCH, JSON.stringify(selectBranch));
+                setBranch(selectBranch)
                 dispatch({ type: 'IS_FNB', isFNB: null })
                 dispatch({ type: 'ALREADY', already: null })
                 signalRManager.killSignalR();
@@ -199,6 +249,7 @@ const HeaderComponent = (props) => {
             console.log("onClickItemBranch err ", e);
             dialogManager.hiddenLoading()
         })
+        setShowModal(false)
     }
 
     const navigateToHome = () => {
@@ -247,6 +298,8 @@ const HeaderComponent = (props) => {
     const onClickLogOut = () => {
         dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_dang_xuat'), I18n.t("thong_bao"), res => {
             if (res == 1) {
+                dispatch({ type: 'IS_FNB', isFNB: null })
+                dispatch({ type: 'ALREADY', already: null })
                 setFileLuuDuLieu(Constant.CURRENT_ACCOUNT, "");
                 setFileLuuDuLieu(Constant.CURRENT_BRANCH, "");
                 navigate('Login', {}, true);
@@ -271,11 +324,11 @@ const HeaderComponent = (props) => {
                 <View style={{ marginTop: 15, }}>
                     <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }} onPress={() => onClickBranh()}>
                         <Icon name="location-on" size={20} color="#fff" />
-                        <Text numberOfLines={2} style={{ color: "#fff" }}>{Branch.Name && Branch.Name != "" ? Branch.Name : I18n.t('chi_nhanh')}</Text>
+                        <Text numberOfLines={2} style={{ color: "#fff" }}>{Branch.Name}</Text>
 
                     </TouchableOpacity>
                     <TouchableOpacity
-                        style={{alignItems:"flex-end"}}
+                        style={{ alignItems: "flex-end" }}
                         onPress={() => onClickLogOut()}>
                         <Text style={{ textDecorationLine: "underline", color: "#fff" }}>{I18n.t('logout')}</Text>
                     </TouchableOpacity>
@@ -313,14 +366,27 @@ const HeaderComponent = (props) => {
                             <View style={{ padding: 10 }}>
                                 <Text style={{ marginBottom: 15, fontSize: 18, fontWeight: 'bold' }}>{I18n.t('chon_chi_nhanh')}</Text>
                                 {
-                                    vendorSession.Branchs && vendorSession.Branchs.length > 0 ?
-                                        vendorSession.Branchs.map((item, index) => (
-                                            <TouchableOpacity key={index} onPress={() => onClickItemBranch(item)}>
+                                    listBranch.map((item, index) => {
+                                        return (
+                                            <TouchableOpacity style={{ flexDirection: "row", }} key={index} onPress={() => onClickItemBranch(item)}>
+                                                <RadioButton.Android
+                                                    color="orange"
+                                                    status={item.checked ? 'checked' : 'unchecked'}
+                                                    onPress={() => onClickItemBranch(item)}
+                                                />
                                                 <Text style={{ paddingVertical: 12 }}>{item.Name}</Text>
                                             </TouchableOpacity>
-                                        ))
-                                        : null
+                                        )
+                                    })
                                 }
+                                <View style={{ flexDirection: "row", justifyContent: "flex-end", padding: 15, alignItems: "center" }}>
+                                    <TouchableOpacity style={{ paddingRight: 20 }} onPress={() => { setShowModal(false) }}>
+                                        <Text style={{ padding: 10 }}>{I18n.t('huy')}</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={onDoneClickItemBranch}>
+                                        <Text style={{ paddingVertical: 10, backgroundColor: Colors.colorchinh, borderRadius: 5, paddingHorizontal: 20, color: "white" }}>{I18n.t('dong_y')}</Text>
+                                    </TouchableOpacity>
+                                </View>
                             </View>
                         </View>
                     </View>
