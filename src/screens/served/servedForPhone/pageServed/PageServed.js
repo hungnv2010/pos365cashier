@@ -323,7 +323,7 @@ export default (props) => {
     //type: 1 => from selectProduct
     //type: 2 => from noteBook, QRCode
     const onCallBack = (newList, type) => {
-        console.log('onCallBack', newList, type);
+        console.log('onCallBack === ', newList, type);
         switch (type) {
             case 1:
                 newList = newList.filter(item => item.Quantity > 0)
@@ -341,6 +341,8 @@ export default (props) => {
 
                     newItem.exist = false
                     newItem.ProductImages = ProductImages
+                    newItem.IsPromotion = false
+                    newItem.ProductId = newItem.Id
                     if (!jsonContent.OrderDetails) jsonContent.OrderDetails = []
                     jsonContent.OrderDetails.forEach((elm, idx) => {
                         if (newItem.Id == elm.Id && !newItem.SplitForSalesOrder) {
@@ -351,8 +353,11 @@ export default (props) => {
                     newList = newList.filter((newItem) => !newItem.exist)
                     console.log('newList', newList);
                     console.log('listProducts', jsonContent.OrderDetails);
-                    outputListProducts([...newList, ...jsonContent.OrderDetails])
+                    
                 })
+                let list = [...newList, ...jsonContent.OrderDetails];
+                console.log('listProducts == list ', list);
+                outputListProducts(list)
                 break;
             default:
                 break;
