@@ -39,11 +39,11 @@ export default (props) => {
     const onClickButton = (button) => {
         switch (button) {
             case 'clear':
-                setResults('')
+                setDataResult('')
                 break;
 
             case 'remove':
-                setResults(results.slice(0, results.length - 1))
+                setDataResult(results.slice(0, results.length - 1))
                 break;
 
             case '/':
@@ -52,17 +52,17 @@ export default (props) => {
             case '+':
                 var lastChar = results.slice(results.length - 1)
                 if (specialChar.includes(lastChar)) {
-                    setResults(results.slice(0, results.length - 1) + button)
+                    setDataResult((results.slice(0, results.length - 1) + button))
                 } else {
                     let newResult = results + button
-                    setResults(newResult)
+                    setDataResult(newResult)
                 }
                 break;
 
             case '.':
                 var lastChar = results.slice(results.length - 1)
                 if (specialChar.includes(lastChar)) {
-                    setResults(results.slice(0, results.length - 1) + button)
+                    setDataResult((results.slice(0, results.length - 1) + button))
                     return
                 }
 
@@ -73,7 +73,7 @@ export default (props) => {
                         return
                     }
                 }
-                setResults(results + button)
+                setDataResult((results + button))
                 break;
 
             case '500000':
@@ -82,30 +82,45 @@ export default (props) => {
             case '50000':
                 var lastChar = results.slice(results.length - 1)
                 if (specialChar.includes(lastChar) || results == 0) {
-                    setResults(results + button)
+                    setDataResult((results + button))
                 } else {
-                    let oldResult = eval(results)
-                    let newResult = +button + oldResult
+                    let newResult = (results).toString().replace(/,/g, '');
+                    let oldResult = eval(newResult)
+                    newResult = +button + oldResult
                     console.log('oldResult', oldResult, newResult, results);
+                    newResult = newResult.toString().replace(/(\d)(?=(\d{3})+\b)/g, '$&,');
                     setResults("" + newResult)
                 }
                 break;
 
             default:
-                let newResult = results + button
-                setResults(newResult)
+                setDataResult((results + button))
                 break;
         }
     }
 
+    const setDataResult = (results) => {
+        console.log("setDataResult result === :: ", results);
+        let newResult = (results).toString().replace(/,/g, '');
+        console.log("setDataResult result === ::: ", newResult);
+        newResult = newResult.toString().replace(/(\d)(?=(\d{3})+\b)/g, '$&,');
+        console.log("setDataResult result === :::: ", newResult);
+        setResults(newResult)
+    }
 
     const getFinalResults = () => {
         try {
-            setResults("" + eval(results))
+            let res = results.replace(/,/g, '');
+            res = eval(res);
+            res = res.toString().replace(/(\d)(?=(\d{3})+\b)/g, '$&,');
+            setResults("" + res)
         } catch (error) {
             console.log('getFinalResults err', error);
             let newRes = results.slice(0, results.length - 1)
-            setResults("" + eval(newRes))
+            let res = newRes.replace(/,/g, '');
+            res = eval(res);
+            res = res.toString().replace(/(\d)(?=(\d{3})+\b)/g, '$&,');
+            setResults("" + res)
         }
     }
 

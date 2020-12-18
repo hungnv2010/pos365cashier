@@ -73,6 +73,8 @@ export default (props) => {
     }, [listOrder])
 
     useEffect(() => {
+        console.log("CustomerOrder props.jsonContent.OrderDetails :: ", props.jsonContent.OrderDetails);
+        
         if (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0) {
             let listOrder = props.jsonContent.OrderDetails.filter(item => item.ProductId > 0)
             setListOrder(listOrder)
@@ -206,6 +208,8 @@ export default (props) => {
     };
 
     const renderProduct = (item, index) => {
+        console.log("renderProduct ====== ", item);
+        
         const isPromotion = !(item.IsPromotion == undefined || (item.IsPromotion == false))
         return (
             <>

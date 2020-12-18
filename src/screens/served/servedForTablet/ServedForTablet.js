@@ -235,10 +235,9 @@ const Served = (props) => {
                 }
             })
             newList = newList.filter(item => !item.exist)
-            jsonContent.OrderDetails = [...newList, ...jsonContent.OrderDetails]
-
-
         });
+        jsonContent.OrderDetails = [...newList, ...jsonContent.OrderDetails]
+        console.log('outputListProducts======= jsonContent.OrderDetails ', jsonContent.OrderDetails);
         checkHasItemOrder(newList)
         checkRoomProductId(newList, props.route.params.room.ProductId)
         updateServerEvent()

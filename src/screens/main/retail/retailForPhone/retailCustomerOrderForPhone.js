@@ -419,7 +419,7 @@ export default (props) => {
     }
 
     const onCLickQR = () => {
-        props.navigation.navigate("QRCode", { _onSelect: onCallBack })
+        props.navigation.navigate("QRCode", { _onSelect: onCallBackQRCode })
     }
 
     const onCLickNoteBook = () => {
@@ -438,7 +438,12 @@ export default (props) => {
         props.navigation.navigate(ScreenList.RetailSelectProduct, { _onSelect: onCallBack, listProducts: listOrder })
     }
 
+    const onCallBackQRCode = (data, type)=>{
+        
+    }
+
     const onCallBack = async (data, type) => {
+        console.log('onCallBackonCallBack , data, type ', data, type);
         switch (type) {
             case 1: //from listPrice
                 if (data) setCurrentPriceBook(data)

@@ -394,13 +394,15 @@ class DataManager {
 
         console.log("splitTable oldServerEvent:: ", oldServerEvent)
         console.log("splitTable newServerEvent:: ", newServerEvent)
-        setTimeout(async () => {
-            await this.updateServerEventNow(oldServerEvent, true)
-            setTimeout(async () => {
-                await this.updateServerEventNow(newServerEvent, true)
-            }, 1000);
-        }, 500);
 
+        // await this.updateServerEventNow(oldServerEvent, true)
+        // await this.updateServerEventNow(newServerEvent, true)
+      
+        signalRManager.sendMessageServerEvent(oldServerEvent)
+        await realmStore.insertServerEvent(oldServerEvent, true)
+
+        signalRManager.sendMessageServerEvent(newServerEvent)
+        await realmStore.insertServerEvent(newServerEvent, true)
     }
 
     createSeverEvent = async (RoomId, Position) => {
@@ -430,88 +432,6 @@ class DataManager {
 
     createJsonContentForRetail = (RoomId) => {
         return {
-            // OfflineId: randomUUID(),
-            // Status: 2,
-            // Discount: 0,
-            // TotalPayment: 0,
-            // AmountReceive: 0,
-            // AmountReceived: 0,
-            // Total: 0,
-            // OrderDetails: [],
-            // SoldById: 0,
-            // ExcessCashType: 0,
-            // ExcessCash: 0,
-            // RoomId: RoomId,
-            // RoomName: "",
-            // Pos: "A",
-            // NumberOfGuests: 0,
-            // SyncStatus: 0,
-            // VATRates: "",
-            // DiscountValue: 0,
-            // Voucher: 0,
-            // DiscountToView: "",
-            // VAT: 0,
-            // Description: "",
-            // ActiveDate: "",
-            // PartnerId: 0,
-            // OldDebt: 0,
-            // DiscountRatio: 0,
-            // Id: 0,
-            // Code: "",
-            // initializingTotalPayment: false,
-            // ShippingCost: "0",
-            // ShippingCostForPartner: 0,
-            // PurchaseDate: "",
-            // PriceBookId: "0",
-            // Topping: "",
-            // MoreAttributes: "",
-            // Printed: false,
-
-            // OfflineId: randomUUID(),
-            // Status: 2,
-            // Discount: 0,
-            // TotalPayment: 0,
-            // AmountReceive: 0,
-            // AmountReceived: 0,
-            // Total: 0,
-            // OrderDetails: [],
-            // // SoldById: 0,
-            // ExcessCashType: 0,
-            // ExcessCash: 0,
-            // RoomId: RoomId,
-            // RoomName: "",
-            // Pos: "A",
-            // NumberOfGuests: 0,
-            // SyncStatus: 0,
-            // VATRates: "",
-            // DiscountValue: 0,
-            // Voucher: 0,
-            // DiscountToView: "",
-            // VAT: 0,
-            // Description: "",
-            // ActiveDate: "",
-            // PartnerId: null,
-            // OldDebt: 0,
-            // DiscountRatio: 0,
-            // // VoucherCode: null,
-            // // VoucherId: null,
-            // Id: 0,
-            // Code: "",
-            // initializingTotalPayment: false,
-            // DeliveryById: null,
-            // AccountId: null,
-            // ShippingCost: "0",
-            // // ShippingCostForPartner: 0,
-            // DeliveryBy: null,
-            // PurchaseDate: "",
-            // PriceBookId: "0",
-            // // Topping: "",
-            // PointToValue: 0,
-            // MoreAttributes: "",
-            // Printed: false,
-            // ChannelId: null,
-            // CardNumber: null
-
             OfflineId: randomUUID(),
             Status: 2,
             Discount: 0,
