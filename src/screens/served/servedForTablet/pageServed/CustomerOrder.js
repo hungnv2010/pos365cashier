@@ -14,10 +14,16 @@ import useDebounce from '../../../../customHook/useDebounce';
 import DialogProductDetail from '../../../../components/dialog/DialogProductDetail'
 import DialogProductUnit from '../../../../components/dialog/DialogProductUnit'
 import dialogManager from '../../../../components/dialog/DialogManager';
+import dataManager from '../../../../data/DataManager';
+import { ReturnProduct } from '../../ReturnProduct';
+import { getFileDuLieuString } from '../../../../data/fileStore/FileStorage';
+import { HTTPService } from '../../../../data/services/HttpService';
+import { ApiPath } from '../../../../data/services/ApiPath';
 
 const TYPE_MODAL = {
     UNIT: 1,
-    DETAIL: 2
+    DETAIL: 2,
+    RETURN: 3
 }
 
 const CustomerOrder = (props) => {
@@ -37,12 +43,19 @@ const CustomerOrder = (props) => {
     const [waitingList, setWaitingList] = useState([])
     const debouceWaitingList = useDebounce(waitingList)
     const [isQuickPayment, setIsQuickPayment] = useState(false)
+    const [vendorSession, setVendorSession] = useState({});
     const orientaition = useSelector(state => {
         console.log("orientaition", state);
         return state.Common.orientaition
     });
 
     useEffect(() => {
+        const getVendorSession = async () => {
+            let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
+            console.log('ReturnProduct data', JSON.parse(data));
+            setVendorSession(JSON.parse(data))
+        }
+        getVendorSession()
         var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
         var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
 
@@ -143,12 +156,52 @@ const CustomerOrder = (props) => {
         }
     }
 
-    const removeItem = (product, index) => {
-        console.log('removeItem', index, product);
+    const removeItem = (product) => {
+        // console.log('removeItem', index, product);
         product.Quantity = 0
-        product.index = index
-        listOrder.splice(index, 1)
+        // listOrder.splice(index, 1)
         props.outputSelectedProduct(product)
+
+    }
+
+    const onClickReturn = (product) => {
+        setItemOrder(product)
+        typeModal.current = TYPE_MODAL.DELETE
+        setShowModal(true)
+    }
+
+    const saveOrder = (data) => {
+        console.log('saveOrder data ', data, vendorSession.Settings.ReturnHistory, itemOrder);
+        if (vendorSession.Settings.ReturnHistory) {
+            let price = itemOrder.IsLargeUnit ? itemOrder.PriceLargeUnit : itemOrder.UnitPrice
+            let params = {
+                RoomHistory: {
+                    Description: data.Description,
+                    Pos: props.Position,
+                    Price: price,
+                    Printed: false,
+                    ProductId: itemOrder.ProductId,
+                    Quantity: data.QuantityChange,
+                    RoomId: props.route.params.room.Id,
+                    Total: data.QuantityChange * price
+                }
+            }
+            new HTTPService().setPath(ApiPath.ROOM_HISTORY).POST(params).then(res => {
+                console.log("saveOrder res", res);
+            })
+                .catch(err => {
+                    console.log('saveOrder err', err);
+                })
+        }
+
+        let item = { ...itemOrder }
+        let Quantity = itemOrder.Quantity - data.QuantityChange
+        if (Quantity > 0) {
+            item.Quantity = Quantity
+            mapDataToList(item, false)
+        } else {
+            removeItem(item)
+        }
     }
 
 
@@ -203,7 +256,7 @@ const CustomerOrder = (props) => {
                     }}>
                         <TouchableOpacity
                             style={{ marginRight: 5 }}
-                            onPress={() => removeItem(item, index)}>
+                            onPress={() => onClickReturn(item)}>
                             <Icon name={!isPromotion ? "trash-can-outline" : "gift"} size={40} color={!isPromotion ? "black" : Colors.colorLightBlue} />
                         </TouchableOpacity>
                         <View style={{ flexDirection: "column", flex: 1, }}>
@@ -253,7 +306,7 @@ const CustomerOrder = (props) => {
                                                     <TouchableOpacity
                                                         onPress={() => {
                                                             if (item.Quantity == 1) {
-                                                                removeItem(item, index)
+                                                                removeItem(item)
                                                             } else {
                                                                 item.Quantity--
                                                                 setListOrder([...listOrder])
@@ -357,6 +410,38 @@ const CustomerOrder = (props) => {
         setIsQuickPayment(!isQuickPayment)
     }
 
+    const printKitchen = () => {
+        let jsonContent = props.jsonContent;
+        if (!checkProcessedQuantityProduct(jsonContent)) {
+            let data = dataManager.getDataPrintCook(jsonContent.OrderDetails)
+            console.log("printKitchen data ", data);
+            jsonContent.OrderDetails.forEach(element => {
+                element.Processed = element.Quantity
+            });
+            console.log("printKitchen jsonContent ", jsonContent);
+            props.handlerProcessedProduct(jsonContent)
+            dispatch({ type: 'LIST_PRINT', listPrint: data })
+            notification(I18n.t("bao_che_bien_thanh_cong"));
+        } else {
+            notification(I18n.t("cac_mon_ban_chon_dang_duoc_nha_bep_chuan_bi"));
+        }
+    }
+
+    const notification = (content) => {
+        setToastDescription(content);
+        setShowToast(true)
+    }
+
+    const checkProcessedQuantityProduct = (jsonContent) => {
+        let isProcessed = true;
+        jsonContent.OrderDetails.forEach(element => {
+            if (element.Processed < element.Quantity) {
+                isProcessed = false;
+            }
+        });
+        return isProcessed;
+    }
+
     return (
         <View style={{ flex: 1 }}>
             <View style={{ flex: 1 }}>
@@ -448,7 +533,7 @@ const CustomerOrder = (props) => {
                         </View>
                     </Menu>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => { }} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
+                <TouchableOpacity onPress={printKitchen} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
                     <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('bao_che_bien')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => onClickPayment()} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
@@ -488,22 +573,28 @@ const CustomerOrder = (props) => {
                             width: Metrics.screenWidth * 0.8,
                             marginBottom: Platform.OS == 'ios' ? marginModal : 0
                         }}>
-                            {typeModal.current == TYPE_MODAL.DETAIL ?
-                                <DialogProductDetail
-                                    onClickTopping={() => onClickTopping(itemOrder)}
-                                    item={itemOrder}
-                                    getDataOnClick={(data) => {
-                                        applyDialogDetail(data)
-                                    }}
-                                    setShowModal={() => {
-                                        setShowModal(false)
-                                    }}
-                                />
-                                :
-                                <DialogProductUnit
-                                    setIsLargeUnit={(IsLargeUnit) => setIsLargeUnit(IsLargeUnit)}
-                                    onClickSubmitUnit={() => onClickSubmitUnit()}
-                                />
+                            {
+                                typeModal.current == TYPE_MODAL.DETAIL ?
+                                    <DialogProductDetail
+                                        onClickTopping={() => onClickTopping(itemOrder)}
+                                        item={itemOrder}
+                                        getDataOnClick={(data) => {
+                                            applyDialogDetail(data)
+                                        }}
+                                        setShowModal={() => {
+                                            setShowModal(false)
+                                        }}
+                                    />
+                                    :
+                                    <ReturnProduct
+                                        Name={itemOrder.Name}
+                                        Quantity={itemOrder.Quantity}
+                                        vendorSession={vendorSession}
+                                        getDataOnClick={(data) => saveOrder(data)}
+                                        setShowModal={() => {
+                                            setShowModal(false)
+                                        }
+                                        } />
                             }
                         </View>
                     </View>

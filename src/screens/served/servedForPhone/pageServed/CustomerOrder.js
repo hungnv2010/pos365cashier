@@ -19,6 +19,8 @@ import { color } from 'react-native-reanimated';
 import { getFileDuLieuString } from '../../../../data/fileStore/FileStorage';
 import { Constant } from '../../../../common/Constant';
 import { ReturnProduct } from '../../ReturnProduct';
+import { HTTPService } from '../../../../data/services/HttpService';
+import { ApiPath } from '../../../../data/services/ApiPath';
 
 const TYPE_MODAL = {
     DETAIL: 0,
@@ -74,7 +76,7 @@ export default (props) => {
 
     useEffect(() => {
         console.log("CustomerOrder props.jsonContent.OrderDetails :: ", props.jsonContent.OrderDetails);
-        
+
         if (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0) {
             let listOrder = props.jsonContent.OrderDetails.filter(item => item.ProductId > 0)
             setListOrder(listOrder)
@@ -118,8 +120,8 @@ export default (props) => {
         return isProcessed;
     }
 
-    const removeItem = (item) => {
-        console.log('removeItem ', item.Name, item.index);
+    const onClickReturn = (item) => {
+        console.log('onClickReturn ', item.Name, item.index);
         setItemOrder(item)
         typeModal.current = TYPE_MODAL.DELETE
         setShowModal(true)
@@ -209,7 +211,7 @@ export default (props) => {
 
     const renderProduct = (item, index) => {
         console.log("renderProduct ====== ", item);
-        
+
         const isPromotion = !(item.IsPromotion == undefined || (item.IsPromotion == false))
         return (
             <>
@@ -231,7 +233,7 @@ export default (props) => {
                     <View style={styles.mainItem}>
                         <TouchableOpacity
                             style={{ paddingVertical: 10, paddingHorizontal: 5 }}
-                            onPress={() => { if (!isPromotion) removeItem(item) }}>
+                            onPress={() => { if (!isPromotion) onClickReturn(item) }}>
                             <Icon name={!isPromotion ? "trash-can-outline" : "gift"} size={40} color={!isPromotion ? "black" : colors.colorLightBlue} />
                         </TouchableOpacity>
                         <View style={{ flex: 1, }}>
@@ -257,7 +259,7 @@ export default (props) => {
                                 null}
                         </View>
                         <View style={{ alignItems: "flex-end" }}>
-                            <Icon style={{ paddingHorizontal: 5 }} name="bell-ring" size={20} color={item.Quantity == item.Processed ? Colors.colorLightBlue : "gray"}  />
+                            <Icon style={{ paddingHorizontal: 5 }} name="bell-ring" size={20} color={item.Quantity == item.Processed ? Colors.colorLightBlue : "gray"} />
                             <Text
                                 style={{ color: colors.colorchinh, marginRight: 5 }}>
                                 {isPromotion ? currencyToString(item.Price * item.Quantity) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit * item.Quantity) : currencyToString(item.Price * item.Quantity))}
@@ -283,10 +285,39 @@ export default (props) => {
 
 
     const saveOrder = (data) => {
-        console.log('saveOrder data ', data);
-
-        listOrder.splice(itemOrder.index, 1)
+        console.log('saveOrder data ', data, vendorSession.Settings.ReturnHistory, itemOrder);
+        if (vendorSession.Settings.ReturnHistory) {
+            let price = itemOrder.IsLargeUnit ? itemOrder.PriceLargeUnit : itemOrder.UnitPrice
+            let params = {
+                RoomHistory: {
+                    Description: data.Description,
+                    Pos: props.Position,
+                    Price: price,
+                    Printed: false,
+                    ProductId: itemOrder.ProductId,
+                    Quantity: data.QuantityChange,
+                    RoomId: props.route.params.room.Id,
+                    Total: data.QuantityChange * price
+                }
+            }
+            new HTTPService().setPath(ApiPath.ROOM_HISTORY).POST(params).then(res => {
+                console.log("saveOrder res", res);
+            })
+                .catch(err => {
+                    console.log('saveOrder err', err);
+                })
+        }
+        listOrder.forEach((element, index, arr) => {
+            if (element.ProductId == itemOrder.ProductId && index == itemOrder.index) {
+                let Quantity = element.Quantity - data.QuantityChange
+                if (Quantity == 0) {
+                    arr.splice(index, 1)
+                }
+                element.Quantity = Quantity
+            }
+        });
         props.outputListProducts([...listOrder])
+       
     }
 
     const changTable = () => {

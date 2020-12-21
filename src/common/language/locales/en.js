@@ -282,6 +282,7 @@ export default {
   tu_dong_tao_ma: "Automatically Generate Code",
   ten_nhom: "Group Name",
   tinh_thanh: "Province",
+  tien_khach_tra: "Tiền khách trả",
 
 
   // TODO: U

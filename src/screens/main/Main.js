@@ -162,7 +162,7 @@ export default (props) => {
             <>
               <MainToolBar
                 navigation={props.navigation}
-                title={I18n.t('phong_ban')}
+                title={I18n.t('thu_ngan')}
                 rightIcon="refresh"
                 clickRightIcon={clickRightIcon}
               />
