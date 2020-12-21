@@ -263,7 +263,7 @@ export default (props) => {
                         <Text style={{ fontSize: 10 }}>{roomHistoryData.length} / {count.current}</Text>
                     </View>
                     <View style={{ flex: 1, borderRightWidth: 1, borderRightColor: 'silver', backgroundColor: '#E8E8E8' }}>
-                        <TextInput style={{ borderWidth: 1, marginTop: 10, backgroundColor: '#FFFFFF', borderColor: '#828282', borderRadius: 10, marginBottom: 10, marginLeft: 10, marginRight: 10, padding: 5 }} inlineImageLeft='search_icon' placeholder='Nhập từ khóa tìm kiếm' onChangeText={text => setInputSearch(text)}></TextInput>
+                        <TextInput style={{ borderWidth: 1, marginTop: 10, backgroundColor: '#FFFFFF', borderColor: '#828282', borderRadius: 10, marginBottom: 10, marginLeft: 10, marginRight: 10, padding: 10 }} inlineImageLeft='search_icon' placeholder='Nhập từ khóa tìm kiếm' onChangeText={text => setInputSearch(text)}></TextInput>
                         {
                         roomHistoryData.length > 0?
                             <FlatList
