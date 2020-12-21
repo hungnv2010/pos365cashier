@@ -84,7 +84,7 @@ const RoomHistoryDetails = (props) => {
 const styles = StyleSheet.create({
     title: {
         fontSize: 12,
-        color: '#363636.'
+        color: '#363636'
     },
     infor: {
         fontSize: 12
