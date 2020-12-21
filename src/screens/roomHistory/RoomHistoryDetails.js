@@ -32,7 +32,7 @@ const RoomHistoryDetails = (props) => {
     return (
         <View>{JSON.stringify(roomHistoryDetail) != "{}" ?
             <View style={{ flex: 1, backgroundColor: '#DDDDDD' }}>
-                <View style={{ flex: 1, flexDirection: 'column', backgroundColor: '#FFFFFF' }}>
+                <View style={{ flexDirection: 'column', backgroundColor: '#FFFFFF' }}>
                     <View style={{ alignItems: 'center', marginTop: 10 }}>
                         <Image source={Images.icon_history} style={{ width: 70, height: 70 }}></Image>
                     </View>
@@ -53,7 +53,7 @@ const RoomHistoryDetails = (props) => {
                         <Text style={{ fontSize: 12, color: '#FF0000', fontStyle: 'italic' }}>{roomHistoryDetail ? roomHistoryDetail.Description : ''}</Text>
                     </View>
                 </View>
-                <View style={{ flex: 1, flexDirection: 'column', marginTop: 15, backgroundColor: '#FFFFFF' }}>
+                <View style={{ flexDirection: 'column', marginTop: 5, backgroundColor: '#FFFFFF' }}>
                     <View style={{ justifyContent: 'space-between', flexDirection: 'row', marginRight: 10, marginLeft: 10, marginTop: 10 }}>
                         <Text style={styles.title}>{I18n.t("ten_hang_hoa")}</Text>
                         <Text style={styles.infor}>{roomHistoryDetail.Product ? roomHistoryDetail.Product.Name : ""}</Text>
@@ -68,11 +68,11 @@ const RoomHistoryDetails = (props) => {
                     </View>
                     <View style={{ justifyContent: 'space-between', flexDirection: 'row', marginRight: 10, marginLeft: 10, marginTop: 10 }}>
                         <Text style={styles.title}>{I18n.t("gia")}</Text>
-                        <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#0099FF', fontFamily: 'tahoma' }}>{roomHistoryDetail ? currencyToString(roomHistoryDetail.Price) : ""}</Text>
+                        <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#0099FF' }}>{roomHistoryDetail ? currencyToString(roomHistoryDetail.Price) : ""}</Text>
                     </View>
                     <View style={{ justifyContent: 'space-between', flexDirection: 'row', marginRight: 10, marginLeft: 10, marginTop: 10 }}>
                         <Text style={styles.title}>{I18n.t("thanh_tien")}</Text>
-                        <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#0099FF', fontFamily: 'tahoma', marginBottom: 10 }}>{roomHistoryDetail ? currencyToString(roomHistoryDetail.Total) : ""}</Text>
+                        <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#0099FF', marginBottom: 10 }}>{roomHistoryDetail ? currencyToString(roomHistoryDetail.Total) : ""}</Text>
                     </View>
                 </View>
             </View>
@@ -84,7 +84,7 @@ const RoomHistoryDetails = (props) => {
 const styles = StyleSheet.create({
     title: {
         fontSize: 12,
-        color: '#999999'
+        color: '#363636'
     },
     infor: {
         fontSize: 12
