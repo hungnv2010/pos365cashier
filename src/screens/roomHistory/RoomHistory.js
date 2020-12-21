@@ -174,7 +174,7 @@ export default (props) => {
     }, [roomHistoryData])
     const renderListItem = (item, index) => {
         return (
-            <TouchableOpacity key={index.toString()} onPress={() => onCLickRoomHistoryItem(item)} style={{ marginBottom: 5 }}>
+            <TouchableOpacity key={index.toString()} onPress={() => onCLickRoomHistoryItem(item)} style={{ marginBottom: 2 }}>
                 <View style={{ flexDirection: "row", alignItems: 'center', alignContent: 'center', padding: 10, borderColor: 'silver', backgroundColor: roomHistoryItem ? item.Id == roomHistoryItem.Id ? "#F6DFCE" : 'white' : 'white', borderRadius: 10 }}>
                     <Image style={{ width: 50, height: 50, borderRadius: 50 }} source={Images.icon_return_good}></Image>
                     <View style={{ flex: 1, flexDirection: "row", justifyContent: 'space-between', alignItems: 'center', marginBottom: 5 }}>
@@ -189,7 +189,7 @@ export default (props) => {
                         <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end', marginRight: 10, marginBottom: 5 }}>
                             <Text style={{ fontSize: 12, color: '#FF0000', fontStyle: 'italic', marginTop: 3 }}>{item.Description}</Text>
                             <Text style={{ fontSize: 12, color: '#4F4F4F', marginTop: 3 }}>{dateToStringFormatUTC(item.CreatedDate)}</Text>
-                            <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#0099FF', marginTop: 3, fontFamily: 'tahoma' }}>{currencyToString(item.Price)}</Text>
+                            <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#0099FF', marginTop: 3 }}>{currencyToString(item.Price)}</Text>
                         </View>
                     </View>
                 </View>
@@ -263,18 +263,22 @@ export default (props) => {
                         <Text style={{ fontSize: 10 }}>{roomHistoryData.length} / {count.current}</Text>
                     </View>
                     <View style={{ flex: 1, borderRightWidth: 1, borderRightColor: 'silver', backgroundColor: '#E8E8E8' }}>
-                        <TextInput style={{ borderWidth: 1, marginTop: 10, backgroundColor: '#FFFFFF', borderColor: '#828282', borderRadius: 10, marginBottom: 10, marginLeft: 10, marginRight: 10, padding: 2 }} inlineImageLeft='search_icon' placeholder='Nhập từ khóa tìm kiếm' onChangeText={text => setInputSearch(text)}></TextInput>
-                        <FlatList
-                            data={roomHistoryData}
-                            onEndReachedThreshold={0.1}
-                            onEndReached={viewData.length == 0 ? onLoadMore : filterMore}
-                            renderItem={({ item, index }) => renderListItem(item, index)}
-                            keyExtractor={(item, index) => index.toString()}
-                            ref={refs => roomHistoryRef.current = refs}
-                            ListFooterComponent={loadMore ? <ActivityIndicator color={colors.colorchinh} /> : null}
-                            onMomentumScrollBegin={() => { onEndReachedCalledDuringMomentum.current = false }}
-                            ref={flatlistRef}
-                        />
+                        <TextInput style={{ borderWidth: 1, marginTop: 10, backgroundColor: '#FFFFFF', borderColor: '#828282', borderRadius: 10, marginBottom: 10, marginLeft: 10, marginRight: 10, padding: 5 }} inlineImageLeft='search_icon' placeholder='Nhập từ khóa tìm kiếm' onChangeText={text => setInputSearch(text)}></TextInput>
+                        {
+                        roomHistoryData.length > 0?
+                            <FlatList
+                                data={roomHistoryData}
+                                onEndReachedThreshold={0.1}
+                                onEndReached={viewData.length == 0 ? onLoadMore : filterMore}
+                                renderItem={({ item, index }) => renderListItem(item, index)}
+                                keyExtractor={(item, index) => index.toString()}
+                                ref={refs => roomHistoryRef.current = refs}
+                                ListFooterComponent={loadMore ? <ActivityIndicator color={colors.colorchinh} /> : null}
+                                onMomentumScrollBegin={() => { onEndReachedCalledDuringMomentum.current = false }}
+                                ref={flatlistRef}
+                            />
+                            : <Text style={{ fontSize: 12, textAlign:'center' }}>Chưa có hàng huỷ trả</Text>
+                        }
                     </View>
                 </View>
                 {

@@ -149,7 +149,10 @@ const Invoice = (props) => {
 
     const outputDateTime = (item) => {
         console.log('outputDateTime', item);
-        if (item.key == 'custom' && !item.startDate) {
+        if(item == null){
+            setShowModal(false)
+        }
+         else if (item.key == 'custom' && !item.startDate) {
             setShowModal(false)
         } else {
             setFilter({
