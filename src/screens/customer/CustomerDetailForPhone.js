@@ -202,7 +202,7 @@ export default (props) => {
                 <View style={{
                     backgroundColor: "#fff", borderRadius: 4,
                     justifyContent: 'center', alignItems: 'center',
-                    height: Metrics.screenHeight * 0.6
+                    maxHeight: Metrics.screenHeight * 0.6
                 }}>
                     <View style={{ paddingVertical: 10, flex: 1 }}>
                         <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", paddingVertical: 15, color: colors.colorLightBlue }}>{I18n.t('chon_tinh_thanh')}</Text>
@@ -361,7 +361,7 @@ export default (props) => {
                     console.log('onClickDone res', res);
                     if (res) {
                         props.route.params.onCallBack('sua')
-                       props.navigation.pop()
+                        props.navigation.pop()
                     }
                     dialogManager.hiddenLoading()
                 })
@@ -456,28 +456,15 @@ export default (props) => {
                     <View style={{ padding: 15 }}>
                         <Text style={{ paddingBottom: 10 }}>{I18n.t('ngay_sinh')}</Text>
                         <View style={{ flexDirection: "row", flex: 1 }}>
-                            <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
-                                <TextInput
-                                    placeholder='dd/mm/yyyy'
-                                    editable={false}
-                                    value={dateToString(customerDetail.DOB)}
-                                    onTouchStart={() => {
-                                        typeModal.current = 1
-                                        setShowModal(true)
-                                    }}
-                                    style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1 }}
-                                // onChangeText={(text) => { onChangeText(text, 3) }}
-                                />
+                            <TouchableOpacity onPress={() => {
+                                typeModal.current = 1
+                                setShowModal(true)
+                            }} style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
+                                <Text style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1, color: dateToString(customerDetail.DOB) ? null : "#CECCCB" }}>{dateToString(customerDetail.DOB) ? dateToString(customerDetail.DOB) : 'dd/mm/yyyy'}</Text>
+                               
                                 <Image source={Images.icon_arrow_down} style={{ width: 20, height: 20, position: "absolute", right: 15 }} />
-                            </View>
-                            {/* <TouchableOpacity
-                                onPress={() => {
-                                    typeModal.current = 1
-                                    setShowModal(true)
-                                }}
-                                style={{ marginLeft: 20, justifyContent: "center", backgroundColor: colors.colorLightBlue, borderRadius: 5 }}>
-                                <Text style={{ textAlign: "center" }}>button</Text>
-                            </TouchableOpacity> */}
+                            </TouchableOpacity>
+                           
                         </View>
                     </View>
                     {
@@ -495,20 +482,14 @@ export default (props) => {
                     </View>
                     <View style={{ padding: 15 }}>
                         <Text style={{ paddingBottom: 10 }}>{I18n.t('ten_nhom')}</Text>
-                        <View style={{ flexDirection: "row", alignItems: "center" }}>
-                            <TextInput
-                                placeholder={I18n.t('ten_nhom')}
-                                value={getGroupName(customerDetail.PartnerGroupMembers)}
-                                editable={false}
-                                onTouchStart={() => {
-                                    typeModal.current = 3
-                                    setShowModal(true)
-                                }
-                                }
-                                style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1 }}
-                            />
+                        <TouchableOpacity onPress={() => {
+                            typeModal.current = 3
+                            setShowModal(true)
+                        }} style={{ flexDirection: "row", alignItems: "center" }}>
+                            <Text style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1, color: getGroupName(customerDetail.PartnerGroupMembers) ? null : "#CECCCB" }}>{getGroupName(customerDetail.PartnerGroupMembers) ? getGroupName(customerDetail.PartnerGroupMembers) : I18n.t('ten_nhom')}</Text>
+                           
                             <Image source={Images.icon_arrow_down} style={{ width: 20, height: 20, position: "absolute", right: 15 }} />
-                        </View>
+                        </TouchableOpacity>
                     </View>
 
                 </Surface>
@@ -525,26 +506,15 @@ export default (props) => {
                     <View style={{ padding: 15 }}>
                         <Text style={{ paddingBottom: 10 }}>{I18n.t('tinh_thanh')}</Text>
                         <View style={{ flexDirection: "row", flex: 1 }}>
-                            <View style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
-                                <TextInput
-                                    placeholder={I18n.t('tinh_thanh')}
-                                    editable={false}
-                                    value={customerDetail.Province}
-                                    style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1 }}
-                                    // onChangeText={(text) => { onChangeText(text, 7) }}
-                                    onTouchStart={() => {
-                                        typeModal.current = 2
-                                        setShowModal(true)
-                                    }}
-                                />
-                                <Image source={Images.icon_arrow_down} style={{ width: 20, height: 20, position: "absolute", right: 15 }} />
-                            </View>
-                            {/* <TouchableOpacity onPress={() => {
+                            <TouchableOpacity onPress={() => {
                                 typeModal.current = 2
                                 setShowModal(true)
-                            }} style={{ marginLeft: 20, justifyContent: "center", backgroundColor: colors.colorLightBlue, borderRadius: 5 }}>
-                                <Text style={{ textAlign: "center" }}>button</Text>
-                            </TouchableOpacity> */}
+                            }} style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
+                                <Text style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1, color: customerDetail.Province ? null : "#CECCCB" }}>{customerDetail.Province ? customerDetail.Province : I18n.t('tinh_thanh')}</Text>
+
+                                <Image source={Images.icon_arrow_down} style={{ width: 20, height: 20, position: "absolute", right: 15 }} />
+                            </TouchableOpacity>
+
                         </View>
                     </View>
 

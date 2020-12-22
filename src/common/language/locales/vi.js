@@ -90,6 +90,7 @@ export default {
   diem_thuong: "Điểm thưởng",
   don_hang_moi: "Đơn mới",
   du_no: "Dư nợ",
+  dien_thoai:"Điện thoại",
   don_hang_moi: "Đơn mới",
 
   // TODO: E

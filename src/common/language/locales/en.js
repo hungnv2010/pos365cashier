@@ -77,6 +77,7 @@ export default {
   diem_hien_tai: "Current Point",
   don_hang_moi: "New orders",
   du_no: "Debt",
+  dien_thoai:"Phone",
   // TODO: E
 
 
