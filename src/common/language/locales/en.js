@@ -77,6 +77,7 @@ export default {
   diem_hien_tai: "Current Point",
   don_hang_moi: "New orders",
   du_no: "Debt",
+  dien_thoai:"Phone",
   // TODO: E
 
 
@@ -254,6 +255,7 @@ export default {
   thoat_tat_ca: "Logout all account",
   tuy_chinh: "More",
   ten_dang_nhap: "User name",
+  thu_ngan: "Cashier",
   ten_cua_hang: "Store name",
   thong_bao_xoa_tai_khoan: "Are you sure you want to delete this profile?",
   thong_bao_thoat_toan_bo_tai_khoan: "Are you sure you want to logout all account?",
@@ -281,6 +283,7 @@ export default {
   tu_dong_tao_ma: "Automatically Generate Code",
   ten_nhom: "Group Name",
   tinh_thanh: "Province",
+  tien_khach_tra: "Tiền khách trả",
 
 
   // TODO: U
