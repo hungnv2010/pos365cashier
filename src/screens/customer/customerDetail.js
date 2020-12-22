@@ -18,7 +18,7 @@ import { ApiPath } from '../../data/services/ApiPath';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import dialogManager from '../../components/dialog/DialogManager';
-
+import DatePicker from 'react-native-date-picker';
 
 export default (props) => {
 
@@ -182,15 +182,19 @@ export default (props) => {
 
     const renderModalContent = () => {
         return typeModal.current == 1 ?
-            <View style={{ backgroundColor: "#fff", borderRadius: 4 }}>
-                <DateTimePicker
+            <View style={{ backgroundColor: "#fff", borderRadius: 4 , alignItems: "center"}}>
+                {/* <DateTimePicker
                     value={new Date()}
                     mode={'date'}
                     display="default"
                     locale="vi-VN"
                     onChange={onChange}
-                />
-
+                /> */}
+                <DatePicker date={new Date()}
+                    onDateChange={onChange}
+                    mode={'date'}
+                    display="default"
+                    locale="vi-VN" />
                 <View style={[styles.viewBottomFilter, { padding: 7, paddingTop: 0 }]}>
                     <TouchableOpacity style={styles.viewButtonCancel} onPress={onCancel}>
                         <Text style={styles.textButtonCancel}>{I18n.t("huy")}</Text>

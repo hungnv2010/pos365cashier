@@ -29,6 +29,8 @@ export default (props) => {
     const isReLoad = useRef(false);
     const roomItem = useRef({});
     const clickAdd = useRef(false);
+    const [roomGroups, setRoomGroups] = useState([])
+
     const [statescrollY, setScrollY] = useState(new Animated.Value(
         Platform.OS === 'ios' ? -HEADER_MAX_HEIGHT : 0,
     ))
@@ -45,17 +47,17 @@ export default (props) => {
 
     useEffect(() => {
 
-        console.log("Room props rooms ", props.route.params.rooms);
-        console.log("Room props roomGroups ", props.route.params.roomGroups);
         getDataInRealm();
 
     }, [])
 
     const getDataInRealm = async () => {
-        let roomsTmp = await realmStore.queryRooms()
+
+        roomsTmp = await realmStore.queryRooms()
         roomsTmp = roomsTmp.sorted('Position')
         roomGroupsTmp = await realmStore.queryRoomGroups()
         roomGroupsTmp = roomGroupsTmp.sorted('Id')
+        setRoomGroups(roomGroupsTmp)
 
         console.log("getDataInRealm roomsTmp ", JSON.parse(JSON.stringify(roomsTmp)));
         var outputList = [];
@@ -69,7 +71,7 @@ export default (props) => {
             })
             outputList.push(object);
         })
-        outputList.push({ Id: "", Name: I18n.t('khac'), list: props.route.params.rooms.filter(item => item.RoomGroupId == 0) })
+        outputList.push({ Id: "", Name: I18n.t('khac'), list: roomsTmp.filter(item => item.RoomGroupId == 0) })
         console.log("getDataInRealm outputList test ", JSON.parse(JSON.stringify(outputList))[outputList.length - 1].list);
         setRooms([...outputList])
     }

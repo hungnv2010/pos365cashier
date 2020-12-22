@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback, useLayoutEffect } from 'react';
 import {
     View, Text, Image,
-    StyleSheet, TouchableOpacity, TextInput, Keyboard, Linking
+    StyleSheet, TouchableOpacity, TextInput, Keyboard, Linking, NativeModules
 } from "react-native";
 import { Snackbar, } from "react-native-paper";
 import I18n from '../../common/language/i18n';
@@ -17,7 +17,7 @@ import { getFileDuLieuString, setFileLuuDuLieu } from "../../data/fileStore/File
 import dialogManager from '../../components/dialog/DialogManager';
 import { CommonActions } from '@react-navigation/native';
 import realmStore from '../../data/realm/RealmStore';
-
+const { Print } = NativeModules;
 
 let error = "";
 
@@ -239,6 +239,17 @@ const LoginScreen = (props) => {
                                 secureTextEntry={true} />
                         </View>
                         <View style={{}}>
+                            <TouchableOpacity style={{ height: 50, width: Metrics.screenWidth - 50, marginTop: 15, borderColor: "#fff", borderWidth: 1, borderRadius: 5, justifyContent: "center", alignItems: "center" }}
+                                onPress={() => {
+                                    Print.openAppOrder((status) => {
+                                        console.log("openAppOrder status ", status)
+                                        if(status == "false"){
+                                            Linking.openURL('https://apps.apple.com/us/app/pos365-order/id1517773105')
+                                        }
+                                    })
+                                }}>
+                                <Text style={{ color: "#fff", fontWeight: 'bold' }}>{I18n.t("nhan_vien_order").toUpperCase()}</Text>
+                            </TouchableOpacity>
                             <TouchableOpacity style={{ height: 50, width: Metrics.screenWidth - 50, marginTop: 15, borderColor: "#fff", borderWidth: 1, borderRadius: 5, justifyContent: "center", alignItems: "center" }}
                                 onPress={() => {
                                     Keyboard.dismiss();

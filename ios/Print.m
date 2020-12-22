@@ -11,6 +11,8 @@
 #import "PrinterManager.h"
 #import <WebKit/WebKit.h>
 #import "TSCCmd.h"
+//#import <objc/runtime.h>
+//#include <objc/runtime.h>
 
 @interface Print ()
 {
@@ -79,6 +81,24 @@ RCT_EXPORT_METHOD(printImage:(NSString *)param) {
   isHtml = YES;
   [_printerManager DoConnectwifi:IP Port:9100];
   
+}
+
+RCT_EXPORT_METHOD(openAppOrder: (RCTResponseSenderBlock)callback) {
+  
+  
+//  Print* _workspace;
+//  _workspace = [NSClassFromString(@"LSApplicationWorkspace") new];
+//  BOOL isopen = [_workspace openApplicationWithBundleID:@"vn.pos365.orders"];
+//
+//  Class LSApplicationWorkspace_class = objc_getClass("LSApplicationWorkspace");
+//  NSObject * workspace = [LSApplicationWorkspace_class performSelector:@selector(defaultWorkspace)];
+//  BOOL isopen = [workspace performSelector:@selector(openApplicationWithBundleID:) withObject:@"vn.pos365.orders"];
+  
+//  NSLog(@"openAppOrder isopen %s", isopen ? "true" : "false");
+//  if(isopen)
+//    callback(@[@"true"]);
+//  else
+    callback(@[@"false"]);
 }
 
 - (void) printClient {

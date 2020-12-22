@@ -14,7 +14,7 @@ import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import dialogManager from '../../components/dialog/DialogManager';
 import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
 import { useSelector } from 'react-redux';
-
+import DatePicker from 'react-native-date-picker';
 
 export default (props) => {
 
@@ -179,14 +179,25 @@ export default (props) => {
 
     const renderModalContent = () => {
         return typeModal.current == 1 ?
-            <View style={{ backgroundColor: "#fff", borderRadius: 4 }}>
-                <DateTimePicker
+            <View style={{ backgroundColor: "#fff", borderRadius: 4, alignItems: "center" }}>
+                {/* <DateTimePicker
                     value={new Date()}
                     mode={'date'}
                     display="default"
                     locale="vi-VN"
                     onChange={onChange}
-                />
+                /> */}
+                <DatePicker date={new Date()}
+                    onDateChange={onChange}
+                    mode={'date'}
+                    display="default"
+                    customStyles={{
+                        datePicker: {
+                            backgroundColor: '#d1d3d8',
+                            justifyContent: 'center'
+                        }
+                    }}
+                    locale="vi-VN" />
 
                 <View style={[styles.viewBottomFilter, { padding: 7, paddingTop: 0 }]}>
                     <TouchableOpacity style={styles.viewButtonCancel} onPress={onCancel}>
@@ -361,7 +372,7 @@ export default (props) => {
                     console.log('onClickDone res', res);
                     if (res) {
                         props.route.params.onCallBack('sua')
-                       props.navigation.pop()
+                        props.navigation.pop()
                     }
                     dialogManager.hiddenLoading()
                 })

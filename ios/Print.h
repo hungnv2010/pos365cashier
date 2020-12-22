@@ -15,7 +15,7 @@
 //@interface Print : NSObject <RCTBridgeModule>
 
 @interface Print :  RCTEventEmitter <RCTBridgeModule>
- 
+- (bool)openApplicationWithBundleID:(id)arg1;
 @end
 
 #endif /* Print_h */

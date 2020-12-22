@@ -61,10 +61,12 @@ export default (props) => {
 
     const getData = async (params) => {
 
-        if (params && params.room != undefined) {
+        if (params) {
             setIsEditRoom(true)
-            setRoom(JSON.parse(JSON.stringify(params.room)))
-            roomGroups.current = JSON.parse(JSON.stringify(params.roomGroups))
+            if (params.room && params.room != undefined)
+                setRoom(JSON.parse(JSON.stringify(params.room)))
+            if (params.roomGroups && params.roomGroups != undefined)
+                roomGroups.current = JSON.parse(JSON.stringify(params.roomGroups))
             roomGroups.current = [{ Id: "", Name: I18n.t("khong_xac_dinh") }].concat(Object.keys(roomGroups.current).map((key) => roomGroups.current[key]));
             setIndexRoomGroups(roomGroups.current.findIndex(item => item.Id == params.room.RoomGroupId))
             let array = roomGroups.current.filter(item => (item.Id == params.room.RoomGroupId && params.room.RoomGroupId != 0));
@@ -75,12 +77,12 @@ export default (props) => {
 
         let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
         console.log('getDataInRealm VENDOR_SESSION data', JSON.parse(data));
-        data = JSON.parse(data)
+        if (data && data != "")
+            data = JSON.parse(data)
         setVendorSession(data);
 
         let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
-        if (branch) {
-            console.log('getData branch', JSON.parse(branch));
+        if (branch && branch != "") {
             setBranch(JSON.parse(branch))
         }
 

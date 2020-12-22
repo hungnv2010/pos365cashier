@@ -28,7 +28,7 @@ const KEY_FUNC = {
     VERSION: "VERSION",
     MORE: ScreenList.More,
     HISTORY: ScreenList.History,
-    ROOM_CATALOG: ScreenList.RoomCatalog,
+    ROOM_CATALOG: ScreenList.RoomList,
     OVERVIEW: ScreenList.OverView,
     INVOICE: ScreenList.Invoice,
     CASH_FLOW: ScreenList.CashFlow,
@@ -398,7 +398,7 @@ const ContentComponent = (props) => {
     const onClickItem = (chucnang, index) => {
         console.log("onClickItem props ", props);
         let params = {};
-        if (chucnang.func == ScreenList.Home || chucnang.func == ScreenList.Customer || chucnang.func == ScreenList.Settings || chucnang.func == ScreenList.Invoice || chucnang.func == ScreenList.OverView || chucnang.func == ScreenList.RoomCatalog || chucnang.func == ScreenList.Customer) {
+        if (chucnang.func == ScreenList.Home || chucnang.func == ScreenList.Customer || chucnang.func == ScreenList.Settings || chucnang.func == ScreenList.Invoice || chucnang.func == ScreenList.OverView  || chucnang.func == ScreenList.RoomHistory) {
             setCurrentItemMenu(index)
         }
         props.navigation.navigate(chucnang.func, params)
