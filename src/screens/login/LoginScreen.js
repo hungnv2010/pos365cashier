@@ -240,13 +240,20 @@ const LoginScreen = (props) => {
                         </View>
                         <View style={{}}>
                             <TouchableOpacity style={{ height: 50, width: Metrics.screenWidth - 50, marginTop: 15, borderColor: "#fff", borderWidth: 1, borderRadius: 5, justifyContent: "center", alignItems: "center" }}
-                                onPress={() => {
-                                    Print.openAppOrder((status) => {
-                                        console.log("openAppOrder status ", status)
-                                        if(status == "false"){
-                                            Linking.openURL('https://apps.apple.com/us/app/pos365-order/id1517773105')
-                                        }
-                                    })
+                                onPress={async () => {
+                                    // Print.openAppOrder((status) => {
+                                    //     console.log("openAppOrder status ", status)
+                                    //     if(status == "false"){
+                                    //         Linking.openURL('https://apps.apple.com/us/app/pos365-order/id1517773105')
+                                    //     }
+                                    // })
+                                    const supported = await Linking.canOpenURL("orderapp://open");
+                                    console.log("Open supported ", supported);
+                                    if (supported) {
+                                        await Linking.openURL("orderapp://open");
+                                    } else {
+                                        Linking.openURL('https://apps.apple.com/us/app/pos365-order/id1517773105')
+                                    }
                                 }}>
                                 <Text style={{ color: "#fff", fontWeight: 'bold' }}>{I18n.t("nhan_vien_order").toUpperCase()}</Text>
                             </TouchableOpacity>
