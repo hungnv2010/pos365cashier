@@ -11,12 +11,9 @@ import { HTTPService, getHeaders } from '../../data/services/HttpService';
 import { ApiPath } from '../../data/services/ApiPath';
 import { CommonActions } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-<<<<<<< HEAD
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import colors from '../../theme/Colors';
-=======
 import { Checkbox, RadioButton } from 'react-native-paper';
->>>>>>> dbc199c2be7d9ba372d022995055690452165e7b
 import dataManager from '../../data/DataManager';
 import { navigate } from '../../navigator/NavigationService';
 import { useDispatch } from 'react-redux';
@@ -475,11 +472,7 @@ const ContentComponent = (props) => {
     const onClickItem = (chucnang, index) => {
         console.log("onClickItem props ", props);
         let params = {};
-<<<<<<< HEAD
-        if (chucnang.func == ScreenList.Home || chucnang.func == ScreenList.Customer || chucnang.func == ScreenList.Settings || chucnang.func == ScreenList.Invoice || chucnang.func == ScreenList.OverView || chucnang.func == ScreenList.RoomCatalog || chucnang.func == ScreenList.Customer || chucnang.func == ScreenList.RoomHistory) {
-=======
         if (chucnang.func == ScreenList.Home || chucnang.func == ScreenList.Customer || chucnang.func == ScreenList.Settings || chucnang.func == ScreenList.Invoice || chucnang.func == ScreenList.OverView  || chucnang.func == ScreenList.RoomHistory) {
->>>>>>> dbc199c2be7d9ba372d022995055690452165e7b
             setCurrentItemMenu(index)
         }
         props.navigation.navigate(chucnang.func, params)
