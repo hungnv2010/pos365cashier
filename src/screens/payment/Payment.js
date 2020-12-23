@@ -25,6 +25,7 @@ import dataManager from '../../data/DataManager';
 import QRCode from 'react-native-qrcode-svg';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import ViewPrint, { TYPE_PRINT } from '../more/ViewPrint';
+import DatePicker from 'react-native-date-picker';
 
 let timeClickPrevious = 1000;
 
@@ -70,7 +71,7 @@ export default (props) => {
     const [marginModal, setMargin] = useState(0)
     const [dataHtml, setDataHtml] = useState("");
     const provisional = useRef();
-    const dateTmp = useRef("")
+    const dateTmp = useRef(new Date())
     const toolBarPaymentRef = useRef();
     const itemAccountRef = useRef();
     const typeModal = useRef();
@@ -647,9 +648,31 @@ export default (props) => {
         console.log("calculator total ", total);
     }
 
-    const onChange = (event, selectedDate) => {
-        const currentDate = selectedDate || date;
+    const onChange = (selectedDate) => {
+        const currentDate = selectedDate;
         console.log("onChange Date ", currentDate);
+        dateTmp.current = currentDate;
+    };
+
+    const onChangeDate = (selectedDate) => {
+        const currentDate = dateTmp.current;
+        let date = selectedDate.getDate();
+        let month = selectedDate.getMonth();
+        let year = selectedDate.getFullYear();
+        currentDate.setDate(date)
+        currentDate.setMonth(month)
+        currentDate.setFullYear(year)
+        console.log("onChangeTime Date ", currentDate);
+        dateTmp.current = currentDate;
+    };
+
+    const onChangeTime = (selectedDate) => {
+        const currentDate = dateTmp.current;
+        let hours = selectedDate.getHours();
+        let minutes = selectedDate.getMinutes();
+        currentDate.setHours(hours)
+        currentDate.setMinutes(minutes)
+        console.log("onChangeTime Date ", currentDate);
         dateTmp.current = currentDate;
     };
 
@@ -721,22 +744,18 @@ export default (props) => {
         if (typeModal.current == TYPE_MODAL.DATE) {
             if (showDateTime)
                 return (
-                    <View>
-                        <DateTimePicker
-                            value={date}
+                    <View style={{ alignItems: "center" }}>
+                        <DatePicker date={date}
+                            onDateChange={onChangeDate}
                             mode={'date'}
                             display="default"
-                            locale="vi-VN"
-                            onChange={onChange}
-                        />
+                            locale="vi-VN" />
                         <View style={styles.line}></View>
-                        <DateTimePicker
-                            value={date}
+                        <DatePicker date={date}
+                            onDateChange={onChangeTime}
                             mode={'time'}
                             display="default"
-                            locale="vi-VN"
-                            onChange={onChange}
-                        />
+                            locale="vi-VN" />
                         <View style={[styles.viewBottomFilter, { padding: 7, paddingTop: 0 }]}>
                             <TouchableOpacity style={styles.viewButtonCancel} onPress={() => onShowDateTime(false)}>
                                 <Text style={styles.textButtonCancel}>{I18n.t("huy")}</Text>
@@ -757,7 +776,7 @@ export default (props) => {
                                     editable={false}
                                     onTouchStart={() => onShowDateTime(true)}
                                     value={"" + dateToStringFormatUTC(date)}
-                                    style={{ padding: 6, flex: 1 }} />
+                                    style={{ padding: 6, flex: 1, color: "#000" }} />
                                 <Fontisto style={{ marginTop: -2 }} name="date" size={20} color={colors.colorchinh} />
                             </TouchableOpacity>
                         </View>

@@ -81,6 +81,23 @@ RCT_EXPORT_METHOD(printImage:(NSString *)param) {
   
 }
 
+RCT_EXPORT_METHOD(openAppOrder: (RCTResponseSenderBlock)callback) {
+  NSString *customURL = @"orderapp://";
+  UIApplication *application = [UIApplication sharedApplication];
+  NSURL *URL = [NSURL URLWithString:@"orderapp://"];
+  if ([application respondsToSelector:@selector(openURL:options:completionHandler:)])
+  {
+    [application openURL:URL options:@{}
+       completionHandler:^(BOOL success) {
+      NSLog(@"Open %@: %d",customURL,success);
+    }];
+    callback(@[@"true"]);
+  }
+  else {
+    callback(@[@"false"]);
+  }
+}
+
 - (void) printClient {
   images = [@[] mutableCopy];
   

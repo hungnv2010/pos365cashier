@@ -103,6 +103,7 @@
 		1A5285A424726E930090BA8A /* TextSetting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextSetting.h; path = Common/TextSetting.h; sourceTree = "<group>"; };
 		1A5285A524726E930090BA8A /* BitmapSetting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BitmapSetting.h; path = Common/BitmapSetting.h; sourceTree = "<group>"; };
 		1A5285A624726E930090BA8A /* ZPLCmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZPLCmd.h; path = Common/ZPLCmd.h; sourceTree = "<group>"; };
+		1ACB4B6E2591CDAB00BA5E1F /* PrivateHeaders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrivateHeaders.h; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* Pos365Cashier-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Pos365Cashier-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* Pos365Cashier-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Pos365Cashier-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		402A6A0C48FD3CD39A9D0EEA /* Pods-Pos365CashierTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pos365CashierTests.release.xcconfig"; path = "Target Support Files/Pods-Pos365CashierTests/Pods-Pos365CashierTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -252,6 +253,7 @@
 			children = (
 				1A52857A247228480090BA8A /* Print.h */,
 				1A52857B247228580090BA8A /* Print.m */,
+				1ACB4B6E2591CDAB00BA5E1F /* PrivateHeaders.h */,
 			);
 			name = Print;
 			sourceTree = "<group>";
@@ -807,7 +809,7 @@
 			baseConfigurationReference = 8BF7FD65B19D4E175A1A0738 /* Pods-Pos365Cashier.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CURRENT_PROJECT_VERSION = 21;
+				CURRENT_PROJECT_VERSION = 28;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = S8C4LR9F7U;
 				ENABLE_BITCODE = NO;
@@ -891,7 +893,7 @@
 			baseConfigurationReference = 6617621057B4C52677488AEC /* Pods-Pos365Cashier.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CURRENT_PROJECT_VERSION = 21;
+				CURRENT_PROJECT_VERSION = 28;
 				DEVELOPMENT_TEAM = S8C4LR9F7U;
 				ENABLE_BITCODE = NO;
 				HEADER_SEARCH_PATHS = (

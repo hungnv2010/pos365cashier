@@ -425,7 +425,8 @@ export default (props) => {
                 setCurrentPriceBook(data)
                 break;
             case 2:
-                setCurrentCustomer(data)
+                console.log('onCallBackPriceCustomer ', type, data);
+                if (data.Id != -1) setCurrentCustomer(data)
                 break;
             default:
                 break;

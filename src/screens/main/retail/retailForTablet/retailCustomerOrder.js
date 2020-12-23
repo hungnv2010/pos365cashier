@@ -10,10 +10,7 @@ import I18n from "../../../../common/language/i18n";
 import { Snackbar } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { ScreenList } from '../../../../common/ScreenList';
-import useDebounce from '../../../../customHook/useDebounce';
 import DialogProductDetail from '../../../../components/dialog/DialogProductDetail'
-import DialogProductUnit from '../../../../components/dialog/DialogProductUnit'
-import dialogManager from '../../../../components/dialog/DialogManager';
 import Entypo from 'react-native-vector-icons/Entypo';
 import realmStore from '../../../../data/realm/RealmStore';
 import dataManager from '../../../../data/DataManager';
@@ -87,6 +84,7 @@ const RetailCustomerOrder = (props) => {
         serverEvents = await realmStore.queryServerEvents()
         let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
         newServerEvents = Object.values(newServerEvents)
+        console.log('newServerEvents',newServerEvents);
         setNumberNewOrder(newServerEvents.length)
         if (newServerEvents.length == 0) {
             let newSE = await createNewServerEvent()

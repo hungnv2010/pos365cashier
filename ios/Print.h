@@ -15,7 +15,7 @@
 //@interface Print : NSObject <RCTBridgeModule>
 
 @interface Print :  RCTEventEmitter <RCTBridgeModule>
- 
+
 @end
 
 #endif /* Print_h */

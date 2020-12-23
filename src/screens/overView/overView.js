@@ -296,7 +296,7 @@ export default (props) => {
                                 setShowModal(true);
                                 typeDateTime.current = 1
                             }}
-                            style={{ flexDirection: "row", backgroundColor: "#E6EAEF", borderRadius: 10, padding: 10 }}>
+                            style={{ flexDirection: "row", backgroundColor: "#E6EAEF", borderRadius: 10, padding: 10 , alignItems:"center"}}>
                             <Text style={{ marginRight: 10, fontSize: 17, }}>{timeForRevenue.name.includes('-') ? timeForRevenue.name : I18n.t(timeForRevenue.name)}</Text>
                             <Image style={{ width: 10, height: 10 }} source={Images.icon_path_4203} />
                         </TouchableOpacity>

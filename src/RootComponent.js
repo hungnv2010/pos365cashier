@@ -42,7 +42,7 @@ export default () => {
     useEffect(() => {
         const savePrinter = async () => {
             let setting = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
-            if (setting != "") {
+            if (setting && setting != "") {
                 setting = JSON.parse(setting);
                 console.log("savePrinter setting ", setting);
                 let objectPrint = {}

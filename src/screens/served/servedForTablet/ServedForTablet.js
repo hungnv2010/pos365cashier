@@ -95,11 +95,11 @@ const Served = (props) => {
             if (JSON.stringify(serverEvent) != '{}' && serverEvent[0].JsonContent) {
                 currentServerEvent.current = serverEvent[0]
                 let jsonContentObject = JSON.parse(serverEvent[0].JsonContent)
+                console.log('jsonContentjsonContentjsonContentjsonContentjsonContent', jsonContentObject, position);
                 if (!jsonContentObject.OrderDetails) jsonContentObject.OrderDetails = []
                 setJsonContent(jsonContentObject)
             } else setJsonContent(Constant.JSONCONTENT_EMPTY)
 
-            console.log('jsonContentjsonContentjsonContentjsonContentjsonContent', jsonContent);
             // setPriceBookId(jsonContent.PriceBookId)
 
             serverEvent.addListener((collection, changes) => {
@@ -235,9 +235,10 @@ const Served = (props) => {
                 }
             })
             newList = newList.filter(item => !item.exist)
+            jsonContent.OrderDetails = [...newList, ...jsonContent.OrderDetails]
+
+
         });
-        jsonContent.OrderDetails = [...newList, ...jsonContent.OrderDetails]
-        console.log('outputListProducts======= jsonContent.OrderDetails ', jsonContent.OrderDetails);
         checkHasItemOrder(newList)
         checkRoomProductId(newList, props.route.params.room.ProductId)
         updateServerEvent()
