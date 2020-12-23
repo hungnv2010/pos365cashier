@@ -79,6 +79,7 @@ const images = {
     logo_365_long_color: require("../../assets/images/logo_365_long_color.png"),
     icon_version: require("../../assets/icons/version.jpg"),
     icon_quick_note: require("../../assets/icons/icon_quick_note.jpg"),
+    icon_vouchers: require("../../assets/icons/gift-box.png"),
 }
 
 export default images

@@ -11,6 +11,7 @@ import { HTTPService, getHeaders } from '../../data/services/HttpService';
 import { ApiPath } from '../../data/services/ApiPath';
 import { CommonActions } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons'
 import colors from '../../theme/Colors';
 import dataManager from '../../data/DataManager';
 import { navigate } from '../../navigator/NavigationService';
@@ -32,7 +33,8 @@ const KEY_FUNC = {
     OVERVIEW: ScreenList.OverView,
     INVOICE: ScreenList.Invoice,
     CASH_FLOW: ScreenList.CashFlow,
-    ROOM_HISTORY: ScreenList.RoomHistory
+    ROOM_HISTORY: ScreenList.RoomHistory,
+    VOUCHERS: ScreenList.Vouchers
 }
 
 const LIST_FUNCITION = [
@@ -86,6 +88,11 @@ const LIST_FUNCITION = [
         func: KEY_FUNC.ROOM_HISTORY,
         icon: Images.icon_history,
         title: 'lich_su_huy_tra_do'
+    },
+    {
+        func : KEY_FUNC.VOUCHERS,
+        icon: Images.icon_vouchers,
+        title:'voucher'
     },
     {
         func: KEY_FUNC.SETTING_FUNC,
@@ -398,7 +405,7 @@ const ContentComponent = (props) => {
     const onClickItem = (chucnang, index) => {
         console.log("onClickItem props ", props);
         let params = {};
-        if (chucnang.func == ScreenList.Home || chucnang.func == ScreenList.Customer || chucnang.func == ScreenList.Settings || chucnang.func == ScreenList.Invoice || chucnang.func == ScreenList.OverView || chucnang.func == ScreenList.RoomCatalog || chucnang.func == ScreenList.Customer) {
+        if (chucnang.func == ScreenList.Home || chucnang.func == ScreenList.Customer || chucnang.func == ScreenList.Settings || chucnang.func == ScreenList.Invoice || chucnang.func == ScreenList.OverView || chucnang.func == ScreenList.RoomCatalog || chucnang.func == ScreenList.Customer || chucnang.func == ScreenList.RoomHistory) {
             setCurrentItemMenu(index)
         }
         props.navigation.navigate(chucnang.func, params)

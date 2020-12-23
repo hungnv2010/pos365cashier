@@ -18,6 +18,7 @@ import Settings from '../../screens/settings/Settings';
 import VNPayPaymentSetting from '../../screens/settings/VNPAYPaymentSetting'
 import RoomHistory from '../../screens/roomHistory/RoomHistory';
 import RoomHistoryDetail from '../../screens/roomHistory/RoomHistoryDetailForPhone';
+import Vouchers from '../../screens/voucher/Vouchers';
 const Drawer = createDrawerNavigator();
 export default (propsFunc) => {
 
@@ -70,6 +71,9 @@ export default (propsFunc) => {
         </Drawer.Screen>
         <Drawer.Screen name={ScreenList.RoomHistory} options={{title:ScreenList.RoomHistory}}>
           {props => <RoomHistory{...props}/>}
+        </Drawer.Screen>
+        <Drawer.Screen name = {ScreenList.Vouchers} options = {{title:ScreenList.Vouchers}}>
+          {props => <Vouchers{...props}/>}
         </Drawer.Screen>
       </Drawer.Navigator>
     </LinearGradient>

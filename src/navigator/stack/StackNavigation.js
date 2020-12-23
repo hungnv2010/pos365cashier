@@ -82,6 +82,7 @@ export default (props) => {
                 <MainStack.Screen name={ScreenList.MainRetail}>{props => <MainRetail {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.SplitTable}>{props => <SplitTable {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.PriceBook}>{props => <Pricebook {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.Vouchers}>{props => <Vouchers {...props}/>}</MainStack.Screen>
             </MainStack.Navigator>
         </Animated.View>
     );
