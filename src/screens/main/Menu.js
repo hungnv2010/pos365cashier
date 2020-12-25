@@ -32,7 +32,8 @@ const KEY_FUNC = {
     OVERVIEW: ScreenList.OverView,
     INVOICE: ScreenList.Invoice,
     CASH_FLOW: ScreenList.CashFlow,
-    ROOM_HISTORY: ScreenList.RoomHistory
+    ROOM_HISTORY: ScreenList.RoomHistory,
+    ORDER_OFFLINE: ScreenList.OrderOffline
 }
 
 const LIST_FUNCITION = [
@@ -42,11 +43,11 @@ const LIST_FUNCITION = [
         title: "man_hinh_thu_ngan"
     },
 
-    // {
-    //     func: KEY_FUNC.ORDER_NOW,
-    //     icon: Images.icon_inventory,
-    //     title: "dang_goi_mon"
-    // },
+    {
+        func: KEY_FUNC.ORDER_OFFLINE,
+        icon: Images.icon_inventory,
+        title: "don_hang_offline"
+    },
     // {
     //     func: KEY_FUNC.HISTORY,
     //     icon: Images.icon_customer,
@@ -407,6 +408,12 @@ const ContentComponent = (props) => {
     const dispatch = useDispatch();
     const [version, setVersion] = useState("");
     const [currentItemMenu, setCurrentItemMenu] = useState(0);
+    const [numberOrderOffline, setNumberOrderOffline] = useState(0);
+
+    realmStore.queryOrdersOffline().then(orderOffline => {
+        console.log("Abc orderOffline ", orderOffline.length);
+        setNumberOrderOffline(orderOffline.length)
+    })
 
     useEffect(() => {
         const getCurrentIP = async () => {
@@ -424,6 +431,7 @@ const ContentComponent = (props) => {
                 console.log("DeviceInfo.getVersion() ===  ", res);
                 setVersion(res)
             });
+            // 
         }
         getCurrentIP()
     }, [])
@@ -464,7 +472,7 @@ const ContentComponent = (props) => {
     const onClickItem = (chucnang, index) => {
         console.log("onClickItem props ", props);
         let params = {};
-        if (chucnang.func == ScreenList.Home || chucnang.func == ScreenList.Customer || chucnang.func == ScreenList.Settings || chucnang.func == ScreenList.Invoice || chucnang.func == ScreenList.OverView  || chucnang.func == ScreenList.RoomHistory) {
+        if (chucnang.func == ScreenList.Home || chucnang.func == ScreenList.Customer || chucnang.func == ScreenList.Settings || chucnang.func == ScreenList.Invoice || chucnang.func == ScreenList.OverView || chucnang.func == ScreenList.RoomHistory) {
             setCurrentItemMenu(index)
         }
         props.navigation.navigate(chucnang.func, params)
@@ -488,6 +496,8 @@ const ContentComponent = (props) => {
 
                         <Paragraph style={styles.text_menu}>
                             {I18n.t(chucnang.title)}
+                            {chucnang.title == "don_hang_offline" ?
+                                <Text style={{ color: Colors.colorBlueText }}>{numberOrderOffline > 0 ? `[${numberOrderOffline}]` : null}</Text> : null}
                             {chucnang.title == "hotline" ?
                                 <Text style={{ color: Colors.colorBlueText }}> {Constant.HOTLINE}</Text> : null}
                             {chucnang.title == "phien_ban_ngay" ?

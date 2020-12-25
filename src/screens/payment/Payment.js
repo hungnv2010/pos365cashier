@@ -480,9 +480,9 @@ export default (props) => {
         if (date && dateTmp.current) {
             json.PurchaseDate = "" + date;
         }
-        delete json.Pos;
-        delete json.RoomName;
-        delete json.RoomId;
+        // delete json.Pos;
+        // delete json.RoomName;
+        // delete json.RoomId;
 
         if (listMethod.length > 0)
             json.AccountId = listMethod[0].Id;
