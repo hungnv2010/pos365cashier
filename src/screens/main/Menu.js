@@ -11,6 +11,8 @@ import { HTTPService, getHeaders } from '../../data/services/HttpService';
 import { ApiPath } from '../../data/services/ApiPath';
 import { CommonActions } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons'
+import colors from '../../theme/Colors';
 import { Checkbox, RadioButton } from 'react-native-paper';
 import dataManager from '../../data/DataManager';
 import { navigate } from '../../navigator/NavigationService';
@@ -33,7 +35,8 @@ const KEY_FUNC = {
     INVOICE: ScreenList.Invoice,
     CASH_FLOW: ScreenList.CashFlow,
     ROOM_HISTORY: ScreenList.RoomHistory,
-    ORDER_OFFLINE: ScreenList.OrderOffline
+    ORDER_OFFLINE: ScreenList.OrderOffline,
+    VOUCHERS: ScreenList.Vouchers
 }
 
 const LIST_FUNCITION = [
@@ -87,6 +90,11 @@ const LIST_FUNCITION = [
         func: KEY_FUNC.ROOM_HISTORY,
         icon: Images.icon_history,
         title: 'lich_su_huy_tra_do'
+    },
+    {
+        func : KEY_FUNC.VOUCHERS,
+        icon: Images.icon_vouchers,
+        title:'voucher'
     },
     {
         func: KEY_FUNC.SETTING_FUNC,

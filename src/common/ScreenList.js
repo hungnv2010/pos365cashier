@@ -68,5 +68,6 @@ export const ScreenList = {
   PriceBook:"PriceBook",
   SplitTable: "SplitTable",
   OrderOffline: "OrderOffline",
+  Vouchers: "Vouchers"
 }
 

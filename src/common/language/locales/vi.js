@@ -423,6 +423,7 @@ export default {
   nhap_chieu_rong_kho_giay: "Nhập chiều rộng khổ giấy",
   nhan_vien:"Nhân viên",
   ngay_huy_tra:"Ngày hủy/trả",
+  ngay_het_han:"Ngày hết hạn",
 
   setting: 'Thiết lập',
 
@@ -443,6 +444,7 @@ export default {
   thanh_tien:"Thành tiền",
   thanh_toan_vnpaypos_qua_may_pos: "Thanh toán VNPAY-POS qua máy POS?",
 
-  vnd: "VND"
+  vnd: "VND",
+  voucher:"Mã quà tặng"
 
 };

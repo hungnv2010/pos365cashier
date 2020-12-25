@@ -319,7 +319,6 @@ export default {
 
   giu_man_hinh_luon_sang: "Keep the screen on",
   gia:"Price",
-
   hien_thanh_dieu_huong: "Show navigation bar",
 
   in_sau_khi_thanh_toan: "Print after payment",
@@ -358,6 +357,7 @@ export default {
   nhap_chieu_rong_kho_giay: "Enter the paper width",
   nhan_vien:'Staff',
   ngay_huy_tra:'Cancellation date',
+  ngay_het_han:'Expiry Date',
 
   so_the_cung: "Card number",
   su_dung_hai_man_hinh: "Using two screen",
@@ -376,6 +376,7 @@ export default {
   thanh_tien:'Total',
   thanh_toan_vnpaypos_qua_may_pos: "VNPAY-POS payment via POS machine?",
 
-  vnd: "VND"
+  vnd: "VND",
+  voucher:"Voucher"
 
 };
