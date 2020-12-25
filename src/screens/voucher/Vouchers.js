@@ -17,6 +17,8 @@ import DateTime from '../../components/filter/DateTime';
 import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
 import { FAB } from 'react-native-paper';
 import { result } from 'underscore';
+import DatePicker from 'react-native-date-picker';
+import Ionicons from 'react-native-vector-icons/MaterialIcons'
 
 export default (props) => {
     const [listVoucher, setListVoucher] = useState([])
@@ -24,13 +26,16 @@ export default (props) => {
     const currentCount = useRef(0)
     const [loadMore, setLoadMore] = useState(false)
     const flatlistRef = useRef(null)
+    const typeModal = useRef(null)
     const [onShowModal, setOnShowModal] = useState(false)
-    const [onShowModalClickItem, setShowModalClickItem] = useState(false)
-    const [onShowModalAdd, setShowModalAdd] = useState(false)
-    const [onCheckDel, setModalCheckDel] = useState(false)
     const itemClick = useRef({})
-    const [ispercent,setIsPercent] = useState(false)
+    const [ispercent, setIsPercent] = useState(false)
     const [quantity, setQuantity] = useState(0)
+    const dateTmp = useRef()
+    const [expiryDate, setExpityDate] = useState()
+    const randomCode = useRef()
+    const newVoucher = useRef({})
+    const valueVoucher = useRef()
     const [filter, setFilter] = useState({
         time: Constant.TIME_SELECT_ALL_TIME[0],
     })
@@ -68,6 +73,24 @@ export default (props) => {
             dialogManager.hiddenLoading()
         })
     }
+    const postVoucher = () => {
+        let param = {
+            Voucher: {
+                Code: randomCode.current,
+                ExpiryDate: dateTmp.current ? dateTmp.current : null,
+                IsPercent: ispercent,
+                Quantity: parseInt(quantity),
+                Value: parseInt(valueVoucher.current)
+            }
+        }
+        new HTTPService().setPath(ApiPath.VOUCHER).POST(param).then((res) => {
+            console.log("mess", res);
+            onRefresh()
+        }).catch((e) => {
+            console.log("error del", e);
+        })
+        setOnShowModal(false)
+    }
     const onLoadMore = () => {
         if (!(currentCount.current < Constant.LOAD_LIMIT) && !onEndReachedCalledDuringMomentum.current) {
             setLoadMore(true)
@@ -98,9 +121,131 @@ export default (props) => {
         return params
     }
     const renderFilter = () => {
-        return <DateTime
-            timeAll={true}
-            outputDateTime={outputDateTime} />
+        return typeModal.current == 1 ?
+            <DateTime
+                timeAll={true}
+                outputDateTime={outputDateTime} />
+            : typeModal.current == 2 ?
+                <View style={{ backgroundColor: 'white', borderRadius: 15 }}>
+                    <View style={{ justifyContent: 'space-between', flexDirection: 'row', padding: 5 }}>
+                        <Text style={{ fontWeight: 'bold', marginLeft: 10, fontSize: 20 }}>{itemClick.current.Code}</Text>
+                        <Ionicons name="close" size={30} color="black" onPress={() => setOnShowModal(false)} />
+                    </View>
+                    <View style={{ justifyContent: 'space-between', flexDirection: 'row', padding: 5 }}>
+                        <Text style={{ color: '#696969', marginLeft: 10 }}>{I18n.t("gia_tri")}: {itemClick.current.IsPercent == false ? currencyToString(itemClick.current.Value) + 'đ' : itemClick.current.Value + '%'}</Text>
+                        <Text style={{ color: '#696969', marginRight: 10 }}>{I18n.t("so_luong")}: {itemClick.current.Quantity}</Text>
+                    </View>{
+                        itemClick.current.ExpiryDate ?
+                            <Text style={{ color: '#696969', marginLeft: 10, padding: 5 }}>{I18n.t("ngay_het_han")}: {dateToDate(itemClick.current.ExpiryDate)}</Text>
+                            : null
+                    }
+                    <View style={{ flexDirection: 'column', marginLeft: 10, marginRight: 10, padding: 5, marginBottom: 10 }}>
+                        <TouchableOpacity style={{ backgroundColor: '#87CEFF', borderRadius: 5, alignItems: 'center', padding: 5 }}>
+                            <Text style={{ color: '#1E90FF', fontWeight: 'bold' }}>{I18n.t("in_may_in_thu_ngan")}</Text>
+                        </TouchableOpacity>
+                        <View style={{ flexDirection: 'row', marginTop: 10 }}>
+                            <TouchableOpacity style={{ flex: 1, backgroundColor: '#FFD39B', borderRadius: 5, alignItems: 'center', marginRight: 7, padding: 5 }}>
+                                <Text style={{ color: '#FF7F24', fontWeight: 'bold' }}>{I18n.t("in_may_in_tem")}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={{ flex: 1, backgroundColor: '#FA8072', borderRadius: 5, alignItems: 'center', marginLeft: 7, padding: 5 }} onPress={onClickDel}>
+                                <Text style={{ color: '#FF3030', fontWeight: 'bold' }}>{I18n.t("xoa")}</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View> :
+                typeModal.current == 3 ?
+                    <View style={{ backgroundColor: 'white', borderRadius: 15 }}>
+                        <Text style={{ fontWeight: 'bold', padding: 10 }}>{itemClick.current.Code}</Text>
+                        <Text style={{ margin: 10 }}>Bạn có chắc muốn xoá mã khuyến mãi?</Text>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginLeft: 10, marginRight: 10, padding: 10 }}>
+                            <TouchableOpacity style={styles.btnHuy}
+                                onPress={() => { setOnShowModal(false) }}>
+                                <Text style={styles.contenBtnHuy}>{I18n.t("huy")}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.btnDongY}
+                                onPress={delVoucher}>
+                                <Text style={styles.contenBtnDongY}>{I18n.t("dong_y")}</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View> :
+                    typeModal.current == 4 ?
+                        <View>
+                            <View style={{ alignItems: 'center', backgroundColor: '#FF4500', borderTopStartRadius: 15, borderTopEndRadius: 15 }}>
+                                <Text style={{ color: 'white', padding: 10, fontSize: 14 }}>{I18n.t("them_moi_voucher")}</Text>
+                            </View>
+                            <View style={{ backgroundColor: 'white', borderBottomStartRadius: 15, borderBottomEndRadius: 15 }}>
+                                <View style={{ flexDirection: 'row', padding: 10 }}>
+                                    <Text style={styles.contentTitle}>{I18n.t("ma_voucher")}</Text>
+                                    <TextInput style={[styles.styleTextInput,{ flex: 2, }]} value={randomCode.current}></TextInput>
+                                </View>
+                                <View style={{ flexDirection: 'row', padding: 10 }}>
+                                    <Text style={styles.contentTitle}>{I18n.t("gia_tri")}</Text>
+                                    <View style={{ flexDirection: 'row', flex: 2 }}>
+                                        <View style={{ flex: 1, flexDirection: 'row', borderRadius: 3, borderColor: '#FF4500', borderWidth: 0.5 }}>
+                                            <TouchableOpacity style={ispercent == false ? styles.btnPercent : styles.btnNotPercent} onPress={() => setIsPercent(false)}>
+                                                <Text style={ispercent == false ? styles.contenBtnDongY : styles.contenBtnHuy}>VND</Text>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity style={ispercent == true ? styles.btnPercent : styles.btnNotPercent} onPress={() => setIsPercent(true)}>
+                                                <Text style={ispercent == true ? styles.contenBtnDongY : styles.contenBtnHuy}>%</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                        <TextInput style={[styles.styleTextInput,{ flex: 1.5, }]} value={valueVoucher.current} onChangeText={(text) => { valueVoucher.current = text }} keyboardType='numeric' placeholder='0'></TextInput>
+
+                                    </View>
+                                </View>
+                                <View style={{ flexDirection: 'row', padding: 10 }}>
+                                    <Text style={styles.contentTitle}>{I18n.t("ngay_het_han")}</Text>
+                                    <View style={{ flex: 2, flexDirection: 'row' }}>
+                                        <TextInput style={[styles.styleTextInput,{ flex: 10,}]} editable={false} placeholder={I18n.t("chon_ngay_het_han")} value={expiryDate ? dateToDate(expiryDate) : null}></TextInput>
+                                        <TouchableOpacity style={{ flex: 1.5, marginLeft: 10 }} onPress={() => timePicker()}>
+                                            <Image source={Images.icon_calendar} style={{ width: 20, height: 20 }} />
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                                <View style={{ flexDirection: 'row', padding: 10 }}>
+                                    <Text style={styles.contentTitle}>{I18n.t("so_luong")}</Text>
+                                    <View style={{ flex: 2, flexDirection: 'row' }}>
+                                        <TouchableOpacity style={{ flex: 1, borderWidth: 0.5, borderColor: '#FF4500', alignItems: 'center', borderRadius: 3, marginRight: 10 }} onPress={() => setQuantity(quantity >= 1 ? quantity - 1 : 0)}>
+                                            <Text style={{ color: '#FF4500' }}>-</Text>
+                                        </TouchableOpacity>
+                                        <TextInput style={[styles.styleTextInput,{ flex: 6, }]} keyboardType='numeric' placeholder='0' value={quantity != 0 ? quantity.toString() : null} onChangeText={text => setQuantity(parseInt(text))}></TextInput>
+                                        <TouchableOpacity style={{ flex: 1, marginLeft: 10, borderWidth: 0.5, borderColor: '#FF4500', borderRadius: 3, alignItems: 'center' }} onPress={() => { setQuantity(quantity + 1) }}>
+                                            <Text style={{ color: '#FF4500' }}>+</Text>
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+                                <View style={{ marginLeft: 5, marginRight: 5, backgroundColor: '#CFCFCF', height: 0.5 }}></View>
+                                <View style={{ flexDirection: 'row', marginLeft: 10, marginRight: 10, padding: 10 }}>
+                                    <TouchableOpacity style={styles.btnHuy} onPress={() => {
+                                        setOnShowModal(false); setExpityDate();
+                                        setQuantity(0); valueVoucher.current = null
+                                    }}>
+                                        <Text style={styles.contenBtnHuy}>{I18n.t("huy")}</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={styles.btnDongY} onPress={onClickDone}>
+                                        <Text style={styles.contenBtnDongY}>{I18n.t("dong_y")}</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </View> :
+                        <View style={{ backgroundColor: 'white', borderRadius: 15 }}>
+                            <DatePicker
+                                date={new Date()}
+                                onDateChange={onChange}
+                                mode={'date'}
+                                display="default"
+                                locale="vi-VN" />
+                            <View style={[styles.viewBottomFilter, { padding: 7, paddingTop: 0, flexDirection: 'row', justifyContent: 'space-between' }]}>
+                                <TouchableOpacity style={[styles.btnHuy]} onPress={onCancel}>
+                                    <Text style={styles.contenBtnHuy}>{I18n.t("huy")}</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.btnDongY} onPress={onDone}>
+                                    <Text style={styles.contenBtnDongY}>{I18n.t("dong_y")}</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View >
+
+
     }
 
     const outputDateTime = (item) => {
@@ -114,20 +259,59 @@ export default (props) => {
             setOnShowModal(false)
         }
     }
-    const onClickFilter = () => {
-        setOnShowModal(true)
+    const onClickDone = () => {
+        postVoucher()
+        setTimeout(() => {
+            dateTmp.current = null
+            setQuantity(0)
+            valueVoucher.current = null
+            setOnShowModal(false)
+        }, 1000)
+
+
     }
-    useEffect(() => {
-        console.log("list voucher", listVoucher);
-    }, [listVoucher])
+    const initCode = () => {
+        let r = Math.random().toString(36).substring(6);
+        randomCode.current = r
+        console.log("random", r);
+
+    }
     const onClickItemVoucher = (item) => {
         itemClick.current = item
         console.log("itemclick", itemClick);
-        setShowModalClickItem(true)
+        typeModal.current = 2
+        setOnShowModal(true)
     }
     const onClickDel = () => {
-        setShowModalClickItem(false)
-        setModalCheckDel(true)
+        setOnShowModal(false)
+        typeModal.current = 3
+        setTimeout(() => {
+            setOnShowModal(true)
+        }, 500)
+
+    }
+    const timePicker = () => {
+        setOnShowModal(false)
+        typeModal.current = 5
+        setTimeout(() => {
+            setOnShowModal(true)
+        }, 500)
+    }
+    const onChange = (selectDate) => {
+        dateTmp.current = selectDate
+    }
+    const onCancel = () => {
+        setOnShowModal(false)
+
+    }
+    const onDone = () => {
+        setExpityDate(dateTmp.current ? dateTmp.current : new Date())
+        setOnShowModal(false)
+        setTimeout(() => {
+            typeModal.current = 4
+            setOnShowModal(true)
+        }, 500)
+
     }
     const delVoucher = () => {
         new HTTPService().setPath(ApiPath.VOUCHER + "/" + itemClick.current.Id).DELETE({}).then((res) => {
@@ -136,34 +320,35 @@ export default (props) => {
         }).catch((e) => {
             console.log("error del", e);
         })
-        setModalCheckDel(false)
+        setOnShowModal(false)
     }
-    useEffect(()=>{
-        console.log("quantity",quantity);
-    },[quantity])
+
+    useEffect(() => {
+        console.log("quantity", expiryDate);
+    }, [expiryDate])
     const renderItem = (item, index) => {
         return (
             <TouchableOpacity onPress={() => onClickItemVoucher(item)}>
                 <View style={{ backgroundColor: 'white', borderRadius: 10, margin: 2, padding: 5 }}>
-                    <View style={{ justifyContent: 'space-between', flexDirection: 'row', padding: 3 }}>
-                        <Text style={{ fontWeight: 'bold', fontSize: 12 }}>{item.Code}</Text>
+                    <View style={{ justifyContent: 'space-between', flexDirection: 'row', padding: 3, marginLeft: 20, marginRight: 20 }}>
+                        <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{item.Code}</Text>
                         <View style={{ flexDirection: 'row' }}>
                             <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#00B2EE' }}>{I18n.t('so_luong')}: </Text>
                             <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#00B2EE' }}>{item.Quantity}</Text>
                         </View>
                     </View>
-                    <View style={{ backgroundColor: '#696969', height: 0.5, marginLeft: 5, marginRight: 5 }}></View>
-                    <View style={{ justifyContent: 'space-between', flexDirection: 'row', padding: 3 }}>
-                        <Text style={{ fontSize: 12, color: '#696969' }}>{I18n.t("ngay_tao")}</Text>
+                    <View style={{ backgroundColor: '#696969', height: 0.5, marginLeft: 20, marginRight: 20 }}></View>
+                    <View style={{ justifyContent: 'space-between', flexDirection: 'row', padding: 3, marginRight: 20, marginLeft: 20 }}>
+                        <Text style={styles.textTitle}>{I18n.t("ngay_tao")}</Text>
                         <Text style={{ fontSize: 12 }}>{dateToDate(item.CreatedDate)}</Text>
                     </View>
-                    <View style={{ justifyContent: 'space-between', flexDirection: 'row', padding: 3 }}>
-                        <Text style={{ fontSize: 12, color: '#696969' }}>{I18n.t("ngay_het_han")}</Text>
+                    <View style={{ justifyContent: 'space-between', flexDirection: 'row', padding: 3, marginRight: 20, marginLeft: 20 }}>
+                        <Text style={styles.textTitle}>{I18n.t("ngay_het_han")}</Text>
                         <Text style={{ fontSize: 12 }}>{item.ExpiryDate ? dateToDate(item.ExpiryDate) : ''}</Text>
                     </View>
-                    <View style={{ backgroundColor: '#696969', height: 0.5, marginLeft: 5, marginRight: 5 }}></View>
-                    <View style={{ justifyContent: 'space-between', flexDirection: 'row', padding: 3 }}>
-                        <Text style={{ fontSize: 12, color: '#696969' }}>{I18n.t("gia_tri")}</Text>
+                    <View style={{ backgroundColor: '#696969', height: 0.5, marginLeft: 20, marginRight: 20 }}></View>
+                    <View style={{ justifyContent: 'space-between', flexDirection: 'row', padding: 3, marginLeft: 20, marginRight: 20 }}>
+                        <Text style={styles.textTitle}>{I18n.t("gia_tri")}</Text>
                         <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#00B2EE' }}>{item.IsPercent == true ? item.Value + '%' : currencyToString(item.Value) + 'đ'}</Text>
                     </View>
                 </View>
@@ -179,7 +364,7 @@ export default (props) => {
             <View style={{ justifyContent: 'space-between', backgroundColor: 'white', flexDirection: 'row', padding: 10, marginBottom: 2 }}>
                 <TouchableOpacity
                     style={{ flexDirection: "row", alignItems: "center" }}
-                    onPress={() => onClickFilter()}>
+                    onPress={() => { typeModal.current = 1; setOnShowModal(true) }}>
                     <Image source={Images.icon_calendar} style={{ width: 20, height: 20 }} />
                     <Text style={{ marginHorizontal: 10 }}>{filter.time.name.includes('-') ? filter.time.name : I18n.t(filter.time.name)}</Text>
                     <Image source={Images.icon_arrow_down} style={{ width: 14, height: 14, marginLeft: 5 }} />
@@ -205,7 +390,7 @@ export default (props) => {
                 style={{ position: 'absolute', backgroundColor: "#1874CD", right: 10, bottom: 10 }}
                 big
                 icon="plus"
-                onPress={() => setShowModalAdd(true)}
+                onPress={() => { typeModal.current = 4, setOnShowModal(true); initCode() }}
             />
             <Modal
                 animationType="fade"
@@ -240,233 +425,48 @@ export default (props) => {
                     </View>
                 </View>
             </Modal>
-            <Modal
-                animationType="fade"
-                supportedOrientations={['portrait', 'landscape']}
-                transparent={true}
-                visible={onShowModalClickItem}
-                onRequestClose={() => {
-                }}>
-                <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
-                    <TouchableWithoutFeedback
-                        onPress={() => {
-                            setShowModalClickItem(false)
-                        }}
-                        style={{
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0
-                        }}>
-                        <View style={{
-                            backgroundColor: 'rgba(0,0,0,0.5)', position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0
-                        }}></View>
-
-                    </TouchableWithoutFeedback>
-                    <View style={{ width: Metrics.screenWidth * 0.8, backgroundColor: 'white', borderRadius: 5 }}>
-                        <View style={{ justifyContent: 'space-between', flexDirection: 'row', margin: 5 }}>
-                            <Text style={{ fontWeight: 'bold', marginLeft: 10 }}>{itemClick.current.Code}</Text>
-                            <Text style={{ marginRight: 10 }} onPress={() => setShowModalClickItem(false)}>X</Text>
-                        </View>
-                        <View style={{ justifyContent: 'space-between', flexDirection: 'row', padding: 5 }}>
-                            <Text style={{ color: '#696969', marginLeft: 10 }}>{I18n.t("gia_tri")}: {itemClick.current.IsPercent==false?currencyToString(itemClick.current.Value)+'đ':itemClick.current.Value+'%'}</Text>
-                            <Text style={{ color: '#696969', marginRight: 10 }}>{I18n.t("so_luong")}: {itemClick.current.Quantity}</Text>
-                        </View>{
-                            itemClick.current.ExpiryDate ?
-                                <Text style={{ color: '#696969', marginLeft: 10, padding: 5 }}>{I18n.t("ngay_het_han")}: {dateToDate(itemClick.current.ExpiryDate)}</Text>
-                                : null
-                        }
-                        <View style={{ flexDirection: 'column', marginLeft: 10, marginRight: 10, padding: 5, marginBottom: 10 }}>
-                            <TouchableOpacity style={{ backgroundColor: '#87CEFF', borderRadius: 5, alignItems: 'center' }}>
-                                <Text style={{ color: '#1E90FF', fontWeight: 'bold' }}>{I18n.t("in_may_thu_ngan")}</Text>
-                            </TouchableOpacity>
-                            <View style={{ flexDirection: 'row', marginTop: 10 }}>
-                                <TouchableOpacity style={{ flex: 1, backgroundColor: '#FFD39B', borderRadius: 5, alignItems: 'center', marginRight: 7, padding: 5 }}>
-                                    <Text style={{ color: '#FF7F24', fontWeight: 'bold' }}>in máy in tem</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={{ flex: 1, backgroundColor: '#FA8072', borderRadius: 5, alignItems: 'center', marginLeft: 7, padding: 5 }} onPress={onClickDel}>
-                                    <Text style={{ color: '#FF3030', fontWeight: 'bold' }}>Xoá</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </View>
-                </View>
-            </Modal>
-            <Modal
-                animationType="fade"
-                supportedOrientations={['portrait', 'landscape']}
-                transparent={true}
-                visible={onCheckDel}
-                onRequestClose={() => {
-                }}>
-                <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
-                    <TouchableWithoutFeedback
-                        onPress={() => {
-                            setModalCheckDel(false)
-                        }}
-                        style={{
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0
-                        }}>
-                        <View style={{
-                            backgroundColor: 'rgba(0,0,0,0.5)', position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0
-                        }}></View>
-
-                    </TouchableWithoutFeedback>
-                    <View style={{ width: Metrics.screenWidth * 0.8 }}>
-                        <View style={{ backgroundColor: 'white', borderRadius: 5 }}>
-                            <Text style={{ fontWeight: 'bold', padding: 10 }}>{itemClick.current.Code}</Text>
-                            <Text style={{ margin: 10 }}>Bạn có chắc muốn xoá mã khuyến mãi?</Text>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginLeft: 10, marginRight: 10, padding: 10 }}>
-                                <TouchableOpacity style={styles.btnHuy}
-                                    onPress={() => setModalCheckDel(false)}>
-                                    <Text style={styles.contenBtnHuy}>Huỷ</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.btnDongY}
-                                    onPress={delVoucher}>
-                                    <Text style={styles.contenBtnDongY}>Đồng ý</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
-                    </View>
-                </View>
-            </Modal>
-            <Modal
-                animationType="fade"
-                supportedOrientations={['portrait', 'landscape']}
-                transparent={true}
-                visible={onShowModalAdd}
-                onRequestClose={() => {
-                }}>
-                <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
-                    <TouchableWithoutFeedback
-                        onPress={() => {
-                            setShowModalAdd(false)
-                        }}
-                        style={{
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0
-                        }}>
-                        <View style={{
-                            backgroundColor: 'rgba(0,0,0,0.5)', position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0
-                        }}></View>
-
-                    </TouchableWithoutFeedback>
-                    <View style={{ width: Metrics.screenWidth * 0.8 ,borderRadius:15}}>
-                        <View style={{ alignItems: 'center', backgroundColor: '#FF4500',borderTopStartRadius:15, borderTopEndRadius:15 }}>
-                            <Text style={{ color: 'white', padding: 10, fontSize: 14 }}>Them moi phieu voucher</Text>
-                        </View>
-                        <View style={{ backgroundColor: 'white' , borderBottomStartRadius:15, borderBottomEndRadius:15}}>
-                            <View style={{ flexDirection: 'row', padding: 10 }}>
-                                <Text style={styles.contentTitle}>Ma voucher</Text>
-                                <TextInput style={{ flex: 2, borderColor: '#B5B5B5', borderWidth: 0.5, borderRadius: 3, height: 20, backgroundColor: '#E8E8E8', textAlign:'center' }}></TextInput>
-                            </View>
-                            <View style={{ flexDirection: 'row', padding: 10 }}>
-                                <Text style={styles.contentTitle}>Gia tri</Text>
-                                <View style={{ flexDirection: 'row', flex: 2 }}>
-                                    <View style={{ flex: 1, flexDirection: 'row', borderRadius: 3,borderColor: '#FF4500', borderWidth:0.5}}>
-                                        <TouchableOpacity style={ispercent==false?styles.btnPercent:styles.btnNotPercent} onPress={()=>setIsPercent(false)}>
-                                            <Text style={ispercent==false?styles.contenBtnDongY:styles.contenBtnHuy}>VND</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity style={ispercent==true?styles.btnPercent:styles.btnNotPercent} onPress={()=>setIsPercent(true)}>
-                                            <Text style={ispercent==true?styles.contenBtnDongY:styles.contenBtnHuy}>%</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                        <TextInput style={{flex: 1.5,marginLeft:5, borderColor: '#B5B5B5', borderWidth: 0.5, borderRadius: 3, height: 20, backgroundColor: '#E8E8E8',textAlign:'right',padding:3 }} keyboardType='numeric' placeholder='0'></TextInput>
-
-                                </View>
-                            </View>
-                            <View style={{ flexDirection: 'row', padding: 10 }}>
-                                <Text style={styles.contentTitle}>Ngay het han</Text>
-                                <View style={{flex:2, flexDirection:'row'}}>
-                                <TextInput style={{ flex: 10, borderColor: '#B5B5B5', borderWidth: 0.5, borderRadius: 3, height: 20, backgroundColor: '#E8E8E8', justifyContent:'center',textAlign:'center' }} editable={false} placeholder='Chon ngay het han'></TextInput>
-                                <TouchableOpacity style={{flex:1.5, marginLeft:10}}>
-                                <Image source={Images.icon_calendar} style={{ width: 20, height: 20 }} />
-                                </TouchableOpacity>
-                                </View>
-                            </View>
-                            <View style={{ flexDirection: 'row', padding: 10 }}>
-                                <Text style={styles.contentTitle}>So luong</Text>
-                                <View style={{flex:2, flexDirection:'row'}}>
-                                    <TouchableOpacity style = {{flex:1,borderWidth:0.5,borderColor:'#FF4500', alignItems:'center',borderRadius:3, marginRight:10}} onPress={()=>setQuantity(quantity>=1?quantity-1:0)}>
-                                        <Text style={{color:'#FF4500'}}>-</Text>
-                                    </TouchableOpacity>
-                                <TextInput style={{ flex: 6, borderColor: '#B5B5B5', borderWidth: 0.5, borderRadius: 3, height: 20, backgroundColor: '#E8E8E8',textAlign:'center' }} keyboardType='numeric' placeholder='0' value={quantity!=0?quantity.toString():null} onChangeText={text=>setQuantity(text)}></TextInput>
-                                <TouchableOpacity style={{flex:1, marginLeft:10,borderWidth:0.5,borderColor:'#FF4500', borderRadius:3,alignItems:'center'}} onPress={()=>{setQuantity(quantity+1)}}>
-                                     <Text style={{color:'#FF4500'}}>+</Text>
-                                </TouchableOpacity>
-                                </View>
-                            </View>
-                            <View style={{marginLeft:5, marginRight:5,backgroundColor:'#CFCFCF',height:0.5}}></View>
-                            <View style={{flexDirection:'row', marginLeft:10, marginRight:10, padding:10}}>
-                                    <TouchableOpacity style={styles.btnHuy} onPress={()=>setShowModalAdd(false)}>
-                                        <Text style={styles.contenBtnHuy}>Huy bo</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity style={styles.btnDongY}>
-                                        <Text style={styles.contenBtnDongY}>Xong</Text>
-                                    </TouchableOpacity>
-                            </View>
-                        </View>
-                    </View>
-                </View>
-            </Modal>
-
-
         </View>
 
     )
 }
 const styles = StyleSheet.create({
-    btnHuy:{
-        flex: 1, alignItems: 'center', padding: 5, backgroundColor: 'white', borderRadius: 3, borderWidth: 1, borderColor: '#FF4500', marginRight: 5, marginLeft:10
+    btnHuy: {
+        flex: 1, alignItems: 'center', padding: 5, backgroundColor: 'white', borderRadius: 3, borderWidth: 1, borderColor: '#FF4500', marginRight: 5, marginLeft: 10
     },
-    btnDongY:{
-        flex: 1, alignItems: 'center', padding: 5, backgroundColor: '#FF4500', borderRadius: 3, marginRight: 10, marginLeft:5  
+    btnDongY: {
+        flex: 1, alignItems: 'center', padding: 5, backgroundColor: '#FF4500', borderRadius: 3, marginRight: 10, marginLeft: 5
     },
-    contenBtnHuy:{
+    contenBtnHuy: {
         color: '#FF4500'
     },
-    contenBtnDongY:{
-        color:'white'
+    contenBtnDongY: {
+        color: 'white'
     },
-    contentTitle:{
-        flex:1,
-        color:'#9C9C9C'
+    contentTitle: {
+        flex: 1,
+        color: '#9C9C9C'
     },
-    btnPercent:{
-        backgroundColor:'#FF4500',
-        alignItems:'center',flex:1
-        , borderColor: '#FF4500',borderRadius:3
+    btnPercent: {
+        backgroundColor: '#FF4500',
+        alignItems: 'center', flex: 1
+        , borderColor: '#FF4500', borderRadius: 3
     },
-    btnNotPercent:{
-        backgroundColor:'white',
-        alignItems:'center',flex:1
-        , borderRadius:3
+    btnNotPercent: {
+        backgroundColor: 'white',
+        alignItems: 'center', flex: 1
+        , borderRadius: 3
     },
-    textInput:{
+    textInput: {
         textAlign: 'center',
-        alignItems:'center',
-        alignContent:'center'
+        alignItems: 'center',
+        alignContent: 'center'
+    },
+    styleTextInput:{
+        marginLeft: 5, borderColor: '#B5B5B5', borderWidth: 0.5, borderRadius: 3, height: 20, backgroundColor: '#E8E8E8', textAlign: 'right', padding: 3, textAlign:'center'
+    },
+    textTitle:{
+        fontSize: 12, color: '#696969'
     }
 
-    
+
 })

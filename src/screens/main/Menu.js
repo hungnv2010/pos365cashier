@@ -472,7 +472,7 @@ const ContentComponent = (props) => {
     const onClickItem = (chucnang, index) => {
         console.log("onClickItem props ", props);
         let params = {};
-        if (chucnang.func == ScreenList.Home || chucnang.func == ScreenList.Customer || chucnang.func == ScreenList.Settings || chucnang.func == ScreenList.Invoice || chucnang.func == ScreenList.OverView  || chucnang.func == ScreenList.RoomHistory) {
+        if (chucnang.func == ScreenList.Home || chucnang.func == ScreenList.Customer || chucnang.func == ScreenList.Settings || chucnang.func == ScreenList.Invoice || chucnang.func == ScreenList.OverView  || chucnang.func == ScreenList.RoomHistory|| chucnang.func == ScreenList.Vouchers) {
             setCurrentItemMenu(index)
         }
         props.navigation.navigate(chucnang.func, params)

@@ -235,8 +235,8 @@ PODS:
     - React
   - react-native-view-shot (3.1.2):
     - React
-  - react-native-webview (9.4.0):
-    - React
+  - react-native-webview (11.0.2):
+    - React-Core
   - React-RCTActionSheet (0.61.5):
     - React-Core/RCTActionSheetHeaders (= 0.61.5)
   - React-RCTAnimation (0.61.5):
@@ -535,20 +535,12 @@ SPEC CHECKSUMS:
   React-jsi: cb2cd74d7ccf4cffb071a46833613edc79cdf8f7
   React-jsiexecutor: d5525f9ed5f782fdbacb64b9b01a43a9323d2386
   React-jsinspector: fa0ecc501688c3c4c34f28834a76302233e29dc0
-<<<<<<< HEAD
   react-native-camera: 2b74be8edc1103c4c46d1f4e5f41723d9ff052cc
+  react-native-date-picker: 7b03feaea96db983f1de449e9d6d1dea4fa61010
   react-native-netinfo: cd479ab1b67cdd1cb1403a99ecdb24190a6dd7ef
   react-native-safe-area-context: e200d4433aba6b7e60b52da5f37af11f7a0b0392
   react-native-view-shot: 4475fde003fe8a210053d1f98fb9e06c1d834e1c
-  react-native-webview: cf5527893252b3b036eea024a1da6996f7344c74
-=======
-  react-native-camera: 9e3d60336e221d62e5b72adf551ca31ff74a94b5
-  react-native-date-picker: 7b03feaea96db983f1de449e9d6d1dea4fa61010
-  react-native-netinfo: eed0fb1d6a9424e98ce686f92aad62ff427d4bc9
-  react-native-safe-area-context: 8260e5157617df4b72865f44006797f895b2ada7
-  react-native-view-shot: 08c46c9e8e92f6681e8f2ffa55ac3d06e7e99070
-  react-native-webview: 0e2881d2e3e72ad52a82445c1a116c43205fd471
->>>>>>> dbc199c2be7d9ba372d022995055690452165e7b
+  react-native-webview: dfd7202ff115c44d3ea401c2f36122fb3ac79f07
   React-RCTActionSheet: 600b4d10e3aea0913b5a92256d2719c0cdd26d76
   React-RCTAnimation: 791a87558389c80908ed06cc5dfc5e7920dfa360
   React-RCTBlob: d89293cc0236d9cb0933d85e430b0bbe81ad1d72

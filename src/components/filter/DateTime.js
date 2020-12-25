@@ -4,11 +4,12 @@ import I18n from '../../common/language/i18n';
 import { Metrics, Images } from '../../theme';
 import colors from '../../theme/Colors';
 import { Constant } from '../../common/Constant';
-import DateRangePicker from "react-native-daterange-picker";
+//import DateRangePicker from "react-native-daterange-picker";
 import moment from "moment";
 import { dateToString } from '../../common/Utils';
 import { RadioButton } from 'react-native-paper'
 import { check } from 'react-native-permissions';
+import DatePicker from 'react-native-date-picker';
 
 
 export default (props) => {
@@ -95,7 +96,7 @@ export default (props) => {
                         alignItems: "center",
                         justifyContent: "center",
                     }}>
-                        <DateRangePicker
+                        <DatePicker
                             visible={true}
                             onChange={(dates) => setDates(dates)}
                             endDate={dateTimePicker.endDate}
@@ -112,7 +113,7 @@ export default (props) => {
                                 </TouchableOpacity>
                             </View>}
                         >
-                        </DateRangePicker>
+                        </DatePicker>
                     </View>
             }
         </View>
