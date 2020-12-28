@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ScrollView } from 'react-native';
 import { Switch } from 'react-native';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, PermissionsAndroid } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, NativeModules } from 'react-native';
 import ToolBarDefault from '../../components/toolbar/ToolBarDefault'
 import I18n from '../../common/language/i18n'
 import MainToolBar from '../main/MainToolBar';
@@ -19,7 +19,7 @@ import { ScreenList } from '../../common/ScreenList';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
-
+const { Print } = NativeModules;
 
 export default (props) => {
     const dispatch = useDispatch();
@@ -224,6 +224,10 @@ export default (props) => {
                 saveState({ ...settingObject, nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: data.stt })
                 break
             case 'giu_man_hinh_luon_sang':
+                if (data.stt == true)
+                    Print.keepTheScreenOn("ok")
+                else
+                    Print.keepTheScreenOff("ok")
                 saveState({ ...settingObject, giu_man_hinh_luon_sang: data.stt })
                 break
         }
@@ -513,7 +517,7 @@ export default (props) => {
                                     <Text style={{ fontSize: 18, justifyContent: 'center', marginTop: 10, marginLeft: 20 }}>{I18n.t('nhap_chieu_rong_kho_giay')}</Text>
                                     <TextInput style={styles.textInputStyle} placeholder='58..80' keyboardType='numeric' onChangeText={text => setDefaultSize(text)}></TextInput>
                                     <TouchableOpacity style={{ justifyContent: 'flex-end', alignItems: 'flex-end', marginTop: 10, marginBottom: 10 }} onPress={changePrintTypeKitchenA}>
-                                        <Text style={{ textAlign: 'center', color: '#FF4500', marginRight: 50, fontSize:12 }} >{I18n.t("dong_y")}</Text>
+                                        <Text style={{ textAlign: 'center', color: '#FF4500', marginRight: 50, fontSize: 12 }} >{I18n.t("dong_y")}</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -608,7 +612,7 @@ export default (props) => {
                                     <Text style={{ fontSize: 18, justifyContent: 'center', marginTop: 10, marginLeft: 20 }}>{I18n.t('nhap_dia_chi_ip_may')}</Text>
                                     <TextInput style={styles.textInputStyle} value={stateValueIp} keyboardType='decimal-pad' onChangeText={text => changeValueIp(text)} ></TextInput>
                                     <TouchableOpacity style={{ justifyContent: 'flex-end', alignItems: 'flex-end', marginTop: 10, marginBottom: 10 }} onPress={setIpLANPrint}>
-                                        <Text style={{ textAlign: 'center', color: '#FF4500', marginRight: 50, fontSize:12 }} >{I18n.t("dong_y")}</Text>
+                                        <Text style={{ textAlign: 'center', color: '#FF4500', marginRight: 50, fontSize: 12 }} >{I18n.t("dong_y")}</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>

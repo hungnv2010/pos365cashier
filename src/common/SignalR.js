@@ -41,6 +41,8 @@ class SignalRManager {
         }
         signalRInfo = this.info;
         this.subjectReceive = new Subject()
+        console.log(" subjectReceive === ", this.subjectReceive);
+        
         this.subjectReceive.map(serverEvent => {
             return serverEvent
         })

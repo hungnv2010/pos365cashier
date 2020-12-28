@@ -98,6 +98,22 @@ RCT_EXPORT_METHOD(openAppOrder: (RCTResponseSenderBlock)callback) {
   }
 }
 
+RCT_EXPORT_METHOD(keepTheScreenOn:(NSString *)param) {
+
+  NSLog(@"setIdleTimerDisabled YES");
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [[UIApplication sharedApplication] setIdleTimerDisabled: YES];
+  });
+}
+
+RCT_EXPORT_METHOD(keepTheScreenOff:(NSString *)param) {
+
+  NSLog(@"setIdleTimerDisabled NO");
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [[UIApplication sharedApplication] setIdleTimerDisabled: NO];
+  });
+}
+
 - (void) printClient {
   images = [@[] mutableCopy];
   

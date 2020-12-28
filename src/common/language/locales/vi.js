@@ -175,6 +175,7 @@ export default {
   lich_su: "Lịch sử",
   lich_su_goi_mon: "Lịch sử gọi món",
   loai_hinh_thanh_toan: 'Loại hình thanh toán',
+  loc_theo_trang_thai: "Lọc theo trạng thái",
 
   // TODO: M
   mang_luoi: 'Mạng lưới',
