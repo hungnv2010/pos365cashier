@@ -35,6 +35,7 @@ const KEY_FUNC = {
     INVOICE: ScreenList.Invoice,
     CASH_FLOW: ScreenList.CashFlow,
     ROOM_HISTORY: ScreenList.RoomHistory,
+    ORDER_OFFLINE: ScreenList.OrderOffline,
     VOUCHERS: ScreenList.Vouchers
 }
 
@@ -45,11 +46,11 @@ const LIST_FUNCITION = [
         title: "man_hinh_thu_ngan"
     },
 
-    // {
-    //     func: KEY_FUNC.ORDER_NOW,
-    //     icon: Images.icon_inventory,
-    //     title: "dang_goi_mon"
-    // },
+    {
+        func: KEY_FUNC.ORDER_OFFLINE,
+        icon: Images.icon_inventory,
+        title: "don_hang_offline"
+    },
     // {
     //     func: KEY_FUNC.HISTORY,
     //     icon: Images.icon_customer,
@@ -415,6 +416,12 @@ const ContentComponent = (props) => {
     const dispatch = useDispatch();
     const [version, setVersion] = useState("");
     const [currentItemMenu, setCurrentItemMenu] = useState(0);
+    const [numberOrderOffline, setNumberOrderOffline] = useState(0);
+
+    realmStore.queryOrdersOffline().then(orderOffline => {
+        console.log("Abc orderOffline ", orderOffline.length);
+        setNumberOrderOffline(orderOffline.length)
+    })
 
     useEffect(() => {
         const getCurrentIP = async () => {
@@ -432,6 +439,7 @@ const ContentComponent = (props) => {
                 console.log("DeviceInfo.getVersion() ===  ", res);
                 setVersion(res)
             });
+            // 
         }
         getCurrentIP()
     }, [])
@@ -479,6 +487,7 @@ const ContentComponent = (props) => {
         props.navigation.closeDrawer();
     }
 
+
     const _renderItem = (chucnang = {}, indexchucnnag = 0) => {
         return (
             <View key={indexchucnnag} style={{ width: "100%", backgroundColor: currentItemMenu == indexchucnnag ? "#EEEEEE" : "#fff" }}>
@@ -496,6 +505,8 @@ const ContentComponent = (props) => {
 
                         <Paragraph style={styles.text_menu}>
                             {I18n.t(chucnang.title)}
+                            {chucnang.title == "don_hang_offline" ?
+                                <Text style={{ color: Colors.colorBlueText }}>{numberOrderOffline > 0 ? `[${numberOrderOffline}]` : null}</Text> : null}
                             {chucnang.title == "hotline" ?
                                 <Text style={{ color: Colors.colorBlueText }}> {Constant.HOTLINE}</Text> : null}
                             {chucnang.title == "phien_ban_ngay" ?

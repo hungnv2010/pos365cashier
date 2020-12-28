@@ -92,7 +92,7 @@ export default (props) => {
   useEffect(() => {
     const syncDatas = async () => {
       if (isFNB === null) return
-      await realmStore.deleteAll()
+      // await realmStore.deleteAll()
       if (isFNB === true) {
         await syncForFNB()
       } else {

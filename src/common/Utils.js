@@ -58,7 +58,7 @@ export const momentToStringDateLocal = (
   return dateTimeUtc
 }
 
-export const dateUTCToDate = (date, inputFormat = "YYYYMMDDhhmmss", outputFormat = "HH:mm DD/MM/YYYY") => {
+export const dateUTCToDate = (date, inputFormat = "EEE MMM dd HH:mm:ss zzz yyyy", outputFormat = "HH:mm DD/MM/YYYY") => {
   let momentUTC = moment.utc(date, inputFormat)
   let momentITC = moment(momentUTC).local();
   let dateITC = momentITC.format(outputFormat);

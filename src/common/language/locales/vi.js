@@ -92,6 +92,7 @@ export default {
   du_no: "Dư nợ",
   dien_thoai:"Điện thoại",
   don_hang_moi: "Đơn mới",
+  don_hang_offline: "Đơn hàng offline",
 
   // TODO: E
 
