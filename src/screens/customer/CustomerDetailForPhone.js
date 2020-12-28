@@ -6,7 +6,6 @@ import { Images, Metrics } from '../../theme';
 import { currencyToString, momentToStringDateLocal, dateToString } from '../../common/Utils';
 import colors from '../../theme/Colors';
 import { Constant } from '../../common/Constant';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 import { HTTPService } from '../../data/services/HttpService';
 import { ApiPath } from '../../data/services/ApiPath';

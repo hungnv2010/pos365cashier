@@ -23,7 +23,7 @@ import { HTTPService, URL } from '../../data/services/HttpService';
 import dialogManager from '../../components/dialog/DialogManager';
 import dataManager from '../../data/DataManager';
 import QRCode from 'react-native-qrcode-svg';
-import DateTimePicker from '@react-native-community/datetimepicker';
+// import DateTimePicker from '@react-native-community/datetimepicker';
 import ViewPrint, { TYPE_PRINT } from '../more/ViewPrint';
 import DatePicker from 'react-native-date-picker';
 

@@ -8,12 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* Pos365CashierTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* Pos365CashierTests.m */; };
-		0AA7B82D98C10FC7CB4DD302 /* libPods-Pos365Cashier-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C102D7554F33C7F2E91EE91C /* libPods-Pos365Cashier-tvOSTests.a */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		19932F186E698697CF0A7E5E /* libPods-Pos365Cashier.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A0ED5839C1DFC765C1E6A6C /* libPods-Pos365Cashier.a */; };
 		1A528574247226170090BA8A /* libRTPrinterSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A528573247226170090BA8A /* libRTPrinterSDK.a */; };
 		1A528576247226310090BA8A /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A528575247226310090BA8A /* CoreBluetooth.framework */; };
 		1A528578247226380090BA8A /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A528577247226380090BA8A /* libz.tbd */; };
@@ -23,8 +21,10 @@
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* Pos365CashierTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* Pos365CashierTests.m */; };
-		8878E8C1370A35994331A062 /* libPods-Pos365CashierTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C27990B52DC92A4256819DF /* libPods-Pos365CashierTests.a */; };
-		F555ED54BBB8CF4EA225AFFF /* libPods-Pos365Cashier-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3313BDDD123AC8BE2D5AEB0 /* libPods-Pos365Cashier-tvOS.a */; };
+		360756E23974BB6857DABB8D /* libPods-Pos365Cashier.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 25E53D977576EF042D47D51D /* libPods-Pos365Cashier.a */; };
+		83C50E4F1A7FD57CCF68C2F0 /* libPods-Pos365Cashier-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2669F7D64B324D15DFEC80CA /* libPods-Pos365Cashier-tvOS.a */; };
+		A85C91D561F0E1175DB6A966 /* libPods-Pos365CashierTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78E933E89114214738902196 /* libPods-Pos365CashierTests.a */; };
+		AB951C2B607AE95FEE28938E /* libPods-Pos365Cashier-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F65DF761801FC06758DB33F /* libPods-Pos365Cashier-tvOSTests.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,7 +49,6 @@
 		00E356EE1AD99517003FC87E /* Pos365CashierTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Pos365CashierTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* Pos365CashierTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Pos365CashierTests.m; sourceTree = "<group>"; };
-		057DE499ECC4E6A42F7C8AF6 /* Pods-Pos365CashierTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pos365CashierTests.debug.xcconfig"; path = "Target Support Files/Pods-Pos365CashierTests/Pods-Pos365CashierTests.debug.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Pos365Cashier.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Pos365Cashier.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = Pos365Cashier/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = Pos365Cashier/AppDelegate.m; sourceTree = "<group>"; };
@@ -57,7 +56,6 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Pos365Cashier/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Pos365Cashier/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Pos365Cashier/main.m; sourceTree = "<group>"; };
-		166245070632AFE97E043172 /* Pods-Pos365Cashier-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pos365Cashier-tvOS.release.xcconfig"; path = "Target Support Files/Pods-Pos365Cashier-tvOS/Pods-Pos365Cashier-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		1A528573247226170090BA8A /* libRTPrinterSDK.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libRTPrinterSDK.a; sourceTree = "<group>"; };
 		1A528575247226310090BA8A /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		1A528577247226380090BA8A /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
@@ -104,20 +102,22 @@
 		1A5285A524726E930090BA8A /* BitmapSetting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BitmapSetting.h; path = Common/BitmapSetting.h; sourceTree = "<group>"; };
 		1A5285A624726E930090BA8A /* ZPLCmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZPLCmd.h; path = Common/ZPLCmd.h; sourceTree = "<group>"; };
 		1ACB4B6E2591CDAB00BA5E1F /* PrivateHeaders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrivateHeaders.h; sourceTree = "<group>"; };
+		21B9A29277C5EFA95C6A3C4F /* Pods-Pos365Cashier-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pos365Cashier-tvOS.release.xcconfig"; path = "Target Support Files/Pods-Pos365Cashier-tvOS/Pods-Pos365Cashier-tvOS.release.xcconfig"; sourceTree = "<group>"; };
+		2435402DC38DA9FEECE3C003 /* Pods-Pos365CashierTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pos365CashierTests.debug.xcconfig"; path = "Target Support Files/Pods-Pos365CashierTests/Pods-Pos365CashierTests.debug.xcconfig"; sourceTree = "<group>"; };
+		25E53D977576EF042D47D51D /* libPods-Pos365Cashier.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Pos365Cashier.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		2669F7D64B324D15DFEC80CA /* libPods-Pos365Cashier-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Pos365Cashier-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E47B1E0B4A5D006451C7 /* Pos365Cashier-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Pos365Cashier-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* Pos365Cashier-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Pos365Cashier-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		402A6A0C48FD3CD39A9D0EEA /* Pods-Pos365CashierTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pos365CashierTests.release.xcconfig"; path = "Target Support Files/Pods-Pos365CashierTests/Pods-Pos365CashierTests.release.xcconfig"; sourceTree = "<group>"; };
-		4232146EED0222861105CD1E /* Pods-Pos365Cashier-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pos365Cashier-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-Pos365Cashier-tvOS/Pods-Pos365Cashier-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
-		6617621057B4C52677488AEC /* Pods-Pos365Cashier.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pos365Cashier.release.xcconfig"; path = "Target Support Files/Pods-Pos365Cashier/Pods-Pos365Cashier.release.xcconfig"; sourceTree = "<group>"; };
-		6A0ED5839C1DFC765C1E6A6C /* libPods-Pos365Cashier.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Pos365Cashier.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		8BF7FD65B19D4E175A1A0738 /* Pods-Pos365Cashier.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pos365Cashier.debug.xcconfig"; path = "Target Support Files/Pods-Pos365Cashier/Pods-Pos365Cashier.debug.xcconfig"; sourceTree = "<group>"; };
-		8C1605767C4E385B9032DC85 /* Pods-Pos365Cashier-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pos365Cashier-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-Pos365Cashier-tvOSTests/Pods-Pos365Cashier-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
-		8C27990B52DC92A4256819DF /* libPods-Pos365CashierTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Pos365CashierTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		B3313BDDD123AC8BE2D5AEB0 /* libPods-Pos365Cashier-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Pos365Cashier-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		C102D7554F33C7F2E91EE91C /* libPods-Pos365Cashier-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Pos365Cashier-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		78E933E89114214738902196 /* libPods-Pos365CashierTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Pos365CashierTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7F65DF761801FC06758DB33F /* libPods-Pos365Cashier-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Pos365Cashier-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7F99BC5F54E126664825A5AB /* Pods-Pos365Cashier-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pos365Cashier-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-Pos365Cashier-tvOS/Pods-Pos365Cashier-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
+		B3FF8A8A2AA7107D1DCDC9CD /* Pods-Pos365CashierTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pos365CashierTests.release.xcconfig"; path = "Target Support Files/Pods-Pos365CashierTests/Pods-Pos365CashierTests.release.xcconfig"; sourceTree = "<group>"; };
+		BC7F917EB6F152A16ACF4402 /* Pods-Pos365Cashier.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pos365Cashier.debug.xcconfig"; path = "Target Support Files/Pods-Pos365Cashier/Pods-Pos365Cashier.debug.xcconfig"; sourceTree = "<group>"; };
+		C602AD95F926827C03D70B0F /* Pods-Pos365Cashier.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pos365Cashier.release.xcconfig"; path = "Target Support Files/Pods-Pos365Cashier/Pods-Pos365Cashier.release.xcconfig"; sourceTree = "<group>"; };
+		D5086C2C0496E3CD0BAE634E /* Pods-Pos365Cashier-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pos365Cashier-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-Pos365Cashier-tvOSTests/Pods-Pos365Cashier-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
-		FC997C20223923704A985E2E /* Pods-Pos365Cashier-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pos365Cashier-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-Pos365Cashier-tvOSTests/Pods-Pos365Cashier-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
+		F41B35C13053D51026CEBC7B /* Pods-Pos365Cashier-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pos365Cashier-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-Pos365Cashier-tvOSTests/Pods-Pos365Cashier-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,7 +125,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8878E8C1370A35994331A062 /* libPods-Pos365CashierTests.a in Frameworks */,
+				A85C91D561F0E1175DB6A966 /* libPods-Pos365CashierTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -136,7 +136,7 @@
 				1A528578247226380090BA8A /* libz.tbd in Frameworks */,
 				1A528576247226310090BA8A /* CoreBluetooth.framework in Frameworks */,
 				1A528574247226170090BA8A /* libRTPrinterSDK.a in Frameworks */,
-				19932F186E698697CF0A7E5E /* libPods-Pos365Cashier.a in Frameworks */,
+				360756E23974BB6857DABB8D /* libPods-Pos365Cashier.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -144,7 +144,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F555ED54BBB8CF4EA225AFFF /* libPods-Pos365Cashier-tvOS.a in Frameworks */,
+				83C50E4F1A7FD57CCF68C2F0 /* libPods-Pos365Cashier-tvOS.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -152,7 +152,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0AA7B82D98C10FC7CB4DD302 /* libPods-Pos365Cashier-tvOSTests.a in Frameworks */,
+				AB951C2B607AE95FEE28938E /* libPods-Pos365Cashier-tvOSTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -265,10 +265,10 @@
 				1A528575247226310090BA8A /* CoreBluetooth.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
-				6A0ED5839C1DFC765C1E6A6C /* libPods-Pos365Cashier.a */,
-				B3313BDDD123AC8BE2D5AEB0 /* libPods-Pos365Cashier-tvOS.a */,
-				C102D7554F33C7F2E91EE91C /* libPods-Pos365Cashier-tvOSTests.a */,
-				8C27990B52DC92A4256819DF /* libPods-Pos365CashierTests.a */,
+				25E53D977576EF042D47D51D /* libPods-Pos365Cashier.a */,
+				2669F7D64B324D15DFEC80CA /* libPods-Pos365Cashier-tvOS.a */,
+				7F65DF761801FC06758DB33F /* libPods-Pos365Cashier-tvOSTests.a */,
+				78E933E89114214738902196 /* libPods-Pos365CashierTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -309,14 +309,14 @@
 		DAF8AE9510FDBB34FD52E9B3 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				8BF7FD65B19D4E175A1A0738 /* Pods-Pos365Cashier.debug.xcconfig */,
-				6617621057B4C52677488AEC /* Pods-Pos365Cashier.release.xcconfig */,
-				4232146EED0222861105CD1E /* Pods-Pos365Cashier-tvOS.debug.xcconfig */,
-				166245070632AFE97E043172 /* Pods-Pos365Cashier-tvOS.release.xcconfig */,
-				FC997C20223923704A985E2E /* Pods-Pos365Cashier-tvOSTests.debug.xcconfig */,
-				8C1605767C4E385B9032DC85 /* Pods-Pos365Cashier-tvOSTests.release.xcconfig */,
-				057DE499ECC4E6A42F7C8AF6 /* Pods-Pos365CashierTests.debug.xcconfig */,
-				402A6A0C48FD3CD39A9D0EEA /* Pods-Pos365CashierTests.release.xcconfig */,
+				BC7F917EB6F152A16ACF4402 /* Pods-Pos365Cashier.debug.xcconfig */,
+				C602AD95F926827C03D70B0F /* Pods-Pos365Cashier.release.xcconfig */,
+				7F99BC5F54E126664825A5AB /* Pods-Pos365Cashier-tvOS.debug.xcconfig */,
+				21B9A29277C5EFA95C6A3C4F /* Pods-Pos365Cashier-tvOS.release.xcconfig */,
+				D5086C2C0496E3CD0BAE634E /* Pods-Pos365Cashier-tvOSTests.debug.xcconfig */,
+				F41B35C13053D51026CEBC7B /* Pods-Pos365Cashier-tvOSTests.release.xcconfig */,
+				2435402DC38DA9FEECE3C003 /* Pods-Pos365CashierTests.debug.xcconfig */,
+				B3FF8A8A2AA7107D1DCDC9CD /* Pods-Pos365CashierTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -328,7 +328,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 00E357021AD99517003FC87E /* Build configuration list for PBXNativeTarget "Pos365CashierTests" */;
 			buildPhases = (
-				F99FB458FF61A7A07D2EE49F /* [CP] Check Pods Manifest.lock */,
+				8793A8192378D90E5CF5EDD1 /* [CP] Check Pods Manifest.lock */,
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
@@ -347,13 +347,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Pos365Cashier" */;
 			buildPhases = (
-				D2300A435F3BA20556ED6C96 /* [CP] Check Pods Manifest.lock */,
+				6D8368625F510CEC792228F1 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				AE2B76233D1B7AE3E958F029 /* [CP] Copy Pods Resources */,
+				4F10DA68F2D059480147170F /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -368,7 +368,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D02E4BA1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "Pos365Cashier-tvOS" */;
 			buildPhases = (
-				8FB421F36C2405B8B911E7C6 /* [CP] Check Pods Manifest.lock */,
+				ECD2D136E2D78D79BD2F0D85 /* [CP] Check Pods Manifest.lock */,
 				FD10A7F122414F3F0027D42C /* Start Packager */,
 				2D02E4771E0B4A5D006451C7 /* Sources */,
 				2D02E4781E0B4A5D006451C7 /* Frameworks */,
@@ -388,7 +388,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2D02E4BB1E0B4A5E006451C7 /* Build configuration list for PBXNativeTarget "Pos365Cashier-tvOSTests" */;
 			buildPhases = (
-				1DE2FB72A630087C7BB3A2EC /* [CP] Check Pods Manifest.lock */,
+				0660E224C6C03CF69B6D71F8 /* [CP] Check Pods Manifest.lock */,
 				2D02E48C1E0B4A5D006451C7 /* Sources */,
 				2D02E48D1E0B4A5D006451C7 /* Frameworks */,
 				2D02E48E1E0B4A5D006451C7 /* Resources */,
@@ -504,7 +504,7 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
 		};
-		1DE2FB72A630087C7BB3A2EC /* [CP] Check Pods Manifest.lock */ = {
+		0660E224C6C03CF69B6D71F8 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -540,29 +540,7 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
 		};
-		8FB421F36C2405B8B911E7C6 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Pos365Cashier-tvOS-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		AE2B76233D1B7AE3E958F029 /* [CP] Copy Pods Resources */ = {
+		4F10DA68F2D059480147170F /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -610,7 +588,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Pos365Cashier/Pods-Pos365Cashier-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		D2300A435F3BA20556ED6C96 /* [CP] Check Pods Manifest.lock */ = {
+		6D8368625F510CEC792228F1 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -632,7 +610,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		F99FB458FF61A7A07D2EE49F /* [CP] Check Pods Manifest.lock */ = {
+		8793A8192378D90E5CF5EDD1 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -648,6 +626,28 @@
 			);
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/Pods-Pos365CashierTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		ECD2D136E2D78D79BD2F0D85 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Pos365Cashier-tvOS-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -761,7 +761,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 057DE499ECC4E6A42F7C8AF6 /* Pods-Pos365CashierTests.debug.xcconfig */;
+			baseConfigurationReference = 2435402DC38DA9FEECE3C003 /* Pods-Pos365CashierTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				DEVELOPMENT_TEAM = S8C4LR9F7U;
@@ -785,7 +785,7 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 402A6A0C48FD3CD39A9D0EEA /* Pods-Pos365CashierTests.release.xcconfig */;
+			baseConfigurationReference = B3FF8A8A2AA7107D1DCDC9CD /* Pods-Pos365CashierTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
@@ -806,7 +806,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8BF7FD65B19D4E175A1A0738 /* Pods-Pos365Cashier.debug.xcconfig */;
+			baseConfigurationReference = BC7F917EB6F152A16ACF4402 /* Pods-Pos365Cashier.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CURRENT_PROJECT_VERSION = 29;
@@ -890,7 +890,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6617621057B4C52677488AEC /* Pods-Pos365Cashier.release.xcconfig */;
+			baseConfigurationReference = C602AD95F926827C03D70B0F /* Pods-Pos365Cashier.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CURRENT_PROJECT_VERSION = 29;
@@ -973,7 +973,7 @@
 		};
 		2D02E4971E0B4A5E006451C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4232146EED0222861105CD1E /* Pods-Pos365Cashier-tvOS.debug.xcconfig */;
+			baseConfigurationReference = 7F99BC5F54E126664825A5AB /* Pods-Pos365Cashier-tvOS.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -1002,7 +1002,7 @@
 		};
 		2D02E4981E0B4A5E006451C7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 166245070632AFE97E043172 /* Pods-Pos365Cashier-tvOS.release.xcconfig */;
+			baseConfigurationReference = 21B9A29277C5EFA95C6A3C4F /* Pods-Pos365Cashier-tvOS.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -1031,7 +1031,7 @@
 		};
 		2D02E4991E0B4A5E006451C7 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = FC997C20223923704A985E2E /* Pods-Pos365Cashier-tvOSTests.debug.xcconfig */;
+			baseConfigurationReference = D5086C2C0496E3CD0BAE634E /* Pods-Pos365Cashier-tvOSTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
@@ -1059,7 +1059,7 @@
 		};
 		2D02E49A1E0B4A5E006451C7 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8C1605767C4E385B9032DC85 /* Pods-Pos365Cashier-tvOSTests.release.xcconfig */;
+			baseConfigurationReference = F41B35C13053D51026CEBC7B /* Pods-Pos365Cashier-tvOSTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;

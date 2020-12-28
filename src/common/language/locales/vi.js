@@ -378,6 +378,7 @@ export default {
   cai_dat_the_cung: "Cài đặt thẻ cứng",
   chan_trang: "Chân trang",
   chi_tiet_huy_tra_hang:"Chi tiết hủy trả hàng",
+  chon_ngay_het_han:"Chọn ngày hết hạn",
 
   don_vi_tien_te: "Đơn vị tiền tệ",
   dollar_my: "Dollar Mỹ",
@@ -397,6 +398,8 @@ export default {
   in_qua_bluetooth: "In qua Bluetooth",
   in_qua_usb: "In qua USB",
   in_hoa_don_truoc_khi_thanh_toan_VNPAYQR_thanh_cong: "In hóa đơn trước khi thanh toán VNPAY-QR thành công? ",
+  in_may_in_thu_ngan:"In máy in thu ngân",
+  in_may_in_tem:"In máy in tem",
 
   khong_cho_phep_ban_hang_khi_het_ton_kho: "Không cho phép bán hàng khi hết tồn kho",
   khong_in: "Không in",
@@ -417,6 +420,7 @@ export default {
   may_in_tem: "Máy in tem",
   mo_cashbox_sau_khi_thanh_toan: "Mở cashbox sau khi thanh toán",
   ma_san_pham:"Mã sản phẩm",
+  ma_voucher:'Mã Voucher',
 
   nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: "Nhận tin nhắn/ thông báo từ phục vụ, quản lý?",
   nhap_so_luong_the: "Nhập số lượng thẻ",
@@ -444,6 +448,7 @@ export default {
   ten_hang_hoa:"Tên hàng hóa",
   thanh_tien:"Thành tiền",
   thanh_toan_vnpaypos_qua_may_pos: "Thanh toán VNPAY-POS qua máy POS?",
+  them_moi_voucher:"Thêm mới phiếu voucher",
 
   vnd: "VND",
   voucher:"Mã quà tặng"

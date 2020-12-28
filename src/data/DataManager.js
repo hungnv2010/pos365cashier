@@ -500,4 +500,3 @@ class DataManager {
 
 const dataManager = new DataManager();
 export default dataManager;
-

@@ -11,8 +11,8 @@ import { useSelector } from 'react-redux';
 import { Constant } from '../../common/Constant';
 import { getFileDuLieuString } from '../../data/fileStore/FileStorage';
 import moment from 'moment';
-import DateRangePicker from 'react-native-daterange-picker';
-import DateTimePicker from '@react-native-community/datetimepicker';
+// import DateRangePicker from 'react-native-daterange-picker';
+// import DateTimePicker from '@react-native-community/datetimepicker';
 import { HTTPService } from '../../data/services/HttpService';
 import { ApiPath } from '../../data/services/ApiPath';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
@@ -176,7 +176,7 @@ export default (props) => {
         setShowModal(false)
     }
 
-    const onChange = (event, selectedDate) => {
+    const onChange = (selectedDate) => {
         dateTmp.current = selectedDate;
     }
 
