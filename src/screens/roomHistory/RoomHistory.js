@@ -174,8 +174,8 @@ export default (props) => {
     }, [roomHistoryData])
     const renderListItem = (item, index) => {
         return (
-            <TouchableOpacity key={index.toString()} onPress={() => onCLickRoomHistoryItem(item)} style={{ marginBottom: 2 }}>
-                <View style={{ flexDirection: "row", alignItems: 'center', alignContent: 'center', padding: 10, borderColor: 'silver', backgroundColor: roomHistoryItem ? item.Id == roomHistoryItem.Id ? "#F6DFCE" : 'white' : 'white', borderRadius: 10 }}>
+            <TouchableOpacity key={index.toString()} onPress={() => onCLickRoomHistoryItem(item)} style={{ marginBottom: 5, borderWidth:0.5, marginLeft:5,marginRight:5, borderRadius:15, borderColor:'#9C9C9C' }}>
+                <View style={{ flexDirection: "row", alignItems: 'center', alignContent: 'center', padding: 7,borderRadius:15, backgroundColor: roomHistoryItem ? item.Id == roomHistoryItem.Id ? "#F6DFCE" : 'white' : 'white' }}>
                     <Image style={{ width: 50, height: 50, borderRadius: 50 }} source={Images.icon_return_good}></Image>
                     <View style={{ flex: 1, flexDirection: "row", justifyContent: 'space-between', alignItems: 'center', marginBottom: 5 }}>
                         <View style={{ flex: 1 }}>
@@ -277,7 +277,9 @@ export default (props) => {
                                 onMomentumScrollBegin={() => { onEndReachedCalledDuringMomentum.current = false }}
                                 ref={flatlistRef}
                             />
-                            : <Text style={{ fontSize: 12, textAlign:'center' }}>Chưa có hàng huỷ/ trả</Text>
+                            :<View style={{backgroundColor:'white', flex:1, alignItems:'center', justifyContent:'center'}}> 
+                            <Text style={{ fontSize: 12, textAlign:'center' }}>Chưa có hàng huỷ/ trả</Text>
+                            </View>
                         }
                     </View>
                 </View>
