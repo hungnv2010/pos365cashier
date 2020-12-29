@@ -149,19 +149,19 @@ const InvoiceDetail = (props) => {
                         <View style={{ borderBottomColor: "#0072bc", borderBottomWidth: 1, }}>
                             <View style={{ margin: 5, flexDirection: "row", justifyContent: "space-between" }}>
                                 <Text style={{ padding: 0, flex: 1, fontWeight: 'bold', }}>{I18n.t("ngay_tao")}</Text>
-                                <Text style={{ paddingLeft: 5, }}>{invoiceDetail.CreatedDate ? dateToString(invoiceDetail.CreatedDate) : ""}</Text>
+                                <Text style={{ paddingLeft: 5, }}>{invoiceDetail.CreatedDate ? dateToString(invoiceDetail.CreatedDate, "hh:mm DD/MM/YYYY") : ""}</Text>
                             </View>
                             {invoiceDetail.PurchaseDate ?
                                 <View style={{ margin: 5, flexDirection: "row", justifyContent: "space-between" }}>
                                     <Text style={{ padding: 0, flex: 1, fontWeight: 'bold', }}>{I18n.t("ngay_ban")}</Text>
-                                    <Text style={{ paddingLeft: 5, }}>{dateToString(invoiceDetail.PurchaseDate)}</Text>
+                                    <Text style={{ paddingLeft: 5, }}>{dateToString(invoiceDetail.PurchaseDate, "hh:mm DD/MM/YYYY")}</Text>
                                 </View>
                                 : null
                             }
                             {invoiceDetail.ModifiedDate ?
                                 <View style={{ margin: 5, flexDirection: "row", justifyContent: "space-between" }}>
                                     <Text style={{ padding: 0, flex: 1, fontWeight: 'bold' }}>{I18n.t("ngay_sua")}</Text>
-                                    <Text style={{ paddingLeft: 5, color: "red" }}>{dateToString(invoiceDetail.ModifiedDate)}</Text>
+                                    <Text style={{ paddingLeft: 5, color: "red" }}>{dateToString(invoiceDetail.ModifiedDate, "hh:mm DD/MM/YYYY")}</Text>
                                 </View>
                                 : null
                             }

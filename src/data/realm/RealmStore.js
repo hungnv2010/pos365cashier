@@ -146,6 +146,16 @@ class RealmStore extends RealmBase {
         return this.queryAll(databaseOption, SchemaName.CUSTOMER)
     }
 
+    async deleteRow(table, value) {
+        let realm = await Realm.open(databaseOption)
+        return new Promise((resolve) => realm.write(() => {
+            let row = realm.objectForPrimaryKey(table, value);
+            console.log("deleteRow row ", row);
+            realm.delete(row)
+            resolve()
+        }))
+    }
+
     //Product
     async insertProducts(newProducts) {
         let realm = await Realm.open(databaseOption)

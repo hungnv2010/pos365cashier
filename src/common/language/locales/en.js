@@ -312,6 +312,7 @@ export default {
   cai_dat_the_cung: "Setting card",
   chan_trang: "Footer",
   chi_tiet_huy_tra_hang:"Room History Detail",
+  chon_ngay_het_han:"Choose expiry date",
 
   don_vi_tien_te: "Currency unit",
   dollar_my: "Dollar",
@@ -319,7 +320,6 @@ export default {
 
   giu_man_hinh_luon_sang: "Keep the screen on",
   gia:"Price",
-
   hien_thanh_dieu_huong: "Show navigation bar",
 
   in_sau_khi_thanh_toan: "Print after payment",
@@ -331,6 +331,9 @@ export default {
   in_qua_bluetooth: "In qua Bluetooth",
   in_qua_usb: "In qua USB",
   in_hoa_don_truoc_khi_thanh_toan_VNPAYQR_thanh_cong: "Print bill before successfull payment VNPAY-QR? ",
+  in_may_in_thu_ngan:"Print cashier printer",
+  in_may_in_tem:"Print stamp printer",
+  
 
   khong_cho_phep_ban_hang_khi_het_ton_kho: "Sales are not allowed when out of stock?",
   khong_in: "Don't print",
@@ -351,6 +354,7 @@ export default {
   may_in_tem: "Stamp printer",
   mo_cashbox_sau_khi_thanh_toan: "Open cashbox after payment",
   ma_san_pham:'Product code',
+  ma_voucher:'Code',
 
   nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: "Receive messages / notifications from waiter, manager?",
   nhap_so_luong_the: "Enter the number of cards",
@@ -358,6 +362,7 @@ export default {
   nhap_chieu_rong_kho_giay: "Enter the paper width",
   nhan_vien:'Staff',
   ngay_huy_tra:'Cancellation date',
+  ngay_het_han:'Expiry Date',
 
   so_the_cung: "Card number",
   su_dung_hai_man_hinh: "Using two screen",
@@ -375,7 +380,9 @@ export default {
   ten_hang_hoa:'Product name',
   thanh_tien:'Total',
   thanh_toan_vnpaypos_qua_may_pos: "VNPAY-POS payment via POS machine?",
+  them_moi_voucher:"Add new voucher",
 
-  vnd: "VND"
+  vnd: "VND",
+  voucher:"Voucher"
 
 };

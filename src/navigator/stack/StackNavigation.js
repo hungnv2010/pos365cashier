@@ -36,6 +36,7 @@ import RetailSelectProduct from '../../screens/main/retail/retailForPhone/retail
 import MainRetail from '../../screens/main/retail/MainRetail'
 import Pricebook from '../../screens/served/Pricebook';
 import SplitTable from '../../screens/splitTable/SplitTable'
+import OrderOffline from '../../screens/orderOffline/OrderOffline'
 
 
 const MainStack = createStackNavigator();
@@ -82,6 +83,8 @@ export default (props) => {
                 <MainStack.Screen name={ScreenList.MainRetail}>{props => <MainRetail {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.SplitTable}>{props => <SplitTable {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.PriceBook}>{props => <Pricebook {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.OrderOffline}>{props => <OrderOffline {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.Vouchers}>{props => <Vouchers {...props}/>}</MainStack.Screen>
             </MainStack.Navigator>
         </Animated.View>
     );

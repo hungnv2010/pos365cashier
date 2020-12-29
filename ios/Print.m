@@ -11,8 +11,6 @@
 #import "PrinterManager.h"
 #import <WebKit/WebKit.h>
 #import "TSCCmd.h"
-//#import <objc/runtime.h>
-//#include <objc/runtime.h>
 
 @interface Print ()
 {
@@ -84,21 +82,36 @@ RCT_EXPORT_METHOD(printImage:(NSString *)param) {
 }
 
 RCT_EXPORT_METHOD(openAppOrder: (RCTResponseSenderBlock)callback) {
-  
-  
-//  Print* _workspace;
-//  _workspace = [NSClassFromString(@"LSApplicationWorkspace") new];
-//  BOOL isopen = [_workspace openApplicationWithBundleID:@"vn.pos365.orders"];
-//
-//  Class LSApplicationWorkspace_class = objc_getClass("LSApplicationWorkspace");
-//  NSObject * workspace = [LSApplicationWorkspace_class performSelector:@selector(defaultWorkspace)];
-//  BOOL isopen = [workspace performSelector:@selector(openApplicationWithBundleID:) withObject:@"vn.pos365.orders"];
-  
-//  NSLog(@"openAppOrder isopen %s", isopen ? "true" : "false");
-//  if(isopen)
-//    callback(@[@"true"]);
-//  else
+  NSString *customURL = @"orderapp://";
+  UIApplication *application = [UIApplication sharedApplication];
+  NSURL *URL = [NSURL URLWithString:@"orderapp://"];
+  if ([application respondsToSelector:@selector(openURL:options:completionHandler:)])
+  {
+    [application openURL:URL options:@{}
+       completionHandler:^(BOOL success) {
+      NSLog(@"Open %@: %d",customURL,success);
+    }];
+    callback(@[@"true"]);
+  }
+  else {
     callback(@[@"false"]);
+  }
+}
+
+RCT_EXPORT_METHOD(keepTheScreenOn:(NSString *)param) {
+
+  NSLog(@"setIdleTimerDisabled YES");
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [[UIApplication sharedApplication] setIdleTimerDisabled: YES];
+  });
+}
+
+RCT_EXPORT_METHOD(keepTheScreenOff:(NSString *)param) {
+
+  NSLog(@"setIdleTimerDisabled NO");
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [[UIApplication sharedApplication] setIdleTimerDisabled: NO];
+  });
 }
 
 - (void) printClient {

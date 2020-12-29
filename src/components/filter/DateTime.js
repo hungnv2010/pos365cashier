@@ -9,6 +9,7 @@ import moment from "moment";
 import { dateToString } from '../../common/Utils';
 import { RadioButton } from 'react-native-paper'
 import { check } from 'react-native-permissions';
+import DatePicker from 'react-native-date-picker';
 
 
 export default (props) => {

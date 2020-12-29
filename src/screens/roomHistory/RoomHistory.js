@@ -277,7 +277,7 @@ export default (props) => {
                                 onMomentumScrollBegin={() => { onEndReachedCalledDuringMomentum.current = false }}
                                 ref={flatlistRef}
                             />
-                            : <Text style={{ fontSize: 12, textAlign:'center' }}>Chưa có hàng huỷ trả</Text>
+                            : <Text style={{ fontSize: 12, textAlign:'center' }}>Chưa có hàng huỷ/ trả</Text>
                         }
                     </View>
                 </View>

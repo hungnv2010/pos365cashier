@@ -311,11 +311,16 @@ class DataManager {
             Title: Title,
             Body: Body,
         }
-        let sent = new HTTPService().setPath(ApiPath.SENT).POST(params)
-        console.log("sentNotification sent ", sent);
-        if (sent) {
+        new HTTPService().setPath(ApiPath.SENT).POST(params).then(sent => {
+            console.log("sentNotification sent ", sent);
+            if (sent) {
 
-        }
+            }
+        })
+    }
+
+    deleteRow(table, value) {
+        realmStore.deleteRow(table, value)
     }
 
     changeTable = async (oldRoomId, oldPosition, newRoomId, newPosition) => {
@@ -397,7 +402,7 @@ class DataManager {
 
         // await this.updateServerEventNow(oldServerEvent, true)
         // await this.updateServerEventNow(newServerEvent, true)
-      
+
         signalRManager.sendMessageServerEvent(oldServerEvent)
         await realmStore.insertServerEvent(oldServerEvent, true)
 
@@ -495,4 +500,3 @@ class DataManager {
 
 const dataManager = new DataManager();
 export default dataManager;
-

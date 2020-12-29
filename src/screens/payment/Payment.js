@@ -23,7 +23,7 @@ import { HTTPService, URL } from '../../data/services/HttpService';
 import dialogManager from '../../components/dialog/DialogManager';
 import dataManager from '../../data/DataManager';
 import QRCode from 'react-native-qrcode-svg';
-import DateTimePicker from '@react-native-community/datetimepicker';
+// import DateTimePicker from '@react-native-community/datetimepicker';
 import ViewPrint, { TYPE_PRINT } from '../more/ViewPrint';
 import DatePicker from 'react-native-date-picker';
 
@@ -480,9 +480,9 @@ export default (props) => {
         if (date && dateTmp.current) {
             json.PurchaseDate = "" + date;
         }
-        delete json.Pos;
-        delete json.RoomName;
-        delete json.RoomId;
+        // delete json.Pos;
+        // delete json.RoomName;
+        // delete json.RoomId;
 
         if (listMethod.length > 0)
             json.AccountId = listMethod[0].Id;

@@ -92,7 +92,7 @@ export default (props) => {
     const syncDatas = async () => {
       if (isFNB === null) return
       dispatch({ type: 'ALREADY', already: false })
-      // await realmStore.deleteAll()
+      await realmStore.deleteAll()
       if (isFNB === true) {
         await dataManager.syncAllDatas()
       } else {
