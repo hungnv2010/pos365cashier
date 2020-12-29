@@ -237,7 +237,7 @@ const HeaderComponent = (props) => {
                 setFileLuuDuLieu(Constant.CURRENT_BRANCH, JSON.stringify(selectBranch));
                 setBranch(selectBranch)
                 dispatch({ type: 'IS_FNB', isFNB: null })
-                dispatch({ type: 'ALREADY', already: null })
+                // dispatch({ type: 'ALREADY', already: false })
                 signalRManager.killSignalR();
                 getRetailerInfoAndNavigate();
                 dialogManager.hiddenLoading();
@@ -299,7 +299,7 @@ const HeaderComponent = (props) => {
         dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_dang_xuat'), I18n.t("thong_bao"), res => {
             if (res == 1) {
                 dispatch({ type: 'IS_FNB', isFNB: null })
-                dispatch({ type: 'ALREADY', already: null })
+                dispatch({ type: 'ALREADY', already: false })
                 setFileLuuDuLieu(Constant.CURRENT_ACCOUNT, "");
                 setFileLuuDuLieu(Constant.CURRENT_BRANCH, "");
                 navigate('Login', {}, true);

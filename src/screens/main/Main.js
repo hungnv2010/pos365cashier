@@ -22,7 +22,6 @@ export default (props) => {
 
   const viewPrintRef = useRef();
   const dispatch = useDispatch();
-
   const { listPrint, isFNB } = useSelector(state => {
     return state.Common
   })
@@ -92,38 +91,19 @@ export default (props) => {
   useEffect(() => {
     const syncDatas = async () => {
       if (isFNB === null) return
-      await realmStore.deleteAll()
+      dispatch({ type: 'ALREADY', already: false })
+      // await realmStore.deleteAll()
       if (isFNB === true) {
-        await syncForFNB()
+        await dataManager.syncAllDatas()
       } else {
-        await syncForRetail()
+        await dataManager.syncAllDatasForRetail()
       }
+      dispatch({ type: 'ALREADY', already: true })
       dialogManager.hiddenLoading()
     }
     syncDatas()
+
   }, [isFNB])
-
-  const syncForFNB = async () => {
-    await dataManager.syncAllDatas()
-      .then(() => {
-        dispatch({ type: 'ALREADY', already: true })
-      })
-      .catch((e) => {
-        dispatch({ type: 'ALREADY', already: true })
-        console.log(e);
-      })
-  }
-
-  const syncForRetail = async () => {
-    await dataManager.syncAllDatasForRetail()
-      .then(() => {
-        dispatch({ type: 'ALREADY', already: true })
-      })
-      .catch((e) => {
-        dispatch({ type: 'ALREADY', already: true })
-        console.log(e);
-      })
-  }
 
 
   const handleChangeState = (newState) => {
@@ -133,17 +113,17 @@ export default (props) => {
   }
 
   const clickRightIcon = async () => {
-    dialogManager.showLoading()
-    dispatch({ type: 'ALREADY', already: null })
-    await syncForFNB()
-    dialogManager.hiddenLoading()
+    dispatch({ type: 'ALREADY', already: false })
+    await realmStore.deleteAll()
+    await dataManager.syncAllDatas()
+    dispatch({ type: 'ALREADY', already: true })
   }
 
   const clickSyncForRetail = async () => {
-    dialogManager.showLoading()
-    dispatch({ type: 'ALREADY', already: null })
-    await syncForRetail()
-    dialogManager.hiddenLoading()
+    dispatch({ type: 'ALREADY', already: false })
+    await realmStore.deleteAll()
+    await dataManager.syncAllDatasForRetail()
+    dispatch({ type: 'ALREADY', already: true })
   }
 
 
@@ -164,7 +144,7 @@ export default (props) => {
                 navigation={props.navigation}
                 title={I18n.t('thu_ngan')}
                 rightIcon="refresh"
-                clickRightIcon={clickRightIcon}
+                clickRightIcon={() => clickRightIcon()}
               />
               <Order {...props} />
             </>
