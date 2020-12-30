@@ -36,7 +36,8 @@ const KEY_FUNC = {
     CASH_FLOW: ScreenList.CashFlow,
     ROOM_HISTORY: ScreenList.RoomHistory,
     ORDER_OFFLINE: ScreenList.OrderOffline,
-    VOUCHERS: ScreenList.Vouchers
+    VOUCHERS: ScreenList.Vouchers,
+    PRODUCT:ScreenList.Product,
 }
 
 const LIST_FUNCITION = [
@@ -75,6 +76,11 @@ const LIST_FUNCITION = [
         func: KEY_FUNC.CUSTOMER,
         icon: Images.icon_customer,
         title: "khach_hang"
+    },
+    {
+        func: KEY_FUNC.PRODUCT,
+        icon: Images.icon_menu_product,
+        title:"hang_hoa"
     },
     {
         func: KEY_FUNC.CASH_FLOW,
