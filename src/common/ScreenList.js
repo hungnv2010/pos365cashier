@@ -70,5 +70,6 @@ export const ScreenList = {
   OrderOffline: "OrderOffline",
   Vouchers: "Vouchers",
   Product:"Product",
+  ProductDetail:"ProductDetail",
 }
 
