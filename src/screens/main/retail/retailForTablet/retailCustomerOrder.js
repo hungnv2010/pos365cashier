@@ -47,6 +47,32 @@ const RetailCustomerOrder = (props) => {
 
 
     useEffect(() => {
+        const getCommodityWaiting = async () => {
+            serverEvents = await realmStore.queryServerEvents()
+            let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
+            newServerEvents = Object.values(newServerEvents)
+            console.log('newServerEvents', newServerEvents);
+            setNumberNewOrder(newServerEvents.length)
+            if (newServerEvents.length == 0) {
+                let newSE = await createNewServerEvent()
+                setCurrentCommodity(newSE)
+            } else {
+                setCurrentCommodity(newServerEvents[0])
+                let jsonContent = JSON.parse(newServerEvents[0].JsonContent)
+                // setListOrder(jsonContent.OrderDetails)
+                setDataOrder(jsonContent.OrderDetails)
+            }
+
+            serverEvents.addListener((collection, changes) => {
+                if (changes.insertions.length || changes.modifications.length) {
+                    console.log('changes.insertions.length ');
+                    let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
+                    newServerEvents = Object.values(newServerEvents)
+                    // setCurrentCommodity(newServerEvents[newServerEvents.length - 1])
+                    setNumberNewOrder(newServerEvents.length)
+                }
+            })
+        }
         getCommodityWaiting()
         var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
         var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
@@ -54,6 +80,7 @@ const RetailCustomerOrder = (props) => {
             let promotions = await realmStore.querryPromotion();
             console.log("promotions === ", promotions);
             setPromotions(promotions)
+
         }
         getDataRealm();
         return () => {
@@ -64,6 +91,7 @@ const RetailCustomerOrder = (props) => {
     }, [])
 
     useEffect(() => {
+        if (props.listProducts.length == 0) return
         // setListOrder(props.listProducts)
         setDataOrder([...props.listProducts])
     }, [props.listProducts])
@@ -71,41 +99,17 @@ const RetailCustomerOrder = (props) => {
 
     useEffect(() => {
         listOrder.forEach((elm, index) => elm.index = index)
-        updateServerEvent(listOrder, currentCommodity)
+        updateServerEvent(listOrder)
     }, [listOrder])
 
     useEffect(() => {
+        console.log('currentCommodity', currentCommodity);
         let jsonObject = currentCommodity.JsonContent ? JSON.parse(currentCommodity.JsonContent) : {}
-        setJsonContent({ ...jsonObject })
+        setJsonContent(jsonObject)
     }, [currentCommodity])
 
 
-    const getCommodityWaiting = async () => {
-        serverEvents = await realmStore.queryServerEvents()
-        let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
-        newServerEvents = Object.values(newServerEvents)
-        console.log('newServerEvents',newServerEvents);
-        setNumberNewOrder(newServerEvents.length)
-        if (newServerEvents.length == 0) {
-            let newSE = await createNewServerEvent()
-            setCurrentCommodity(newSE)
-        } else {
-            setCurrentCommodity(newServerEvents[newServerEvents.length - 1])
-            let jsonContent = JSON.parse(newServerEvents[newServerEvents.length - 1].JsonContent)
-            // setListOrder(jsonContent.OrderDetails)
-            setDataOrder(jsonContent.OrderDetails)
-        }
 
-        serverEvents.addListener((collection, changes) => {
-            if (changes.insertions.length || changes.modifications.length) {
-                console.log('changes.insertions.length ');
-                let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
-                newServerEvents = Object.values(newServerEvents)
-                setCurrentCommodity(newServerEvents[newServerEvents.length - 1])
-                setNumberNewOrder(newServerEvents.length)
-            }
-        })
-    }
 
     const syncListProducts = (data) => {
         props.outputSelectedProduct(data, 2)
@@ -121,15 +125,15 @@ const RetailCustomerOrder = (props) => {
     }
 
 
-    const updateServerEvent = (data, serverEvent) => {
-        console.log('updateServerEvent', data, serverEvent);
-        if (!serverEvent.JsonContent) return
-        let jsonContent = JSON.parse(serverEvent.JsonContent)
+    const updateServerEvent = (data) => {
+        console.log(`updateServerEvent ${currentCommodity.RowKey}`, data, currentCommodity);
+        if (!currentCommodity.JsonContent) return
+        let jsonContent = JSON.parse(currentCommodity.JsonContent)
         jsonContent.OrderDetails = [...data]
         dataManager.calculatateJsonContent(jsonContent)
         console.log('updateServerEvent jsonContent', jsonContent);
-        serverEvent.JsonContent = JSON.stringify(jsonContent)
-        realmStore.insertServerEventForRetail(serverEvent)
+        currentCommodity.JsonContent = JSON.stringify(jsonContent)
+        realmStore.insertServerEventForRetail(currentCommodity)
     }
 
     const _keyboardDidShow = () => {
@@ -461,8 +465,11 @@ const RetailCustomerOrder = (props) => {
                 props.outputCurrentCustomer(data)
                 break
             case 3: // from commodity waiting
+                console.log('setCurrentCommodity(data)', data);
                 setCurrentCommodity(data)
                 let jsonContent = JSON.parse(data.JsonContent)
+                console.log('jsonContent', jsonContent);
+                setJsonContent(jsonContent)
                 syncListProducts(jsonContent.OrderDetails)
                 break;
 

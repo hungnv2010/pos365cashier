@@ -27,7 +27,7 @@ const LoginScreen = (props) => {
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
     const [showToast, setShowToast] = useState(false);
-    const [logIn, setLogIn] = useState(false);
+    // const [logIn, setLogIn] = useState(false);
     const [hasLogin, setHasLogin] = useState(true);
     const dispatch = useDispatch();
 
@@ -65,8 +65,8 @@ const LoginScreen = (props) => {
         getCurrentAccount()
     }, [])
 
-    const onClickLogin = useCallback(() => {
-        if (!logIn) return
+    const onClickLogin = () => {
+        // if (!logIn) return
         if (!checkDataLogin()) {
             return
         } else {
@@ -90,14 +90,14 @@ const LoginScreen = (props) => {
                 console.log("onClickLogin err ", e);
             })
         }
-    }, [logIn])
+    }
 
-    useEffect(() => {
-        onClickLogin()
-        return () => {
-            setLogIn(false)
-        }
-    }, [onClickLogin])
+    // useEffect(() => {
+    //     onClickLogin()
+    //     return () => {
+    //         setLogIn(false)
+    //     }
+    // }, [onClickLogin])
 
     const handlerLoginSuccess = (params, res) => {
         let account = { SessionId: res.SessionId, UserName: params.UserName, Link: shop.trim() };
@@ -258,10 +258,7 @@ const LoginScreen = (props) => {
                                 <Text style={{ color: "#fff", fontWeight: 'bold' }}>{I18n.t("nhan_vien_order").toUpperCase()}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={{ height: 50, width: Metrics.screenWidth - 50, marginTop: 15, borderColor: "#fff", borderWidth: 1, borderRadius: 5, justifyContent: "center", alignItems: "center" }}
-                                onPress={() => {
-                                    Keyboard.dismiss();
-                                    setLogIn(!logIn)
-                                }}>
+                                onPress={onClickLogin }>
                                 <Text style={{ color: "#fff", fontWeight: 'bold' }}>{I18n.t("thu_ngan").toUpperCase()}</Text>
                             </TouchableOpacity>
                         </View>

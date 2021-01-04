@@ -36,7 +36,8 @@ const KEY_FUNC = {
     CASH_FLOW: ScreenList.CashFlow,
     ROOM_HISTORY: ScreenList.RoomHistory,
     ORDER_OFFLINE: ScreenList.OrderOffline,
-    VOUCHERS: ScreenList.Vouchers
+    VOUCHERS: ScreenList.Vouchers,
+    PRODUCT:ScreenList.Product,
 }
 
 const LIST_FUNCITION = [
@@ -75,6 +76,11 @@ const LIST_FUNCITION = [
         func: KEY_FUNC.CUSTOMER,
         icon: Images.icon_customer,
         title: "khach_hang"
+    },
+    {
+        func: KEY_FUNC.PRODUCT,
+        icon: Images.icon_menu_product,
+        title:"hang_hoa"
     },
     {
         func: KEY_FUNC.CASH_FLOW,
@@ -246,7 +252,7 @@ const HeaderComponent = (props) => {
                 setFileLuuDuLieu(Constant.CURRENT_BRANCH, JSON.stringify(selectBranch));
                 setBranch(selectBranch)
                 dispatch({ type: 'IS_FNB', isFNB: null })
-                dispatch({ type: 'ALREADY', already: null })
+                // dispatch({ type: 'ALREADY', already: false })
                 signalRManager.killSignalR();
                 getRetailerInfoAndNavigate();
                 dialogManager.hiddenLoading();
@@ -308,7 +314,7 @@ const HeaderComponent = (props) => {
         dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_dang_xuat'), I18n.t("thong_bao"), res => {
             if (res == 1) {
                 dispatch({ type: 'IS_FNB', isFNB: null })
-                dispatch({ type: 'ALREADY', already: null })
+                dispatch({ type: 'ALREADY', already: false })
                 setFileLuuDuLieu(Constant.CURRENT_ACCOUNT, "");
                 setFileLuuDuLieu(Constant.CURRENT_BRANCH, "");
                 navigate('Login', {}, true);

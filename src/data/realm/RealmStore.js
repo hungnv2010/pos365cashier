@@ -35,6 +35,7 @@ class RealmStore extends RealmBase {
     }
 
     deleteAll = async () => {
+        console.log('deleteAll');
         let realm = await Realm.open(databaseOption)
         return new Promise((resolve) => realm.write(() => {
             realm.deleteAll()
@@ -58,6 +59,16 @@ class RealmStore extends RealmBase {
         return new Promise((resolve) => realm.write(() => {
             let partner = realm.objects(SchemaName.CUSTOMER)
             realm.delete(partner)
+            resolve()
+        }))
+    }
+
+    deleteCommodity = async (item) => {
+        let realm = await Realm.open(databaseOption)
+        return new Promise((resolve) => realm.write(() => {
+            let serverEvent = realm.objectForPrimaryKey(SchemaName.SERVER_EVENT, item.RowKey)
+            console.log('deleteCommodity serverEvent', serverEvent);
+            realm.delete(serverEvent)
             resolve()
         }))
     }

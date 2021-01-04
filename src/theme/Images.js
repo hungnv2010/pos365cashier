@@ -80,6 +80,7 @@ const images = {
     icon_version: require("../../assets/icons/version.jpg"),
     icon_quick_note: require("../../assets/icons/icon_quick_note.jpg"),
     icon_vouchers: require("../../assets/icons/gift-box.png"),
+    icon_menu_product: require("../../assets/icons/icon_menu.png")
 }
 
 export default images

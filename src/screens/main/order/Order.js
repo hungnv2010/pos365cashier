@@ -30,10 +30,9 @@ export default (props) => {
 
     const [indexRoom, setIndexRoom] = useState(0)
     const [loadDone, setLoadDone] = useState(false)
-    const already = useSelector(state => {
-        return state.Common.already
+    const { already } = useSelector(state => {
+        return state.Common
     });
-    const dispatch = useDispatch();
 
     const { deviceType } = useSelector(state => {
         console.log("useSelector state ======== ", state);
@@ -58,41 +57,42 @@ export default (props) => {
     const dataRef = useRef([])
 
     useEffect(() => {
-        if (already) {
-            init()
+        if (!already) return
+        const init = async () => {
+            rooms = await realmStore.queryRooms()
+            rooms = rooms.sorted('Position')
+            roomGroups = await realmStore.queryRoomGroups()
+            roomGroups = roomGroups.sorted('Id')
+            serverEvents = await realmStore.queryServerEvents()
+            console.log("init: ", JSON.parse(JSON.stringify(rooms, roomGroups, serverEvents)));
+
+            let newDatas = insertServerEvent(getDatas(rooms, roomGroups), serverEvents)
+            console.log("init: newDatas ", newDatas);
+            dataRef.current = newDatas
+            setData(newDatas)
+
+            let list = newDatas.filter(item => item.isGroup)
+
+            setListRoom(list)
+
+            serverEvents.addListener((collection, changes) => {
+                if (changes.insertions.length || changes.modifications.length) {
+                    let newDatas = insertServerEvent(getDatas(rooms, roomGroups), serverEvents)
+                    dataRef.current = newDatas
+                    setData(newDatas)
+                }
+            })
+
+            setLoadDone(true)
         }
+        init()
         return () => {
+            setLoadDone(false)
             if (serverEvents) serverEvents.removeAllListeners()
         }
     }, [already])
 
-    const init = async () => {
-        rooms = await realmStore.queryRooms()
-        rooms = rooms.sorted('Position')
-        roomGroups = await realmStore.queryRoomGroups()
-        roomGroups = roomGroups.sorted('Id')
-        serverEvents = await realmStore.queryServerEvents()
-        console.log("init: ", JSON.parse(JSON.stringify(rooms, roomGroups, serverEvents)));
 
-        let newDatas = insertServerEvent(getDatas(rooms, roomGroups), serverEvents)
-        console.log("init: newDatas ", newDatas);
-        dataRef.current = newDatas
-        setData(newDatas)
-
-        let list = newDatas.filter(item => item.isGroup)
-
-        setListRoom(list)
-
-        serverEvents.addListener((collection, changes) => {
-            if (changes.insertions.length || changes.modifications.length) {
-                let newDatas = insertServerEvent(getDatas(rooms, roomGroups), serverEvents)
-                dataRef.current = newDatas
-                setData(newDatas)
-            }
-        })
-
-        setLoadDone(true)
-    }
 
     const reloadTime = async () => {
         console.log('reloadTime', dataRef.current);
@@ -251,7 +251,7 @@ export default (props) => {
     }
 
 
-    return (
+    return loadDone ? (
         <View style={{ flex: 1 }}>
             <View style={{ height: 40 }}>
                 <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{ backgroundColor: colors.colorchinh }}>
@@ -289,37 +289,35 @@ export default (props) => {
                 </View>
             </View>
             <View style={{ flex: 1, padding: 2 }}>
-                {
-                    loadDone ?
-                        <ScrollView scrollToOverflowEnabled={true} showsVerticalScrollIndicator={false} ref={(ref) => refScroll = ref} style={{ flex: 1 }}>
-                            <View style={styles.containerRoom}>
-                                {datas ?
-                                    datas.map((data, idx) =>
-                                        <View
-                                            key={idx}
-                                            onLayout={(e) => {
-                                                let footerY = e.nativeEvent.layout.y;
-                                                if (data.isGroup) {
-                                                    console.log("footerY ", footerY);
-                                                    _nodes.set(data.Id, footerY)
-                                                }
-                                            }}
-                                            style={{ flexDirection: "row" }}>
-                                            {data.isGroup ? renderRoomGroup(data) : renderRoom(data, widthRoom)}
-                                        </View>
-                                    ) : null
-                                }
-                            </View>
-                        </ScrollView>
-                        :
-                        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                            <ActivityIndicator size="large" style={{}} color={colors.colorchinh} />
-                        </View>
-                }
+                <ScrollView scrollToOverflowEnabled={true} showsVerticalScrollIndicator={false} ref={(ref) => refScroll = ref} style={{ flex: 1 }}>
+                    <View style={styles.containerRoom}>
+                        {datas ?
+                            datas.map((data, idx) =>
+                                <View
+                                    key={idx}
+                                    onLayout={(e) => {
+                                        let footerY = e.nativeEvent.layout.y;
+                                        if (data.isGroup) {
+                                            console.log("footerY ", footerY);
+                                            _nodes.set(data.Id, footerY)
+                                        }
+                                    }}
+                                    style={{ flexDirection: "row" }}>
+                                    {data.isGroup ? renderRoomGroup(data) : renderRoom(data, widthRoom)}
+                                </View>
+                            ) : null
+                        }
+                    </View>
+                </ScrollView>
             </View>
-
         </View>
-    );
+    )
+        :
+        (
+            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                <ActivityIndicator size="large" style={{}} color={colors.colorchinh} />
+            </View>
+        );
 }
 
 const styles = StyleSheet.create({

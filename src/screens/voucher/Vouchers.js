@@ -19,6 +19,7 @@ import { FAB } from 'react-native-paper';
 import { result } from 'underscore';
 import DatePicker from 'react-native-date-picker';
 import Ionicons from 'react-native-vector-icons/MaterialIcons'
+import { ceil } from 'react-native-reanimated';
 
 export default (props) => {
     const [listVoucher, setListVoucher] = useState([])
@@ -33,14 +34,13 @@ export default (props) => {
     const [quantity, setQuantity] = useState(0)
     const dateTmp = useRef()
     const [expiryDate, setExpityDate] = useState()
-    const randomCode = useRef()
-    const newVoucher = useRef({})
+    const [randomCode, setCode] = useState()
     const valueVoucher = useRef()
     const [filter, setFilter] = useState({
         time: Constant.TIME_SELECT_ALL_TIME[0],
     })
     const filterRef = useRef({
-        time: Constant.TIME_SELECT_ALL_TIME[4],
+        time: Constant.TIME_SELECT_ALL_TIME[0],
         skip: 0
     })
     const onEndReachedCalledDuringMomentum = useRef(false)
@@ -76,7 +76,7 @@ export default (props) => {
     const postVoucher = () => {
         let param = {
             Voucher: {
-                Code: randomCode.current,
+                Code: randomCode,
                 ExpiryDate: dateTmp.current ? dateTmp.current : null,
                 IsPercent: ispercent,
                 Quantity: parseInt(quantity),
@@ -127,7 +127,7 @@ export default (props) => {
                 outputDateTime={outputDateTime} />
             : typeModal.current == 2 ?
                 <View style={{ backgroundColor: 'white', borderRadius: 15 }}>
-                    <View style={{ justifyContent: 'space-between', flexDirection: 'row', padding: 5 }}>
+                    <View style={{ justifyContent: 'space-between', flexDirection: 'row', padding: 5, marginTop: 5 }}>
                         <Text style={{ fontWeight: 'bold', marginLeft: 10, fontSize: 20 }}>{itemClick.current.Code}</Text>
                         <Ionicons name="close" size={30} color="black" onPress={() => setOnShowModal(false)} />
                     </View>
@@ -140,14 +140,14 @@ export default (props) => {
                             : null
                     }
                     <View style={{ flexDirection: 'column', marginLeft: 10, marginRight: 10, padding: 5, marginBottom: 10 }}>
-                        <TouchableOpacity style={{ backgroundColor: '#87CEFF', borderRadius: 5, alignItems: 'center', padding: 5 }}>
+                        <TouchableOpacity style={{ backgroundColor: '#87CEFF', borderRadius: 5, alignItems: 'center', padding: 5, height: 50, justifyContent: 'center' }}>
                             <Text style={{ color: '#1E90FF', fontWeight: 'bold' }}>{I18n.t("in_may_in_thu_ngan")}</Text>
                         </TouchableOpacity>
-                        <View style={{ flexDirection: 'row', marginTop: 10 }}>
-                            <TouchableOpacity style={{ flex: 1, backgroundColor: '#FFD39B', borderRadius: 5, alignItems: 'center', marginRight: 7, padding: 5 }}>
+                        <View style={{ flexDirection: 'row', marginTop: 10, height: 50 }}>
+                            <TouchableOpacity style={{ flex: 1, backgroundColor: '#FFD39B', borderRadius: 5, justifyContent: 'center', alignItems: 'center', marginRight: 7, padding: 5 }}>
                                 <Text style={{ color: '#FF7F24', fontWeight: 'bold' }}>{I18n.t("in_may_in_tem")}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={{ flex: 1, backgroundColor: '#FA8072', borderRadius: 5, alignItems: 'center', marginLeft: 7, padding: 5 }} onPress={onClickDel}>
+                            <TouchableOpacity style={{ flex: 1, backgroundColor: '#FA8072', borderRadius: 5, justifyContent: 'center', alignItems: 'center', marginLeft: 7, padding: 5 }} onPress={onClickDel}>
                                 <Text style={{ color: '#FF3030', fontWeight: 'bold' }}>{I18n.t("xoa")}</Text>
                             </TouchableOpacity>
                         </View>
@@ -173,15 +173,15 @@ export default (props) => {
                             <View style={{ alignItems: 'center', backgroundColor: '#FF4500', borderTopStartRadius: 15, borderTopEndRadius: 15 }}>
                                 <Text style={{ color: 'white', padding: 10, fontSize: 14 }}>{I18n.t("them_moi_voucher")}</Text>
                             </View>
-                            <View style={{ backgroundColor: 'white', borderBottomStartRadius: 15, borderBottomEndRadius: 15 }}>
-                                <View style={{ flexDirection: 'row', padding: 10 }}>
+                            <View style={{ backgroundColor: 'white', borderBottomStartRadius: 15, borderBottomEndRadius: 15, }}>
+                                <View style={{ flexDirection: 'row', padding: 10, marginTop: 10 }}>
                                     <Text style={styles.contentTitle}>{I18n.t("ma_voucher")}</Text>
-                                    <TextInput style={[styles.styleTextInput,{ flex: 2, }]} value={randomCode.current}></TextInput>
+                                    <TextInput style={[styles.styleTextInput, { flex: 2, marginLeft: 15 }]} value={randomCode} onChangeText={text => setCode(text)}></TextInput>
                                 </View>
                                 <View style={{ flexDirection: 'row', padding: 10 }}>
                                     <Text style={styles.contentTitle}>{I18n.t("gia_tri")}</Text>
                                     <View style={{ flexDirection: 'row', flex: 2 }}>
-                                        <View style={{ flex: 1, flexDirection: 'row', borderRadius: 3, borderColor: '#FF4500', borderWidth: 0.5 }}>
+                                        <View style={{ flex: 1, flexDirection: 'row', borderRadius: 3, borderColor: '#FF4500', borderWidth: 0.75, marginLeft: 10 }}>
                                             <TouchableOpacity style={ispercent == false ? styles.btnPercent : styles.btnNotPercent} onPress={() => setIsPercent(false)}>
                                                 <Text style={ispercent == false ? styles.contenBtnDongY : styles.contenBtnHuy}>VND</Text>
                                             </TouchableOpacity>
@@ -189,27 +189,27 @@ export default (props) => {
                                                 <Text style={ispercent == true ? styles.contenBtnDongY : styles.contenBtnHuy}>%</Text>
                                             </TouchableOpacity>
                                         </View>
-                                        <TextInput style={[styles.styleTextInput,{ flex: 1.5, }]} value={valueVoucher.current} onChangeText={(text) => { valueVoucher.current = text }} keyboardType='numeric' placeholder='0'></TextInput>
+                                        <TextInput style={[styles.styleTextInput, { flex: 1.5, }]} value={valueVoucher.current} onChangeText={(text) => { valueVoucher.current = text }} keyboardType='numeric' placeholder='0'></TextInput>
 
                                     </View>
                                 </View>
                                 <View style={{ flexDirection: 'row', padding: 10 }}>
                                     <Text style={styles.contentTitle}>{I18n.t("ngay_het_han")}</Text>
                                     <View style={{ flex: 2, flexDirection: 'row' }}>
-                                        <TextInput style={[styles.styleTextInput,{ flex: 10,}]} editable={false} placeholder={I18n.t("chon_ngay_het_han")} value={expiryDate ? dateToDate(expiryDate) : null}></TextInput>
+                                        <TextInput style={[styles.styleTextInput, { flex: 10, }]} editable={false} placeholder={I18n.t("chon_ngay_het_han")} value={dateTmp.current ? dateToDate(dateTmp.current) : null}></TextInput>
                                         <TouchableOpacity style={{ flex: 1.5, marginLeft: 10 }} onPress={() => timePicker()}>
-                                            <Image source={Images.icon_calendar} style={{ width: 20, height: 20 }} />
+                                            <Image source={Images.icon_calendar} style={{ width: 23, height: 23 }} />
                                         </TouchableOpacity>
                                     </View>
                                 </View>
-                                <View style={{ flexDirection: 'row', padding: 10 }}>
+                                <View style={{ flexDirection: 'row', padding: 10, marginBottom: 5 }}>
                                     <Text style={styles.contentTitle}>{I18n.t("so_luong")}</Text>
-                                    <View style={{ flex: 2, flexDirection: 'row' }}>
-                                        <TouchableOpacity style={{ flex: 1, borderWidth: 0.5, borderColor: '#FF4500', alignItems: 'center', borderRadius: 3, marginRight: 10 }} onPress={() => setQuantity(quantity >= 1 ? quantity - 1 : 0)}>
+                                    <View style={{ flex: 2, flexDirection: 'row', marginLeft: 15 }}>
+                                        <TouchableOpacity style={{ flex: 1.3, borderWidth: 0.5, borderColor: '#FF4500', alignItems: 'center', borderRadius: 3, justifyContent: 'center' }} onPress={() => setQuantity(quantity >= 1 ? quantity - 1 : 0)}>
                                             <Text style={{ color: '#FF4500' }}>-</Text>
                                         </TouchableOpacity>
-                                        <TextInput style={[styles.styleTextInput,{ flex: 6, }]} keyboardType='numeric' placeholder='0' value={quantity != 0 ? quantity.toString() : null} onChangeText={text => setQuantity(parseInt(text))}></TextInput>
-                                        <TouchableOpacity style={{ flex: 1, marginLeft: 10, borderWidth: 0.5, borderColor: '#FF4500', borderRadius: 3, alignItems: 'center' }} onPress={() => { setQuantity(quantity + 1) }}>
+                                        <TextInput style={[styles.styleTextInput, { flex: 6, }]} keyboardType='numeric' placeholder='0' value={quantity != 0 ? quantity.toString() : null} onChangeText={text => setQuantity(parseInt(text))}></TextInput>
+                                        <TouchableOpacity style={{ flex: 1.3, marginLeft: 10, borderWidth: 0.5, borderColor: '#FF4500', borderRadius: 3, alignItems: 'center', justifyContent: 'center' }} onPress={() => { setQuantity(quantity + 1) }}>
                                             <Text style={{ color: '#FF4500' }}>+</Text>
                                         </TouchableOpacity>
                                     </View>
@@ -217,7 +217,7 @@ export default (props) => {
                                 <View style={{ marginLeft: 5, marginRight: 5, backgroundColor: '#CFCFCF', height: 0.5 }}></View>
                                 <View style={{ flexDirection: 'row', marginLeft: 10, marginRight: 10, padding: 10 }}>
                                     <TouchableOpacity style={styles.btnHuy} onPress={() => {
-                                        setOnShowModal(false); setExpityDate();
+                                        setOnShowModal(false); setExpityDate(); dateTmp.current = null;
                                         setQuantity(0); valueVoucher.current = null
                                     }}>
                                         <Text style={styles.contenBtnHuy}>{I18n.t("huy")}</Text>
@@ -268,12 +268,16 @@ export default (props) => {
             setOnShowModal(false)
         }, 1000)
 
-
     }
     const initCode = () => {
-        let r = Math.random().toString(36).substring(6);
-        randomCode.current = r
-        console.log("random", r);
+        // let r = Math.random().toString(36).substring(6);
+        // setCode(r)
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        for (var i = 0; i < 6; i++)
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+        setCode(text)
+        console.log("random", text);
 
     }
     const onClickItemVoucher = (item) => {
@@ -329,25 +333,25 @@ export default (props) => {
     const renderItem = (item, index) => {
         return (
             <TouchableOpacity onPress={() => onClickItemVoucher(item)}>
-                <View style={{ backgroundColor: 'white', borderRadius: 10, margin: 2, padding: 5 }}>
-                    <View style={{ justifyContent: 'space-between', flexDirection: 'row', padding: 3, marginLeft: 20, marginRight: 20 }}>
+                <View style={styles.borderItem}>
+                    <View style={{ justifyContent: 'space-between', flexDirection: 'row', padding: 7, marginLeft: 10, marginRight: 10 }}>
                         <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{item.Code}</Text>
                         <View style={{ flexDirection: 'row' }}>
                             <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#00B2EE' }}>{I18n.t('so_luong')}: </Text>
                             <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#00B2EE' }}>{item.Quantity}</Text>
                         </View>
                     </View>
-                    <View style={{ backgroundColor: '#696969', height: 0.5, marginLeft: 20, marginRight: 20 }}></View>
-                    <View style={{ justifyContent: 'space-between', flexDirection: 'row', padding: 3, marginRight: 20, marginLeft: 20 }}>
+                    <View style={{ backgroundColor: '#696969', marginLeft: 10, marginRight: 10, padding: 0.25 }}></View>
+                    <View style={{ justifyContent: 'space-between', flexDirection: 'row', padding: 7, marginRight: 10, marginLeft: 10, marginTop: 3 }}>
                         <Text style={styles.textTitle}>{I18n.t("ngay_tao")}</Text>
                         <Text style={{ fontSize: 12 }}>{dateToDate(item.CreatedDate)}</Text>
                     </View>
-                    <View style={{ justifyContent: 'space-between', flexDirection: 'row', padding: 3, marginRight: 20, marginLeft: 20 }}>
+                    <View style={{ justifyContent: 'space-between', flexDirection: 'row', padding: 7, marginRight: 10, marginLeft: 10, marginBottom: 3 }}>
                         <Text style={styles.textTitle}>{I18n.t("ngay_het_han")}</Text>
                         <Text style={{ fontSize: 12 }}>{item.ExpiryDate ? dateToDate(item.ExpiryDate) : ''}</Text>
                     </View>
-                    <View style={{ backgroundColor: '#696969', height: 0.5, marginLeft: 20, marginRight: 20 }}></View>
-                    <View style={{ justifyContent: 'space-between', flexDirection: 'row', padding: 3, marginLeft: 20, marginRight: 20 }}>
+                    <View style={{ backgroundColor: '#696969', marginLeft: 10, marginRight: 10, padding: 0.25 }}></View>
+                    <View style={{ justifyContent: 'space-between', flexDirection: 'row', padding: 7, marginLeft: 10, marginRight: 10 }}>
                         <Text style={styles.textTitle}>{I18n.t("gia_tri")}</Text>
                         <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#00B2EE' }}>{item.IsPercent == true ? item.Value + '%' : currencyToString(item.Value) + 'đ'}</Text>
                     </View>
@@ -384,7 +388,9 @@ export default (props) => {
                         onMomentumScrollBegin={() => { onEndReachedCalledDuringMomentum.current = false }}
                         ref={flatlistRef}
                     />
-                    : <Text style={{ fontSize: 12, textAlign: 'center' }}>Chưa có Voucher</Text>
+                    : <View style={{ backgroundColor: 'white', justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+                        <Text style={{ fontSize: 12 }}>Chưa có Voucher</Text>
+                    </View>
             }
             <FAB
                 style={{ position: 'absolute', backgroundColor: "#1874CD", right: 10, bottom: 10 }}
@@ -431,10 +437,10 @@ export default (props) => {
 }
 const styles = StyleSheet.create({
     btnHuy: {
-        flex: 1, alignItems: 'center', padding: 5, backgroundColor: 'white', borderRadius: 3, borderWidth: 1, borderColor: '#FF4500', marginRight: 5, marginLeft: 10
+        flex: 1, alignItems: 'center', padding: 5, backgroundColor: 'white', borderRadius: 3, borderWidth: 1, borderColor: '#FF4500', marginRight: 5, marginLeft: 10, justifyContent: 'center'
     },
     btnDongY: {
-        flex: 1, alignItems: 'center', padding: 5, backgroundColor: '#FF4500', borderRadius: 3, marginRight: 10, marginLeft: 5
+        flex: 1, alignItems: 'center', padding: 5, backgroundColor: '#FF4500', borderRadius: 3, marginRight: 10, marginLeft: 5, justifyContent: 'center'
     },
     contenBtnHuy: {
         color: '#FF4500'
@@ -449,23 +455,26 @@ const styles = StyleSheet.create({
     btnPercent: {
         backgroundColor: '#FF4500',
         alignItems: 'center', flex: 1
-        , borderColor: '#FF4500', borderRadius: 3
+        , borderColor: '#FF4500', borderRadius: 3, justifyContent: 'center'
     },
     btnNotPercent: {
         backgroundColor: 'white',
         alignItems: 'center', flex: 1
-        , borderRadius: 3
+        , borderRadius: 3, justifyContent: 'center'
     },
     textInput: {
         textAlign: 'center',
         alignItems: 'center',
         alignContent: 'center'
     },
-    styleTextInput:{
-        marginLeft: 5, borderColor: '#B5B5B5', borderWidth: 0.5, borderRadius: 3, height: 20, backgroundColor: '#E8E8E8', textAlign: 'right', padding: 3, textAlign:'center'
+    styleTextInput: {
+        marginLeft: 10, borderColor: '#B5B5B5', borderWidth: 0.5, borderRadius: 3, height: 23, backgroundColor: '#E8E8E8', padding: 2, textAlign: 'center'
     },
-    textTitle:{
+    textTitle: {
         fontSize: 12, color: '#696969'
+    },
+    borderItem: {
+        backgroundColor: 'white', borderRadius: 15, margin: 2, padding: 5, borderWidth: 0.25, marginLeft: 3, marginRight: 3
     }
 
 

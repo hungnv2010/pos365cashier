@@ -62,6 +62,7 @@ export default (props) => {
 
     const deleteServerEvent = (item) => {
         console.log('deleteServerEvent', item);
+        realmStore.deleteCommodity(item)
     }
 
     const clickLeftIcon = async () => {
