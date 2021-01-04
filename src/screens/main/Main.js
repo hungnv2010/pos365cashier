@@ -79,13 +79,13 @@ export default (props) => {
 
     }
 
-    // const scan = setInterval(() => {
-    //   getDataNewOrders()
-    // }, 15000);
+    const scan = setInterval(() => {
+      getDataNewOrders()
+    }, 15000);
 
     return () => {
       AppState.removeEventListener('change', handleChangeState);
-      // clearInterval(scan)
+      clearInterval(scan)
     }
   }, [])
 

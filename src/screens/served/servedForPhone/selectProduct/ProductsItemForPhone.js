@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
         paddingVertical: 5,
         marginBottom: 3,
         marginHorizontal: 5,
-        borderRadius: 10
+        borderRadius: 10, 
     },
     wrapNameItem: {
         flexDirection: "column",

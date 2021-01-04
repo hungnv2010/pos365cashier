@@ -4,7 +4,7 @@ import realmStore from '../../../../data/realm/RealmStore';
 import ProductsItemForPhone from './ProductsItemForPhone';
 import { Constant } from '../../../../common/Constant';
 import I18n from '../../../../common/language/i18n';
-import { change_alias } from '../../../../common/Utils';
+import { change_alias, dateToString, currencyToString } from '../../../../common/Utils';
 import useDebounce from '../../../../customHook/useDebounce';
 import { Colors, Metrics, Images } from '../../../../theme'
 import ToolBarSelectProduct from '../../../../components/toolbar/ToolBarSelectProduct'
@@ -145,14 +145,17 @@ export default (props) => {
   const getDescription = (item) => {
     let Description = ''
     if (item.ProductType == 2 && item.IsTimer) {
-      let date = new Date()
-      let [day, month, hour, minute] = [
-        (date.getDate() < 10 ? "0" : "") + (date.getDate()),
-        ((date.getMonth() + 1) < 10 ? '0' : '') + (date.getMonth() + 1),
-        date.getHours(),
-        date.getMinutes()
-      ]
-      Description = `${day}/${month} ${hour}:${minute}=>${day}/${month} ${hour}:${minute} (0 ${I18n.t('phut')})`
+      // let date = new Date()
+      // let [day, month, hour, minute] = [
+      //   (date.getDate() < 10 ? "0" : "") + (date.getDate()),
+      //   ((date.getMonth() + 1) < 10 ? '0' : '') + (date.getMonth() + 1),
+      //   date.getHours(),
+      //   date.getMinutes()
+      // ]
+      // Description = `${day}/${month} ${hour}:${minute}=>${day}/${month} ${hour}:${minute} (0 ${I18n.t('phut')})`
+
+      let checkIn = new Date();
+      Description = `${dateToString(checkIn, "DD/MM HH:mm")}=>${dateToString(checkIn, "DD/MM HH:mm")} () ${I18n.t('mot_gio_dau_tien')} = ${currencyToString(item.Price)}.`;
     }
     return Description
   }
@@ -160,7 +163,7 @@ export default (props) => {
   const handleButtonIncrease = (item, index) => {
     console.log('handleButtonIncrease', item, index);
     let qtt = getQuantity(item)
-    
+
     if (item.SplitForSalesOrder || (item.ProductType == 2 && item.IsTimer)) {
       listProducts.current.unshift({ ...item, Quantity: qtt })
     } else {
