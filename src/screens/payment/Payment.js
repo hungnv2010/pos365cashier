@@ -562,8 +562,8 @@ export default (props) => {
                     typeModal.current = TYPE_MODAL.QRCODE
                     setShowModal(true)
                     handlerQRCode(order)
-                } else
-                    props.navigation.pop()
+                } else{}
+                    // props.navigation.pop()
 
                 printAfterPayment()
             } else {

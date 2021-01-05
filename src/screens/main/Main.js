@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, createRef, useLayoutEffect } from 'react';
-import { View, AppState, Text, ActivityIndicator } from 'react-native';
+import { View, AppState, Text, ActivityIndicator, NativeModules } from 'react-native';
 import MainToolBar from './MainToolBar';
 import dataManager from '../../data/DataManager'
 import Order from './order/Order';
@@ -16,6 +16,7 @@ import RetailToolBar from '../main/retail/retailToolbar';
 import Customer from '../customer/Customer';
 import ViewPrint, { TYPE_PRINT } from '../more/ViewPrint';
 import { Colors } from '../../theme';
+const { Print } = NativeModules;
 
 export default (props) => {
 
@@ -81,6 +82,8 @@ export default (props) => {
     const scan = setInterval(() => {
       getDataNewOrders()
     }, 15000);
+
+    Print.registerPrint("192.168.100.237_80")
 
     return () => {
       AppState.removeEventListener('change', handleChangeState);
