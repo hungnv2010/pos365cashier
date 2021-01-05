@@ -43,45 +43,47 @@ export default (props) => {
     ])
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        const updateTime = setInterval(() => {
-            reloadTime()
-        }, 1000 * 60);
 
-        return () => {
-            clearInterval(updateTime)
-        }
-    }, [])
-
-    const reloadTime = () => {
-        alert("ok")
-    }
-
-    useEffect(() => {
+    useLayoutEffect(() => {
         const getListPos = async () => {
 
             let serverEvent = await realmStore.queryServerEvents()
+            let listPriceBook = await realmStore.queryPricebook()
+            listPriceBook = JSON.parse(JSON.stringify(listPriceBook))
 
             const row_key = `${props.route.params.room.Id}_${position}`
 
             serverEvent = serverEvent.filtered(`RowKey == '${row_key}'`)
 
-            if (JSON.stringify(serverEvent) != '{}' && serverEvent[0].JsonContent) {
-                currentServerEvent.current = serverEvent[0]
-                let jsonContentObject = JSON.parse(serverEvent[0].JsonContent)
-                setJsonContent(jsonContentObject.OrderDetails ? jsonContentObject : Constant.JSONCONTENT_EMPTY)
+            // if (JSON.stringify(serverEvent) != '{}' && serverEvent[0].JsonContent) {
+            //     currentServerEvent.current = serverEvent[0]
+            //     let jsonContentObject = JSON.parse(serverEvent[0].JsonContent)
+            //     setJsonContent(jsonContentObject.OrderDetails ? jsonContentObject : Constant.JSONCONTENT_EMPTY)
 
-                if (props.route.params.room.ProductId) {
-                    let ischeck = false;
-                    jsonContentObject.OrderDetails.forEach(element => {
-                        if (element.Id == props.route.params.room.ProductId) {
-                            ischeck = true;
-                        }
-                    });
-                    toolBarPhoneServedRef.current.clickCheckInRef(!ischeck)
+
+
+            // } else setJsonContent(Constant.JSONCONTENT_EMPTY)
+            currentServerEvent.current = JSON.stringify(serverEvent) != '{}' && serverEvent[0].JsonContent ? JSON.parse(JSON.stringify(serverEvent[0]))
+                : await dataManager.createSeverEvent(props.route.params.room.Id, position)
+            console.log('currentServerEvent.current', JSON.parse(currentServerEvent.current.JsonContent));
+            let jsonContentObject = JSON.parse(currentServerEvent.current.JsonContent)
+            console.log('listPriceBook', listPriceBook, jsonContentObject);
+            for (const property in listPriceBook) {
+                if (listPriceBook[property].Id == jsonContentObject.PriceBookId) {
+                    setCurrentPriceBook(listPriceBook[property])
                 }
+            }
+            setJsonContent(jsonContentObject)
 
-            } else setJsonContent(Constant.JSONCONTENT_EMPTY)
+            if (props.route.params.room.ProductId) {
+                let ischeck = false;
+                jsonContentObject.OrderDetails.forEach(element => {
+                    if (element.Id == props.route.params.room.ProductId) {
+                        ischeck = true;
+                    }
+                });
+                toolBarPhoneServedRef.current.clickCheckInRef(!ischeck)
+            }
 
             // setPriceBookId(jsonContent.PriceBookId)
 
@@ -102,7 +104,7 @@ export default (props) => {
         getDataRealm();
 
         getListPos()
-        
+
         return () => {
             if (serverEvent) serverEvent.removeAllListeners()
         }
@@ -309,7 +311,7 @@ export default (props) => {
     }
 
     const updateServerEvent = () => {
-        if (currentServerEvent) {
+        if (currentServerEvent.current) {
             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current))
             dataManager.calculatateJsonContent(jsonContent)
             setJsonContent({ ...jsonContent })
