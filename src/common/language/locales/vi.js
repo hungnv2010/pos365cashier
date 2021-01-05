@@ -193,6 +193,7 @@ export default {
   mac_dinh: "Mặc định",
   mat_hang: "Mặt hàng",
   ma_khach_hang: "Mã khách hàng",
+  mot_gio_dau_tien : "1 giờ đầu tiên",
 
   // TODO: N
   no: "Nợ",

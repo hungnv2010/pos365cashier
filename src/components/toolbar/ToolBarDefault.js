@@ -8,6 +8,7 @@ import {
 import { Colors, Metrics, Images } from '../../theme'
 import { IconButton, Subheading } from "react-native-paper";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import IonIcon from 'react-native-vector-icons/Ionicons'
 import Fonts from '../../theme/Fonts';
 import LinearGradient from 'react-native-linear-gradient';
 import PropTypes from 'prop-types';
@@ -46,7 +47,11 @@ export default function ToolBarDefault(props) {
             <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
                 {props.clickRightIcon && props.rightIcon ?
                     <TouchableOpacity style={{ paddingHorizontal: 10 }} onPress={props.clickRightIcon}>
-                        <Icon name={props.rightIcon} size={props.size ? props.size : 30} color="white" />
+                        {props.rightIcon == 'md-search' ?
+                            <IonIcon name={props.rightIcon} size={props.size ? props.size : 30} color="white" />
+                            :
+                            <Icon name={props.rightIcon} size={props.size ? props.size : 30} color="white" />
+                        }
                     </TouchableOpacity>
                     :
                     null

@@ -217,12 +217,12 @@ export default (props) => {
                 saveState({ ...settingObject, khong_cho_phep_ban_hang_khi_het_ton_kho: data.stt })
                 updateSetting('StockControlWhenSelling', data.stt)
                 break
-            case 'mo_cashbox_sau_khi_thanh_toan':
-                saveState({ ...settingObject, mo_cashbox_sau_khi_thanh_toan: data.stt })
-                break
-            case 'nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly':
-                saveState({ ...settingObject, nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: data.stt })
-                break
+            // case 'mo_cashbox_sau_khi_thanh_toan':
+            //     saveState({ ...settingObject, mo_cashbox_sau_khi_thanh_toan: data.stt })
+            //     break
+            // case 'nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly':
+            //     saveState({ ...settingObject, nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: data.stt })
+            //     break
             case 'giu_man_hinh_luon_sang':
                 if (data.stt == true)
                     Print.keepTheScreenOn("ok")
@@ -370,10 +370,10 @@ export default (props) => {
             }
             <ScrollView style={{ marginBottom: 1 }}>
                 <View style={{ flex: 1, flexDirection: 'column' }}>
-                    <TouchableOpacity onPress={() => screenSwitch(ScreenList.VNPayPaymentSetting, settingObject)}>
+                    {/* <TouchableOpacity onPress={() => screenSwitch(ScreenList.VNPayPaymentSetting, settingObject)}>
                         <Text style={styles.textTitleItem}>{I18n.t("thiet_lap_thanh_toan_vnpay")}</Text>
                     </TouchableOpacity>
-                    <View style={styles.viewLine}></View>
+                    <View style={styles.viewLine}></View> */}
 
                     <View>
                         <Text style={styles.textTitle}>{I18n.t("thong_bao")}</Text>
@@ -402,9 +402,9 @@ export default (props) => {
                         <TouchableOpacity onPress={() => screenSwitch(ScreenList.PrintHtml)}>
                             <Text style={styles.textTitleItem}>HTML print</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => screenSwitch(ScreenList.PrintWebview)}>
+                        {/* <TouchableOpacity onPress={() => screenSwitch(ScreenList.PrintWebview)}>
                             <Text style={styles.textTitleItem}>Temp print</Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                         <SettingSwitch title={"tu_dong_in_bao_bep"} output={onSwitchTone} isStatus={settingObject.tu_dong_in_bao_bep} />
                         <SettingSwitch title={"in_sau_khi_thanh_toan"} output={onSwitchTone} isStatus={settingObject.in_sau_khi_thanh_toan} />
                         <SettingSwitch title={"in_hai_lien_cho_hoa_don"} output={onSwitchTone} isStatus={settingObject.in_hai_lien_cho_hoa_don} />
@@ -419,8 +419,8 @@ export default (props) => {
                         <SettingSwitch title={"cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang"} output={onSwitchTone} isStatus={settingObject.cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang} />
                         <SettingSwitch title={"cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang"} output={onSwitchTone} isStatus={settingObject.cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang} />
                         <SettingSwitch title={"khong_cho_phep_ban_hang_khi_het_ton_kho"} output={onSwitchTone} isStatus={settingObject.khong_cho_phep_ban_hang_khi_het_ton_kho} />
-                        <SettingSwitch title={"mo_cashbox_sau_khi_thanh_toan"} output={onSwitchTone} isStatus={settingObject.mo_cashbox_sau_khi_thanh_toan} />
-                        <SettingSwitch title={"nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly"} output={onSwitchTone} isStatus={settingObject.nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly} />
+                        {/* <SettingSwitch title={"mo_cashbox_sau_khi_thanh_toan"} output={onSwitchTone} isStatus={settingObject.mo_cashbox_sau_khi_thanh_toan} />
+                        <SettingSwitch title={"nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly"} output={onSwitchTone} isStatus={settingObject.nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly} /> */}
                     </View>
                     <View style={styles.viewLine}></View>
                     <View>

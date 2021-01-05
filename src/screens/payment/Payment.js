@@ -23,10 +23,9 @@ import { HTTPService, URL } from '../../data/services/HttpService';
 import dialogManager from '../../components/dialog/DialogManager';
 import dataManager from '../../data/DataManager';
 import QRCode from 'react-native-qrcode-svg';
-// import DateTimePicker from '@react-native-community/datetimepicker';
 import ViewPrint, { TYPE_PRINT } from '../more/ViewPrint';
 import DatePicker from 'react-native-date-picker';
-
+var Sound = require('react-native-sound');
 let timeClickPrevious = 1000;
 
 const TYPE_MODAL = { FILTER_ACCOUNT: "FILTER_ACCOUNT", QRCODE: "QRCODE", DATE: "DATE" }
@@ -78,6 +77,7 @@ export default (props) => {
     const qrCode = useRef();
     const currentServerEvent = useRef();
     const viewPrintRef = useRef();
+    const settingObject = useRef();
     const isClick = useRef(false);
     const { Print } = NativeModules;
     let row_key = "";
@@ -120,8 +120,15 @@ export default (props) => {
             setVendorSession(JSON.parse(data));
         }
 
+        const getObjectSetting = async () => {
+            settingObject.current = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
+            settingObject.current = JSON.parse(settingObject.current)
+            console.log("settingObject.current ", settingObject.current);
+        }
+
         getRoom()
         getVendorSession()
+        getObjectSetting()
 
         var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
         var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
@@ -420,7 +427,7 @@ export default (props) => {
             if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
                 jsonContent.RoomName = props.route.params.Name
             }
-            //viewPrintRef.current.printProvisionalRef(jsonContent)
+            // viewPrintRef.current.printProvisionalRef(jsonContent)
             viewPrintRef.current.printKitchenRef(jsonContent)
             timeClickPrevious = newDate;
             //console.log("Printer ojjjjj",printerObject);
@@ -438,6 +445,39 @@ export default (props) => {
     }
 
     const onClickPay = () => {
+        let newDate = new Date().getTime();
+        if (timeClickPrevious + 2000 < newDate) {
+            timeClickPrevious = newDate;
+        } else {
+            return;
+        }
+        // Sound.setCategory('Playback');
+
+        // const callback = (error, sound) => {
+        //     if (error) {
+        //         console.log('error', error.message);
+        //         return;
+        //     }
+        //     // Run optional pre-play callback
+        //     sound.play(() => {
+        //         // Success counts as getting to the end
+        //         // Release when it's done so we're not using up resources
+        //         sound.release();
+        //     });
+        // };
+        // if (timeClickPrevious + 2000 < newDate) {
+        //     if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
+        //         jsonContent.RoomName = props.route.params.Name
+        //     }
+        //     viewPrintRef.current.printProvisionalRef(jsonContent)
+        //     viewPrintRef.current.printKitchenRef(jsonContent)
+        //     timeClickPrevious = newDate;
+        //     //console.log("Printer ojjjjj",printerObject);
+        // }
+        // const sound = new Sound(require('./videoplayback.mp4'), error => callback(error, sound));
+
+        // return;
+
         if (checkQRInListMethod()) {
             setToastDescription(I18n.t("khong_ho_tro_nhieu_tai_khoan_cho_qr"))
             setShowToast(true)
@@ -524,6 +564,8 @@ export default (props) => {
                     handlerQRCode(order)
                 } else
                     props.navigation.pop()
+
+                printAfterPayment()
             } else {
                 // alert("err")
                 handlerError({ JsonContent: json, RowKey: row_key })
@@ -532,6 +574,27 @@ export default (props) => {
             console.log("onClickPay err ", err);
             handlerError({ JsonContent: json, RowKey: row_key })
         });
+    }
+
+    const printAfterPayment = () => {
+        Sound.setCategory('Playback');
+        const callback = (error, sound) => {
+            if (error) {
+                console.log('error', error.message);
+                return;
+            }
+            // Run optional pre-play callback
+            sound.play(() => {
+                // Success counts as getting to the end
+                // Release when it's done so we're not using up resources
+                sound.release();
+            });
+        };
+        const sound = new Sound(require('./videoplayback.mp4'), error => callback(error, sound));
+        if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
+            jsonContent.RoomName = props.route.params.Name
+        }
+        viewPrintRef.current.printProvisionalRef(jsonContent)
     }
 
     const handlerQRCode = async (order) => {
