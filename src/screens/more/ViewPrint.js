@@ -82,14 +82,15 @@ export default forwardRef((props, ref) => {
             // snapshotContentContainer: true,
         }).then(
             uri => {
-                console.log('Snapshot uri', uri);
-                Print.printImageFromClient(uri, currentHtml.current.ip, (a, b) => {
-                    console.log("printImageFromClient ab ", a, b);
+                console.log('Snapshot uri', uri, currentHtml);
+                // Print.printImageFromClient(uri, currentHtml.current.ip, ( b) => {
+                Print.printImageFromClient(uri, "192.168.100.237", (b) => {
+                    console.log("printImageFromClient ab ", b);
                 })
-                setTimeout(() => {
-                    alert("print ")
-                    setDataHtmlPrint()
-                }, 1000);
+                // setTimeout(() => {
+                //     alert("print ")
+                //     setDataHtmlPrint()
+                // }, 1000);
             },
             error => console.error('Oops, snapshot failed', error)
         );
@@ -108,7 +109,8 @@ export default forwardRef((props, ref) => {
     }
 
     const printProvisional = async (jsonContent, checkProvisional = false) => {
-        let ip = await checkIP()
+        let ip = ''//await checkIP()
+        ip = "192.168.100.237"
         console.log("ip ", ip);
         if (ip != "") {
             if (checkProvisional) {
@@ -122,10 +124,14 @@ export default forwardRef((props, ref) => {
             if (jsonContent.OrderDetails && jsonContent.OrderDetails.length > 0) {
                 let res = await printService.GenHtml(HtmlDefault, jsonContent)
                 if (res && res != "") {
+                    setDataHtml(res)
+                    setTimeout(() => {
+                        clickCapture()
+                    }, 200);
                     // setDataHtmlPrint(res)
-                    printService.listWaiting.push({ html: res, ip: ip })
+                    // printService.listWaiting.push({ html: res, ip: ip })
                 }
-                setDataHtmlPrint()
+                // setDataHtmlPrint()
             }
             else
                 dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
@@ -140,24 +146,24 @@ export default forwardRef((props, ref) => {
         console.log("printObject ", printObject);
         console.log('vendorSession ', vendorSession);
         // if (status != "") {
-            for (const value in data) {
-                if (data.hasOwnProperty(value)) {
-                    const item = data[value];
-                    let i = 1;
-                    for (const key in item) {
-                        if (item.hasOwnProperty(key)) {
-                            const element = item[key];
-                            let res = printService.GenHtmlKitchen(htmlKitchen, element, i, vendorSession)
-                            if (res && res != "") {
-                                printService.listWaiting.push({ html: res, ip: printObject[value] })
-                            }
+        for (const value in data) {
+            if (data.hasOwnProperty(value)) {
+                const item = data[value];
+                let i = 1;
+                for (const key in item) {
+                    if (item.hasOwnProperty(key)) {
+                        const element = item[key];
+                        let res = printService.GenHtmlKitchen(htmlKitchen, element, i, vendorSession)
+                        if (res && res != "") {
+                            printService.listWaiting.push({ html: res, ip: printObject[value] })
                         }
-                        i++;
                     }
+                    i++;
                 }
             }
-            console.log("printService.listWaiting ", printService.listWaiting);
-            setDataHtmlPrint()
+        }
+        console.log("printService.listWaiting ", printService.listWaiting);
+        setDataHtmlPrint()
         // }
     }
 
@@ -201,7 +207,7 @@ export default forwardRef((props, ref) => {
                             }]}
                             source={{ html: dataHtml }}
                             scalesPageToFit={true}
-                            onLoadEnd={e => checkHtmlPrint(e)}
+                        // onLoadEnd={e => checkHtmlPrint(e)}
                         />
                     </View>
                 </ScrollView>
