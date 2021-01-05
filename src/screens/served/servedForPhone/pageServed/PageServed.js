@@ -54,7 +54,7 @@ export default (props) => {
     }, [])
 
     const reloadTime = () => {
-        alert("ok")
+        // alert("ok")
     }
 
     useEffect(() => {
