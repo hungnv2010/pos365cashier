@@ -60,18 +60,18 @@ const RetailCustomerOrder = (props) => {
                 setCurrentCommodity(newServerEvents[0])
                 let jsonContent = JSON.parse(newServerEvents[0].JsonContent)
                 // setListOrder(jsonContent.OrderDetails)
-                setDataOrder(jsonContent.OrderDetails)
+                syncListProducts(jsonContent.OrderDetails)
             }
 
-            serverEvents.addListener((collection, changes) => {
-                if (changes.insertions.length || changes.modifications.length) {
-                    console.log('changes.insertions.length ');
-                    let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
-                    newServerEvents = Object.values(newServerEvents)
-                    // setCurrentCommodity(newServerEvents[newServerEvents.length - 1])
-                    setNumberNewOrder(newServerEvents.length)
-                }
-            })
+            // serverEvents.addListener((collection, changes) => {
+            //     if (changes.insertions.length || changes.modifications.length) {
+            //         console.log('changes.insertions.length ');
+            //         let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
+            //         newServerEvents = Object.values(newServerEvents)
+            //         // setCurrentCommodity(newServerEvents[newServerEvents.length - 1])
+            //         setNumberNewOrder(newServerEvents.length)
+            //     }
+            // })
         }
         getCommodityWaiting()
         var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
@@ -91,7 +91,7 @@ const RetailCustomerOrder = (props) => {
     }, [])
 
     useEffect(() => {
-        if (props.listProducts.length == 0) return
+        // if (props.listProducts.length == 0) return
         // setListOrder(props.listProducts)
         setDataOrder([...props.listProducts])
     }, [props.listProducts])
@@ -134,6 +134,7 @@ const RetailCustomerOrder = (props) => {
         console.log('updateServerEvent jsonContent', jsonContent);
         currentCommodity.JsonContent = JSON.stringify(jsonContent)
         realmStore.insertServerEventForRetail(currentCommodity)
+        setCurrentCommodity({ ...currentCommodity })
     }
 
     const _keyboardDidShow = () => {
@@ -147,16 +148,17 @@ const RetailCustomerOrder = (props) => {
 
     const applyDialogDetail = (product) => {
         console.log('applyDialogDetail', product);
+        let price = product.IsLargeUnit == true ? product.PriceLargeUnit : product.Price
+        let discount = product.Percent ? (price * product.Discount / 100) : product.Discount 
         listOrder.forEach((elm, index) => {
             if (elm.ProductId == product.ProductId && index == product.index) {
                 elm.Quantity = product.Quantity
                 elm.Description = product.Description
-                elm.Discount = product.Discount
-                elm.Percent = product.Percent
+                elm.Discount = discount - price > 0 ? price : discount
                 elm.PriceWithDiscount = product.PriceWithDiscount
             }
         })
-        setDataOrder([...listOrder])
+        syncListProducts([...listOrder])
         // let list = addPromotion([...listOrder])
         // setListOrder([...list])
         // setListOrder([...listOrder])
@@ -364,10 +366,10 @@ const RetailCustomerOrder = (props) => {
 
                         <View style={{ alignItems: "flex-end" }}>
                             {/* <Icon style={{ paddingHorizontal: 5 }} name="bell-ring" size={20} color="grey" /> */}
-                            <Text
+                            {/* <Text
                                 style={{ color: Colors.colorchinh, marginRight: 5 }}>
                                 {isPromotion ? currencyToString(item.Price * item.Quantity) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit * item.Quantity) : currencyToString(item.Price * item.Quantity))}
-                            </Text>
+                            </Text> */}
                         </View>
 
                         {
@@ -519,9 +521,9 @@ const RetailCustomerOrder = (props) => {
                     onPress={() => { setExpand(!expand) }}
                     style={{ borderTopWidth: .5, borderTopColor: "red", paddingVertical: 3, backgroundColor: "white", marginLeft: 10 }}>
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
-                        <Text style={{ fontWeight: "bold" }}>{I18n.t('tong_thanh_tien')}</Text>
+                        <Text style={{ fontWeight: "bold" }}>{I18n.t('khach_phai_tra')}</Text>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                            <Text style={{ fontWeight: "bold", fontSize: 16, color: Colors.colorchinh }}>{currencyToString(jsonContent.Total)}</Text>
+                            <Text style={{ fontWeight: "bold", fontSize: 16, color: Colors.colorchinh }}>{currencyToString(jsonContent.AmountReceived)}</Text>
                             {expand ?
                                 <Icon style={{}} name="chevron-up" size={30} color="black" />
                                 :
@@ -542,7 +544,7 @@ const RetailCustomerOrder = (props) => {
                                 </View>
                             </View>
                             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
-                                <Text style={{ fontWeight: "bold" }}>{I18n.t('khach_phai_tra')}</Text>
+                                <Text style={{ fontWeight: "bold" }}>{I18n.t('tong_thanh_tien')}</Text>
                                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
                                     <Text style={{ fontWeight: "bold", fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(jsonContent.Total)}</Text>
                                 </View>

@@ -311,6 +311,7 @@ const HeaderComponent = (props) => {
                 dispatch({ type: 'ALREADY', already: false })
                 setFileLuuDuLieu(Constant.CURRENT_ACCOUNT, "");
                 setFileLuuDuLieu(Constant.CURRENT_BRANCH, "");
+                signalRManager.killSignalR();
                 navigate('Login', {}, true);
             }
         })

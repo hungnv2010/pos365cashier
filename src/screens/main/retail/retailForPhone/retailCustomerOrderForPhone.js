@@ -58,8 +58,7 @@ export default (props) => {
 
 
     useEffect(() => {
-        if (listOrder != undefined && listOrder.length > 0)
-            listOrder.forEach((elm, index) => elm.index = index)
+        listOrder.forEach((elm, index) => elm.index = index)
     }, [listOrder])
 
     useEffect(() => {
@@ -111,6 +110,7 @@ export default (props) => {
 
 
     const getOtherPrice = async (list) => {
+        console.log('getOtherPrice');
         if (currentPriceBook.Id) {
             if (jsonContent.OrderDetails && currentPriceBook) {
                 let apiPath = ApiPath.PRICE_BOOK + `/${currentPriceBook.Id}/manyproductprice`
@@ -146,20 +146,20 @@ export default (props) => {
             let newSE = await createNewServerEvent()
             setCurrentCommodity(newSE)
         } else {
-            setCurrentCommodity(newServerEvents[newServerEvents.length - 1])
-            let jsonContent = JSON.parse(newServerEvents[newServerEvents.length - 1].JsonContent)
+            setCurrentCommodity(newServerEvents[0])
+            let jsonContent = JSON.parse(newServerEvents[0].JsonContent)
             // setListOrder(jsonContent.OrderDetails)
             setDataOrder(jsonContent.OrderDetails)
         }
 
-        serverEvents.addListener((collection, changes) => {
-            if (changes.insertions.length || changes.modifications.length) {
-                let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
-                newServerEvents = Object.values(newServerEvents)
-                setCurrentCommodity(newServerEvents[newServerEvents.length - 1])
-                setNumberNewOrder(newServerEvents.length)
-            }
-        })
+        // serverEvents.addListener((collection, changes) => {
+        //     if (changes.insertions.length || changes.modifications.length) {
+        //         let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
+        //         newServerEvents = Object.values(newServerEvents)
+        //         // setCurrentCommodity(newServerEvents[newServerEvents.length - 1])
+        //         setNumberNewOrder(newServerEvents.length)
+        //     }
+        // })
     }
 
     const _keyboardDidShow = () => {
@@ -195,8 +195,6 @@ export default (props) => {
     const removeItem = (item, index) => {
         console.log('removeItem ', item.Name, item.index);
         listOrder.splice(index, 1)
-        // updateServerEvent(listOrder, currentCommodity)
-        // setListOrder([...listOrder])
         setDataOrder([...listOrder])
     }
 
@@ -207,15 +205,13 @@ export default (props) => {
         console.log("setDataOrder listOrder list ", listOrder, list);
 
         setListOrder([...list])
-        updateServerEvent(list, currentCommodity)
+        updateServerEvent([...list])
     }
 
     const addPromotion = async (list) => {
         console.log("addPromotion list ", list);
         console.log("addPromotion promotions ", promotions);
         let listProduct = await realmStore.queryProducts()
-        // console.log("addPromotion listProduct:::: ", listProduct);
-
         let listNewOrder = list.filter(element => (element.IsPromotion == undefined || (element.IsPromotion == false)))
         let listOldPromotion = list.filter(element => (element.IsPromotion != undefined && (element.IsPromotion == true)))
         console.log("listNewOrder listOldPromotion ==:: ", listNewOrder, listOldPromotion);
@@ -281,7 +277,6 @@ export default (props) => {
                 if ((element.IsPromotion == undefined || (element.IsPromotion == false)) && element.Id == item.ProductId && checkEndDate(item.EndDate) && (item.IsLargeUnit == element.IsLargeUnit && element.Quantity >= item.QuantityCondition)) {
                     let promotion = listProduct.filtered(`Id == ${item.ProductPromotionId}`)
                     promotion = JSON.parse(JSON.stringify(promotion[0]));
-                    // let promotion = JSON.parse(item.Promotion)
                     console.log("addPromotion item:::: ", promotion);
                     if (index == 0) {
                         promotion.FisrtPromotion = true;
@@ -370,7 +365,7 @@ export default (props) => {
                                 {item.Name}
                             </TextTicker>
                             <View style={{ flexDirection: "row" }}>
-                                <Text style={{}}>{isPromotion ? currencyToString(item.Price) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : currencyToString(item.Price))} x </Text>
+                                <Text style={{}}>{isPromotion ? currencyToString(item.Price) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : item.Discount > 0 ? currencyToString(item.PriceWithDiscount) : currencyToString(item.Price))} x </Text>
                                 <View>
                                     <Text style={{ color: Colors.colorchinh }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text>
                                 </View>
@@ -385,11 +380,11 @@ export default (props) => {
                                 null}
                         </View>
                         <View style={{ alignItems: "flex-end" }}>
-                            <Icon style={{ paddingHorizontal: 5 }} name="bell-ring" size={20} color="grey" />
+                            {/* <Icon style={{ paddingHorizontal: 5 }} name="bell-ring" size={20} color="grey" />
                             <Text
                                 style={{ color: Colors.colorchinh, marginRight: 5 }}>
                                 {isPromotion ? currencyToString(item.Price * item.Quantity) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit * item.Quantity) : currencyToString(item.Price * item.Quantity))}
-                            </Text>
+                            </Text> */}
                         </View>
                     </View>
                 </TouchableOpacity>
@@ -427,7 +422,8 @@ export default (props) => {
     }
 
     const onClickSync = () => {
-
+        console.log('onClickSync', props);
+        props.syncForRetail()
     }
 
     const outputTextSearch = (text) => {
@@ -438,8 +434,8 @@ export default (props) => {
         props.navigation.navigate(ScreenList.RetailSelectProduct, { _onSelect: onCallBack, listProducts: listOrder })
     }
 
-    const onCallBackQRCode = (data, type)=>{
-        
+    const onCallBackQRCode = (data, type) => {
+
     }
 
     const onCallBack = async (data, type) => {
@@ -461,9 +457,7 @@ export default (props) => {
                 break
             case 4: //from select products
                 data = await getOtherPrice(data)
-                // setListOrder(data)
                 setDataOrder(data)
-                // updateServerEvent(data, currentCommodity)
                 break;
             case 5:
                 break
@@ -472,14 +466,15 @@ export default (props) => {
         }
     }
 
-    const updateServerEvent = (data, serverEvent) => {
-        if (!serverEvent.JsonContent) return
-        console.log('updateServerEvent', data, serverEvent);
-        let jsonContent = JSON.parse(serverEvent.JsonContent)
+    const updateServerEvent = (data) => {
+        if (!currentCommodity.JsonContent) return
+        console.log('updateServerEvent', data, currentCommodity);
+        let jsonContent = JSON.parse(currentCommodity.JsonContent)
         jsonContent.OrderDetails = [...data]
         dataManager.calculatateJsonContent(jsonContent)
-        serverEvent.JsonContent = JSON.stringify(jsonContent)
-        realmStore.insertServerEventForRetail(serverEvent)
+        currentCommodity.JsonContent = JSON.stringify(jsonContent)
+        realmStore.insertServerEventForRetail(currentCommodity)
+        setCurrentCommodity({ ...currentCommodity })
     }
 
     const onClickNewOrder = async () => {
@@ -489,10 +484,9 @@ export default (props) => {
             return
         }
         let newSE = await createNewServerEvent()
-        console.log('createNewServerEventcreateNewServerEvent', newSE);
-        currentCommodity.current = newSE
-        // setListOrder([])
-        setDataOrder([])
+        setCurrentCommodity(newSE)
+        setListOrder([])
+        // setDataOrder([])
     }
 
     const onCallBackPayment = (data) => {
@@ -511,17 +505,18 @@ export default (props) => {
 
     const applyDialogDetail = (product) => {
         console.log('applyDialogDetail listOrder ', product, listOrder);
+        let price = product.IsLargeUnit == true ? product.PriceLargeUnit : product.Price
+        let discount = product.Percent ? (price * product.Discount / 100) : product.Discount
         listOrder.forEach((elm, index) => {
             if (elm.ProductId == product.ProductId && index == product.index) {
                 elm.Quantity = product.Quantity
                 elm.Description = product.Description
-                elm.Discount = product.Discount
-                elm.Percent = product.Percent
+                elm.Discount = discount - price > 0 ? price : discount
                 elm.PriceWithDiscount = product.PriceWithDiscount
             }
         })
         // setListOrder([...listOrder])
-        setDataOrder([...listOrder])
+        setDataOrder([...listOrder].filter(item => item.Quantity > 0))
     }
 
     return (

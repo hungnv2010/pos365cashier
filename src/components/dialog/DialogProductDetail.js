@@ -12,7 +12,7 @@ export default (props) => {
     const [showQuickNote, setShowQuickNote] = useState(false)
     const [listQuickNote, setListQuickNote] = useState([])
     const [IsLargeUnit, setIsLargeUnit] = useState(false)
-    const [percent, selectPercent] = useState(props.item.Percent ? props.item.Percent : false)
+    const [percent, selectPercent] = useState(false)
     const [discount, setDiscount] = useState(props.item.Discount ? props.item.Discount : 0)
     const [price, setPrice] = useState(props.item.IsLargeUnit == true ? props.item.PriceLargeUnit : props.item.Price)
 

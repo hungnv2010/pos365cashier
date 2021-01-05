@@ -40,6 +40,6 @@ export const ApiPath = {
     CHANGE_TABLE_COMFIRM: "api/serve/changetableconfirmationall",
     UPDATE_SETTING: "api/setting/updatesinglefeatureconfiguration",
     ROOM_HISTORY: "api/rooms/history",
-    SYNC_PRICE_BOOK: "api/pricebooks?format=json",
+    SYNC_PRICE_BOOK: "api/pricebooks",
     PRICE_BOOK: "api/pricebooks"
 }

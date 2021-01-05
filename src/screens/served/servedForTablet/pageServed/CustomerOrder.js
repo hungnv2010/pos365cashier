@@ -134,11 +134,16 @@ const CustomerOrder = (props) => {
     }, [debouceWaitingList])
 
     const applyDialogDetail = (product) => {
-        listOrder.forEach((elm, index) => {
-            if (elm.ProductId == product.ProductId && index == product.index) elm = product
-        })
-        setListOrder([...listOrder])
-        mapDataToList(product, true)
+        console.log('applyDialogDetail', product);
+        if (product.Quantity > 0) {
+            mapDataToList(product, true)
+        } else {
+            removeItem(product)
+        }
+        // listOrder.forEach((elm, index) => {
+        //     if (elm.ProductId == product.ProductId && index == product.index) elm = product
+        // })
+        // setListOrder([...listOrder])
     }
 
     const mapDataToList = (product, isNow = true) => {

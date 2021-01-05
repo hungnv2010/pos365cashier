@@ -77,7 +77,9 @@ export default {
   diem_hien_tai: "Current Point",
   don_hang_moi: "New orders",
   du_no: "Debt",
-  dien_thoai:"Phone",
+  dien_thoai: "Phone",
+  danh_sach_gia: "List Pricebook",
+  don_hang_offline: "Offline order",
   // TODO: E
 
 
@@ -201,7 +203,7 @@ export default {
   phuong_thuc: "Method",
   phut: "minutes",
   phien_ban_ngay: "Version",
-  phuong_thuc_khac:"Other method",
+  phuong_thuc_khac: "Other method",
 
   // TODO: Q
   quy_khach_vui_long_nhap_mat_khau: "Please enter your password",
@@ -225,7 +227,7 @@ export default {
 
   // TODO: T
   thong_bao: "Notification",
-  tong_so_hoa_don:"Total invoice",
+  tong_so_hoa_don: "Total invoice",
   tieng_anh: "English",
   tieng_viet: "Vietnamese",
   tong_quan: "Overview",
@@ -311,15 +313,15 @@ export default {
   chon_cong_nghe_in: "Select the print technology",
   cai_dat_the_cung: "Setting card",
   chan_trang: "Footer",
-  chi_tiet_huy_tra_hang:"Room History Detail",
-  chon_ngay_het_han:"Choose expiry date",
+  chi_tiet_huy_tra_hang: "Room History Detail",
+  chon_ngay_het_han: "Choose expiry date",
 
   don_vi_tien_te: "Currency unit",
   dollar_my: "Dollar",
   dia_chi: "Address",
 
   giu_man_hinh_luon_sang: "Keep the screen on",
-  gia:"Price",
+  gia: "Price",
   hien_thanh_dieu_huong: "Show navigation bar",
 
   in_sau_khi_thanh_toan: "Print after payment",
@@ -331,16 +333,16 @@ export default {
   in_qua_bluetooth: "In qua Bluetooth",
   in_qua_usb: "In qua USB",
   in_hoa_don_truoc_khi_thanh_toan_VNPAYQR_thanh_cong: "Print bill before successfull payment VNPAY-QR? ",
-  in_may_in_thu_ngan:"Print cashier printer",
-  in_may_in_tem:"Print stamp printer",
-  
+  in_may_in_thu_ngan: "Print cashier printer",
+  in_may_in_tem: "Print stamp printer",
+
 
   khong_cho_phep_ban_hang_khi_het_ton_kho: "Sales are not allowed when out of stock?",
   khong_in: "Don't print",
   khong_hien_thi: "Not displayed",
 
   link_dang_nhap: "Link login",
-  ly_do:"Reason",
+  ly_do: "Reason",
 
   may_in_thu_ngan: "Cashier printer",
   may_in_bao_bep_a: "Printer report kitchen A",
@@ -353,16 +355,16 @@ export default {
   may_in_bao_pha_che_d: "Printer report preparation D",
   may_in_tem: "Stamp printer",
   mo_cashbox_sau_khi_thanh_toan: "Open cashbox after payment",
-  ma_san_pham:'Product code',
-  ma_voucher:'Code',
+  ma_san_pham: 'Product code',
+  ma_voucher: 'Code',
 
   nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: "Receive messages / notifications from waiter, manager?",
   nhap_so_luong_the: "Enter the number of cards",
   nhap_dia_chi_ip_may: "Enter the IP address of the machine ",
   nhap_chieu_rong_kho_giay: "Enter the paper width",
-  nhan_vien:'Staff',
-  ngay_huy_tra:'Cancellation date',
-  ngay_het_han:'Expiry Date',
+  nhan_vien: 'Staff',
+  ngay_huy_tra: 'Cancellation date',
+  ngay_het_han: 'Expiry Date',
 
   so_the_cung: "Card number",
   su_dung_hai_man_hinh: "Using two screen",
@@ -376,13 +378,13 @@ export default {
   thiet_lap_he_thong: "System settings",
   ten: "Name",
   thanh_toan_vnpayqr: "Payment VNPAY-QR?",
-  thanh_toan_vnpaypos_qua_may_pos:"VNPAY-POS payment via POS machine?",
-  ten_hang_hoa:'Product name',
-  thanh_tien:'Total',
   thanh_toan_vnpaypos_qua_may_pos: "VNPAY-POS payment via POS machine?",
-  them_moi_voucher:"Add new voucher",
+  ten_hang_hoa: 'Product name',
+  thanh_tien: 'Total',
+  thanh_toan_vnpaypos_qua_may_pos: "VNPAY-POS payment via POS machine?",
+  them_moi_voucher: "Add new voucher",
 
   vnd: "VND",
-  voucher:"Voucher"
+  voucher: "Voucher"
 
 };
