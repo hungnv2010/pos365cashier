@@ -84,21 +84,24 @@ const Served = (props) => {
 
     useEffect(() => {
         const getListPos = async () => {
-
             let serverEvent = await realmStore.queryServerEvents()
-
+            // let listPriceBook = await realmStore.queryPricebook()
+            // listPriceBook = JSON.parse(JSON.stringify(listPriceBook))
+            // console.log('listPriceBook', listPriceBook);
             const row_key = `${props.route.params.room.Id}_${position}`
-
             serverEvent = serverEvent.filtered(`RowKey == '${row_key}'`)
-            console.log('serverEventserverEvent', JSON.parse(JSON.stringify(serverEvent)));
-
-            if (JSON.stringify(serverEvent) != '{}' && serverEvent[0].JsonContent) {
-                currentServerEvent.current = serverEvent[0]
-                let jsonContentObject = JSON.parse(serverEvent[0].JsonContent)
-                console.log('jsonContentjsonContentjsonContentjsonContentjsonContent', jsonContentObject, position);
-                if (!jsonContentObject.OrderDetails) jsonContentObject.OrderDetails = []
-                setJsonContent(jsonContentObject)
-            } else setJsonContent(Constant.JSONCONTENT_EMPTY)
+            currentServerEvent.current = JSON.stringify(serverEvent) != '{}' && serverEvent[0].JsonContent ? serverEvent[0]
+                : await dataManager.createSeverEvent(props.route.params.room.Id, position)
+            // let jsonContentObject = currentServerEvent.current.JsonContent ? JSON.parse(currentServerEvent.current.JsonContent)
+            //     : dataManager.createJsonContent(props.route.params.room.Id, position, moment(), [])
+            let jsonContentObject = JSON.parse(currentServerEvent.current.JsonContent)
+            setJsonContent(jsonContentObject)
+            // if (JSON.stringify(serverEvent) != '{}' && serverEvent[0].JsonContent) {
+            //     currentServerEvent.current = serverEvent[0]
+            //     let jsonContentObject = JSON.parse(serverEvent[0].JsonContent)
+            //     if (!jsonContentObject.OrderDetails) jsonContentObject.OrderDetails = []
+            //     setJsonContent(jsonContentObject)
+            // } else setJsonContent(Constant.JSONCONTENT_EMPTY)
 
             // setPriceBookId(jsonContent.PriceBookId)
 
@@ -127,25 +130,32 @@ const Served = (props) => {
                         res.PriceList.forEach((priceBook) => {
                             if (priceBook.ProductId == product.ProductId) {
                                 product.DiscountRatio = 0.0
-                                if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
-                                if (!priceBook.Price) priceBook.Price = product.UnitPrice
+                                if (!priceBook.PriceLargeUnit) product.PriceLargeUnit = priceBook.PriceLargeUnit
+                                if (!priceBook.Price) product.UnitPrice = priceBook.Price
                                 let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price
                                 product.Price = newBasePrice + product.TotalTopping
                             }
                         })
                     })
                     updateServerEvent()
+                    // let objJsonContent = {...jsonContent}
+                    // dataManager.calculatateJsonContent(objJsonContent)
+                    // console.log('getOtherPricejsonContent', objJsonContent);
+                    // setJsonContent(objJsonContent)
                 }
             }
         }
 
         const getBasePrice = () => {
+            console.log('getBasePrice');
             jsonContent.OrderDetails.map((product) => {
                 product.DiscountRatio = 0.0
                 let basePrice = (product.IsLargeUnit) ? product.PriceLargeUnit : product.UnitPrice
                 product.Price = basePrice + product.TotalTopping
             })
             updateServerEvent()
+            // dataManager.calculatateJsonContent(jsonContent)
+            // setJsonContent({ ...jsonContent })
         }
         if (jsonContent.OrderDetails) {
             if (currentPriceBook && currentPriceBook.Id) getOtherPrice()
@@ -358,12 +368,13 @@ const Served = (props) => {
     }
 
     const updateServerEvent = () => {
-        if (currentServerEvent) {
+        if (currentServerEvent.current) {
             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current))
             dataManager.calculatateJsonContent(jsonContent)
             setJsonContent({ ...jsonContent })
             serverEvent.Version += 1
             serverEvent.JsonContent = JSON.stringify(jsonContent)
+            console.log('updateServerEvent serverEvent', jsonContent);
 
             dataManager.updateServerEvent(serverEvent)
         }
