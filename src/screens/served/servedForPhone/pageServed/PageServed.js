@@ -44,15 +44,11 @@ export default (props) => {
     const dispatch = useDispatch();
 
 
-<<<<<<< HEAD
     const reloadTime = () => {
         // alert("ok")
     }
 
-    useEffect(() => {
-=======
     useLayoutEffect(() => {
->>>>>>> 417a10ba8c054947186d45b3134de81724495156
         const getListPos = async () => {
 
             let serverEvent = await realmStore.queryServerEvents()
