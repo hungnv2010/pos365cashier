@@ -93,6 +93,8 @@ export default {
   dien_thoai:"Điện thoại",
   don_hang_moi: "Đơn mới",
   don_hang_offline: "Đơn hàng offline",
+  danh_sach_gia:"Danh sách giá",
+  don_hang_offline:"Đơn hàng offline",
 
   // TODO: E
 

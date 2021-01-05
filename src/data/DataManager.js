@@ -277,7 +277,8 @@ class DataManager {
         let totalProducts = this.totalProducts(JsonContent.OrderDetails)
         let discount = this.totalDiscountProducts(JsonContent.OrderDetails)
         let totalWithVAT = totalProducts + (JsonContent.VAT ? JsonContent.VAT : 0)
-        JsonContent.Total = totalWithVAT - discount
+        // JsonContent.Total = totalWithVAT - discount
+        JsonContent.Total = totalWithVAT
         JsonContent.AmountReceived = totalWithVAT - discount
         JsonContent.Discount = discount
         if (!JsonContent.ActiveDate || JsonContent.ActiveDate == "")
@@ -301,7 +302,8 @@ class DataManager {
         let totalDiscount = 0
         products.forEach(product => {
             let discount = product.Discount > 0 ? product.Discount : 0
-            totalDiscount = product.Percent ? (product.Price * discount / 100) * product.Quantity : discount * product.Quantity
+            // totalDiscount = product.Percent ? (product.Price * discount / 100) * product.Quantity : discount * product.Quantity
+            totalDiscount += discount * product.Quantity
         })
         return totalDiscount
     }

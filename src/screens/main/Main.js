@@ -95,10 +95,12 @@ export default (props) => {
     const syncDatas = async () => {
       if (isFNB === null) return
       dispatch({ type: 'ALREADY', already: false })
-      await realmStore.deleteAll()
+      // await realmStore.deleteAll()
       if (isFNB === true) {
+        await realmStore.deleteAll()
         await dataManager.syncAllDatas()
       } else {
+        await realmStore.deleteAllForRetail()
         await dataManager.syncAllDatasForRetail()
       }
       dispatch({ type: 'ALREADY', already: true })
@@ -116,17 +118,21 @@ export default (props) => {
   }
 
   const clickRightIcon = async () => {
+    dialogManager.showLoading()
     dispatch({ type: 'ALREADY', already: false })
     await realmStore.deleteAll()
     await dataManager.syncAllDatas()
     dispatch({ type: 'ALREADY', already: true })
+    dialogManager.hiddenLoading()
   }
 
   const clickSyncForRetail = async () => {
+    dialogManager.showLoading()
     dispatch({ type: 'ALREADY', already: false })
-    await realmStore.deleteAll()
+    await realmStore.deleteAllForRetail()
     await dataManager.syncAllDatasForRetail()
     dispatch({ type: 'ALREADY', already: true })
+    dialogManager.hiddenLoading()
   }
 
 
