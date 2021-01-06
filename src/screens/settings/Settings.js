@@ -19,6 +19,7 @@ import { ScreenList } from '../../common/ScreenList';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
+import colors from '../../theme/Colors';
 const { Print } = NativeModules;
 
 export default (props) => {
@@ -136,7 +137,8 @@ export default (props) => {
                 setSettingObject(DefaultSetting)
             } else {
                 setSettingObject(JSON.parse(data))
-                setSettingObject({ ...settingObject, strings: JSON.parse(res.Settings) })
+                if(res.length!=0)
+                setSettingObject({ ...settingObject, strings: res.Settings })
 
             }
         }
@@ -771,10 +773,10 @@ const Footer = (props) => {
 }
 const styles = StyleSheet.create({
     textTitle: {
-        fontSize: 16, color: '#FF4500', marginLeft: 20
+        fontSize: 16, color: colors.colorchinh, marginLeft: 20, marginTop:10
     },
     textTitleItem: {
-        flex: 6, fontSize: 16, marginLeft: 20, marginTop: 20
+        flex: 6, fontSize: 16, marginLeft: 20, marginTop: 30
     },
     textTitleItemHint: {
         flex: 1, fontSize: 16, color: 'silver', marginLeft: 20
@@ -783,23 +785,23 @@ const styles = StyleSheet.create({
         flex: 2,
     },
     viewLine: {
-        height: 1, width: '100%', alignSelf: 'center', backgroundColor: 'silver', marginVertical: 10
+        height: 1, width: '100%', alignSelf: 'center', backgroundColor: 'silver', marginVertical: 10, marginTop:10
     },
     styleButtonOK: {
-        flex: 1, backgroundColor: "#FF4500", borderRadius: 4, paddingHorizontal: 20, paddingVertical: 10, justifyContent: "flex-end", marginLeft: 10, marginRight: 20, marginBottom: 10
+        flex: 1, backgroundColor: colors.colorchinh, borderRadius: 4, paddingHorizontal: 20, paddingVertical: 10, justifyContent: "flex-end", marginLeft: 10, marginRight: 20, marginBottom: 10
     },
     styleButtonHuy: {
-        flex: 1, backgroundColor: "#fff", borderWidth: 1, borderColor: "#FF4500", borderRadius: 4, justifyContent: 'flex-start', paddingVertical: 10, paddingHorizontal: 20, marginLeft: 20, marginRight: 10, marginBottom: 10
+        flex: 1, backgroundColor: "#fff", borderWidth: 1, borderColor: colors.colorchinh, borderRadius: 4, justifyContent: 'flex-start', paddingVertical: 10, paddingHorizontal: 20, marginLeft: 20, marginRight: 10, marginBottom: 10
     },
     styleViewModal: {
         alignItems: 'center', justifyContent: 'center', backgroundColor: "#fff", borderRadius: 5,
     },
     titleModal: {
-        fontSize: 18, fontWeight: "bold", textAlign: "center", paddingVertical: 10, color: '#FF4500'
+        fontSize: 18, fontWeight: "bold", textAlign: "center", paddingVertical: 10, color: colors.colorchinh
     },
     textInputStyle: {
         height: 45, borderBottomWidth: 1, marginTop: 5, padding: 10, marginLeft: 20, marginRight: 20, fontSize: 16
     },
-    styleTextBtnHuy: { textAlign: "center", color: "#FF4500", fontSize: 16 },
+    styleTextBtnHuy: { textAlign: "center", color: colors.colorchinh, fontSize: 16 },
     styleTextBtnOk: { textAlign: "center", color: "#fff", fontSize: 16 },
 })
