@@ -169,16 +169,22 @@ export default forwardRef((props, ref) => {
         return new Promise(async (resolve, reject) => {
             let objectSetting = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
 
-            console.log('checkIP objectSetting ', objectSetting);
-            let item = {}
-            objectSetting.forEach(element => {
-                if (element.key == Constant.KEY_PRINTER.CashierKey) {
-                    item = element;
-                }
-            });
+            console.log('checkIP objectSetting == ', objectSetting);
+            if (objectSetting && objectSetting != "") {
+                objectSetting = JSON.parse(objectSetting)
+                let item = {}
+                objectSetting.Printer.forEach(element => {
+                    if (element.key == Constant.KEY_PRINTER.CashierKey) {
+                        item = element;
+                    }
+                });
 
-            if (item.key != "" && item.ip != "") {
-                resolve(item.ip)
+                if (item.key != "" && item.ip != "") {
+                    resolve(item.ip)
+                } else {
+                    dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_may_in'), I18n.t('thong_bao'))
+                    resolve("")
+                }
             } else {
                 dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_may_in'), I18n.t('thong_bao'))
                 resolve("")
