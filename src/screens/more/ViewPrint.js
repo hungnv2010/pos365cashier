@@ -38,6 +38,7 @@ export default forwardRef((props, ref) => {
     const [uriImg, setUriImg] = useState("")
     const [dataHtml, setDataHtml] = useState("");
     const currentHtml = useRef({})
+    const isProvisional = useRef(true)
 
     useEffect(() => {
         setDataHtml(props.html)
@@ -82,14 +83,16 @@ export default forwardRef((props, ref) => {
             // snapshotContentContainer: true,
         }).then(
             uri => {
-                console.log('Snapshot uri', uri);
-                Print.printImageFromClient(uri, currentHtml.current.ip, (a, b) => {
-                    console.log("printImageFromClient ab ", a, b);
+                console.log('Snapshot uri', uri, currentHtml);
+                // Print.printImageFromClient(uri, currentHtml.current.ip, ( b) => {
+                Print.printImageFromClient(uri, "192.168.100.237", (b) => {
+                    console.log("printImageFromClient ab ", b);
                 })
-                setTimeout(() => {
-                    alert("print ")
-                    setDataHtmlPrint()
-                }, 1000);
+                if (!isProvisional.current)
+                    setTimeout(() => {
+                        alert("print ")
+                        setDataHtmlPrint()
+                    }, 1000);
             },
             error => console.error('Oops, snapshot failed', error)
         );
@@ -100,6 +103,7 @@ export default forwardRef((props, ref) => {
             console.log("tttt setDataHtmlPrint", printService.listWaiting);
             currentHtml.current = printService.listWaiting.pop()
             console.log("tttt setDataHtmlPrint aaa == ", currentHtml);
+            console.log("tttt setDataHtmlPrint aaa == currentHtml.current.html ", currentHtml.current.html);
             setDataHtml(currentHtml.current.html)
         }
         else {
@@ -109,6 +113,7 @@ export default forwardRef((props, ref) => {
 
     const printProvisional = async (jsonContent, checkProvisional = false) => {
         let ip = await checkIP()
+        // ip = "192.168.100.237"
         console.log("ip ", ip);
         if (ip != "") {
             if (checkProvisional) {
@@ -122,10 +127,11 @@ export default forwardRef((props, ref) => {
             if (jsonContent.OrderDetails && jsonContent.OrderDetails.length > 0) {
                 let res = await printService.GenHtml(HtmlDefault, jsonContent)
                 if (res && res != "") {
-                    // setDataHtmlPrint(res)
-                    printService.listWaiting.push({ html: res, ip: ip })
+                    isProvisional.current = true;
+                    let newRes = res.replace("</body>", "<p style='display: none;'>" + new Date() + "</p> </body>");
+                    printService.listWaiting.push({ html: newRes, ip: ip })
+                    setDataHtmlPrint()
                 }
-                setDataHtmlPrint()
             }
             else
                 dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
@@ -133,40 +139,46 @@ export default forwardRef((props, ref) => {
     }
 
     const printKitchen = async (data) => {
-        let status = await checkIP()
+        isProvisional.current = false;
         let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
         vendorSession = JSON.parse(vendorSession);
         console.log("data ", data);
         console.log("printObject ", printObject);
         console.log('vendorSession ', vendorSession);
-        // if (status != "") {
-            for (const value in data) {
-                if (data.hasOwnProperty(value)) {
-                    const item = data[value];
-                    let i = 1;
-                    for (const key in item) {
-                        if (item.hasOwnProperty(key)) {
-                            const element = item[key];
-                            let res = printService.GenHtmlKitchen(htmlKitchen, element, i, vendorSession)
-                            if (res && res != "") {
-                                printService.listWaiting.push({ html: res, ip: printObject[value] })
-                            }
+        for (const value in data) {
+            if (data.hasOwnProperty(value)) {
+                const item = data[value];
+                let i = 1;
+                for (const key in item) {
+                    if (item.hasOwnProperty(key)) {
+                        const element = item[key];
+                        let res = printService.GenHtmlKitchen(htmlKitchen, element, i, vendorSession)
+                        if (res && res != "") {
+                            printService.listWaiting.push({ html: res, ip: printObject[value] })
                         }
-                        i++;
                     }
+                    i++;
                 }
             }
-            console.log("printService.listWaiting ", printService.listWaiting);
-            setDataHtmlPrint()
-        // }
+        }
+        console.log("printService.listWaiting ", printService.listWaiting);
+        setDataHtmlPrint()
     }
 
     const checkIP = async () => {
         return new Promise(async (resolve, reject) => {
-            let getCurrentIP = await getFileDuLieuString(Constant.IPPRINT, true);
-            console.log('checkIP ', getCurrentIP);
-            if (getCurrentIP && getCurrentIP != "") {
-                resolve(getCurrentIP)
+            let objectSetting = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
+
+            console.log('checkIP objectSetting ', objectSetting);
+            let item = {}
+            objectSetting.forEach(element => {
+                if (element.key == Constant.KEY_PRINTER.CashierKey) {
+                    item = element;
+                }
+            });
+
+            if (item.key != "" && item.ip != "") {
+                resolve(item.ip)
             } else {
                 dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_may_in'), I18n.t('thong_bao'))
                 resolve("")
@@ -201,6 +213,7 @@ export default forwardRef((props, ref) => {
                             }]}
                             source={{ html: dataHtml }}
                             scalesPageToFit={true}
+                            // startInLoadingState
                             onLoadEnd={e => checkHtmlPrint(e)}
                         />
                     </View>

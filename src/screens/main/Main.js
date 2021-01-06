@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, createRef, useLayoutEffect } from 'react';
-import { View, AppState, Text, ActivityIndicator } from 'react-native';
+import { View, AppState, Text, ActivityIndicator, NativeModules } from 'react-native';
 import MainToolBar from './MainToolBar';
 import dataManager from '../../data/DataManager'
 import Order from './order/Order';
@@ -16,6 +16,7 @@ import RetailToolBar from '../main/retail/retailToolbar';
 import Customer from '../customer/Customer';
 import ViewPrint, { TYPE_PRINT } from '../more/ViewPrint';
 import { Colors } from '../../theme';
+const { Print } = NativeModules;
 
 export default (props) => {
 
@@ -78,13 +79,15 @@ export default (props) => {
 
     }
 
-    // const scan = setInterval(() => {
-    //   getDataNewOrders()
-    // }, 15000);
+    const scan = setInterval(() => {
+      getDataNewOrders()
+    }, 15000);
+
+    Print.registerPrint("")
 
     return () => {
       AppState.removeEventListener('change', handleChangeState);
-      // clearInterval(scan)
+      clearInterval(scan)
     }
   }, [])
 
@@ -92,10 +95,12 @@ export default (props) => {
     const syncDatas = async () => {
       if (isFNB === null) return
       dispatch({ type: 'ALREADY', already: false })
-      await realmStore.deleteAll()
+      // await realmStore.deleteAll()
       if (isFNB === true) {
+        await realmStore.deleteAll()
         await dataManager.syncAllDatas()
       } else {
+        await realmStore.deleteAllForRetail()
         await dataManager.syncAllDatasForRetail()
       }
       dispatch({ type: 'ALREADY', already: true })
@@ -113,17 +118,21 @@ export default (props) => {
   }
 
   const clickRightIcon = async () => {
+    dialogManager.showLoading()
     dispatch({ type: 'ALREADY', already: false })
     await realmStore.deleteAll()
     await dataManager.syncAllDatas()
     dispatch({ type: 'ALREADY', already: true })
+    dialogManager.hiddenLoading()
   }
 
   const clickSyncForRetail = async () => {
+    dialogManager.showLoading()
     dispatch({ type: 'ALREADY', already: false })
-    await realmStore.deleteAll()
+    await realmStore.deleteAllForRetail()
     await dataManager.syncAllDatasForRetail()
     dispatch({ type: 'ALREADY', already: true })
+    dialogManager.hiddenLoading()
   }
 
 

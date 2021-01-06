@@ -454,7 +454,7 @@ export default (props) => {
                         <View style={{
                             padding: 0,
                             backgroundColor: "#fff", borderRadius: 4, marginHorizontal: 20,
-                            width: Metrics.screenWidth * 0.8,
+                            width: Metrics.screenWidth * 0.9,
                             // marginBottom: Platform.OS == 'ios' ? Metrics.screenHeight / 2.5 : 0
                             marginBottom: Platform.OS == 'ios' ? marginModal : 0
                         }}>
@@ -505,7 +505,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-evenly",
-        // paddingVertical: 10,
+        paddingVertical: 5,
         borderBottomColor: "#ABB2B9",
         borderBottomWidth: 0.5,
     },

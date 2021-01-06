@@ -43,12 +43,12 @@ RCT_EXPORT_MODULE();
 
 RCT_EXPORT_METHOD(registerPrint:(NSString *)param) {
   NSLog(@"registerPrint param %@", param);
-  NSArray *arrayOfComponents = [param componentsSeparatedByString:@"_"];
-  IP = arrayOfComponents[0];
-  SizeInput = [arrayOfComponents[1] integerValue];
-  NSLog(@"registerPrint IP %@", IP);
-  NSLog(@"registerPrint SizeInput %ld", (long)SizeInput);
-  isConnectAndPrint = NO;
+//  NSArray *arrayOfComponents = [param componentsSeparatedByString:@"_"];
+//  IP = arrayOfComponents[0];
+//  SizeInput = [arrayOfComponents[1] integerValue];
+//  NSLog(@"registerPrint IP %@", IP);
+//  NSLog(@"registerPrint SizeInput %ld", (long)SizeInput);
+//  isConnectAndPrint = NO;
   _printerManager = [PrinterManager sharedInstance];
   [_printerManager AddConnectObserver:self selector:@selector(handleNotification:)];//Add
 }
@@ -67,7 +67,7 @@ RCT_EXPORT_METHOD(printImageFromClient:(NSString *)param ip:(NSString *)ip callb
   imagePrintClient = [[UIImage alloc] initWithData:imgData];
   NSLog(@"printImageFromClient imagePrintClient %@", imagePrintClient);
   [self printClient];
-  callback(@[[NSNull null], @"Done"]);
+  callback(@[@"Done"]);
 }
 
 RCT_EXPORT_METHOD(printImage:(NSString *)param) {
@@ -128,7 +128,7 @@ RCT_EXPORT_METHOD(keepTheScreenOff:(NSString *)param) {
   [imagePrintClient drawInRect:CGRectMake(0, 0, newWidth, newHeight)];
   UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
   imagePrintClient = newImage;
-  
+  NSLog(@"printImageFromClient URL 1");
   CGImageRef tmpImgRef = newImage.CGImage;
   int numberArrayImage = 1;
   if(newHeight > newWidth){
@@ -138,14 +138,14 @@ RCT_EXPORT_METHOD(keepTheScreenOff:(NSString *)param) {
       numberArrayImage = newHeight / newWidth;
     }
   }
-  
+  NSLog(@"printImageFromClient URL 2");
   for (int i=0; i<numberArrayImage; i++) {
     CGImageRef topImgRef = CGImageCreateWithImageInRect(tmpImgRef, CGRectMake(0, i * newImage.size.height / numberArrayImage, newImage.size.width, newImage.size.height / numberArrayImage));
     UIImage *img = [UIImage imageWithCGImage:topImgRef];
     [images addObject:img];
     CGImageRelease(topImgRef);
   }
-  
+  NSLog(@"printImageFromClient URL 3");
   //  for (int i=0, count = [images count]; i < count; i++) {
   
   Cmd *cmd = [_printerManager CreateCmdClass:_printerManager.CurrentPrinterCmdType];
@@ -160,20 +160,22 @@ RCT_EXPORT_METHOD(keepTheScreenOff:(NSString *)param) {
   int Size = SizeInput > 0 ? SizeInput : 72;
   bitmapSetting.limitWidth = Size*8;//ESC
   NSData *data;
-  
+  NSLog(@"printImageFromClient URL 4");
   for (int i=0, count = [images count]; i < count; i++) {
     data = [cmd GetBitMapCmd:bitmapSetting image:[images objectAtIndex:i]];
     [cmd Append:data];
+    NSLog(@"printImageFromClient URL 5");
   }
   [cmd Append:[cmd GetLFCRCmd]];
   //[cmd Append:[cmd GetCutPaperCmd:CutterMode_half]];
-  //[cmd Append:[cmd GetFeedAndCutPaperCmd:false FeedDistance:0]];
+//  [cmd Append:[cmd GetFeedAndCutPaperCmd:true FeedDistance:10]];
   [cmd Append:[cmd GetCutPaperCmd:CutterMode_half]];//for ESC
   [cmd Append:[cmd GetBeepCmd:1 interval:10]];
   //    [cmd Append:[cmd GetOpenDrawerCmd:0 startTime:5 endTime:0]];
   if ([_printerManager.CurrentPrinter IsOpen]){
     NSData *data=[cmd GetCmd];
     [currentprinter Write:data];
+    NSLog(@"printImageFromClient URL 7");
   }
   data = nil;
   cmd=nil;

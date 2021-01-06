@@ -60,8 +60,7 @@ class DataManager {
                         console.log('serverEventByRowKey', serverEventByRowKey, JSON.stringify(serverEventByRowKey));
                         serverEventByRowKey = JSON.stringify(serverEventByRowKey) != '{}' ? JSON.parse(JSON.stringify(serverEventByRowKey))[0]
                             : await this.createSeverEvent(item.RoomId, item.Position)
-                        serverEventByRowKey.JsonContent = serverEventByRowKey.JsonContent ? JSON.parse(serverEventByRowKey.JsonContent)
-                            : this.createJsonContent(item.RoomId, item.Position, moment(), item.products)
+                        serverEventByRowKey.JsonContent = JSON.parse(serverEventByRowKey.JsonContent)
                         if (serverEventByRowKey.JsonContent.OrderDetails && serverEventByRowKey.JsonContent.OrderDetails.length > 0) {
                             item.products.forEach(elm => {
                                 if ((elm.SplitForSalesOrder || (elm.ProductType == 2 && elm.IsTimer))) {
@@ -277,7 +276,8 @@ class DataManager {
         let totalProducts = this.totalProducts(JsonContent.OrderDetails)
         let discount = this.totalDiscountProducts(JsonContent.OrderDetails)
         let totalWithVAT = totalProducts + (JsonContent.VAT ? JsonContent.VAT : 0)
-        JsonContent.Total = totalWithVAT - discount
+        // JsonContent.Total = totalWithVAT - discount
+        JsonContent.Total = totalWithVAT
         JsonContent.AmountReceived = totalWithVAT - discount
         JsonContent.Discount = discount
         if (!JsonContent.ActiveDate || JsonContent.ActiveDate == "")
@@ -294,14 +294,15 @@ class DataManager {
     }
 
     totalProducts = (products) => {
-        return products.reduce((total, product) => total + (product.IsPromotion == true ? product.Price * product.Quantity : (product.IsLargeUnit ? product.PriceLargeUnit : product.UnitPrice) * product.Quantity), 0)
+        return products.reduce((total, product) => total + (product.IsPromotion == true ? product.Price * product.Quantity : (product.IsLargeUnit ? product.PriceLargeUnit : product.Price) * product.Quantity), 0)
     }
 
     totalDiscountProducts = (products) => {
         let totalDiscount = 0
         products.forEach(product => {
             let discount = product.Discount > 0 ? product.Discount : 0
-            totalDiscount = product.Percent ? (product.Price * discount / 100) * product.Quantity : discount * product.Quantity
+            // totalDiscount = product.Percent ? (product.Price * discount / 100) * product.Quantity : discount * product.Quantity
+            totalDiscount += discount * product.Quantity
         })
         return totalDiscount
     }
@@ -337,16 +338,16 @@ class DataManager {
 
         newServerEvent = (JSON.stringify(newServerEvent) != '{}') ? JSON.parse(JSON.stringify(newServerEvent))[0]
             : await this.createSeverEvent(newRoomId, newPosition)
-        if (!newServerEvent.JsonContent) {
-            newServerEvent.JsonContent =
-                this.createJsonContent(newRoomId, newPosition, momentToDateUTC(moment()), oldServerEvent.JsonContent.OrderDetails)
-        } else {
-            newServerEvent.JsonContent = JSON.parse(newServerEvent.JsonContent)
-            let OrderDetails = newServerEvent.JsonContent.OrderDetails ?
-                [...newServerEvent.JsonContent.OrderDetails, ...oldServerEvent.JsonContent.OrderDetails]
-                : oldServerEvent.JsonContent.OrderDetails
-            newServerEvent.JsonContent.OrderDetails = [...OrderDetails]
-        }
+        // if (!newServerEvent.JsonContent) {
+        //     newServerEvent.JsonContent =
+        //         this.createJsonContent(newRoomId, newPosition, momentToDateUTC(moment()), oldServerEvent.JsonContent.OrderDetails)
+        // } else {
+        newServerEvent.JsonContent = JSON.parse(newServerEvent.JsonContent)
+        let OrderDetails = newServerEvent.JsonContent.OrderDetails ?
+            [...newServerEvent.JsonContent.OrderDetails, ...oldServerEvent.JsonContent.OrderDetails]
+            : oldServerEvent.JsonContent.OrderDetails
+        newServerEvent.JsonContent.OrderDetails = [...OrderDetails]
+        // }
 
         oldServerEvent.Version += 1
         oldServerEvent.JsonContent = JSON.stringify(this.removeJsonContent(oldServerEvent.JsonContent))
@@ -372,16 +373,16 @@ class DataManager {
 
         newServerEvent = (JSON.stringify(newServerEvent) != '{}') ? JSON.parse(JSON.stringify(newServerEvent))[0]
             : await this.createSeverEvent(RoomId, NewPosition)
-        if (!newServerEvent.JsonContent) {
-            newServerEvent.JsonContent =
-                this.createJsonContent(RoomId, NewPosition, momentToDateUTC(moment()), ListNewSplit)
-        } else {
-            newServerEvent.JsonContent = JSON.parse(newServerEvent.JsonContent)
-            let OrderDetails = newServerEvent.JsonContent.OrderDetails ?
-                [...newServerEvent.JsonContent.OrderDetails, ...ListNewSplit]
-                : ListNewSplit
-            newServerEvent.JsonContent.OrderDetails = [...OrderDetails]
-        }
+        // if (!newServerEvent.JsonContent) {
+        //     newServerEvent.JsonContent =
+        //         this.createJsonContent(RoomId, NewPosition, momentToDateUTC(moment()), ListNewSplit)
+        // } else {
+        newServerEvent.JsonContent = JSON.parse(newServerEvent.JsonContent)
+        let OrderDetails = newServerEvent.JsonContent.OrderDetails ?
+            [...newServerEvent.JsonContent.OrderDetails, ...ListNewSplit]
+            : ListNewSplit
+        newServerEvent.JsonContent.OrderDetails = [...OrderDetails]
+        // }
 
 
         oldServerEvent.Version += 1
@@ -411,6 +412,7 @@ class DataManager {
     }
 
     createSeverEvent = async (RoomId, Position) => {
+        let objectJsonContent = this.createJsonContent(RoomId, Position, moment())
         let vendorSession = await this.selectVendorSession()
         let PartitionKey = `${vendorSession.CurrentBranchId}_${vendorSession.CurrentUser.RetailerId}`
         let RowKey = `${RoomId}_${Position}`
@@ -421,7 +423,8 @@ class DataManager {
             PartitionKey: PartitionKey,
             RowKey: RowKey,
             Timestamp: moment().format("YYYY-MM-DD'T'HH:mm:ssZ"),
-            ETag: `W/\"datetime'${momentToStringDateLocal(moment())}'\"`
+            ETag: `W/\"datetime'${momentToStringDateLocal(moment())}'\"`,
+            JsonContent: JSON.stringify(objectJsonContent)
         }
     }
 

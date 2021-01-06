@@ -93,6 +93,8 @@ export default {
   dien_thoai:"Điện thoại",
   don_hang_moi: "Đơn mới",
   don_hang_offline: "Đơn hàng offline",
+  danh_sach_gia:"Danh sách giá",
+  don_hang_offline:"Đơn hàng offline",
 
   // TODO: E
 
@@ -191,6 +193,7 @@ export default {
   mac_dinh: "Mặc định",
   mat_hang: "Mặt hàng",
   ma_khach_hang: "Mã khách hàng",
+  mot_gio_dau_tien : "1 giờ đầu tiên",
 
   // TODO: N
   no: "Nợ",

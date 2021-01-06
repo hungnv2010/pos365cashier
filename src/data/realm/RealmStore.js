@@ -43,6 +43,23 @@ class RealmStore extends RealmBase {
         }))
     }
 
+    deleteAllForRetail = async () => {
+        let realm = await Realm.open(databaseOption)
+        let newSchemaName = { ...SchemaName }
+        delete newSchemaName.SERVER_EVENT
+        realm.write(() => {
+            for (const schema in newSchemaName) {
+                realm.delete(realm.objects(newSchemaName[schema]))
+            }
+            return Promise.resolve()
+        })
+        // return new Promise((resolve) => realm.write(() => {
+        //     let room = realm.objects(SchemaName.ROOM)
+        //     realm.delete(room)
+        //     resolve()
+        // }))
+    }
+
     deleteRoom = async () => {
         console.log("deleteRoom ");
         let realm = await Realm.open(databaseOption)
@@ -239,6 +256,7 @@ export const SchemaName = {
     QR_CODE: "QRCode",
     PRICE_BOOK: "PriceBook"
 }
+
 
 const PriceBook = {
     name: SchemaName.PRICE_BOOK,

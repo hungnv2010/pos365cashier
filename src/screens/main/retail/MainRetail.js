@@ -88,7 +88,8 @@ const MainRetail = (props) => {
 
 
             case 2:
-                setListProducts(product)
+                let newProduct = product.filter(prod => prod.Quantity > 0)
+                setListProducts(newProduct)
                 break;
             default:
                 break;
