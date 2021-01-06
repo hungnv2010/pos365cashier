@@ -4,6 +4,7 @@ import { getFileDuLieuString, setFileLuuDuLieu } from "../../data/fileStore/File
 import { Constant } from "../../common/Constant";
 import { set } from 'react-native-reanimated';
 import I18n from '../../common/language/i18n';
+import colors from '../../theme/Colors';
 export default function SettingSwitch(props) {
     const [stateSwitch, setStateSwitch] = useState(props.isStatus)
 
@@ -18,7 +19,7 @@ export default function SettingSwitch(props) {
     }
     const setThumbColor = (a) => {
         if (a == true) {
-            return "#FF4500"
+            return colors.colorchinh
         } else {
             return "silver"
         }
@@ -27,7 +28,7 @@ export default function SettingSwitch(props) {
         <TouchableOpacity onPress={() => onSwitchClick()}>
             <View style={styles.styleItemSwitch}>
                 <Text style={{ fontSize: 16, flex: 6, marginLeft: 20, marginTop: 20 }}>{I18n.t(props.title)}</Text>
-                <Switch style={{ flex: 1, marginTop:20 }} value={stateSwitch} onValueChange={() => onSwitchClick()} trackColor={{ false: "silver", true: "#FFA07A" }}
+                <Switch style={{ flex: 1, marginTop:20,marginRight:20 }} value={stateSwitch} onValueChange={() => onSwitchClick()} trackColor={{ false: "silver", true: "#FFA07A" }}
                     thumbColor={setThumbColor(stateSwitch)}
                 ></Switch>
             </View>
@@ -39,6 +40,6 @@ const styles = StyleSheet.create({
     styleItemSwitch: {
         flex: 1,
         flexDirection: 'row',
-        marginTop: 10
+        marginTop: 10, justifyContent:'center',alignItems:'center'
     }
 })

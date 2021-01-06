@@ -394,7 +394,6 @@ const ProductSchema = {
         StopTimer: { type: 'bool', default: false },
         Hidden: { type: 'bool', default: false },
         IsCheckPriceServer: { type: 'bool', default: true },
-
     }
 }
 

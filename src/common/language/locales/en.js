@@ -313,14 +313,18 @@ export default {
   chan_trang: "Footer",
   chi_tiet_huy_tra_hang:"Room History Detail",
   chon_ngay_het_han:"Choose expiry date",
+  chi_tiet_hang_hoa:"Product detail",
 
   don_vi_tien_te: "Currency unit",
   dollar_my: "Dollar",
   dia_chi: "Address",
+  don_vi_tinh:'Unit',
+  dich_vu:'Service',
 
   giu_man_hinh_luon_sang: "Keep the screen on",
   gia:"Price",
   hien_thanh_dieu_huong: "Show navigation bar",
+  hien_thi_hang_hoa:'',
 
   in_sau_khi_thanh_toan: "Print after payment",
   in_hai_lien_cho_hoa_don: "Print twice for the invoice",
@@ -341,6 +345,8 @@ export default {
 
   link_dang_nhap: "Link login",
   ly_do:"Reason",
+  luu:'Save',
+  luu_va_sao_chep:"Save & Coppy ",
 
   may_in_thu_ngan: "Cashier printer",
   may_in_bao_bep_a: "Printer report kitchen A",
@@ -368,6 +374,7 @@ export default {
   su_dung_hai_man_hinh: "Using two screen",
   setting: "Setting",
   so_dien_thoai: "Phone number",
+  so_luong_theo_thoi_gian:'',
 
   thiet_lap_thanh_toan_vnpay: "Payments setting VNPAY",
   thong_tin_cua_hang: "Store informations",
@@ -381,6 +388,8 @@ export default {
   thanh_tien:'Total',
   thanh_toan_vnpaypos_qua_may_pos: "VNPAY-POS payment via POS machine?",
   them_moi_voucher:"Add new voucher",
+  thiet_lap_gia_ban_theo_block:'',
+  them_moi:'Add',
 
   vnd: "VND",
   voucher:"Voucher"

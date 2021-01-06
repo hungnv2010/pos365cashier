@@ -379,15 +379,19 @@ export default {
   chan_trang: "Chân trang",
   chi_tiet_huy_tra_hang:"Chi tiết hủy trả hàng",
   chon_ngay_het_han:"Chọn ngày hết hạn",
+  chi_tiet_hang_hoa:"Chi tiết hàng hoá",
 
   don_vi_tien_te: "Đơn vị tiền tệ",
   dollar_my: "Dollar Mỹ",
   dia_chi: "Địa chỉ",
+  don_vi_tinh:"Đơn vị tính",
+  dich_vu:'Dịch vụ',
 
   giu_man_hinh_luon_sang: "Giữ màn hình luôn sáng",
-  gia:"Giá",
+  gia:"Giá bán",
 
   hien_thanh_dieu_huong: "Hiện thanh điều hướng",
+  hien_thi_hang_hoa:'Hiển thị hàng hoá',
 
   in_sau_khi_thanh_toan: "In sau khi thanh toán",
   in_hai_lien_cho_hoa_don: "In 2 liên cho hóa đơn",
@@ -407,6 +411,8 @@ export default {
 
   link_dang_nhap: "Link đăng nhập",
   ly_do:"Lý do",
+  luu:'Lưu',
+  luu_va_sao_chep:"Lưu & Sao chép",
 
   may_in_thu_ngan: "Máy in thu ngân",
   may_in_bao_bep_a: "Máy in báo bếp A",
@@ -435,6 +441,7 @@ export default {
   so_the_cung: "Số thẻ cứng",
   su_dung_hai_man_hinh: "Sử dụng hai màn hình",
   so_dien_thoai: "Số điện thoại",
+  so_luong_theo_thoi_gian:'Số lượng theo thời gian',
 
   tien_khach_tra: "Tiền khách trả",
   thiet_lap_thanh_toan_vnpay: "Thiết lập thanh toán VNPAY",
@@ -449,6 +456,9 @@ export default {
   thanh_tien:"Thành tiền",
   thanh_toan_vnpaypos_qua_may_pos: "Thanh toán VNPAY-POS qua máy POS?",
   them_moi_voucher:"Thêm mới phiếu voucher",
+  thiet_lap_gia_ban_theo_block:'Thiết lập giá bán theo block',
+  them_moi:'Thêm mới',
+  tinh_theo_phan_tram:'Tính theo %',
 
   vnd: "VND",
   voucher:"Mã quà tặng"

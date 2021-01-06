@@ -128,7 +128,7 @@ export default (props) => {
                 icon='plus'
                 color="#fff"
                 onPress={()=>{
-                    props.navigation.navigate(ScreenList.ProductDetail)
+                    props.navigation.navigate(ScreenList.ProductDetail,{product:{}, category:{}})
                 }}
                 />
         </View>
