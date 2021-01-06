@@ -313,14 +313,11 @@ export default {
   chon_cong_nghe_in: "Select the print technology",
   cai_dat_the_cung: "Setting card",
   chan_trang: "Footer",
-<<<<<<< HEAD
   chi_tiet_huy_tra_hang:"Room History Detail",
   chon_ngay_het_han:"Choose expiry date",
   chi_tiet_hang_hoa:"Product detail",
-=======
   chi_tiet_huy_tra_hang: "Room History Detail",
   chon_ngay_het_han: "Choose expiry date",
->>>>>>> c69e843de45f4964b675e2593483cff157d804ef
 
   don_vi_tien_te: "Currency unit",
   dollar_my: "Dollar",
@@ -351,13 +348,10 @@ export default {
   khong_hien_thi: "Not displayed",
 
   link_dang_nhap: "Link login",
-<<<<<<< HEAD
   ly_do:"Reason",
   luu:'Save',
   luu_va_sao_chep:"Save & Coppy ",
-=======
   ly_do: "Reason",
->>>>>>> c69e843de45f4964b675e2593483cff157d804ef
 
   may_in_thu_ngan: "Cashier printer",
   may_in_bao_bep_a: "Printer report kitchen A",
@@ -395,16 +389,13 @@ export default {
   ten: "Name",
   thanh_toan_vnpayqr: "Payment VNPAY-QR?",
   thanh_toan_vnpaypos_qua_may_pos: "VNPAY-POS payment via POS machine?",
-<<<<<<< HEAD
   them_moi_voucher:"Add new voucher",
   thiet_lap_gia_ban_theo_block:'',
   them_moi:'Add',
-=======
   ten_hang_hoa: 'Product name',
   thanh_tien: 'Total',
   thanh_toan_vnpaypos_qua_may_pos: "VNPAY-POS payment via POS machine?",
   them_moi_voucher: "Add new voucher",
->>>>>>> c69e843de45f4964b675e2593483cff157d804ef
 
   vnd: "VND",
   voucher: "Voucher"
