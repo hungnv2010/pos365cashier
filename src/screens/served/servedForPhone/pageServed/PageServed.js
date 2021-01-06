@@ -14,7 +14,6 @@ import realmStore from '../../../../data/realm/RealmStore';
 import { useDispatch } from 'react-redux';
 import colors from '../../../../theme/Colors';
 import dataManager from '../../../../data/DataManager';
-import Pricebook from '../../Pricebook';
 import { ApiPath } from '../../../../data/services/ApiPath';
 import { HTTPService } from '../../../../data/services/HttpService';
 import _, { map } from 'underscore';
@@ -35,6 +34,7 @@ export default (props) => {
     const [currentPriceBook, setCurrentPriceBook] = useState({ Name: "Giá niêm yết", Id: 0 })
     const [currentCustomer, setCurrentCustomer] = useState({ Name: "Khách hàng", Id: 0 })
     const toolBarPhoneServedRef = useRef();
+    const listPriceBookRef = useRef({})
     const [listPosition, setListPosition] = useState([
         { name: "A", status: false },
         { name: "B", status: false },
@@ -50,19 +50,9 @@ export default (props) => {
             let serverEvent = await realmStore.queryServerEvents()
             let listPriceBook = await realmStore.queryPricebook()
             listPriceBook = JSON.parse(JSON.stringify(listPriceBook))
-
+            listPriceBookRef.current = listPriceBook
             const row_key = `${props.route.params.room.Id}_${position}`
-
             serverEvent = serverEvent.filtered(`RowKey == '${row_key}'`)
-
-            // if (JSON.stringify(serverEvent) != '{}' && serverEvent[0].JsonContent) {
-            //     currentServerEvent.current = serverEvent[0]
-            //     let jsonContentObject = JSON.parse(serverEvent[0].JsonContent)
-            //     setJsonContent(jsonContentObject.OrderDetails ? jsonContentObject : Constant.JSONCONTENT_EMPTY)
-
-
-
-            // } else setJsonContent(Constant.JSONCONTENT_EMPTY)
             currentServerEvent.current = JSON.stringify(serverEvent) != '{}' && serverEvent[0].JsonContent ? JSON.parse(JSON.stringify(serverEvent[0]))
                 : await dataManager.createSeverEvent(props.route.params.room.Id, position)
             console.log('currentServerEvent.current', JSON.parse(currentServerEvent.current.JsonContent));
@@ -84,8 +74,6 @@ export default (props) => {
                 });
                 toolBarPhoneServedRef.current.clickCheckInRef(!ischeck)
             }
-
-            // setPriceBookId(jsonContent.PriceBookId)
 
             serverEvent.addListener((collection, changes) => {
                 if ((changes.insertions.length || changes.modifications.length) && serverEvent[0].FromServer) {
@@ -143,6 +131,7 @@ export default (props) => {
             updateServerEvent()
         }
         if (jsonContent.OrderDetails) {
+            jsonContent.PriceBookId = currentPriceBook.Id
             if (currentPriceBook && currentPriceBook.Id) getOtherPrice()
             else getBasePrice()
         }
@@ -311,6 +300,7 @@ export default (props) => {
     }
 
     const updateServerEvent = () => {
+        console.log('updateServerEvent', currentPriceBook.Id);
         if (currentServerEvent.current) {
             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current))
             dataManager.calculatateJsonContent(jsonContent)
@@ -442,7 +432,7 @@ export default (props) => {
     }
 
     const onClickListedPrice = () => {
-        props.navigation.navigate(ScreenList.PriceBook, { _onSelect: onCallBackPriceCustomer, currentPriceBook: currentPriceBook })
+        props.navigation.navigate(ScreenList.PriceBook, { _onSelect: onCallBackPriceCustomer, currentPriceBook: currentPriceBook, listPriceBook: listPriceBookRef.current  })
     }
 
 
@@ -468,7 +458,7 @@ export default (props) => {
 
     const handlerProcessedProduct = (jsonContent) => {
         console.log("handlerProcessedProduct jsonContent ", jsonContent);
-        if (currentServerEvent) {
+        if (currentServerEvent.current) {
             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current))
             // dataManager.calculatateJsonContent(jsonContent)
             setJsonContent({ ...jsonContent })
