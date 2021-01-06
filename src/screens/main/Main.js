@@ -83,7 +83,7 @@ export default (props) => {
       getDataNewOrders()
     }, 15000);
 
-    Print.registerPrint("192.168.100.237_80")
+    Print.registerPrint("")
 
     return () => {
       AppState.removeEventListener('change', handleChangeState);

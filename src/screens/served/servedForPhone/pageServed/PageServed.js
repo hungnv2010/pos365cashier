@@ -44,6 +44,10 @@ export default (props) => {
     const dispatch = useDispatch();
 
 
+    const reloadTime = () => {
+        // alert("ok")
+    }
+
     useLayoutEffect(() => {
         const getListPos = async () => {
 

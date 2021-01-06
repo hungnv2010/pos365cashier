@@ -451,33 +451,6 @@ export default (props) => {
         } else {
             return;
         }
-        // Sound.setCategory('Playback');
-
-        // const callback = (error, sound) => {
-        //     if (error) {
-        //         console.log('error', error.message);
-        //         return;
-        //     }
-        //     // Run optional pre-play callback
-        //     sound.play(() => {
-        //         // Success counts as getting to the end
-        //         // Release when it's done so we're not using up resources
-        //         sound.release();
-        //     });
-        // };
-        // if (timeClickPrevious + 2000 < newDate) {
-        //     if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
-        //         jsonContent.RoomName = props.route.params.Name
-        //     }
-        //     viewPrintRef.current.printProvisionalRef(jsonContent)
-        //     viewPrintRef.current.printKitchenRef(jsonContent)
-        //     timeClickPrevious = newDate;
-        //     //console.log("Printer ojjjjj",printerObject);
-        // }
-        // const sound = new Sound(require('./videoplayback.mp4'), error => callback(error, sound));
-
-        // return;
-
         if (checkQRInListMethod()) {
             setToastDescription(I18n.t("khong_ho_tro_nhieu_tai_khoan_cho_qr"))
             setShowToast(true)
@@ -520,9 +493,9 @@ export default (props) => {
         if (date && dateTmp.current) {
             json.PurchaseDate = "" + date;
         }
-        // delete json.Pos;
-        // delete json.RoomName;
-        // delete json.RoomId;
+        delete json.Pos;
+        delete json.RoomName;
+        delete json.RoomId;
 
         if (listMethod.length > 0)
             json.AccountId = listMethod[0].Id;
@@ -535,18 +508,19 @@ export default (props) => {
 
             Order: json,
         };
-
+        let tilteNotification = jsonContent.RoomName;
         if (props.route.params.Screen != undefined && props.route.params.Screen == ScreenList.MainRetail) {
             params.DeliveryBy = null;//by retain
             params.ShippingCost = 0;//by retain
             params.LadingCode = "";//by retain
+            tilteNotification = I18n.t('don_hang')
         }
         console.log("onClickPay params ", params);
         dialogManager.showLoading();
-        new HTTPService().setPath(ApiPath.ORDERS).POST(params).then(order => {
+        new HTTPService().setPath(ApiPath.ORDERS).POST(params).then(async order => {
             console.log("onClickPay order ", order);
             if (order) {
-                dataManager.sentNotification(jsonContent.RoomName, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
+                dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
                 dialogManager.hiddenLoading()
 
                 if (props.route.params.Screen != undefined && props.route.params.Screen == ScreenList.MainRetail) {
@@ -556,16 +530,18 @@ export default (props) => {
                     dataManager.paymentSetServerEvent(serverEvent, {});
                     dataManager.subjectUpdateServerEvent.next(serverEvent)
                 }
-
+                await printAfterPayment()
                 if (order.QRCode != "") {
                     qrCode.current = order.QRCode
                     typeModal.current = TYPE_MODAL.QRCODE
                     setShowModal(true)
                     handlerQRCode(order)
-                } else{}
+                } else {
+                    setTimeout(() => {
+                        props.navigation.pop()
+                    }, 1000);
                     // props.navigation.pop()
-
-                printAfterPayment()
+                }
             } else {
                 // alert("err")
                 handlerError({ JsonContent: json, RowKey: row_key })
@@ -576,7 +552,7 @@ export default (props) => {
         });
     }
 
-    const printAfterPayment = () => {
+    const printAfterPayment = async () => {
         Sound.setCategory('Playback');
         const callback = (error, sound) => {
             if (error) {

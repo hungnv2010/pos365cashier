@@ -43,12 +43,12 @@ RCT_EXPORT_MODULE();
 
 RCT_EXPORT_METHOD(registerPrint:(NSString *)param) {
   NSLog(@"registerPrint param %@", param);
-  NSArray *arrayOfComponents = [param componentsSeparatedByString:@"_"];
-  IP = arrayOfComponents[0];
-  SizeInput = [arrayOfComponents[1] integerValue];
-  NSLog(@"registerPrint IP %@", IP);
-  NSLog(@"registerPrint SizeInput %ld", (long)SizeInput);
-  isConnectAndPrint = NO;
+//  NSArray *arrayOfComponents = [param componentsSeparatedByString:@"_"];
+//  IP = arrayOfComponents[0];
+//  SizeInput = [arrayOfComponents[1] integerValue];
+//  NSLog(@"registerPrint IP %@", IP);
+//  NSLog(@"registerPrint SizeInput %ld", (long)SizeInput);
+//  isConnectAndPrint = NO;
   _printerManager = [PrinterManager sharedInstance];
   [_printerManager AddConnectObserver:self selector:@selector(handleNotification:)];//Add
 }
@@ -168,11 +168,10 @@ RCT_EXPORT_METHOD(keepTheScreenOff:(NSString *)param) {
   }
   [cmd Append:[cmd GetLFCRCmd]];
   //[cmd Append:[cmd GetCutPaperCmd:CutterMode_half]];
-  //[cmd Append:[cmd GetFeedAndCutPaperCmd:false FeedDistance:0]];
+//  [cmd Append:[cmd GetFeedAndCutPaperCmd:true FeedDistance:10]];
   [cmd Append:[cmd GetCutPaperCmd:CutterMode_half]];//for ESC
   [cmd Append:[cmd GetBeepCmd:1 interval:10]];
   //    [cmd Append:[cmd GetOpenDrawerCmd:0 startTime:5 endTime:0]];
-//  NSLog(@"printImageFromClient URL 6 " + [_printerManager.CurrentPrinter IsOpen]);
   if ([_printerManager.CurrentPrinter IsOpen]){
     NSData *data=[cmd GetCmd];
     [currentprinter Write:data];
