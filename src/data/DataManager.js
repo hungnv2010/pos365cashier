@@ -274,12 +274,13 @@ class DataManager {
 
     calculatateJsonContent = (JsonContent) => {
         let totalProducts = this.totalProducts(JsonContent.OrderDetails)
-        let discount = this.totalDiscountProducts(JsonContent.OrderDetails)
+        // let discount = this.totalDiscountProducts(JsonContent.OrderDetails)
         let totalWithVAT = totalProducts + (JsonContent.VAT ? JsonContent.VAT : 0)
-        // JsonContent.Total = totalWithVAT - discount
-        JsonContent.Total = totalWithVAT
-        JsonContent.AmountReceived = totalWithVAT - discount
-        JsonContent.Discount = discount
+        JsonContent.Total = totalWithVAT - JsonContent.Discount
+        // JsonContent.Total = totalWithVAT
+        JsonContent.AmountReceived = JsonContent.Total
+        // JsonContent.AmountReceived = totalWithVAT - discount
+        // JsonContent.Discount = discount
         if (!JsonContent.ActiveDate || JsonContent.ActiveDate == "")
             JsonContent.ActiveDate = moment()
         else if (!JsonContent.OrderDetails || JsonContent.OrderDetails.length == 0)

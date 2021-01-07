@@ -139,16 +139,30 @@ const CustomerOrder = (props) => {
     }, [debouceWaitingList])
 
     const applyDialogDetail = (product) => {
-        console.log('applyDialogDetail', product);
-        if (product.Quantity > 0) {
-            mapDataToList(product, true)
-        } else {
-            removeItem(product)
-        }
-        // listOrder.forEach((elm, index) => {
-        //     if (elm.ProductId == product.ProductId && index == product.index) elm = product
-        // })
-        // setListOrder([...listOrder])
+        // console.log('applyDialogDetail', product);
+        // if (product.Quantity > 0) {
+        //     mapDataToList(product, true)
+        // } else {
+        //     removeItem(product)
+        // }
+        // // listOrder.forEach((elm, index) => {
+        // //     if (elm.ProductId == product.ProductId && index == product.index) elm = product
+        // // })
+        // // setListOrder([...listOrder])
+        let price = product.IsLargeUnit == true ? product.PriceLargeUnit : product.UnitPrice
+        let discount = product.Percent ? (price * product.Discount / 100) : product.Discount
+        listOrder.forEach((elm, index, arr) => {
+            if (elm.ProductId == product.ProductId && index == product.index) {
+                if (product.Quantity == 0) {
+                    arr.splice(index, 1)
+                }
+                elm.Quantity = product.Quantity
+                elm.Description = product.Description
+                elm.Discount = discount - price > 0 ? price : discount
+                elm.Price = product.Price
+            }
+        })
+        props.outputSelectedProduct(product)
     }
 
     const mapDataToList = (product, isNow = true) => {
@@ -591,7 +605,7 @@ const CustomerOrder = (props) => {
                                     <DialogProductDetail
                                         onClickTopping={() => onClickTopping(itemOrder)}
                                         item={itemOrder}
-                                        getDataOnClick={(data) => {
+                                        onClickSubmit={(data) => {
                                             applyDialogDetail(data)
                                         }}
                                         setShowModal={() => {

@@ -365,7 +365,7 @@ export default (props) => {
                                 {item.Name}
                             </TextTicker>
                             <View style={{ flexDirection: "row" }}>
-                                <Text style={{}}>{isPromotion ? currencyToString(item.Price) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : item.Discount > 0 ? currencyToString(item.PriceWithDiscount) : currencyToString(item.Price))} x </Text>
+                                <Text style={{}}>{isPromotion ? currencyToString(item.Price) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : currencyToString(item.Price))} x </Text>
                                 <View>
                                     <Text style={{ color: Colors.colorchinh }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text>
                                 </View>
@@ -505,14 +505,17 @@ export default (props) => {
 
     const applyDialogDetail = (product) => {
         console.log('applyDialogDetail listOrder ', product, listOrder);
-        let price = product.IsLargeUnit == true ? product.PriceLargeUnit : product.Price
+        let price = product.IsLargeUnit == true ? product.PriceLargeUnit : product.UnitPrice
         let discount = product.Percent ? (price * product.Discount / 100) : product.Discount
-        listOrder.forEach((elm, index) => {
+        listOrder.forEach((elm, index, arr) => {
             if (elm.ProductId == product.ProductId && index == product.index) {
+                if (product.Quantity == 0) {
+                    arr.splice(index, 1)
+                }
                 elm.Quantity = product.Quantity
                 elm.Description = product.Description
                 elm.Discount = discount - price > 0 ? price : discount
-                elm.PriceWithDiscount = product.PriceWithDiscount
+                elm.Price = product.Price
             }
         })
         // setListOrder([...listOrder])

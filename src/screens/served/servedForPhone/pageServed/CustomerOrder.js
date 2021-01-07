@@ -169,20 +169,22 @@ export default (props) => {
         props.outputListProducts([...listOrder])
     }
 
-    const mapDataToList = (data) => {
-        console.log("mapDataToList data ", data);
-        listOrder.forEach((element, index, arr) => {
-            if (element.ProductId == data.ProductId && index == itemOrder.index) {
-                if (data.Quantity == 0) {
+    const mapDataToList = (product) => {
+        console.log("mapDataToList data ", product);
+        let price = product.IsLargeUnit == true ? product.PriceLargeUnit : product.UnitPrice
+        let discount = product.Percent ? (price * product.Discount / 100) : product.Discount
+        listOrder.forEach((elm, index, arr) => {
+            if (elm.ProductId == product.ProductId && index == product.index) {
+                if (product.Quantity == 0) {
                     arr.splice(index, 1)
                 }
-                element.Description = data.Description
-                element.Quantity = +data.Quantity
-                element.IsLargeUnit = data.IsLargeUnit
-                element.Price = data.IsLargeUnit ? data.PriceLargeUnit : data.UnitPrice
+                elm.Quantity = product.Quantity
+                elm.Description = product.Description
+                elm.Discount = discount - price > 0 ? price : discount
+                elm.Price = product.Price
             }
-        });
-
+        })
+    
         props.outputListProducts([...listOrder])
     }
 
@@ -210,7 +212,6 @@ export default (props) => {
     };
 
     const renderProduct = (item, index) => {
-        console.log("renderProduct ====== ", item);
 
         const isPromotion = !(item.IsPromotion == undefined || (item.IsPromotion == false))
         return (
@@ -317,7 +318,7 @@ export default (props) => {
             }
         });
         props.outputListProducts([...listOrder])
-       
+
     }
 
     const changTable = () => {
@@ -360,7 +361,7 @@ export default (props) => {
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                         <Text style={{ fontWeight: "bold" }}>{I18n.t('tong_thanh_tien')}</Text>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                            <Text style={{ fontWeight: "bold", fontSize: 16, color: colors.colorchinh }}>{currencyToString(jsonContent.Total)}đ</Text>
+                            <Text style={{ fontWeight: "bold", fontSize: 16, color: colors.colorchinh }}>{currencyToString(jsonContent.Total - (jsonContent.VAT ? jsonContent.VAT : 0) + jsonContent.Discount)}đ</Text>
                             {expand ?
                                 <Icon style={{}} name="chevron-up" size={30} color="black" />
                                 :
@@ -463,7 +464,7 @@ export default (props) => {
                                     <DialogProductDetail
                                         onClickTopping={() => onClickTopping(itemOrder)}
                                         item={itemOrder}
-                                        getDataOnClick={(data) => {
+                                        onClickSubmit={(data) => {
                                             mapDataToList(data)
                                         }}
                                         setShowModal={() => {
