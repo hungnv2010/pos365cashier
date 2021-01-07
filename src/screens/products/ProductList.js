@@ -53,7 +53,7 @@ export default (props) => {
         return (
             <View style={{ alignItems: 'center', justifyContent: 'center', padding: 10, marginBottom:5, marginTop: 5, backgroundColor: idCategory == item.Id ? colors.colorchinh : null, borderRadius:10 }}>
                 <TouchableOpacity style={{}} onPress={() => { filterByCategory(item) }}>
-                    <Text style={{ color: idCategory == item.Id ? 'white' : 'black' }} >{item.Name}</Text>
+                    <Text style={{ color: idCategory == item.Id ? 'white' : 'black', fontWeight:idCategory==item.Id?'bold':null }} >{item.Name}</Text>
                 </TouchableOpacity>
             </View>
         )
@@ -73,7 +73,7 @@ export default (props) => {
                 </View>
                 <View style={{ backgroundColor: 'silver', height: 0.5, margin: 5, marginTop: 10 }}></View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1, padding: 5 }}>
-                    <View style={{borderRadius:5,backgroundColor: '#87CEFF'}}>
+                    <View style={{borderRadius:5,backgroundColor: '#BFEFFF'}}>
                     <Text style={{  borderRadius: 5, color: '#0099FF',padding:2 }}>{item.Code}</Text>
                     </View>
                     <View style={{borderRadius:5, backgroundColor: '#FFE7BA'}}>

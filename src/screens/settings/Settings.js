@@ -137,8 +137,8 @@ export default (props) => {
                 setSettingObject(DefaultSetting)
             } else {
                 setSettingObject(JSON.parse(data))
-                if(res.length!=0)
-                setSettingObject({ ...settingObject, strings: res.Settings })
+                if (res.length != 0)
+                    setSettingObject({ ...settingObject, strings: res.Settings })
 
             }
         }
@@ -519,7 +519,9 @@ export default (props) => {
                                     <Text style={{ fontSize: 18, justifyContent: 'center', marginTop: 10, marginLeft: 20 }}>{I18n.t('nhap_chieu_rong_kho_giay')}</Text>
                                     <TextInput style={styles.textInputStyle} placeholder='58..80' keyboardType='numeric' onChangeText={text => setDefaultSize(text)}></TextInput>
                                     <TouchableOpacity style={{ justifyContent: 'flex-end', alignItems: 'flex-end', marginTop: 10, marginBottom: 10 }} onPress={changePrintTypeKitchenA}>
-                                        <Text style={{ textAlign: 'center', color: '#FF4500', marginRight: 50, fontSize: 12 }} >{I18n.t("dong_y")}</Text>
+                                        <View style={{ backgroundColor: colors.colorchinh, marginRight: 15, padding: 10, borderColor: colors.colorchinh, borderWidth: 1, borderRadius: 5 }}>
+                                            <Text style={[styles.styleTextBtnOk, {}]} >{I18n.t("dong_y")}</Text>
+                                        </View>
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -613,8 +615,10 @@ export default (props) => {
                                     <Text style={styles.titleModal}>{titlePrint}</Text>
                                     <Text style={{ fontSize: 18, justifyContent: 'center', marginTop: 10, marginLeft: 20 }}>{I18n.t('nhap_dia_chi_ip_may')}</Text>
                                     <TextInput style={styles.textInputStyle} value={stateValueIp} keyboardType='decimal-pad' onChangeText={text => changeValueIp(text)} ></TextInput>
-                                    <TouchableOpacity style={{ justifyContent: 'flex-end', alignItems: 'flex-end', marginTop: 10, marginBottom: 10 }} onPress={setIpLANPrint}>
-                                        <Text style={{ textAlign: 'center', color: '#FF4500', marginRight: 50, fontSize: 12 }} >{I18n.t("dong_y")}</Text>
+                                    <TouchableOpacity style={{ justifyContent: 'flex-end', alignItems: 'flex-end', marginTop: 10, marginBottom: 10, }} onPress={setIpLANPrint}>
+                                        <View style={{ backgroundColor: colors.colorchinh, marginRight: 15, padding: 10, borderColor: colors.colorchinh, borderWidth: 1, borderRadius: 5 }}>
+                                            <Text style={[styles.styleTextBtnOk, {}]} >{I18n.t("dong_y")}</Text>
+                                        </View>
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -773,7 +777,7 @@ const Footer = (props) => {
 }
 const styles = StyleSheet.create({
     textTitle: {
-        fontSize: 16, color: colors.colorchinh, marginLeft: 20, marginTop:10
+        fontSize: 16, color: colors.colorchinh, marginLeft: 20, marginTop: 10
     },
     textTitleItem: {
         flex: 6, fontSize: 16, marginLeft: 20, marginTop: 30
@@ -785,7 +789,7 @@ const styles = StyleSheet.create({
         flex: 2,
     },
     viewLine: {
-        height: 1, width: '100%', alignSelf: 'center', backgroundColor: 'silver', marginVertical: 10, marginTop:10
+        height: 1, width: '100%', alignSelf: 'center', backgroundColor: 'silver', marginVertical: 10, marginTop: 10
     },
     styleButtonOK: {
         flex: 1, backgroundColor: colors.colorchinh, borderRadius: 4, paddingHorizontal: 20, paddingVertical: 10, justifyContent: "flex-end", marginLeft: 10, marginRight: 20, marginBottom: 10
@@ -800,8 +804,8 @@ const styles = StyleSheet.create({
         fontSize: 18, fontWeight: "bold", textAlign: "center", paddingVertical: 10, color: colors.colorchinh
     },
     textInputStyle: {
-        height: 45, borderBottomWidth: 1, marginTop: 5, padding: 10, marginLeft: 20, marginRight: 20, fontSize: 16
+        borderWidth: 0.5, marginTop: 10, padding: 10, marginLeft: 20, marginRight: 20, fontSize: 14, borderRadius: 5
     },
-    styleTextBtnHuy: { textAlign: "center", color: colors.colorchinh, fontSize: 16 },
-    styleTextBtnOk: { textAlign: "center", color: "#fff", fontSize: 16 },
+    styleTextBtnHuy: { textAlign: "center", color: colors.colorchinh, fontSize: 14 },
+    styleTextBtnOk: { textAlign: "center", color: "#fff", fontSize: 14 },
 })
