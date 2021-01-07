@@ -74,10 +74,10 @@ export default (props) => {
                 params.LadingCode = "";//by retain
                 jsonContent.RoomId = null
             }
-            // console.log("onClickPay params ", params);
+            console.log("clickUpload params ", params);
 
             new HTTPService().setPath(ApiPath.ORDERS).POST(params).then(async order => {
-                console.log("onClickPay order ", order);
+                console.log("clickUpload order ", order);
                 if (order) {
                     dataManager.sentNotification(jsonContent.RoomName, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
                     let row_key = `${jsonContent.RoomId}_${jsonContent.Pos}`
@@ -90,15 +90,11 @@ export default (props) => {
                     dataManager.deleteRow(SchemaName.ORDERS_OFFLINE, element.Id);
                     dialogManager.hiddenLoading()
                 }
-                // if (index == dataList.length - 1) {
-                //     console.log("onClickPay index == dataList.length - 1 ");
                 getData();
-                // }
             }).catch(err => {
-                console.log("onClickPay err ", err);
+                console.log("clickUpload err ", err);
                 dialogManager.hiddenLoading()
             });
-
         });
 
     }

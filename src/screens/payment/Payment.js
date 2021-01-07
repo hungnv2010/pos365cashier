@@ -487,16 +487,14 @@ export default (props) => {
         json.TotalPayment = giveMoneyBack ? json.Total : amountReceived
         json.VATRates = json.VATRates
         json.AmountReceived = amountReceived
+        json.Status = 2;
+        json.SyncStatus = 0;
         if (noteInfo != '') {
             json.Description = noteInfo;
         }
         if (date && dateTmp.current) {
             json.PurchaseDate = "" + date;
         }
-        delete json.Pos;
-        delete json.RoomName;
-        delete json.RoomId;
-
         if (listMethod.length > 0)
             json.AccountId = listMethod[0].Id;
         let params = {
@@ -505,8 +503,7 @@ export default (props) => {
             MerchantName: vendorSession.Settings.MerchantName,
             DontSetTime: true,
             ExcessCashType: 0,
-
-            Order: json,
+            // Order: json,
         };
         let tilteNotification = jsonContent.RoomName;
         if (props.route.params.Screen != undefined && props.route.params.Screen == ScreenList.MainRetail) {
@@ -514,7 +511,12 @@ export default (props) => {
             params.ShippingCost = 0;//by retain
             params.LadingCode = "";//by retain
             tilteNotification = I18n.t('don_hang')
+            delete json.Pos;
+            delete json.RoomName;
+            delete json.RoomId;
         }
+        params.Order = json;
+
         console.log("onClickPay params ", params);
         dialogManager.showLoading();
         new HTTPService().setPath(ApiPath.ORDERS).POST(params).then(async order => {
@@ -537,10 +539,10 @@ export default (props) => {
                     setShowModal(true)
                     handlerQRCode(order)
                 } else {
-                    setTimeout(() => {
-                        props.navigation.pop()
-                    }, 1000);
-                    // props.navigation.pop()
+                    // setTimeout(() => {
+                    //     props.navigation.pop()
+                    // }, 1000);
+                    props.navigation.pop()
                 }
             } else {
                 // alert("err")
@@ -559,10 +561,7 @@ export default (props) => {
                 console.log('error', error.message);
                 return;
             }
-            // Run optional pre-play callback
             sound.play(() => {
-                // Success counts as getting to the end
-                // Release when it's done so we're not using up resources
                 sound.release();
             });
         };

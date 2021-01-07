@@ -17,6 +17,7 @@ import DialogProductDetail from '../../../../components/dialog/DialogProductDeta
 import { ApiPath } from '../../../../data/services/ApiPath';
 import { HTTPService } from '../../../../data/services/HttpService';
 import _, { map } from 'underscore';
+import dialogManager from '../../../../components/dialog/DialogManager';
 
 export default (props) => {
 
@@ -499,7 +500,11 @@ export default (props) => {
 
         } else {
             console.log('onClickPayment jsonContent ', jsonContent);
-            props.navigation.navigate(ScreenList.Payment, { onCallBack: onCallBackPayment, Screen: ScreenList.MainRetail, RoomId: jsonContent.RoomId, Name: jsonContent.RoomName ? jsonContent.RoomName : I18n.t('app_name'), Position: jsonContent.Pos });
+            if (jsonContent.OrderDetails && jsonContent.OrderDetails.length > 0) {
+                props.navigation.navigate(ScreenList.Payment, { onCallBack: onCallBackPayment, Screen: ScreenList.MainRetail, RoomId: jsonContent.RoomId, Name: jsonContent.RoomName ? jsonContent.RoomName : I18n.t('app_name'), Position: jsonContent.Pos });
+            } else {
+                dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
+            }
         }
     }
 
