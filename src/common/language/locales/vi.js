@@ -70,7 +70,7 @@ export default {
   dang_dung: "Đang dùng",
   dang_trong: "Đang trống",
   dong_y: "Đồng ý",
-  don_hang: "Đơn Hàng",
+  don_hang: "Đơn hàng",
   d: "đ",
   don_gia: "Đơn giá",
   den: "đến",

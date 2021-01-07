@@ -59,7 +59,7 @@ export default forwardRef((props, ref) => {
                     </TouchableOpacity>
                 }
             </View>
-            <View style={{ flex: 5, alignItems: 'center', flexDirection: 'row' }}>
+            <View style={{ flex: 5, paddingLeft: 10, alignItems: 'center', flexDirection: 'row' }}>
                 <Subheading
                     numberOfLines={1}
                     style={{

@@ -10,21 +10,21 @@ import realmStore from '../../data/realm/RealmStore';
 export default (props) => {
 
     const [currentPriceId, setCurrentPriceId] = useState((props.route.params.currentPriceBook.Id ? props.route.params.currentPriceBook.Id : 0))
-    const [listPricebook, setListPricebook] = useState([])
+    const [listPricebook, setListPricebook] = useState(Object.values(props.route.params.listPriceBook))
 
     useEffect(() => {
-        const initPricebook = async () => {
-            dialogManager.showLoading()
-            let newPricebooks = []
-            let results = await realmStore.queryPricebook()
-            results.forEach(item => {
-                newPricebooks.push({ ...JSON.parse(JSON.stringify(item)) })
-            })
-            console.log('newPricebooks', newPricebooks);
-            setListPricebook(newPricebooks)
-            dialogManager.hiddenLoading()
-        }
-        initPricebook()
+        // const initPricebook = async () => {
+        //     dialogManager.showLoading()
+        //     let newPricebooks = []
+        //     let results = await realmStore.queryPricebook()
+        //     results.forEach(item => {
+        //         newPricebooks.push({ ...JSON.parse(JSON.stringify(item)) })
+        //     })
+        //     console.log('newPricebooks', newPricebooks);
+        //     setListPricebook(newPricebooks)
+        //     dialogManager.hiddenLoading()
+        // }
+        // initPricebook()
     }, [])
 
     useEffect(() => {
@@ -73,7 +73,7 @@ export default (props) => {
 
 const styles = StyleSheet.create({
     cateItem: { borderWidth: 0.5, padding: 15, margin: 5, borderRadius: 10 },
-    Item: { flexDirection: "row", justifyContent: "space-between", padding: 10, alignItems: "center", borderRadius: 10, margin: 2 },
+    Item: { flexDirection: "row", justifyContent: "space-between", padding: 20, alignItems: "center", borderRadius: 10, margin: 2 },
     button: { borderWidth: .5, padding: 15, borderRadius: 10 },
 })
 

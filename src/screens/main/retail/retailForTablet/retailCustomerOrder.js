@@ -63,15 +63,14 @@ const RetailCustomerOrder = (props) => {
                 syncListProducts(jsonContent.OrderDetails)
             }
 
-            // serverEvents.addListener((collection, changes) => {
-            //     if (changes.insertions.length || changes.modifications.length) {
-            //         console.log('changes.insertions.length ');
-            //         let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
-            //         newServerEvents = Object.values(newServerEvents)
-            //         // setCurrentCommodity(newServerEvents[newServerEvents.length - 1])
-            //         setNumberNewOrder(newServerEvents.length)
-            //     }
-            // })
+            serverEvents.addListener((collection, changes) => {
+                if (changes.insertions.length || changes.modifications.length) {
+                    // console.log('changes.insertions.length ');
+                    // let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
+                    // newServerEvents = Object.values(newServerEvents)
+                    // setCurrentCommodity(newServerEvents[newServerEvents.length - 1])
+                    setNumberNewOrder(serverEvents.length)                }
+            })
         }
         getCommodityWaiting()
         var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
@@ -148,14 +147,17 @@ const RetailCustomerOrder = (props) => {
 
     const applyDialogDetail = (product) => {
         console.log('applyDialogDetail', product);
-        let price = product.IsLargeUnit == true ? product.PriceLargeUnit : product.Price
+        let price = product.IsLargeUnit == true ? product.PriceLargeUnit : product.UnitPrice
         let discount = product.Percent ? (price * product.Discount / 100) : product.Discount 
-        listOrder.forEach((elm, index) => {
+        listOrder.forEach((elm, index, arr) => {
             if (elm.ProductId == product.ProductId && index == product.index) {
+                if (product.Quantity == 0) {
+                    arr.splice(index, 1)
+                }
                 elm.Quantity = product.Quantity
                 elm.Description = product.Description
                 elm.Discount = discount - price > 0 ? price : discount
-                elm.PriceWithDiscount = product.PriceWithDiscount
+                elm.Price = product.Price
             }
         })
         syncListProducts([...listOrder])
@@ -346,7 +348,7 @@ const RetailCustomerOrder = (props) => {
                         <View style={{ flexDirection: "column", flex: 1, }}>
                             <Text style={{ fontWeight: "bold", marginBottom: 7 }}>{item.Name}</Text>
                             <View style={{ flexDirection: "row" }}>
-                                <Text style={{}}>{isPromotion ? currencyToString(item.Price) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : item.Discount > 0 ? currencyToString(item.PriceWithDiscount) : currencyToString(item.Price))} x </Text>
+                                <Text style={{}}>{isPromotion ? currencyToString(item.Price) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : currencyToString(item.Price))} x </Text>
                                 <View onPress={() => onClickUnit({ ...item })}>
                                     {
                                         orientaition == Constant.PORTRAIT ?

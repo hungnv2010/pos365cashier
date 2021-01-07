@@ -17,6 +17,7 @@ import DialogProductDetail from '../../../../components/dialog/DialogProductDeta
 import { ApiPath } from '../../../../data/services/ApiPath';
 import { HTTPService } from '../../../../data/services/HttpService';
 import _, { map } from 'underscore';
+import dialogManager from '../../../../components/dialog/DialogManager';
 
 export default (props) => {
 
@@ -152,14 +153,14 @@ export default (props) => {
             setDataOrder(jsonContent.OrderDetails)
         }
 
-        // serverEvents.addListener((collection, changes) => {
-        //     if (changes.insertions.length || changes.modifications.length) {
-        //         let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
-        //         newServerEvents = Object.values(newServerEvents)
-        //         // setCurrentCommodity(newServerEvents[newServerEvents.length - 1])
-        //         setNumberNewOrder(newServerEvents.length)
-        //     }
-        // })
+        serverEvents.addListener((collection, changes) => {
+            if (changes.insertions.length || changes.modifications.length) {
+                // let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
+                // newServerEvents = Object.values(newServerEvents)
+                // // setCurrentCommodity(newServerEvents[newServerEvents.length - 1])
+                setNumberNewOrder(serverEvents.length)
+            }
+        })
     }
 
     const _keyboardDidShow = () => {
@@ -365,7 +366,7 @@ export default (props) => {
                                 {item.Name}
                             </TextTicker>
                             <View style={{ flexDirection: "row" }}>
-                                <Text style={{}}>{isPromotion ? currencyToString(item.Price) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : item.Discount > 0 ? currencyToString(item.PriceWithDiscount) : currencyToString(item.Price))} x </Text>
+                                <Text style={{}}>{isPromotion ? currencyToString(item.Price) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : currencyToString(item.Price))} x </Text>
                                 <View>
                                     <Text style={{ color: Colors.colorchinh }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text>
                                 </View>
@@ -499,20 +500,27 @@ export default (props) => {
 
         } else {
             console.log('onClickPayment jsonContent ', jsonContent);
-            props.navigation.navigate(ScreenList.Payment, { onCallBack: onCallBackPayment, Screen: ScreenList.MainRetail, RoomId: jsonContent.RoomId, Name: jsonContent.RoomName ? jsonContent.RoomName : I18n.t('app_name'), Position: jsonContent.Pos });
+            if (jsonContent.OrderDetails && jsonContent.OrderDetails.length > 0) {
+                props.navigation.navigate(ScreenList.Payment, { onCallBack: onCallBackPayment, Screen: ScreenList.MainRetail, RoomId: jsonContent.RoomId, Name: jsonContent.RoomName ? jsonContent.RoomName : I18n.t('app_name'), Position: jsonContent.Pos });
+            } else {
+                dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
+            }
         }
     }
 
     const applyDialogDetail = (product) => {
         console.log('applyDialogDetail listOrder ', product, listOrder);
-        let price = product.IsLargeUnit == true ? product.PriceLargeUnit : product.Price
+        let price = product.IsLargeUnit == true ? product.PriceLargeUnit : product.UnitPrice
         let discount = product.Percent ? (price * product.Discount / 100) : product.Discount
-        listOrder.forEach((elm, index) => {
+        listOrder.forEach((elm, index, arr) => {
             if (elm.ProductId == product.ProductId && index == product.index) {
+                if (product.Quantity == 0) {
+                    arr.splice(index, 1)
+                }
                 elm.Quantity = product.Quantity
                 elm.Description = product.Description
                 elm.Discount = discount - price > 0 ? price : discount
-                elm.PriceWithDiscount = product.PriceWithDiscount
+                elm.Price = product.Price
             }
         })
         // setListOrder([...listOrder])
