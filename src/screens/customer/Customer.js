@@ -26,7 +26,7 @@ import Fontisto from 'react-native-vector-icons/Fontisto';
 import TextTicker from 'react-native-text-ticker';
 
 let GUEST = {
-    Id: -1,
+    Id: 0,
     Name: I18n.t("khach_le"),
     Code: "KH_khach_le",
     Point: 0,
@@ -80,7 +80,7 @@ export default (props) => {
             props.route.params._onSelect(item, 2);
             props.navigation.goBack()
         } else {
-            if (item.Id == -1) {
+            if (item.Id == 0) {
                 onClickAddCustomer()
             } else {
                 let params = { Includes: 'PartnerGroupMembers' }

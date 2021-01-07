@@ -59,9 +59,11 @@ export default (props) => {
             serverEvent = serverEvent.filtered(`RowKey == '${row_key}'`)
             currentServerEvent.current = JSON.stringify(serverEvent) != '{}' && serverEvent[0].JsonContent ? JSON.parse(JSON.stringify(serverEvent[0]))
                 : await dataManager.createSeverEvent(props.route.params.room.Id, position)
-            console.log('currentServerEvent.current', JSON.parse(currentServerEvent.current.JsonContent));
+            console.log('currentServerEvent.current', currentServerEvent.current, JSON.parse(currentServerEvent.current.JsonContent));
             let jsonContentObject = JSON.parse(currentServerEvent.current.JsonContent)
-            console.log('listPriceBook', listPriceBook, jsonContentObject);
+            if (jsonContentObject.Partner) {
+                setCurrentCustomer(jsonContentObject.Partner)
+            }
             for (const property in listPriceBook) {
                 if (listPriceBook[property].Id == jsonContentObject.PriceBookId) {
                     setCurrentPriceBook(listPriceBook[property])
@@ -81,7 +83,7 @@ export default (props) => {
 
             serverEvent.addListener((collection, changes) => {
                 if ((changes.insertions.length || changes.modifications.length) && serverEvent[0].FromServer) {
-                    currentServerEvent.current = serverEvent[0]
+                    currentServerEvent.current = JSON.parse(JSON.stringify(serverEvent[0]))
                     setJsonContent(JSON.parse(serverEvent[0].JsonContent))
                 }
             })
@@ -140,6 +142,23 @@ export default (props) => {
             else getBasePrice()
         }
     }, [currentPriceBook])
+
+    useEffect(() => {
+        console.log('currentCustomercurrentCustomer', currentCustomer, jsonContent);
+        if (JSON.stringify(jsonContent) != "{}") {
+            jsonContent.Partner = null
+            jsonContent.PartnerId = null
+            if (currentCustomer && currentCustomer.Id) {
+                jsonContent.Partner = currentCustomer
+                jsonContent.PartnerId = currentCustomer.Id
+            }
+            let serverEvent = currentServerEvent.current
+            serverEvent.Version += 1
+            serverEvent.JsonContent = JSON.stringify(jsonContent)
+            dataManager.updateServerEvent(serverEvent)
+        }
+    
+    }, [currentCustomer])
 
     const getOtherPrice = async (list) => {
         if (currentPriceBook.Id) {
@@ -306,7 +325,7 @@ export default (props) => {
     const updateServerEvent = () => {
         console.log('updateServerEvent', currentPriceBook.Id);
         if (currentServerEvent.current) {
-            let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current))
+            let serverEvent = currentServerEvent.current
             dataManager.calculatateJsonContent(jsonContent)
             setJsonContent({ ...jsonContent })
             serverEvent.Version += 1
@@ -436,7 +455,7 @@ export default (props) => {
     }
 
     const onClickListedPrice = () => {
-        props.navigation.navigate(ScreenList.PriceBook, { _onSelect: onCallBackPriceCustomer, currentPriceBook: currentPriceBook, listPriceBook: listPriceBookRef.current  })
+        props.navigation.navigate(ScreenList.PriceBook, { _onSelect: onCallBackPriceCustomer, currentPriceBook: currentPriceBook, listPriceBook: listPriceBookRef.current })
     }
 
 
@@ -453,7 +472,7 @@ export default (props) => {
                 break;
             case 2:
                 console.log('onCallBackPriceCustomer ', type, data);
-                if (data.Id != -1) setCurrentCustomer(data)
+                setCurrentCustomer(data)
                 break;
             default:
                 break;
