@@ -51,7 +51,7 @@ export default (props) => {
             setTopping(toppingRef.current)
         }
         init()
-    }, [])
+    }, [itemOrder])
 
     useEffect(() => {
         if (listCateId[0] == I18n.t('tat_ca')) {

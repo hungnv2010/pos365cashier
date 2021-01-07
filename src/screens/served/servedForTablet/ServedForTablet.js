@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+import React, { useState, useMemo, useRef, useEffect, useLayoutEffect } from 'react';
 import { View, NativeModules, Text, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
@@ -44,6 +44,7 @@ const Served = (props) => {
     const meMoItemOrder = useMemo(() => itemOrder, [itemOrder])
     const [promotions, setPromotions] = useState([])
     const toolBarTabletServedRef = useRef();
+    const listPriceBookRef = useRef({})
     const orientaition = useSelector(state => {
         return state.Common.orientaition
     });
@@ -82,28 +83,25 @@ const Served = (props) => {
         getDataRealm();
     }, [])
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const getListPos = async () => {
             let serverEvent = await realmStore.queryServerEvents()
-            // let listPriceBook = await realmStore.queryPricebook()
-            // listPriceBook = JSON.parse(JSON.stringify(listPriceBook))
-            // console.log('listPriceBook', listPriceBook);
+            let listPriceBook = await realmStore.queryPricebook()
+            listPriceBook = JSON.parse(JSON.stringify(listPriceBook))
+            listPriceBookRef.current = listPriceBook
             const row_key = `${props.route.params.room.Id}_${position}`
             serverEvent = serverEvent.filtered(`RowKey == '${row_key}'`)
             currentServerEvent.current = JSON.stringify(serverEvent) != '{}' && serverEvent[0].JsonContent ? serverEvent[0]
                 : await dataManager.createSeverEvent(props.route.params.room.Id, position)
-            // let jsonContentObject = currentServerEvent.current.JsonContent ? JSON.parse(currentServerEvent.current.JsonContent)
-            //     : dataManager.createJsonContent(props.route.params.room.Id, position, moment(), [])
-            let jsonContentObject = JSON.parse(currentServerEvent.current.JsonContent)
-            setJsonContent(jsonContentObject)
-            // if (JSON.stringify(serverEvent) != '{}' && serverEvent[0].JsonContent) {
-            //     currentServerEvent.current = serverEvent[0]
-            //     let jsonContentObject = JSON.parse(serverEvent[0].JsonContent)
-            //     if (!jsonContentObject.OrderDetails) jsonContentObject.OrderDetails = []
-            //     setJsonContent(jsonContentObject)
-            // } else setJsonContent(Constant.JSONCONTENT_EMPTY)
 
-            // setPriceBookId(jsonContent.PriceBookId)
+            let jsonContentObject = JSON.parse(currentServerEvent.current.JsonContent)
+            for (const property in listPriceBook) {
+                if (listPriceBook[property].Id == jsonContentObject.PriceBookId) {
+                    setCurrentPriceBook(listPriceBook[property])
+                }
+            }
+            setJsonContent(jsonContentObject)
+
 
             serverEvent.addListener((collection, changes) => {
                 if ((changes.insertions.length || changes.modifications.length) && serverEvent[0].FromServer) {
@@ -138,10 +136,7 @@ const Served = (props) => {
                         })
                     })
                     updateServerEvent()
-                    // let objJsonContent = {...jsonContent}
-                    // dataManager.calculatateJsonContent(objJsonContent)
-                    // console.log('getOtherPricejsonContent', objJsonContent);
-                    // setJsonContent(objJsonContent)
+
                 }
             }
         }
@@ -154,10 +149,10 @@ const Served = (props) => {
                 product.Price = basePrice + product.TotalTopping
             })
             updateServerEvent()
-            // dataManager.calculatateJsonContent(jsonContent)
-            // setJsonContent({ ...jsonContent })
+
         }
         if (jsonContent.OrderDetails) {
+            jsonContent.PriceBookId = currentPriceBook.Id
             if (currentPriceBook && currentPriceBook.Id) getOtherPrice()
             else getBasePrice()
         }
@@ -368,6 +363,7 @@ const Served = (props) => {
     }
 
     const updateServerEvent = () => {
+        console.log('updateServerEvent currentPriceBook', currentPriceBook);
         if (currentServerEvent.current) {
             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current))
             dataManager.calculatateJsonContent(jsonContent)
@@ -397,7 +393,7 @@ const Served = (props) => {
     }
 
     const onClickListedPrice = () => {
-        props.navigation.navigate(ScreenList.PriceBook, { _onSelect: onCallBack, currentPriceBook: currentPriceBook })
+        props.navigation.navigate(ScreenList.PriceBook, { _onSelect: onCallBack, currentPriceBook: currentPriceBook, listPriceBook: listPriceBookRef.current })
     }
 
 
@@ -467,6 +463,18 @@ const Served = (props) => {
         }, 500);
     }
     const viewPrintRef = useRef();
+
+    const handlerProcessedProduct = (jsonContent) => {
+        console.log("handlerProcessedProduct jsonContent ", jsonContent);
+        if (currentServerEvent.current) {
+            let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current))
+            // dataManager.calculatateJsonContent(jsonContent)
+            setJsonContent({ ...jsonContent })
+            serverEvent.Version += 1
+            serverEvent.JsonContent = JSON.stringify(jsonContent)
+            dataManager.updateServerEvent(serverEvent)
+        }
+    }
 
     return (
         <View style={{ flex: 1 }}>
@@ -550,7 +558,8 @@ const Served = (props) => {
                             outputPosition={outputPosition}
                             outputSelectedProduct={outputSelectedProduct}
                             listTopping={listTopping}
-                            Position={position} />
+                            Position={position}
+                            handlerProcessedProduct={(jsonContent) => handlerProcessedProduct(jsonContent)} />
                     </View >
 
                 </View>

@@ -14,7 +14,6 @@ import realmStore from '../../../../data/realm/RealmStore';
 import { useDispatch } from 'react-redux';
 import colors from '../../../../theme/Colors';
 import dataManager from '../../../../data/DataManager';
-import Pricebook from '../../Pricebook';
 import { ApiPath } from '../../../../data/services/ApiPath';
 import { HTTPService } from '../../../../data/services/HttpService';
 import _, { map } from 'underscore';
@@ -35,6 +34,7 @@ export default (props) => {
     const [currentPriceBook, setCurrentPriceBook] = useState({ Name: "Giá niêm yết", Id: 0 })
     const [currentCustomer, setCurrentCustomer] = useState({ Name: "Khách hàng", Id: 0 })
     const toolBarPhoneServedRef = useRef();
+    const listPriceBookRef = useRef({})
     const [listPosition, setListPosition] = useState([
         { name: "A", status: false },
         { name: "B", status: false },
@@ -54,24 +54,16 @@ export default (props) => {
             let serverEvent = await realmStore.queryServerEvents()
             let listPriceBook = await realmStore.queryPricebook()
             listPriceBook = JSON.parse(JSON.stringify(listPriceBook))
-
+            listPriceBookRef.current = listPriceBook
             const row_key = `${props.route.params.room.Id}_${position}`
-
             serverEvent = serverEvent.filtered(`RowKey == '${row_key}'`)
-
-            // if (JSON.stringify(serverEvent) != '{}' && serverEvent[0].JsonContent) {
-            //     currentServerEvent.current = serverEvent[0]
-            //     let jsonContentObject = JSON.parse(serverEvent[0].JsonContent)
-            //     setJsonContent(jsonContentObject.OrderDetails ? jsonContentObject : Constant.JSONCONTENT_EMPTY)
-
-
-
-            // } else setJsonContent(Constant.JSONCONTENT_EMPTY)
             currentServerEvent.current = JSON.stringify(serverEvent) != '{}' && serverEvent[0].JsonContent ? JSON.parse(JSON.stringify(serverEvent[0]))
                 : await dataManager.createSeverEvent(props.route.params.room.Id, position)
-            console.log('currentServerEvent.current', JSON.parse(currentServerEvent.current.JsonContent));
+            console.log('currentServerEvent.current', currentServerEvent.current, JSON.parse(currentServerEvent.current.JsonContent));
             let jsonContentObject = JSON.parse(currentServerEvent.current.JsonContent)
-            console.log('listPriceBook', listPriceBook, jsonContentObject);
+            if (jsonContentObject.Partner) {
+                setCurrentCustomer(jsonContentObject.Partner)
+            }
             for (const property in listPriceBook) {
                 if (listPriceBook[property].Id == jsonContentObject.PriceBookId) {
                     setCurrentPriceBook(listPriceBook[property])
@@ -89,11 +81,9 @@ export default (props) => {
                 toolBarPhoneServedRef.current.clickCheckInRef(!ischeck)
             }
 
-            // setPriceBookId(jsonContent.PriceBookId)
-
             serverEvent.addListener((collection, changes) => {
                 if ((changes.insertions.length || changes.modifications.length) && serverEvent[0].FromServer) {
-                    currentServerEvent.current = serverEvent[0]
+                    currentServerEvent.current = JSON.parse(JSON.stringify(serverEvent[0]))
                     setJsonContent(JSON.parse(serverEvent[0].JsonContent))
                 }
             })
@@ -147,10 +137,28 @@ export default (props) => {
             updateServerEvent()
         }
         if (jsonContent.OrderDetails) {
+            jsonContent.PriceBookId = currentPriceBook.Id
             if (currentPriceBook && currentPriceBook.Id) getOtherPrice()
             else getBasePrice()
         }
     }, [currentPriceBook])
+
+    useEffect(() => {
+        console.log('currentCustomercurrentCustomer', currentCustomer, jsonContent);
+        if (JSON.stringify(jsonContent) != "{}") {
+            jsonContent.Partner = null
+            jsonContent.PartnerId = null
+            if (currentCustomer && currentCustomer.Id) {
+                jsonContent.Partner = currentCustomer
+                jsonContent.PartnerId = currentCustomer.Id
+            }
+            let serverEvent = currentServerEvent.current
+            serverEvent.Version += 1
+            serverEvent.JsonContent = JSON.stringify(jsonContent)
+            dataManager.updateServerEvent(serverEvent)
+        }
+    
+    }, [currentCustomer])
 
     const getOtherPrice = async (list) => {
         if (currentPriceBook.Id) {
@@ -315,8 +323,9 @@ export default (props) => {
     }
 
     const updateServerEvent = () => {
+        console.log('updateServerEvent', currentPriceBook.Id);
         if (currentServerEvent.current) {
-            let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current))
+            let serverEvent = currentServerEvent.current
             dataManager.calculatateJsonContent(jsonContent)
             setJsonContent({ ...jsonContent })
             serverEvent.Version += 1
@@ -446,7 +455,7 @@ export default (props) => {
     }
 
     const onClickListedPrice = () => {
-        props.navigation.navigate(ScreenList.PriceBook, { _onSelect: onCallBackPriceCustomer, currentPriceBook: currentPriceBook })
+        props.navigation.navigate(ScreenList.PriceBook, { _onSelect: onCallBackPriceCustomer, currentPriceBook: currentPriceBook, listPriceBook: listPriceBookRef.current })
     }
 
 
@@ -463,7 +472,7 @@ export default (props) => {
                 break;
             case 2:
                 console.log('onCallBackPriceCustomer ', type, data);
-                if (data.Id != -1) setCurrentCustomer(data)
+                setCurrentCustomer(data)
                 break;
             default:
                 break;
@@ -472,7 +481,7 @@ export default (props) => {
 
     const handlerProcessedProduct = (jsonContent) => {
         console.log("handlerProcessedProduct jsonContent ", jsonContent);
-        if (currentServerEvent) {
+        if (currentServerEvent.current) {
             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current))
             // dataManager.calculatateJsonContent(jsonContent)
             setJsonContent({ ...jsonContent })

@@ -63,15 +63,14 @@ const RetailCustomerOrder = (props) => {
                 syncListProducts(jsonContent.OrderDetails)
             }
 
-            // serverEvents.addListener((collection, changes) => {
-            //     if (changes.insertions.length || changes.modifications.length) {
-            //         console.log('changes.insertions.length ');
-            //         let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
-            //         newServerEvents = Object.values(newServerEvents)
-            //         // setCurrentCommodity(newServerEvents[newServerEvents.length - 1])
-            //         setNumberNewOrder(newServerEvents.length)
-            //     }
-            // })
+            serverEvents.addListener((collection, changes) => {
+                if (changes.insertions.length || changes.modifications.length) {
+                    // console.log('changes.insertions.length ');
+                    // let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
+                    // newServerEvents = Object.values(newServerEvents)
+                    // setCurrentCommodity(newServerEvents[newServerEvents.length - 1])
+                    setNumberNewOrder(serverEvents.length)                }
+            })
         }
         getCommodityWaiting()
         var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);

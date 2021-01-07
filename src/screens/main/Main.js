@@ -20,7 +20,7 @@ const { Print } = NativeModules;
 
 export default (props) => {
 
-
+  let scan = null
   const viewPrintRef = useRef();
   const dispatch = useDispatch();
   const { listPrint, isFNB } = useSelector(state => {
@@ -70,24 +70,12 @@ export default (props) => {
 
     AppState.addEventListener('change', handleChangeState);
 
-    const getDataNewOrders = async () => {
-      let newOrders = await dataManager.initComfirmOrder()
-      console.log('getDataNewOrders', newOrders);
 
-      if (newOrders != null)
-        viewPrintRef.current.printKitchenRef(newOrders)
-
-    }
-
-    const scan = setInterval(() => {
-      getDataNewOrders()
-    }, 15000);
 
     Print.registerPrint("")
 
     return () => {
       AppState.removeEventListener('change', handleChangeState);
-      clearInterval(scan)
     }
   }, [])
 
@@ -97,6 +85,18 @@ export default (props) => {
       dispatch({ type: 'ALREADY', already: false })
       // await realmStore.deleteAll()
       if (isFNB === true) {
+        const getDataNewOrders = async () => {
+          let newOrders = await dataManager.initComfirmOrder()
+          console.log('getDataNewOrders', newOrders);
+
+          if (newOrders != null)
+            viewPrintRef.current.printKitchenRef(newOrders)
+
+        }
+
+        // scan = setInterval(() => {
+        //   getDataNewOrders()
+        // }, 15000);
         await realmStore.deleteAll()
         await dataManager.syncAllDatas()
       } else {
@@ -108,6 +108,9 @@ export default (props) => {
     }
     syncDatas()
 
+    return () => {
+      if (scan) clearInterval(scan)
+    }
   }, [isFNB])
 
 
