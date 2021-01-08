@@ -100,6 +100,10 @@ export default (props) => {
             let orderDetails = JSON.parse(currentServerEvent.current.JsonContent).OrderDetails;
             let jsonContentTmp = JSON.parse(currentServerEvent.current.JsonContent)
             console.log("useEffect serverEvent ", currentServerEvent.current);
+            if (jsonContentTmp.Partner && jsonContentTmp.Partner.Id) {
+                setCustomer(jsonContentTmp.Partner)
+                // alert("ok 2")
+            }
             setJsonContent(jsonContentTmp)
             let total = getTotalOrder(orderDetails);
             setTotalPrice(total);
@@ -122,7 +126,8 @@ export default (props) => {
 
         const getObjectSetting = async () => {
             settingObject.current = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
-            settingObject.current = JSON.parse(settingObject.current)
+            if (settingObject.current)
+                settingObject.current = JSON.parse(settingObject.current)
             console.log("settingObject.current ", settingObject.current);
         }
 
@@ -213,8 +218,15 @@ export default (props) => {
     }
 
     const onCallBackCustomer = (data) => {
-        console.log("onCallBackCustomer data ", data);
+        console.log("onCallBackCustomer data : ", data);
         setCustomer(data);
+        if (currentServerEvent.current) {
+            console.log("onCallBackCustomer Partner : ", data);
+            let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
+            jsonContent.Partner = data;
+            dataManager.paymentSetServerEvent(serverEvent, jsonContent);
+            dataManager.subjectUpdateServerEvent.next(serverEvent)
+        }
     }
 
     const addCustomer = () => {
@@ -529,7 +541,7 @@ export default (props) => {
                     props.route.params.onCallBack("success")
                 } else {
                     let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
-                    dataManager.paymentSetServerEvent(serverEvent, {});
+                    dataManager.paymentSetServerEvent(serverEvent, {}, true);
                     dataManager.subjectUpdateServerEvent.next(serverEvent)
                 }
                 await printAfterPayment()
@@ -684,6 +696,12 @@ export default (props) => {
         console.log("calculator excess ", excess);
         console.log("calculator excessCash ", excessCash);
         console.log("calculator total ", total);
+
+        if (currentServerEvent.current) {
+            let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
+            dataManager.paymentSetServerEvent(serverEvent, jsonContent);
+            dataManager.subjectUpdateServerEvent.next(serverEvent)
+        }
     }
 
     const onChange = (selectedDate) => {

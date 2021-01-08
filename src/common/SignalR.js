@@ -207,7 +207,7 @@ class SignalRManager {
                 });
         } else {
             console.log("settimeout");
-            alert("Opps!", "Cannot connect to server")
+            console.log("Opps!", "Cannot connect to server")
 
         }
     }

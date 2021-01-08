@@ -286,11 +286,11 @@ class DataManager {
             JsonContent.ActiveDate = ""
     }
 
-    paymentSetServerEvent = (serverEvent, newJsonContent) => {
+    paymentSetServerEvent = (serverEvent, newJsonContent, updateNow = false) => {
         if (!serverEvent.JsonContent) return
         serverEvent.JsonContent = JSON.stringify(newJsonContent)
-        serverEvent.Version += 10
-
+        if (updateNow)
+            serverEvent.Version += 10
     }
 
     totalProducts = (products) => {
