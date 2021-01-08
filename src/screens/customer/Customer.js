@@ -153,7 +153,7 @@ export default (props) => {
                         clickLeftIcon={() => {
                             props.navigation.goBack()
                         }}
-                        title={I18n.t('thanh_toan')} />
+                        title={props.route.params._onSelect?"Chọn khách hàng":I18n.t('thanh_toan')} />
                     :
                     <MainToolBar
                         navigation={props.navigation}

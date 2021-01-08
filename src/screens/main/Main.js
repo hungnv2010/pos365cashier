@@ -94,13 +94,13 @@ export default (props) => {
 
         }
 
-        // scan = setInterval(() => {
-        //   getDataNewOrders()
-        // }, 15000);
-        await realmStore.deleteAll()
+        scan = setInterval(() => {
+          getDataNewOrders()
+        }, 15000);
+        // await realmStore.deleteAll()
         await dataManager.syncAllDatas()
       } else {
-        await realmStore.deleteAllForRetail()
+        // await realmStore.deleteAllForRetail()
         await dataManager.syncAllDatasForRetail()
       }
       dispatch({ type: 'ALREADY', already: true })
