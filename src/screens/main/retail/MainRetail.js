@@ -9,6 +9,7 @@ import RetailToolbar from './retailToolbar';
 import { ScreenList } from '../../../common/ScreenList';
 import { ApiPath } from '../../../data/services/ApiPath';
 import { HTTPService } from '../../../data/services/HttpService';
+import realmStore from '../../../data/realm/RealmStore';
 
 
 const MainRetail = (props) => {
@@ -137,8 +138,26 @@ const MainRetail = (props) => {
         setText(text.trim())
     }
 
-    const onCallBack = (data, type) => {
-
+    const onCallBack = async (newList, type) => {
+       
+                let allPromise = newList.map(async item => {
+                    let products = await realmStore.queryProducts()
+                    let productWithId = products.filtered(`Id ==${item.Id}`)
+                    productWithId = JSON.parse(JSON.stringify(productWithId))[0] ? JSON.parse(JSON.stringify(productWithId))[0] : {}
+                    return { ...productWithId, ...item, exist: false }
+                })
+                let list = await Promise.all(allPromise)
+                listProducts.forEach(item => {
+                    list.forEach(elm => {
+                        if (item.Id == elm.Id && !item.SplitForSalesOrder) {
+                            item.Quantity += elm.Quantity
+                            elm.exist = true
+                        }
+                    })
+                })
+                list = list.filter((newItem) => !newItem.exist)
+                setListProducts([...list, ...listProducts])
+       
     }
 
     const outputCurrentPriceBook = (data) => {

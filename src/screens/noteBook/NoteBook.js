@@ -69,7 +69,7 @@ export default (props) => {
                 console.log("onClickNavigateServed ", props);
                 let array = [];
                 res.results.forEach((element, index) => {
-                    let obj = { Quantity: element.Quantity, ...element.Product, Sid: Date.now() + index, Price: element.Price, }
+                    let obj = { Quantity: element.Quantity, ...element.Product, Price: element.Price, }
                     array.push(obj)
                 });
                 props.route.params._onSelect(array, 2);
