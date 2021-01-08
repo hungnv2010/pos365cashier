@@ -563,14 +563,14 @@ export default (props) => {
     }
 
     const updateServerEvent = (status) => {
-        if (props.route.params.Screen != undefined && props.route.params.Screen == ScreenList.MainRetail) {
-            props.route.params.onCallBack(status)
-        } else {
+        // if (props.route.params.Screen != undefined && props.route.params.Screen == ScreenList.MainRetail) {
+        //     props.route.params.onCallBack(status)
+        // } else {
             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
             serverEvent.JsonContent = "{}"
             serverEvent.Version += 10
-            dataManager.updateServerEventNow(serverEvent, true);
-        }
+            dataManager.updateServerEventNow(serverEvent, true, false);
+        // }
         playSound()
     }
 

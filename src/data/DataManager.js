@@ -250,9 +250,10 @@ class DataManager {
         this.subjectUpdateServerEvent.next(serverEvent)
     }
 
-    updateServerEventNow = async (serverEvent, FromServer = false) => {
+    updateServerEventNow = async (serverEvent, FromServer = false, isFNB = true) => {
         await realmStore.insertServerEvent(serverEvent, FromServer)
-        signalRManager.sendMessageServerEvent(serverEvent)
+        if (isFNB)
+            signalRManager.sendMessageServerEvent(serverEvent)
     }
 
     calculatateServerEvent = (serverEvent, newOrderDetail) => {
