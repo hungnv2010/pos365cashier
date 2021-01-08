@@ -95,6 +95,9 @@ const Served = (props) => {
                 : await dataManager.createSeverEvent(props.route.params.room.Id, position)
 
             let jsonContentObject = JSON.parse(currentServerEvent.current.JsonContent)
+            if (jsonContentObject.Partner) {
+                setCurrentCustomer(jsonContentObject.Partner)
+            }
             for (const property in listPriceBook) {
                 if (listPriceBook[property].Id == jsonContentObject.PriceBookId) {
                     setCurrentPriceBook(listPriceBook[property])
@@ -157,6 +160,23 @@ const Served = (props) => {
             else getBasePrice()
         }
     }, [currentPriceBook])
+
+    useEffect(() => {
+        console.log('currentCustomercurrentCustomer', currentCustomer, jsonContent);
+        if (JSON.stringify(jsonContent) != "{}") {
+            jsonContent.Partner = null
+            jsonContent.PartnerId = null
+            if (currentCustomer && currentCustomer.Id) {
+                jsonContent.Partner = currentCustomer
+                jsonContent.PartnerId = currentCustomer.Id
+            }
+            let serverEvent = currentServerEvent.current
+            serverEvent.Version += 1
+            serverEvent.JsonContent = JSON.stringify(jsonContent)
+            dataManager.updateServerEvent(serverEvent)
+        }
+    
+    }, [currentCustomer])
 
     const getOtherPrice = async (product) => {
         if (currentPriceBook.Id) {

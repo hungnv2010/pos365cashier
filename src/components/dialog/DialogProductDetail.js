@@ -24,11 +24,12 @@ export default (props) => {
     const [IsLargeUnit, setIsLargeUnit] = useState(false)
     const [percent, selectPercent] = useState(false)
     const [discount, setDiscount] = useState(props.item.Discount ? props.item.Discount : 0)
-    const [price, setPrice] = useState(props.item.IsLargeUnit == true ? props.item.PriceLargeUnit : props.item.Price)
+    const [price, setPrice] = useState(props.item.Price)
     const [typeModal, setTypeModal] = useState(TYPE_MODAL.DEFAULT);
     const [date, setDate] = useState(new Date());
 
     useEffect(() => {
+        console.log('itemOrderitemOrder', props.item);
         let listOrder = itemOrder.OrderQuickNotes ? itemOrder.OrderQuickNotes.split(',') : [];
         let listQuickNote = []
         listOrder.forEach((item, idx) => {
@@ -42,16 +43,13 @@ export default (props) => {
     }, [])
 
     useEffect(() => {
-        let totalDiscount = percent ? itemOrder.Price * discount / 100 : discount
-        setPrice(itemOrder.Price - totalDiscount > 0 ? itemOrder.Price - totalDiscount : 0)
+        let price = itemOrder.IsLargeUnit == true ? itemOrder.PriceLargeUnit : itemOrder.UnitPrice
+        let totalDiscount = percent ? itemOrder.UnitPrice * discount / 100 : discount
+        setPrice(price - totalDiscount > 0 ? price - totalDiscount : 0)
     }, [discount, percent])
 
     const onClickOk = () => {
-        if (props.fromRetail) {
-            props.onClickSubmit({ ...itemOrder, Discount: discount, Percent: percent, PriceWithDiscount: price })
-        } else {
-            props.getDataOnClick({ ...itemOrder, IsLargeUnit: IsLargeUnit, Checkin: date })
-        }
+        props.onClickSubmit({ ...itemOrder, Discount: discount, Percent: percent, Price: price })
         props.setShowModal(false)
     }
 

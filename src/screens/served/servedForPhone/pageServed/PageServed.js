@@ -61,9 +61,7 @@ export default (props) => {
                 : await dataManager.createSeverEvent(props.route.params.room.Id, position)
             console.log('currentServerEvent.current', currentServerEvent.current, JSON.parse(currentServerEvent.current.JsonContent));
             let jsonContentObject = JSON.parse(currentServerEvent.current.JsonContent)
-            if (jsonContentObject.Partner) {
-                setCurrentCustomer(jsonContentObject.Partner)
-            }
+
             for (const property in listPriceBook) {
                 if (listPriceBook[property].Id == jsonContentObject.PriceBookId) {
                     setCurrentPriceBook(listPriceBook[property])
@@ -103,6 +101,11 @@ export default (props) => {
             if (serverEvent) serverEvent.removeAllListeners()
         }
     }, [position])
+
+
+    useEffect(() => {
+        console.log('jsonContent.Partner', jsonContent.Partner);
+    }, [jsonContent.Partner])
 
     useEffect(() => {
         const getOtherPrice = async () => {
@@ -144,20 +147,40 @@ export default (props) => {
     }, [currentPriceBook])
 
     useEffect(() => {
-        console.log('currentCustomercurrentCustomer', currentCustomer, jsonContent);
         if (JSON.stringify(jsonContent) != "{}") {
-            jsonContent.Partner = null
-            jsonContent.PartnerId = null
             if (currentCustomer && currentCustomer.Id) {
-                jsonContent.Partner = currentCustomer
-                jsonContent.PartnerId = currentCustomer.Id
+                let apiPath = `${ApiPath.SYNC_PARTNERS}/${currentCustomer.Id}`
+                new HTTPService().setPath(apiPath).GET()
+                    .then(result => {
+                        if (result) {
+                            console.log('resultresult', result, jsonContent);
+                            let discount = dataManager.totalProducts(jsonContent.OrderDetails) * result.BestDiscount / 100
+                            console.log('discount', discount);
+                            jsonContent.Discount = discount
+                            jsonContent.Partner = currentCustomer
+                            jsonContent.PartnerId = currentCustomer.Id
+                            console.log('jsonContentjsonContent', jsonContent);
+                            dataManager.calculatateJsonContent(jsonContent)
+                            let serverEvent = currentServerEvent.current
+                            serverEvent.Version += 1
+                            serverEvent.JsonContent = JSON.stringify(jsonContent)
+                            dataManager.updateServerEvent(serverEvent)
+                        }
+                    })
+
+            } else {
+                jsonContent.Partner = null
+                jsonContent.PartnerId = null
+                jsonContent.Discount = 0
+                dataManager.calculatateJsonContent(jsonContent)
+                let serverEvent = currentServerEvent.current
+                serverEvent.Version += 1
+                serverEvent.JsonContent = JSON.stringify(jsonContent)
+                dataManager.updateServerEvent(serverEvent)
             }
-            let serverEvent = currentServerEvent.current
-            serverEvent.Version += 1
-            serverEvent.JsonContent = JSON.stringify(jsonContent)
-            dataManager.updateServerEvent(serverEvent)
+
         }
-    
+
     }, [currentCustomer])
 
     const getOtherPrice = async (list) => {
