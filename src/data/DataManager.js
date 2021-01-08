@@ -292,6 +292,8 @@ class DataManager {
         serverEvent.JsonContent = JSON.stringify(newJsonContent)
         if (updateNow)
             serverEvent.Version += 10
+        else
+            serverEvent.Version += 10
     }
 
     totalProducts = (products) => {

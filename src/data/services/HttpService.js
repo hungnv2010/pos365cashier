@@ -28,8 +28,7 @@ export class HTTPService {
 
     HTTP_OK = 200 | 204;
 
-
-
+    showMessage = true;
 
     constructor() {
 
@@ -44,9 +43,9 @@ export class HTTPService {
         return this
     }
 
-    setPath(path) {
+    setPath(path, showMessage = true) {
         this._path = this._api + path;
-
+        this.showMessage = showMessage;
         return this
     }
 
@@ -108,17 +107,18 @@ export class HTTPService {
 }
 
 const error = () => {
-    NetInfo.fetch().then(state => {
-        if (state.isConnected == true) {
-            dialogManager.showPopupOneButton(I18n.t('loi_server'), I18n.t('thong_bao'), () => {
-                dialogManager.destroy();
-            }, null, null, I18n.t('dong'))
-        } else {
-            dialogManager.showPopupOneButton(I18n.t('loi_ket_noi_mang'), I18n.t('thong_bao'), () => {
-                dialogManager.destroy();
-            }, null, null, I18n.t('dong'))
-        }
-    });
+    if (showMessage)
+        NetInfo.fetch().then(state => {
+            if (state.isConnected == true) {
+                dialogManager.showPopupOneButton(I18n.t('loi_server'), I18n.t('thong_bao'), () => {
+                    dialogManager.destroy();
+                }, null, null, I18n.t('dong'))
+            } else {
+                dialogManager.showPopupOneButton(I18n.t('loi_ket_noi_mang'), I18n.t('thong_bao'), () => {
+                    dialogManager.destroy();
+                }, null, null, I18n.t('dong'))
+            }
+        });
 }
 
 const extractData = (response) => {
