@@ -156,7 +156,7 @@ export default (props) => {
                 typeModal.current == 3 ?
                     <View style={{ backgroundColor: 'white', borderRadius: 15 }}>
                         <Text style={{ fontWeight: 'bold', padding: 10 }}>{itemClick.current.Code}</Text>
-                        <Text style={{ margin: 10 }}>Bạn có chắc muốn xoá mã khuyến mãi?</Text>
+                        <Text style={{ margin: 10 }}>{I18n.t('ban_co_chac_muon_xoa_voucher_nay')}</Text>
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginLeft: 10, marginRight: 10, padding: 10 }}>
                             <TouchableOpacity style={styles.btnHuy}
                                 onPress={() => { setOnShowModal(false) }}>
@@ -389,7 +389,7 @@ export default (props) => {
                         ref={flatlistRef}
                     />
                     : <View style={{ backgroundColor: 'white', justifyContent: 'center', alignItems: 'center', flex: 1 }}>
-                        <Text style={{ fontSize: 12 }}>Chưa có Voucher</Text>
+                        <Text style={{ fontSize: 12 }}>{I18n.t('chua_co_voucher')}</Text>
                     </View>
             }
             <FAB
