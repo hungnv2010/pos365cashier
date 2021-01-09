@@ -32,7 +32,7 @@ export default (props) => {
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
     const [currentPriceBook, setCurrentPriceBook] = useState({ Name: "Giá niêm yết", Id: 0 })
-    const [currentCustomer, setCurrentCustomer] = useState({ Name: "Khách hàng", Id: 0 })
+    // const [currentCustomer, setCurrentCustomer] = useState({ Name: "Khách hàng", Id: 0 })
     const toolBarPhoneServedRef = useRef();
     const listPriceBookRef = useRef({})
     const [listPosition, setListPosition] = useState([
@@ -146,42 +146,10 @@ export default (props) => {
         }
     }, [currentPriceBook])
 
-    useEffect(() => {
-        if (JSON.stringify(jsonContent) != "{}") {
-            if (currentCustomer && currentCustomer.Id) {
-                let apiPath = `${ApiPath.SYNC_PARTNERS}/${currentCustomer.Id}`
-                new HTTPService().setPath(apiPath).GET()
-                    .then(result => {
-                        if (result) {
-                            console.log('resultresult', result, jsonContent);
-                            let discount = dataManager.totalProducts(jsonContent.OrderDetails) * result.BestDiscount / 100
-                            console.log('discount', discount);
-                            jsonContent.Discount = discount
-                            jsonContent.Partner = currentCustomer
-                            jsonContent.PartnerId = currentCustomer.Id
-                            console.log('jsonContentjsonContent', jsonContent);
-                            dataManager.calculatateJsonContent(jsonContent)
-                            let serverEvent = currentServerEvent.current
-                            serverEvent.Version += 1
-                            serverEvent.JsonContent = JSON.stringify(jsonContent)
-                            dataManager.updateServerEvent(serverEvent)
-                        }
-                    })
+    // useEffect(() => {
 
-            } else {
-                jsonContent.Partner = null
-                jsonContent.PartnerId = null
-                jsonContent.Discount = 0
-                dataManager.calculatateJsonContent(jsonContent)
-                let serverEvent = currentServerEvent.current
-                serverEvent.Version += 1
-                serverEvent.JsonContent = JSON.stringify(jsonContent)
-                dataManager.updateServerEvent(serverEvent)
-            }
 
-        }
-
-    }, [currentCustomer])
+    // }, [currentCustomer])
 
     const getOtherPrice = async (list) => {
         if (currentPriceBook.Id) {
@@ -386,7 +354,7 @@ export default (props) => {
 
     //type: 1 => from selectProduct
     //type: 2 => from noteBook, QRCode
-    const onCallBack = (newList, type) => {
+    const onCallBack = async (newList, type) => {
         console.log('onCallBack === ', newList, type);
         switch (type) {
             case 1:
@@ -397,36 +365,24 @@ export default (props) => {
                 outputListProducts([...newList])
                 break;
             case 2:
-                newList.forEach(async (newItem, index, arr) => {
+                let allPromise = newList.map(async item => {
                     let products = await realmStore.queryProducts()
-                    let productWithId = products.filtered(`Id ==${newItem.Id}`)
+                    let productWithId = products.filtered(`Id ==${item.Id}`)
                     productWithId = JSON.parse(JSON.stringify(productWithId))[0] ? JSON.parse(JSON.stringify(productWithId))[0] : {}
-                    let ProductImages = productWithId.ProductImages ? productWithId.ProductImages : ""
-
-                    newItem.exist = false
-                    newItem.ProductImages = ProductImages
-                    newItem.IsPromotion = false
-                    newItem.ProductId = newItem.Id
-                    if (newItem.ProductType == 2 && newItem.IsTimer) {
-                        let checkIn = new Date();
-                        newItem.Checkin = checkIn;
-                        newItem.Description = `${dateToString(checkIn, "DD/MM HH:mm")} =>  ${dateToString(checkIn, "DD/MM HH:mm")} () ${I18n.t('mot_gio_dau_tien')} = ${currencyToString(newItem.Price)}.`;
-                    }
-                    if (!jsonContent.OrderDetails) jsonContent.OrderDetails = []
-                    jsonContent.OrderDetails.forEach((elm, idx) => {
-                        if (newItem.Id == elm.Id && !newItem.SplitForSalesOrder) {
-                            elm.Quantity += newItem.Quantity
-                            newItem.exist = true
+                    return { ...productWithId, ...item, exist: false }
+                })
+                let list = await Promise.all(allPromise)
+                if (!jsonContent.OrderDetails) jsonContent.OrderDetails = []
+                jsonContent.OrderDetails.forEach(item => {
+                    list.forEach(elm => {
+                        if (item.Id == elm.Id && !item.SplitForSalesOrder) {
+                            item.Quantity += elm.Quantity
+                            elm.exist = true
                         }
                     })
-                    newList = newList.filter((newItem) => !newItem.exist)
-                    console.log('newList', newList);
-                    console.log('listProducts', jsonContent.OrderDetails);
-
                 })
-                let list = [...newList, ...jsonContent.OrderDetails];
-                console.log('listProducts == list ', list);
-                outputListProducts(list)
+                list = list.filter((newItem) => !newItem.exist)
+                outputListProducts([...list, ...jsonContent.OrderDetails])
                 break;
             default:
                 break;
@@ -458,7 +414,7 @@ export default (props) => {
         listPosition.forEach((item, index) => {
             const row_key = `${props.route.params.room.Id}_${item.name}`
             let serverEventPos = serverEvent.filtered(`RowKey == '${row_key}'`)
-            if (JSON.stringify(serverEventPos) != "{}" && JSON.parse(serverEventPos[0].JsonContent).OrderDetails.length > 0) {
+            if (JSON.stringify(serverEventPos) != "{}" && serverEventPos[0].JsonContent && JSON.parse(serverEventPos[0].JsonContent).OrderDetails && JSON.parse(serverEventPos[0].JsonContent).OrderDetails.length > 0) {
                 item.status = true
             }
         })
@@ -495,7 +451,40 @@ export default (props) => {
                 break;
             case 2:
                 console.log('onCallBackPriceCustomer ', type, data);
-                setCurrentCustomer(data)
+                // setCurrentCustomer(data)
+                if (JSON.stringify(jsonContent) != "{}") {
+                    if (data && data.Id) {
+                        let apiPath = `${ApiPath.SYNC_PARTNERS}/${data.Id}`
+                        new HTTPService().setPath(apiPath).GET()
+                            .then(result => {
+                                if (result) {
+                                    console.log('resultresult', result, jsonContent);
+                                    let discount = dataManager.totalProducts(jsonContent.OrderDetails) * result.BestDiscount / 100
+                                    console.log('discount', discount);
+                                    jsonContent.Discount = discount
+                                    jsonContent.Partner = data
+                                    jsonContent.PartnerId = data.Id
+                                    console.log('jsonContentjsonContent', jsonContent);
+                                    dataManager.calculatateJsonContent(jsonContent)
+                                    let serverEvent = currentServerEvent.current
+                                    serverEvent.Version += 1
+                                    serverEvent.JsonContent = JSON.stringify(jsonContent)
+                                    dataManager.updateServerEvent(serverEvent)
+                                }
+                            })
+
+                    } else {
+                        jsonContent.Partner = null
+                        jsonContent.PartnerId = null
+                        jsonContent.Discount = 0
+                        dataManager.calculatateJsonContent(jsonContent)
+                        let serverEvent = currentServerEvent.current
+                        serverEvent.Version += 1
+                        serverEvent.JsonContent = JSON.stringify(jsonContent)
+                        dataManager.updateServerEvent(serverEvent)
+                    }
+
+                }
                 break;
             default:
                 break;
@@ -556,7 +545,7 @@ export default (props) => {
                 <TouchableOpacity
                     style={{ flexDirection: "row", alignItems: "center" }}
                     onPress={onClickRetailCustomer}>
-                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{currentCustomer.Name ? currentCustomer.Name : I18n.t('khach_hang')}</Text>
+                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{jsonContent.Partner ? jsonContent.Partner.Name : I18n.t('khach_hang')}</Text>
                     <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} color={colors.colorchinh} />
                 </TouchableOpacity>
             </View>

@@ -100,6 +100,9 @@ export default (props) => {
             let orderDetails = JSON.parse(currentServerEvent.current.JsonContent).OrderDetails;
             let jsonContentTmp = JSON.parse(currentServerEvent.current.JsonContent)
             console.log("useEffect serverEvent ", currentServerEvent.current);
+            if (jsonContentTmp.Partner && jsonContentTmp.Partner.Id) {
+                setCustomer(jsonContentTmp.Partner)
+            }
             setJsonContent(jsonContentTmp)
             let total = getTotalOrder(orderDetails);
             setTotalPrice(total);
@@ -122,7 +125,8 @@ export default (props) => {
 
         const getObjectSetting = async () => {
             settingObject.current = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
-            settingObject.current = JSON.parse(settingObject.current)
+            if (settingObject.current)
+                settingObject.current = JSON.parse(settingObject.current)
             console.log("settingObject.current ", settingObject.current);
         }
 
@@ -213,8 +217,15 @@ export default (props) => {
     }
 
     const onCallBackCustomer = (data) => {
-        console.log("onCallBackCustomer data ", data);
+        console.log("onCallBackCustomer data : ", data);
         setCustomer(data);
+        if (currentServerEvent.current) {
+            console.log("onCallBackCustomer Partner : ", data);
+            let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
+            jsonContent.Partner = data;
+            dataManager.paymentSetServerEvent(serverEvent, jsonContent);
+            dataManager.subjectUpdateServerEvent.next(serverEvent)
+        }
     }
 
     const addCustomer = () => {
@@ -430,7 +441,6 @@ export default (props) => {
             // viewPrintRef.current.printProvisionalRef(jsonContent)
             viewPrintRef.current.printKitchenRef(jsonContent)
             timeClickPrevious = newDate;
-            //console.log("Printer ojjjjj",printerObject);
         }
     }
 
@@ -519,19 +529,12 @@ export default (props) => {
 
         console.log("onClickPay params ", params);
         dialogManager.showLoading();
-        new HTTPService().setPath(ApiPath.ORDERS).POST(params).then(async order => {
+        new HTTPService().setPath(ApiPath.ORDERS, true).POST(params).then(async order => {
             console.log("onClickPay order ", order);
             if (order) {
                 dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
                 dialogManager.hiddenLoading()
-
-                if (props.route.params.Screen != undefined && props.route.params.Screen == ScreenList.MainRetail) {
-                    props.route.params.onCallBack("success")
-                } else {
-                    let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
-                    dataManager.paymentSetServerEvent(serverEvent, {});
-                    dataManager.subjectUpdateServerEvent.next(serverEvent)
-                }
+                updateServerEvent("success")
                 await printAfterPayment()
                 if (order.QRCode != "") {
                     qrCode.current = order.QRCode
@@ -539,33 +542,54 @@ export default (props) => {
                     setShowModal(true)
                     handlerQRCode(order)
                 } else {
-                    // setTimeout(() => {
-                    //     props.navigation.pop()
-                    // }, 1000);
-                    props.navigation.pop()
+                    setTimeout(() => {
+                        props.navigation.pop()
+                    }, 1000);
+                    // props.navigation.pop()
                 }
             } else {
-                // alert("err")
-                handlerError({ JsonContent: json, RowKey: row_key })
+                onError(json)
             }
         }).catch(err => {
             console.log("onClickPay err ", err);
-            handlerError({ JsonContent: json, RowKey: row_key })
+            onError(json)
         });
     }
 
-    const printAfterPayment = async () => {
+    const onError = (json) => {
+        updateServerEvent("")
+        handlerError({ JsonContent: json, RowKey: row_key })
+        props.navigation.pop()
+    }
+
+    const updateServerEvent = (status) => {
+        // if (props.route.params.Screen != undefined && props.route.params.Screen == ScreenList.MainRetail) {
+        //     props.route.params.onCallBack(status)
+        // } else {
+            let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
+            serverEvent.JsonContent = "{}"
+            serverEvent.Version += 10
+            dataManager.updateServerEventNow(serverEvent, true, false);
+        // }
+        playSound()
+    }
+
+    const playSound = () => {
         Sound.setCategory('Playback');
         const callback = (error, sound) => {
             if (error) {
-                console.log('error', error.message);
+                console.log('error ' + error.message + " sound " + JSON.stringify(sound));
                 return;
             }
             sound.play(() => {
                 sound.release();
             });
         };
-        const sound = new Sound(require('./videoplayback.mp4'), error => callback(error, sound));
+        const sound = new Sound('file.mp4', Sound.MAIN_BUNDLE, error => callback(error, sound));
+    }
+
+    const printAfterPayment = async () => {
+
         if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
             jsonContent.RoomName = props.route.params.Name
         }
@@ -660,7 +684,7 @@ export default (props) => {
         let excessCash = (excess < 0.0 && excess > -0.001) ? 0 : excess;
         jsonContent.Discount = totalDiscount
         jsonContent.DiscountValue = disCountValue
-        jsonContent.Vat = vat
+        jsonContent.VAT = vat
         jsonContent.Total = total
         jsonContent.ExcessCash = excessCash
         if (listMethod.length == 1) {
@@ -683,7 +707,13 @@ export default (props) => {
         console.log("calculator totalPrice== ", total);
         console.log("calculator excess ", excess);
         console.log("calculator excessCash ", excessCash);
-        console.log("calculator total ", total);
+        console.log("calculator jsonContent ", jsonContent);
+
+        if (currentServerEvent.current) {
+            let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
+            dataManager.paymentSetServerEvent(serverEvent, jsonContent);
+            dataManager.subjectUpdateServerEvent.next(serverEvent)
+        }
     }
 
     const onChange = (selectedDate) => {
@@ -811,6 +841,7 @@ export default (props) => {
                             <Text style={styles.textInfo}>{I18n.t('thoi_gian')}</Text>
                             <TouchableOpacity onPress={() => onShowDateTime(true)} style={styles.inputDateTime}>
                                 <TextInput
+                                    returnKeyType='done'
                                     editable={false}
                                     onTouchStart={() => onShowDateTime(true)}
                                     value={"" + dateToStringFormatUTC(date)}
@@ -821,6 +852,7 @@ export default (props) => {
                         <View style={styles.viewNote}>
                             <Text style={styles.textInfo}>{I18n.t('ghi_chu')}</Text>
                             <TextInput
+                                returnKeyType='done'
                                 value={noteInfo}
                                 onChangeText={onChangeTextNote}
                                 multiline
@@ -862,6 +894,7 @@ export default (props) => {
                         </TouchableOpacity>
                     </View>
                     <TextInput
+                        returnKeyType='done'
                         keyboardType="number-pad"
                         value={"" + currencyToString(item.Value)}
                         onTouchStart={() => onTouchInput({ ...item, ...METHOD.pay })}
@@ -948,6 +981,7 @@ export default (props) => {
                                     </TouchableOpacity>
                                 </View>
                                 <TextInput
+                                    returnKeyType='done'
                                     keyboardType="number-pad"
                                     value={"" + currencyToString(!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio)}
                                     onTouchStart={() => onTouchInput(METHOD.discount)}
@@ -978,6 +1012,7 @@ export default (props) => {
                                     </TouchableOpacity>
                                 </View>
                                 <TextInput
+                                    returnKeyType='done'
                                     keyboardType="number-pad"
                                     value={"" + currencyToString(jsonContent.VATRates)}
                                     onTouchStart={() => onTouchInput(METHOD.vat)}

@@ -415,11 +415,11 @@ export default (props) => {
     }
 
     const onCLickQR = () => {
-        props.navigation.navigate("QRCode", { _onSelect: onCallBackQRCode })
+        props.navigation.navigate("QRCode", { _onSelect: onCallBackNoteBookVsQRCode })
     }
 
     const onCLickNoteBook = () => {
-        props.navigation.navigate("NoteBook", { _onSelect: onCallBack })
+        props.navigation.navigate("NoteBook", { _onSelect: onCallBackNoteBookVsQRCode })
     }
 
     const onClickSync = () => {
@@ -435,7 +435,28 @@ export default (props) => {
         props.navigation.navigate(ScreenList.RetailSelectProduct, { _onSelect: onCallBack, listProducts: listOrder })
     }
 
-    const onCallBackQRCode = (data, type) => {
+
+
+    const onCallBackNoteBookVsQRCode = async (newList, type) => {
+
+        let allPromise = newList.map(async item => {
+            let products = await realmStore.queryProducts()
+            let productWithId = products.filtered(`Id ==${item.Id}`)
+            productWithId = JSON.parse(JSON.stringify(productWithId))[0] ? JSON.parse(JSON.stringify(productWithId))[0] : {}
+            return { ...productWithId, ...item, exist: false }
+        })
+        let list = await Promise.all(allPromise)
+        if (!jsonContent.OrderDetails) jsonContent.OrderDetails = []
+        jsonContent.OrderDetails.forEach(item => {
+            list.forEach(elm => {
+                if (item.Id == elm.Id && !item.SplitForSalesOrder) {
+                    item.Quantity += elm.Quantity
+                    elm.exist = true
+                }
+            })
+        })
+        list = list.filter((newItem) => !newItem.exist)
+        setDataOrder([...list, ...jsonContent.OrderDetails])
 
     }
 

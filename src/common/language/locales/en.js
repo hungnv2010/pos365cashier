@@ -78,7 +78,7 @@ export default {
   don_hang_moi: "New orders",
   du_no: "Debt",
   dien_thoai: "Phone",
-  danh_sach_gia: "List Pricebook",
+  danh_sach_gia: "Choose Pricebook",
   don_hang_offline: "Offline order",
   // TODO: E
 

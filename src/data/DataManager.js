@@ -250,9 +250,10 @@ class DataManager {
         this.subjectUpdateServerEvent.next(serverEvent)
     }
 
-    updateServerEventNow = async (serverEvent, FromServer = false) => {
+    updateServerEventNow = async (serverEvent, FromServer = false, isFNB = true) => {
         await realmStore.insertServerEvent(serverEvent, FromServer)
-        signalRManager.sendMessageServerEvent(serverEvent)
+        if (isFNB)
+            signalRManager.sendMessageServerEvent(serverEvent)
     }
 
     calculatateServerEvent = (serverEvent, newOrderDetail) => {
@@ -287,11 +288,13 @@ class DataManager {
             JsonContent.ActiveDate = ""
     }
 
-    paymentSetServerEvent = (serverEvent, newJsonContent) => {
+    paymentSetServerEvent = (serverEvent, newJsonContent, updateNow = false) => {
         if (!serverEvent.JsonContent) return
         serverEvent.JsonContent = JSON.stringify(newJsonContent)
-        serverEvent.Version += 10
-
+        if (updateNow)
+            serverEvent.Version += 10
+        else
+            serverEvent.Version += 10
     }
 
     totalProducts = (products) => {

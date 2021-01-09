@@ -48,7 +48,7 @@ export default (props) => {
     useEffect(() => {
         console.log('customeretail props', props, listGroup);
         let customerDetail = props.route.params.item
-        if (customerDetail.Id == - 1) {
+        if (customerDetail.Id == 0) {
             resetCustomer()
             return
         }
@@ -211,27 +211,23 @@ export default (props) => {
             typeModal.current == 2 ?
                 <View style={{
                     backgroundColor: "#fff", borderRadius: 4,
-                    justifyContent: 'center', alignItems: 'center',
-                    maxHeight: Metrics.screenHeight * 0.6
+                    height: Metrics.screenHeight * 0.6
                 }}>
-                    <View style={{ paddingVertical: 10, flex: 1 }}>
-                        <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", paddingVertical: 15, color: colors.colorLightBlue }}>{I18n.t('chon_tinh_thanh')}</Text>
-                        <ScrollView
-                            showsVerticalScrollIndicator={false}
-                        >
-                            {
-                                Constant.LIST_PROVICE.map((item, index) => {
-                                    return (
-                                        <TouchableOpacity
-                                            onPress={() => onClickChooseProvice(item)}
-                                            key={index} style={{ paddingVertical: 15, }}>
-                                            <Text style={{ textAlign: "center" }}>{item.name}</Text>
-                                        </TouchableOpacity>
-                                    )
-                                })
-                            }
-                        </ScrollView>
-                    </View>
+                    <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", paddingVertical: 15, color: colors.colorLightBlue, textTransform: "uppercase" }}>{I18n.t('chon_tinh_thanh')}</Text>
+                    <ScrollView>
+                        {
+                            Constant.LIST_PROVICE.map((item, index) => {
+                                return (
+                                    <TouchableOpacity
+                                        onPress={() => onClickChooseProvice(item)}
+                                        key={index} style={{ paddingVertical: 15, }}>
+                                        <Text style={{ textAlign: "center" }}>{item.name}</Text>
+                                    </TouchableOpacity>
+                                )
+                            })
+                        }
+                    </ScrollView>
+
                 </View>
                 :
                 <View style={{
@@ -346,7 +342,7 @@ export default (props) => {
                 Description: customerDetail.Description,
             }
         }
-        if (props.route.params.item.Id == -1) {
+        if (props.route.params.item.Id == 0) {
             console.log('add');
             dialogManager.showLoading()
             new HTTPService().setPath(ApiPath.CUSTOMER).POST(params)
@@ -423,7 +419,7 @@ export default (props) => {
             </View> */}
             <ToolBarDefault
                 {...props}
-                title={props.route.params.item.Id == -1 ? I18n.t('them_khach_hang') : I18n.t('cap_nhat_khach_hang')} />
+                title={props.route.params.item.Id == 0 ? I18n.t('them_khach_hang') : I18n.t('cap_nhat_khach_hang')} />
             <ScrollView style={{ flex: 1, padding: 10 }}>
                 <Surface style={styles.surface}>
                     <View style={{ height: Metrics.screenHeight / 6, flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 15 }}>
@@ -471,10 +467,10 @@ export default (props) => {
                                 setShowModal(true)
                             }} style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
                                 <Text style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1, color: dateToString(customerDetail.DOB) ? null : "#CECCCB" }}>{dateToString(customerDetail.DOB) ? dateToString(customerDetail.DOB) : 'dd/mm/yyyy'}</Text>
-                               
+
                                 <Image source={Images.icon_arrow_down} style={{ width: 20, height: 20, position: "absolute", right: 15 }} />
                             </TouchableOpacity>
-                           
+
                         </View>
                     </View>
                     {
@@ -497,7 +493,7 @@ export default (props) => {
                             setShowModal(true)
                         }} style={{ flexDirection: "row", alignItems: "center" }}>
                             <Text style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1, color: getGroupName(customerDetail.PartnerGroupMembers) ? null : "#CECCCB" }}>{getGroupName(customerDetail.PartnerGroupMembers) ? getGroupName(customerDetail.PartnerGroupMembers) : I18n.t('ten_nhom')}</Text>
-                           
+
                             <Image source={Images.icon_arrow_down} style={{ width: 20, height: 20, position: "absolute", right: 15 }} />
                         </TouchableOpacity>
                     </View>
@@ -568,7 +564,7 @@ export default (props) => {
             </ScrollView>
             <View style={{ flexDirection: "row", margin: 10, }}>
                 {
-                    props.route.params.item.Id == -1 ?
+                    props.route.params.item.Id == 0 ?
                         null
                         :
                         <>

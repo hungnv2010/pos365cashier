@@ -53,7 +53,7 @@ export default (props) => {
 
     useEffect(() => {
         console.log('customeretail props', props.customerDetail);
-        if (props.customerDetail.Id == - 1) {
+        if (props.customerDetail.Id == 0) {
             resetCustomer()
             return
         }
@@ -182,7 +182,7 @@ export default (props) => {
 
     const renderModalContent = () => {
         return typeModal.current == 1 ?
-            <View style={{ backgroundColor: "#fff", borderRadius: 4 , alignItems: "center"}}>
+            <View style={{ backgroundColor: "#fff", borderRadius: 4, alignItems: "center" }}>
                 {/* <DateTimePicker
                     value={new Date()}
                     mode={'date'}
@@ -213,9 +213,7 @@ export default (props) => {
                 }}>
                     <View style={{ paddingVertical: 10, flex: 1 }}>
                         <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", paddingVertical: 15, color: colors.colorLightBlue }}>{I18n.t('chon_tinh_thanh')}</Text>
-                        <ScrollView
-                            showsVerticalScrollIndicator={false}
-                        >
+                        <ScrollView>
                             {
                                 Constant.LIST_PROVICE.map((item, index) => {
                                     return (
@@ -344,7 +342,7 @@ export default (props) => {
                 Description: customerDetail.Description,
             }
         }
-        if (props.customerDetail.Id == -1) {
+        if (props.customerDetail.Id == 0) {
             console.log('add');
             dialogManager.showLoading()
             new HTTPService().setPath(ApiPath.CUSTOMER).POST(params)
@@ -419,7 +417,7 @@ export default (props) => {
     return (
         <View style={{ flex: 1 }}>
             <View style={{ backgroundColor: colors.colorchinh, marginLeft: 5, paddingVertical: 10 }}>
-                <Text style={{ textAlign: "center", color: "white", fontSize: 15, textTransform: "uppercase", fontWeight: "bold" }}>{props.customerDetail.Id == -1 ? 'Add customer' : 'Update Customer'}</Text>
+                <Text style={{ textAlign: "center", color: "white", fontSize: 15, textTransform: "uppercase", fontWeight: "bold" }}>{props.customerDetail.Id == 0 ? 'Add customer' : 'Update Customer'}</Text>
             </View>
             <KeyboardAwareScrollView style={{ flexGrow: 1 }}>
                 <Surface style={styles.surface}>
@@ -595,7 +593,7 @@ export default (props) => {
             </KeyboardAwareScrollView>
             <View style={{ flexDirection: "row", margin: 10, }}>
                 {
-                    props.customerDetail.Id == -1 ?
+                    props.customerDetail.Id == 0 ?
                         null
                         :
                         <>
