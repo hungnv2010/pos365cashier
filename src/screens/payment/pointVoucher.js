@@ -184,6 +184,7 @@ export default (props) => {
                             <Text style={styles.flex_3}>{I18n.t('su_dung_diem')}</Text>
                             <View style={styles.flex_3}></View>
                             <TextInput
+                                returnKeyType='done'
                                 keyboardType="number-pad"
                                 onChangeText={(text) => onChangeTextInput(text)}
                                 value={pointUse == 0 ? "" : currencyToString(pointUse)}

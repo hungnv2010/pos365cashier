@@ -57,6 +57,7 @@ export const ReturnProduct = (props) => {
                             <Text style={styles.button}>-</Text>
                         </TouchableOpacity>
                         <TextInput
+                            returnKeyType='done'
                             onChangeText={text => {
                                 console.log("text ", text);
                                 if (isNaN(text) || text.length > 4) return
@@ -79,6 +80,7 @@ export const ReturnProduct = (props) => {
                     <View style={{ alignItems: "center", flexDirection: "row", flex: 7 }}>
 
                         <TextInput
+                            returnKeyType='done'
                             editable={false} selectTextOnFocus={false}
                             style={[styles.textQuantityModalOnly, { marginHorizontal: 0 }]}
                             value={"" + ((Quantity - QuantityChange) > 0 ? (Quantity - QuantityChange) : 0)}

@@ -438,8 +438,8 @@ export default (props) => {
             if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
                 jsonContent.RoomName = props.route.params.Name
             }
-            // viewPrintRef.current.printProvisionalRef(jsonContent)
-            viewPrintRef.current.printKitchenRef(jsonContent)
+            viewPrintRef.current.printProvisionalRef(jsonContent)
+            // viewPrintRef.current.printKitchenRef(jsonContent)
             timeClickPrevious = newDate;
         }
     }

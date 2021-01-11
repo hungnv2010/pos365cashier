@@ -94,7 +94,12 @@ export default (props) => {
 
     const printKitchen = () => {
         let jsonContent = props.jsonContent;
+        console.log("printKitchen jsonContent :: ", jsonContent);
         if (!checkProcessedQuantityProduct(jsonContent)) {
+            jsonContent.OrderDetails.forEach(element => {
+                element.RoomName = props.route.params.room.Name;
+                element.Pos = jsonContent.Pos;
+            });
             let data = dataManager.getDataPrintCook(jsonContent.OrderDetails)
             console.log("printKitchen data ", data);
             jsonContent.OrderDetails.forEach(element => {

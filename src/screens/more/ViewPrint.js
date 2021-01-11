@@ -152,6 +152,7 @@ export default forwardRef((props, ref) => {
                 for (const key in item) {
                     if (item.hasOwnProperty(key)) {
                         const element = item[key];
+                        console.log('element ', element);
                         let res = printService.GenHtmlKitchen(htmlKitchen, element, i, vendorSession)
                         if (res && res != "") {
                             printService.listWaiting.push({ html: res, ip: printObject[value] })

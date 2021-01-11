@@ -451,6 +451,7 @@ export default (props) => {
                     <View style={{ padding: 15 }}>
                         <Text style={{ paddingBottom: 10 }}>{I18n.t('dien_thoai')}</Text>
                         <TextInput
+                            returnKeyType='done'
                             placeholder={I18n.t('dien_thoai')}
                             keyboardType="numeric"
                             value={customerDetail.Phone}
@@ -558,6 +559,7 @@ export default (props) => {
                     <View style={{ padding: 15 }}>
                         <Text style={{ paddingBottom: 10 }}>{I18n.t('du_no')}</Text>
                         <TextInput
+                            returnKeyType='done'
                             placeholder={I18n.t('du_no')}
                             keyboardType="numeric"
                             value={currencyToString(customerDetail.TotalDebt)}
@@ -568,6 +570,7 @@ export default (props) => {
                     <View style={{ padding: 15 }}>
                         <Text style={{ paddingBottom: 10 }}>{I18n.t('diem_thuong')}</Text>
                         <TextInput
+                            returnKeyType='done'
                             placeholder={I18n.t('diem_thuong')}
                             keyboardType="numeric"
                             value={currencyToString(customerDetail.Point)}

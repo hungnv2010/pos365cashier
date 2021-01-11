@@ -30,6 +30,7 @@ export default (props) => {
 
   useEffect(() => {
     if (listPrint != "") {
+      console.log("useEffect ===== listPrint ", listPrint);
       viewPrintRef.current.printKitchenRef(listPrint)
       dispatch({ type: 'LIST_PRINT', listPrint: "" })
     }
