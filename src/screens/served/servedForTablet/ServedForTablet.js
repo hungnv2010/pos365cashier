@@ -138,9 +138,9 @@ const Served = (props) => {
                             }
                         })
                     })
-                    updateServerEvent()
-
+                    
                 }
+                updateServerEvent()
             }
         }
 

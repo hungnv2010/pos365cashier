@@ -124,8 +124,8 @@ export default (props) => {
                             }
                         })
                     })
-                    updateServerEvent()
                 }
+                updateServerEvent()
             }
         }
 

@@ -34,6 +34,14 @@ class RealmStore extends RealmBase {
         }))
     }
 
+    deleteAll = async () => {
+        let realm = await Realm.open(databaseOption)
+        realm.write(() => {
+            realm.deleteAll()
+            Promise.resolve()
+        })
+    }
+
     deleteAllForFnb = async () => {
         let newSchemaName = { ...SchemaName }
         delete newSchemaName.ORDERS_OFFLINE

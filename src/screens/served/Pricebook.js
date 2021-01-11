@@ -35,11 +35,11 @@ export default (props) => {
         let isSelected = currentPriceId == item.Id
         return (
             <TouchableOpacity onPress={() => {
-                props.route.params._onSelect(item ? item : { Name: "Giá niêm yết", Id: 0 }, 1)
+                props.route.params._onSelect(item, 1)
                 props.navigation.pop()
             }}>
                 <View key={item.Id} style={{ ...styles.Item, backgroundColor: index % 2 == 0 ? "#f9f2e4" : "white", flex: 1 }}>
-                    <Text numberOfLines={2} style={{ color: isSelected ? colors.colorchinh : "black" }}>{item.Name}</Text>
+                    <Text numberOfLines={2} style={{ color: isSelected ? colors.colorchinh : "black" }}>{item.Id == 0 ? I18n.t(item.Name) : item.Name}</Text>
                 </View >
             </TouchableOpacity>
         )

@@ -43,8 +43,8 @@ const MainRetail = (props) => {
                         })
                     })
                     // updateServerEvent()
-                    setListProducts([...listProducts])
                 }
+                setListProducts([...listProducts])
             }
         }
 
