@@ -46,7 +46,7 @@ class SignalRManager {
         this.subjectReceive.map(serverEvent => {
             return serverEvent
         })
-            // .distinct(serverEvent => serverEvent.Version)
+            .distinct(serverEvent => serverEvent.Version)
             .subscribe(serverEvent => this.onReceiveServerEvent(serverEvent))
         this.connectionHub = signalr.hubConnection("https://signalr.pos365.vn/signalr", {
             headers: {

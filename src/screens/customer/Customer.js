@@ -27,7 +27,7 @@ import TextTicker from 'react-native-text-ticker';
 
 let GUEST = {
     Id: 0,
-    Name: I18n.t("khach_le"),
+    Name: "khach_le",
     Code: "KH_khach_le",
     Point: 0,
 }
@@ -110,7 +110,7 @@ export default (props) => {
                     <View style={{ flex: 1.3 }}>
                         <Text
                             numberOfLines={1}
-                            style={{ fontSize: 15, fontWeight: "bold", }}>{item.Name}</Text>
+                            style={{ fontSize: 15, fontWeight: "bold", }}>{item.Id == 0 ? I18n.t(item.Name) : item.Name}</Text>
                         <Text style={{ paddingVertical: 5 }}>{item.Code}</Text>
                         <Text style={{}}>{I18n.t('diem_thuong')}: {currencyToString(item.Point)}</Text>
                     </View>
@@ -153,7 +153,7 @@ export default (props) => {
                         clickLeftIcon={() => {
                             props.navigation.goBack()
                         }}
-                        title={props.route.params._onSelect?"Chọn khách hàng":I18n.t('thanh_toan')} />
+                        title={props.route.params._onSelect ? I18n.t('chon_khach_hang') : I18n.t('thanh_toan')} />
                     :
                     <MainToolBar
                         navigation={props.navigation}

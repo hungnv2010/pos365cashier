@@ -83,7 +83,7 @@ export default (props) => {
     const syncDatas = async () => {
       if (isFNB === null) return
       dispatch({ type: 'ALREADY', already: false })
-      // await realmStore.deleteAll()
+      await realmStore.deleteAllForFnb()
       if (isFNB === true) {
         const getDataNewOrders = async () => {
           let newOrders = await dataManager.initComfirmOrder()
@@ -97,10 +97,10 @@ export default (props) => {
         scan = setInterval(() => {
           getDataNewOrders()
         }, 15000);
-        // await realmStore.deleteAll()
+        await realmStore.deleteAllForFnb()
         await dataManager.syncAllDatas()
       } else {
-        // await realmStore.deleteAllForRetail()
+        await realmStore.deleteAllForRetail()
         await dataManager.syncAllDatasForRetail()
       }
       dispatch({ type: 'ALREADY', already: true })

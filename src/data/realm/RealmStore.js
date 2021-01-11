@@ -34,30 +34,23 @@ class RealmStore extends RealmBase {
         }))
     }
 
-    deleteAll = async () => {
-        console.log('deleteAll');
-        let realm = await Realm.open(databaseOption)
-        return new Promise((resolve) => realm.write(() => {
-            realm.deleteAll()
-            resolve()
-        }))
+    deleteAllForFnb = async () => {
+        let newSchemaName = { ...SchemaName }
+        delete newSchemaName.ORDERS_OFFLINE
+        await this.deleteSchema(newSchemaName)
     }
 
     deleteAllForRetail = async () => {
-        let realm = await Realm.open(databaseOption)
         let newSchemaName = { ...SchemaName }
         delete newSchemaName.SERVER_EVENT
-        realm.write(() => {
-            for (const schema in newSchemaName) {
-                realm.delete(realm.objects(newSchemaName[schema]))
-            }
-            return Promise.resolve()
-        })
-        // return new Promise((resolve) => realm.write(() => {
-        //     let room = realm.objects(SchemaName.ROOM)
-        //     realm.delete(room)
-        //     resolve()
-        // }))
+        delete newSchemaName.ORDERS_OFFLINE
+        await this.deleteSchema(newSchemaName)
+        // realm.write(() => {
+        //     for (const schema in newSchemaName) {
+        //         realm.delete(realm.objects(newSchemaName[schema]))
+        //     }
+        //     return Promise.resolve()
+        // })
     }
 
     deleteRoom = async () => {
@@ -68,6 +61,17 @@ class RealmStore extends RealmBase {
             realm.delete(room)
             resolve()
         }))
+    }
+
+    deleteSchema = async (listSchema) => {
+        let realm = await Realm.open(databaseOption)
+        realm.write(() => {
+            for (const item in listSchema) {
+                let schema = realm.objects(listSchema[item])
+                realm.delete(schema)
+            }
+            Promise.resolve()
+        })
     }
 
     deletePartner = async () => {

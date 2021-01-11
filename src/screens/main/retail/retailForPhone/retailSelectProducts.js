@@ -182,13 +182,13 @@ export default (props) => {
     let pos_2 = listChangeText.current.map(elm => elm.Id).indexOf(item.Id);
     if (pos > -1) {
       if (item.SplitForSalesOrder || (item.ProductType == 2 && item.IsTimer)) {
-        if (listProducts.current[pos].Quantity > qtt) {
+        if (listProducts.current[pos].Quantity >= qtt) {
           listProducts.current[pos].Quantity -= qtt
         } else {
           listProducts.current.splice(pos, 1)
         }
       } else {
-        if (listProducts.current[pos].Quantity > qtt) {
+        if (listProducts.current[pos].Quantity >= qtt) {
           listProducts.current[pos].Quantity -= qtt
         } else {
           listProducts.current = listProducts.current.filter(elm => elm.Id != item.Id)
@@ -222,7 +222,7 @@ export default (props) => {
     })
     console.log('listChangeText numb3 ', numb);
     if (!exist) {
-      listChangeText.current.push({ ...item, Quantity: numb, Sid: Date.now() })
+      listChangeText.current.push({ ...item, Quantity: numb, })
     }
     console.log('listProducts.current', listProducts.current);
 
@@ -237,7 +237,7 @@ export default (props) => {
         arr.splice(idx, 1)
         let qtt = getQuantity(elm)
         for (let i = 0; i < elm.Quantity; i++) {
-          arr.splice(idx, 0, { ...elm, Quantity: qtt, Sid: Date.now() + i })
+          arr.splice(idx, 0, { ...elm, Quantity: qtt,  })
         }
       }
     })
