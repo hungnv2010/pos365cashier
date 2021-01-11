@@ -374,6 +374,8 @@ export default {
   am_bao_thanh_toan: "Âm báo thanh toán",
 
   bao_che_bien_sau_khi_thanh_toan: "Báo chế biến sau khi thanh toán",
+  ban_co_chac_muon_xoa_voucher_nay:"Bạn có chắc muốn xoá voucher này?",
+  block_theo_phut:"Block tính theo phút",
 
   chon_cong_nghe_in: "Chọn công nghệ in",
   cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang: "Cho phép thay đổi tên hàng hóa khi bán hàng?",
@@ -383,18 +385,24 @@ export default {
   chi_tiet_huy_tra_hang:"Chi tiết hủy trả hàng",
   chon_ngay_het_han:"Chọn ngày hết hạn",
   chi_tiet_hang_hoa:"Chi tiết hàng hoá",
+  chua_co_lich_su_huy_tra:'Chưa có lịch sử huỷ/ trả hàng',
+  chua_co_voucher:'Chưa có Voucher',
 
   don_vi_tien_te: "Đơn vị tiền tệ",
   dollar_my: "Dollar Mỹ",
   dia_chi: "Địa chỉ",
   don_vi_tinh:"Đơn vị tính",
   dich_vu:'Dịch vụ',
+  don_vi_tinh_lon_va_cac_thong_so_khac:"Đơn vị tính lớn và các thông số khác",
 
   giu_man_hinh_luon_sang: "Giữ màn hình luôn sáng",
   gia:"Giá bán",
+  gia_ban_duoc_tinh_theo_phan_tram_gia_tri_don_hang:"Giá bán được tính theo % giá trị đơn hàng",
+  gia_bon_block_dau:"Giá 4 block đầu tiên",
 
   hien_thanh_dieu_huong: "Hiện thanh điều hướng",
   hien_thi_hang_hoa:'Hiển thị hàng hoá',
+  hien_thi_san_pham_tren_man_hinh_thu_ngan:'Hiển thị sản phẩm trên danh sách của màn hình thu ngân',
 
   in_sau_khi_thanh_toan: "In sau khi thanh toán",
   in_hai_lien_cho_hoa_don: "In 2 liên cho hóa đơn",
@@ -430,6 +438,7 @@ export default {
   mo_cashbox_sau_khi_thanh_toan: "Mở cashbox sau khi thanh toán",
   ma_san_pham:"Mã sản phẩm",
   ma_voucher:'Mã Voucher',
+  ma_hang_ma_sku_ma_vach:"Mã hàng/ SKU/ Mã vạch",
 
   nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: "Nhận tin nhắn/ thông báo từ phục vụ, quản lý?",
   nhap_so_luong_the: "Nhập số lượng thẻ",
@@ -445,6 +454,9 @@ export default {
   su_dung_hai_man_hinh: "Sử dụng hai màn hình",
   so_dien_thoai: "Số điện thoại",
   so_luong_theo_thoi_gian:'Số lượng theo thời gian',
+  so_luong_hang_hoa_duoc_tinh_theo_thoi_gian:"Số lượng của hàng hoá được tính theo thời gian sử dụng",
+  so_block_gio_dau_tien:"Số block giờ đầu tiên",
+  so_may_in_toi_da:"Số máy in tối đa",
 
   tien_khach_tra: "Tiền khách trả",
   thiet_lap_thanh_toan_vnpay: "Thiết lập thanh toán VNPAY",
@@ -462,6 +474,7 @@ export default {
   thiet_lap_gia_ban_theo_block:'Thiết lập giá bán theo block',
   them_moi:'Thêm mới',
   tinh_theo_phan_tram:'Tính theo %',
+  thiet_lap_khung_gio_dac_biet:"Thiết lập khung giờ đặc biệt",
 
   vnd: "VND",
   voucher:"Mã quà tặng"

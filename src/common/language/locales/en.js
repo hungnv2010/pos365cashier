@@ -304,9 +304,12 @@ export default {
   // TODO: Y
   yeu_cau_thanh_toan: "Payment request",
   //vuong
-  am_bao_thanh_toan: "Payments notification",
+  am_bao_thanh_toan: "Payments tone",
 
   bao_che_bien_sau_khi_thanh_toan: "Report processing after payment",
+  ban_co_chac_muon_xoa_voucher_nay:"Do you want to delete voucher?",
+  block_theo_phut:"Block per minute",
+  
 
   cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang: "Allows to change the name of good when selling",
   cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang: "Allows employees change prices when selling",
@@ -318,21 +321,28 @@ export default {
   chi_tiet_hang_hoa:"Product detail",
   chi_tiet_huy_tra_hang: "Room History Detail",
   chon_ngay_het_han: "Choose expiry date",
+  chua_co_lich_su_huy_tra:"No room history",
+  chua_co_voucher:'No Voucher',
 
   don_vi_tien_te: "Currency unit",
   dollar_my: "Dollar",
   dia_chi: "Address",
   don_vi_tinh:'Unit',
   dich_vu:'Service',
+  don_vi_tinh_lon_va_cac_thong_so_khac:'Large unit and other',
 
   giu_man_hinh_luon_sang: "Keep the screen on",
   gia: "Price",
+  gia_bon_block_dau:"Price for the first 4 block",
+  gia_ban_duoc_tinh_theo_phan_tram_gia_tri_don_hang:"Price is calculated by % of order",
+
   hien_thanh_dieu_huong: "Show navigation bar",
   hien_thi_hang_hoa:'',
+  hien_thi_san_pham_tren_man_hinh_thu_ngan:"Display product on the list of the cashier screen",
 
   in_sau_khi_thanh_toan: "Print after payment",
-  in_hai_lien_cho_hoa_don: "Print twice for the invoice",
-  in_hai_lien_cho_che_bien: "Print twice for processing",
+  in_hai_lien_cho_hoa_don: "Print 2 copies for invoice",
+  in_hai_lien_cho_che_bien: "Print 2 copies for cook",
   in_tem_truoc_thanh_toan: "Print stamp before payment",
   in_sunmi: "Print Sunmi",
   in_qua_mang_lan: "In qua mạng LAN",
@@ -353,19 +363,20 @@ export default {
   luu_va_sao_chep:"Save & Coppy ",
   ly_do: "Reason",
 
-  may_in_thu_ngan: "Cashier printer",
-  may_in_bao_bep_a: "Printer report kitchen A",
-  may_in_bao_bep_b: "Printer report kitchen B",
-  may_in_bao_bep_c: "Printer report kitchen C",
-  may_in_bao_bep_d: "Printer report kitchen D",
-  may_in_bao_pha_che_a: "Printer report preparation A",
-  may_in_bao_pha_che_b: "Printer report preparation B",
-  may_in_bao_pha_che_c: "Printer report preparation C",
-  may_in_bao_pha_che_d: "Printer report preparation D",
-  may_in_tem: "Stamp printer",
+  may_in_thu_ngan: "Printer cashier",
+  may_in_bao_bep_a: "Printer kitchen A",
+  may_in_bao_bep_b: "Printer kitchen B",
+  may_in_bao_bep_c: "Printer kitchen C",
+  may_in_bao_bep_d: "Printer kitchen D",
+  may_in_bao_pha_che_a: "Printer bartender A",
+  may_in_bao_pha_che_b: "Printer bartender B",
+  may_in_bao_pha_che_c: "Printer bartender C",
+  may_in_bao_pha_che_d: "Printer bartender D",
+  may_in_tem: "Printer tem",
   mo_cashbox_sau_khi_thanh_toan: "Open cashbox after payment",
   ma_san_pham: 'Product code',
   ma_voucher: 'Code',
+  ma_hang_ma_sku_ma_vach:'Product code',
 
   nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: "Receive messages / notifications from waiter, manager?",
   nhap_so_luong_the: "Enter the number of cards",
@@ -380,6 +391,9 @@ export default {
   setting: "Setting",
   so_dien_thoai: "Phone number",
   so_luong_theo_thoi_gian:'',
+  so_block_gio_dau_tien:'First hour block number',
+  so_luong_hang_hoa_duoc_tinh_theo_thoi_gian:"The quantity is calculated by time of use",
+  so_may_in_toi_da:'Maximum printers',
 
   thiet_lap_thanh_toan_vnpay: "Payments setting VNPAY",
   thong_tin_cua_hang: "Store informations",
@@ -396,6 +410,7 @@ export default {
   thanh_tien: 'Total',
   thanh_toan_vnpaypos_qua_may_pos: "VNPAY-POS payment via POS machine?",
   them_moi_voucher: "Add new voucher",
+  thiet_lap_khung_gio_dac_biet:"Set special time frame",
 
   vnd: "VND",
   voucher: "Voucher"

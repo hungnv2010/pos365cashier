@@ -10,7 +10,7 @@ import { currencyToString } from '../../common/Utils';
 import { TextInput } from 'react-native-gesture-handler';
 import { ApiPath } from "../../data/services/ApiPath";
 import { HTTPService } from "../../data/services/HttpService";
-import DialogSingleChoice from '../../components/dialog/DialogSingleChoice'
+import DialogMultiChoice from '../../components/dialog/DialogMultiChoice'
 
 export default (props) => {
     const [product, setProduct] = useState({})
@@ -57,7 +57,7 @@ export default (props) => {
     const renderModal=()=>{
         return(
             <View>
-                <DialogSingleChoice listItem={category} title='Chon' titleButton='Ok'></DialogSingleChoice>
+                <DialogMultiChoice listItem={category} title='Chon' titleButton='Ok' ></DialogMultiChoice>
             </View>
         )
     }
@@ -87,7 +87,7 @@ export default (props) => {
                     </TouchableOpacity>
                 </View>
                 <View>
-                    <Text style={styles.title}>Mã hàng/ SKU/ Mã vạch</Text>
+                    <Text style={styles.title}>{I18n.t('ma_hang_ma_sku_ma_vach')}</Text>
                     <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#00BFFF' }]} value={product.Code}></TextInput>
                 </View>
                 <View>
@@ -106,7 +106,7 @@ export default (props) => {
                         <Text style={styles.titleBold}>{I18n.t('hien_thi_hang_hoa')}</Text>
                         <Switch style={{ transform: [{ scaleX: .6 }, { scaleY: .6 }] }} value={displayProduct} onValueChange={() => setDisplayProduct(!displayProduct)}></Switch>
                     </View>
-                    <Text style={styles.titleHint}>Hiển thị sản phẩm trên danh sách của màn hình thu ngân</Text>
+                    <Text style={styles.titleHint}>{I18n.t('hien_thi_san_pham_tren_man_hinh_thu_ngan')}</Text>
                     {
                         displayProduct == true ? <View style={{ flexDirection: 'column' }}>
                             {
@@ -116,23 +116,23 @@ export default (props) => {
                                             <Text style={styles.titleBold}>{I18n.t('tinh_theo_phan_tram')}</Text>
                                             <Switch style={{ transform: [{ scaleX: .6 }, { scaleY: .6 }] }} ></Switch>
                                         </View>
-                                        <Text style={styles.titleHint}>Giá bán được tinh theo % giá trị của đơn hàng</Text>
+                                        <Text style={styles.titleHint}>{I18n.t('gia_ban_duoc_tinh_theo_phan_tram_gia_tri_don_hang')}</Text>
                                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 5, alignItems: 'center' }}>
                                             <Text style={styles.titleBold}>{I18n.t('so_luong_theo_thoi_gian')}</Text>
                                             <Switch style={{ transform: [{ scaleX: .6 }, { scaleY: .6 }] }} onValueChange={() => setProductOl({ ...productOl, IsTimer: !productOl.IsTimer })} value={productOl.IsTimer}></Switch>
                                         </View>
-                                        <Text style={styles.titleHint}>Số lượng của hàng hoá được tính theo thời gian sử dụng</Text>
+                                        <Text style={styles.titleHint}>{I18n.t('so_luong_hang_hoa_duoc_tinh_theo_thoi_gian')}</Text>
                                         {productOl.IsTimer==true ?
                                             <View>
                                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 5, alignItems: 'center' }}>
                                                     <Text style={styles.titleBold}>{I18n.t('thiet_lap_gia_ban_theo_block')}</Text>
                                                     <Switch style={{ transform: [{ scaleX: .6 }, { scaleY: .6 }] }} value={productOl.IsPriceForBlock} onValueChange={() => setProductOl({ ...productOl, IsPriceForBlock: !productOl.IsPriceForBlock })}></Switch>
                                                 </View>
-                                                <Text style={productOl.IsPriceForBlock == false ? styles.titleHint : { marginLeft: 15 }}>Block tính theo phút</Text>
+                                                <Text style={productOl.IsPriceForBlock == false ? styles.titleHint : { marginLeft: 15 }}>{I18n.t("block_theo_phut")}</Text>
                                                 <TextInput style={{ color: productOl.IsPriceForBlock == true ? '#00BFFF' : '#B5B5B5', marginLeft: 5, fontWeight: 'bold', padding: 10 }} value={product.BlockOfTimeToUseService ? currencyToString(product.BlockOfTimeToUseService) : null}></TextInput>
-                                                <Text style={productOl.IsPriceForBlock == false ? styles.titleHint : { marginLeft: 15 }}>Số block giờ đầu tiên</Text>
+                                                <Text style={productOl.IsPriceForBlock == false ? styles.titleHint : { marginLeft: 15 }}>{I18n.t('so_block_gio_dau_tien')}</Text>
                                                 <TextInput style={{ color: productOl.IsPriceForBlock == true ? '#00BFFF' : '#B5B5B5', marginLeft: 5, fontWeight: 'bold', padding: 10 }} value={product.PriceConfig ? JSON.parse(product.PriceConfig).Block + '' : null}></TextInput>
-                                                <Text style={productOl.IsPriceForBlock == false ? styles.titleHint : { marginLeft: 15 }}>Giá 4 block đầu tiên</Text>
+                                                <Text style={productOl.IsPriceForBlock == false ? styles.titleHint : { marginLeft: 15 }}>{I18n.t('gia_bon_block_dau')}</Text>
                                                 <TextInput style={{ color: productOl.IsPriceForBlock == true ? '#00BFFF' : '#B5B5B5', marginLeft: 5, fontWeight: 'bold', padding: 10 }} value={product.Price ? currencyToString(product.Price) : null}></TextInput>
                                             </View> : null}
                                     </View>
@@ -152,7 +152,7 @@ export default (props) => {
                                 </View>
                                 {product.ProductType == 2 ?
                                     <TouchableOpacity style={[styles.textInput, { fontWeight: 'bold', backgroundColor: '#B0E2FF', marginTop: 10, justifyContent: 'center', alignItems: 'center' }]}>
-                                        <Text style={[styles.titleButton]}>Thiết lập khung giờ đặc biệt</Text>
+                                        <Text style={[styles.titleButton]}>{I18n.t("thiet_lap_khung_gio_dac_biet")}</Text>
                                     </TouchableOpacity>
                                     :
                                     <View>
@@ -166,14 +166,14 @@ export default (props) => {
                                     <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#00BFFF' }]} value={product.Unit ? product.Unit : null}></TextInput>
                                 </View>
                                 <TouchableOpacity style={[styles.textInput, { fontWeight: 'bold', backgroundColor: '#B0E2FF', marginTop: 10, justifyContent: 'center', alignItems: 'center' }]}>
-                                    <Text style={[styles.titleButton]}>Đơn vị tính lớn và các thông số khác</Text>
+                                    <Text style={[styles.titleButton]}>{I18n.t("don_vi_tinh_lon_va_cac_thong_so_khac")}</Text>
                                 </TouchableOpacity>
                             </View>
                             <View style={{ padding: 3, backgroundColor: '#E8E8E8', marginTop: 10, }}></View>
                             <View style={{ marginBottom: 10 }}>
                                 <View style={{ justifyContent: 'space-between', flexDirection: 'row', padding: 5, marginTop: 10, marginBottom: 10 }}>
                                     <Text style={styles.titleBold}>{I18n.t('bao_che_bien')}</Text>
-                                    <Text style={{ color: 'silver', marginRight: 10 }}>Số máy in tối đa   /5</Text>
+                                    <Text style={{ color: 'silver', marginRight: 10 }}>{I18n.t('so_may_in_toi_da')}   /5</Text>
                                 </View>
                                 <View style={{ flexDirection: 'column' }}>
                                     <View style={{ flexDirection: 'row' }}>
