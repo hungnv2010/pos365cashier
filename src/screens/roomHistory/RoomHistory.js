@@ -182,7 +182,7 @@ export default (props) => {
                             <Text style={{ fontSize: 14, fontWeight: 'bold', marginLeft: 10, color: '#363636' }}>{item.Product.Name}</Text>
                             <Text style={{ fontSize: 12, marginLeft: 10, marginTop: 3, color: '#4F4F4F' }}>{item.Room.Name}[{item.Pos}]</Text>
                             <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', marginTop: 3, marginLeft: 10, marginBottom: 5 }}>
-                                <Text style={{ fontSize: 12, color: '#4F4F4F' }}>Số Lượng:</Text>
+                                <Text style={{ fontSize: 12, color: '#4F4F4F' }}>{I18n.t('so_luong')}</Text>
                                 <Text style={{ fontSize: 12, color: '#4F4F4F' }}>{currencyToString(item.Quantity)} {item.Product.Unit}</Text>
                             </View>
                         </View>
@@ -263,7 +263,7 @@ export default (props) => {
                         <Text style={{ fontSize: 10 }}>{roomHistoryData.length} / {count.current}</Text>
                     </View>
                     <View style={{ flex: 1, borderRightWidth: 1, borderRightColor: 'silver', backgroundColor: '#E8E8E8' }}>
-                        <TextInput style={{ borderWidth: 1, marginTop: 10, backgroundColor: '#FFFFFF', borderColor: '#828282', borderRadius: 10, marginBottom: 10, marginLeft: 10, marginRight: 10, padding: 10 }} inlineImageLeft='search_icon' placeholder='Nhập từ khóa tìm kiếm' onChangeText={text => setInputSearch(text)}></TextInput>
+                        <TextInput style={{ borderWidth: 1, marginTop: 10, backgroundColor: '#FFFFFF', borderColor: '#828282', borderRadius: 10, marginBottom: 10, marginLeft: 10, marginRight: 10, padding: 10 }} inlineImageLeft='search_icon' placeholder={I18n.t('nhap_tu_khoa_tim_kiem')} onChangeText={text => setInputSearch(text)}></TextInput>
                         {
                         roomHistoryData.length > 0?
                             <FlatList
@@ -278,7 +278,7 @@ export default (props) => {
                                 ref={flatlistRef}
                             />
                             :<View style={{backgroundColor:'white', flex:1, alignItems:'center', justifyContent:'center'}}> 
-                            <Text style={{ fontSize: 12, textAlign:'center' }}>Chưa có hàng huỷ/ trả</Text>
+                            <Text style={{ fontSize: 12, textAlign:'center' }}>{I18n.t('chua_co_lich_su_huy_tra')}</Text>
                             </View>
                         }
                     </View>

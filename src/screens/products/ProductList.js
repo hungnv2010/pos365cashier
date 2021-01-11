@@ -59,9 +59,9 @@ export default (props) => {
         )
     }
     const renderProduct = (item, index) => {
-        return (
-            <TouchableOpacity onPress={()=>onClickItem(item)}>
-            <View style={{ borderRadius: 10, padding: 5, margin: 5, borderColor: 'silver', borderWidth: 0.5, }}>
+        return (    
+            <TouchableOpacity onPress={()=>onClickItem(item)} style={{backgroundColor:'#D3D3D3'}}>
+                <View style={{backgroundColor:'white', padding: 5, margin: 5,borderRadius: 10,borderColor: 'silver', borderWidth: 0.5, }}>
                 <View style={{ flexDirection: 'row' }}>
                     <Image style={{ height: 50, width: 50, borderRadius: 10 }} source={item.ProductImages != "" && JSON.parse(item.ProductImages).length > 0 ? { uri: JSON.parse(item.ProductImages)[0].ImageURL } : Images.icon_product} />
 
@@ -80,7 +80,7 @@ export default (props) => {
                     <Text style={{ color: item.OnHand > 0 ? '#0099FF' : colors.colorchinh ,padding:2}}>{item.ProductType != 2 ? 'Tồn kho:' + currencyToString(item.OnHand) : '---'}</Text>
                     </View>
                 </View>
-            </View>
+                </View>
             </TouchableOpacity>
         )
     }
@@ -95,7 +95,7 @@ export default (props) => {
     }
 
     return (
-        <View style={{flex:1,flexDirection:'column'}}>
+        <View style={{flex:1,flexDirection:'column', }}>
             <ToolBarNoteBook
                 {...props}
                 leftIcon="keyboard-backspace"
@@ -104,7 +104,7 @@ export default (props) => {
                 rightIcon="md-search"
                 clickRightIcon={(textSearch) => outputIsSelectProduct(textSearch)}
             />
-            <View>
+            <View style={{backgroundColor:'#D3D3D3'}}>
                 <FlatList
                     data={category}
                     // onEndReachedThreshold={0.1}

@@ -156,7 +156,7 @@ export default (props) => {
                 typeModal.current == 3 ?
                     <View style={{ backgroundColor: 'white', borderRadius: 15 }}>
                         <Text style={{ fontWeight: 'bold', padding: 10 }}>{itemClick.current.Code}</Text>
-                        <Text style={{ margin: 10 }}>Bạn có chắc muốn xoá mã khuyến mãi?</Text>
+                        <Text style={{ margin: 10 }}>{I18n.t('ban_co_chac_muon_xoa_voucher_nay')}</Text>
                         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginLeft: 10, marginRight: 10, padding: 10 }}>
                             <TouchableOpacity style={styles.btnHuy}
                                 onPress={() => { setOnShowModal(false) }}>
@@ -189,7 +189,7 @@ export default (props) => {
                                                 <Text style={ispercent == true ? styles.contenBtnDongY : styles.contenBtnHuy}>%</Text>
                                             </TouchableOpacity>
                                         </View>
-                                        <TextInput style={[styles.styleTextInput, { flex: 1.5, }]} value={valueVoucher.current} onChangeText={(text) => { valueVoucher.current = text }} keyboardType='numeric' placeholder='0'></TextInput>
+                                        <TextInput returnKeyType='done' style={[styles.styleTextInput, { flex: 1.5, }]} value={valueVoucher.current} onChangeText={(text) => { valueVoucher.current = text }} keyboardType='numeric' placeholder='0'></TextInput>
 
                                     </View>
                                 </View>
@@ -208,7 +208,7 @@ export default (props) => {
                                         <TouchableOpacity style={{ flex: 1.3, borderWidth: 0.5, borderColor: '#FF4500', alignItems: 'center', borderRadius: 3, justifyContent: 'center' }} onPress={() => setQuantity(quantity >= 1 ? quantity - 1 : 0)}>
                                             <Text style={{ color: '#FF4500' }}>-</Text>
                                         </TouchableOpacity>
-                                        <TextInput style={[styles.styleTextInput, { flex: 6, }]} keyboardType='numeric' placeholder='0' value={quantity != 0 ? quantity.toString() : null} onChangeText={text => setQuantity(parseInt(text))}></TextInput>
+                                        <TextInput returnKeyType='done' style={[styles.styleTextInput, { flex: 6, }]} keyboardType='numeric' placeholder='0' value={quantity != 0 ? quantity.toString() : null} onChangeText={text => setQuantity(parseInt(text))}></TextInput>
                                         <TouchableOpacity style={{ flex: 1.3, marginLeft: 10, borderWidth: 0.5, borderColor: '#FF4500', borderRadius: 3, alignItems: 'center', justifyContent: 'center' }} onPress={() => { setQuantity(quantity + 1) }}>
                                             <Text style={{ color: '#FF4500' }}>+</Text>
                                         </TouchableOpacity>
@@ -389,7 +389,7 @@ export default (props) => {
                         ref={flatlistRef}
                     />
                     : <View style={{ backgroundColor: 'white', justifyContent: 'center', alignItems: 'center', flex: 1 }}>
-                        <Text style={{ fontSize: 12 }}>Chưa có Voucher</Text>
+                        <Text style={{ fontSize: 12 }}>{I18n.t('chua_co_voucher')}</Text>
                     </View>
             }
             <FAB

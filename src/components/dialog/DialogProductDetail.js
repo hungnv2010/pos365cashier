@@ -214,6 +214,7 @@ export default (props) => {
                                         </TouchableOpacity>
                                     </View>
                                     <TextInput
+                                        returnKeyType='done'
                                         keyboardType="numeric"
                                         value={currencyToString(discount)}
                                         onChangeText={text => {

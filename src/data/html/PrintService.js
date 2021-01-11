@@ -116,7 +116,7 @@ class PrintService {
 
     GenHtmlKitchen = (html, JsonContent, i, vendorSession) => {
         // let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
-        // console.log('data', JSON.parse(vendorSession));
+        console.log('GenHtmlKitchen JsonContent ', JsonContent);
         // vendorSession = JSON.parse(vendorSession);
         // return new Promise((resolve, reject) => {
         let HTMLBase = html;
@@ -134,7 +134,7 @@ class PrintService {
             listTable += itemTable;
         });
         HTMLBase = listHtml[0] + listTable + listHtml[2];
-        HTMLBase = HTMLBase.replace("{Ten_Phong_Ban}", JsonContent[0].RoomName + "[" + JsonContent[0].Position + "]")
+        HTMLBase = HTMLBase.replace("{Ten_Phong_Ban}", JsonContent[0].RoomName + "[" + JsonContent[0].Pos + "]")
         HTMLBase = HTMLBase.replace("{Gio_Hien_Tai}", moment(new Date()).format('DD/MM/YYYY - HH:mm'))
         HTMLBase = HTMLBase.replace("{STT_Don_Hang}", i)
         HTMLBase = HTMLBase.replace("{Lien_check}", 1 != 1 ? "style='visibility: unset'" : "style='visibility: collapse; display: none'")

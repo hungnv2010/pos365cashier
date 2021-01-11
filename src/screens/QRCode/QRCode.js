@@ -59,7 +59,8 @@ export default (props) => {
     const notifyErr = () => {
         dialogManager.showPopupOneButton(I18n.t('ma_khong_hop_le'), I18n.t('thong_bao'), (res) => {
             console.log("notifyErr res ", res);
-            refQRCodeScanner.reactivate();
+            if (refQRCodeScanner)
+                refQRCodeScanner.reactivate();
         })
     }
 
