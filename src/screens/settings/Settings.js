@@ -616,7 +616,7 @@ export default (props) => {
                                 <View style={{ width: Metrics.screenWidth * 0.8, }}>
                                     <Text style={styles.titleModal}>{titlePrint}</Text>
                                     <Text style={{ fontSize: 18, justifyContent: 'center', marginTop: 10, marginLeft: 20 }}>{I18n.t('nhap_dia_chi_ip_may')}</Text>
-                                    <TextInput returnKeyType='done' style={styles.textInputStyle} value={stateValueIp} keyboardType='decimal-pad' onChangeText={text => changeValueIp(text)} ></TextInput>
+                                    <TextInput returnKeyType='done' style={styles.textInputStyle} value={stateValueIp} keyboardType='numeric' onChangeText={text => changeValueIp(text)} ></TextInput>
                                     <TouchableOpacity style={{ justifyContent: 'flex-end', alignItems: 'flex-end', marginTop: 10, marginBottom: 10, }} onPress={setIpLANPrint}>
                                         <View style={{ backgroundColor: colors.colorchinh, marginRight: 15, padding: 10, borderColor: colors.colorchinh, borderWidth: 1, borderRadius: 5 }}>
                                             <Text style={[styles.styleTextBtnOk, {}]} >{I18n.t("dong_y")}</Text>
