@@ -308,7 +308,7 @@ const CustomerOrder = (props) => {
                             </Text>
                         </View>
                         <View style={{}}>
-                            <Icon style={{ alignSelf: "flex-end" }} name="bell-ring" size={20} color={item.Quantity == item.Processed ? Colors.colorLightBlue : "gray"} />
+                            <Icon style={{ alignSelf: "flex-end" }} name="bell-ring" size={20} color={item.Quantity <= item.Processed ? Colors.colorLightBlue : "gray"} />
                             <Text
                                 style={{ color: Colors.colorchinh, alignSelf: "flex-end" }}>
                                 {isPromotion ? currencyToString(item.Price * item.Quantity) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit * item.Quantity) : currencyToString(item.Price * item.Quantity))}

@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { Snackbar } from 'react-native-paper';
 import I18n from '../../common/language/i18n'
 import moment from "moment";
+import { TYPE_PRINT } from '../../screens/more/ViewPrint';
 const { Print } = NativeModules;
 const eventSwicthScreen = new NativeEventEmitter(Print);
 
@@ -114,7 +115,7 @@ class PrintService {
         return item.Quantity * price
     }
 
-    GenHtmlKitchen = (html, JsonContent, i, vendorSession) => {
+    GenHtmlKitchen = (html, JsonContent, i, vendorSession, type = TYPE_PRINT.KITCHEN) => {
         // let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
         console.log('GenHtmlKitchen JsonContent ', JsonContent);
         // vendorSession = JSON.parse(vendorSession);
@@ -128,9 +129,12 @@ class PrintService {
                 let itemTable = listHtml[1];
 
                 itemTable = itemTable.replace("{STT_Hang_Hoa}", "" + (index + 1))
+                if (type != TYPE_PRINT.KITCHEN) {
+                    itemTable = itemTable.replace("{So_Luong_Check}", "text-decoration: line-through; ");
+                }
                 itemTable = itemTable.replace("{Ten_Hang_Hoa}", "" + el.Name)
                 itemTable = itemTable.replace("{Ghi_Chu_Hang_Hoa}", description)
-                itemTable = itemTable.replace("{So_Luong}", Math.round((el.Quantity - el.Processed) * 1000) / 1000)
+                itemTable = itemTable.replace("{So_Luong}", Math.round((type != TYPE_PRINT.KITCHEN ? (el.Processed - el.Quantity) : (el.Quantity - el.Processed)) * 1000) / 1000)
                 itemTable = itemTable.replace("{DVT_Hang_Hoa}", (el.IsLargeUnit ? el.LargeUnit : el.Unit))
                 listTable += itemTable;
 

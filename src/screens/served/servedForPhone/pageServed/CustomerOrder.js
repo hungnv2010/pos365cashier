@@ -218,7 +218,7 @@ export default (props) => {
             jsonContent.RoomName = props.route.params.room.Name
         }
 
-        
+
         // viewPrintRef.current.printProvisionalRef(jsonContent)
 
 
@@ -297,7 +297,7 @@ export default (props) => {
                                 null}
                         </View>
                         <View style={{ alignItems: "flex-end" }}>
-                            <Icon style={{ paddingHorizontal: 5 }} name="bell-ring" size={20} color={item.Quantity == item.Processed ? Colors.colorLightBlue : "gray"} />
+                            <Icon style={{ paddingHorizontal: 5 }} name="bell-ring" size={20} color={item.Quantity <= item.Processed ? Colors.colorLightBlue : "gray"} />
                             <Text
                                 style={{ color: colors.colorchinh, marginRight: 5 }}>
                                 {isPromotion ? currencyToString(item.Price * item.Quantity) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit * item.Quantity) : currencyToString(item.Price * item.Quantity))}
@@ -345,6 +345,7 @@ export default (props) => {
                     console.log('saveOrder err', err);
                 })
         }
+        let listOrderReturn = []
         listOrder.forEach((element, index, arr) => {
             if (element.ProductId == itemOrder.ProductId && index == itemOrder.index) {
                 let Quantity = element.Quantity - data.QuantityChange
@@ -352,10 +353,15 @@ export default (props) => {
                     arr.splice(index, 1)
                 }
                 element.Quantity = Quantity
+                listOrderReturn.push({ ...data, ...itemOrder, Quantity: data.QuantityChange, Description: data.Description, Processed: 0, RoomName: props.route.params.room.Name, Pos: jsonContent.Pos })
             }
         });
         props.outputListProducts([...listOrder])
-
+        console.log("saveOrder listOrder ====: " + JSON.stringify(listOrder));
+        console.log("saveOrder listOrderReturn ====: " + JSON.stringify(listOrderReturn));
+        let listTmp = dataManager.getDataPrintCook(listOrderReturn)
+        console.log("saveOrder listTmp ====: " + JSON.stringify(listTmp));
+        dispatch({ type: 'PRINT_RETURN_PRODUCT', printReturnProduct: JSON.stringify(listTmp) })
     }
 
     const changTable = () => {
