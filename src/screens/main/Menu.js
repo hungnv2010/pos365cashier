@@ -37,19 +37,19 @@ const KEY_FUNC = {
     ROOM_HISTORY: ScreenList.RoomHistory,
     ORDER_OFFLINE: ScreenList.OrderOffline,
     VOUCHERS: ScreenList.Vouchers,
-    PRODUCT:ScreenList.Product,
+    PRODUCT: ScreenList.Product,
 }
 
 const LIST_FUNCITION = [
     {
         func: KEY_FUNC.HOME,
-        icon: Images.icon_inventory,
+        icon: Images.icon_cashier,
         title: "man_hinh_thu_ngan"
     },
 
     {
         func: KEY_FUNC.ORDER_OFFLINE,
-        icon: Images.icon_inventory,
+        icon: Images.icon_cashier,
         title: "don_hang_offline"
     },
     // {
@@ -59,7 +59,7 @@ const LIST_FUNCITION = [
     // },
     {
         func: KEY_FUNC.ROOM_CATALOG,
-        icon: Images.icon_customer,
+        icon: Images.icon_room_table,
         title: "danh_muc_phong_ban"
     },
     // {
@@ -69,7 +69,7 @@ const LIST_FUNCITION = [
     // },
     {
         func: KEY_FUNC.OVERVIEW,
-        icon: Images.icon_inventory,
+        icon: Images.icon_overview,
         title: "tong_quan"
     },
     {
@@ -79,28 +79,28 @@ const LIST_FUNCITION = [
     },
     {
         func: KEY_FUNC.PRODUCT,
-        icon: Images.icon_menu_product,
-        title:"hang_hoa"
+        icon: Images.icon_product,
+        title: "hang_hoa"
     },
     {
         func: KEY_FUNC.CASH_FLOW,
-        icon: Images.icon_customer,
+        icon: Images.icon_cashier,
         title: "thu_chi_"
     },
     {
         func: KEY_FUNC.INVOICE,
-        icon: Images.icon_report,
+        icon: Images.icon_invoice,
         title: "hoa_don"
     },
     {
         func: KEY_FUNC.ROOM_HISTORY,
-        icon: Images.icon_history,
+        icon: Images.icon_cashier,
         title: 'lich_su_huy_tra_do'
     },
     {
-        func : KEY_FUNC.VOUCHERS,
-        icon: Images.icon_vouchers,
-        title:'voucher'
+        func: KEY_FUNC.VOUCHERS,
+        icon: Images.icon_cashier,
+        title: 'voucher'
     },
     {
         func: KEY_FUNC.SETTING_FUNC,
@@ -109,7 +109,7 @@ const LIST_FUNCITION = [
     },
     {
         func: KEY_FUNC.VERSION,
-        icon: Images.icon_version,
+        icon: Images.icon_cashier,
         title: "phien_ban_ngay"
     },
 ]
@@ -346,7 +346,10 @@ const HeaderComponent = (props) => {
                     <TouchableOpacity
                         style={{ alignItems: "flex-end" }}
                         onPress={() => onClickLogOut()}>
-                        <Text style={{ textDecorationLine: "underline", color: "#fff" }}>{I18n.t('logout')}</Text>
+                        <View style={{ flexDirection: 'row' }}>
+                            <Text style={{ textDecorationLine: "underline", color: "#fff" }}>{I18n.t('logout')}</Text>
+                            <Image source={Images.icon_logout} style={{width:12,height:15, marginLeft:5}}></Image>
+                        </View>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -487,7 +490,7 @@ const ContentComponent = (props) => {
     const onClickItem = (chucnang, index) => {
         console.log("onClickItem props ", props);
         let params = {};
-        if (chucnang.func == ScreenList.Home || chucnang.func == ScreenList.Customer || chucnang.func == ScreenList.Settings || chucnang.func == ScreenList.Invoice || chucnang.func == ScreenList.OverView  || chucnang.func == ScreenList.RoomHistory|| chucnang.func == ScreenList.Vouchers) {
+        if (chucnang.func == ScreenList.Home || chucnang.func == ScreenList.Customer || chucnang.func == ScreenList.Settings || chucnang.func == ScreenList.Invoice || chucnang.func == ScreenList.OverView || chucnang.func == ScreenList.RoomHistory || chucnang.func == ScreenList.Vouchers) {
             setCurrentItemMenu(index)
         }
         props.navigation.navigate(chucnang.func, params)
@@ -586,7 +589,7 @@ const ContentComponent = (props) => {
 
 const styles = StyleSheet.create({
     icon_menu: {
-        width: 26, height: 26, margin: 13
+        width: 48, height: 48, margin: 0
     },
     row_menu: {
         width: "100%", borderBottomWidth: 0, borderBottomColor: "#ddd",

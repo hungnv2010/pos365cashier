@@ -407,7 +407,7 @@ export default (props) => {
     const renderAddCashFlow = () => {
         return (
             <View>
-                <View style={{ backgroundColor: colors.colorchinh, flexDirection: "row", justifyContent: "center", alignItems: "center", padding: 10 }}>
+                <View style={{ backgroundColor: colors.colorchinh, flexDirection: "row", justifyContent: "center", alignItems: "center", padding: 10,borderTopStartRadius:4,borderTopEndRadius:4 }}>
                     <Text style={{ flex: 1, color: "#fff", marginLeft: 10, fontWeight: "bold" }}>{I18n.t('them_moi_phieu_thu_chi')}</Text>
                 </View>
                 <View style={{ padding: 10 }}>
@@ -458,7 +458,7 @@ export default (props) => {
 
     const renderContentFilter = () => {
         return (
-            <View style={{ backgroundColor: "#fff", padding: 10 }}>
+            <View style={{ backgroundColor: "#fff", padding: 10,borderRadius:4 }}>
                 <TouchableOpacity style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 10, alignItems: "center", height: 35, backgroundColor: "#eeeeee", paddingHorizontal: 0 }}>
                     {renderSelectCoupon()}
                 </TouchableOpacity>
@@ -498,7 +498,7 @@ export default (props) => {
                 </TouchableOpacity>
                 <View style={{ justifyContent: "center", flexDirection: "row", paddingTop: 10 }}>
                     <TouchableOpacity style={{ flex: 1, backgroundColor: "#fff", borderRadius: 4, borderWidth: 1, borderColor: colors.colorchinh, paddingHorizontal: 20, paddingVertical: 10, justifyContent: "flex-end" }} onPress={onClickCancelFilter}>
-                        <Text style={{ textAlign: "center", color: "#000" }}>{I18n.t("huy")}</Text>
+                        <Text style={{ textAlign: "center", color: colors.colorchinh}}>{I18n.t("huy")}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={{ marginLeft: 10, flex: 1, backgroundColor: colors.colorchinh, borderRadius: 4, paddingHorizontal: 20, paddingVertical: 10, justifyContent: "flex-end" }} onPress={onClickOkFilter}>
                         <Text style={{ textAlign: "center", color: "#fff" }}>{I18n.t("dong_y")}</Text>

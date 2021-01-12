@@ -286,7 +286,7 @@ const Invoice = (props) => {
                 justifyContent: 'center',
             }}>
                 <View>
-                    <View style={{backgroundColor:"#FF4500"}}>
+                    <View style={{backgroundColor:"#FF4500",borderTopEndRadius:4,borderTopStartRadius:4}}>
                     <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", paddingVertical: 10,color:'white' }}>{I18n.t('loc_theo_trang_thai')}</Text>
                     </View>
                     {
@@ -322,18 +322,18 @@ const Invoice = (props) => {
             />
             <View style={{ flex: 1, flexDirection: "row" }}>
                 <View style={{ flex: 1, borderRightWidth: 1, borderRightColor: "grey" }}>
-                    <View style={{ flexDirection: "row", alignItems: "center", padding: 10, borderBottomColor: "grey", borderBottomWidth: 1, justifyContent: "space-between" }}>
+                    <View style={{ flexDirection: "row", alignItems: "center", borderBottomColor: "grey", borderBottomWidth: 1, justifyContent: "space-between" }}>
                         <TouchableOpacity
                             style={{ flexDirection: "row", alignItems: "center" }}
                             onPress={() => onClickFilter(1)}>
-                            <Image source={Images.icon_calendar} style={{ width: 20, height: 20 }} />
+                            <Image source={Images.icon_calendar} style={{ width: 48, height: 48 }} />
                             <Text style={{ marginHorizontal: 10 }}>{filter.time.name.includes('-') ? filter.time.name : I18n.t(filter.time.name)}</Text>
                             <Image source={Images.icon_arrow_down} style={{ width: 14, height: 14, marginLeft: 5 }} />
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={{ flexDirection: "row", alignItems: "center" }}
+                            style={{ flexDirection: "row", alignItems: "center" ,padding:20}}
                             onPress={() => onClickFilter(2)}>
-                            <Image source={Images.icon_filter} style={{ width: 20, height: 20 }} />
+                            <Image source={Images.icon_filter} style={{ width: 17, height: 18 }} />
                             <Text style={{ marginHorizontal: 10 }}>{I18n.t(filter.status.name)}</Text>
                             <Image source={Images.icon_arrow_down} style={{ width: 14, height: 14, marginLeft: 5 }} />
                         </TouchableOpacity>

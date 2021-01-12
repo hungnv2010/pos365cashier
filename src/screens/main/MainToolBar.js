@@ -1,7 +1,7 @@
 
 
 import React, { Component } from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Image, StyleSheet, } from 'react-native';
 import { Colors, Metrics, Images } from '../../theme'
 import { IconButton, Subheading } from "react-native-paper";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -30,10 +30,10 @@ export default function MainToolBar(props) {
                 <TouchableOpacity onPress={() => {
                     console.log("Click this.props ", props);
                     props.navigation.openDrawer();
-                }} style={[{ marginLeft: 15 }, deviceType == Constant.TABLET ? { alignSelf: "flex-start" } : { alignItems: "center" }]}>
+                }} style={[{ }, deviceType == Constant.TABLET ? { alignSelf: "flex-start" } : { alignItems: "center" }]}>
                     {/* <Image source={Images.logo_365_boss_white}
                         style={{ width: 172, height: 40, resizeMode: 'contain' }} /> */}
-                    <Icon style={{ marginTop: 0 }} name="menu" size={32} color="#fff" />
+                    <Image source={Images.icon_menu} style={{width:48,height:48}} />
                 </TouchableOpacity>
                 <View style={{ flex: 4, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
                     <Subheading
