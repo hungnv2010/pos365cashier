@@ -84,7 +84,7 @@ export default (props) => {
     const syncDatas = async () => {
       if (isFNB === null) return
       dispatch({ type: 'ALREADY', already: false })
-      await realmStore.deleteAllForFnb()
+      // await realmStore.deleteAllForFnb()
       if (isFNB === true) {
         const getDataNewOrders = async () => {
           let newOrders = await dataManager.initComfirmOrder()
@@ -124,7 +124,7 @@ export default (props) => {
   const clickRightIcon = async () => {
     dialogManager.showLoading()
     dispatch({ type: 'ALREADY', already: false })
-    await realmStore.deleteAll()
+    await realmStore.deleteAllForFnb()
     await dataManager.syncAllDatas()
     dispatch({ type: 'ALREADY', already: true })
     dialogManager.hiddenLoading()

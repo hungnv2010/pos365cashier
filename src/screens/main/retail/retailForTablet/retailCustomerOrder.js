@@ -34,6 +34,8 @@ const RetailCustomerOrder = (props) => {
     const typeModal = useRef(TYPE_MODAL.DETAIL)
     const [itemOrder, setItemOrder] = useState({})
     const [currentCommodity, setCurrentCommodity] = useState({})
+    const [currentPriceBook, setCurrentPriceBook] = useState({ Name: "gia_niem_yet", Id: 0 })
+    const [currentCustomer, setCurrentCustomer] = useState({ Name: "khach_hang", Id: 0 })
     const [jsonContent, setJsonContent] = useState({})
     const [isQuickPayment, setIsQuickPayment] = useState(false)
     const [promotions, setPromotions] = useState([])
@@ -59,17 +61,13 @@ const RetailCustomerOrder = (props) => {
             } else {
                 setCurrentCommodity(newServerEvents[0])
                 let jsonContent = JSON.parse(newServerEvents[0].JsonContent)
-                // setListOrder(jsonContent.OrderDetails)
                 syncListProducts(jsonContent.OrderDetails)
             }
 
             serverEvents.addListener((collection, changes) => {
                 if (changes.insertions.length || changes.modifications.length) {
-                    // console.log('changes.insertions.length ');
-                    // let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
-                    // newServerEvents = Object.values(newServerEvents)
-                    // setCurrentCommodity(newServerEvents[newServerEvents.length - 1])
-                    setNumberNewOrder(serverEvents.length)                }
+                    setNumberNewOrder(serverEvents.length)
+                }
             })
         }
         getCommodityWaiting()
@@ -90,10 +88,49 @@ const RetailCustomerOrder = (props) => {
     }, [])
 
     useEffect(() => {
-        // if (props.listProducts.length == 0) return
-        // setListOrder(props.listProducts)
         setDataOrder([...props.listProducts])
     }, [props.listProducts])
+
+    useEffect(() => {
+        const getOtherPrice = async () => {
+            if (listOrder && currentPriceBook) {
+                let apiPath = ApiPath.PRICE_BOOK + `/${currentPriceBook.Id}/manyproductprice`
+                let params = { "pricebookId": currentPriceBook.Id, "ProductIds": listOrder.map((product) => product.ProductId) }
+                console.log('getOtherPrice params', params);
+                let res = await new HTTPService().setPath(apiPath).POST(params)
+                if (res && res.PriceList && res.PriceList.length > 0) {
+                    console.log('getOtherPrice res', res);
+                    listOrder.map((product) => {
+                        res.PriceList.forEach((priceBook) => {
+                            if (priceBook.ProductId == product.ProductId) {
+                                product.DiscountRatio = 0.0
+                                if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
+                                if (!priceBook.Price) priceBook.Price = product.UnitPrice
+                                let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price
+                                product.Price = newBasePrice + product.TotalTopping
+                            }
+                        })
+                    })
+                    // updateServerEvent()
+                }
+                setListProducts([...listOrder])
+            }
+        }
+
+        const getBasePrice = () => {
+            listOrder.map((product) => {
+                product.DiscountRatio = 0.0
+                let basePrice = (product.IsLargeUnit) ? product.PriceLargeUnit : product.UnitPrice
+                product.Price = basePrice + product.TotalTopping
+            })
+            // updateServerEvent()
+            setListProducts([...listOrder])
+        }
+        if (listOrder) {
+            if (currentPriceBook && currentPriceBook.Id) getOtherPrice()
+            else getBasePrice()
+        }
+    }, [currentPriceBook])
 
 
     useEffect(() => {
@@ -112,7 +149,6 @@ const RetailCustomerOrder = (props) => {
 
     const syncListProducts = (data) => {
         props.outputSelectedProduct(data, 2)
-        // setListOrder(data)
         setDataOrder(data)
     }
 
@@ -148,7 +184,7 @@ const RetailCustomerOrder = (props) => {
     const applyDialogDetail = (product) => {
         console.log('applyDialogDetail', product);
         let price = product.IsLargeUnit == true ? product.PriceLargeUnit : product.UnitPrice
-        let discount = product.Percent ? (price * product.Discount / 100) : product.Discount 
+        let discount = product.Percent ? (price * product.Discount / 100) : product.Discount
         listOrder.forEach((elm, index, arr) => {
             if (elm.ProductId == product.ProductId && index == product.index) {
                 if (product.Quantity == 0) {
@@ -161,9 +197,7 @@ const RetailCustomerOrder = (props) => {
             }
         })
         syncListProducts([...listOrder])
-        // let list = addPromotion([...listOrder])
-        // setListOrder([...list])
-        // setListOrder([...listOrder])
+    
     }
 
     const setDataOrder = async (listOrder) => {
@@ -173,7 +207,6 @@ const RetailCustomerOrder = (props) => {
         console.log("setDataOrder listOrder list ", listOrder, list);
 
         setListOrder([...list])
-        // updateServerEvent(list, currentCommodity)
     }
 
     const removeItem = (product, index) => {
@@ -445,12 +478,12 @@ const RetailCustomerOrder = (props) => {
 
     const onClickListedPrice = () => {
         console.log('onClickListedPrice');
-        props.navigation.navigate(ScreenList.PriceBook, { _onSelect: onCallBack, currentPriceBook: props.currentPriceBook })
+        props.navigation.navigate(ScreenList.PriceBook, { _onSelect: onCallBack, currentPriceBook: currentPriceBook })
     }
 
     const onClickRetailCustomer = () => {
         console.log('onClickRetailCustomer');
-        props.navigation.navigate(ScreenList.Customer, { _onSelect: onCallBack })
+        props.navigation.navigate(ScreenList.Customer, { _onSelect: onCallBack, currentCustomer: currentCustomer })
     }
 
     const onCLickCommodity = () => {
@@ -463,10 +496,10 @@ const RetailCustomerOrder = (props) => {
     const onCallBack = (data, type) => {
         switch (type) {
             case 1:
-                props.outputCurrentPriceBook(data)
+                if (data) setCurrentPriceBook(data)
                 break
             case 2:
-                props.outputCurrentCustomer(data)
+                if (data) setCurrentCustomer(data)
                 break
             case 3: // from commodity waiting
                 console.log('setCurrentCommodity(data)', data);
@@ -493,12 +526,12 @@ const RetailCustomerOrder = (props) => {
                     style={{ flexDirection: "row", alignItems: "center" }}
                     onPress={onClickListedPrice}>
                     <Entypo style={{ paddingHorizontal: 5 }} name="price-ribbon" size={25} color={Colors.colorchinh} />
-                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{props.currentPriceBook.Name ? props.currentPriceBook.Name : I18n.t('gia_niem_yet')}</Text>
+                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{currentPriceBook.Id == 0 ? I18n.t(currentPriceBook.Name) : currentPriceBook.Name}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={{ flexDirection: "row", alignItems: "center" }}
                     onPress={onClickRetailCustomer}>
-                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{props.currentCustomer.Name ? props.currentCustomer.Name : I18n.t('khach_hang')}</Text>
+                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{currentCustomer.Id == 0 ? I18n.t(currentCustomer.Name) : currentCustomer.Name}</Text>
                     <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} color={Colors.colorchinh} />
                 </TouchableOpacity>
             </View>

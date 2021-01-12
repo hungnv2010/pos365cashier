@@ -35,6 +35,7 @@ let GUEST = {
 export default (props) => {
 
     const [customerData, setCustomerData] = useState([])
+    const [currentCustomer, setCurrentCustomer] = useState(props.route.params.currentCustomer ? props.route.params.currentCustomer : {})
     const [customerItem, setCustomerItem] = useState(GUEST)
     const { deviceType } = useSelector(state => {
         console.log("useSelector state ", state);
@@ -100,9 +101,10 @@ export default (props) => {
     }
 
     const renderListItem = (item, index) => {
+        let backgroundColor = (item.Id == customerItem.Id && deviceType == Constant.TABLET) || (item.Id == currentCustomer.Id) ? "#F6DFCE" : "white"
         return (
             <TouchableOpacity onPress={() => onClickCustomerItem(item)} key={index.toString()}
-                style={[{ flexDirection: "row", alignItems: "center", borderBottomColor: "#ddd", borderBottomWidth: 1, padding: 10 }, item.Id == customerItem.Id && deviceType == Constant.TABLET ? { backgroundColor: "#F6DFCE" } : { backgroundColor: "white" }]}>
+                style={{ flexDirection: "row", alignItems: "center", borderBottomColor: "#ddd", borderBottomWidth: 1, padding: 10, backgroundColor: backgroundColor }}>
                 <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center", }}>
                     <View style={{ width: 60, height: 60, justifyContent: "center", alignItems: "center", backgroundColor: index % 2 == 0 ? colors.colorPhu : colors.colorLightBlue, borderRadius: 30, marginRight: 10 }}>
                         <Text style={{ color: "#fff", fontSize: 24, textTransform: "uppercase" }}>{item.Name[0]}</Text>

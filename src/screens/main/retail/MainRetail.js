@@ -16,52 +16,13 @@ const MainRetail = (props) => {
 
     const [listProducts, setListProducts] = useState([])
     const [text, setText] = useState("")
-    const [currentPriceBook, setCurrentPriceBook] = useState({ Name: "Giá niêm yết", Id: 0 })
-    const [currentCustomer, setCurrentCustomer] = useState({ Name: "Khách hàng", Id: 0 })
+
     const { orientaition, deviceType } = useSelector(state => {
         return state.Common
     });
+   
 
-    useEffect(() => {
-        const getOtherPrice = async () => {
-            if (listProducts && currentPriceBook) {
-                let apiPath = ApiPath.PRICE_BOOK + `/${currentPriceBook.Id}/manyproductprice`
-                let params = { "pricebookId": currentPriceBook.Id, "ProductIds": listProducts.map((product) => product.ProductId) }
-                console.log('getOtherPrice params', params);
-                let res = await new HTTPService().setPath(apiPath).POST(params)
-                if (res && res.PriceList && res.PriceList.length > 0) {
-                    console.log('getOtherPrice res', res);
-                    listProducts.map((product) => {
-                        res.PriceList.forEach((priceBook) => {
-                            if (priceBook.ProductId == product.ProductId) {
-                                product.DiscountRatio = 0.0
-                                if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
-                                if (!priceBook.Price) priceBook.Price = product.UnitPrice
-                                let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price
-                                product.Price = newBasePrice + product.TotalTopping
-                            }
-                        })
-                    })
-                    // updateServerEvent()
-                }
-                setListProducts([...listProducts])
-            }
-        }
-
-        const getBasePrice = () => {
-            listProducts.map((product) => {
-                product.DiscountRatio = 0.0
-                let basePrice = (product.IsLargeUnit) ? product.PriceLargeUnit : product.UnitPrice
-                product.Price = basePrice + product.TotalTopping
-            })
-            // updateServerEvent()
-            setListProducts([...listProducts])
-        }
-        if (listProducts) {
-            if (currentPriceBook && currentPriceBook.Id) getOtherPrice()
-            else getBasePrice()
-        }
-    }, [currentPriceBook])
+ 
 
     const outputSelectedProduct = async (product, type = 1) => {
         switch (type) {
@@ -139,34 +100,27 @@ const MainRetail = (props) => {
     }
 
     const onCallBack = async (newList, type) => {
-       
-                let allPromise = newList.map(async item => {
-                    let products = await realmStore.queryProducts()
-                    let productWithId = products.filtered(`Id ==${item.Id}`)
-                    productWithId = JSON.parse(JSON.stringify(productWithId))[0] ? JSON.parse(JSON.stringify(productWithId))[0] : {}
-                    return { ...productWithId, ...item, exist: false }
-                })
-                let list = await Promise.all(allPromise)
-                listProducts.forEach(item => {
-                    list.forEach(elm => {
-                        if (item.Id == elm.Id && !item.SplitForSalesOrder) {
-                            item.Quantity += elm.Quantity
-                            elm.exist = true
-                        }
-                    })
-                })
-                list = list.filter((newItem) => !newItem.exist)
-                setListProducts([...list, ...listProducts])
-       
+
+        let allPromise = newList.map(async item => {
+            let products = await realmStore.queryProducts()
+            let productWithId = products.filtered(`Id ==${item.Id}`)
+            productWithId = JSON.parse(JSON.stringify(productWithId))[0] ? JSON.parse(JSON.stringify(productWithId))[0] : {}
+            return { ...productWithId, ...item, exist: false }
+        })
+        let list = await Promise.all(allPromise)
+        listProducts.forEach(item => {
+            list.forEach(elm => {
+                if (item.Id == elm.Id && !item.SplitForSalesOrder) {
+                    item.Quantity += elm.Quantity
+                    elm.exist = true
+                }
+            })
+        })
+        list = list.filter((newItem) => !newItem.exist)
+        setListProducts([...list, ...listProducts])
+
     }
 
-    const outputCurrentPriceBook = (data) => {
-        setCurrentPriceBook(data)
-    }
-
-    const outputCurrentCustomer = (data) => {
-        setCurrentCustomer(data)
-    }
 
     return (
         <View style={{ flex: 1 }}>
@@ -190,10 +144,7 @@ const MainRetail = (props) => {
                             <View style={{ flex: 4, marginLeft: 2 }}>
                                 <RetailCustomerOrder
                                     {...props}
-                                    currentPriceBook={currentPriceBook}
-                                    outputCurrentPriceBook={outputCurrentPriceBook}
-                                    currentCustomer={currentCustomer}
-                                    outputCurrentCustomer={outputCurrentCustomer}
+                                
                                     listProducts={[...listProducts]}
                                     outputSelectedProduct={outputSelectedProduct} />
                             </View>

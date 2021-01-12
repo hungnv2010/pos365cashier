@@ -33,11 +33,23 @@ export default (props) => {
     const [isQuickPayment, setIsQuickPayment] = useState(false)
     const [itemOrder, setItemOrder] = useState({})
     const [jsonContent, setJsonContent] = useState({})
-    const [currentPriceBook, setCurrentPriceBook] = useState({ Name: "Giá niêm yết", Id: 0 })
-    const [currentCustomer, setCurrentCustomer] = useState({ Name: "Khách hàng", Id: 0 })
+    const [currentPriceBook, setCurrentPriceBook] = useState({ Name: "gia_niem_yet", Id: 0 })
+    const [currentCustomer, setCurrentCustomer] = useState({ Name: "khach_hang", Id: 0 })
     const [promotions, setPromotions] = useState([])
 
     let serverEvents = null;
+
+    const listPriceBookRef = useRef()
+
+    useEffect(() => {
+        const getListPriceBook = async () => {
+            let listPriceBook = await realmStore.queryPricebook()
+            listPriceBook = JSON.parse(JSON.stringify(listPriceBook))
+            listPriceBookRef.current = listPriceBook
+            console.log(' listPriceBookRef.current', listPriceBookRef.current);
+        }
+        getListPriceBook()
+    }, [])
 
     useEffect(() => {
         getCommodityWaiting()
@@ -153,14 +165,6 @@ export default (props) => {
             setDataOrder(jsonContent.OrderDetails)
         }
 
-        serverEvents.addListener((collection, changes) => {
-            if (changes.insertions.length || changes.modifications.length) {
-                // let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
-                // newServerEvents = Object.values(newServerEvents)
-                // // setCurrentCommodity(newServerEvents[newServerEvents.length - 1])
-                setNumberNewOrder(serverEvents.length)
-            }
-        })
     }
 
     const _keyboardDidShow = () => {
@@ -475,7 +479,7 @@ export default (props) => {
                 console.log('onCallBackonCallBack', data);
                 setCurrentCommodity(data)
                 let jsonContent = JSON.parse(data.JsonContent)
-                setListOrder(jsonContent.OrderDetails)
+                setDataOrder(jsonContent.OrderDetails)
                 break
             case 4: //from select products
                 data = await getOtherPrice(data)
@@ -562,12 +566,12 @@ export default (props) => {
                     style={{ flexDirection: "row", alignItems: "center" }}
                     onPress={onClickListedPrice}>
                     <Entypo style={{ paddingHorizontal: 5 }} name="price-ribbon" size={25} color={Colors.colorchinh} />
-                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{currentPriceBook.Name ? currentPriceBook.Name : I18n.t('gia_niem_yet')}</Text>
+                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold", textTransform: "uppercase" }}>{currentPriceBook.Id == 0 ? I18n.t(currentPriceBook.Name) : currentPriceBook.Name}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={{ flexDirection: "row", alignItems: "center" }}
                     onPress={onClickRetailCustomer}>
-                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{currentCustomer.Name ? currentCustomer.Name : I18n.t('khach_hang')}</Text>
+                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold", textTransform: "uppercase" }}>{currentCustomer.Id == 0 ? I18n.t(currentCustomer.Name) : currentCustomer.Name}</Text>
                     <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} color={Colors.colorchinh} />
                 </TouchableOpacity>
             </View>
