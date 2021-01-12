@@ -59,11 +59,14 @@ export default (props) => {
     }
 
     const selectRadioButton = (status) => {
+        itemOrder.IsLargeUnit = status;
         setIsLargeUnit(status)
-        if (status)
+        if (status) {
             setPrice(itemOrder.PriceLargeUnit)
-        else
+        }
+        else {
             setPrice(itemOrder.UnitPrice)
+        }
     }
 
     const dateTmp = useRef(new Date())
