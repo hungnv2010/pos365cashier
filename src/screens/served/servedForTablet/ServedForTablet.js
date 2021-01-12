@@ -39,8 +39,8 @@ const Served = (props) => {
     const [value, setValue] = useState('');
     const [itemOrder, setItemOrder] = useState({})
     const [listTopping, setListTopping] = useState([])
-    const [currentPriceBook, setCurrentPriceBook] = useState({ Name: "Giá niêm yết", Id: 0 })
-    const [currentCustomer, setCurrentCustomer] = useState({ Name: "Khách hàng", Id: 0 })
+    const [currentPriceBook, setCurrentPriceBook] = useState({ Name: "gia_niem_yet", Id: 0 })
+    const [currentCustomer, setCurrentCustomer] = useState({ Name: "khach_hang", Id: 0 })
     const meMoItemOrder = useMemo(() => itemOrder, [itemOrder])
     const [promotions, setPromotions] = useState([])
     const toolBarTabletServedRef = useRef();
@@ -95,9 +95,9 @@ const Served = (props) => {
                 : await dataManager.createSeverEvent(props.route.params.room.Id, position)
 
             let jsonContentObject = JSON.parse(currentServerEvent.current.JsonContent)
-            // if (jsonContentObject.Partner) {
-            //     setCurrentCustomer(jsonContentObject.Partner)
-            // }
+            if (jsonContentObject.Partner) {
+                setCurrentCustomer(jsonContentObject.Partner)
+            }
             for (const property in listPriceBook) {
                 if (listPriceBook[property].Id == jsonContentObject.PriceBookId) {
                     setCurrentPriceBook(listPriceBook[property])
@@ -138,9 +138,9 @@ const Served = (props) => {
                             }
                         })
                     })
-                    updateServerEvent()
 
                 }
+                updateServerEvent()
             }
         }
 
@@ -161,22 +161,42 @@ const Served = (props) => {
         }
     }, [currentPriceBook])
 
-    // useEffect(() => {
-    //     console.log('currentCustomercurrentCustomer', currentCustomer, jsonContent);
-    //     if (JSON.stringify(jsonContent) != "{}") {
-    //         jsonContent.Partner = null
-    //         jsonContent.PartnerId = null
-    //         if (currentCustomer && currentCustomer.Id) {
-    //             jsonContent.Partner = currentCustomer
-    //             jsonContent.PartnerId = currentCustomer.Id
-    //         }
-    //         let serverEvent = currentServerEvent.current
-    //         serverEvent.Version += 1
-    //         serverEvent.JsonContent = JSON.stringify(jsonContent)
-    //         dataManager.updateServerEvent(serverEvent)
-    //     }
+    useEffect(() => {
+        if (JSON.stringify(jsonContent) != "{}") {
+            if (currentCustomer && currentCustomer.Id) {
+                let apiPath = `${ApiPath.SYNC_PARTNERS}/${currentCustomer.Id}`
+                new HTTPService().setPath(apiPath).GET()
+                    .then(result => {
+                        if (result) {
+                            console.log('resultresult', result, jsonContent);
+                            let discount = dataManager.totalProducts(jsonContent.OrderDetails) * result.BestDiscount / 100
+                            console.log('discount', discount);
+                            jsonContent.Discount = discount
+                            jsonContent.Partner = currentCustomer
+                            jsonContent.PartnerId = currentCustomer.Id
+                            console.log('jsonContentjsonContent', jsonContent);
+                            dataManager.calculatateJsonContent(jsonContent)
+                            let serverEvent = currentServerEvent.current
+                            serverEvent.Version += 1
+                            serverEvent.JsonContent = JSON.stringify(jsonContent)
+                            dataManager.updateServerEvent(serverEvent)
+                        }
+                    })
 
-    // }, [currentCustomer])
+            } else {
+                jsonContent.Partner = null
+                jsonContent.PartnerId = null
+                jsonContent.Discount = 0
+                dataManager.calculatateJsonContent(jsonContent)
+                let serverEvent = currentServerEvent.current
+                serverEvent.Version += 1
+                serverEvent.JsonContent = JSON.stringify(jsonContent)
+                dataManager.updateServerEvent(serverEvent)
+            }
+
+        }
+
+    }, [currentCustomer])
 
     const getOtherPrice = async (product) => {
         if (currentPriceBook.Id) {
@@ -200,12 +220,6 @@ const Served = (props) => {
             return product
     }
 
-    // const setPriceBookId = (pricebookId) => {
-    //     console.log('setPriceBookId', pricebookId);
-    //     let filters = pricebooksRef.current.filter(item => item.Id == pricebookId)
-    //     if (filters.length > 0) setCurrentPriceBook(filters[0])
-    // }
-
     const outputSelectedProduct = async (product, replace = false) => {
         if (product.Quantity > 0 && !replace) {
             if (!jsonContent.OrderDetails) jsonContent.OrderDetails = []
@@ -222,7 +236,7 @@ const Served = (props) => {
                 jsonContent.OrderDetails.forEach(elm => {
                     if (elm.ProductId == product.ProductId) {
                         isExist = true
-                        elm.Quantity += product.Quantity
+                        elm.Quantity = product.Quantity
                         return;
                     }
                 })
@@ -419,7 +433,7 @@ const Served = (props) => {
     }
 
     const onClickListedPrice = () => {
-        props.navigation.navigate(ScreenList.PriceBook, { _onSelect: onCallBack, currentPriceBook: currentPriceBook, listPriceBook: listPriceBookRef.current })
+        props.navigation.navigate(ScreenList.PriceBook, { _onSelect: onCallBack, currentPriceBook: currentPriceBook })
     }
 
 
@@ -434,40 +448,8 @@ const Served = (props) => {
                 if (data) setCurrentPriceBook(data)
                 break;
             case 2:
-                // if (data) setCurrentCustomer(data)
-                if (JSON.stringify(jsonContent) != "{}") {
-                    if (data && data.Id) {
-                        let apiPath = `${ApiPath.SYNC_PARTNERS}/${data.Id}`
-                        new HTTPService().setPath(apiPath).GET()
-                            .then(result => {
-                                if (result) {
-                                    console.log('resultresult', result, jsonContent);
-                                    let discount = dataManager.totalProducts(jsonContent.OrderDetails) * result.BestDiscount / 100
-                                    console.log('discount', discount);
-                                    jsonContent.Discount = discount
-                                    jsonContent.Partner = data
-                                    jsonContent.PartnerId = data.Id
-                                    console.log('jsonContentjsonContent', jsonContent);
-                                    dataManager.calculatateJsonContent(jsonContent)
-                                    let serverEvent = currentServerEvent.current
-                                    serverEvent.Version += 1
-                                    serverEvent.JsonContent = JSON.stringify(jsonContent)
-                                    dataManager.updateServerEvent(serverEvent)
-                                }
-                            })
+                if (data) setCurrentCustomer(data)
 
-                    } else {
-                        jsonContent.Partner = null
-                        jsonContent.PartnerId = null
-                        jsonContent.Discount = 0
-                        dataManager.calculatateJsonContent(jsonContent)
-                        let serverEvent = currentServerEvent.current
-                        serverEvent.Version += 1
-                        serverEvent.JsonContent = JSON.stringify(jsonContent)
-                        dataManager.updateServerEvent(serverEvent)
-                    }
-
-                }
                 break;
 
             default:
@@ -598,12 +580,12 @@ const Served = (props) => {
                                 style={{ flexDirection: "row", alignItems: "center" }}
                                 onPress={onClickListedPrice}>
                                 <Entypo style={{ paddingHorizontal: 5 }} name="price-ribbon" size={25} color={colors.colorchinh} />
-                                <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{currentPriceBook.Name ? currentPriceBook.Name : I18n.t('gia_niem_yet')}</Text>
+                                <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{currentPriceBook.Id == 0 ? I18n.t(currentPriceBook.Name) : currentPriceBook.Name}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
                                 style={{ flexDirection: "row", alignItems: "center" }}
                                 onPress={onClickRetailCustomer}>
-                                <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{jsonContent.Partner ? jsonContent.Partner.Name : I18n.t('khach_hang')}</Text>
+                                <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{currentCustomer.Id == 0 ? I18n.t(currentCustomer.Name) : currentCustomer.Name}</Text>
                                 <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} color={Colors.colorchinh} />
                             </TouchableOpacity>
                         </View>

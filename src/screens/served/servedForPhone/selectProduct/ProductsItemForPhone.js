@@ -33,38 +33,39 @@ const ProductsItemForPhone = ({ item, index, onClickProduct, handleButtonDecreas
             {item.Quantity > 0 ?
                 <View style={{ flex: 1.5, flexDirection: "row", alignItems: "center", marginRight: 25 }}>
 
-                        <TouchableOpacity onPress={() => {
-                            if (value > 0) {
-                                let tmp = +value - 1;
-                                setValue(tmp)
-                                handleButtonDecrease(item, index)
+                    <TouchableOpacity onPress={() => {
+                        if (value > 0) {
+                            let tmp = +value - 1;
+                            setValue(tmp)
+                            handleButtonDecrease(item, index)
+                        }
+                    }}>
+                        <Icon name="minus-box" size={40} color={Colors.colorchinh} />
+                    </TouchableOpacity>
+                    <TextInput
+                        returnKeyType='done'
+                        keyboardType="numeric"
+                        textAlign="center"
+                        value={"" + Math.round(value * 1000) / 1000}
+                        onChangeText={(numb) => {
+                            if (isNaN(numb) || +numb.length > 4) return
+                            if (item.SplitForSalesOrder || (item.ProductType == 2 && item.IsTimer)) {
+                                numb = Math.round(+numb)
                             }
-                        }}>
-                            <Icon name="minus-box" size={40} color={Colors.colorchinh} />
-                        </TouchableOpacity>
-                        <TextInput
-                            keyboardType="numeric"
-                            textAlign="center"
-                            value={"" + Math.round(value * 1000) / 1000}
-                            onChangeText={(numb) => {
-                                if (isNaN(numb) || +numb.length > 4) return
-                                if (item.SplitForSalesOrder || (item.ProductType == 2 && item.IsTimer)) {
-                                    numb = Math.round(+numb)
-                                }
-                                setValue(numb)
-                                onChangeText(numb, item)
-                            }}
-                            style={{ width: 50, borderBottomWidth: .5, paddingVertical: 5, paddingTop: 10, marginBottom: 5, color: "#000" }}>
-                        </TextInput>
-                        <TouchableOpacity onPress={() => {
-                            if (value < 1000) {
-                                let tmp = +value + 1;
-                                setValue(tmp)
-                                handleButtonIncrease(item, index)
-                            }
-                        }}>
-                            <Icon name="plus-box" size={40} color={Colors.colorchinh} />
-                        </TouchableOpacity>
+                            setValue(numb)
+                            onChangeText(numb, item)
+                        }}
+                        style={{ width: 50, borderBottomWidth: .5, paddingVertical: 5, paddingTop: 10, marginBottom: 5, color: "#000" }}>
+                    </TextInput>
+                    <TouchableOpacity onPress={() => {
+                        if (value < 1000) {
+                            let tmp = +value + 1;
+                            setValue(tmp)
+                            handleButtonIncrease(item, index)
+                        }
+                    }}>
+                        <Icon name="plus-box" size={40} color={Colors.colorchinh} />
+                    </TouchableOpacity>
                 </View> :
                 null
             }
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
         paddingVertical: 5,
         marginBottom: 3,
         marginHorizontal: 5,
-        borderRadius: 10, 
+        borderRadius: 10,
     },
     wrapNameItem: {
         flexDirection: "column",

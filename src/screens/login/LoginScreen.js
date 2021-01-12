@@ -58,8 +58,7 @@ const LoginScreen = (props) => {
                     setHasLogin(false)
                 }
                 dialogManager.hiddenLoading()
-                // dispatch({ type: 'ALREADY', already: null })
-                // await realmStore.deleteAll()
+         
             }
         }
         getCurrentAccount()
@@ -102,7 +101,7 @@ const LoginScreen = (props) => {
     const handlerLoginSuccess = async (params, res) => {
         let account = { SessionId: res.SessionId, UserName: params.UserName, Link: shop.trim() };
         setFileLuuDuLieu(Constant.CURRENT_ACCOUNT, JSON.stringify(account));
-        // await realmStore.deleteAll()
+        await realmStore.deleteAll()
         getRetailerInfoAndNavigate();
     }
 

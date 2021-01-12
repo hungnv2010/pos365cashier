@@ -23,17 +23,28 @@ export default (props) => {
   let scan = null
   const viewPrintRef = useRef();
   const dispatch = useDispatch();
-  const { listPrint, isFNB } = useSelector(state => {
+  const { listPrint, isFNB, printProvisional } = useSelector(state => {
     return state.Common
   })
 
 
   useEffect(() => {
     if (listPrint != "") {
+      console.log("useEffect ===== listPrint ", listPrint);
       viewPrintRef.current.printKitchenRef(listPrint)
       dispatch({ type: 'LIST_PRINT', listPrint: "" })
     }
   }, [listPrint])
+
+  useEffect(() => {
+    if (printProvisional != "") {
+      console.log("useEffect ===== printProvisional ", printProvisional);
+      viewPrintRef.current.printProvisionalRef(printProvisional)
+      dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: "" })
+    }
+  }, [printProvisional])
+  
+  // PRINT_PROVISIONAL
 
   useEffect(() => {
     const getCurrentBranch = async () => {
@@ -83,7 +94,7 @@ export default (props) => {
     const syncDatas = async () => {
       if (isFNB === null) return
       dispatch({ type: 'ALREADY', already: false })
-      // await realmStore.deleteAll()
+      // await realmStore.deleteAllForFnb()
       if (isFNB === true) {
         const getDataNewOrders = async () => {
           let newOrders = await dataManager.initComfirmOrder()
@@ -97,10 +108,10 @@ export default (props) => {
         scan = setInterval(() => {
           getDataNewOrders()
         }, 15000);
-        // await realmStore.deleteAll()
+        await realmStore.deleteAllForFnb()
         await dataManager.syncAllDatas()
       } else {
-        // await realmStore.deleteAllForRetail()
+        await realmStore.deleteAllForRetail()
         await dataManager.syncAllDatasForRetail()
       }
       dispatch({ type: 'ALREADY', already: true })
@@ -123,7 +134,7 @@ export default (props) => {
   const clickRightIcon = async () => {
     dialogManager.showLoading()
     dispatch({ type: 'ALREADY', already: false })
-    await realmStore.deleteAll()
+    await realmStore.deleteAllForFnb()
     await dataManager.syncAllDatas()
     dispatch({ type: 'ALREADY', already: true })
     dialogManager.hiddenLoading()

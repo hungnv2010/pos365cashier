@@ -49,11 +49,12 @@ export default {
   chon_khoang_thoi_gian: "Select time",
   chon_dvt: "Unit",
   chon: "Choose",
-  chon_tinh_thanh: "Choose province",
-  chon_bang_gia: "Choose pricebook",
-  moi_chon_mon_truoc: "choose your products first",
+  chon_tinh_thanh: "Select province",
+  chon_bang_gia: "Select pricebook",
+  moi_chon_mon_truoc: "Select your products first",
   chua_cap_nhat: "No infomation",
   cap_nhat_khach_hang: "Update customer",
+  chon_khach_hang:"Select customer",
 
   // TODO: D
   dang_dung: "Serving",
@@ -78,7 +79,7 @@ export default {
   don_hang_moi: "New orders",
   du_no: "Debt",
   dien_thoai: "Phone",
-  danh_sach_gia: "Choose Pricebook",
+  danh_sach_gia: "Select Pricebook",
   don_hang_offline: "Offline order",
   // TODO: E
 

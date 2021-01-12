@@ -42,7 +42,7 @@ export default (props) => {
     const [expand, setExpand] = useState(false)
     const [vendorSession, setVendorSession] = useState({});
     const typeModal = useRef(TYPE_MODAL.DETAIL)
-
+    const isStartPrint = useRef(-1)
 
     useEffect(() => {
         const getVendorSession = async () => {
@@ -94,15 +94,23 @@ export default (props) => {
 
     const printKitchen = () => {
         let jsonContent = props.jsonContent;
+        console.log("printKitchen jsonContent :: ", jsonContent);
         if (!checkProcessedQuantityProduct(jsonContent)) {
+            jsonContent.OrderDetails.forEach(element => {
+                element.RoomName = props.route.params.room.Name;
+                element.Pos = jsonContent.Pos;
+            });
             let data = dataManager.getDataPrintCook(jsonContent.OrderDetails)
-            console.log("printKitchen data ", data);
+            console.log("printKitchen data ====: " + JSON.stringify(data));
+            // isStartPrint.current = 1;
+            dispatch({ type: 'LIST_PRINT', listPrint: JSON.stringify(data) })
+
             jsonContent.OrderDetails.forEach(element => {
                 element.Processed = element.Quantity
             });
-            console.log("printKitchen jsonContent ", jsonContent);
+            console.log("printKitchen jsonContent ::: ", jsonContent);
             props.handlerProcessedProduct(jsonContent)
-            dispatch({ type: 'LIST_PRINT', listPrint: data })
+
             notification(I18n.t("bao_che_bien_thanh_cong"));
         } else {
             notification(I18n.t("cac_mon_ban_chon_dang_duoc_nha_bep_chuan_bi"));
@@ -186,9 +194,10 @@ export default (props) => {
                 elm.Description = product.Description
                 elm.Discount = discount - price > 0 ? price : discount
                 elm.Price = product.Price
+                elm.IsLargeUnit = product.IsLargeUnit
             }
         })
-    
+        console.log("mapDataToList listOrder ", listOrder);
         props.outputListProducts([...listOrder])
     }
 
@@ -199,6 +208,30 @@ export default (props) => {
         } else {
             dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
         }
+    }
+
+    const onClickProvisional = async () => {
+        hideMenu()
+        console.log("onClickProvisional props.route.params ", props.route.params);
+
+        if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
+            jsonContent.RoomName = props.route.params.room.Name
+        }
+
+        
+        // viewPrintRef.current.printProvisionalRef(jsonContent)
+
+
+        // jsonContent.OrderDetails.forEach(element => {
+        //     element.RoomName = props.route.params.room.Name;
+        //     element.Pos = jsonContent.Pos;
+        // });
+        // let data = dataManager.getDataPrintCook(jsonContent.OrderDetails)
+        // console.log("printKitchen data ====: " + JSON.stringify(data));
+        // // isStartPrint.current = 1;
+        // dispatch({ type: 'LIST_PRINT', listPrint: JSON.stringify(data) })
+
+        dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: jsonContent })
     }
 
     let _menu = null;
@@ -415,7 +448,7 @@ export default (props) => {
                                 <MaterialIcons style={{ paddingHorizontal: 7 }} name="notifications" size={26} color={Colors.colorchinh} />
                                 <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('chuyen_ban')}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => { }} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
+                            <TouchableOpacity onPress={() => onClickProvisional()} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
                                 <Icon style={{ paddingHorizontal: 10 }} name="message" size={22} color={Colors.colorchinh} />
                                 <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('tam_tinh')}</Text>
                             </TouchableOpacity>

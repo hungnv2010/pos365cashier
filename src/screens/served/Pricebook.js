@@ -10,21 +10,21 @@ import realmStore from '../../data/realm/RealmStore';
 export default (props) => {
 
     const [currentPriceId, setCurrentPriceId] = useState((props.route.params.currentPriceBook.Id ? props.route.params.currentPriceBook.Id : 0))
-    const [listPricebook, setListPricebook] = useState(Object.values(props.route.params.listPriceBook))
+    const [listPricebook, setListPricebook] = useState([])
 
     useEffect(() => {
-        // const initPricebook = async () => {
-        //     dialogManager.showLoading()
-        //     let newPricebooks = []
-        //     let results = await realmStore.queryPricebook()
-        //     results.forEach(item => {
-        //         newPricebooks.push({ ...JSON.parse(JSON.stringify(item)) })
-        //     })
-        //     console.log('newPricebooks', newPricebooks);
-        //     setListPricebook(newPricebooks)
-        //     dialogManager.hiddenLoading()
-        // }
-        // initPricebook()
+        const initPricebook = async () => {
+            dialogManager.showLoading()
+            let newPricebooks = []
+            let results = await realmStore.queryPricebook()
+            results.forEach(item => {
+                newPricebooks.push({ ...JSON.parse(JSON.stringify(item)) })
+            })
+            console.log('newPricebooks', newPricebooks);
+            setListPricebook(newPricebooks)
+            dialogManager.hiddenLoading()
+        }
+        initPricebook()
     }, [])
 
     useEffect(() => {
@@ -35,11 +35,11 @@ export default (props) => {
         let isSelected = currentPriceId == item.Id
         return (
             <TouchableOpacity onPress={() => {
-                props.route.params._onSelect(item ? item : { Name: "Giá niêm yết", Id: 0 }, 1)
+                props.route.params._onSelect(item, 1)
                 props.navigation.pop()
             }}>
                 <View key={item.Id} style={{ ...styles.Item, backgroundColor: index % 2 == 0 ? "#f9f2e4" : "white", flex: 1 }}>
-                    <Text numberOfLines={2} style={{ color: isSelected ? colors.colorchinh : "black" }}>{item.Name}</Text>
+                    <Text numberOfLines={2} style={{ color: isSelected ? colors.colorchinh : "black", textTransform:"uppercase" }}>{item.Id == 0 ? I18n.t(item.Name) : item.Name}</Text>
                 </View >
             </TouchableOpacity>
         )
