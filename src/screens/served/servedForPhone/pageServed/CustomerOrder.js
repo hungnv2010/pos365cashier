@@ -42,7 +42,7 @@ export default (props) => {
     const [expand, setExpand] = useState(false)
     const [vendorSession, setVendorSession] = useState({});
     const typeModal = useRef(TYPE_MODAL.DETAIL)
-
+    const isStartPrint = useRef(-1)
 
     useEffect(() => {
         const getVendorSession = async () => {
@@ -101,13 +101,16 @@ export default (props) => {
                 element.Pos = jsonContent.Pos;
             });
             let data = dataManager.getDataPrintCook(jsonContent.OrderDetails)
-            console.log("printKitchen data ", data);
+            console.log("printKitchen data ====: " + JSON.stringify(data));
+            // isStartPrint.current = 1;
+            dispatch({ type: 'LIST_PRINT', listPrint: JSON.stringify(data)})
+
             jsonContent.OrderDetails.forEach(element => {
                 element.Processed = element.Quantity
             });
-            console.log("printKitchen jsonContent ", jsonContent);
+            console.log("printKitchen jsonContent ::: ", jsonContent);
             props.handlerProcessedProduct(jsonContent)
-            dispatch({ type: 'LIST_PRINT', listPrint: data })
+
             notification(I18n.t("bao_che_bien_thanh_cong"));
         } else {
             notification(I18n.t("cac_mon_ban_chon_dang_duoc_nha_bep_chuan_bi"));
@@ -193,7 +196,7 @@ export default (props) => {
                 elm.Price = product.Price
             }
         })
-    
+
         props.outputListProducts([...listOrder])
     }
 

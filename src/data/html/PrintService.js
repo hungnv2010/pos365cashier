@@ -123,15 +123,19 @@ class PrintService {
         let listHtml = HTMLBase.split("<!--Body Table-->");
         let listTable = ""
         JsonContent.forEach((el, index) => {
-            var description = el.Description && el.Description.trim() != "" ? `<br>${el.Description?.replace(";", "<br>")}` : "";
-            let itemTable = listHtml[1];
+            if (el.Quantity - el.Processed > 0) {
+                var description = el.Description && el.Description.trim() != "" ? `<br>${el.Description?.replace(";", "<br>")}` : "";
+                let itemTable = listHtml[1];
 
-            itemTable = itemTable.replace("{STT_Hang_Hoa}", "" + (index + 1))
-            itemTable = itemTable.replace("{Ten_Hang_Hoa}", "" + el.Name)
-            itemTable = itemTable.replace("{Ghi_Chu_Hang_Hoa}", description)
-            itemTable = itemTable.replace("{So_Luong}", Math.round(el.Quantity * 1000) / 1000)
-            itemTable = itemTable.replace("{DVT_Hang_Hoa}", (el.IsLargeUnit ? el.LargeUnit : el.Unit))
-            listTable += itemTable;
+                itemTable = itemTable.replace("{STT_Hang_Hoa}", "" + (index + 1))
+                itemTable = itemTable.replace("{Ten_Hang_Hoa}", "" + el.Name)
+                itemTable = itemTable.replace("{Ghi_Chu_Hang_Hoa}", description)
+                itemTable = itemTable.replace("{So_Luong}", Math.round((el.Quantity - el.Processed) * 1000) / 1000)
+                itemTable = itemTable.replace("{DVT_Hang_Hoa}", (el.IsLargeUnit ? el.LargeUnit : el.Unit))
+                listTable += itemTable;
+
+                delete el.QuantityPrint;
+            }
         });
         HTMLBase = listHtml[0] + listTable + listHtml[2];
         HTMLBase = HTMLBase.replace("{Ten_Phong_Ban}", JsonContent[0].RoomName + "[" + JsonContent[0].Pos + "]")
@@ -143,6 +147,7 @@ class PrintService {
             HTMLBase = HTMLBase.replace("{Nhan_Vien}", vendorSession.CurrentUser.Name)
         }
         console.log("html ", JSON.stringify(HTMLBase));
+
         return HTMLBase;
         // })
     }

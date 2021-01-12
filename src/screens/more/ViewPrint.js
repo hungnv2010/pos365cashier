@@ -69,7 +69,7 @@ export default forwardRef((props, ref) => {
             printProvisional(jsonContent)
         },
         printKitchenRef(jsonContent) {
-            console.log('printKitchenRef jsonContent ', jsonContent);
+            console.log('printKitchenRef jsonContent: ', jsonContent);
             printKitchen(jsonContent)
         }
     }));
@@ -142,7 +142,9 @@ export default forwardRef((props, ref) => {
         isProvisional.current = false;
         let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
         vendorSession = JSON.parse(vendorSession);
-        console.log("data ", data);
+        console.log("data ===:: "+ data);
+        data = JSON.parse(data)
+        console.log("data === "+ data);
         console.log("printObject ", printObject);
         console.log('vendorSession ', vendorSession);
         for (const value in data) {
@@ -152,7 +154,7 @@ export default forwardRef((props, ref) => {
                 for (const key in item) {
                     if (item.hasOwnProperty(key)) {
                         const element = item[key];
-                        console.log('element ', element);
+                        console.log('element == ', element);
                         let res = printService.GenHtmlKitchen(htmlKitchen, element, i, vendorSession)
                         if (res && res != "") {
                             printService.listWaiting.push({ html: res, ip: printObject[value] })

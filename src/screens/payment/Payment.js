@@ -50,7 +50,7 @@ export default (props) => {
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
     const [choosePoint, setChoosePoint] = useState(0)
-    const [percent, setPercent] = useState(false)
+    const [percent, setPercent] = useState(true)
     const [percentVAT, setPercentVAT] = useState(false)
     const [point, setPoint] = useState(0)
     const [listMethod, setListMethod] = useState([CASH])
@@ -107,13 +107,18 @@ export default (props) => {
             let total = getTotalOrder(orderDetails);
             setTotalPrice(total);
             CASH.Value = total;
+            // calculatorPrice(jsonContentTmp, total, false);
             setPercentVAT(jsonContentTmp.VATRates ? true : false)
-            if (jsonContentTmp.DiscountToView && jsonContentTmp.DiscountToView.toString().indexOf('%') > -1) {
+
+            let isVnd = !(jsonContentTmp.DiscountRatio > 0 || jsonContentTmp.DiscountValue == 0)
+            console.log("useEffect isVnd == ", isVnd);
+            // if (jsonContentTmp.Discount && jsonContentTmp.Discount > 0) {
+            if (!isVnd) {
                 setPercent(true)
             } else {
                 setPercent(false)
             }
-            calculatorPrice(jsonContentTmp, total);
+
         }
 
         const getVendorSession = async () => {
@@ -566,10 +571,10 @@ export default (props) => {
         // if (props.route.params.Screen != undefined && props.route.params.Screen == ScreenList.MainRetail) {
         //     props.route.params.onCallBack(status)
         // } else {
-            let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
-            serverEvent.JsonContent = "{}"
-            serverEvent.Version += 10
-            dataManager.updateServerEventNow(serverEvent, true, false);
+        let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
+        serverEvent.JsonContent = "{}"
+        serverEvent.Version += 10
+        dataManager.updateServerEventNow(serverEvent, true, false);
         // }
         playSound()
     }
@@ -665,11 +670,12 @@ export default (props) => {
         }
     }
 
-    const calculatorPrice = (jsonContent, totalPrice) => {
+    const calculatorPrice = (jsonContent, totalPrice, update = true) => {
         let realPriceValue = totalPrice;
         let disCountValue = 0;
         if (!percent) {
             disCountValue = jsonContent.DiscountValue ? jsonContent.DiscountValue : 0;
+            jsonContent.DiscountRatio = 0
         } else {
             disCountValue = realPriceValue / 100 * jsonContent.DiscountRatio
         }
@@ -684,6 +690,7 @@ export default (props) => {
         let excessCash = (excess < 0.0 && excess > -0.001) ? 0 : excess;
         jsonContent.Discount = totalDiscount
         jsonContent.DiscountValue = disCountValue
+
         jsonContent.VAT = vat
         jsonContent.Total = total
         jsonContent.ExcessCash = excessCash
@@ -709,7 +716,7 @@ export default (props) => {
         console.log("calculator excessCash ", excessCash);
         console.log("calculator jsonContent ", jsonContent);
 
-        if (currentServerEvent.current) {
+        if (currentServerEvent.current && update == true) {
             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
             dataManager.paymentSetServerEvent(serverEvent, jsonContent);
             dataManager.subjectUpdateServerEvent.next(serverEvent)
@@ -976,7 +983,13 @@ export default (props) => {
                                     <TouchableOpacity onPress={() => selectPercent(false)} style={{ width: 55, alignItems: "center", borderWidth: 0.5, borderTopLeftRadius: 5, borderBottomLeftRadius: 5, paddingVertical: 7, borderColor: colors.colorchinh, backgroundColor: !percent ? colors.colorchinh : "#fff" }}>
                                         <Text style={{ color: !percent ? "#fff" : "#000" }}>VNĐ</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => selectPercent(true)} style={{ width: 55, alignItems: "center", borderWidth: 0.5, borderColor: colors.colorchinh, borderTopRightRadius: 5, borderBottomRightRadius: 5, paddingVertical: 7, backgroundColor: !percent ? "#fff" : colors.colorchinh }}>
+                                    <TouchableOpacity onPress={() => {
+
+                                        jsonContent.DiscountRatio = jsonContent.Discount / totalPrice * 100
+                                        console.log("jsonContent.DiscountRatio ", jsonContent.DiscountRatio);
+                                        
+                                        selectPercent(true)
+                                    }} style={{ width: 55, alignItems: "center", borderWidth: 0.5, borderColor: colors.colorchinh, borderTopRightRadius: 5, borderBottomRightRadius: 5, paddingVertical: 7, backgroundColor: !percent ? "#fff" : colors.colorchinh }}>
                                         <Text style={{ color: percent ? "#fff" : "#000" }}>%</Text>
                                     </TouchableOpacity>
                                 </View>
