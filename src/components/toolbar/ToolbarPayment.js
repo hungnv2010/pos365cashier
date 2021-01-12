@@ -64,8 +64,8 @@ export default forwardRef((props, ref) => {
                         setShowInput(false)
                         props.onClickBackSearch()
                     }
-                }}>
-                    <Icon name="keyboard-backspace" size={props.size ? props.size : 30} color="white" />
+                }} style={{paddingLeft:19,paddingRight:19,paddingTop:16,paddingBottom:16}}>
+                    <Image source={Images.icon_back} style={{width:10,height:16,}}/>
                 </TouchableOpacity>
                 {/* } */}
             </View>

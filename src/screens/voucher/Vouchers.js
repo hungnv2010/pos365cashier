@@ -365,15 +365,15 @@ export default (props) => {
                 navigation={props.navigation}
                 title={I18n.t('voucher')}
             />
-            <View style={{ justifyContent: 'space-between', backgroundColor: 'white', flexDirection: 'row', padding: 10, marginBottom: 2 }}>
+            <View style={{ justifyContent: 'space-between', backgroundColor: 'white', flexDirection: 'row',  marginBottom: 2 }}>
                 <TouchableOpacity
                     style={{ flexDirection: "row", alignItems: "center" }}
                     onPress={() => { typeModal.current = 1; setOnShowModal(true) }}>
-                    <Image source={Images.icon_calendar} style={{ width: 20, height: 20 }} />
+                    <Image source={Images.icon_calendar} style={{ width: 48, height: 48 }} />
                     <Text style={{ marginHorizontal: 10 }}>{filter.time.name.includes('-') ? filter.time.name : I18n.t(filter.time.name)}</Text>
                     <Image source={Images.icon_arrow_down} style={{ width: 14, height: 14, marginLeft: 5 }} />
                 </TouchableOpacity>
-                <Text>{listVoucher.length}/{count.current}</Text>
+                <Text style={{marginTop:15,marginRight:10}}>{listVoucher.length}/{count.current}</Text>
             </View>
             {
                 listVoucher.length > 0 ?

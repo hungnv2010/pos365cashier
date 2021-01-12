@@ -51,7 +51,7 @@ export default (props) => {
     }
     const renderCategory = (item, index) => {
         return (
-            <View style={{ alignItems: 'center', justifyContent: 'center', padding: 10, marginBottom:5, marginTop: 5, backgroundColor: idCategory == item.Id ? colors.colorchinh : null, borderRadius:10 }}>
+            <View style={{ alignItems: 'center', justifyContent: 'center',padding:10, marginLeft:5,marginRight:10, marginBottom:5, marginTop: 5, backgroundColor: idCategory == item.Id ? colors.colorchinh : null, borderRadius:10 }}>
                 <TouchableOpacity style={{}} onPress={() => { filterByCategory(item) }}>
                     <Text style={{ color: idCategory == item.Id ? 'white' : 'black', fontWeight:idCategory==item.Id?'bold':null }} >{item.Name}</Text>
                 </TouchableOpacity>
@@ -60,11 +60,14 @@ export default (props) => {
     }
     const renderProduct = (item, index) => {
         return (    
-            <TouchableOpacity onPress={()=>onClickItem(item)} style={{backgroundColor:'#D3D3D3'}}>
+            <TouchableOpacity onPress={()=>onClickItem(item)} style={{backgroundColor:'#F5F5F5'}}>
                 <View style={{backgroundColor:'white', padding: 5, margin: 5,borderRadius: 10,borderColor: 'silver', borderWidth: 0.5, }}>
-                <View style={{ flexDirection: 'row' }}>
-                    <Image style={{ height: 50, width: 50, borderRadius: 10 }} source={item.ProductImages != "" && JSON.parse(item.ProductImages).length > 0 ? { uri: JSON.parse(item.ProductImages)[0].ImageURL } : Images.icon_product} />
-
+                <View style={{ flexDirection: 'row' }}>{item.ProductImages != "" && JSON.parse(item.ProductImages).length > 0 ?
+                    <Image style={{ height: 50, width: 50, borderRadius: 10 }} source={ { uri: JSON.parse(item.ProductImages)[0].ImageURL }} />
+                    :<View style={{padding:20}}>
+                        <Text style={{textAlign:'center'}}>{item.Name?item.Name.indexOf(' ')==-1?item.Name.slice(0,2).toUpperCase():(item.Name.slice(0,1)+item.Name.slice(item.Name.indexOf(' ')+1,item.Name.indexOf(' ')+2)).toUpperCase():null}</Text>
+                    </View>
+                }
                     <View style={{ flexDirection: 'column', justifyContent: 'space-between', flex: 1, padding: 5 }}>
                         <Text>{item.Name}</Text>
                         <Text style={{ color: '#0099FF', fontWeight: 'bold' }}>{currencyToString(item.Price)} đ</Text>
@@ -73,10 +76,10 @@ export default (props) => {
                 </View>
                 <View style={{ backgroundColor: 'silver', height: 0.5, margin: 5, marginTop: 10 }}></View>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1, padding: 5 }}>
-                    <View style={{borderRadius:5,backgroundColor: '#BFEFFF'}}>
+                    <View style={{borderRadius:5}}>
                     <Text style={{  borderRadius: 5, color: '#0099FF',padding:2 }}>{item.Code}</Text>
                     </View>
-                    <View style={{borderRadius:5, backgroundColor: '#FFE7BA'}}>
+                    <View style={{borderRadius:5, }}>
                     <Text style={{ color: item.OnHand > 0 ? '#0099FF' : colors.colorchinh ,padding:2}}>{item.ProductType != 2 ? 'Tồn kho:' + currencyToString(item.OnHand) : '---'}</Text>
                     </View>
                 </View>
@@ -98,25 +101,28 @@ export default (props) => {
         <View style={{flex:1,flexDirection:'column', }}>
             <ToolBarNoteBook
                 {...props}
-                leftIcon="keyboard-backspace"
                 title={I18n.t('hang_hoa')}
                 clickLeftIcon={() => { props.navigation.goBack() }}
                 rightIcon="md-search"
                 clickRightIcon={(textSearch) => outputIsSelectProduct(textSearch)}
             />
-            <View style={{backgroundColor:'#D3D3D3'}}>
+            <View style={{backgroundColor:'#F5F5F5'}}>
+                <View style={{ backgroundColor:"#FFDEAD",marginTop:5,borderRadius:10,marginLeft:5,marginRight:5 }}> 
+                
                 <FlatList
                     data={category}
                     // onEndReachedThreshold={0.1}
                     // onEndReached={viewData.length == 0 ? onLoadMore : filterMore}
                     renderItem={({ item, index }) => renderCategory(item, index)}
                     horizontal={true}
+                    style={{marginRight:10,marginLeft:10}}
                 // keyExtractor={(item, index) => index.toString()}
                 // ref={refs => roomHistoryRef.current = refs}
                 // ListFooterComponent={loadMore ? <ActivityIndicator color={colors.colorchinh} /> : null}
                 // onMomentumScrollBegin={() => { onEndReachedCalledDuringMomentum.current = false }}
                 // ref={flatlistRef}
                 />
+                </View>
                 <FlatList
                     data={listProduct}
                     renderItem={({ item, index }) => renderProduct(item, index)}

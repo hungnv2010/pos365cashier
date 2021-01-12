@@ -39,8 +39,8 @@ export default function ToolBarNoteBook(props) {
 
             <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
                 {props.clickLeftIcon ?
-                    <TouchableOpacity onPress={props.clickLeftIcon}>
-                        <Icon name={props.leftIcon} size={props.size ? props.size : 30} color="white" />
+                    <TouchableOpacity onPress={props.clickLeftIcon} style={{paddingLeft:19,paddingRight:19,paddingTop:16,paddingBottom:16}}>
+                        <Image source={Images.icon_back} style={{width:10,height:16,}}/>
                     </TouchableOpacity>
                     :
                     <TouchableOpacity onPress={() => {
@@ -52,7 +52,7 @@ export default function ToolBarNoteBook(props) {
                             }, 1000);
                         }
                     }}>
-                        <Icon name={props.leftIcon} size={props.size ? props.size : 30} color="white" />
+                       <Image source={Images.icon_back} style={{width:10,height:16,paddingLeft:19,paddingRight:19,paddingTop:16,paddingBottom:16}}/>
                     </TouchableOpacity>
                 }
             </View>
@@ -79,12 +79,12 @@ export default function ToolBarNoteBook(props) {
 
             <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
                 {showInput == false ?
-                    <TouchableOpacity onPress={() => onClickSearch()}>
-                        <Ionicons name={props.rightIcon} size={props.size ? props.size : 30} color="white" />
+                    <TouchableOpacity onPress={() => onClickSearch()} style={{padding:15,}}>
+                        <Image source={Images.icon_search} style={{width:18,height:18}}/>
                     </TouchableOpacity>
                     :
-                    <TouchableOpacity onPress={() => setShowInput(false)}>
-                        <Icon name="close" size={props.size ? props.size : 30} color="white" />
+                    <TouchableOpacity onPress={() => setShowInput(false)} style={{padding:17}}>
+                        <Image source={Images.icon_remove} style={{width:14,height:14}}/>
                     </TouchableOpacity>
                 }
             </View>

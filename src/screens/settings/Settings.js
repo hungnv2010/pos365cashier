@@ -132,19 +132,21 @@ export default (props) => {
     useFocusEffect(useCallback(() => {
         const getSetting = async () => {
             let data = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
+            console.log("setting data", JSON.parse(data));
             let res = await new HTTPService().setPath(ApiPath.VENDOR_SESSION).GET()
-            if (data.length == 0) {
-                setSettingObject(DefaultSetting)
-            } else {
-                setSettingObject(JSON.parse(data))
-                if (res.length != 0)
-                    setSettingObject({ ...settingObject, strings: res.Settings })
+            setSettingObject(JSON.parse(data))
+            if (res.length != 0)
+            setSettingObject({ ...JSON.parse(data), strings: res.Settings })
+            console.log("setting object", settingObject);
 
-            }
+
         }
 
         getSetting()
     }, []))
+    useEffect(()=>{
+        console.log("setting object", settingObject);
+    },[settingObject])
     useFocusEffect(useCallback(() => {
         const getCurentRetailer = async () => {
             let res = await new HTTPService().setPath(ApiPath.VENDOR_SESSION).GET()
@@ -390,7 +392,7 @@ export default (props) => {
                         {
                             settingObject.Printer.map((item, index) => {
                                 return (
-                                    <PrintConnect title={I18n.t(item.title)} onSet={index == 9 ? onShowModalStampPrint : onShowModal} stylePrinter={(item.type ? I18n.t(item.type) : I18n.t('khong_in')) + (item.size ? ', size ' + item.size + ' mm ' : '') + (item.ip ? '(' + item.ip + ')' : '')} pos={index} status={showModal} />
+                                    <PrintConnect key={index.toString()} title={I18n.t(item.title)} onSet={index == 9 ? onShowModalStampPrint : onShowModal} stylePrinter={(item.type ? I18n.t(item.type) : I18n.t('khong_in')) + (item.size ? ', size ' + item.size + ' mm ' : '') + (item.ip ? '(' + item.ip + ')' : '')} pos={index} status={showModal} />
                                 )
                             })
                         }
@@ -614,7 +616,7 @@ export default (props) => {
                                 <View style={{ width: Metrics.screenWidth * 0.8, }}>
                                     <Text style={styles.titleModal}>{titlePrint}</Text>
                                     <Text style={{ fontSize: 18, justifyContent: 'center', marginTop: 10, marginLeft: 20 }}>{I18n.t('nhap_dia_chi_ip_may')}</Text>
-                                    <TextInput style={styles.textInputStyle} value={stateValueIp} keyboardType='decimal-pad' onChangeText={text => changeValueIp(text)} ></TextInput>
+                                    <TextInput style={styles.textInputStyle} value={stateValueIp} keyboardType='numeric' onChangeText={text => changeValueIp(text)} ></TextInput>
                                     <TouchableOpacity style={{ justifyContent: 'flex-end', alignItems: 'flex-end', marginTop: 10, marginBottom: 10, }} onPress={setIpLANPrint}>
                                         <View style={{ backgroundColor: colors.colorchinh, marginRight: 15, padding: 10, borderColor: colors.colorchinh, borderWidth: 1, borderRadius: 5 }}>
                                             <Text style={[styles.styleTextBtnOk, {}]} >{I18n.t("dong_y")}</Text>

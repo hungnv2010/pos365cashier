@@ -252,15 +252,15 @@ export default (props) => {
             />
             <View style={{ flex: 1, flexDirection: "row" }}>
                 <View style={{ flex: 1 }}>
-                    <View style={{ flexDirection: 'row', borderRightWidth: 1, borderRightColor: 'silver', justifyContent: 'space-between', padding: 10, backgroundColor: '#E8E8E8', borderBottomWidth: 1, borderBottomColor: '#828282' }}>
+                    <View style={{ flexDirection: 'row', borderRightWidth: 1, borderRightColor: 'silver', justifyContent: 'space-between', backgroundColor: '#E8E8E8', borderBottomWidth: 1, borderBottomColor: '#828282' }}>
                         <TouchableOpacity
                             style={{ flexDirection: "row", alignItems: "center" }}
                             onPress={() => onClickFilter()}>
-                            <Image source={Images.icon_calendar} style={{ width: 20, height: 20 }} />
+                            <Image source={Images.icon_calendar} style={{ width: 48, height: 48 }} />
                             <Text style={{ marginHorizontal: 10 }}>{filter.time.name.includes('-') ? filter.time.name : I18n.t(filter.time.name)}</Text>
                             <Image source={Images.icon_arrow_down} style={{ width: 14, height: 14, marginLeft: 5 }} />
                         </TouchableOpacity>
-                        <Text style={{ fontSize: 10 }}>{roomHistoryData.length} / {count.current}</Text>
+                        <Text style={{ fontSize: 12,textAlign:'center',marginTop:15,marginRight:10 }}>{roomHistoryData.length} / {count.current}</Text>
                     </View>
                     <View style={{ flex: 1, borderRightWidth: 1, borderRightColor: 'silver', backgroundColor: '#E8E8E8' }}>
                         <TextInput style={{ borderWidth: 1, marginTop: 10, backgroundColor: '#FFFFFF', borderColor: '#828282', borderRadius: 10, marginBottom: 10, marginLeft: 10, marginRight: 10, padding: 10 }} inlineImageLeft='search_icon' placeholder={I18n.t('nhap_tu_khoa_tim_kiem')} onChangeText={text => setInputSearch(text)}></TextInput>

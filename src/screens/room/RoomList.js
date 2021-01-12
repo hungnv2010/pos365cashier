@@ -135,7 +135,7 @@ export default (props) => {
                                                 {
                                                     item.list.map((el, indexEl) => {
                                                         return (
-                                                            <TouchableOpacity onPress={() => onClickItem(el)} style={{ backgroundColor: "#fff", padding: 15, flexDirection: "column" }}>
+                                                            <TouchableOpacity key={indexEl.toString()} onPress={() => onClickItem(el)} style={{ backgroundColor: "#fff", padding: 15, flexDirection: "column" }}>
                                                                 <Text style={{ textTransform: "uppercase", fontWeight: "bold" }}>{el.Name}</Text>
                                                             </TouchableOpacity>
                                                         )
@@ -176,7 +176,7 @@ export default (props) => {
                         {
                             [{ Id: "", Name: I18n.t("tat_ca") }].concat(rooms).map((item, index) => {
                                 return (
-                                    <TouchableOpacity onPress={() => onClickTab(item, index)} style={{
+                                    <TouchableOpacity key={index.toString()} onPress={() => onClickTab(item, index)} style={{
                                         padding: 10,
                                     }}>
                                         <Text style={{ color: indexTab == index ? colors.colorLightBlue : "black", fontSize: 15 }}>{item.Name}</Text>
