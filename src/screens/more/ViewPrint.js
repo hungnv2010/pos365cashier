@@ -23,8 +23,7 @@ export const defaultKitchen = {
 export const defaultMultiKitchen = { "KitchenA": { "B.20": [{ "RowKey": "837da80565ee44d4bcd36e07061e3c9d", "PartitionKey": "80743_58128", "RoomId": 859713, "RoomName": "B.20", "Position": "A", "ProductId": 10585766, "Name": "Súp kem kiểu Paris", "Quantity": 1, "Serveby": 161528, "ServebyName": "admin", "Printer": "KitchenA", "SecondPrinter": "BartenderA", "Printer3": "KitchenB", "Printer4": "KitchenC", "Printer5": "KitchenD", "CreatedDate": "2020-11-02T10:16:00.2700000Z", "Approved": true, "IsLargeUnit": false, "Unit": "Cái", "LargeUnit": "Thùng" }, { "RowKey": "9cc7552ce03d41508bded9d15f9140f7", "PartitionKey": "80743_58128", "RoomId": 859713, "RoomName": "B.20", "Position": "A", "ProductId": 10585767, "Name": "Lemon Tea", "Quantity": 1, "Serveby": 161528, "ServebyName": "admin", "Printer": "KitchenA", "CreatedDate": "2020-11-02T10:16:00.2700000Z", "Approved": true, "IsLargeUnit": false, "Unit": "Cái", "LargeUnit": "Thùng" }, { "RowKey": "7a5b33f88246409b94cd60c3b6672c15", "PartitionKey": "80743_58128", "RoomId": 859713, "RoomName": "B.20", "Position": "A", "ProductId": 10585765, "Name": "Súp kém bí đỏ với sữa dừa", "Quantity": 1, "Serveby": 161528, "ServebyName": "admin", "Printer": "KitchenA", "CreatedDate": "2020-11-02T10:16:00.2700000Z", "Approved": true, "IsLargeUnit": false, "Unit": "Cái", "LargeUnit": "Thùng" }], "B.21": [{ "RowKey": "32759d1d0c0b43998ac092600d8f6120", "PartitionKey": "80743_58128", "RoomId": 859712, "RoomName": "B.21", "Position": "A", "ProductId": 10585765, "Name": "Súp kém bí đỏ với sữa dừa", "Quantity": 1, "Serveby": 161528, "ServebyName": "admin", "Printer": "KitchenA", "CreatedDate": "2020-11-02T10:16:03.2430000Z", "Approved": true, "IsLargeUnit": true, "Unit": "Cái", "LargeUnit": "Thùng" }] }, "KitchenB": { "B.22": [{ "RowKey": "32759d1d0c0b43998ac09260d8f61201", "PartitionKey": "80743_58128", "RoomId": 859712, "RoomName": "B.22", "Position": "A", "ProductId": 10585765, "Name": "Súp kém bí đỏ với sữa dừa 123", "Quantity": 1, "Serveby": 161528, "ServebyName": "admin", "Printer": "KitchenB", "CreatedDate": "2020-11-02T10:16:03.2430000Z", "Approved": true, "IsLargeUnit": true, "Unit": "Cái", "LargeUnit": "Thùng" }] } }
 export const TYPE_PRINT = {
     KITCHEN: "KITCHEN",
-    PROVISIONAL: "PROVISIONAL",
-    TEM: "TEM"
+    RETURN_PRODUCT: "RETURN_PRODUCT"
 }
 
 export const KITCHEN_PRINT = {
@@ -68,9 +67,9 @@ export default forwardRef((props, ref) => {
         printProvisionalRef(jsonContent) {
             printProvisional(jsonContent)
         },
-        printKitchenRef(jsonContent) {
-            console.log('printKitchenRef jsonContent ', jsonContent);
-            printKitchen(jsonContent)
+        printKitchenRef(jsonContent, type = TYPE_PRINT.KITCHEN) {
+            console.log('printKitchenRef jsonContent: ', jsonContent);
+            printKitchen(jsonContent, type)
         }
     }));
 
@@ -138,11 +137,13 @@ export default forwardRef((props, ref) => {
         }
     }
 
-    const printKitchen = async (data) => {
+    const printKitchen = async (data, type = TYPE_PRINT.KITCHEN) => {
         isProvisional.current = false;
         let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
         vendorSession = JSON.parse(vendorSession);
-        console.log("data ", data);
+        console.log("data ===:: " + data);
+        data = JSON.parse(data)
+        console.log("data === " + data);
         console.log("printObject ", printObject);
         console.log('vendorSession ', vendorSession);
         for (const value in data) {
@@ -152,8 +153,8 @@ export default forwardRef((props, ref) => {
                 for (const key in item) {
                     if (item.hasOwnProperty(key)) {
                         const element = item[key];
-                        console.log('element ', element);
-                        let res = printService.GenHtmlKitchen(htmlKitchen, element, i, vendorSession)
+                        console.log('element == ', element);
+                        let res = printService.GenHtmlKitchen(htmlKitchen, element, i, vendorSession, type)
                         if (res && res != "") {
                             printService.listWaiting.push({ html: res, ip: printObject[value] })
                         }

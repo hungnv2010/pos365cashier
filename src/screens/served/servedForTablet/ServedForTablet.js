@@ -239,7 +239,7 @@ const Served = (props) => {
                 jsonContent.OrderDetails.forEach(elm => {
                     if (elm.ProductId == product.ProductId) {
                         isExist = true
-                        elm.Quantity += product.Quantity
+                        elm.Quantity = product.Quantity
                         return;
                     }
                 })

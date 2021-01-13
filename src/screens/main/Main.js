@@ -23,7 +23,7 @@ export default (props) => {
   let scan = null
   const viewPrintRef = useRef();
   const dispatch = useDispatch();
-  const { listPrint, isFNB } = useSelector(state => {
+  const { listPrint, isFNB, printProvisional, printReturnProduct } = useSelector(state => {
     return state.Common
   })
 
@@ -35,6 +35,24 @@ export default (props) => {
       dispatch({ type: 'LIST_PRINT', listPrint: "" })
     }
   }, [listPrint])
+
+  useEffect(() => {
+    if (printReturnProduct != "") {
+      console.log("useEffect ===== printReturnProduct ", printReturnProduct);
+      viewPrintRef.current.printKitchenRef(printReturnProduct, TYPE_PRINT.RETURN_PRODUCT)
+      dispatch({ type: 'PRINT_RETURN_PRODUCT', printReturnProduct: "" })
+    }
+  }, [printReturnProduct])
+
+  useEffect(() => {
+    if (printProvisional != "") {
+      console.log("useEffect ===== printProvisional ", printProvisional);
+      viewPrintRef.current.printProvisionalRef(printProvisional)
+      dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: "" })
+    }
+  }, [printProvisional])
+  
+  // PRINT_PROVISIONAL
 
   useEffect(() => {
     const getCurrentBranch = async () => {

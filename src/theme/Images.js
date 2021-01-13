@@ -80,7 +80,14 @@ const images = {
     icon_version: require("../../assets/icons/version.jpg"),
     icon_quick_note: require("../../assets/icons/icon_quick_note.jpg"),
     icon_vouchers: require("../../assets/icons/gift-box.png"),
-    icon_menu_product: require("../../assets/icons/icon_menu.png")
+    icon_menu_product: require("../../assets/icons/icon_menu.png"),
+    icon_cashier: require("../../assets/icons/icon_cashier.png"),
+    icon_overview: require("../../assets/icons/icon_overview.png"),
+    icon_room_table: require("../../assets/icons/icon_room_table.png"),
+    icon_back:require("../../assets/icons/right_arrow.png"),
+    icon_search:require("../../assets/icons/icon_search.png"),
+    icon_remove:require("../../assets/icons/icon_remove.png"),
+    
 }
 
 export default images

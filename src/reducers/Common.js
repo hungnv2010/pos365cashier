@@ -25,6 +25,8 @@ const initState = {
 	isFNB: null,
 
 	listPrint: "",
+	printProvisional: "",
+	printReturnProduct: ""
 }
 
 const commonReducer = (state = initState, action = {}) => {
@@ -108,11 +110,16 @@ const commonReducer = (state = initState, action = {}) => {
 				...state,
 				listPrint: action.listPrint
 			}
-		// case "HISTORY_ORDER":
-		// 	return {
-		// 		...state,
-		// 		historyOrder: action.historyOrder
-		// 	}
+		case "PRINT_PROVISIONAL":
+			return {
+				...state,
+				printProvisional: action.printProvisional
+			}
+		case "PRINT_RETURN_PRODUCT":
+			return {
+				...state,
+				printReturnProduct: action.printReturnProduct
+			}
 		default:
 			return state
 	}

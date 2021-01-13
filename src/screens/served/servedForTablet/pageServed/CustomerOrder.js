@@ -139,7 +139,7 @@ const CustomerOrder = (props) => {
     }, [debouceWaitingList])
 
     const applyDialogDetail = (product) => {
-        // console.log('applyDialogDetail', product);
+        console.log('applyDialogDetail product ', product);
         // if (product.Quantity > 0) {
         //     mapDataToList(product, true)
         // } else {
@@ -160,12 +160,16 @@ const CustomerOrder = (props) => {
                 elm.Description = product.Description
                 elm.Discount = discount - price > 0 ? price : discount
                 elm.Price = product.Price
+                elm.IsLargeUnit = product.IsLargeUnit
             }
         })
+        console.log('applyDialogDetail listOrder ', listOrder);
         props.outputSelectedProduct(product)
     }
 
     const mapDataToList = (product, isNow = true) => {
+        console.log("mapDataToList product isNow ", product, isNow);
+        
         if (isNow) props.outputSelectedProduct(product, true)
         else {
             let isExist = false
@@ -304,7 +308,7 @@ const CustomerOrder = (props) => {
                             </Text>
                         </View>
                         <View style={{}}>
-                            <Icon style={{ alignSelf: "flex-end" }} name="bell-ring" size={20} color={item.Quantity == item.Processed ? Colors.colorLightBlue : "gray"} />
+                            <Icon style={{ alignSelf: "flex-end" }} name="bell-ring" size={20} color={item.Quantity <= item.Processed ? Colors.colorLightBlue : "gray"} />
                             <Text
                                 style={{ color: Colors.colorchinh, alignSelf: "flex-end" }}>
                                 {isPromotion ? currencyToString(item.Price * item.Quantity) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit * item.Quantity) : currencyToString(item.Price * item.Quantity))}

@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { Snackbar } from 'react-native-paper';
 import I18n from '../../common/language/i18n'
 import moment from "moment";
+import { TYPE_PRINT } from '../../screens/more/ViewPrint';
 const { Print } = NativeModules;
 const eventSwicthScreen = new NativeEventEmitter(Print);
 
@@ -114,7 +115,7 @@ class PrintService {
         return item.Quantity * price
     }
 
-    GenHtmlKitchen = (html, JsonContent, i, vendorSession) => {
+    GenHtmlKitchen = (html, JsonContent, i, vendorSession, type = TYPE_PRINT.KITCHEN) => {
         // let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
         console.log('GenHtmlKitchen JsonContent ', JsonContent);
         // vendorSession = JSON.parse(vendorSession);
@@ -123,15 +124,22 @@ class PrintService {
         let listHtml = HTMLBase.split("<!--Body Table-->");
         let listTable = ""
         JsonContent.forEach((el, index) => {
-            var description = el.Description && el.Description.trim() != "" ? `<br>${el.Description?.replace(";", "<br>")}` : "";
-            let itemTable = listHtml[1];
+            if (el.Quantity - el.Processed > 0) {
+                var description = el.Description && el.Description.trim() != "" ? `<br>${el.Description?.replace(";", "<br>")}` : "";
+                let itemTable = listHtml[1];
 
-            itemTable = itemTable.replace("{STT_Hang_Hoa}", "" + (index + 1))
-            itemTable = itemTable.replace("{Ten_Hang_Hoa}", "" + el.Name)
-            itemTable = itemTable.replace("{Ghi_Chu_Hang_Hoa}", description)
-            itemTable = itemTable.replace("{So_Luong}", Math.round(el.Quantity * 1000) / 1000)
-            itemTable = itemTable.replace("{DVT_Hang_Hoa}", (el.IsLargeUnit ? el.LargeUnit : el.Unit))
-            listTable += itemTable;
+                itemTable = itemTable.replace("{STT_Hang_Hoa}", "" + (index + 1))
+                if (type != TYPE_PRINT.KITCHEN) {
+                    itemTable = itemTable.replace("{So_Luong_Check}", "text-decoration: line-through; ");
+                }
+                itemTable = itemTable.replace("{Ten_Hang_Hoa}", "" + el.Name)
+                itemTable = itemTable.replace("{Ghi_Chu_Hang_Hoa}", description)
+                itemTable = itemTable.replace("{So_Luong}", Math.round((type != TYPE_PRINT.KITCHEN ? (el.Processed - el.Quantity) : (el.Quantity - el.Processed)) * 1000) / 1000)
+                itemTable = itemTable.replace("{DVT_Hang_Hoa}", (el.IsLargeUnit ? el.LargeUnit : el.Unit))
+                listTable += itemTable;
+
+                delete el.QuantityPrint;
+            }
         });
         HTMLBase = listHtml[0] + listTable + listHtml[2];
         HTMLBase = HTMLBase.replace("{Ten_Phong_Ban}", JsonContent[0].RoomName + "[" + JsonContent[0].Pos + "]")
@@ -143,6 +151,7 @@ class PrintService {
             HTMLBase = HTMLBase.replace("{Nhan_Vien}", vendorSession.CurrentUser.Name)
         }
         console.log("html ", JSON.stringify(HTMLBase));
+
         return HTMLBase;
         // })
     }

@@ -50,7 +50,7 @@ export default (props) => {
     return (
         <View style={{
             padding: 0,
-            backgroundColor: "#fff", borderRadius: 4, marginHorizontal: 0,
+            backgroundColor: "#fff", borderRadius: 5, marginHorizontal: 0,
             // width: !isSelectCustom ? Metrics.screenWidth * 0.5 : null,
             justifyContent: 'center',
         }}>
@@ -60,7 +60,7 @@ export default (props) => {
                         {props.header ?
                             props.header
                             :
-                            <View style={{ backgroundColor: "#FF4500" }}>
+                            <View style={{ backgroundColor: "#FF4500" ,borderTopStartRadius:5,borderTopEndRadius:5}}>
                                 <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", paddingVertical: 10, color: "#FFFFFF" }}>{I18n.t('chon_khoang_thoi_gian')}</Text>
                             </View>
                         }
@@ -164,10 +164,10 @@ const CustomTime = (props) => {
 }
 const styles = StyleSheet.create({
     styleButtonOK: {
-        flex: 1, backgroundColor: "#FF4500", borderRadius: 4, paddingHorizontal: 20, paddingVertical: 10, justifyContent: "flex-end", marginLeft: 10, marginRight: 20, marginBottom: 10
+        flex: 1, backgroundColor: "#FF4500", borderRadius: 5, paddingHorizontal: 20, paddingVertical: 10, justifyContent: "flex-end", marginLeft: 10, marginRight: 20, marginBottom: 10
     },
     styleButtonHuy: {
-        flex: 1, backgroundColor: "#fff", borderWidth: 1, borderColor: "#FF4500", borderRadius: 4, justifyContent: 'flex-start', paddingVertical: 10, paddingHorizontal: 20, marginLeft: 20, marginRight: 10, marginBottom: 10
+        flex: 1, backgroundColor: "#fff", borderWidth: 1, borderColor: "#FF4500", borderRadius: 5, justifyContent: 'flex-start', paddingVertical: 10, paddingHorizontal: 20, marginLeft: 20, marginRight: 10, marginBottom: 10
     },
     styleTextBtnHuy: { textAlign: "center", color: "#FF4500", fontSize: 16 },
     styleTextBtnOk: { textAlign: "center", color: "#fff", fontSize: 16 },

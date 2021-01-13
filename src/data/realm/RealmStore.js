@@ -104,6 +104,7 @@ class RealmStore extends RealmBase {
 
     //server event
     insertServerEvent = async (newServerEvent, FromServer = false) => {
+        console.log("insertServerEvent ==== ", newServerEvent);
         let realm = await Realm.open(databaseOption)
         return new Promise((resolve) => realm.write(() => {
             let serverEvent = realm.objectForPrimaryKey(SchemaName.SERVER_EVENT, newServerEvent.RowKey)
