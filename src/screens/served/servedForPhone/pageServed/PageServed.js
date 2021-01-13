@@ -34,7 +34,6 @@ export default (props) => {
     const [currentPriceBook, setCurrentPriceBook] = useState({ Name: "gia_niem_yet", Id: 0 })
     const [currentCustomer, setCurrentCustomer] = useState({ Name: "khach_hang", Id: 0 })
     const toolBarPhoneServedRef = useRef();
-    const listPriceBookRef = useRef({})
     const [listPosition, setListPosition] = useState([
         { name: "A", status: false },
         { name: "B", status: false },
@@ -54,7 +53,6 @@ export default (props) => {
             let serverEvent = await realmStore.queryServerEvents()
             let listPriceBook = await realmStore.queryPricebook()
             listPriceBook = JSON.parse(JSON.stringify(listPriceBook))
-            listPriceBookRef.current = listPriceBook
             const row_key = `${props.route.params.room.Id}_${position}`
             serverEvent = serverEvent.filtered(`RowKey == '${row_key}'`)
             currentServerEvent.current = JSON.stringify(serverEvent) != '{}' && serverEvent[0].JsonContent ? JSON.parse(JSON.stringify(serverEvent[0]))
@@ -64,9 +62,11 @@ export default (props) => {
             if (jsonContentObject.Partner) {
                 setCurrentCustomer(jsonContentObject.Partner)
             }
-            for (const property in listPriceBook) {
-                if (listPriceBook[property].Id == jsonContentObject.PriceBookId) {
-                    setCurrentPriceBook(listPriceBook[property])
+            if (jsonContentObject.PriceBookId) {
+                for (const property in listPriceBook) {
+                    if (listPriceBook[property].Id == jsonContentObject.PriceBookId) {
+                        setCurrentPriceBook(listPriceBook[property])
+                    }
                 }
             }
             setJsonContent(jsonContentObject)
@@ -464,7 +464,7 @@ export default (props) => {
     }
 
     const onClickListedPrice = () => {
-        props.navigation.navigate(ScreenList.PriceBook, { _onSelect: onCallBackPriceCustomer, currentPriceBook: currentPriceBook,  })
+        props.navigation.navigate(ScreenList.PriceBook, { _onSelect: onCallBackPriceCustomer, currentPriceBook: currentPriceBook, })
     }
 
 

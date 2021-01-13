@@ -98,10 +98,13 @@ const Served = (props) => {
             if (jsonContentObject.Partner) {
                 setCurrentCustomer(jsonContentObject.Partner)
             }
-            for (const property in listPriceBook) {
-                if (listPriceBook[property].Id == jsonContentObject.PriceBookId) {
-                    setCurrentPriceBook(listPriceBook[property])
+            if (jsonContentObject.PriceBookId) {
+                for (const property in listPriceBook) {
+                    if (listPriceBook[property].Id == jsonContentObject.PriceBookId) {
+                        setCurrentPriceBook(listPriceBook[property])
+                    }
                 }
+
             }
             setJsonContent(jsonContentObject)
 

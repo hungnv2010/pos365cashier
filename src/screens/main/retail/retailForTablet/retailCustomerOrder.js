@@ -11,10 +11,12 @@ import { Snackbar } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { ScreenList } from '../../../../common/ScreenList';
 import DialogProductDetail from '../../../../components/dialog/DialogProductDetail'
-import Entypo from 'react-native-vector-icons/Entypo';
 import realmStore from '../../../../data/realm/RealmStore';
 import dataManager from '../../../../data/DataManager';
 import _, { map } from 'underscore';
+import { ApiPath } from '../../../../data/services/ApiPath';
+import { HTTPService } from '../../../../data/services/HttpService';
+import Entypo from 'react-native-vector-icons/Entypo';
 
 
 const TYPE_MODAL = {
@@ -33,10 +35,9 @@ const RetailCustomerOrder = (props) => {
     const [expand, setExpand] = useState(false)
     const typeModal = useRef(TYPE_MODAL.DETAIL)
     const [itemOrder, setItemOrder] = useState({})
-    const [currentCommodity, setCurrentCommodity] = useState({})
-    const [currentPriceBook, setCurrentPriceBook] = useState({ Name: "gia_niem_yet", Id: 0 })
-    const [currentCustomer, setCurrentCustomer] = useState({ Name: "khach_hang", Id: 0 })
-    const [jsonContent, setJsonContent] = useState({})
+    // const listPriceBookRef = useRef({})
+    // const currentCommodity = useRef({})
+    // const [jsonContent, setJsonContent] = useState({})
     const [isQuickPayment, setIsQuickPayment] = useState(false)
     const [promotions, setPromotions] = useState([])
 
@@ -49,28 +50,43 @@ const RetailCustomerOrder = (props) => {
 
 
     useEffect(() => {
-        const getCommodityWaiting = async () => {
-            serverEvents = await realmStore.queryServerEvents()
-            let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
-            newServerEvents = Object.values(newServerEvents)
-            console.log('newServerEvents', newServerEvents);
-            setNumberNewOrder(newServerEvents.length)
-            if (newServerEvents.length == 0) {
-                let newSE = await createNewServerEvent()
-                setCurrentCommodity(newSE)
-            } else {
-                setCurrentCommodity(newServerEvents[0])
-                let jsonContent = JSON.parse(newServerEvents[0].JsonContent)
-                syncListProducts(jsonContent.OrderDetails)
-            }
 
-            serverEvents.addListener((collection, changes) => {
-                if (changes.insertions.length || changes.modifications.length) {
-                    setNumberNewOrder(serverEvents.length)
-                }
-            })
-        }
-        getCommodityWaiting()
+        // const getCommodityWaiting = async () => {
+        //     let listPriceBook = await realmStore.queryPricebook()
+        //     listPriceBook = JSON.parse(JSON.stringify(listPriceBook))
+        //     listPriceBookRef.current = listPriceBook
+        //     serverEvents = await realmStore.queryServerEvents()
+        //     let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
+        //     newServerEvents = Object.values(newServerEvents)
+        //     console.log('newServerEvents', newServerEvents);
+        //     setNumberNewOrder(newServerEvents.length)
+        //     if (newServerEvents.length == 0) {
+        //         let newSE = await createNewServerEvent()
+        //         currentCommodity.current = (newSE)
+        //         setJsonContent(JSON.parse(newSE.JsonContent))
+        //     } else {
+        //         currentCommodity.current = (newServerEvents[0])
+        //         let jsonContent = JSON.parse(newServerEvents[0].JsonContent)
+        //         if (jsonContent.Partner) props.outputCustomer(jsonContent.Partner)
+        //         if (jsonContent.PriceBookId) {
+        //             for (const property in listPriceBook) {
+        //                 if (listPriceBook[property].Id == jsonContent.PriceBookId) {
+        //                     props.ouptutPriceBook(listPriceBook[property])
+        //                 }
+        //             }
+
+        //         }
+        //         setJsonContent(jsonContent)
+        //         syncListProducts(jsonContent.OrderDetails)
+        //     }
+
+        //     serverEvents.addListener((collection, changes) => {
+        //         if (changes.insertions.length || changes.modifications.length) {
+        //             setNumberNewOrder(serverEvents.length)
+        //         }
+        //     })
+        // }
+        // getCommodityWaiting()
         var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
         var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
         const getDataRealm = async () => {
@@ -87,90 +103,31 @@ const RetailCustomerOrder = (props) => {
         }
     }, [])
 
-    useEffect(() => {
-        setDataOrder([...props.listProducts])
-    }, [props.listProducts])
+
 
     useEffect(() => {
-        const getOtherPrice = async () => {
-            if (listOrder && currentPriceBook) {
-                let apiPath = ApiPath.PRICE_BOOK + `/${currentPriceBook.Id}/manyproductprice`
-                let params = { "pricebookId": currentPriceBook.Id, "ProductIds": listOrder.map((product) => product.ProductId) }
-                console.log('getOtherPrice params', params);
-                let res = await new HTTPService().setPath(apiPath).POST(params)
-                if (res && res.PriceList && res.PriceList.length > 0) {
-                    console.log('getOtherPrice res', res);
-                    listOrder.map((product) => {
-                        res.PriceList.forEach((priceBook) => {
-                            if (priceBook.ProductId == product.ProductId) {
-                                product.DiscountRatio = 0.0
-                                if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
-                                if (!priceBook.Price) priceBook.Price = product.UnitPrice
-                                let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price
-                                product.Price = newBasePrice + product.TotalTopping
-                            }
-                        })
-                    })
-                    // updateServerEvent()
-                }
-                setListProducts([...listOrder])
-            }
+        console.log('props.jsonContent.OrderDetails', props.jsonContent);
+        if (JSON.stringify(props.jsonContent) != "{}") {
+            setListOrder(props.jsonContent.OrderDetails)
         }
-
-        const getBasePrice = () => {
-            listOrder.map((product) => {
-                product.DiscountRatio = 0.0
-                let basePrice = (product.IsLargeUnit) ? product.PriceLargeUnit : product.UnitPrice
-                product.Price = basePrice + product.TotalTopping
-            })
-            // updateServerEvent()
-            setListProducts([...listOrder])
-        }
-        if (listOrder) {
-            if (currentPriceBook && currentPriceBook.Id) getOtherPrice()
-            else getBasePrice()
-        }
-    }, [currentPriceBook])
+    }, [props.jsonContent])
 
 
     useEffect(() => {
         listOrder.forEach((elm, index) => elm.index = index)
-        updateServerEvent(listOrder)
     }, [listOrder])
 
-    useEffect(() => {
-        console.log('currentCommodity', currentCommodity);
-        let jsonObject = currentCommodity.JsonContent ? JSON.parse(currentCommodity.JsonContent) : {}
-        setJsonContent(jsonObject)
-    }, [currentCommodity])
 
 
 
 
     const syncListProducts = (data) => {
         props.outputSelectedProduct(data, 2)
-        setDataOrder(data)
-    }
-
-    const createNewServerEvent = async () => {
-        let newServerEvent = await dataManager.createSeverEvent(Date.now(), "A")
-        newServerEvent.JsonContent = JSON.stringify(dataManager.createJsonContentForRetail(newServerEvent.RoomId))
-        console.log('newServerEvent', newServerEvent);
-        return realmStore.insertServerEventForRetail(newServerEvent)
+        // setDataOrder(data)
     }
 
 
-    const updateServerEvent = (data) => {
-        console.log(`updateServerEvent ${currentCommodity.RowKey}`, data, currentCommodity);
-        if (!currentCommodity.JsonContent) return
-        let jsonContent = JSON.parse(currentCommodity.JsonContent)
-        jsonContent.OrderDetails = [...data]
-        dataManager.calculatateJsonContent(jsonContent)
-        console.log('updateServerEvent jsonContent', jsonContent);
-        currentCommodity.JsonContent = JSON.stringify(jsonContent)
-        realmStore.insertServerEventForRetail(currentCommodity)
-        setCurrentCommodity({ ...currentCommodity })
-    }
+
 
     const _keyboardDidShow = () => {
         if (orientaition != Constant.PORTRAIT)
@@ -197,7 +154,7 @@ const RetailCustomerOrder = (props) => {
             }
         })
         syncListProducts([...listOrder])
-    
+
     }
 
     const setDataOrder = async (listOrder) => {
@@ -207,6 +164,8 @@ const RetailCustomerOrder = (props) => {
         console.log("setDataOrder listOrder list ", listOrder, list);
 
         setListOrder([...list])
+        // updateServerEvent([...list])
+
     }
 
     const removeItem = (product, index) => {
@@ -216,14 +175,18 @@ const RetailCustomerOrder = (props) => {
     }
 
     const onClickNewOrder = async () => {
-        if (listOrder.length == 0) {
-            setToastDescription(I18n.t("moi_chon_mon_truoc"))
-            setShowToast(true)
-            return
-        }
-        let newSE = await createNewServerEvent()
-        setCurrentCommodity(newSE)
-        syncListProducts([])
+        props.onClickNewOrder()
+        // if (listOrder.length == 0) {
+        //     setToastDescription(I18n.t("moi_chon_mon_truoc"))
+        //     setShowToast(true)
+        //     return
+        // }
+        // let newSE = await createNewServerEvent()
+        // currentCommodity.current = (newSE)
+        // setJsonContent(JSON.parse(newSE.JsonContent))
+        // syncListProducts([])
+        // props.outputCustomer({ Name: "khach_hang", Id: 0 })
+        // props.ouptutPriceBook({ Name: "gia_niem_yet", Id: 0 })
     }
 
     const addPromotion = async (list) => {
@@ -420,7 +383,8 @@ const RetailCustomerOrder = (props) => {
                                                 } else {
                                                     item.Quantity--
                                                     // setListOrder([...listOrder])
-                                                    setDataOrder([...listOrder])
+                                                    // setDataOrder([...listOrder])
+                                                    syncListProducts([...listOrder])
                                                 }
                                             }}>
                                             <Icon name="minus-box" size={40} color={Colors.colorchinh} />
@@ -449,7 +413,8 @@ const RetailCustomerOrder = (props) => {
                                         <TouchableOpacity onPress={() => {
                                             item.Quantity++
                                             // setListOrder([...listOrder])
-                                            setDataOrder([...listOrder])
+                                            // setDataOrder([...listOrder])
+                                            syncListProducts([...listOrder])
                                         }}>
                                             <Icon name="plus-box" size={40} color={Colors.colorchinh} />
                                         </TouchableOpacity>
@@ -472,42 +437,43 @@ const RetailCustomerOrder = (props) => {
         if (isQuickPayment) {
 
         } else {
-            props.navigation.navigate(ScreenList.Payment, { onCallBack: onCallBackPayment, Screen: ScreenList.MainRetail, RoomId: jsonContent.RoomId, Name: jsonContent.RoomName ? jsonContent.RoomName : I18n.t('app_name'), Position: jsonContent.Pos });
+            props.navigation.navigate(ScreenList.Payment, { onCallBack: onCallBackPayment, Screen: ScreenList.MainRetail, RoomId: props.jsonContent.RoomId, Name: props.jsonContent.RoomName ? props.jsonContent.RoomName : I18n.t('app_name'), Position: props.jsonContent.Pos });
         }
     }
 
-    const onClickListedPrice = () => {
-        console.log('onClickListedPrice');
-        props.navigation.navigate(ScreenList.PriceBook, { _onSelect: onCallBack, currentPriceBook: currentPriceBook })
-    }
 
-    const onClickRetailCustomer = () => {
-        console.log('onClickRetailCustomer');
-        props.navigation.navigate(ScreenList.Customer, { _onSelect: onCallBack, currentCustomer: currentCustomer })
-    }
 
     const onCLickCommodity = () => {
-        console.log('onCLickCommodity');
-        props.navigation.navigate(ScreenList.CommodityWaiting, {
-            _onSelect: onCallBack
-        });
+       
+        props.onCLickCommodity()
     }
 
     const onCallBack = (data, type) => {
         switch (type) {
-            case 1:
-                if (data) setCurrentPriceBook(data)
-                break
-            case 2:
-                if (data) setCurrentCustomer(data)
-                break
+            // case 1:
+            //     if (data) props.ouptutPriceBook(data)
+            //     break
+            // case 2:
+            //     if (data) props.outputCustomer(data)
+            //     break
             case 3: // from commodity waiting
-                console.log('setCurrentCommodity(data)', data);
-                setCurrentCommodity(data)
-                let jsonContent = JSON.parse(data.JsonContent)
-                console.log('jsonContent', jsonContent);
-                setJsonContent(jsonContent)
-                syncListProducts(jsonContent.OrderDetails)
+                currentCommodity.current = (data)
+                // let jsonContent = JSON.parse(data.JsonContent)
+                // console.log('jsonContentjsonContent', jsonContent, listPriceBookRef.current);
+                // if (jsonContent.Partner) props.outputCustomer(jsonContent.Partner)
+                // else props.outputCustomer({ Name: "khach_hang", Id: 0 })
+                // if (jsonContent.PriceBookId) {
+                //     for (const property in listPriceBookRef.current) {
+                //         if (listPriceBookRef.current[property].Id == jsonContent.PriceBookId) {
+                //             props.ouptutPriceBook(listPriceBookRef.current[property])
+                //         }
+                //     }
+
+                // } else {
+                //     props.ouptutPriceBook({ Name: "gia_niem_yet", Id: 0 })
+                // }
+                // setJsonContent(jsonContent)
+                // syncListProducts(jsonContent.OrderDetails)
                 break;
 
             default:
@@ -519,22 +485,33 @@ const RetailCustomerOrder = (props) => {
         setIsQuickPayment(!isQuickPayment)
     }
 
+
+    // const onClickListedPrice = () => {
+    //     console.log('onClickListedPrice');
+    //     props.navigation.navigate(ScreenList.PriceBook, { _onSelect: onCallBack, currentPriceBook: props.currentPriceBook })
+    // }
+
+    // const onClickRetailCustomer = () => {
+    //     console.log('onClickRetailCustomer');
+    //     props.navigation.navigate(ScreenList.Customer, { _onSelect: onCallBack, currentCustomer: props.currentCustomer })
+    // }
+
     return (
         <View style={{ flex: 1 }}>
-            <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 2, borderBottomColor: Colors.colorchinh, borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5 }}>
+            {/* <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 2, borderBottomColor: Colors.colorchinh, borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5 }}>
                 <TouchableOpacity
                     style={{ flexDirection: "row", alignItems: "center" }}
                     onPress={onClickListedPrice}>
                     <Entypo style={{ paddingHorizontal: 5 }} name="price-ribbon" size={25} color={Colors.colorchinh} />
-                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{currentPriceBook.Id == 0 ? I18n.t(currentPriceBook.Name) : currentPriceBook.Name}</Text>
+                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{props.currentPriceBook.Id == 0 ? I18n.t(props.currentPriceBook.Name) : props.currentPriceBook.Name}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={{ flexDirection: "row", alignItems: "center" }}
                     onPress={onClickRetailCustomer}>
-                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{currentCustomer.Id == 0 ? I18n.t(currentCustomer.Name) : currentCustomer.Name}</Text>
+                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{props.currentCustomer.Id == 0 ? I18n.t(props.currentCustomer.Name) : props.currentCustomer.Name}</Text>
                     <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} color={Colors.colorchinh} />
                 </TouchableOpacity>
-            </View>
+            </View> */}
             <View style={{ flex: 1 }}>
                 {listOrder.length > 0 ?
                     <FlatList
@@ -558,7 +535,7 @@ const RetailCustomerOrder = (props) => {
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                         <Text style={{ fontWeight: "bold" }}>{I18n.t('khach_phai_tra')}</Text>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                            <Text style={{ fontWeight: "bold", fontSize: 16, color: Colors.colorchinh }}>{currencyToString(jsonContent.AmountReceived)}</Text>
+                            <Text style={{ fontWeight: "bold", fontSize: 16, color: Colors.colorchinh }}>{currencyToString(props.jsonContent.Total - props.jsonContent.VAT + props.jsonContent.Discount)}</Text>
                             {expand ?
                                 <Icon style={{}} name="chevron-up" size={30} color="black" />
                                 :
@@ -570,18 +547,18 @@ const RetailCustomerOrder = (props) => {
                         <View style={{ marginLeft: 0 }}>
                             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                                 <Text>{I18n.t('tong_chiet_khau')}</Text>
-                                <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>- {currencyToString(jsonContent.Discount)}đ</Text>
+                                <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>- {currencyToString(props.jsonContent.Discount)}đ</Text>
                             </View>
                             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
-                                <Text>VAT ({jsonContent.VATRates}%)</Text>
+                                <Text>VAT ({props.jsonContent.VATRates}%)</Text>
                                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                                    <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(jsonContent.VAT ? jsonContent.VAT : 0)}đ</Text>
+                                    <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(props.jsonContent.VAT ? props.jsonContent.VAT : 0)}đ</Text>
                                 </View>
                             </View>
                             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                                 <Text style={{ fontWeight: "bold" }}>{I18n.t('tong_thanh_tien')}</Text>
                                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                                    <Text style={{ fontWeight: "bold", fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(jsonContent.Total)}</Text>
+                                    <Text style={{ fontWeight: "bold", fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(props.jsonContent.Total)}</Text>
                                 </View>
                             </View>
                         </View>
