@@ -16,7 +16,7 @@ export const ReturnProduct = (props) => {
 
     // const [itemOrder, setItemOrder] = useState({ ...props.item })
     const [Quantity, setQuantity] = useState(props.Quantity)
-    const [QuantityChange, setQuantityChange] = useState(props.Quantity)
+    const [QuantityChange, setQuantityChange] = useState(props.QuantitySubtract > 0 ? props.QuantitySubtract : props.Quantity)
     const [Name, setName] = useState(props.Name)
     const [vendorSession, setVendorSession] = useState(props.vendorSession);
     const [Description, setDescription] = useState("");

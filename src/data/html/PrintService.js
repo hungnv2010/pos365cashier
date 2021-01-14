@@ -65,7 +65,7 @@ class PrintService {
                 HTMLBase = HTMLBase.replace("{Dia_Chi_Cua_Hang}", vendorSession.CurrentRetailer.Address ? vendorSession.CurrentRetailer.Address : "")
                 HTMLBase = HTMLBase.replace("{Dien_Thoai_Cua_Hang}", vendorSession.CurrentRetailer.Phone)
                 HTMLBase = HTMLBase.replace("{Loai_Hoa_Don}", typeHeader)
-                HTMLBase = HTMLBase.replace("{Ma_Chung_Tu}", number + ": " + code)
+                HTMLBase = HTMLBase.replace("{Ma_Chung_Tu}", number + ": " + (JsonContent.PaymentCode ? JsonContent.PaymentCode : code))
                 HTMLBase = HTMLBase.replace("{Ngay_Tao_Karaoke}", dateToDate(new Date()))
                 HTMLBase = HTMLBase.replace("{Ngay}/{Thang}/{Nam}-{Gio}:{Phut}-Vao", dateToDate(JsonContent.ActiveDate, DATE_FORMAT, "DD/MM/YYYY - HH:mm"))
                 HTMLBase = HTMLBase.replace("{Ngay}/{Thang}/{Nam}-{Gio}:{Phut}-Ra", dateToDate(new Date(), DATE_FORMAT, "DD/MM/YYYY - HH:mm"))
@@ -115,6 +115,21 @@ class PrintService {
         return item.Quantity * price
     }
 
+    handlerQuantityPrint(el, type) {
+        let Quantity = 0;
+        if (type != TYPE_PRINT.KITCHEN) {
+            if (el.Processed >= el.QuantityChange) {
+                Quantity = 0 - el.QuantityChange
+            } else {
+                Quantity = 0 - el.Processed
+            }
+        } else {
+            Quantity = Math.round((el.Quantity - el.Processed) * 1000) / 1000;
+        }
+        console.log("handlerQuantityPrint Quantity ", Quantity);
+        return Quantity;
+    }
+
     GenHtmlKitchen = (html, JsonContent, i, vendorSession, type = TYPE_PRINT.KITCHEN) => {
         // let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
         console.log('GenHtmlKitchen JsonContent ', JsonContent);
@@ -123,8 +138,10 @@ class PrintService {
         let HTMLBase = html;
         let listHtml = HTMLBase.split("<!--Body Table-->");
         let listTable = ""
+
         JsonContent.forEach((el, index) => {
-            if (el.Quantity - el.Processed > 0) {
+            if ((type == TYPE_PRINT.KITCHEN && (el.Quantity - el.Processed > 0))
+            ) {
                 var description = el.Description && el.Description.trim() != "" ? `<br>${el.Description?.replace(";", "<br>")}` : "";
                 let itemTable = listHtml[1];
 
@@ -134,11 +151,9 @@ class PrintService {
                 }
                 itemTable = itemTable.replace("{Ten_Hang_Hoa}", "" + el.Name)
                 itemTable = itemTable.replace("{Ghi_Chu_Hang_Hoa}", description)
-                itemTable = itemTable.replace("{So_Luong}", Math.round((type != TYPE_PRINT.KITCHEN ? (el.Processed - el.Quantity) : (el.Quantity - el.Processed)) * 1000) / 1000)
+                itemTable = itemTable.replace("{So_Luong}", this.handlerQuantityPrint(el, type))
                 itemTable = itemTable.replace("{DVT_Hang_Hoa}", (el.IsLargeUnit ? el.LargeUnit : el.Unit))
                 listTable += itemTable;
-
-                delete el.QuantityPrint;
             }
         });
         HTMLBase = listHtml[0] + listTable + listHtml[2];

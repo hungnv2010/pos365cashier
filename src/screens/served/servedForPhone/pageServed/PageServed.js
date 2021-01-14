@@ -223,6 +223,7 @@ export default (props) => {
         list = await addPromotion(list);
         console.log("outputListProducts addPromotion list ", list);
         jsonContent.OrderDetails = [...list]
+        jsonContent.Pos = position;
         updateServerEvent()
     }
 
@@ -345,6 +346,7 @@ export default (props) => {
 
     const updateServerEvent = () => {
         console.log('updateServerEvent', currentPriceBook.Id);
+        console.log('updateServerEvent jsonContent :: ', jsonContent);
         if (currentServerEvent.current) {
             let serverEvent = currentServerEvent.current
             dataManager.calculatateJsonContent(jsonContent)

@@ -83,15 +83,15 @@ export default forwardRef((props, ref) => {
         }).then(
             uri => {
                 console.log('Snapshot uri', uri, currentHtml);
-                // Print.printImageFromClient(uri, currentHtml.current.ip, ( b) => {
+                // alert("img " + uri)
+                // setUriImg(uri)
                 Print.printImageFromClient(uri, "192.168.100.237", (b) => {
                     console.log("printImageFromClient ab ", b);
                 })
                 if (!isProvisional.current)
                     setTimeout(() => {
-                        alert("print ")
                         setDataHtmlPrint()
-                    }, 1000);
+                    }, 500);
             },
             error => console.error('Oops, snapshot failed', error)
         );
@@ -113,7 +113,7 @@ export default forwardRef((props, ref) => {
     const printProvisional = async (jsonContent, checkProvisional = false) => {
         let ip = await checkIP()
         // ip = "192.168.100.237"
-        console.log("ip ", ip);
+        console.log("printProvisional jsonContent ", jsonContent);
         if (ip != "") {
             if (checkProvisional) {
                 let provisional = await getFileDuLieuString(Constant.PROVISIONAL_PRINT, true);
@@ -196,8 +196,12 @@ export default forwardRef((props, ref) => {
 
     const checkHtmlPrint = (e) => {
         console.log("checkHtmlPrint currentHtml e ", currentHtml, e);
-        if (currentHtml.current && currentHtml.current.html && currentHtml.current.html != "")
-            clickCapture()
+        if (currentHtml.current && currentHtml.current.html && currentHtml.current.html != "") {
+            setTimeout(() => {
+                clickCapture()
+            }, 100
+            );
+        }
     }
 
     const childRef = useRef();
@@ -221,14 +225,14 @@ export default forwardRef((props, ref) => {
                             }]}
                             source={{ html: dataHtml }}
                             scalesPageToFit={true}
-                            // startInLoadingState
+                            startInLoadingState
                             onLoadEnd={e => checkHtmlPrint(e)}
                         />
                     </View>
                 </ScrollView>
             </View>
             {/* <TouchableOpacity style={{backgroundColor:"red", padding: 20, flex: 1}} onPress={() => data.callback("ClickHung")}><Text>Click</Text></TouchableOpacity> */}
-            {/* <Image source={{ uri: uriImg }} resizeMode="contain" style={{ position: "absolute", top: 50, width: 100, height: 100, flex: 1 }} /> */}
+            {/* <Image source={{ uri: uriImg ? uriImg : "" }} resizeMode="contain" style={{ position: "absolute", top: 50, width: 100, height: 100, flex: 1 }} /> */}
         </View>
     )
 

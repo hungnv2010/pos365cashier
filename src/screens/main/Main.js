@@ -160,9 +160,9 @@ export default (props) => {
 
   return (
     <View style={{ flex: 1 }}>
-      <ViewPrint
+      {/* <ViewPrint
         ref={viewPrintRef}
-      />
+      /> */}
       {
         isFNB === null ?
           <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -185,6 +185,9 @@ export default (props) => {
               syncForRetail={clickSyncForRetail} />
 
       }
+      <ViewPrint
+        ref={viewPrintRef}
+      />
     </View>
   );
 };
