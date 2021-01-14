@@ -16,7 +16,7 @@ export default (props)=>{
     }
     const renderItem = (item,index) =>{
         return(
-            <View style={{borderColor: nameItem==item.Name?'#1E90FF':'white',borderWidth:1,marginLeft:20,marginRight:20,borderRadius:5}}>
+            <View style={{borderColor: nameItem==item.Name?'#1E90FF':'white',borderWidth:1,marginLeft:20,marginRight:20,borderRadius:15,padding:15,backgroundColor:'#f2f2f2'}}>
                 <TouchableOpacity onPress={()=>{setNameItem(item.Name); value.current={key:item.Name}}}>
                 <Text style={{padding:5,textAlign:'center', color:nameItem==item.Name?'#1E90FF':null,fontWeight:nameItem==item.Name?'bold':null}}>{item.Name}</Text>
                 </TouchableOpacity>
@@ -28,6 +28,7 @@ export default (props)=>{
             <Text style={styles.styleTextBold}>{props.title}</Text>
             <FlatList data={props.listItem} 
             renderItem={({item,index})=> renderItem(item,index)} 
+            keyExtractor={(item, index) => index.toString()}
             />
             <TouchableOpacity style={styles.styleButton} onPress={onClickApply}>
                 <Text style={[styles.styleTextBold,{color:'white'}]}>{props.titleButton}</Text>
@@ -37,10 +38,10 @@ export default (props)=>{
 }
 const styles = StyleSheet.create({
     styleButton:
-        {marginLeft:10,marginRight:10,backgroundColor:'#1E90FF',marginBottom:10,marginTop:10,borderRadius:5},
+        {marginLeft:10,marginRight:10,backgroundColor:'#1E90FF',marginBottom:15,marginTop:15,borderRadius:15,height:50},
     styleTextBold:{
         textAlign:'center',
-        fontWeight:'bold',padding:10,
+        fontWeight:'bold',padding:15,
     }
     
 })

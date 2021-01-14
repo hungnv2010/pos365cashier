@@ -87,6 +87,7 @@ const images = {
     icon_back:require("../../assets/icons/right_arrow.png"),
     icon_search:require("../../assets/icons/icon_search.png"),
     icon_remove:require("../../assets/icons/icon_remove.png"),
+    icon_refresh:require("../../assets/icons/icon_refresh.png"),
     
 }
 

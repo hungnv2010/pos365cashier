@@ -10,22 +10,51 @@ import { currencyToString } from '../../common/Utils';
 import { TextInput } from 'react-native-gesture-handler';
 import { ApiPath } from "../../data/services/ApiPath";
 import { HTTPService } from "../../data/services/HttpService";
-import DialogMultiChoice from '../../components/dialog/DialogMultiChoice'
+import DialogSingleChoice from '../../components/dialog/DialogSingleChoice'
+import DialogInput from '../../components/dialog/DialogInput'
 
 export default (props) => {
     const [product, setProduct] = useState({})
     const [productOl, setProductOl] = useState({})
     const [category, setCategory] = useState({})
     const [displayProduct, setDisplayProduct] = useState(true)
-    const [quantityOverTime, setQuantityOverTime] = useState(true)
-    const [priceByBlock, setPriceByBlock] = useState(true)
     const [showModal,setOnShowModal] = useState(false)
     const typeModal = useRef()
+    const addCate = useRef([{
+        Name:'ten_nhom',
+        Hint:'nhap_ten_nhom_hang_hoa'
+    }])
+    const addDVT = useRef([{
+        Name:'don_vi_tinh_lon',
+        Hint:'Lorem ipsum'
+    },
+    {
+        Name:'ma_dvt_lon',
+        Hint:'Lorem ipsum'
+    },
+    {
+        Name:'gia_ban_dvt_lon',
+        Hint:'Lorem ipsum'
+    },
+    {
+        Name:'gia_tri_quy_doi',
+        Hint:'Lorem ipsum'
+    },
+])
+    const { deviceType } = useSelector(state => {
+        return state.Common
+    })
     useEffect(() => {
-        getData(props.route.params)
+        if (deviceType==Constant.PHONE) {
+            getData(props.route.params)
         console.log("Image", typeof (product.ProductImages));
+        }    
     }, [])
-    const getData = (param) => {
+    useEffect(()=>{
+        setProduct(props.iproduct)
+        setCategory(props.iCategory)
+    },[props.iproduct])
+    const getData = (param) => {    
         setProduct(JSON.parse(JSON.stringify(param.product)))
         console.log("afsdfsa", product.Id);
         console.log("data product", product);
@@ -50,57 +79,84 @@ export default (props) => {
     useEffect(() => {
         console.log("afsdfsa", product.Id);
         getProduct()
-    }, [product.Code])
+        
+    }, [product])
     useEffect(() => {
         console.log('product Ol', productOl);
     }, [productOl])
     const renderModal=()=>{
         return(
-            <View>
-                <DialogMultiChoice listItem={category} title='Chon' titleButton='Ok' ></DialogMultiChoice>
+            <View>{typeModal.current==1?
+                <View style={{maxHeight:Metrics.screenHeight*0.7, backgroundColor:'white',borderRadius:5}}>
+                    <Text style={[styles.titleButtonOff,{padding:15}]}>{I18n.t('chon_loai_hang_hoa')}</Text>
+                    <View style={{flexDirection:'row',padding:10}}>
+                        <TouchableOpacity style={styles.styleButton}>
+                            <Text style={styles.titleButtonOff}>{I18n.t('hang_hoa')}</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.styleButton}>
+                            <Text style={styles.titleButtonOff}>{I18n.t('dich_vu')}</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <TouchableOpacity style={[styles.styleButton,{margin:10}]}>
+                        <Text style={styles.titleButtonOff}>Combo</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{padding:15,margin:10,borderRadius:15,alignItems:'center',backgroundColor:'#36a3f7'}}>
+                        <Text style={[styles.titleButtonOff,{color:'white'}]}>{I18n.t('xong')}</Text>
+                    </TouchableOpacity>
+                </View>
+                :typeModal.current==2?
+                <DialogSingleChoice listItem={category} title='Chon' title={I18n.t('chon_nhom_hang_hoa')} titleButton='Ok' ></DialogSingleChoice>:
+                typeModal.current == 3?
+                <DialogInput listItem={addCate.current} title={I18n.t('them_moi_nhom_hang_hoa')} titleButton={I18n.t('tao_nhom')}></DialogInput>:
+                typeModal.current==4?
+                <DialogInput listItem={addDVT.current} title={I18n.t('don_ti_tinh_lon_va_cac_thong_so_khac')} titleButton={I18n.t('ap_dung')}/>:
+                null
+            }
             </View>
         )
     }
     return (
 
         <View style={{ flex: 1, flexDirection: 'column', backgroundColor: 'white' }}>
+            { deviceType == Constant.PHONE?
             <ToolBarDefault
                 {...props}
                 leftIcon="keyboard-backspace"
                 title={I18n.t('chi_tiet_hang_hoa')}
                 clickLeftIcon={() => { props.navigation.goBack() }}
-            />
+            />:null
+}
             <ScrollView>
                 <View style={{ justifyContent: 'center', alignItems: 'center', padding: 20 }}>
                     <Image style={{ width: 70, height: 70, }} source={Images.icon_product} />
                 </View>
-                <View style={{ padding: 3, backgroundColor: '#E8E8E8' }}></View>
+                <View style={{ padding: 3, backgroundColor: '#f2f2f2' }}></View>
                 <View>
                     <Text style={styles.title}>{I18n.t('ten_hang_hoa')}</Text>
-                    <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#00BFFF' }]} value={product.Name}></TextInput>
+                    <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#36a3f7' }]} value={product?product.Name:null}></TextInput>
                 </View>
                 <View>
                     <Text style={styles.title}>{I18n.t('loai_hang')}</Text>
-                    <TouchableOpacity style={[styles.textInput, { justifyContent: 'space-between', flexDirection: 'row' }]} onPress={()=>setOnShowModal(true)} >
-                        <Text style={styles.titleButton}>{product.ProductType == 1 ? I18n.t('hang_hoa') : product.ProductType == 2 ? I18n.t('dich_vu') : I18n.t('Combo')}</Text>
-                        <Image style={{ width: 20, height: 20, }} source={Images.icon_arrow_down} />
+                    <TouchableOpacity style={[styles.textInput, { justifyContent: 'space-between', flexDirection: 'row' }]} onPress={()=>{typeModal.current=1;setOnShowModal(true)}} >
+                        <Text style={styles.titleButton}>{product.ProductType? product.ProductType == 1 ? I18n.t('hang_hoa') : product.ProductType == 2 ? I18n.t('dich_vu') : I18n.t('Combo'):null}</Text>
+                        <Image style={{ width: 20, height: 20, marginTop:5}} source={Images.icon_arrow_down} />
                     </TouchableOpacity>
                 </View>
                 <View>
                     <Text style={styles.title}>{I18n.t('ma_hang_ma_sku_ma_vach')}</Text>
-                    <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#00BFFF' }]} value={product.Code}></TextInput>
+                    <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#36a3f7' }]} value={product.Code}></TextInput>
                 </View>
                 <View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                         <Text style={styles.title}>{I18n.t('ten_nhom')}</Text>
-                        <Text style={[styles.title, { marginRight: 10, color: '#00BFFF' }]}>{I18n.t('them_moi')}</Text>
+                        <Text style={[styles.title, { marginRight: 10, color: '#36a3f7' ,textDecorationLine: 'underline',}]} onPress={()=>{typeModal.current=3,setOnShowModal(true)}}>{I18n.t('them_moi')}</Text>
                     </View>
-                    <TouchableOpacity style={[styles.textInput, { justifyContent: 'space-between', flexDirection: 'row' }]} >
+                    <TouchableOpacity style={[styles.textInput, { justifyContent: 'space-between', flexDirection: 'row' }]} onPress={()=>{typeModal.current=2; setOnShowModal(true)}}>
                         <Text style={styles.titleButton}>{productOl.Category ? productOl.Category.Name : null}</Text>
-                        <Image style={{ width: 20, height: 20, }} source={Images.icon_arrow_down} />
+                        <Image style={{ width: 20, height: 20,marginTop:5 }} source={Images.icon_arrow_down} />
                     </TouchableOpacity>
                 </View>
-                <View style={{ padding: 3, backgroundColor: '#E8E8E8', marginTop: 10 }}></View>
+                <View style={{ padding: 3, backgroundColor: '#f2f2f2', marginTop: 10 }}></View>
                 <View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 5, alignItems: 'center' }}>
                         <Text style={styles.titleBold}>{I18n.t('hien_thi_hang_hoa')}</Text>
@@ -129,25 +185,25 @@ export default (props) => {
                                                     <Switch style={{ transform: [{ scaleX: .6 }, { scaleY: .6 }] }} value={productOl.IsPriceForBlock} onValueChange={() => setProductOl({ ...productOl, IsPriceForBlock: !productOl.IsPriceForBlock })}></Switch>
                                                 </View>
                                                 <Text style={productOl.IsPriceForBlock == false ? styles.titleHint : { marginLeft: 15 }}>{I18n.t("block_theo_phut")}</Text>
-                                                <TextInput style={{ color: productOl.IsPriceForBlock == true ? '#00BFFF' : '#B5B5B5', marginLeft: 5, fontWeight: 'bold', padding: 10 }} value={product.BlockOfTimeToUseService ? currencyToString(product.BlockOfTimeToUseService) : null}></TextInput>
+                                                <TextInput style={{ color: productOl.IsPriceForBlock == true ? '#36a3f7' : '#B5B5B5', marginLeft: 5, fontWeight: 'bold', padding: 10 }} value={product.BlockOfTimeToUseService ? currencyToString(product.BlockOfTimeToUseService) : null}></TextInput>
                                                 <Text style={productOl.IsPriceForBlock == false ? styles.titleHint : { marginLeft: 15 }}>{I18n.t('so_block_gio_dau_tien')}</Text>
-                                                <TextInput style={{ color: productOl.IsPriceForBlock == true ? '#00BFFF' : '#B5B5B5', marginLeft: 5, fontWeight: 'bold', padding: 10 }} value={product.PriceConfig ? JSON.parse(product.PriceConfig).Block + '' : null}></TextInput>
+                                                <TextInput style={{ color: productOl.IsPriceForBlock == true ? '#36a3f7' : '#B5B5B5', marginLeft: 5, fontWeight: 'bold', padding: 10 }} value={product.PriceConfig ? JSON.parse(product.PriceConfig).Block + '' : null}></TextInput>
                                                 <Text style={productOl.IsPriceForBlock == false ? styles.titleHint : { marginLeft: 15 }}>{I18n.t('gia_bon_block_dau')}</Text>
-                                                <TextInput style={{ color: productOl.IsPriceForBlock == true ? '#00BFFF' : '#B5B5B5', marginLeft: 5, fontWeight: 'bold', padding: 10 }} value={product.Price ? currencyToString(product.Price) : null}></TextInput>
+                                                <TextInput style={{ color: productOl.IsPriceForBlock == true ? '#36a3f7' : '#B5B5B5', marginLeft: 5, fontWeight: 'bold', padding: 10 }} value={product.Price ? currencyToString(product.Price) : null}></TextInput>
                                             </View> : null}
                                     </View>
                                     : null
                             }
-                            <View style={{ padding: 3, backgroundColor: '#E8E8E8', marginTop: 10 }}></View>
+                            <View style={{ padding: 3, backgroundColor: '#f2f2f2', marginTop: 10 }}></View>
                             <View>
                                 <View style={{ flexDirection: 'row' }}>
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.title}>{I18n.t('gia_von')}</Text>
-                                        <TextInput style={[styles.textInput, { color: '#00BFFF', fontWeight: 'bold' }]} value={productOl.Cost ? currencyToString(productOl.Cost) : null}></TextInput>
+                                        <TextInput style={[styles.textInput, { color: '#36a3f7', fontWeight: 'bold' }]} value={productOl.Cost ? currencyToString(productOl.Cost) : null}></TextInput>
                                     </View>
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.title} >{I18n.t('gia')}</Text>
-                                        <TextInput style={[styles.textInput, { color: '#00BFFF', fontWeight: 'bold' }]} value={product.Price ? currencyToString(product.Price) : null}></TextInput>
+                                        <TextInput style={[styles.textInput, { color: '#36a3f7', fontWeight: 'bold' }]} value={product.Price ? currencyToString(product.Price) : null}></TextInput>
                                     </View>
                                 </View>
                                 {product.ProductType == 2 ?
@@ -157,19 +213,19 @@ export default (props) => {
                                     :
                                     <View>
                                         <Text style={styles.title}>{I18n.t('ton_kho')}</Text>
-                                        <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#00BFFF', textAlign: 'center' }]} value={productOl.OnHand ? productOl.OnHand + '' : null}></TextInput>
+                                        <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#36a3f7', textAlign: 'center' }]} value={productOl.OnHand ? productOl.OnHand + '' : null}></TextInput>
                                     </View>
                                 }
 
                                 <View>
                                     <Text style={styles.title}>{I18n.t('don_vi_tinh')}</Text>
-                                    <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#00BFFF' }]} value={product.Unit ? product.Unit : null}></TextInput>
+                                    <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#36a3f7' }]} value={product.Unit ? product.Unit : null}></TextInput>
                                 </View>
-                                <TouchableOpacity style={[styles.textInput, { fontWeight: 'bold', backgroundColor: '#B0E2FF', marginTop: 10, justifyContent: 'center', alignItems: 'center' }]}>
+                                <TouchableOpacity style={[styles.textInput, { fontWeight: 'bold', backgroundColor: '#B0E2FF', marginTop: 10, justifyContent: 'center', alignItems: 'center' }]} onPress={()=>{typeModal.current=4;setOnShowModal(true)}}>
                                     <Text style={[styles.titleButton]}>{I18n.t("don_vi_tinh_lon_va_cac_thong_so_khac")}</Text>
                                 </TouchableOpacity>
                             </View>
-                            <View style={{ padding: 3, backgroundColor: '#E8E8E8', marginTop: 10, }}></View>
+                            <View style={{ padding: 3, backgroundColor: '#f2f2f2', marginTop: 10, }}></View>
                             <View style={{ marginBottom: 10 }}>
                                 <View style={{ justifyContent: 'space-between', flexDirection: 'row', padding: 5, marginTop: 10, marginBottom: 10 }}>
                                     <Text style={styles.titleBold}>{I18n.t('bao_che_bien')}</Text>
@@ -208,19 +264,19 @@ export default (props) => {
                             </View>
                         </View> : null}
                 </View>
-                <View style={{ backgroundColor: '#E8E8E8', padding: 10 }}>
+                <View style={{ backgroundColor: '#f2f2f2', padding: 10 }}>
                     <View style={{ flexDirection: 'column' }}>
                         <View style={{ flexDirection: 'row' }}>
-                            <TouchableOpacity style={{ flex: 1, backgroundColor: '#00AE72', padding: 10, justifyContent: 'center', margin: 7, alignItems: 'center', borderRadius: 5 }}>
+                            <TouchableOpacity style={{ flex: 1, backgroundColor: '#00AE72', padding: 15, justifyContent: 'center', margin: 7, alignItems: 'center', borderRadius: 15,height:50 }}>
                                 <Text style={{ color: 'white', fontWeight: 'bold' }}>{I18n.t('luu_va_sao_chep')}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={{ flex: 1, backgroundColor: '#00BFFF', padding: 10, justifyContent: 'center', margin: 7, alignItems: 'center', borderRadius: 5 }}>
+                            <TouchableOpacity style={{ flex: 1, backgroundColor: '#00BFFF', padding: 15, justifyContent: 'center', margin: 7, alignItems: 'center', borderRadius: 15 ,height:50}}>
                                 <Text style={{ color: 'white', fontWeight: 'bold' }}>{I18n.t('luu')}</Text>
                             </TouchableOpacity>
                         </View>
                         {product != {} ?
                         <View>
-                            <TouchableOpacity style={{ flex: 1, backgroundColor: '#FF3030', padding: 10, justifyContent: 'center', margin: 7, alignItems: 'center', borderRadius: 5 }}>
+                            <TouchableOpacity style={{ flex: 1, backgroundColor: '#FF3030', padding: 15, justifyContent: 'center', margin: 7, alignItems: 'center', borderRadius: 15,height:50 }}>
                                 <Text style={{ color: 'white', fontWeight: 'bold' }}>{I18n.t('xoa')}</Text>
                             </TouchableOpacity> 
                             </View>: null
@@ -273,7 +329,8 @@ const styles = StyleSheet.create({
     },
     titleButton: {
         fontWeight: 'bold',
-        color: '#00BFFF'
+        color: '#36a3f7',
+        marginTop:5
     },
     titleButtonOff: {
         fontWeight: 'bold',
@@ -284,12 +341,12 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         alignItems: 'center',
         textAlign: 'center',
-        color: '#00BFFF'
+        color: '#36a3f7'
     },
     styleButton: {
-        flex: 1, marginRight: 10, justifyContent: 'center', alignItems: 'center', borderRadius: 5, borderWidth: 0.5, padding: 5, backgroundColor: '#E8E8E8', flexDirection: 'row'
+        flex: 1, marginRight: 10, justifyContent: 'center', alignItems: 'center', borderRadius: 5, borderWidth: 0.5, padding: 15, backgroundColor: '#f2f2f2', flexDirection: 'row'
     },
-    textInput: { backgroundColor: '#E8E8E8', marginTop: 5, marginLeft: 15, marginRight: 15, height: 40, borderRadius: 10, padding: 10, borderWidth: 0.25, borderColor: 'silver' },
+    textInput: { backgroundColor: '#f2f2f2', marginTop: 5, marginLeft: 15, marginRight: 15, height: 40, borderRadius: 15,height:50, padding: 10, borderWidth: 0.25, borderColor: 'silver' },
     titleHint: {
         marginLeft: 15, marginRight: 10, color: '#B5B5B5', marginBottom: 5, marginTop: 5
     },

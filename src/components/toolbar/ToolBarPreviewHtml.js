@@ -40,7 +40,7 @@ export default function ToolBarPreviewHtml(props) {
                             {props.rightIcon && props.clickRightIcon ?
                                 <Icon name={props.rightIcon} size={props.size ? props.size : 30} color="white" />
                                 :
-                                <Icon delayPressIn={0} color="#fff" name="keyboard-backspace" onPress={onClickBack} size={30} />
+                                <Image source={Images.icon_back} style={{width:10,height:16,paddingLeft:19,paddingRight:19,paddingTop:16,paddingBottom:16}}/>
                             }
                         </TouchableOpacity>
                     </View>

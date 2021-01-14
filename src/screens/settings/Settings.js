@@ -466,7 +466,7 @@ export default (props) => {
                                     {
                                         Constant.CATYGORY_PRINT && [PrintType].concat(Constant.CATYGORY_PRINT).map((item, index) => {
                                             return (
-                                                <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", marginLeft: 20 }} onPress={() => onSelectPrintType(item)}>
+                                                <TouchableOpacity key={index.toString()} style={{ flexDirection: "row", alignItems: "center", marginLeft: 20 }} onPress={() => onSelectPrintType(item)}>
                                                     <RadioButton.Android
                                                         style={{ padding: 0, margin: 0 }}
                                                         color='#FF4500'
@@ -561,7 +561,7 @@ export default (props) => {
                                     {
                                         Constant.CURRENTCY_UNIT && [Currentcy].concat(Constant.CURRENTCY_UNIT).map((item, index) => {
                                             return (
-                                                <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", marginLeft: 20 }} onPress={() => onSelectCurrentcy(item)}>
+                                                <TouchableOpacity key={index.toString()} style={{ flexDirection: "row", alignItems: "center", marginLeft: 20 }} onPress={() => onSelectCurrentcy(item)}>
                                                     <RadioButton.Android
                                                         style={{ padding: 0, margin: 0 }}
                                                         color='#FF4500'
@@ -659,7 +659,7 @@ export default (props) => {
                                     {
                                         Constant.STAMP_PRINTER && [PrintType].concat(Constant.STAMP_PRINTER).map((item, index) => {
                                             return (
-                                                <TouchableOpacity style={{ flexDirection: "row", alignItems: "center" }} onPress={() => onSelectPrintType(item)}>
+                                                <TouchableOpacity key={index.toString()} style={{ flexDirection: "row", alignItems: "center" }} onPress={() => onSelectPrintType(item)}>
                                                     <RadioButton.Android
                                                         style={{ padding: 0, margin: 0 }}
                                                         color='#FF4500'

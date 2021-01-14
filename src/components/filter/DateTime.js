@@ -142,6 +142,7 @@ const CustomTime = (props) => {
                     <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", marginLeft: 20 }} onPress={() => onClickRadioButton(item)}>
                         <RadioButton.Android
                             style={{ padding: 0, margin: 0 }}
+                            key={index.toString()}
                             color='#FF4500'
                             onPress={() => onClickRadioButton(item)}
                             status={defaut == item.name ? 'checked' : 'unchecked'}

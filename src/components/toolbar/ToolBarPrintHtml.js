@@ -50,7 +50,7 @@ export default function ToolBarPrintHtml(props) {
                             {props.rightIcon && props.clickRightIcon ?
                                 <Icon name={props.rightIcon} size={props.size ? props.size : 30} color="white" />
                                 :
-                                <Icon delayPressIn={0} size={30} name="keyboard-backspace" color="white" onPress={onClickBack} />
+                                <Icon  size={30} name="keyboard-backspace" color="white" delayPressIn={0} onPress={onClickBack} />
                             }
                         </TouchableOpacity>
                     </View>
