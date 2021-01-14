@@ -168,12 +168,7 @@ const CustomerOrder = (props) => {
             }
         })
         console.log('applyDialogDetail listOrder ', listOrder);
-        let objectProduct = product
-        if (product.SplitForSalesOrder) {
-            objectProduct['QuantitySplit'] = product.Quantity;
-        }
-        console.log('applyDialogDetail objectProduct ', objectProduct);
-        props.outputSelectedProduct(objectProduct, false, true)
+        props.outputSelectedProduct(product, true)
     }
 
     const mapDataToList = (product, isNow = true) => {
@@ -194,9 +189,7 @@ const CustomerOrder = (props) => {
     }
 
     const removeItem = (product) => {
-        // console.log('removeItem', index, product);
         product.Quantity = 0
-        // listOrder.splice(index, 1)
         props.outputSelectedProduct(product)
 
     }

@@ -27,7 +27,6 @@ const MainRetail = (props) => {
     const { orientaition, deviceType } = useSelector(state => {
         return state.Common
     });
-    const listPriceBookRef = useRef()
     const currentCommodity = useRef()
 
 
@@ -72,7 +71,7 @@ const MainRetail = (props) => {
                 let res = await new HTTPService().setPath(apiPath).POST(params)
                 if (res && res.PriceList && res.PriceList.length > 0) {
                     console.log('getOtherPrice res', res);
-                    jsonContent.OrderDetails.map((product) => {
+                    jsonContent.OrderDetails.foreach((product) => {
                         res.PriceList.forEach((priceBook) => {
                             if (priceBook.ProductId == product.ProductId) {
                                 product.DiscountRatio = 0.0
@@ -94,7 +93,7 @@ const MainRetail = (props) => {
         }
 
         const getBasePrice = () => {
-            jsonContent.OrderDetails.map((product) => {
+            jsonContent.OrderDetails.foreach((product) => {
                 product.DiscountRatio = 0.0
                 let basePrice = (product.IsLargeUnit) ? product.PriceLargeUnit : product.UnitPrice
                 product.Price = basePrice + product.TotalTopping
@@ -114,6 +113,7 @@ const MainRetail = (props) => {
             }
             else {
                 jsonContent.PriceBookId = null
+                jsonContent.PriceBook = null
                 getBasePrice()
             }
         }
