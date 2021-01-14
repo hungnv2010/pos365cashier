@@ -168,7 +168,7 @@ export default (props) => {
     const getOtherPrice = async (list) => {
         console.log('getOtherPrice');
         if (currentPriceBook.Id) {
-            if (jsonContent.OrderDetails && currentPriceBook) {
+            if (list && currentPriceBook) {
                 let apiPath = ApiPath.PRICE_BOOK + `/${currentPriceBook.Id}/manyproductprice`
                 let params = { "pricebookId": currentPriceBook.Id, "ProductIds": list.map((product) => product.ProductId) }
                 let res = await new HTTPService().setPath(apiPath).POST(params)

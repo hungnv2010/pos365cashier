@@ -107,9 +107,14 @@ const RetailCustomerOrder = (props) => {
 
     useEffect(() => {
         console.log('props.jsonContent.OrderDetails', props.jsonContent);
-        if (JSON.stringify(props.jsonContent) != "{}") {
-            setListOrder(props.jsonContent.OrderDetails)
+        const getPromotion = async () => {
+            if (JSON.stringify(props.jsonContent) != "{}") {
+                let list = []
+                list = await addPromotion([...props.jsonContent.OrderDetails])
+                setListOrder(list)
+            }
         }
+        getPromotion()
     }, [props.jsonContent])
 
 
@@ -444,7 +449,7 @@ const RetailCustomerOrder = (props) => {
 
 
     const onCLickCommodity = () => {
-       
+
         props.onCLickCommodity()
     }
 
