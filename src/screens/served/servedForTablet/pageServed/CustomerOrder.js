@@ -157,6 +157,10 @@ const CustomerOrder = (props) => {
                     arr.splice(index, 1)
                 }
                 elm.Quantity = product.Quantity
+                if (elm.SplitForSalesOrder) {
+                    product['QuantitySplit'] = product.Quantity;
+                    elm.Quantity = 1;
+                }
                 elm.Description = product.Description
                 elm.Discount = discount - price > 0 ? price : discount
                 elm.Price = product.Price
@@ -164,12 +168,12 @@ const CustomerOrder = (props) => {
             }
         })
         console.log('applyDialogDetail listOrder ', listOrder);
-        props.outputSelectedProduct(product)
+        props.outputSelectedProduct(product, true)
     }
 
     const mapDataToList = (product, isNow = true) => {
         console.log("mapDataToList product isNow ", product, isNow);
-        
+
         if (isNow) props.outputSelectedProduct(product, true)
         else {
             let isExist = false
@@ -185,9 +189,7 @@ const CustomerOrder = (props) => {
     }
 
     const removeItem = (product) => {
-        // console.log('removeItem', index, product);
         product.Quantity = 0
-        // listOrder.splice(index, 1)
         props.outputSelectedProduct(product)
 
     }
@@ -308,7 +310,7 @@ const CustomerOrder = (props) => {
                             </Text>
                         </View>
                         <View style={{}}>
-                            <Icon style={{ alignSelf: "flex-end" }} name="bell-ring" size={20} color={item.Quantity == item.Processed ? Colors.colorLightBlue : "gray"} />
+                            <Icon style={{ alignSelf: "flex-end" }} name="bell-ring" size={20} color={item.Quantity <= item.Processed ? Colors.colorLightBlue : "gray"} />
                             <Text
                                 style={{ color: Colors.colorchinh, alignSelf: "flex-end" }}>
                                 {isPromotion ? currencyToString(item.Price * item.Quantity) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit * item.Quantity) : currencyToString(item.Price * item.Quantity))}

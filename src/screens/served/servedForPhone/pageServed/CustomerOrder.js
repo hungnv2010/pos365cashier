@@ -40,6 +40,7 @@ export default (props) => {
     const [itemOrder, setItemOrder] = useState({})
     const [marginModal, setMargin] = useState(0)
     const [expand, setExpand] = useState(false)
+    const [QuantitySubtract, setQuantitySubtract] = useState(0)
     const [vendorSession, setVendorSession] = useState({});
     const typeModal = useRef(TYPE_MODAL.DETAIL)
     const isStartPrint = useRef(-1)
@@ -85,6 +86,7 @@ export default (props) => {
 
     const sendOrder = async () => {
         console.log("sendOrder room ", props.route.params.room);
+        console.log("sendOrder props ", props);
         if (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0) {
             props.navigation.navigate(ScreenList.Payment, { RoomId: props.route.params.room.Id, Name: props.route.params.room.Name, Position: props.Position });
         } else {
@@ -95,25 +97,26 @@ export default (props) => {
     const printKitchen = () => {
         let jsonContent = props.jsonContent;
         console.log("printKitchen jsonContent :: ", jsonContent);
-        if (!checkProcessedQuantityProduct(jsonContent)) {
-            jsonContent.OrderDetails.forEach(element => {
-                element.RoomName = props.route.params.room.Name;
-                element.Pos = jsonContent.Pos;
-            });
-            let data = dataManager.getDataPrintCook(jsonContent.OrderDetails)
-            console.log("printKitchen data ====: " + JSON.stringify(data));
-            // isStartPrint.current = 1;
-            dispatch({ type: 'LIST_PRINT', listPrint: JSON.stringify(data) })
-
-            jsonContent.OrderDetails.forEach(element => {
-                element.Processed = element.Quantity
-            });
-            console.log("printKitchen jsonContent ::: ", jsonContent);
-            props.handlerProcessedProduct(jsonContent)
-
-            notification(I18n.t("bao_che_bien_thanh_cong"));
+        if (jsonContent.OrderDetails.length > 0) {
+            if (!checkProcessedQuantityProduct(jsonContent)) {
+                jsonContent.OrderDetails.forEach(element => {
+                    element.RoomName = props.route.params.room.Name;
+                    element.Pos = jsonContent.Pos;
+                });
+                let data = dataManager.getDataPrintCook(jsonContent.OrderDetails)
+                console.log("printKitchen data ====: " + JSON.stringify(data));
+                dispatch({ type: 'LIST_PRINT', listPrint: JSON.stringify(data) })
+                jsonContent.OrderDetails.forEach(element => {
+                    element.Processed = element.Quantity
+                });
+                console.log("printKitchen jsonContent ::: ", jsonContent);
+                props.handlerProcessedProduct(jsonContent)
+                notification(I18n.t("bao_che_bien_thanh_cong"));
+            } else {
+                notification(I18n.t("cac_mon_ban_chon_dang_duoc_nha_bep_chuan_bi"));
+            }
         } else {
-            notification(I18n.t("cac_mon_ban_chon_dang_duoc_nha_bep_chuan_bi"));
+            dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
         }
     }
 
@@ -182,23 +185,32 @@ export default (props) => {
     }
 
     const mapDataToList = (product) => {
+        console.log("mapDataToList itemOrder ", itemOrder);
         console.log("mapDataToList data ", product);
-        let price = product.IsLargeUnit == true ? product.PriceLargeUnit : product.UnitPrice
-        let discount = product.Percent ? (price * product.Discount / 100) : product.Discount
-        listOrder.forEach((elm, index, arr) => {
-            if (elm.ProductId == product.ProductId && index == product.index) {
-                if (product.Quantity == 0) {
-                    arr.splice(index, 1)
+        if (itemOrder.Quantity > product.Quantity) {
+            setTimeout(() => {
+                setQuantitySubtract(itemOrder.Quantity - product.Quantity)
+                typeModal.current = TYPE_MODAL.DELETE
+                setShowModal(true)
+            }, 300);
+        } else {
+            let price = product.IsLargeUnit == true ? product.PriceLargeUnit : product.UnitPrice
+            let discount = product.Percent ? (price * product.Discount / 100) : product.Discount
+            listOrder.forEach((elm, index, arr) => {
+                if (elm.ProductId == product.ProductId && index == product.index) {
+                    if (product.Quantity == 0) {
+                        arr.splice(index, 1)
+                    }
+                    elm.Quantity = product.Quantity
+                    elm.Description = product.Description
+                    elm.Discount = discount - price > 0 ? price : discount
+                    elm.Price = product.Price
+                    elm.IsLargeUnit = product.IsLargeUnit
                 }
-                elm.Quantity = product.Quantity
-                elm.Description = product.Description
-                elm.Discount = discount - price > 0 ? price : discount
-                elm.Price = product.Price
-                elm.IsLargeUnit = product.IsLargeUnit
-            }
-        })
-        console.log("mapDataToList listOrder ", listOrder);
-        props.outputListProducts([...listOrder])
+            })
+            console.log("mapDataToList listOrder ", listOrder);
+            props.outputListProducts([...listOrder])
+        }
     }
 
     const splitTable = () => {
@@ -218,7 +230,7 @@ export default (props) => {
             jsonContent.RoomName = props.route.params.room.Name
         }
 
-        
+
         // viewPrintRef.current.printProvisionalRef(jsonContent)
 
 
@@ -297,7 +309,7 @@ export default (props) => {
                                 null}
                         </View>
                         <View style={{ alignItems: "flex-end" }}>
-                            <Icon style={{ paddingHorizontal: 5 }} name="bell-ring" size={20} color={item.Quantity == item.Processed ? Colors.colorLightBlue : "gray"} />
+                            <Icon style={{ paddingHorizontal: 5 }} name="bell-ring" size={20} color={item.Quantity <= item.Processed ? Colors.colorLightBlue : "gray"} />
                             <Text
                                 style={{ color: colors.colorchinh, marginRight: 5 }}>
                                 {isPromotion ? currencyToString(item.Price * item.Quantity) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit * item.Quantity) : currencyToString(item.Price * item.Quantity))}
@@ -345,6 +357,8 @@ export default (props) => {
                     console.log('saveOrder err', err);
                 })
         }
+        let checkPrint = false;
+        let listOrderReturn = []
         listOrder.forEach((element, index, arr) => {
             if (element.ProductId == itemOrder.ProductId && index == itemOrder.index) {
                 let Quantity = element.Quantity - data.QuantityChange
@@ -352,10 +366,20 @@ export default (props) => {
                     arr.splice(index, 1)
                 }
                 element.Quantity = Quantity
+                listOrderReturn.push({ ...data, ...itemOrder, Quantity: Quantity, Description: data.Description, RoomName: props.route.params.room.Name, Pos: jsonContent.Pos })
+                if (element.Processed > 0) {
+                    checkPrint = true;
+                }
             }
         });
         props.outputListProducts([...listOrder])
-
+        console.log("saveOrder listOrder ====: " + JSON.stringify(listOrder));
+        console.log("saveOrder listOrderReturn ====: " + JSON.stringify(listOrderReturn));
+        if (checkPrint) {
+            let listTmp = dataManager.getDataPrintCook(listOrderReturn)
+            console.log("saveOrder listTmp ====: " + JSON.stringify(listTmp));
+            dispatch({ type: 'PRINT_RETURN_PRODUCT', printReturnProduct: JSON.stringify(listTmp) })
+        }
     }
 
     const changTable = () => {
@@ -512,6 +536,7 @@ export default (props) => {
                                     <ReturnProduct
                                         Name={itemOrder.Name}
                                         Quantity={itemOrder.Quantity}
+                                        QuantitySubtract={QuantitySubtract}
                                         vendorSession={vendorSession}
                                         getDataOnClick={(data) => saveOrder(data)}
                                         setShowModal={() => {

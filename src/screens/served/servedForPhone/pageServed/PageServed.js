@@ -19,6 +19,7 @@ import { HTTPService } from '../../../../data/services/HttpService';
 import _, { map } from 'underscore';
 import { ScreenList } from '../../../../common/ScreenList';
 import { currencyToString, dateToString } from '../../../../common/Utils';
+import moment from 'moment';
 
 export default (props) => {
 
@@ -34,7 +35,6 @@ export default (props) => {
     const [currentPriceBook, setCurrentPriceBook] = useState({ Name: "gia_niem_yet", Id: 0 })
     const [currentCustomer, setCurrentCustomer] = useState({ Name: "khach_hang", Id: 0 })
     const toolBarPhoneServedRef = useRef();
-    const listPriceBookRef = useRef({})
     const [listPosition, setListPosition] = useState([
         { name: "A", status: false },
         { name: "B", status: false },
@@ -52,34 +52,35 @@ export default (props) => {
         const getListPos = async () => {
 
             let serverEvent = await realmStore.queryServerEvents()
-            let listPriceBook = await realmStore.queryPricebook()
-            listPriceBook = JSON.parse(JSON.stringify(listPriceBook))
-            listPriceBookRef.current = listPriceBook
+            // let listPriceBook = await realmStore.queryPricebook()
+            // listPriceBook = JSON.parse(JSON.stringify(listPriceBook))
             const row_key = `${props.route.params.room.Id}_${position}`
             serverEvent = serverEvent.filtered(`RowKey == '${row_key}'`)
-            currentServerEvent.current = JSON.stringify(serverEvent) != '{}' && serverEvent[0].JsonContent ? JSON.parse(JSON.stringify(serverEvent[0]))
+            currentServerEvent.current = JSON.stringify(serverEvent) != '{}' ? JSON.parse(JSON.stringify(serverEvent[0]))
                 : await dataManager.createSeverEvent(props.route.params.room.Id, position)
             console.log('currentServerEvent.current', currentServerEvent.current, JSON.parse(currentServerEvent.current.JsonContent));
             let jsonContentObject = JSON.parse(currentServerEvent.current.JsonContent)
             if (jsonContentObject.Partner) {
                 setCurrentCustomer(jsonContentObject.Partner)
             }
-            for (const property in listPriceBook) {
-                if (listPriceBook[property].Id == jsonContentObject.PriceBookId) {
-                    setCurrentPriceBook(listPriceBook[property])
-                }
-            }
+            // if (jsonContentObject.PriceBookId) {
+            //     for (const property in listPriceBook) {
+            //         if (listPriceBook[property].Id == jsonContentObject.PriceBookId) {
+            //             setCurrentPriceBook(listPriceBook[property])
+            //         }
+            //     }
+            // }
             setJsonContent(jsonContentObject)
 
-            if (props.route.params.room.ProductId) {
-                let ischeck = false;
-                jsonContentObject.OrderDetails.forEach(element => {
-                    if (element.Id == props.route.params.room.ProductId) {
-                        ischeck = true;
-                    }
-                });
-                toolBarPhoneServedRef.current.clickCheckInRef(!ischeck)
-            }
+            // if (props.route.params.room.ProductId) {
+            //     let ischeck = false;
+            //     jsonContentObject.OrderDetails.forEach(element => {
+            //         if (element.Id == props.route.params.room.ProductId) {
+            //             ischeck = true;
+            //         }
+            //     });
+            //     toolBarPhoneServedRef.current.clickCheckInRef(!ischeck)
+            // }
 
             serverEvent.addListener((collection, changes) => {
                 if ((changes.insertions.length || changes.modifications.length) && serverEvent[0].FromServer) {
@@ -113,7 +114,7 @@ export default (props) => {
                 let res = await new HTTPService().setPath(apiPath).POST(params)
                 console.log('getOtherPrice res', res);
                 if (res && res.PriceList && res.PriceList.length > 0) {
-                    jsonContent.OrderDetails.map((product) => {
+                    jsonContent.OrderDetails.forEach((product) => {
                         res.PriceList.forEach((priceBook) => {
                             if (priceBook.ProductId == product.ProductId) {
                                 product.DiscountRatio = 0.0
@@ -125,22 +126,29 @@ export default (props) => {
                         })
                     })
                 }
-                updateServerEvent()
+                updateServerEvent({...jsonContent})
             }
         }
 
         const getBasePrice = () => {
-            jsonContent.OrderDetails.map((product) => {
+            jsonContent.OrderDetails.foreach((product) => {
                 product.DiscountRatio = 0.0
                 let basePrice = (product.IsLargeUnit) ? product.PriceLargeUnit : product.UnitPrice
                 product.Price = basePrice + product.TotalTopping
             })
-            updateServerEvent()
+            updateServerEvent({...jsonContent})
         }
-        if (jsonContent.OrderDetails) {
-            jsonContent.PriceBookId = currentPriceBook.Id
-            if (currentPriceBook && currentPriceBook.Id) getOtherPrice()
-            else getBasePrice()
+        if (JSON.stringify(jsonContent) != "{}") {
+            if (currentPriceBook && currentPriceBook.Id) {
+                jsonContent.PriceBook = currentPriceBook
+                jsonContent.PriceBookId = currentPriceBook.Id
+                getOtherPrice()
+            }
+            else {
+                jsonContent.PriceBookId = null
+                jsonContent.PriceBook = null
+                getBasePrice()
+            }
         }
     }, [currentPriceBook])
 
@@ -182,11 +190,13 @@ export default (props) => {
     }, [currentCustomer])
 
     const getOtherPrice = async (list) => {
+        console.log('getOtherPrice', list, currentPriceBook, jsonContent);
         if (currentPriceBook.Id) {
-            if (jsonContent.OrderDetails && currentPriceBook) {
+            if (list && currentPriceBook) {
                 let apiPath = ApiPath.PRICE_BOOK + `/${currentPriceBook.Id}/manyproductprice`
                 let params = { "pricebookId": currentPriceBook.Id, "ProductIds": list.map((product) => product.ProductId) }
                 let res = await new HTTPService().setPath(apiPath).POST(params)
+                console.log('resres', res);
                 if (res && res.PriceList && res.PriceList.length > 0) {
                     list.map((product) => {
                         res.PriceList.forEach((priceBook) => {
@@ -209,7 +219,7 @@ export default (props) => {
 
 
     const outputListProducts = async (list) => {
-        console.log("outputListProducts ", list);
+        console.log('outputListProducts', list, props, jsonContent, currentServerEvent.current);
         if (props.route.params.room.ProductId) {
             let ischeck = false;
             list.forEach(element => {
@@ -221,9 +231,19 @@ export default (props) => {
         }
         list = await getOtherPrice(list)
         list = await addPromotion(list);
-        console.log("outputListProducts addPromotion list ", list);
-        jsonContent.OrderDetails = [...list]
-        updateServerEvent()
+        if (JSON.stringify(jsonContent) != "{}") {
+            jsonContent.OrderDetails = [...list]
+            updateServerEvent({...jsonContent})
+
+        } else {
+            let title = props.route.params.Name ? props.route.params.Name : ""
+            let body = I18n.t('gio_khach_vao') + moment().format('HH:mm dd/MM')
+            let { RoomId, Position } = currentServerEvent.current
+            let jsonContent = dataManager.createJsonContent(RoomId, Position, moment(), list)
+            dataManager.sentNotification(title, body)
+            updateServerEvent(jsonContent)
+
+        }
     }
 
     const addPromotion = async (list) => {
@@ -343,11 +363,13 @@ export default (props) => {
         return true;
     }
 
-    const updateServerEvent = () => {
+    const updateServerEvent = (jsonContent) => {
         console.log('updateServerEvent', currentPriceBook.Id);
+        console.log('updateServerEvent jsonContent :: ', jsonContent);
         if (currentServerEvent.current) {
             let serverEvent = currentServerEvent.current
             dataManager.calculatateJsonContent(jsonContent)
+            console.log('jsonContentjsonContent', jsonContent);
             setJsonContent({ ...jsonContent })
             serverEvent.Version += 1
             serverEvent.JsonContent = JSON.stringify(jsonContent)
@@ -379,6 +401,11 @@ export default (props) => {
 
     const onClickSelectProduct = () => {
         let list = jsonContent.OrderDetails ? jsonContent.OrderDetails.filter(item => (item.ProductId > 0 && (item.IsPromotion == undefined || (item.IsPromotion == false)))) : []
+        console.log('list', list);
+        list = list.filter(item => item.Quantity > item.Processed)
+        list.forEach(item => {
+            item.Quantity = item.Quantity - item.Processed
+        })
         props.navigation.navigate('SelectProduct', { _onSelect: onCallBack, listProducts: list })
     }
 
@@ -464,7 +491,7 @@ export default (props) => {
     }
 
     const onClickListedPrice = () => {
-        props.navigation.navigate(ScreenList.PriceBook, { _onSelect: onCallBackPriceCustomer, currentPriceBook: currentPriceBook,  })
+        props.navigation.navigate(ScreenList.PriceBook, { _onSelect: onCallBackPriceCustomer, currentPriceBook: currentPriceBook, })
     }
 
 
@@ -490,7 +517,7 @@ export default (props) => {
         console.log("handlerProcessedProduct jsonContent ", jsonContent);
         if (currentServerEvent.current) {
             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current))
-            // dataManager.calculatateJsonContent(jsonContent)
+            dataManager.calculatateJsonContent(jsonContent)
             setJsonContent({ ...jsonContent })
             serverEvent.Version += 1
             serverEvent.JsonContent = JSON.stringify(jsonContent)

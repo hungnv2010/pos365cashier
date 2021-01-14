@@ -7,7 +7,7 @@ import { Images, Metrics } from '../../theme';
 import { ScreenList } from '../../common/ScreenList';
 import { currencyToString, dateToStringFormatUTC } from '../../common/Utils';
 import colors from '../../theme/Colors';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Constant } from '../../common/Constant';
 import Calculator from './calculator';
 import { getFileDuLieuString } from '../../data/fileStore/FileStorage';
@@ -46,6 +46,7 @@ export default (props) => {
         Name: I18n.t('tien_mat'),
         Value: 0,
     }
+    const dispatch = useDispatch();
     const [totalPrice, setTotalPrice] = useState(0);
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
@@ -100,19 +101,19 @@ export default (props) => {
             let orderDetails = JSON.parse(currentServerEvent.current.JsonContent).OrderDetails;
             let jsonContentTmp = JSON.parse(currentServerEvent.current.JsonContent)
             console.log("useEffect serverEvent ", currentServerEvent.current);
+            console.log("useEffect jsonContentTmp ", jsonContentTmp);
             if (jsonContentTmp.Partner && jsonContentTmp.Partner.Id) {
                 setCustomer(jsonContentTmp.Partner)
             }
             setJsonContent(jsonContentTmp)
             let total = getTotalOrder(orderDetails);
             setTotalPrice(total);
-            CASH.Value = total;
+            CASH.Value = jsonContentTmp.Total;
             // calculatorPrice(jsonContentTmp, total, false);
             setPercentVAT(jsonContentTmp.VATRates ? true : false)
 
             let isVnd = !(jsonContentTmp.DiscountRatio > 0 || jsonContentTmp.DiscountValue == 0)
             console.log("useEffect isVnd == ", isVnd);
-            // if (jsonContentTmp.Discount && jsonContentTmp.Discount > 0) {
             if (!isVnd) {
                 setPercent(true)
             } else {
@@ -200,7 +201,7 @@ export default (props) => {
         let newDate = new Date().getTime();
         if (timeClickPrevious + 500 < newDate) {
             let list = listMethod;
-            list.push({ ...CASH, Id: timeClickPrevious, MethodId: 0, Value: list.length > 0 ? 0 : totalPrice })
+            list.push({ ...CASH, Id: timeClickPrevious, MethodId: 0, Value: list.length > 0 ? 0 : jsonContent.Total })
             setListMethod([...list])
             timeClickPrevious = newDate;
         }
@@ -443,8 +444,11 @@ export default (props) => {
             if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
                 jsonContent.RoomName = props.route.params.Name
             }
-            viewPrintRef.current.printProvisionalRef(jsonContent)
+            // viewPrintRef.current.printProvisionalRef(jsonContent)
             // viewPrintRef.current.printKitchenRef(jsonContent)
+
+            dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: jsonContent })
+
             timeClickPrevious = newDate;
         }
     }
@@ -540,7 +544,7 @@ export default (props) => {
                 dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
                 dialogManager.hiddenLoading()
                 updateServerEvent("success")
-                await printAfterPayment()
+                await printAfterPayment(order.Code)
                 if (order.QRCode != "") {
                     qrCode.current = order.QRCode
                     typeModal.current = TYPE_MODAL.QRCODE
@@ -574,6 +578,7 @@ export default (props) => {
         let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
         serverEvent.JsonContent = "{}"
         serverEvent.Version += 10
+        console.log("updateServerEvent serverEvent ", serverEvent);
         dataManager.updateServerEventNow(serverEvent, true, false);
         // }
         playSound()
@@ -590,15 +595,18 @@ export default (props) => {
                 sound.release();
             });
         };
-        const sound = new Sound('file.mp4', Sound.MAIN_BUNDLE, error => callback(error, sound));
+        const sound = new Sound('file.mp3', Sound.MAIN_BUNDLE, error => callback(error, sound));
     }
 
-    const printAfterPayment = async () => {
-
+    const printAfterPayment = async (Code) => {
+        console.log("printAfterPayment jsonContent 1 ",  jsonContent);
         if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
             jsonContent.RoomName = props.route.params.Name
         }
-        viewPrintRef.current.printProvisionalRef(jsonContent)
+        jsonContent.PaymentCode = Code;
+        console.log("printAfterPayment jsonContent 2 ",  jsonContent);
+        // viewPrintRef.current.printProvisionalRef(jsonContent)
+        dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: jsonContent })
     }
 
     const handlerQRCode = async (order) => {
@@ -671,6 +679,7 @@ export default (props) => {
     }
 
     const calculatorPrice = (jsonContent, totalPrice, update = true) => {
+        console.log("calculator jsonContent ==  ", jsonContent);
         let realPriceValue = totalPrice;
         let disCountValue = 0;
         if (!percent) {
@@ -987,7 +996,7 @@ export default (props) => {
 
                                         jsonContent.DiscountRatio = jsonContent.Discount / totalPrice * 100
                                         console.log("jsonContent.DiscountRatio ", jsonContent.DiscountRatio);
-                                        
+
                                         selectPercent(true)
                                     }} style={{ width: 55, alignItems: "center", borderWidth: 0.5, borderColor: colors.colorchinh, borderTopRightRadius: 5, borderBottomRightRadius: 5, paddingVertical: 7, backgroundColor: !percent ? "#fff" : colors.colorchinh }}>
                                         <Text style={{ color: percent ? "#fff" : "#000" }}>%</Text>

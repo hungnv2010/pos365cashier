@@ -237,11 +237,11 @@ export default (props) => {
         arr.splice(idx, 1)
         let qtt = getQuantity(elm)
         for (let i = 0; i < elm.Quantity; i++) {
-          arr.splice(idx, 0, { ...elm, Quantity: qtt,  })
+          arr.splice(idx, 0, { ...elm, Quantity: qtt, })
         }
       }
     })
-    listProducts.current = [...listProducts.current, ...listChangeText.current]
+    listProducts.current = [...listProducts.current, ...listChangeText.current].filter(item => item.Quantity > 0)
     console.log('onClickDone listProducts', listProducts.current);
     props.route.params._onSelect(listProducts.current, 4);
   }

@@ -22,7 +22,7 @@ import dialogManager from '../../../../components/dialog/DialogManager';
 export default (props) => {
 
 
-    const [currentCommodity, setCurrentCommodity] = useState({})
+    const currentCommodity = useRef({})
     const [numberNewOrder, setNumberNewOrder] = useState(0)
     const [showModal, setShowModal] = useState(false)
     const [listOrder, setListOrder] = useState([])
@@ -72,12 +72,21 @@ export default (props) => {
 
     useEffect(() => {
         listOrder.forEach((elm, index) => elm.index = index)
+
     }, [listOrder])
 
     useEffect(() => {
-        let jsonObject = currentCommodity.JsonContent ? JSON.parse(currentCommodity.JsonContent) : {}
-        setJsonContent({ ...jsonObject })
-    }, [currentCommodity])
+        if (JSON.stringify(jsonContent) != "{}") {
+            if (currentPriceBook.Id) {
+                jsonContent.PriceBookId = currentPriceBook.Id
+            } else {
+                jsonContent.PriceBookId = null
+            }
+            currentCommodity.current.JsonContent = JSON.stringify(jsonContent)
+            realmStore.insertServerEventForRetail(currentCommodity.current)
+            setJsonContent({ ...jsonContent })
+        }
+    }, [currentPriceBook])
 
     useEffect(() => {
         const getOtherPrice = async () => {
@@ -98,8 +107,7 @@ export default (props) => {
                             }
                         })
                     })
-                    // updateServerEvent()
-                    // setListOrder([...listOrder])
+
                 }
                 setDataOrder([...listOrder])
             }
@@ -111,21 +119,56 @@ export default (props) => {
                 let basePrice = (product.IsLargeUnit) ? product.PriceLargeUnit : product.UnitPrice
                 product.Price = basePrice + product.TotalTopping
             })
-            // updateServerEvent()
-            // setListOrder([...listOrder])
+
             setDataOrder([...listOrder])
         }
-        if (listOrder) {
+        if (JSON.stringify(jsonContent) != "{}") {
             if (currentPriceBook && currentPriceBook.Id) getOtherPrice()
             else getBasePrice()
         }
     }, [currentPriceBook])
 
+    useEffect(() => {
+        if (JSON.stringify(jsonContent) != "{}") {
+            if (currentCustomer && currentCustomer.Id) {
+                let apiPath = `${ApiPath.SYNC_PARTNERS}/${currentCustomer.Id}`
+                new HTTPService().setPath(apiPath).GET()
+                    .then(result => {
+                        if (result) {
+                            console.log('resultresult', result, jsonContent);
+                            let discount = dataManager.totalProducts(jsonContent.OrderDetails) * result.BestDiscount / 100
+                            console.log('discount', discount);
+                            jsonContent.Discount = discount
+                            jsonContent.Partner = currentCustomer
+                            jsonContent.PartnerId = currentCustomer.Id
+                            console.log('jsonContentjsonContent', jsonContent);
+                            dataManager.calculatateJsonContent(jsonContent)
+                            currentCommodity.current.JsonContent = JSON.stringify(jsonContent)
+                            realmStore.insertServerEventForRetail(currentCommodity.current)
+                            setJsonContent({ ...jsonContent })
+                        }
+                    })
+
+            } else {
+                jsonContent.Partner = null
+                jsonContent.PartnerId = null
+                jsonContent.Discount = 0
+                dataManager.calculatateJsonContent(jsonContent)
+                currentCommodity.current.JsonContent = JSON.stringify(jsonContent)
+                realmStore.insertServerEventForRetail(currentCommodity.current)
+                setJsonContent({ ...jsonContent })
+            }
+
+        }
+
+    }, [currentCustomer])
+
+
 
     const getOtherPrice = async (list) => {
         console.log('getOtherPrice');
         if (currentPriceBook.Id) {
-            if (jsonContent.OrderDetails && currentPriceBook) {
+            if (list && currentPriceBook) {
                 let apiPath = ApiPath.PRICE_BOOK + `/${currentPriceBook.Id}/manyproductprice`
                 let params = { "pricebookId": currentPriceBook.Id, "ProductIds": list.map((product) => product.ProductId) }
                 let res = await new HTTPService().setPath(apiPath).POST(params)
@@ -157,11 +200,20 @@ export default (props) => {
         setNumberNewOrder(newServerEvents.length)
         if (newServerEvents.length == 0) {
             let newSE = await createNewServerEvent()
-            setCurrentCommodity(newSE)
+            currentCommodity.current = (newSE)
         } else {
-            setCurrentCommodity(newServerEvents[0])
+            currentCommodity.current = (newServerEvents[0])
             let jsonContent = JSON.parse(newServerEvents[0].JsonContent)
-            // setListOrder(jsonContent.OrderDetails)
+            if (jsonContent.Partner) setCurrentCustomer(jsonContent.Partner)
+            if (jsonContent.PriceBookId) {
+                for (const property in listPriceBookRef.current) {
+                    if (listPriceBookRef.current[property].Id == jsonContent.PriceBookId) {
+                        setCurrentPriceBook(listPriceBookRef.current[property])
+                    }
+                }
+
+            }
+            setJsonContent(jsonContent)
             setDataOrder(jsonContent.OrderDetails)
         }
 
@@ -210,7 +262,8 @@ export default (props) => {
         console.log("setDataOrder listOrder list ", listOrder, list);
 
         setListOrder([...list])
-        updateServerEvent([...list])
+        updateServerEvent([...listOrder])
+
     }
 
     const addPromotion = async (list) => {
@@ -477,9 +530,22 @@ export default (props) => {
 
             case 3: //from commodity
                 console.log('onCallBackonCallBack', data);
-                setCurrentCommodity(data)
+                currentCommodity.current = (data)
                 let jsonContent = JSON.parse(data.JsonContent)
-                setDataOrder(jsonContent.OrderDetails)
+                console.log('onCallBackonCallBack jsoncontent', jsonContent);
+                if (jsonContent.Partner) setCurrentCustomer(jsonContent.Partner)
+                else setCurrentCustomer({ Name: "khach_hang", Id: 0 })
+                if (jsonContent.PriceBookId) {
+                    for (const property in listPriceBookRef.current) {
+                        if (listPriceBookRef.current[property].Id == jsonContent.PriceBookId) {
+                            setCurrentPriceBook(listPriceBookRef.current[property])
+                        }
+                    }
+
+                } else setCurrentPriceBook({ Name: "gia_niem_yet", Id: 0 })
+
+                setJsonContent(jsonContent)
+                setListOrder(jsonContent.OrderDetails)
                 break
             case 4: //from select products
                 data = await getOtherPrice(data)
@@ -493,14 +559,14 @@ export default (props) => {
     }
 
     const updateServerEvent = (data) => {
-        if (!currentCommodity.JsonContent) return
-        console.log('updateServerEvent', data, currentCommodity);
-        let jsonContent = JSON.parse(currentCommodity.JsonContent)
+        console.log('updateServerEvent', data);
+        if (JSON.stringify(jsonContent) == "{}") return
         jsonContent.OrderDetails = [...data]
         dataManager.calculatateJsonContent(jsonContent)
-        currentCommodity.JsonContent = JSON.stringify(jsonContent)
-        realmStore.insertServerEventForRetail(currentCommodity)
-        setCurrentCommodity({ ...currentCommodity })
+        console.log('updateServerEvent jsonContent', jsonContent);
+        currentCommodity.current.JsonContent = JSON.stringify(jsonContent)
+        realmStore.insertServerEventForRetail(currentCommodity.current)
+        setJsonContent({ ...jsonContent })
     }
 
     const onClickNewOrder = async () => {
@@ -510,8 +576,11 @@ export default (props) => {
             return
         }
         let newSE = await createNewServerEvent()
-        setCurrentCommodity(newSE)
+        currentCommodity.current = (newSE)
+        setJsonContent(JSON.parse(newSE.JsonContent))
         setListOrder([])
+        setCurrentCustomer({ Name: "khach_hang", Id: 0 })
+        setCurrentPriceBook({ Name: "gia_niem_yet", Id: 0 })
         // setDataOrder([])
     }
 
@@ -598,7 +667,7 @@ export default (props) => {
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                         <Text style={{ fontWeight: "bold" }}>{I18n.t('tong_thanh_tien')}</Text>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                            <Text style={{ fontWeight: "bold", fontSize: 16, color: Colors.colorchinh }}>{currencyToString(jsonContent.Total)}đ</Text>
+                            <Text style={{ fontWeight: "bold", fontSize: 16, color: Colors.colorchinh }}>{currencyToString(jsonContent.Total + jsonContent.Discount - jsonContent.VAT)}đ</Text>
                             {expand ?
                                 <Icon style={{}} name="chevron-up" size={30} color="black" />
                                 :
@@ -621,7 +690,7 @@ export default (props) => {
                             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                                 <Text style={{ fontWeight: "bold" }}>{I18n.t('khach_phai_tra')}</Text>
                                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                                    <Text style={{ fontWeight: "bold", fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(jsonContent.AmountReceived)}đ</Text>
+                                    <Text style={{ fontWeight: "bold", fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(jsonContent.Total)}đ</Text>
                                 </View>
                             </View>
                         </View>
