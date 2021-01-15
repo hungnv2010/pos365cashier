@@ -50,7 +50,9 @@ export default function ToolBarPrintHtml(props) {
                             {props.rightIcon && props.clickRightIcon ?
                                 <Icon name={props.rightIcon} size={props.size ? props.size : 30} color="white" />
                                 :
-                                <Icon  size={30} name="keyboard-backspace" color="white" delayPressIn={0} onPress={onClickBack} />
+                                <TouchableOpacity onPress={onClickBack} style={{ paddingLeft: 19, paddingRight: 19, paddingTop: 16, paddingBottom: 16 }}>
+                                    <Image source={Images.icon_back} style={{ width: 10, height: 16, }} />
+                                </TouchableOpacity>
                             }
                         </TouchableOpacity>
                     </View>
@@ -95,7 +97,7 @@ export default function ToolBarPrintHtml(props) {
                         </View>}
                 </View>
             </View>
-            </View>
+        </View>
     )
 
 }

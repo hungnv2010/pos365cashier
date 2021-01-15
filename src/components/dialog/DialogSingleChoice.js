@@ -38,7 +38,7 @@ export default (props)=>{
 }
 const styles = StyleSheet.create({
     styleButton:
-        {marginLeft:10,marginRight:10,backgroundColor:'#1E90FF',marginBottom:15,marginTop:15,borderRadius:15,height:50},
+        {marginLeft:10,marginRight:10,backgroundColor:'#1E90FF',marginBottom:15,marginTop:15,borderRadius:16,height:50},
     styleTextBold:{
         textAlign:'center',
         fontWeight:'bold',padding:15,

@@ -42,7 +42,7 @@ export default forwardRef((props, ref) => {
 
                 <View style={{ flex: 1, alignItems: "center" }}>
                     <TouchableOpacity onPress={() => { props.navigation.openDrawer() }}>
-                        <Icon name="menu" size={28} color="white" />
+                    <Image source={Images.icon_menu} style={{width:48,height:48}} />
                     </TouchableOpacity>
                 </View>
                 <View style={{ flex: 1.5, justifyContent: 'center', alignItems: 'flex-start', }}>

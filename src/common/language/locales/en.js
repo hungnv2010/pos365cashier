@@ -324,6 +324,10 @@ export default {
   chon_ngay_het_han: "Choose expiry date",
   chua_co_lich_su_huy_tra:"No room history",
   chua_co_voucher:'No Voucher',
+  chon_loai_hang_hoa:'Chose product type',
+  chon_nhom_hang_hoa:'Choose categoty',
+  chua_co:'Empty',
+  chon_hang_hoa:'Choose product',
 
 
   don_vi_tien_te: "Currency unit",
@@ -332,14 +336,17 @@ export default {
   don_vi_tinh:'Unit',
   dich_vu:'Service',
   don_vi_tinh_lon_va_cac_thong_so_khac:'Large unit and other',
+  don_vi_tinh_lon:'Large unit',
 
   giu_man_hinh_luon_sang: "Keep the screen on",
   gia: "Price",
   gia_bon_block_dau:"Price for the first 4 block",
   gia_ban_duoc_tinh_theo_phan_tram_gia_tri_don_hang:"Price is calculated by % of order",
+  gia_ban_dvt_lon:'Price large unit',
+  gia_tri_quy_doi:'Exchange value',
 
   hien_thanh_dieu_huong: "Show navigation bar",
-  hien_thi_hang_hoa:'',
+  hien_thi_hang_hoa:'Display product',
   hien_thi_san_pham_tren_man_hinh_thu_ngan:"Display product on the list of the cashier screen",
 
   in_sau_khi_thanh_toan: "Print after payment",
@@ -379,6 +386,7 @@ export default {
   ma_san_pham: 'Product code',
   ma_voucher: 'Code',
   ma_hang_ma_sku_ma_vach:'Product code',
+  ma_dvt_lon:'Large unit code',
 
   nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: "Receive messages / notifications from waiter, manager?",
   nhap_so_luong_the: "Enter the number of cards",
@@ -387,12 +395,13 @@ export default {
   nhan_vien: 'Staff',
   ngay_huy_tra: 'Cancellation date',
   ngay_het_han: 'Expiry Date',
+  nhap_ten_nhom_hang_hoa:'Enter category name',
 
   so_the_cung: "Card number",
   su_dung_hai_man_hinh: "Using two screen",
   setting: "Setting",
   so_dien_thoai: "Phone number",
-  so_luong_theo_thoi_gian:'',
+  so_luong_theo_thoi_gian:'Quantity by time',
   so_block_gio_dau_tien:'First hour block number',
   so_luong_hang_hoa_duoc_tinh_theo_thoi_gian:"The quantity is calculated by time of use",
   so_may_in_toi_da:'Maximum printers',
@@ -406,7 +415,7 @@ export default {
   thanh_toan_vnpayqr: "Payment VNPAY-QR?",
   thanh_toan_vnpaypos_qua_may_pos: "VNPAY-POS payment via POS machine?",
   them_moi_voucher:"Add new voucher",
-  thiet_lap_gia_ban_theo_block:'',
+  thiet_lap_gia_ban_theo_block:'Set price by block',
   them_moi:'Add',
   ten_hang_hoa: 'Product name',
   thanh_tien: 'Total',
@@ -414,6 +423,10 @@ export default {
   them_moi_voucher: "Add new voucher",
   thiet_lap_khung_gio_dac_biet:"Set special time frame",
   ton_kho:'Inventory',
+  them_moi_nhom_hang_hoa:'Add new category',
+  tao_nhom:'Create group',
+  tinh_theo_phan_tram:'Account by %',
+  thanh_phan_combo:"Combo Components",
 
   vnd: "VND",
   voucher: "Voucher"

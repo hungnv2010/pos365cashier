@@ -388,6 +388,10 @@ export default {
   chi_tiet_hang_hoa:"Chi tiết hàng hoá",
   chua_co_lich_su_huy_tra:'Chưa có lịch sử huỷ/ trả hàng',
   chua_co_voucher:'Chưa có Voucher',
+  chon_loai_hang_hoa:'Chọn loại hàng hoá ',
+  chon_nhom_hang_hoa:'Chọn nhóm hàng hoá',
+  chua_co:'Empty',
+  chon_hang_hoa:'Choose product',
 
   don_vi_tien_te: "Đơn vị tiền tệ",
   dollar_my: "Dollar Mỹ",
@@ -395,11 +399,14 @@ export default {
   don_vi_tinh:"Đơn vị tính",
   dich_vu:'Dịch vụ',
   don_vi_tinh_lon_va_cac_thong_so_khac:"Đơn vị tính lớn và các thông số khác",
+  don_vi_tinh_lon:'Đơn vị tính lớn',
 
   giu_man_hinh_luon_sang: "Giữ màn hình luôn sáng",
   gia:"Giá bán",
   gia_ban_duoc_tinh_theo_phan_tram_gia_tri_don_hang:"Giá bán được tính theo % giá trị đơn hàng",
   gia_bon_block_dau:"Giá 4 block đầu tiên",
+  gia_ban_dvt_lon:'Giá bán đơn vị tính lớn',
+  gia_tri_quy_doi:'Giá trij quy đổi',
 
   hien_thanh_dieu_huong: "Hiện thanh điều hướng",
   hien_thi_hang_hoa:'Hiển thị hàng hoá',
@@ -440,6 +447,7 @@ export default {
   ma_san_pham:"Mã sản phẩm",
   ma_voucher:'Mã Voucher',
   ma_hang_ma_sku_ma_vach:"Mã hàng/ SKU/ Mã vạch",
+  ma_dvt_lon:'Mã đơn vị tính lớn',
 
   nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: "Nhận tin nhắn/ thông báo từ phục vụ, quản lý?",
   nhap_so_luong_the: "Nhập số lượng thẻ",
@@ -448,6 +456,7 @@ export default {
   nhan_vien:"Nhân viên",
   ngay_huy_tra:"Ngày hủy/trả",
   ngay_het_han:"Ngày hết hạn",
+  nhap_ten_nhom_hang_hoa:'Nhập tên nhóm hàng hoá',
 
   setting: 'Thiết lập',
 
@@ -476,6 +485,9 @@ export default {
   them_moi:'Thêm mới',
   tinh_theo_phan_tram:'Tính theo %',
   thiet_lap_khung_gio_dac_biet:"Thiết lập khung giờ đặc biệt",
+  them_moi_nhom_hang_hoa:'Thêm mới nhóm hàng hoá',
+  tao_nhom:'Tạo nhóm',
+  thanh_phan_combo:"Combo Components",
 
   vnd: "VND",
   voucher:"Mã quà tặng"
