@@ -125,26 +125,31 @@ export default (props) => {
                             }
                         })
                     })
+                } else {
+                    jsonContent.OrderDetails.forEach((product) => {
+                        product.DiscountRatio = 0.0
+                        let basePrice = (product.IsLargeUnit) ? product.PriceLargeUnit : product.UnitPrice
+                        product.Price = basePrice + product.TotalTopping
+                    })
                 }
-                updateServerEvent({...jsonContent})
+                updateServerEvent({ ...jsonContent })
             }
         }
 
         const getBasePrice = () => {
-            jsonContent.OrderDetails.foreach((product) => {
+            jsonContent.OrderDetails.forEach((product) => {
                 product.DiscountRatio = 0.0
                 let basePrice = (product.IsLargeUnit) ? product.PriceLargeUnit : product.UnitPrice
                 product.Price = basePrice + product.TotalTopping
             })
-            updateServerEvent({...jsonContent})
+            updateServerEvent({ ...jsonContent })
         }
         if (JSON.stringify(jsonContent) != "{}") {
             if (currentPriceBook && currentPriceBook.Id) {
                 jsonContent.PriceBook = currentPriceBook
                 jsonContent.PriceBookId = currentPriceBook.Id
                 getOtherPrice()
-            }
-            else {
+            } else {
                 jsonContent.PriceBookId = null
                 jsonContent.PriceBook = null
                 getBasePrice()
@@ -232,8 +237,9 @@ export default (props) => {
         list = await getOtherPrice(list)
         list = await addPromotion(list);
         if (JSON.stringify(jsonContent) != "{}") {
-            jsonContent.OrderDetails = [...list]
-            updateServerEvent({...jsonContent})
+            jsonContent.OrderDetails = jsonContent.OrderDetails.filter(item => item.Quantity == item.Processed).concat(list)
+            // jsonContent.OrderDetails = [...jsonContent.OrderDetails, ...list]
+            updateServerEvent({ ...jsonContent })
 
         } else {
             let title = props.route.params.Name ? props.route.params.Name : ""

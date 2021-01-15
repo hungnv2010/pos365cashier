@@ -46,6 +46,7 @@ const CustomerOrder = (props) => {
     const debouceWaitingList = useDebounce(waitingList)
     const [isQuickPayment, setIsQuickPayment] = useState(false)
     const [vendorSession, setVendorSession] = useState({});
+    const [QuantitySubtract, setQuantitySubtract] = useState(0)
     const orientaition = useSelector(state => {
         console.log("orientaition", state);
         return state.Common.orientaition
@@ -149,26 +150,36 @@ const CustomerOrder = (props) => {
         // //     if (elm.ProductId == product.ProductId && index == product.index) elm = product
         // // })
         // // setListOrder([...listOrder])
-        let price = product.IsLargeUnit == true ? product.PriceLargeUnit : product.UnitPrice
-        let discount = product.Percent ? (price * product.Discount / 100) : product.Discount
-        listOrder.forEach((elm, index, arr) => {
-            if (elm.ProductId == product.ProductId && index == product.index) {
-                if (product.Quantity == 0) {
-                    arr.splice(index, 1)
+
+
+        if (itemOrder.Quantity > product.Quantity) {
+            setTimeout(() => {
+                setQuantitySubtract(itemOrder.Quantity - product.Quantity)
+                typeModal.current = TYPE_MODAL.RETURN
+                setShowModal(true)
+            }, 300);
+        } else {
+            let price = product.IsLargeUnit == true ? product.PriceLargeUnit : product.UnitPrice
+            let discount = product.Percent ? (price * product.Discount / 100) : product.Discount
+            listOrder.forEach((elm, index, arr) => {
+                if (elm.ProductId == product.ProductId && index == product.index) {
+                    if (product.Quantity == 0) {
+                        arr.splice(index, 1)
+                    }
+                    elm.Quantity = product.Quantity
+                    if (elm.SplitForSalesOrder) {
+                        product['QuantitySplit'] = product.Quantity;
+                        elm.Quantity = 1;
+                    }
+                    elm.Description = product.Description
+                    elm.Discount = discount - price > 0 ? price : discount
+                    elm.Price = product.Price
+                    elm.IsLargeUnit = product.IsLargeUnit
                 }
-                elm.Quantity = product.Quantity
-                if (elm.SplitForSalesOrder) {
-                    product['QuantitySplit'] = product.Quantity;
-                    elm.Quantity = 1;
-                }
-                elm.Description = product.Description
-                elm.Discount = discount - price > 0 ? price : discount
-                elm.Price = product.Price
-                elm.IsLargeUnit = product.IsLargeUnit
-            }
-        })
-        console.log('applyDialogDetail listOrder ', listOrder);
-        props.outputSelectedProduct(product, true)
+            })
+            console.log('applyDialogDetail listOrder ', listOrder);
+            props.outputSelectedProduct(product, true)
+        }
     }
 
     const mapDataToList = (product, isNow = true) => {
@@ -555,14 +566,6 @@ const CustomerOrder = (props) => {
                                 <MaterialIcons style={{ paddingHorizontal: 7 }} name="notifications" size={26} color={Colors.colorchinh} />
                                 <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('in_tam_tinh')}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => { }} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
-                                <Icon style={{ paddingHorizontal: 10 }} name="message" size={22} color={Colors.colorchinh} />
-                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('in_tem')}</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={onClickOptionQuickPayment} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
-                                <Icon style={{ paddingHorizontal: 10 }} name={isQuickPayment ? "check-box-outline" : "close-box-outline"} size={26} color={isQuickPayment ? Colors.colorchinh : "#000"} />
-                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('thanh_toan_nhanh')}</Text>
-                            </TouchableOpacity>
                         </View>
                     </Menu>
                 </TouchableOpacity>
@@ -622,6 +625,7 @@ const CustomerOrder = (props) => {
                                     <ReturnProduct
                                         Name={itemOrder.Name}
                                         Quantity={itemOrder.Quantity}
+                                        QuantitySubtract={QuantitySubtract}
                                         vendorSession={vendorSession}
                                         getDataOnClick={(data) => saveOrder(data)}
                                         setShowModal={() => {

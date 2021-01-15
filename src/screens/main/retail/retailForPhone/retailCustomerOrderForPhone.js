@@ -108,6 +108,12 @@ export default (props) => {
                         })
                     })
 
+                }else{
+                    jsonContent.OrderDetails.foreach((product) => {
+                        product.DiscountRatio = 0.0
+                        let basePrice = (product.IsLargeUnit) ? product.PriceLargeUnit : product.UnitPrice
+                        product.Price = basePrice + product.TotalTopping
+                    })
                 }
                 setDataOrder([...listOrder])
             }

@@ -116,6 +116,7 @@ class PrintService {
     }
 
     handlerQuantityPrint(el, type) {
+        console.log("handlerQuantityPrint el type ", el, type);
         let Quantity = 0;
         if (type != TYPE_PRINT.KITCHEN) {
             if (el.Processed >= el.QuantityChange) {
@@ -140,8 +141,10 @@ class PrintService {
         let listTable = ""
 
         JsonContent.forEach((el, index) => {
-            if ((type == TYPE_PRINT.KITCHEN && (el.Quantity - el.Processed > 0))
+            console.log("GenHtmlKitchen el ", el);
+            if ((type == TYPE_PRINT.KITCHEN && (el.Quantity - el.Processed > 0) || ((type != TYPE_PRINT.KITCHEN)))
             ) {
+                console.log("GenHtmlKitchen el ok");
                 var description = el.Description && el.Description.trim() != "" ? `<br>${el.Description?.replace(";", "<br>")}` : "";
                 let itemTable = listHtml[1];
 

@@ -85,8 +85,8 @@ export default forwardRef((props, ref) => {
                 console.log('Snapshot uri', uri, currentHtml);
                 // alert("img " + uri)
                 // setUriImg(uri)
-                Print.printImageFromClient(uri, "192.168.100.237", (b) => {
-                    console.log("printImageFromClient ab ", b);
+                Print.printImageFromClient(uri, currentHtml.current.ip, (b) => {
+                    console.log("printImageFromClient b ", b);
                 })
                 if (!isProvisional.current)
                     setTimeout(() => {

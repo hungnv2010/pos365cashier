@@ -200,7 +200,7 @@ class SignalRManager {
         if (this.isStartSignalR) {
             this.proxy.invoke(type, message)
                 .done((response) => {
-                    console.log('', response)
+                    console.log('sendMessage ', response)
                 })
                 .fail(() => {
                     console.warn('Something went wrong when calling server, it might not be up and running?')
