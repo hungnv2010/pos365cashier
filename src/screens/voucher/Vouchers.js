@@ -332,7 +332,7 @@ export default (props) => {
     }, [expiryDate])
     const renderItem = (item, index) => {
         return (
-            <TouchableOpacity onPress={() => onClickItemVoucher(item)}>
+            <TouchableOpacity key={index.toString()} onPress={() => onClickItemVoucher(item)}>
                 <View style={styles.borderItem}>
                     <View style={{ justifyContent: 'space-between', flexDirection: 'row', padding: 7, marginLeft: 10, marginRight: 10 }}>
                         <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{item.Code}</Text>

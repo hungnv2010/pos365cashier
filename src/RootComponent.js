@@ -2,7 +2,7 @@ import React, { useState, useEffect, useFocusEffect, useCallback } from 'react';
 import {
     StyleSheet,
     NativeModules,
-    Dimensions, ToastAndroid, NativeEventEmitter, AppState
+    Dimensions, ToastAndroid, NativeEventEmitter, AppState, View, Text
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import StackNavigation from './navigator/stack/StackNavigation';
@@ -14,17 +14,23 @@ import I18n from './common/language/i18n'
 import signalRManager, { signalRInfo } from './common/SignalR';
 import { getFileDuLieuString } from './data/fileStore/FileStorage';
 import { Snackbar } from 'react-native-paper';
+import NetInfo from "@react-native-community/netinfo";
 const { Print } = NativeModules;
 let time = 0;
 const eventSwicthScreen = new NativeEventEmitter(Print);
 import moment from 'moment';
 import 'moment/min/locales'
+import { Metrics } from './theme';
+
+var numberInternetReachable = 0;
 
 export default () => {
 
     const [forceUpdate, setForceUpdate] = useState(false);
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
+    const [netInfo, setNetInfo] = useState(true);
+    const [showStatusInternet, setShowStatusInternet] = useState(false);
     const dispatch = useDispatch();
 
     const { height, width } = Dimensions.get('window');
@@ -54,6 +60,23 @@ export default () => {
             }
         }
         savePrinter()
+
+        // Subscribe
+        const unsubscribe = NetInfo.addEventListener(state => {
+            if (state.isConnected == true && state.isInternetReachable == true) {
+                setNetInfo(true)
+                setTimeout(() => {
+                    setShowStatusInternet(false)
+                }, 1500);
+            } else {
+                if (numberInternetReachable > 0) {
+                    setNetInfo(false)
+                    setShowStatusInternet(true)
+                }
+            }
+            numberInternetReachable++;
+        });
+
     }, [])
 
     useEffect(() => {
@@ -107,12 +130,11 @@ export default () => {
 
     const handleChangeState = (newState) => {
         if (newState === "active") {
-            let currentLocale = I18n.currentLocale()
             if (signalRInfo != "") {
                 signalRManager.killSignalR();
                 signalRManager.startSignalR();
             }
-            // const currentLocale = DeviceInfo.getDeviceLocale()
+            let currentLocale = I18n.currentLocale()
             console.log("currentLocale ", currentLocale);
             if (currentLocale.indexOf('vi') > -1) {
                 I18n.locale = "vi";
@@ -121,17 +143,6 @@ export default () => {
                 I18n.locale = "en";
                 moment.locale('en');
             }
-        }
-    }
-
-
-    const clickBack = () => {
-        if (time + 1000 > new Date().getTime()) {
-            RNExitApp.exitApp();
-        } else {
-            time = new Date().getTime();
-            let thongbao = "Nhấn back 2 lần nữa để thoát";
-            ToastAndroid.show(thongbao, ToastAndroid.SHORT, ToastAndroid.BOTTOM);
         }
     }
 
@@ -150,6 +161,14 @@ export default () => {
     return (
 
         <NavigationContainer ref={navigationRef}>
+            {
+                showStatusInternet ?
+                    <View style={[styles.viewStatusInternet, { backgroundColor: netInfo ? "green" : "#ddd", }]}>
+                        <Text style={{ color: netInfo ? "#fff" : "#000" }}>{netInfo ? I18n.t("da_ket_noi") : I18n.t("khong_co_ket_noi")}</Text>
+                    </View>
+                    : null
+            }
+
             <StackNavigation />
             <Snackbar
                 duration={5000}
@@ -165,5 +184,6 @@ export default () => {
 };
 
 const styles = StyleSheet.create({
+    viewStatusInternet: { alignItems: "center", padding: 4 },
 
 });

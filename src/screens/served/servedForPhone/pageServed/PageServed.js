@@ -371,6 +371,7 @@ export default (props) => {
 
     const updateServerEvent = (jsonContent) => {
         console.log('updateServerEvent', currentPriceBook.Id);
+        console.log('updateServerEvent jsonContent :: ', jsonContent);
         if (currentServerEvent.current) {
             let serverEvent = currentServerEvent.current
             dataManager.calculatateJsonContent(jsonContent)

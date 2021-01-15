@@ -325,6 +325,7 @@ export default {
   chua_co_lich_su_huy_tra:"No room history",
   chua_co_voucher:'No Voucher',
 
+
   don_vi_tien_te: "Currency unit",
   dollar_my: "Dollar",
   dia_chi: "Address",
@@ -412,6 +413,7 @@ export default {
   thanh_toan_vnpaypos_qua_may_pos: "VNPAY-POS payment via POS machine?",
   them_moi_voucher: "Add new voucher",
   thiet_lap_khung_gio_dac_biet:"Set special time frame",
+  ton_kho:'Inventory',
 
   vnd: "VND",
   voucher: "Voucher"

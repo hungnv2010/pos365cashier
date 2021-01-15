@@ -17,7 +17,7 @@
 		1A528578247226380090BA8A /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A528577247226380090BA8A /* libz.tbd */; };
 		1A52857C247228580090BA8A /* Print.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A52857B247228580090BA8A /* Print.m */; };
 		1A5285A724726E930090BA8A /* PrinterManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A52859E24726E930090BA8A /* PrinterManager.m */; };
-		1A53079A25A85F650055ECAB /* file.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 1A53079925A85F650055ECAB /* file.mp4 */; };
+		1A53088E25AEEEDE0055ECAB /* file.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 1A53088D25AEEEDE0055ECAB /* file.mp3 */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -102,8 +102,7 @@
 		1A5285A424726E930090BA8A /* TextSetting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextSetting.h; path = Common/TextSetting.h; sourceTree = "<group>"; };
 		1A5285A524726E930090BA8A /* BitmapSetting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BitmapSetting.h; path = Common/BitmapSetting.h; sourceTree = "<group>"; };
 		1A5285A624726E930090BA8A /* ZPLCmd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ZPLCmd.h; path = Common/ZPLCmd.h; sourceTree = "<group>"; };
-		1A53079925A85F650055ECAB /* file.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; name = file.mp4; path = ../src/screens/payment/file.mp4; sourceTree = "<group>"; };
-		1ACB4B6E2591CDAB00BA5E1F /* PrivateHeaders.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrivateHeaders.h; sourceTree = "<group>"; };
+		1A53088D25AEEEDE0055ECAB /* file.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = file.mp3; path = ../src/screens/payment/file.mp3; sourceTree = "<group>"; };
 		21B9A29277C5EFA95C6A3C4F /* Pods-Pos365Cashier-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pos365Cashier-tvOS.release.xcconfig"; path = "Target Support Files/Pods-Pos365Cashier-tvOS/Pods-Pos365Cashier-tvOS.release.xcconfig"; sourceTree = "<group>"; };
 		2435402DC38DA9FEECE3C003 /* Pods-Pos365CashierTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pos365CashierTests.debug.xcconfig"; path = "Target Support Files/Pods-Pos365CashierTests/Pods-Pos365CashierTests.debug.xcconfig"; sourceTree = "<group>"; };
 		25E53D977576EF042D47D51D /* libPods-Pos365Cashier.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Pos365Cashier.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -255,7 +254,6 @@
 			children = (
 				1A52857A247228480090BA8A /* Print.h */,
 				1A52857B247228580090BA8A /* Print.m */,
-				1ACB4B6E2591CDAB00BA5E1F /* PrivateHeaders.h */,
 			);
 			name = Print;
 			sourceTree = "<group>";
@@ -285,7 +283,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				1A53079925A85F650055ECAB /* file.mp4 */,
+				1A53088D25AEEEDE0055ECAB /* file.mp3 */,
 				13B07FAE1A68108700A75B9A /* Pos365Cashier */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				00E356EF1AD99517003FC87E /* Pos365CashierTests */,
@@ -472,7 +470,7 @@
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
-				1A53079A25A85F650055ECAB /* file.mp4 in Resources */,
+				1A53088E25AEEEDE0055ECAB /* file.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -813,7 +811,7 @@
 			baseConfigurationReference = BC7F917EB6F152A16ACF4402 /* Pods-Pos365Cashier.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CURRENT_PROJECT_VERSION = 39;
+				CURRENT_PROJECT_VERSION = 40;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = S8C4LR9F7U;
 				ENABLE_BITCODE = NO;
@@ -897,7 +895,7 @@
 			baseConfigurationReference = C602AD95F926827C03D70B0F /* Pods-Pos365Cashier.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CURRENT_PROJECT_VERSION = 39;
+				CURRENT_PROJECT_VERSION = 40;
 				DEVELOPMENT_TEAM = S8C4LR9F7U;
 				ENABLE_BITCODE = NO;
 				HEADER_SEARCH_PATHS = (

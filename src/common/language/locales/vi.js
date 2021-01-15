@@ -96,6 +96,7 @@ export default {
   don_hang_offline: "Đơn hàng offline",
   danh_sach_gia:"Chọn bảng giá",
   don_hang_offline:"Đơn hàng offline",
+  da_ket_noi: "Đã kết nối",
 
   // TODO: E
 
@@ -151,6 +152,7 @@ export default {
   khuyen_mai: "Khuyến mãi",
   khuyen_mai_: "khuyến mãi",
   khong_tim_thay_hoa_don_nao_phu_hop:"Không tìm thấy hóa đơn nào phù hợp",
+  khong_co_ket_noi: "Không có kết nối",
 
   // TODO: H
   hoa_don: "Hoá đơn",

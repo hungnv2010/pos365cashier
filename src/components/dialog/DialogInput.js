@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Image, View, Text, TouchableOpacity, TextInput,StyleSheet } from 'react-native';
+import { Image, View, Text, TouchableOpacity, TextInput,StyleSheet,FlatList } from 'react-native';
 import { currencyToString, dateToString } from '../../common/Utils';
 import I18n from "../../common/language/i18n";
 import { Checkbox, RadioButton } from 'react-native-paper';
@@ -11,12 +11,23 @@ export default (props) =>{
     const onClickButton = ()=>{
         props.outputValue(value)
     }
+    const renderItem = (item,index)=>{
+        return(
+        <View >
+            <Text style={styles.styleContent}>{item.Name}</Text>
+            <TextInput style={styles.styleTextInput} placeholder={item.Hint}></TextInput>
+        </View>
+        )
+    }
     return(
         <View style={{backgroundColor:'white',borderRadius:5}}>
             <Text style={[styles.styleTitle,{marginTop:10}]}>{props.title}</Text>
             <View style={styles.styleLine}></View>
-            <Text style={styles.styleContent}>{props.titleInput}</Text>
-            <TextInput style={styles.styleTextInput} placeholder={props.titleHint} onChangeText={(text)=>setValue(text)}></TextInput>
+            <FlatList
+                        data={props.listItem}
+                        renderItem={({ item, index }) => renderItem(item, index)}
+                        keyExtractor={(item, index) => index.toString()}
+                    />
             <Text style={[styles.styleContent]}>{props.content}</Text>
             <View style={styles.styleLine}></View>
             <TouchableOpacity style={styles.styleButton} onPress={onClickButton}>

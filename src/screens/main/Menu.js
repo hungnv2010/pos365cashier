@@ -210,31 +210,6 @@ const HeaderComponent = (props) => {
             }
         })
         setListBranch([...listBranch])
-        // console.log("onClickItemBranch ", props);
-        // setShowModal(false)
-        // if (Branch.Id == item.Id) {
-        //     return;
-        // }
-        // let params = { branchId: item.Id }
-        // dialogManager.showLoading();
-        // new HTTPService().setPath(ApiPath.CHANGE_BRANCH).GET(params).then(async (res) => {
-        //     console.log("onClickItemBranch res ", res);
-        //     if (res) {
-        //         setFileLuuDuLieu(Constant.CURRENT_BRANCH, JSON.stringify(item));
-        //         setBranch(item)
-        //         dispatch({ type: 'IS_FNB', isFNB: null })
-        //         dispatch({ type: 'ALREADY', already: null })
-        //         signalRManager.killSignalR();
-        //         getRetailerInfoAndNavigate();
-        //         dialogManager.hiddenLoading();
-        //     } else {
-        //         dialogManager.hiddenLoading();
-        //     }
-        // }).catch((e) => {
-        //     dialogManager.hiddenLoading();
-        //     console.log("onClickItemBranch err ", e);
-        //     dialogManager.hiddenLoading()
-        // })
     }
 
     const onDoneClickItemBranch = () => {
@@ -279,35 +254,7 @@ const HeaderComponent = (props) => {
     }
 
     const getRetailerInfoAndNavigate = () => {
-        // console.log('getRetailerInfoAndNavigate', item.FieldId);
-        // if (item.FieldId && (item.FieldId == 3 || item.FieldId == 11)) {
-        //     dispatch({ type: 'IS_FNB', isFNB: true })
-        // } else {
-        //     if (vendorSession.CurrentRetailer && (vendorSession.CurrentRetailer.FieldId == 3 || vendorSession.CurrentRetailer.FieldId == 11)) {
-        //         dispatch({ type: 'IS_FNB', isFNB: true })
-        //     } else {
-        //         dispatch({ type: 'IS_FNB', isFNB: false })
-        //     }
-        // }
         navigateToHome()
-        // let inforParams = {};
-        // new HTTPService().setPath(ApiPath.VENDOR_SESSION).GET(inforParams, getHeaders()).then((res) => {
-        //     console.log("getDataRetailerInfo getDataRetailerInfores ", res);
-        //     if (res && res.CurrentUser) {
-        //         if (res.CurrentRetailer && (res.CurrentRetailer.FieldId == 3 || res.CurrentRetailer.FieldId == 11)) {
-        //             setFileLuuDuLieu(Constant.VENDOR_SESSION, JSON.stringify(res))
-        //             navigateToHome()
-        //         } else {
-        //             dialogManager.showPopupOneButton(I18n.t("vui_long_chon_linh_vuc_ban_le_ho_tro_shop_thoi_trang_sieu_thi"), I18n.t('thong_bao'));
-        //         }
-        //     } else {
-        //         dialogManager.showPopupOneButton(I18n.t('ban_khong_co_quyen_truy_cap'), I18n.t('thong_bao'));
-        //     }
-        //     dialogManager.hiddenLoading();
-        // }).catch((e) => {
-        //     dialogManager.hiddenLoading();
-        //     console.log("getDataRetailerInfo err ", e);
-        // })
     }
 
     const onClickLogOut = () => {

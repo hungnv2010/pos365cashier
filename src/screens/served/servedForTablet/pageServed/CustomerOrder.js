@@ -157,6 +157,10 @@ const CustomerOrder = (props) => {
                     arr.splice(index, 1)
                 }
                 elm.Quantity = product.Quantity
+                if (elm.SplitForSalesOrder) {
+                    product['QuantitySplit'] = product.Quantity;
+                    elm.Quantity = 1;
+                }
                 elm.Description = product.Description
                 elm.Discount = discount - price > 0 ? price : discount
                 elm.Price = product.Price
@@ -169,7 +173,7 @@ const CustomerOrder = (props) => {
 
     const mapDataToList = (product, isNow = true) => {
         console.log("mapDataToList product isNow ", product, isNow);
-        
+
         if (isNow) props.outputSelectedProduct(product, true)
         else {
             let isExist = false
