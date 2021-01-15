@@ -129,8 +129,9 @@ const Served = (props) => {
                 let apiPath = ApiPath.PRICE_BOOK + `/${currentPriceBook.Id}/manyproductprice`
                 let params = { "pricebookId": currentPriceBook.Id, "ProductIds": jsonContent.OrderDetails.map((product) => product.ProductId) }
                 let res = await new HTTPService().setPath(apiPath).POST(params)
+                console.log('getOtherPrice res', res);
                 if (res && res.PriceList && res.PriceList.length > 0) {
-                    jsonContent.OrderDetails.map((product) => {
+                    jsonContent.OrderDetails.forEach((product) => {
                         res.PriceList.forEach((priceBook) => {
                             if (priceBook.ProductId == product.ProductId) {
                                 product.DiscountRatio = 0.0
@@ -142,19 +143,25 @@ const Served = (props) => {
                         })
                     })
 
+                } else {
+                    jsonContent.OrderDetails.forEach((product) => {
+                        product.DiscountRatio = 0.0
+                        let basePrice = (product.IsLargeUnit) ? product.PriceLargeUnit : product.UnitPrice
+                        product.Price = basePrice + product.TotalTopping
+                    })
                 }
-                updateServerEvent()
+                updateServerEvent({ ...jsonContent })
             }
         }
 
         const getBasePrice = () => {
             console.log('getBasePrice');
-            jsonContent.OrderDetails.map((product) => {
+            jsonContent.OrderDetails.forEach((product) => {
                 product.DiscountRatio = 0.0
                 let basePrice = (product.IsLargeUnit) ? product.PriceLargeUnit : product.UnitPrice
                 product.Price = basePrice + product.TotalTopping
             })
-            updateServerEvent()
+            updateServerEvent({ ...jsonContent })
 
         }
         if (jsonContent.OrderDetails) {
@@ -224,44 +231,45 @@ const Served = (props) => {
     }
 
     const outputSelectedProduct = async (product, replace = false) => {
+        let { RoomId, Position } = currentServerEvent.current
+        let jsonContentTmp = JSON.stringify(jsonContent) == "{}" ? dataManager.createJsonContent(RoomId, Position, moment()) : jsonContent
         if (product.Quantity > 0 && !replace) {
-            if (!jsonContent.OrderDetails) jsonContent.OrderDetails = []
-            if (jsonContent.OrderDetails.length == 0) {
-                let title = jsonContent.RoomName ? jsonContent.RoomName : ""
+            if (jsonContentTmp.OrderDetails.length == 0) {
+                let title = props.route.params.Name ? props.route.params.Name : ""
                 let body = I18n.t('gio_khach_vao') + moment().format('HH:mm dd/MM')
                 dataManager.sentNotification(title, body)
             }
             if (product.SplitForSalesOrder) {
                 product = await getOtherPrice(product)
-                jsonContent.OrderDetails.push(product)
+                jsonContentTmp.OrderDetails.push(product)
             } else {
                 let isExist = false
-                jsonContent.OrderDetails.forEach(elm => {
+                jsonContentTmp.OrderDetails.forEach(elm => {
                     if (elm.ProductId == product.ProductId) {
                         isExist = true
-                        elm.Quantity = product.Quantity
+                        elm.Quantity += product.Quantity
                         return;
                     }
                 })
                 if (!isExist) {
                     product = await getOtherPrice(product)
-                    jsonContent.OrderDetails.push(product)
+                    jsonContentTmp.OrderDetails.push(product)
                 }
             }
         } else if (replace) {
-            jsonContent.OrderDetails = jsonContent.OrderDetails.map((elm, index) => {
+            jsonContentTmp.OrderDetails = jsonContentTmp.OrderDetails.map((elm, index) => {
                 if (elm.ProductId == product.ProductId && index == product.index) elm = product
                 return elm
             })
         } else {
-            jsonContent.OrderDetails = jsonContent.OrderDetails
+            jsonContentTmp.OrderDetails = jsonContentTmp.OrderDetails
                 .filter((elm, index) => index != product.index)
         }
         checkRoomProductId([product], props.route.params.room.ProductId)
 
-        console.log("outputSelectedProduct jsonContent.OrderDetails ", jsonContent.OrderDetails);
-        jsonContent.OrderDetails = await addPromotion(jsonContent.OrderDetails);
-        updateServerEvent()
+        console.log("outputSelectedProduct jsonContent.OrderDetails ", jsonContentTmp.OrderDetails);
+        jsonContentTmp.OrderDetails = await addPromotion(jsonContentTmp.OrderDetails);
+        updateServerEvent({ ...jsonContentTmp })
     }
 
     const outputListProducts = async (newList, type) => {
@@ -289,7 +297,7 @@ const Served = (props) => {
 
         checkHasItemOrder(newList)
         checkRoomProductId(newList, props.route.params.room.ProductId)
-        updateServerEvent()
+        updateServerEvent({ ...jsonContent })
     }
 
     const addPromotion = async (list) => {
@@ -405,7 +413,7 @@ const Served = (props) => {
         return true;
     }
 
-    const updateServerEvent = () => {
+    const updateServerEvent = (jsonContent) => {
         console.log('updateServerEvent currentPriceBook', currentPriceBook);
         if (currentServerEvent.current) {
             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current))
