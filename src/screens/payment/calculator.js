@@ -128,7 +128,7 @@ export default (props) => {
 
     return (
         <View style={{ flex: 1 }}>
-            <Surface style={styles.surface}>
+            {/* <Surface style={styles.surface}>
                 <View style={{ height: 50, backgroundColor: "#fff", flexDirection: "row", alignItems: "center", }}>
                     <TouchableOpacity style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
                         <Image source={Images.icon_bell_blue} style={{ height: 30, width: 30 }} />
@@ -147,7 +147,7 @@ export default (props) => {
                         <Text>Not print 0 price</Text>
                     </TouchableOpacity>
                 </View>
-            </Surface>
+            </Surface> */}
             {
                 !props.choosePoint ?
                     <>

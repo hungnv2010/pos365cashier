@@ -84,7 +84,7 @@ export default (props) => {
     let row_key = "";
     let qrCodeRealm = null
 
-    const { deviceType } = useSelector(state => {
+    const { deviceType, isFNB } = useSelector(state => {
         return state.Common
     });
 
@@ -543,7 +543,7 @@ export default (props) => {
             if (order) {
                 dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
                 dialogManager.hiddenLoading()
-                updateServerEvent("success")
+                updateServerEvent()
                 await printAfterPayment(order.Code)
                 if (order.QRCode != "") {
                     qrCode.current = order.QRCode
@@ -552,6 +552,8 @@ export default (props) => {
                     handlerQRCode(order)
                 } else {
                     setTimeout(() => {
+                        if (!isFNB)
+                            props.route.params.onCallBack("success")
                         props.navigation.pop()
                     }, 1000);
                     // props.navigation.pop()
@@ -571,16 +573,12 @@ export default (props) => {
         props.navigation.pop()
     }
 
-    const updateServerEvent = (status) => {
-        // if (props.route.params.Screen != undefined && props.route.params.Screen == ScreenList.MainRetail) {
-        //     props.route.params.onCallBack(status)
-        // } else {
+    const updateServerEvent = () => {
         let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
         serverEvent.JsonContent = "{}"
         serverEvent.Version += 10
         console.log("updateServerEvent serverEvent ", serverEvent);
         dataManager.updateServerEventNow(serverEvent, true, false);
-        // }
         playSound()
     }
 
@@ -599,12 +597,12 @@ export default (props) => {
     }
 
     const printAfterPayment = async (Code) => {
-        console.log("printAfterPayment jsonContent 1 ",  jsonContent);
+        console.log("printAfterPayment jsonContent 1 ", jsonContent);
         if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
             jsonContent.RoomName = props.route.params.Name
         }
         jsonContent.PaymentCode = Code;
-        console.log("printAfterPayment jsonContent 2 ",  jsonContent);
+        console.log("printAfterPayment jsonContent 2 ", jsonContent);
         // viewPrintRef.current.printProvisionalRef(jsonContent)
         dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: jsonContent })
     }
