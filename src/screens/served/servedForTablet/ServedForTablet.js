@@ -223,7 +223,7 @@ const Served = (props) => {
             return product
     }
 
-    const outputSelectedProduct = async (product, replace = false, isPopup = false) => {
+    const outputSelectedProduct = async (product, replace = false) => {
         if (product.Quantity > 0 && !replace) {
             if (!jsonContent.OrderDetails) jsonContent.OrderDetails = []
             if (jsonContent.OrderDetails.length == 0) {
@@ -233,18 +233,7 @@ const Served = (props) => {
             }
             if (product.SplitForSalesOrder) {
                 product = await getOtherPrice(product)
-                console.log("outputSelectedProduct product:: ", product);
-                if (product.Quantity == 1) {
-                    if (!isPopup) {
-                        jsonContent.OrderDetails.push(product)
-                    }
-                } else if (product.QuantitySplit > 1) {
-                    for (let index = 0; index < product.QuantitySplit - 1; index++) {
-                        jsonContent.OrderDetails.push({ ...product, Quantity: 1 })
-                    }
-                } 
-                // product = await getOtherPrice(product)
-                // jsonContent.OrderDetails.push(product)
+                jsonContent.OrderDetails.push(product)
             } else {
                 let isExist = false
                 jsonContent.OrderDetails.forEach(elm => {
