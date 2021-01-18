@@ -14,8 +14,8 @@ export default (props) =>{
     const renderItem = (item,index)=>{
         return(
         <View >
-            <Text style={styles.styleContent}>{item.Name}</Text>
-            <TextInput style={styles.styleTextInput} placeholder={item.Hint}></TextInput>
+            <Text style={styles.styleContent}>{I18n.t(item.Name)}</Text>
+            <TextInput style={styles.styleTextInput} placeholder={I18n.t(item.Hint)}></TextInput>
         </View>
         )
     }
@@ -39,17 +39,17 @@ export default (props) =>{
 const styles = StyleSheet.create({
     styleTitle:{
         fontWeight:'bold',
-        textAlign:'center',padding:10
+        textAlign:'center',padding:15
     },
     styleContent:{
         padding:10
     },
     styleButton:{
         backgroundColor:'#1E90FF',
-        borderRadius:5,marginLeft:10,marginRight:10,marginBottom:20,marginTop:10
+        borderRadius:16,marginLeft:10,marginRight:10,marginBottom:20,marginTop:10
     },
     styleTextInput:{
-        borderRadius:5,padding:10,borderWidth:1,borderColor:'#1E90FF', marginRight:10,marginLeft:10,fontSize:14
+        borderRadius:16,padding:15,borderWidth:1, marginRight:10,marginLeft:10,fontSize:14
     },
     styleLine:{
         height:1,marginLeft:10,marginRight:10,backgroundColor:'#DCDCDC'

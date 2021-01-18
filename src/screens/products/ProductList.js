@@ -58,30 +58,6 @@ export default (props) => {
             setItProduct(el)
         }
     }
-    const renderDetail = ()=>{
-        if (deviceType == Constant.TABLET) {
-            if (typeBtn.current == 1) {
-                return(
-                    <View style={{ flex: 1 }}>
-                        <ProductDetail iproduct={itProduct } />
-                    </View>
-                )
-            }else{
-                return(
-                    <View style={{ flex: 1 }}>
-                        <ProductDetail iproduct={{} } />
-                    </View>
-                )
-            }
-            
-        }else{
-            if (typeBtn.current == 1) {
-                props.navigation.navigate(ScreenList.ProductDetail, { product: itemProduct.current, category: category })
-            }else{
-                props.navigation.navigate(ScreenList.ProductDetail, { product: {}, category: {} })
-            }
-        }
-    }
     
     const renderCategory = (item, index) => {
         return (
