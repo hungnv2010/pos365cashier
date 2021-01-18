@@ -471,7 +471,6 @@ export default (props) => {
     };
 
     const showMenu = async () => {
-        console.log("showMenu listPosition ", listPosition);
         _menu.show();
         let serverEvent = await realmStore.queryServerEvents()
         listPosition.forEach((item, index) => {
@@ -479,6 +478,8 @@ export default (props) => {
             let serverEventPos = serverEvent.filtered(`RowKey == '${row_key}'`)
             if (JSON.stringify(serverEventPos) != "{}" && serverEventPos[0].JsonContent && JSON.parse(serverEventPos[0].JsonContent).OrderDetails && JSON.parse(serverEventPos[0].JsonContent).OrderDetails.length > 0) {
                 item.status = true
+            } else {
+                item.status = false
             }
         })
         setListPosition([...listPosition])

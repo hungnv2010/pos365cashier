@@ -153,6 +153,7 @@ export default {
   khuyen_mai_: "khuyến mãi",
   khong_tim_thay_hoa_don_nao_phu_hop:"Không tìm thấy hóa đơn nào phù hợp",
   khong_co_ket_noi: "Không có kết nối",
+  khong_co_ket_noi_internet_don_hang_cua_quy_khach_duoc_luu_vao_offline: "Không có kết nối internet, đơn hàng được lưu vào danh sách đơn hàng offline.",
 
   // TODO: H
   hoa_don: "Hoá đơn",

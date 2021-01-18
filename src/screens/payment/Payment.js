@@ -25,6 +25,7 @@ import dataManager from '../../data/DataManager';
 import QRCode from 'react-native-qrcode-svg';
 import ViewPrint, { TYPE_PRINT } from '../more/ViewPrint';
 import DatePicker from 'react-native-date-picker';
+import moment from 'moment';
 var Sound = require('react-native-sound');
 let timeClickPrevious = 1000;
 
@@ -568,17 +569,19 @@ export default (props) => {
     }
 
     const onError = (json) => {
-        updateServerEvent("")
+        dialogManager.showPopupOneButton(I18n.t("khong_co_ket_noi_internet_don_hang_cua_quy_khach_duoc_luu_vao_offline"))
+        updateServerEvent()
         handlerError({ JsonContent: json, RowKey: row_key })
         props.navigation.pop()
     }
 
     const updateServerEvent = () => {
         let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
-        serverEvent.JsonContent = "{}"
+        // serverEvent.JsonContent = "{}"
+        serverEvent.JsonContent = JSON.stringify(dataManager.createJsonContent(props.route.params.RoomId, props.route.params.Position, moment(), []))
         serverEvent.Version += 10
         console.log("updateServerEvent serverEvent ", serverEvent);
-        dataManager.updateServerEventNow(serverEvent, true, false);
+        dataManager.updateServerEventNow(serverEvent, true, isFNB);
         playSound()
     }
 
@@ -650,13 +653,18 @@ export default (props) => {
     }
 
     const outputResult = (value) => {
-        console.log("outputResult value ", value);
-        if (sendMethod == METHOD.discount) {
-            onChangeTextInput(currencyToString(value), 1)
-        } else if (sendMethod == METHOD.vat) {
-            onChangeTextInput(currencyToString(value), 2)
-        } else {
-            onChangeTextPaymentPaid(currencyToString(value), sendMethod)
+        console.log("outputResult value :: ", value);
+        if (value && value != "") {
+            if (sendMethod == METHOD.discount) {
+                onChangeTextInput(currencyToString(value), 1)
+                // onChangeTextInput(value, 1)
+            } else if (sendMethod == METHOD.vat) {
+                onChangeTextInput(currencyToString(value), 2)
+                // onChangeTextInput(value, 2)
+            } else {
+                onChangeTextPaymentPaid(currencyToString(value), sendMethod)
+                // onChangeTextPaymentPaid(value, sendMethod)
+            }
         }
     }
 

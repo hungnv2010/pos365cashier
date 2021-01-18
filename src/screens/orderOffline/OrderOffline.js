@@ -58,6 +58,7 @@ export default (props) => {
             dialogManager.showLoading();
             let jsonContent = JSON.parse(element.Orders)
             jsonContent.AccountId = null;
+            jsonContent.Code = element.Id;
             let params = {
                 QrCodeEnable: vendorSession.Settings.QrCodeEnable,
                 MerchantCode: vendorSession.Settings.MerchantCode,
@@ -118,7 +119,7 @@ export default (props) => {
                 rightIcon="refresh"
                 clickRightIcon={() => clickUpload()}
             />
-            <ScrollView style={{ flex: 1 }}
+            <ScrollView
                 refreshControl={
                     <RefreshControl
                         tintColor={Colors.colorchinh}
@@ -129,17 +130,19 @@ export default (props) => {
             >
                 {
                     dataList.length > 0 ?
-                        dataList.map((item, index) => (
-                            <TouchableOpacity onPress={() => onClickItem(item)} key={index} style={styles.viewItem}>
-                                <View style={styles.name}>
-                                    <Text style={{}}>{item.Id}</Text>
-                                    <Text style={{ marginTop: 10 }}>{JSON.parse(item.Orders).Partner ? JSON.parse(item.Orders).Partner.Name : I18n.t('khach_le')}</Text>
-                                </View>
-                                <View style={styles.right}>
-                                    <Text style={{ color: Colors.colorchinh }}>{currencyToString(JSON.parse(item.Orders).Total)}</Text>
-                                    <Text style={{ marginTop: 10 }}>{dateUTCToDate(new Date(JSON.parse(item.Orders).PurchaseDate))}</Text>
-                                </View>
-                            </TouchableOpacity>))
+                        dataList.map((item, index) => {
+                            return (
+                                <TouchableOpacity onPress={() => onClickItem(item)} key={index} style={styles.viewItem}>
+                                    <View style={styles.name}>
+                                        <Text style={{}}>{item.Id}</Text>
+                                        <Text style={{ marginTop: 10 }}>{JSON.parse(item.Orders).Partner ? JSON.parse(item.Orders).Partner.Name : I18n.t('khach_le')}</Text>
+                                    </View>
+                                    <View style={styles.right}>
+                                        <Text style={{ color: Colors.colorchinh }}>{currencyToString(JSON.parse(item.Orders).Total)}</Text>
+                                        <Text style={{ marginTop: 10 }}>{dateUTCToDate(new Date(JSON.parse(item.Orders).PurchaseDate))}</Text>
+                                    </View>
+                                </TouchableOpacity>)
+                        })
                         : null
                 }
             </ScrollView>
@@ -159,7 +162,7 @@ export default (props) => {
 
 const styles = StyleSheet.create({
     viewPlus: { backgroundColor: Colors.colorLightBlue, justifyContent: "center", borderRadius: 25, width: 50, height: 50, alignItems: "center" },
-    name: { flex: 1, height: "100%", justifyContent: "center" },
-    right: { flex: 1, height: "100%", justifyContent: "center", alignItems: "flex-end" },
-    viewItem: { padding: 10, flexDirection: "row", justifyContent: "space-between", alignItems: "center", borderBottomColor: "#ddd", borderBottomWidth: 0.5 },
+    name: { justifyContent: "center" },
+    right: { justifyContent: "center", alignItems: "flex-end" },
+    viewItem: { padding: 15, flexDirection: "row", justifyContent: "space-between", alignItems: "center", borderBottomColor: "#ddd", borderBottomWidth: 0.5 },
 })
