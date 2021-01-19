@@ -12,6 +12,7 @@ import { ApiPath } from "../../data/services/ApiPath";
 import { HTTPService } from "../../data/services/HttpService";
 import DialogSingleChoice from '../../components/dialog/DialogSingleChoice'
 import DialogInput from '../../components/dialog/DialogInput'
+import PrintCook from '../../screens/products/PrintCook'
 
 export default (props) => {
     const [product, setProduct] = useState({})
@@ -19,8 +20,9 @@ export default (props) => {
     const [category, setCategory] = useState({})
     const [displayProduct, setDisplayProduct] = useState(true)
     const [showModal, setOnShowModal] = useState(false)
-    const [defaultType, setDefaultType] = useState(product ? product.ProductType : null)
+    const [defaultType, setDefaultType] = useState()
     const typeModal = useRef()
+    const priceConfig = useRef()
     const addCate = useRef([{
         Name: 'ten_nhom',
         Hint: 'nhap_ten_nhom_hang_hoa'
@@ -49,6 +51,7 @@ export default (props) => {
         if (deviceType == Constant.PHONE) {
             getData(props.route.params)
             console.log("Image", typeof (product.ProductImages));
+            setDefaultType(product.ProductType)
         }
     }, [])
     useEffect(() => {
@@ -63,7 +66,6 @@ export default (props) => {
     }
 
     const getProduct = () => {
-        console.log("afsdfsa get product", product.Id)
         if (product.Code != null) {
             let paramFilter = `(substringof('${product.Code}',Code) or substringof('${product.Code}',Name) or substringof('${product.Code}',Code2) or substringof('${product.Code}',Code3) or substringof('${product.Code}',Code4) or substringof('${product.Code}',Code5))`
             new HTTPService().setPath(ApiPath.PRODUCT).GET({ ncludeSummary: true, Inlinecount: 'allpages', CategoryId: -1, PartnerId: 0, top: 20, filter: paramFilter }).then((res) => {
@@ -74,13 +76,14 @@ export default (props) => {
             }).catch((e) => {
                 console.log("error", e);
             })
+        }else{
+            setProductOl({})
         }
 
     }
     useEffect(() => {
-        console.log("afsdfsa", product.Id);
+        console.log("afsdfsa", product);
         getProduct()
-
     }, [product])
     useEffect(() => {
         console.log('product Ol', productOl);
@@ -140,7 +143,7 @@ export default (props) => {
                 <View>
                     <Text style={styles.title}>{I18n.t('loai_hang')}</Text>
                     <TouchableOpacity style={[styles.textInput, { justifyContent: 'space-between', flexDirection: 'row' }]} onPress={() => { typeModal.current = 1; setOnShowModal(true), setDefaultType(product.ProductType) }} >
-                        <Text style={styles.titleButton}>{product.ProductType ? product.ProductType == 1 ? I18n.t('hang_hoa') : product.ProductType == 2 ? I18n.t('dich_vu') : 'Combo' : null}</Text>
+                        <Text style={styles.titleButton}>{product.ProductType ? product.ProductType == 1 ? I18n.t('hang_hoa') : product.ProductType == 2 ? I18n.t('dich_vu') : product.ProductType == 3 ? 'Combo' : null : null}</Text>
                         <Image style={{ width: 20, height: 20, marginTop: 5 }} source={Images.icon_arrow_down} />
                     </TouchableOpacity>
                 </View>
@@ -196,7 +199,7 @@ export default (props) => {
                                     </View>
                                     : product.ProductType == 3 ?
                                         <View>
-                                            <View style={{ padding: 3, backgroundColor: '#f2f2f2', marginTop: 10 ,marginBottom:10}}></View>
+                                            <View style={{ padding: 3, backgroundColor: '#f2f2f2', marginTop: 10, marginBottom: 10 }}></View>
                                             <Text style={styles.titleBold}>{I18n.t('thanh_phan_combo')}</Text>
                                             {productOl.Formular ?
                                                 <View>
@@ -245,42 +248,7 @@ export default (props) => {
                                 </TouchableOpacity>
                             </View>
                             <View style={{ padding: 3, backgroundColor: '#f2f2f2', marginTop: 10, }}></View>
-                            <View style={{ marginBottom: 10 }}>
-                                <View style={{ justifyContent: 'space-between', flexDirection: 'row', padding: 5, marginTop: 10, marginBottom: 10 }}>
-                                    <Text style={styles.titleBold}>{I18n.t('bao_che_bien')}</Text>
-                                    <Text style={{ color: 'silver', marginRight: 10 }}>{I18n.t('so_may_in_toi_da')}   /5</Text>
-                                </View>
-                                <View style={{ flexDirection: 'column' }}>
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <TouchableOpacity style={[styles.styleButton, { marginLeft: 15 }]}>
-                                            <Text style={[styles.titleButtonOff, {}]}>{I18n.t('may_in_bao_bep_a')}</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity style={styles.styleButton}>
-                                            <Text style={styles.titleButtonOff}>{I18n.t('may_in_bao_bep_b')}</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity style={styles.styleButton}>
-                                            <Text style={styles.titleButtonOff}>{I18n.t('may_in_bao_bep_c')}</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity style={styles.styleButton}>
-                                            <Text style={styles.titleButtonOff}>{I18n.t('may_in_bao_bep_d')}</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                    <View style={{ flexDirection: 'row', marginTop: 10 }}>
-                                        <TouchableOpacity style={[styles.styleButton, { marginLeft: 15 }]}>
-                                            <Text style={styles.titleButtonOff}>{I18n.t('may_in_bao_pha_che_a')}</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity style={styles.styleButton}>
-                                            <Text style={styles.titleButtonOff}>{I18n.t('may_in_bao_pha_che_b')}</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity style={styles.styleButton}>
-                                            <Text style={styles.titleButtonOff}>{I18n.t('may_in_bao_pha_che_c')}</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity style={styles.styleButton}>
-                                            <Text style={styles.titleButtonOff}>{I18n.t('may_in_bao_pha_che_d')}</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                </View>
-                            </View>
+                            <PrintCook product={product} config={priceConfig.current}></PrintCook>
                         </View> : null}
                 </View>
                 <View style={{ backgroundColor: '#f2f2f2', padding: 10 }}>
@@ -365,6 +333,9 @@ const styles = StyleSheet.create({
     styleButton: {
         flex: 1, marginRight: 10, justifyContent: 'center', alignItems: 'center', borderRadius: 16, borderWidth: 0.5, padding: 15, backgroundColor: '#f2f2f2'
     },
+    styleButtonOn: {
+        flex: 1, marginRight: 10, justifyContent: 'center', alignItems: 'center', borderRadius: 16, borderWidth: 0.5, padding: 15, backgroundColor: 'white', borderColor: '#36a3f7'
+    },
     textInput: { backgroundColor: '#f2f2f2', marginTop: 5, marginLeft: 15, marginRight: 15, height: 40, borderRadius: 15, height: 50, padding: 10, borderWidth: 0.25, borderColor: 'silver' },
     titleHint: {
         marginLeft: 15, marginRight: 10, color: '#B5B5B5', marginBottom: 5, marginTop: 5
@@ -378,6 +349,4 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         borderRadius: 5
     }
-
-
 })

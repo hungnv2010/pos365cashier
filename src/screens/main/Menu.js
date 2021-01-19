@@ -450,7 +450,7 @@ const ContentComponent = (props) => {
         return (
             <View key={indexchucnnag} style={{ width: "100%", backgroundColor: currentItemMenu == indexchucnnag ? "#EEEEEE" : "#fff" }}>
                 <TouchableOpacity
-                    style={{ with: Metrics.screenWidth * 1, flexDirection: "row", alignItems: "center" }}
+                    style={{ with: Metrics.screenWidth * 1, flexDirection: "row", alignItems: "center"}}
                     onPress={() => onClickItem(chucnang, indexchucnnag)}>
                     {chucnang.icon && chucnang.icon != "" ?
                         <Image

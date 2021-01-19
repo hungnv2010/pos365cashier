@@ -30,7 +30,7 @@ export default function MainToolBar(props) {
                 <TouchableOpacity onPress={() => {
                     console.log("Click this.props ", props);
                     props.navigation.openDrawer();
-                }} style={[{ marginLeft: 15 }, deviceType == Constant.TABLET ? { alignSelf: "flex-start" } : { alignItems: "center" }]}>
+                }} style={[{ }, deviceType == Constant.TABLET ? { alignSelf: "flex-start" } : { alignItems: "center" }]}>
                     {/* <Image source={Images.logo_365_boss_white}
                         style={{ width: 172, height: 40, resizeMode: 'contain' }} /> */}
                     <Image source={Images.icon_menu} style={{width:48,height:48}} />
@@ -48,13 +48,15 @@ export default function MainToolBar(props) {
                     </Subheading>
                 </View>
 
-                <View style={{ marginRight: 15, alignItems: "center" }}>
+                <View style={{  alignItems: "center" }}>
                     {props.clickRightIcon && props.rightIcon ?
-                        <TouchableOpacity onPress={props.clickRightIcon}>
+                        <TouchableOpacity onPress={props.clickRightIcon} style={{marginRight: 15,}}>
                             <Icon name={props.rightIcon} size={props.size ? props.size : 28} color="white" />
                         </TouchableOpacity>
-                        :
-                        null
+                        :null
+                        // <TouchableOpacity onPress={props.clickRightIcon}>
+                        //     <Image source={Images.icon_refresh} style={{width:48,height:48}}></Image>
+                        // </TouchableOpacity>
                     }
                 </View>
             </View>
