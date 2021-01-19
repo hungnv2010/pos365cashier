@@ -177,8 +177,10 @@ export default (props) => {
     }
 
     const onChangeTextInput = (text, type) => {
+        console.log("onChangeTextInput text ", text);
         text = text.replace(/,/g, "");
         text = Number(text);
+        console.log("onChangeTextInput text:: ", text);
         let json = { ...jsonContent }
         switch (type) {
             case 2:
@@ -656,13 +658,13 @@ export default (props) => {
         console.log("outputResult value :: ", value);
         if (value && value != "") {
             if (sendMethod == METHOD.discount) {
-                onChangeTextInput(currencyToString(value), 1)
+                onChangeTextInput(currencyToString(value, true), 1)
                 // onChangeTextInput(value, 1)
             } else if (sendMethod == METHOD.vat) {
-                onChangeTextInput(currencyToString(value), 2)
+                onChangeTextInput(currencyToString(value, true), 2)
                 // onChangeTextInput(value, 2)
             } else {
-                onChangeTextPaymentPaid(currencyToString(value), sendMethod)
+                onChangeTextPaymentPaid(currencyToString(value, true), sendMethod)
                 // onChangeTextPaymentPaid(value, sendMethod)
             }
         }
@@ -918,7 +920,7 @@ export default (props) => {
                     <TextInput
                         returnKeyType='done'
                         keyboardType="number-pad"
-                        value={"" + currencyToString(item.Value)}
+                        value={"" + currencyToString(item.Value, true)}
                         onTouchStart={() => onTouchInput({ ...item, ...METHOD.pay })}
                         editable={deviceType == Constant.TABLET ? false : true}
                         onChangeText={(text) => onChangeTextPaymentPaid(text, item, index)}
@@ -1011,11 +1013,11 @@ export default (props) => {
                                 <TextInput
                                     returnKeyType='done'
                                     keyboardType="number-pad"
-                                    value={"" + currencyToString(!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio)}
+                                    value={"" + currencyToString((!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio), true)}
                                     onTouchStart={() => onTouchInput(METHOD.discount)}
                                     editable={deviceType == Constant.TABLET ? false : true}
                                     onChangeText={(text) => onChangeTextInput(text, 1)}
-                                    style={{ borderColor: sendMethod == METHOD.discount ? colors.colorchinh : "gray", textAlign: "right", backgroundColor: "#eeeeee", marginLeft: 10, flex: 3, borderWidth: 0.5, borderRadius: 5, padding: 6.8 }} />
+                                    style={{ borderColor: sendMethod == METHOD.discount ? colors.colorchinh : "gray", textAlign: "right", backgroundColor: "#eeeeee", marginLeft: 10, flex: 3, borderWidth: 0.5, borderRadius: 5, padding: 6.8, color: "#000" }} />
                             </View>
                             <View style={{ height: 50, backgroundColor: "#fff", flexDirection: "row", paddingHorizontal: 10, alignItems: "center", justifyContent: "space-between" }}>
                                 <Text style={{ flex: 3 }}>{I18n.t('diem_voucher')}</Text>
@@ -1042,11 +1044,11 @@ export default (props) => {
                                 <TextInput
                                     returnKeyType='done'
                                     keyboardType="number-pad"
-                                    value={"" + currencyToString(jsonContent.VATRates)}
+                                    value={"" + currencyToString(jsonContent.VATRates, true)}
                                     onTouchStart={() => onTouchInput(METHOD.vat)}
                                     editable={deviceType == Constant.TABLET ? false : true}
                                     onChangeText={(text) => onChangeTextInput(text, 2)}
-                                    style={{ borderColor: sendMethod == METHOD.vat ? colors.colorchinh : "gray", textAlign: "right", backgroundColor: "#eeeeee", marginLeft: 10, flex: 3, borderWidth: 0.5, borderRadius: 5, padding: 6.8 }} />
+                                    style={{ borderColor: sendMethod == METHOD.vat ? colors.colorchinh : "gray", textAlign: "right", backgroundColor: "#eeeeee", marginLeft: 10, flex: 3, borderWidth: 0.5, borderRadius: 5, padding: 6.8, color: "#000" }} />
                             </View>
                         </Surface>
                         <Surface style={styles.surface}>
@@ -1170,8 +1172,8 @@ const styles = StyleSheet.create({
     viewNote: { width: "100%", flexDirection: "row", marginVertical: 10 },
     textInfo: { width: "30%", paddingVertical: 7 },
     line: { width: "100%", height: 1, backgroundColor: "#eeeeee" },
-    inputNote: { width: "70%", height: 70, backgroundColor: "#eeeeee", marginLeft: 0, borderWidth: 0.5, borderRadius: 5, padding: 6 },
-    inputListMethod: { textAlign: "right", backgroundColor: "#eeeeee", marginLeft: 0, flex: 3, borderWidth: 0.5, borderRadius: 5, padding: 6.8 },
+    inputNote: { width: "70%", height: 70, backgroundColor: "#eeeeee", marginLeft: 0, borderWidth: 0.5, borderRadius: 5, padding: 6, color: "#000" },
+    inputListMethod: { textAlign: "right", backgroundColor: "#eeeeee", marginLeft: 0, flex: 3, borderWidth: 0.5, borderRadius: 5, padding: 6.8, color: "#000" },
     buttonCaculatorMothod: { width: 32, height: 32, justifyContent: "center", alignItems: "center", borderRadius: 5, borderWidth: 0.5, borderColor: colors.colorchinh },
     viewCalculatorMethod: { flex: 3, justifyContent: "center", alignItems: "center", },
     iconArrowDown: { width: 14, height: 14, marginHorizontal: 10 },

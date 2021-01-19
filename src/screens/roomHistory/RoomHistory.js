@@ -264,7 +264,7 @@ export default (props) => {
                         <Text style={{ fontSize: 12,textAlign:'center',marginTop:15,marginRight:10 }}>{roomHistoryData.length} / {count.current}</Text>
                     </View>
                     <View style={{ flex: 1, borderRightWidth: 1, borderRightColor: 'silver', backgroundColor: '#E8E8E8' }}>
-                        <TextInput style={{ borderWidth: 1, marginTop: 10, backgroundColor: '#FFFFFF', borderColor: '#828282', borderRadius: 10, marginBottom: 10, marginLeft: 10, marginRight: 10, padding: 10 }} inlineImageLeft='search_icon' placeholder={I18n.t('nhap_tu_khoa_tim_kiem')} onChangeText={text => setInputSearch(text)}></TextInput>
+                        <TextInput style={{ borderWidth: 1, marginTop: 10, backgroundColor: '#FFFFFF', borderColor: '#828282', borderRadius: 10, marginBottom: 10, marginLeft: 10, marginRight: 10, padding: 10, color: "#000" }} inlineImageLeft='search_icon' placeholderTextColor="#808080" placeholder={I18n.t('nhap_tu_khoa_tim_kiem')} onChangeText={text => setInputSearch(text)}></TextInput>
                         {
                         roomHistoryData.length > 0?
                             <FlatList

@@ -297,7 +297,7 @@ const CustomerOrder = (props) => {
                     }}>
                         <TouchableOpacity
                             style={{ marginRight: 5 }}
-                            onPress={() => onClickReturn(item)}>
+                            onPress={() => { if (!isPromotion) onClickReturn(item) }}>
                             <Icon name={!isPromotion ? "trash-can-outline" : "gift"} size={40} color={!isPromotion ? "black" : Colors.colorLightBlue} />
                         </TouchableOpacity>
                         <View style={{ flexDirection: "column", flex: 1, }}>
@@ -443,10 +443,10 @@ const CustomerOrder = (props) => {
     }
 
     const onClickPayment = () => {
-        if (isQuickPayment) {
-
-        } else {
+        if (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0) {
             props.navigation.navigate(ScreenList.Payment, { RoomId: props.route.params.room.Id, Position: props.Position });
+        } else {
+            dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
         }
     }
 

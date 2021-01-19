@@ -26,7 +26,7 @@ export default (props) => {
 
             <View style={{ margin: 15, backgroundColor: "#fff", borderRadius: 5, flexDirection: "row", alignItems: "center" }}>
                 <Ionicons name={"md-search"} size={25} color="black" style={{ marginLeft: 10 }} />
-                <TextInput style={{ padding: 10, flex: 1 }} />
+                <TextInput style={{ padding: 10, flex: 1 , color: "#000"}} />
             </View>
 
             <ScrollView>

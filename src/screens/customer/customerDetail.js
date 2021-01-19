@@ -430,8 +430,9 @@ export default (props) => {
                             <View style={{ paddingVertical: 20 }}>
                                 <TextInput
                                     placeholder={I18n.t('tu_dong_tao_ma')}
+                                    placeholderTextColor="#808080"
                                     value={customerDetail.Code}
-                                    style={{ borderWidth: 0.5, padding: 10, borderRadius: 5 }}
+                                    style={{ borderWidth: 0.5, color: "#000", padding: 10, borderRadius: 5 }}
                                     onChangeText={(text) => { onChangeText(text, 0) }}
                                 />
                             </View>
@@ -443,8 +444,9 @@ export default (props) => {
                         <Text style={{ paddingBottom: 10 }}>{I18n.t('ten')}<Text style={{ color: "red" }}>*</Text></Text>
                         <TextInput
                             placeholder={I18n.t('ten')}
+                            placeholderTextColor="#808080"
                             value={customerDetail.Name}
-                            style={{ borderWidth: 0.5, padding: 10, borderRadius: 5 }}
+                            style={{ borderWidth: 0.5, color: "#000", padding: 10, borderRadius: 5 }}
                             onChangeText={(text) => { onChangeText(text, 1) }}
                         />
                     </View>
@@ -453,9 +455,10 @@ export default (props) => {
                         <TextInput
                             returnKeyType='done'
                             placeholder={I18n.t('dien_thoai')}
+                            placeholderTextColor="#808080"
                             keyboardType="numeric"
                             value={customerDetail.Phone}
-                            style={{ borderWidth: 0.5, padding: 10, borderRadius: 5 }}
+                            style={{ borderWidth: 0.5, color: "#000", padding: 10, borderRadius: 5 }}
                             onChangeText={(text) => { onChangeText(text, 2) }}
                         />
                     </View>
@@ -492,7 +495,7 @@ export default (props) => {
                             keyboardType="email-address"
                             placeholder="Email"
                             value={customerDetail.Email}
-                            style={{ borderWidth: 0.5, padding: 10, borderRadius: 5 }}
+                            style={{ borderWidth: 0.5, color: "#000", padding: 10, borderRadius: 5 }}
                             onChangeText={(text) => { onChangeText(text, 4) }}
                         />
                     </View>
@@ -524,8 +527,9 @@ export default (props) => {
                         <Text style={{ paddingBottom: 10 }}>{I18n.t('dia_chi')}</Text>
                         <TextInput
                             placeholder={I18n.t('dia_chi')}
+                            placeholderTextColor="#808080"
                             value={customerDetail.Address}
-                            style={{ borderWidth: 0.5, padding: 10, borderRadius: 5 }}
+                            style={{ borderWidth: 0.5, color: "#000", padding: 10, borderRadius: 5 }}
                             onChangeText={(text) => { onChangeText(text, 6) }}
                         />
                     </View>
@@ -561,9 +565,10 @@ export default (props) => {
                         <TextInput
                             returnKeyType='done'
                             placeholder={I18n.t('du_no')}
+                            placeholderTextColor="#808080"
                             keyboardType="numeric"
                             value={currencyToString(customerDetail.TotalDebt)}
-                            style={{ borderWidth: 0.5, padding: 10, borderRadius: 5 }}
+                            style={{ borderWidth: 0.5, color: "#000", padding: 10, borderRadius: 5 }}
                             onChangeText={(text) => { onChangeText(text, 8) }}
                         />
                     </View>
@@ -572,9 +577,10 @@ export default (props) => {
                         <TextInput
                             returnKeyType='done'
                             placeholder={I18n.t('diem_thuong')}
+                            placeholderTextColor="#808080"
                             keyboardType="numeric"
                             value={currencyToString(customerDetail.Point)}
-                            style={{ borderWidth: 0.5, padding: 10, borderRadius: 5 }}
+                            style={{ borderWidth: 0.5, color: "#000", padding: 10, borderRadius: 5 }}
                             onChangeText={(text) => { onChangeText(text, 9) }}
                         />
                     </View>
@@ -585,8 +591,9 @@ export default (props) => {
                         <Text style={{ paddingBottom: 10 }}>{I18n.t('ghi_chu')}</Text>
                         <TextInput
                             placeholder={I18n.t('ghi_chu')}
+                            placeholderTextColor="#808080"
                             value={customerDetail.Description}
-                            style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, height: 70 }}
+                            style={{ borderWidth: 0.5, color: "#000", padding: 10, borderRadius: 5, height: 70 }}
                             onChangeText={(text) => { onChangeText(text, 10) }}
                             multiline={true}
                             numberOfLines={3}

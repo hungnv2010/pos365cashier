@@ -203,6 +203,7 @@ export default (props) => {
                             </View>
                             <TextInput
                                 placeholder={I18n.t('tim_kiem')}
+                                placeholderTextColor="#808080"
                                 onTouchStart={() => {
                                     if (deviceType == Constant.PHONE) {
                                         props.navigation.navigate(ScreenList.SearchVoucher, { _onSelect: onCallBack, listVoucher: listVoucher })
@@ -233,7 +234,7 @@ const styles = StyleSheet.create({
         margin: 5,
         elevation: 4,
     },
-    text_input: { textAlign: "right", backgroundColor: "#eeeeee", marginLeft: 10, flex: 3, borderColor: "gray", borderWidth: 0.5, borderRadius: 5, padding: 6.8 },
+    text_input: { textAlign: "right", backgroundColor: "#eeeeee", marginLeft: 10, flex: 3, borderColor: "gray", borderWidth: 0.5, borderRadius: 5, padding: 6.8, color: "#000" },
     text_payment_paid: { fontWeight: "bold", color: colors.colorchinh, marginLeft: 10 },
     value_payment_paid: { flex: 3, textAlign: "right", fontWeight: "bold" },
     point_row_1: { height: 50, backgroundColor: "#fff", flexDirection: "row", paddingHorizontal: 10, alignItems: "center", borderBottomWidth: 0.5, borderBottomColor: "#ccc", },

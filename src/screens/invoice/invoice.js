@@ -343,10 +343,11 @@ const Invoice = (props) => {
                         <View style={{ backgroundColor: "white", height: 40, width: " 95%", borderRadius: 10, flexDirection: "row", alignItems: "center", paddingHorizontal: 10 }}>
                             <Ionicons name="md-search" size={20} color="black" style={{marginRight: 20}}/>
                             <TextInput
-                                style={{ flex: 1, height: 35 }}
+                                style={{ flex: 1, color: "#000", height: 35 }}
                                 value={textSearch}
                                 onChangeText={text => onChangeText(text)}
                                 placeholder={I18n.t('nhap_ma_hoa_don_tim_kiem')}
+                                placeholderTextColor="#808080"
                             />
                             {
                                 textSearch != "" ?

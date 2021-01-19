@@ -101,7 +101,8 @@ export const ReturnProduct = (props) => {
                                     multiline={true}
                                     value={Description}
                                     style={styles.descModal}
-                                    placeholder={I18n.t('ly_do')} />
+                                    placeholder={I18n.t('ly_do')}
+                                    placeholderTextColor="#808080" />
                             </View>
                         </View>
                         <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", marginBottom: 15 }}>

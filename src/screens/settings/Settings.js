@@ -773,7 +773,7 @@ const Footer = (props) => {
     return (
         <View style={{ flex: 1, marginTop: 15 }}>
             <Text style={styles.textTitleItemHint}>{props.title}</Text>
-            <TextInput style={{ height: 45, borderBottomWidth: 1, marginTop: 5, padding: 10, marginLeft: 20, marginRight: 20, fontSize: 16, color: 'silver' }} placeholder={props.titleHint}></TextInput>
+            <TextInput style={{ height: 45, borderBottomWidth: 1, marginTop: 5, padding: 10, marginLeft: 20, marginRight: 20, fontSize: 16, color: 'silver' }} placeholder={props.titleHint} placeholderTextColor="#808080"></TextInput>
         </View>
     )
 }
@@ -806,7 +806,7 @@ const styles = StyleSheet.create({
         fontSize: 18, fontWeight: "bold", textAlign: "center", paddingVertical: 10, color: colors.colorchinh
     },
     textInputStyle: {
-        borderWidth: 0.5, marginTop: 10, padding: 10, marginLeft: 20, marginRight: 20, fontSize: 14, borderRadius: 5
+        borderWidth: 0.5, marginTop: 10, padding: 10, marginLeft: 20, marginRight: 20, fontSize: 14, borderRadius: 5, color: "#000"
     },
     styleTextBtnHuy: { textAlign: "center", color: colors.colorchinh, fontSize: 14 },
     styleTextBtnOk: { textAlign: "center", color: "#fff", fontSize: 14 },
