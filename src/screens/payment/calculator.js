@@ -26,11 +26,19 @@ export default (props) => {
     }, [props.method])
 
     useEffect(() => {
-        let myRegex = (/[\d.]+/g)
-        let myArr = myRegex.exec(results)
-        console.log('myArr', myArr);
-        if (myArr) {
-            props.outputResult(myArr[0])
+        // let myRegex = (/[\d.]+/g)
+        // let myArr = myRegex.exec(results)
+        // console.log('myArr', myArr);
+        // if (myArr) {
+        //     props.outputResult(myArr[0])
+        // } else {
+        //     props.outputResult(0)
+        // }
+        console.log("results === ", results);
+        
+        if (results != undefined && results != "") {
+            let number = results.replace(/,/g, '');
+            props.outputResult(Number(number))
         } else {
             props.outputResult(0)
         }
@@ -61,18 +69,29 @@ export default (props) => {
 
             case '.':
                 var lastChar = results.slice(results.length - 1)
+                console.log("lastChar ", lastChar);
+                console.log("specialChar ", specialChar);
+                console.log("specialChar.includes(lastChar) ", specialChar.includes(lastChar));
                 if (specialChar.includes(lastChar)) {
+                    console.log("(results.slice(0, results.length - 1) + button) ", (results.slice(0, results.length - 1) + button));
                     setDataResult((results.slice(0, results.length - 1) + button))
                     return
                 }
 
                 let lastIndex = results.lastIndexOf('.')
+                console.log("lastIndex ", lastIndex);
+                
                 if (lastIndex != -1) {
                     let rightString = results.slice(lastIndex + 1, results.length)
+                    console.log("rightString ", rightString);
+                    console.log("!rightString.includes('+') ", !rightString.includes('+'));
+                    console.log("!rightString.includes('-') ", !rightString.includes('-'));
                     if (!rightString.includes('+') && !rightString.includes('-') && !rightString.includes('*') && !rightString.includes('/')) {
                         return
                     }
                 }
+                console.log("results ", results);
+                console.log("button ", button);
                 setDataResult((results + button))
                 break;
 

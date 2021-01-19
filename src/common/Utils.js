@@ -4,23 +4,30 @@ import moment from "moment";
 export const DATE_FORMAT = "YYYY-MM-DD'T'HH:mm:ss.SSFFFFF'Z'";
 
 //Convert number, currency format
-export const currencyToString = value => {
+export const currencyToString = (value, decimal = false) => {
   if (!value || (value && value == "")) {
     value = "0";
   }
   // value = value | 0;
-  value = parseInt(value)
-  if (value < 0) {
-    value = value.toString();
-    let money = parseInt(value.replace(/\D/g, ""), 10);
-    let currentMoney = I18n.toNumber(money, { delimiter: ",", precision: 0 });
-    return `-${currentMoney.toString()}`;
+  value = value.toString()
+  let decimalValue = 0;
+  if (!decimal) {
+    value = parseInt(value)
   } else {
-    value = value.toString();
-    let money = parseInt(value.replace(/\D/g, ""), 10);
-    let currentMoney = I18n.toNumber(money, { delimiter: ",", precision: 0 });
-    return currentMoney.toString();
+    if (value != "0" && value.indexOf(".") > -1) {
+      // alert(value)
+      let arr = value.split('.')
+      value = arr[0].replace(/\"/g, "")
+      decimalValue = arr[1].replace(/\"/g, "")
+    }
   }
+
+  value = value.toString();
+  let money = parseInt(value.replace(/\D/g, ""), 10);
+  let currentMoney = I18n.toNumber(money, { delimiter: ",", precision: 0 });
+  let output = (value < 0) ? `-${currentMoney.toString()}` : `${currentMoney.toString()}`
+  output = (decimal && decimalValue > 0) ? `${output}.${decimalValue}` : output;
+  return output;
 };
 
 export const dateToStringFormatUTC = (

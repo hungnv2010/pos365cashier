@@ -519,7 +519,7 @@ export default (props) => {
                                 <View style={{ width: Metrics.screenWidth * 0.8, }}>
                                     <Text style={styles.titleModal}>{I18n.t('thong_tin_cua_hang')}</Text>
                                     <Text style={{ fontSize: 18, justifyContent: 'center', marginTop: 10, marginLeft: 20 }}>{I18n.t('nhap_chieu_rong_kho_giay')}</Text>
-                                    <TextInput returnKeyType='done' style={styles.textInputStyle} placeholder='58..80' keyboardType="numbers-and-punctuation" onChangeText={text => setDefaultSize(text)}></TextInput>
+                                    <TextInput returnKeyType='done' style={styles.textInputStyle} placeholder='58..80' placeholderTextColor="#808080" keyboardType="numbers-and-punctuation" onChangeText={text => setDefaultSize(text)}></TextInput>
                                     <TouchableOpacity style={{ justifyContent: 'flex-end', alignItems: 'flex-end', marginTop: 10, marginBottom: 10 }} onPress={changePrintTypeKitchenA}>
                                         <View style={{ backgroundColor: colors.colorchinh, marginRight: 15, padding: 10, borderColor: colors.colorchinh, borderWidth: 1, borderRadius: 5 }}>
                                             <Text style={[styles.styleTextBtnOk, {}]} >{I18n.t("dong_y")}</Text>
@@ -616,7 +616,7 @@ export default (props) => {
                                 <View style={{ width: Metrics.screenWidth * 0.8, }}>
                                     <Text style={styles.titleModal}>{titlePrint}</Text>
                                     <Text style={{ fontSize: 18, justifyContent: 'center', marginTop: 10, marginLeft: 20 }}>{I18n.t('nhap_dia_chi_ip_may')}</Text>
-                                    <TextInput returnKeyType='done' style={styles.textInputStyle} value={stateValueIp} keyboardType='numeric' onChangeText={text => changeValueIp(text)} ></TextInput>
+                                    <TextInput returnKeyType='done' style={styles.textInputStyle} value={stateValueIp} keyboardType='numbers-and-punctuation' onChangeText={text => changeValueIp(text)} ></TextInput>
                                     <TouchableOpacity style={{ justifyContent: 'flex-end', alignItems: 'flex-end', marginTop: 10, marginBottom: 10, }} onPress={setIpLANPrint}>
                                         <View style={{ backgroundColor: colors.colorchinh, marginRight: 15, padding: 10, borderColor: colors.colorchinh, borderWidth: 1, borderRadius: 5 }}>
                                             <Text style={[styles.styleTextBtnOk, {}]} >{I18n.t("dong_y")}</Text>
@@ -773,7 +773,7 @@ const Footer = (props) => {
     return (
         <View style={{ flex: 1, marginTop: 15 }}>
             <Text style={styles.textTitleItemHint}>{props.title}</Text>
-            <TextInput style={{ height: 45, borderBottomWidth: 1, marginTop: 5, padding: 10, marginLeft: 20, marginRight: 20, fontSize: 16, color: 'silver' }} placeholder={props.titleHint}></TextInput>
+            <TextInput style={{ height: 45, borderBottomWidth: 1, marginTop: 5, padding: 10, marginLeft: 20, marginRight: 20, fontSize: 16, color: 'silver' }} placeholder={props.titleHint} placeholderTextColor="#808080"></TextInput>
         </View>
     )
 }
@@ -806,7 +806,7 @@ const styles = StyleSheet.create({
         fontSize: 18, fontWeight: "bold", textAlign: "center", paddingVertical: 10, color: colors.colorchinh
     },
     textInputStyle: {
-        borderWidth: 0.5, marginTop: 10, padding: 10, marginLeft: 20, marginRight: 20, fontSize: 14, borderRadius: 5
+        borderWidth: 0.5, marginTop: 10, padding: 10, marginLeft: 20, marginRight: 20, fontSize: 14, borderRadius: 5, color: "#000"
     },
     styleTextBtnHuy: { textAlign: "center", color: colors.colorchinh, fontSize: 14 },
     styleTextBtnOk: { textAlign: "center", color: "#fff", fontSize: 14 },

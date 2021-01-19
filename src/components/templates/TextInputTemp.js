@@ -29,6 +29,7 @@ export default class TextInputTemp extends Component {
                 style={[styles.inputtext, this.props.style]}
                 onChangeText={(text) => this.onChangeText(text)}
                 placeholder={this.props.placeholder}
+                placeholderTextColor="#808080"
                 secureTextEntry={this.props.password}/>
         )
     }
@@ -36,7 +37,7 @@ export default class TextInputTemp extends Component {
 
 const styles = StyleSheet.create({
     inputtext: {
-        backgroundColor: "#FFA951",
+        backgroundColor: "#FFA951", color: "#000",
         margin: 10, padding: 10, borderColor: Colors.colorchinh, borderRadius: 5, borderWidth: 1, height: 50, width: Metrics.screenWidth - 50
     }
 })

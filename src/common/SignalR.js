@@ -42,7 +42,7 @@ class SignalRManager {
         signalRInfo = this.info;
         this.subjectReceive = new Subject()
         console.log(" subjectReceive === ", this.subjectReceive);
-        
+
         this.subjectReceive.map(serverEvent => {
             return serverEvent
         })
@@ -87,10 +87,10 @@ class SignalRManager {
 
         this.subjectSend = new Subject()
         this.subjectSend.debounceTime(300)
-        .map(serverEvent => {
-            return serverEvent
-        })
-        .subscribe(serverEvent => this.sendMessageServerEventNow(serverEvent))
+            .map(serverEvent => {
+                return serverEvent
+            })
+            .subscribe(serverEvent => this.sendMessageServerEventNow(serverEvent))
 
         // Subscribe
         const unsubscribe = NetInfo.addEventListener(state => {
@@ -157,15 +157,20 @@ class SignalRManager {
     }
 
     sendMessageServerEvent = (serverEvent, isNow = false) => {
-        if(this.cacheMessage == JSON.stringify(serverEvent)) return;
-        if(isNow) 
+        console.log('sendMessageServerEvent serverEvent isNow ');
+        if (this.cacheMessage == JSON.stringify(serverEvent)) return;
+        if (isNow) {
+            console.log('sendMessageServerEvent serverEvent isNow true');
             this.sendMessageServerEventNow(serverEvent)
-        else
+        }
+        else {
+            console.log('sendMessageServerEvent serverEvent isNow false');
             this.subjectSend.next(serverEvent)
+        }
     }
 
     sendMessageServerEventNow = (serverEvent) => {
-
+        console.log('sendMessageServerEventNow serverEvent ');
         // let jsonContentObject = JSON.parse(serverEvent.JsonContent)
         // if(jsonContentObject.orderDetails)
         //     jsonContentObject.orderDetails.forEach(element => {
@@ -181,7 +186,7 @@ class SignalRManager {
         // } catch (error) {
         //     serverEvent.Compress = false
         // }
-        
+
         this.sendMessage(serverEvent)
     }
 
