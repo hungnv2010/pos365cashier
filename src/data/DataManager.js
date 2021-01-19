@@ -408,14 +408,14 @@ class DataManager {
         console.log("splitTable oldServerEvent:: ", oldServerEvent)
         console.log("splitTable newServerEvent:: ", newServerEvent)
 
-        // await this.updateServerEventNow(oldServerEvent, true)
-        // await this.updateServerEventNow(newServerEvent, true)
+        await this.updateServerEventNow(oldServerEvent, true)
+        await this.updateServerEventNow(newServerEvent, true)
 
-        signalRManager.sendMessageServerEvent(oldServerEvent)
-        await realmStore.insertServerEvent(oldServerEvent, true)
+        // signalRManager.sendMessageServerEvent(oldServerEvent)
+        // await realmStore.insertServerEvent(oldServerEvent, true)
 
-        signalRManager.sendMessageServerEvent(newServerEvent)
-        await realmStore.insertServerEvent(newServerEvent, true)
+        // signalRManager.sendMessageServerEvent(newServerEvent)
+        // await realmStore.insertServerEvent(newServerEvent, true)
     }
 
     createSeverEvent = async (RoomId, Position) => {

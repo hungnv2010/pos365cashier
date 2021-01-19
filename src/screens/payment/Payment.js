@@ -156,10 +156,6 @@ export default (props) => {
         calculatorPrice(jsonContent, totalPrice)
     }, [percent])
 
-    // useEffect(() => {
-    //     calculatorPrice(jsonContent, totalPrice)
-    // }, [customer])
-
     const _keyboardDidShow = () => {
         setMargin(Metrics.screenWidth / 2)
     }
