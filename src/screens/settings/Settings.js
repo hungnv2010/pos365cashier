@@ -519,7 +519,7 @@ export default (props) => {
                                 <View style={{ width: Metrics.screenWidth * 0.8, }}>
                                     <Text style={styles.titleModal}>{I18n.t('thong_tin_cua_hang')}</Text>
                                     <Text style={{ fontSize: 18, justifyContent: 'center', marginTop: 10, marginLeft: 20 }}>{I18n.t('nhap_chieu_rong_kho_giay')}</Text>
-                                    <TextInput returnKeyType='done' style={styles.textInputStyle} placeholder='58..80' keyboardType="numbers-and-punctuation" onChangeText={text => setDefaultSize(text)}></TextInput>
+                                    <TextInput returnKeyType='done' style={styles.textInputStyle} placeholder='58..80' placeholderTextColor="#808080" keyboardType="numbers-and-punctuation" onChangeText={text => setDefaultSize(text)}></TextInput>
                                     <TouchableOpacity style={{ justifyContent: 'flex-end', alignItems: 'flex-end', marginTop: 10, marginBottom: 10 }} onPress={changePrintTypeKitchenA}>
                                         <View style={{ backgroundColor: colors.colorchinh, marginRight: 15, padding: 10, borderColor: colors.colorchinh, borderWidth: 1, borderRadius: 5 }}>
                                             <Text style={[styles.styleTextBtnOk, {}]} >{I18n.t("dong_y")}</Text>

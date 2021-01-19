@@ -297,7 +297,7 @@ class DataManager {
         if (updateNow)
             serverEvent.Version += 10
         else
-            serverEvent.Version += 10
+            serverEvent.Version += 1
     }
 
     totalProducts = (products) => {

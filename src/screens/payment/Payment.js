@@ -110,9 +110,7 @@ export default (props) => {
             let total = getTotalOrder(orderDetails);
             setTotalPrice(total);
             CASH.Value = jsonContentTmp.Total;
-            // calculatorPrice(jsonContentTmp, total, false);
             setPercentVAT(jsonContentTmp.VATRates ? true : false)
-
             let isVnd = !(jsonContentTmp.DiscountRatio > 0 || jsonContentTmp.DiscountValue == 0)
             console.log("useEffect isVnd == ", isVnd);
             if (!isVnd) {
@@ -157,6 +155,10 @@ export default (props) => {
     useEffect(() => {
         calculatorPrice(jsonContent, totalPrice)
     }, [percent])
+
+    // useEffect(() => {
+    //     calculatorPrice(jsonContent, totalPrice)
+    // }, [customer])
 
     const _keyboardDidShow = () => {
         setMargin(Metrics.screenWidth / 2)
@@ -227,14 +229,36 @@ export default (props) => {
 
     const onCallBackCustomer = (data) => {
         console.log("onCallBackCustomer data : ", data);
-        setCustomer(data);
-        if (currentServerEvent.current) {
-            console.log("onCallBackCustomer Partner : ", data);
-            let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
-            jsonContent.Partner = data;
-            dataManager.paymentSetServerEvent(serverEvent, jsonContent);
-            dataManager.subjectUpdateServerEvent.next(serverEvent)
-        }
+
+        let apiPath = `${ApiPath.SYNC_PARTNERS}/${data.Id}`
+        new HTTPService().setPath(apiPath).GET()
+            .then(result => {
+                if (result) {
+                    console.log('onCallBackCustomer result', result, jsonContent);
+                    let discount = dataManager.totalProducts(jsonContent.OrderDetails) * result.BestDiscount / 100
+                    console.log('discount', discount);
+                    jsonContent.Discount = discount
+                    jsonContent.Partner = data
+                    jsonContent.PartnerId = data.Id
+                    jsonContent.DiscountRatio = result.BestDiscount
+                    console.log('jsonContentjsonContent', jsonContent);
+
+                    calculatorPrice(jsonContent, totalPrice)
+                }
+                setCustomer(data);
+            }).catch(err => {
+                console.log("onCallBackCustomer err ", err);
+                setCustomer(data);
+            })
+
+        // setCustomer(data);
+        // if (currentServerEvent.current) {
+        //     console.log("onCallBackCustomer Partner : ", data);
+        //     let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
+        //     jsonContent.Partner = data;
+        //     dataManager.paymentSetServerEvent(serverEvent, jsonContent);
+        //     dataManager.subjectUpdateServerEvent.next(serverEvent)
+        // }
     }
 
     const addCustomer = () => {

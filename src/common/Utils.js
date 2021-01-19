@@ -5,13 +5,11 @@ export const DATE_FORMAT = "YYYY-MM-DD'T'HH:mm:ss.SSFFFFF'Z'";
 
 //Convert number, currency format
 export const currencyToString = (value, decimal = false) => {
-  console.log("currencyToString value ", value);
   if (!value || (value && value == "")) {
     value = "0";
   }
   // value = value | 0;
   value = value.toString()
-  console.log("currencyToString value : ", value);
   let decimalValue = 0;
   if (!decimal) {
     value = parseInt(value)
@@ -23,30 +21,13 @@ export const currencyToString = (value, decimal = false) => {
       decimalValue = arr[1].replace(/\"/g, "")
     }
   }
-  console.log("currencyToString value :: ", value);
-  console.log("currencyToString decimalValue :: ", decimalValue);
 
   value = value.toString();
   let money = parseInt(value.replace(/\D/g, ""), 10);
   let currentMoney = I18n.toNumber(money, { delimiter: ",", precision: 0 });
-
   let output = (value < 0) ? `-${currentMoney.toString()}` : `${currentMoney.toString()}`
-
   output = (decimal && decimalValue > 0) ? `${output}.${decimalValue}` : output;
-  console.log("currencyToString output :: ", output);
   return output;
-
-  // if (value < 0) {
-  //   value = value.toString();
-  //   let money = parseInt(value.replace(/\D/g, ""), 10);
-  //   let currentMoney = I18n.toNumber(money, { delimiter: ",", precision: 0 });
-  //   return `-${currentMoney.toString()}`;
-  // } else {
-  //   value = value.toString();
-  //   let money = parseInt(value.replace(/\D/g, ""), 10);
-  //   let currentMoney = I18n.toNumber(money, { delimiter: ",", precision: 0 });
-  //   return currentMoney.toString();
-  // }
 };
 
 export const dateToStringFormatUTC = (
