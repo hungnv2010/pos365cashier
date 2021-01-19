@@ -77,7 +77,7 @@ const images = {
     default_food_image: require('../../assets/images/default-image.png'),
     icon_return: require("../../assets/icons/return.png"),
     logo_365_long_color: require("../../assets/images/logo_365_long_color.png"),
-    icon_version: require("../../assets/icons/version.jpg"),
+    icon_version: require("../../assets/icons/icon_version.png"),
     icon_quick_note: require("../../assets/icons/icon_quick_note.jpg"),
     icon_vouchers: require("../../assets/icons/gift-box.png"),
     icon_menu_product: require("../../assets/icons/icon_menu.png"),

@@ -101,18 +101,18 @@ export default (props) => {
                 size: '',
                 ip: ''
             },
-            {
-                key: Constant.KEY_PRINTER.StampPrintKey,
-                title: 'may_in_tem',
-                type: '',
-                size: '',
-                ip: ''
-            },
+            // {
+            //     key: Constant.KEY_PRINTER.StampPrintKey,
+            //     title: 'may_in_tem',
+            //     type: '',
+            //     size: '',
+            //     ip: ''
+            // },
         ],
         InfoStore: '',
         HtmlPrint: '',
         TempPrint: '',
-        tu_dong_in_bao_bep: true,
+        tu_dong_in_bao_bep: false,
         in_sau_khi_thanh_toan: false,
         in_hai_lien_cho_hoa_don: false,
         in_hai_lien_cho_che_bien: false,
@@ -414,10 +414,10 @@ export default (props) => {
                         <SettingSwitch title={"in_hai_lien_cho_hoa_don"} output={onSwitchTone} isStatus={settingObject.in_hai_lien_cho_hoa_don} />
                         <SettingSwitch title={"in_hai_lien_cho_che_bien"} output={onSwitchTone} isStatus={settingObject.in_hai_lien_cho_che_bien} />
                         <SettingSwitch title={"in_tam_tinh"} output={onSwitchTone} isStatus={settingObject.in_tam_tinh} />
-                        <SettingSwitch title={"in_tem_truoc_thanh_toan"} output={onSwitchTone} isStatus={settingObject.in_tem_truoc_thanh_toan} />
-                        <SettingSwitch title={"bao_che_bien_sau_thanh_toan"} output={onSwitchTone} isStatus={settingObject.bao_che_bien_sau_thanh_toan} />
+                        {/* <SettingSwitch title={"in_tem_truoc_thanh_toan"} output={onSwitchTone} isStatus={settingObject.in_tem_truoc_thanh_toan} /> */}
+                        {/* <SettingSwitch title={"bao_che_bien_sau_thanh_toan"} output={onSwitchTone} isStatus={settingObject.bao_che_bien_sau_thanh_toan} /> */}
                     </View>
-                    <View style={styles.viewLine}></View>
+                    {/* <View style={styles.viewLine}></View>
                     <View>
                         <Text style={styles.textTitle}>{I18n.t("thiet_lap_tinh_nang")}</Text>
                         <SettingSwitch title={"cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang"} output={onSwitchTone} isStatus={settingObject.cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang} />
@@ -425,7 +425,7 @@ export default (props) => {
                         <SettingSwitch title={"khong_cho_phep_ban_hang_khi_het_ton_kho"} output={onSwitchTone} isStatus={settingObject.khong_cho_phep_ban_hang_khi_het_ton_kho} />
                         {/* <SettingSwitch title={"mo_cashbox_sau_khi_thanh_toan"} output={onSwitchTone} isStatus={settingObject.mo_cashbox_sau_khi_thanh_toan} />
                         <SettingSwitch title={"nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly"} output={onSwitchTone} isStatus={settingObject.nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly} /> */}
-                    </View>
+                    {/* </View> */} 
                     <View style={styles.viewLine}></View>
                     <View>
                         <Text style={styles.textTitle}>{I18n.t("thiet_lap_he_thong")}</Text>
@@ -752,7 +752,7 @@ const StoreInformation = (props) => {
             <ItemStoreInfor title={I18n.t('ten')} titleHint={props.name}></ItemStoreInfor>
             <ItemStoreInfor title={I18n.t('dia_chi')} titleHint={props.address}></ItemStoreInfor>
             <ItemStoreInfor title={I18n.t('so_dien_thoai')} titleHint={props.phoneNumber}></ItemStoreInfor>
-            <Footer title={I18n.t('chan_trang')} titleHint='Xin cám ơn, hẹn gặp lại quý khách!'></Footer>
+            <Footer title={I18n.t('chan_trang')} titleHint={I18n.t('xin_cam_on_va_hen_gap_lai')}></Footer>
             <Footer title='Banner Ads1' titleHint='https://www.pos365.vn/wp-content'></Footer>
             <Footer title='Banner Ads2' titleHint='https://www.pos365.vn/wp-content'></Footer>
             <Footer title='Slideshow1' titleHint='https://www.pos365.vn/wp-content'></Footer>

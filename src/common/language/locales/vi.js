@@ -492,6 +492,8 @@ export default {
   thanh_phan_combo:"Combo Components",
 
   vnd: "VND",
-  voucher:"Mã quà tặng"
+  voucher:"Mã quà tặng",
+
+  xin_cam_on_va_hen_gap_lai:"Xin cám ơn, hẹn gặp lại quý khách!"
 
 };

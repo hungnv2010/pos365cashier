@@ -155,13 +155,15 @@ export default (props) => {
 
                 </View>
 
-                {deviceType== Constant.TABLET? itProduct!=null ?
+                {deviceType == Constant.TABLET? itProduct!=null ?
                     <View style={{ flex: 1 }}>
                         <ProductDetail iproduct={itProduct } iCategory={category}/>
                     </View>
                     :<View style={{flex:1}}></View>
                     :
-                    null
+                    <View style={{ flex: 1 }}>
+                        <ProductDetail iproduct={{}} iCategory={category}/>
+                    </View>
 
                 }
 
