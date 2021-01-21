@@ -323,6 +323,7 @@ export default (props) => {
                   onChangeText={onChangeText}
                   item={item}
                   index={index}
+                  getQuantity={getQuantity}
                   onClickProduct={onClickProduct}
                   handleButtonDecrease={handleButtonDecrease}
                   handleButtonIncrease={handleButtonIncrease}

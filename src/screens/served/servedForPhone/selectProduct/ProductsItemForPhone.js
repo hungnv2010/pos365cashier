@@ -6,12 +6,12 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
 
-const ProductsItemForPhone = ({ item, index, onClickProduct, handleButtonDecrease, handleButtonIncrease, onChangeText }) => {
+const ProductsItemForPhone = ({ item, index, onClickProduct, handleButtonDecrease, handleButtonIncrease, onChangeText, getQuantity }) => {
 
     const [value, setValue] = useState(item.Quantity)
 
     const onClickItem = () => {
-        setValue(1)
+        setValue(getQuantity(item))
         onClickProduct(item, index)
     }
 

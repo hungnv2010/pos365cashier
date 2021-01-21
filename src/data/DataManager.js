@@ -345,19 +345,21 @@ class DataManager {
 
         newServerEvent = (JSON.stringify(newServerEvent) != '{}') ? JSON.parse(JSON.stringify(newServerEvent))[0]
             : await this.createSeverEvent(newRoomId, newPosition)
-        // if (!newServerEvent.JsonContent) {
-        //     newServerEvent.JsonContent =
-        //         this.createJsonContent(newRoomId, newPosition, momentToDateUTC(moment()), oldServerEvent.JsonContent.OrderDetails)
-        // } else {
         newServerEvent.JsonContent = JSON.parse(newServerEvent.JsonContent)
         let OrderDetails = newServerEvent.JsonContent.OrderDetails ?
             [...newServerEvent.JsonContent.OrderDetails, ...oldServerEvent.JsonContent.OrderDetails]
             : oldServerEvent.JsonContent.OrderDetails
         newServerEvent.JsonContent.OrderDetails = [...OrderDetails]
-        // }
+        newServerEvent.JsonContent.Partner = oldServerEvent.JsonContent.Partner ? oldServerEvent.JsonContent.Partner : null
+        newServerEvent.JsonContent.PartnerId = oldServerEvent.JsonContent.PartnerId ? oldServerEvent.JsonContent.PartnerId : null
+        newServerEvent.JsonContent.Partner = oldServerEvent.JsonContent.Partner ? oldServerEvent.JsonContent.Partner : null
+        newServerEvent.JsonContent.PartnerId = oldServerEvent.JsonContent.PartnerId ? oldServerEvent.JsonContent.PartnerId : null
+        newServerEvent.JsonContent.PriceBookId = oldServerEvent.JsonContent.PriceBookId ? oldServerEvent.JsonContent.PriceBookId : null
+        newServerEvent.JsonContent.PriceBook = oldServerEvent.JsonContent.PriceBook ? oldServerEvent.JsonContent.PriceBook : null
+        newServerEvent.JsonContent.ActiveDate = oldServerEvent.JsonContent.ActiveDate ? oldServerEvent.JsonContent.ActiveDate : ""
 
         oldServerEvent.Version += 1
-        oldServerEvent.JsonContent = JSON.stringify(this.removeJsonContent(oldServerEvent.JsonContent))
+        oldServerEvent.JsonContent = JSON.stringify({})
         newServerEvent.Version += 1
         this.calculatateJsonContent(newServerEvent.JsonContent)
         newServerEvent.JsonContent = JSON.stringify(newServerEvent.JsonContent)
@@ -408,14 +410,14 @@ class DataManager {
         console.log("splitTable oldServerEvent:: ", oldServerEvent)
         console.log("splitTable newServerEvent:: ", newServerEvent)
 
-        // await this.updateServerEventNow(oldServerEvent, true)
-        // await this.updateServerEventNow(newServerEvent, true)
+        await this.updateServerEventNow(oldServerEvent, true)
+        await this.updateServerEventNow(newServerEvent, true)
 
-        signalRManager.sendMessageServerEvent(oldServerEvent)
-        await realmStore.insertServerEvent(oldServerEvent, true)
+        // signalRManager.sendMessageServerEvent(oldServerEvent)
+        // await realmStore.insertServerEvent(oldServerEvent, true)
 
-        signalRManager.sendMessageServerEvent(newServerEvent)
-        await realmStore.insertServerEvent(newServerEvent, true)
+        // signalRManager.sendMessageServerEvent(newServerEvent)
+        // await realmStore.insertServerEvent(newServerEvent, true)
     }
 
     createSeverEvent = async (RoomId, Position) => {

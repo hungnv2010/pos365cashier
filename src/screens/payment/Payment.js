@@ -31,7 +31,7 @@ let timeClickPrevious = 1000;
 
 const TYPE_MODAL = { FILTER_ACCOUNT: "FILTER_ACCOUNT", QRCODE: "QRCODE", DATE: "DATE" }
 
-const CUSTOMER_DEFAULT = { Id: "", Name: I18n.t('khach_le') };
+const CUSTOMER_DEFAULT = { Id: 0, Name: 'khach_le' };
 
 const METHOD = {
     discount: { name: I18n.t('chiet_khau') },
@@ -155,10 +155,6 @@ export default (props) => {
     useEffect(() => {
         calculatorPrice(jsonContent, totalPrice)
     }, [percent])
-
-    // useEffect(() => {
-    //     calculatorPrice(jsonContent, totalPrice)
-    // }, [customer])
 
     const _keyboardDidShow = () => {
         setMargin(Metrics.screenWidth / 2)
@@ -651,11 +647,11 @@ export default (props) => {
         dataManager.syncQRCode([params]);
 
         qrCodeRealm = await realmStore.queryQRCode()
-        qrCodeRealm.addListener((collection, changes) => {
-            if (changes.insertions.length || changes.modifications.length) {
-                console.log("handlerQRCode qrCode.addListener collection changes ", collection, changes);
-            }
-        })
+        // qrCodeRealm.addListener((collection, changes) => {
+        //     if (changes.insertions.length || changes.modifications.length) {
+        //         console.log("handlerQRCode qrCode.addListener collection changes ", collection, changes);
+        //     }
+        // })
     }
 
     const handlerError = (data) => {

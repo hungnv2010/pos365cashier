@@ -173,7 +173,8 @@ export default (props) => {
         refScroll.scrollTo({ y: 500 })
     }
 
-    const onItemPress = ({ Id, Name, ProductId, IsActive }) => {
+    const onItemPress = (item) => {
+        const { Id, Name, ProductId, IsActive } = item
         deviceType == Constant.TABLET ?
             props.navigation.navigate('ServedForTablet', { room: { Id: Id, Name: Name, ProductId: ProductId, IsActive: IsActive } })
             :

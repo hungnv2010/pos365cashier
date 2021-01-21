@@ -19,10 +19,10 @@ import { ScreenList } from '../../../common/ScreenList';
 
 const MainRetail = (props) => {
 
-    // const [listProducts, setListProducts] = useState([])
     const [text, setText] = useState("")
     const [currentPriceBook, setCurrentPriceBook] = useState({ Name: "gia_niem_yet", Id: 0 })
     const [currentCustomer, setCurrentCustomer] = useState({ Name: "khach_hang", Id: 0 })
+    const [numberCommodity, setNumberCommodity] = useState(0)
     const [jsonContent, setJsonContent] = useState({})
     const { orientaition, deviceType } = useSelector(state => {
         return state.Common
@@ -38,126 +38,33 @@ const MainRetail = (props) => {
             let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
             newServerEvents = Object.values(newServerEvents)
             console.log('newServerEvents', newServerEvents);
-            // setNumberNewOrder(newServerEvents.length)
+            setNumberCommodity(newServerEvents.length)
             if (newServerEvents.length == 0) {
                 let newSE = await createNewServerEvent()
                 currentCommodity.current = (newSE)
-                setJsonContent(JSON.parse(newSE.JsonContent))
             } else {
-                currentCommodity.current = (newServerEvents[0])
-                let jsonContent = JSON.parse(newServerEvents[0].JsonContent)
-                if (jsonContent.Partner) setCurrentCustomer(jsonContent.Partner)
-                if (jsonContent.PriceBook) setCurrentPriceBook(jsonContent.PriceBook)
-
-
-                setJsonContent({ ...jsonContent })
+                currentCommodity.current = JSON.parse(JSON.stringify(newServerEvents[0]))
             }
+            let jsonContent = JSON.parse(currentCommodity.current.JsonContent)
+            setJsonContent(jsonContent)
 
-            serverEvents.addListener((collection, changes) => {
-                if (changes.insertions.length || changes.modifications.length) {
-                    // setNumberNewOrder(serverEvents.length)
-                }
-            })
+
         }
         getCommodityWaiting()
     }, [])
 
     useEffect(() => {
-        const getOtherPrice = async () => {
-            if (currentPriceBook) {
-                let apiPath = ApiPath.PRICE_BOOK + `/${currentPriceBook.Id}/manyproductprice`
-                let params = { "pricebookId": currentPriceBook.Id, "ProductIds": jsonContent.OrderDetails.map((product) => product.ProductId) }
-                console.log('getOtherPrice params', params);
-                let res = await new HTTPService().setPath(apiPath).POST(params)
-                if (res && res.PriceList && res.PriceList.length > 0) {
-                    console.log('getOtherPrice res', res);
-                    jsonContent.OrderDetails.foreach((product) => {
-                        res.PriceList.forEach((priceBook) => {
-                            if (priceBook.ProductId == product.ProductId) {
-                                product.DiscountRatio = 0.0
-                                if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
-                                if (!priceBook.Price) priceBook.Price = product.UnitPrice
-                                let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price
-                                product.Price = newBasePrice + product.TotalTopping
-                            }
-                        })
-                    })
-                    // updateServerEvent()
-                } else {
-                    jsonContent.OrderDetails.foreach((product) => {
-                        product.DiscountRatio = 0.0
-                        let basePrice = (product.IsLargeUnit) ? product.PriceLargeUnit : product.UnitPrice
-                        product.Price = basePrice + product.TotalTopping
-                    })
-                }
-                // jsonContent.OrderDetails = [...listProducts]
-                dataManager.calculatateJsonContent(jsonContent)
-                currentCommodity.current.JsonContent = JSON.stringify(jsonContent)
-                realmStore.insertServerEventForRetail(currentCommodity.current)
-                setJsonContent({ ...jsonContent })
-            }
-        }
+        console.log('jsonContent.Partner', jsonContent.Partner);
+        if (jsonContent.Partner && jsonContent.Partner.Id && jsonContent.Partner.Id != currentCustomer.Id) setCurrentCustomer(jsonContent.Partner)
+        else setCurrentCustomer({ Name: "khach_hang", Id: 0 })
 
-        const getBasePrice = () => {
-            jsonContent.OrderDetails.foreach((product) => {
-                product.DiscountRatio = 0.0
-                let basePrice = (product.IsLargeUnit) ? product.PriceLargeUnit : product.UnitPrice
-                product.Price = basePrice + product.TotalTopping
-            })
-            // updateServerEvent()
-            // jsonContent.OrderDetails = [...listProducts]
-            dataManager.calculatateJsonContent(jsonContent)
-            currentCommodity.current.JsonContent = JSON.stringify(jsonContent)
-            realmStore.insertServerEventForRetail(currentCommodity.current)
-            setJsonContent({ ...jsonContent })
-        }
-        if (JSON.stringify(jsonContent) != "{}") {
-            if (currentPriceBook && currentPriceBook.Id) {
-                jsonContent.PriceBook = currentPriceBook
-                jsonContent.PriceBookId = currentPriceBook.Id
-                getOtherPrice()
-            }
-            else {
-                jsonContent.PriceBookId = null
-                jsonContent.PriceBook = null
-                getBasePrice()
-            }
-        }
-    }, [currentPriceBook])
+    }, [jsonContent.Partner])
 
     useEffect(() => {
-        if (JSON.stringify(jsonContent) != "{}") {
-
-            if (currentCustomer && currentCustomer.Id) {
-                let apiPath = `${ApiPath.SYNC_PARTNERS}/${currentCustomer.Id}`
-                new HTTPService().setPath(apiPath).GET()
-                    .then(result => {
-                        if (result) {
-                            console.log('resultresult', result, jsonContent);
-                            let discount = dataManager.totalProducts(jsonContent.OrderDetails) * result.BestDiscount / 100
-                            console.log('discount', discount);
-                            jsonContent.Discount = discount
-                            jsonContent.Partner = currentCustomer
-                            jsonContent.PartnerId = currentCustomer.Id
-                            dataManager.calculatateJsonContent(jsonContent)
-                            currentCommodity.current.JsonContent = JSON.stringify(jsonContent)
-                            realmStore.insertServerEventForRetail(currentCommodity.current)
-                            setJsonContent({ ...jsonContent })
-                        }
-                    })
-
-            } else {
-                jsonContent.Partner = null
-                jsonContent.PartnerId = null
-                jsonContent.Discount = 0
-                dataManager.calculatateJsonContent(jsonContent)
-                currentCommodity.current.JsonContent = JSON.stringify(jsonContent)
-                realmStore.insertServerEventForRetail(currentCommodity.current)
-                setJsonContent({ ...jsonContent })
-            }
-        }
-    }, [currentCustomer])
-
+        console.log('jsonContent.PriceBook', jsonContent.PriceBook);
+        if (jsonContent.PriceBook && jsonContent.PriceBook.Id && jsonContent.PriceBook.Id != currentPriceBook.Id) setCurrentPriceBook(jsonContent.PriceBook)
+        else setCurrentPriceBook({ Name: "gia_niem_yet", Id: 0 })
+    }, [jsonContent.PriceBook])
 
     const createNewServerEvent = async () => {
         let newServerEvent = await dataManager.createSeverEvent(Date.now(), "A")
@@ -169,39 +76,36 @@ const MainRetail = (props) => {
     const outputSelectedProduct = async (product, type = 1) => {
         switch (type) {
             case 1:
-                let isExist = false
-                if (product.SplitForSalesOrder) {
-                    product = await getOtherPrice(product)
-                    jsonContent.OrderDetails.push(product)
-                } else {
-                    jsonContent.OrderDetails.forEach(elm => {
-                        if (elm.ProductId == product.ProductId) {
-                            isExist = true
-                            elm.Quantity += product.Quantity
-                            elm.Quantity = Math.round(elm.Quantity * 1000) / 1000
-                            return;
-                        }
-                    })
-                    if (!isExist) {
+                {
+                    let isExist = false
+                    if (product.SplitForSalesOrder) {
                         product = await getOtherPrice(product)
                         jsonContent.OrderDetails.push(product)
+                    } else {
+                        jsonContent.OrderDetails.forEach(elm => {
+                            if (elm.ProductId == product.ProductId) {
+                                isExist = true
+                                elm.Quantity += product.Quantity
+                                elm.Quantity = Math.round(elm.Quantity * 1000) / 1000
+                                return;
+                            }
+                        })
+                        if (!isExist) {
+                            product = await getOtherPrice(product)
+                            jsonContent.OrderDetails.push(product)
+                        }
                     }
+                    updateServerEvent({ ...jsonContent })
+                    break;
                 }
-                dataManager.calculatateJsonContent(jsonContent)
-                currentCommodity.current.JsonContent = JSON.stringify(jsonContent)
-                realmStore.insertServerEventForRetail(currentCommodity.current)
-                setJsonContent({ ...jsonContent })
-                break;
-
 
             case 2:
-                let newProduct = product.filter(prod => prod.Quantity > 0)
-                jsonContent.OrderDetails = newProduct
-                dataManager.calculatateJsonContent(jsonContent)
-                currentCommodity.current.JsonContent = JSON.stringify(jsonContent)
-                realmStore.insertServerEventForRetail(currentCommodity.current)
-                setJsonContent({ ...jsonContent })
-                break;
+                {
+                    let newProduct = product.filter(prod => prod.Quantity > 0)
+                    jsonContent.OrderDetails = newProduct
+                    updateServerEvent({ ...jsonContent })
+                    break;
+                }
             default:
                 break;
         }
@@ -268,32 +172,120 @@ const MainRetail = (props) => {
         list = list.filter((newItem) => !newItem.exist)
         // setListProducts([...list, ...listProducts])
         jsonContent.OrderDetails = [...list, ...jsonContent.OrderDetails]
-        dataManager.calculatateJsonContent(jsonContent)
-        currentCommodity.current.JsonContent = JSON.stringify(jsonContent)
-        realmStore.insertServerEventForRetail(currentCommodity.current)
-        setJsonContent({ ...jsonContent })
+        updateServerEvent({ ...jsonContent })
 
     }
 
-    const onCallBackPriceCustomer = (data, type) => {
+    const onCallBackPriceCustomer = (data, type, number) => {
         switch (type) {
             case 1:
-                if (data) setCurrentPriceBook(data)
-                break;
+                // if (data) setCurrentPriceBook(data)
+                {
+                    const getOtherPrice = async () => {
+                        if (jsonContent.OrderDetails && data) {
+                            let apiPath = ApiPath.PRICE_BOOK + `/${data.Id}/manyproductprice`
+                            let params = { "pricebookId": data.Id, "ProductIds": jsonContent.OrderDetails.map((product) => product.ProductId) }
+                            let res = await new HTTPService().setPath(apiPath).POST(params)
+                            console.log('getOtherPrice res', res);
+                            if (res && res.PriceList && res.PriceList.length > 0) {
+                                jsonContent.OrderDetails.forEach((product) => {
+                                    res.PriceList.forEach((priceBook) => {
+                                        if (priceBook.ProductId == product.ProductId) {
+                                            product.DiscountRatio = 0.0
+                                            if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
+                                            if (!priceBook.Price) priceBook.Price = product.UnitPrice
+                                            let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price
+                                            product.Price = newBasePrice + product.TotalTopping
+                                        }
+                                    })
+                                })
+                            } else {
+                                jsonContent.OrderDetails.forEach((product) => {
+                                    product.DiscountRatio = 0.0
+                                    let basePrice = (product.IsLargeUnit) ? product.PriceLargeUnit : product.UnitPrice
+                                    product.Price = basePrice + product.TotalTopping
+                                })
+                            }
+                            updateServerEvent({ ...jsonContent })
+                        }
+                    }
+
+                    const getBasePrice = () => {
+                        jsonContent.OrderDetails.forEach((product) => {
+                            product.DiscountRatio = 0.0
+                            let basePrice = (product.IsLargeUnit) ? product.PriceLargeUnit : product.UnitPrice
+                            product.Price = basePrice + product.TotalTopping
+                        })
+                        updateServerEvent({ ...jsonContent })
+                    }
+                    if (JSON.stringify(jsonContent) != "{}") {
+                        if (data && data.Id) {
+                            jsonContent.PriceBook = data
+                            jsonContent.PriceBookId = data.Id
+                            getOtherPrice()
+                        } else {
+                            jsonContent.PriceBookId = null
+                            jsonContent.PriceBook = null
+                            getBasePrice()
+                        }
+                    }
+                    break
+                }
             case 2:
-                if (data) setCurrentCustomer(data)
-                break;
-            case 3:
-                currentCommodity.current = data
-                let jsonContent = JSON.parse(data.JsonContent)
-                setJsonContent(jsonContent)
-                if (jsonContent.Partner) setCurrentCustomer(jsonContent.Partner)
-                else setCurrentCustomer({ Name: "khach_hang", Id: 0 })
-                if (jsonContent.PriceBook) setCurrentPriceBook(jsonContent.PriceBook)
-                else setCurrentPriceBook({ Name: "gia_niem_yet", Id: 0 })
-                break;
+                {
+                    if (JSON.stringify(jsonContent) != "{}") {
+                        if (data && data.Id) {
+                            let apiPath = `${ApiPath.SYNC_PARTNERS}/${data.Id}`
+                            new HTTPService().setPath(apiPath).GET()
+                                .then(result => {
+                                    if (result) {
+                                        console.log('resultresult', result, jsonContent);
+                                        let discount = dataManager.totalProducts(jsonContent.OrderDetails) * result.BestDiscount / 100
+                                        console.log('discount', discount);
+                                        jsonContent.Discount = discount
+                                        jsonContent.Partner = data
+                                        jsonContent.PartnerId = data.Id
+                                        console.log('jsonContentjsonContent', jsonContent);
+                                        updateServerEvent({ ...jsonContent })
+                                    }
+                                })
+
+                        } else {
+                            jsonContent.Partner = null
+                            jsonContent.PartnerId = null
+                            jsonContent.Discount = 0
+                            updateServerEvent({ ...jsonContent })
+                        }
+
+                    }
+                    break
+                }
+            case 3: //from commodity waiting
+                {
+                    currentCommodity.current = (data)
+                    let jsonContent = JSON.parse(data.JsonContent)
+                    setNumberCommodity(number)
+                    updateServerEvent(jsonContent)
+                    break
+                }
+            case 5:
+                {
+                    setNumberCommodity(number)
+                }
             default:
                 break;
+        }
+    }
+
+    const updateServerEvent = (jsonContentObj) => {
+
+        if (currentCommodity.current) {
+            let serverEvent = currentCommodity.current
+            dataManager.calculatateJsonContent(jsonContentObj)
+            currentCommodity.current.JsonContent = JSON.stringify(jsonContentObj)
+            realmStore.insertServerEventForRetail(serverEvent)
+            setJsonContent({ ...jsonContentObj })
+
         }
     }
 
@@ -308,16 +300,11 @@ const MainRetail = (props) => {
     }
 
     const onClickNewOrder = async () => {
-        if (JSON.stringify(jsonContent) != "{}" && jsonContent.OrderDetails.length == 0) {
-            // setToastDescription(I18n.t("moi_chon_mon_truoc"))
-            // setShowToast(true)
-            return
-        }
+
         let newSE = await createNewServerEvent()
         currentCommodity.current = (newSE)
         setJsonContent(JSON.parse(newSE.JsonContent))
-        setCurrentCustomer({ Name: "khach_hang", Id: 0 })
-        setCurrentPriceBook({ Name: "gia_niem_yet", Id: 0 })
+        setNumberCommodity(numberCommodity + 1)
     }
 
     const onCLickCommodity = () => {
@@ -364,6 +351,7 @@ const MainRetail = (props) => {
                                 <RetailCustomerOrder
                                     {...props}
                                     jsonContent={jsonContent}
+                                    numberCommodity={numberCommodity}
                                     outputSelectedProduct={outputSelectedProduct}
                                     onCLickCommodity={onCLickCommodity}
                                     onClickNewOrder={onClickNewOrder} />
