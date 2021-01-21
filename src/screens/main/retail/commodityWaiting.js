@@ -80,11 +80,11 @@ export default (props) => {
                     key={item.Id}
                     style={{ borderRadius: 5, margin: numberColumn == 4 ? 2 : 2, padding: 0, width: widthRoom - (numberColumn == 4 ? 5 : 4.67), height: widthRoom - (numberColumn == 4 ? 5 : 4.67), backgroundColor: colors.colorLightBlue, borderWidth: 0, alignItems: "center" }}>
                     <View style={{ height: "35%", justifyContent: "center", alignItems: "center" }}>
-                        <Text style={{ textAlign: "center", textTransform: "uppercase", color: "#fff", fontSize: 14 }}>Order</Text>
+                        <Text style={{ textAlign: "center", textTransform: "uppercase", color: "#fff", fontSize: 14 }}>{I18n.t('don_hang')}</Text>
                     </View>
                     <View style={{ backgroundColor: "#fff", height: 0.5, width: "100%" }}></View>
                     <View style={{ flex: 1, justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
-                        <Text style={{ textAlign: "center", color: "#fff", marginTop: 0, fontSize: 10 }}>Retail customers</Text>
+                        <Text style={{ textAlign: "center", color: "#fff", marginTop: 0, fontSize: 10 }}>{I18n.t('khach_hang_ban_le')}</Text>
                         <Text style={{ textAlign: "center", color: "#fff", marginTop: 10, fontSize: 10 }}>{currencyToString(JSON.parse(item.JsonContent).Total)}</Text>
                     </View>
                 </TouchableOpacity>
@@ -101,7 +101,7 @@ export default (props) => {
                 {...props}
                 leftIcon="keyboard-backspace"
                 clickLeftIcon={clickLeftIcon}
-                title="Commodity waiting for payment" />
+                title={I18n.t('don_hang_cho_thanh_toan')} />
             {listCommodity.length > 0 ?
                 renderList()
                 :

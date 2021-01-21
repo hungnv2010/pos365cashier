@@ -53,7 +53,7 @@ export default (props) => {
     const onClickItem = (el) => {
         itemProduct.current = el
         if (deviceType == Constant.PHONE) {
-            props.navigation.navigate(ScreenList.ProductDetail, { product: itemProduct.current, category: category })
+            props.navigation.navigate(ScreenList.ProductDetail, { product: el, category: category })
         } else {
             setItProduct(el)
         }
@@ -133,6 +133,7 @@ export default (props) => {
                             horizontal={true}
                             style={{ marginRight: 10, marginLeft: 10 }}
                              keyExtractor={(item, index) => index.toString()}
+                             showsHorizontalScrollIndicator={false}
                         // ref={refs => roomHistoryRef.current = refs}
                         // ListFooterComponent={loadMore ? <ActivityIndicator color={colors.colorchinh} /> : null}
                         // onMomentumScrollBegin={() => { onEndReachedCalledDuringMomentum.current = false }}
@@ -161,10 +162,7 @@ export default (props) => {
                     </View>
                     :<View style={{flex:1}}></View>
                     :
-                    <View style={{ flex: 1 }}>
-                        <ProductDetail iproduct={{}} iCategory={category}/>
-                    </View>
-
+                    null
                 }
 
             </View>

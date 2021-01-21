@@ -339,6 +339,7 @@ export default {
   don_vi_tinh_lon_va_cac_thong_so_khac:'Large unit and other',
   don_vi_tinh_lon:'Large unit',
   doi_tac:'Partner',
+  don_hang_cho_thanh_toan:"Commodity waiting for payment",
 
   giu_man_hinh_luon_sang: "Keep the screen on",
   gia: "Price",
@@ -368,6 +369,8 @@ export default {
   khong_cho_phep_ban_hang_khi_het_ton_kho: "Sales are not allowed when out of stock?",
   khong_in: "Don't print",
   khong_hien_thi: "Not displayed",
+  khong_co_ket_noi:'No connection',
+  khach_hang_ban_le:'Retail customers',
 
   link_dang_nhap: "Link login",
   ly_do:"Reason",
@@ -391,6 +394,7 @@ export default {
   ma_voucher: 'Code',
   ma_hang_ma_sku_ma_vach:'Product code',
   ma_dvt_lon:'Large unit code',
+  may_tinh:'Calculator',
 
   nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: "Receive messages / notifications from waiter, manager?",
   nhap_so_luong_the: "Enter the number of cards",

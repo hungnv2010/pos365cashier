@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
-import { Animated, Image, View, StyleSheet, Text, TouchableOpacity, ScrollView } from "react-native";
+import { Animated, Image, View, StyleSheet, Text, TouchableOpacity, ScrollView, SafeAreaView } from "react-native";
 import MainToolBar from '../main/MainToolBar';
 import I18n from '../../common/language/i18n';
 import realmStore from '../../data/realm/RealmStore';
@@ -13,8 +13,8 @@ import { FlatList, TextInput } from 'react-native-gesture-handler';
 import { currencyToString, dateToString, momentToStringDateLocal, dateToStringFormatUTC } from '../../common/Utils';
 
 export default (props) => {
-    const [product, setProduct] = useState(props.product)
-    const [priceConfig, setPriceConfig] = useState(props.config)
+    const [product, setProduct] = useState(props.productOl)
+    const [priceConfig, setPriceConfig] = useState({})
     const [countPrint, setCountPrint] = useState(0)
 
     const [printCook, setPrintCook] = useState([{ Name: 'may_in_bao_bep_a', Key: 'KitchenA', Status: '' },
@@ -27,36 +27,16 @@ export default (props) => {
     { Name: 'may_in_bao_pha_che_d', Key: 'BartenderD', Status: '' },])
     useEffect(() => {
         console.log("printcook", product);
-        setProduct(props.product)
-        if (product.PriceConfig!=null) {
-            setPriceConfig(JSON.parse(product.PriceConfig))
-                if (priceConfig.SecondPrinter != "") {
-                    setCountPrint(2)
-                } else if (priceConfig.Printer3 != "") {
-                    setCountPrint(3)
-                } else if (priceConfig.Printer4 != "") {
-                    setCountPrint(4)
-                } else if (priceConfig.Printer5 != "") {
-                    setCountPrint(5)
-                } else if (product.Printer != "") {
-                    setCountPrint(1)
-                } else {
-                    setCountPrint(0)
-                }
-            } 
-        if (product.Printer!="") {
-            setCountPrint(1)
-        }else{
-            setCountPrint(0)
-        }
-
+        setProduct(props.productOl)
+        setTimeout(()=>{
+            getPriceConfig()
+        },1000)
         
 
-
-    }, [props.product])
-    useEffect(() => {
-
-    }, [priceConfig])
+    }, [props.productOl])
+    const getPriceConfig = ()=>{
+        product.PriceConfig? product.PriceConfig!=null ? setPriceConfig(JSON.parse(product.PriceConfig)):null:null
+}
     const onClick = (item) => {
         alert(item)
     }
@@ -64,7 +44,7 @@ export default (props) => {
     const renderItem = (item, index) => {
         return (
             <View style={{ flex: 1, marginBottom: 10 }}>
-                <TouchableOpacity style={[product.Printer == item.Key ? styles.styleButtonOn : styles.styleButton, { marginLeft: 15 }]} onPress={() => onClick(product.PriceConfig?(JSON.parse(product.PriceConfig)).Printer3:null)}>
+                <TouchableOpacity style={[product.Printer == item.Key ? styles.styleButtonOn : styles.styleButton, { marginLeft: 15 }]} onPress={() => onClick(priceConfig)}>
                     <Text style={[product.Printer == item.Key ? styles.titleButtonOn : styles.titleButtonOff, {}]}>{I18n.t(item.Name)}</Text>
                 </TouchableOpacity>
             </View>

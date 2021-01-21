@@ -34,9 +34,9 @@ const TYPE_MODAL = { FILTER_ACCOUNT: "FILTER_ACCOUNT", QRCODE: "QRCODE", DATE: "
 const CUSTOMER_DEFAULT = { Id: "", Name: I18n.t('khach_le') };
 
 const METHOD = {
-    discount: { name: "Discount" },
+    discount: { name: I18n.t('chiet_khau') },
     vat: { name: "Vat" },
-    pay: { name: "Pay" }
+    pay: { name: I18n.t('tien_khach_tra') }
 }
 
 export default (props) => {
@@ -1022,7 +1022,7 @@ export default (props) => {
                                 <Text style={{ flex: 3 }}>{I18n.t('chiet_khau')}</Text>
                                 <View style={{ flexDirection: "row", flex: 3, marginLeft: 5 }}>
                                     <TouchableOpacity onPress={() => selectPercent(false)} style={{ width: 55, alignItems: "center", borderWidth: 0.5, borderTopLeftRadius: 5, borderBottomLeftRadius: 5, paddingVertical: 7, borderColor: colors.colorchinh, backgroundColor: !percent ? colors.colorchinh : "#fff" }}>
-                                        <Text style={{ color: !percent ? "#fff" : colors.colorchinh }}>VNĐ</Text>
+                                        <Text style={{ color: !percent ? "#fff" : '#000' }}>VNĐ</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={() => {
 
@@ -1031,7 +1031,7 @@ export default (props) => {
 
                                         selectPercent(true)
                                     }} style={{ width: 55, alignItems: "center", borderWidth: 0.5, borderColor: colors.colorchinh, borderTopRightRadius: 5, borderBottomRightRadius: 5, paddingVertical: 7, backgroundColor: !percent ? "#fff" : colors.colorchinh }}>
-                                        <Text style={{ color: percent ? "#fff" : colors.colorchinh }}>%</Text>
+                                        <Text style={{ color: percent ? "#fff" : '#000' }}>%</Text>
                                     </TouchableOpacity>
                                 </View>
                                 <TextInput
@@ -1059,10 +1059,10 @@ export default (props) => {
                                 <Text style={{ flex: 3 }}>VAT</Text>
                                 <View style={{ flexDirection: "row", flex: 3, marginLeft: 5 }}>
                                     <TouchableOpacity onPress={() => selectVAT(0)} style={{ width: 55, alignItems: "center", borderWidth: 0.5, borderTopLeftRadius: 5, borderBottomLeftRadius: 5, paddingVertical: 7, borderColor: colors.colorchinh, backgroundColor: !percentVAT ? colors.colorchinh : "#fff" }}>
-                                        <Text style={{ color: !percentVAT ? "#fff" : colors.colorchinh }}>0%</Text>
+                                        <Text style={{ color: !percentVAT ? "#fff" : '#000' }}>0%</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={() => selectVAT(vendorSession.Settings && vendorSession.Settings.VAT ? vendorSession.Settings.VAT : 0)} style={{ width: 55, alignItems: "center", borderWidth: 0.5, borderColor: colors.colorchinh, borderTopRightRadius: 5, borderBottomRightRadius: 5, paddingVertical: 7, backgroundColor: !percentVAT ? "#fff" : colors.colorchinh }}>
-                                        <Text style={{ color: percentVAT ? "#fff" : colors.colorchinh }}>{vendorSession.Settings && vendorSession.Settings.VAT ? vendorSession.Settings.VAT : 0}%</Text>
+                                        <Text style={{ color: percentVAT ? "#fff" : "#000" }}>{vendorSession.Settings && vendorSession.Settings.VAT ? vendorSession.Settings.VAT : 0}%</Text>
                                     </TouchableOpacity>
                                 </View>
                                 <TextInput
