@@ -97,7 +97,7 @@ const CustomerOrder = (props) => {
             let listOrder = props.jsonContent.OrderDetails.filter(item => item.ProductId > 0)
             setListOrder(listOrder)
         } else setListOrder([])
-    }, [props.jsonContent])
+    }, [props.jsonContent.OrderDetails])
 
     useEffect(() => {
         console.log(props.listTopping, 'props.listTopping');
@@ -124,7 +124,7 @@ const CustomerOrder = (props) => {
                 element.Description = description
                 element.Topping = JSON.stringify(topping)
                 element.TotalTopping = totalPrice
-                element.Price = (element.IsLargeUnit) ? element.PriceLargeUnit : element.UnitPrice + totalPrice
+                element.Price = (element.IsLargeUnit) ? element.PriceLargeUnit : element.Price + totalPrice
             }
         });
         setListOrder([...listOrder])
@@ -165,6 +165,9 @@ const CustomerOrder = (props) => {
                 if (elm.ProductId == product.ProductId && index == product.index) {
                     if (product.Quantity == 0) {
                         arr.splice(index, 1)
+                    }
+                    if (product.Percent) {
+                        elm.DiscountRatio = product.Discount
                     }
                     elm.Quantity = product.Quantity
                     if (elm.SplitForSalesOrder) {

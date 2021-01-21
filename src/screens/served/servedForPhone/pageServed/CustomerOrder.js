@@ -176,8 +176,9 @@ export default (props) => {
                 element.Topping = JSON.stringify(topping)
                 element.TotalTopping = totalTopping
 
-                let basePriceProduct = element.Price > element.TotalTopping ? element.Price - element.TotalTopping : 0
-                element.Price = basePriceProduct + totalTopping
+                // let basePriceProduct = element.Price > element.TotalTopping ? element.Price - element.TotalTopping : 0
+                let basePriceProduct = (element.IsLargeUnit) ? element.PriceLargeUnit : element.Price
+                element.Price = (basePriceProduct + totalTopping)
             }
         });
         setListOrder([...listOrder])
@@ -201,11 +202,15 @@ export default (props) => {
                     if (product.Quantity == 0) {
                         arr.splice(index, 1)
                     }
+                    if (product.Percent) {
+                        elm.DiscountRatio = product.Discount
+                    }
                     elm.Quantity = product.Quantity
                     elm.Description = product.Description
                     elm.Discount = discount - price > 0 ? price : discount
                     elm.Price = product.Price
                     elm.IsLargeUnit = product.IsLargeUnit
+
                 }
             })
             console.log("mapDataToList listOrder ", listOrder);
@@ -294,7 +299,7 @@ export default (props) => {
                                 {item.Name}
                             </TextTicker>
                             <View style={{ flexDirection: "row" }}>
-                                <Text style={{}}>{isPromotion ? currencyToString(item.Price) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : currencyToString(item.Price))} x </Text>
+                                <Text style={{}}>{currencyToString(item.Price)} x </Text>
                                 <View>
                                     <Text style={{ color: Colors.colorchinh }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text>
                                 </View>
@@ -385,7 +390,6 @@ export default (props) => {
     const changTable = () => {
         hideMenu()
         if (listOrder && listOrder.length > 0) {
-            hideMenu()
             props.navigation.navigate("ChangeTable", {
                 FromRoomId: props.route.params.room.Id,
                 FromPos: props.Position,

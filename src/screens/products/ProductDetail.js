@@ -47,8 +47,57 @@ export default (props) => {
     const { deviceType } = useSelector(state => {
         return state.Common
     })
+    let params = {
+        CompareCost: 200000,
+        CompareOnHand: 57,
+        Cost: productOl.Cost,
+        MaxQuantity: productOl.MaxQuantity,
+        MinQuantity: productOl.MinQuantity,
+        OnHand: product.OnHand,
+        PriceByBranch: productOl.PriceByBranch,
+        PriceByBranchLargeUnit: productOl.PriceByBranchLargeUnit,
+        Product: {
+            AttributesName: product.AttributesName,
+            BlockOfTimeToUseService: product.BlockOfTimeToUseService,
+            BonusPoint: product.BonusPoint,
+            BonusPointForAssistant: product.BonusPointForAssistant,
+            BonusPointForAssistant2: product.BonusPointForAssistant2,
+            BonusPointForAssistant3: product.BonusPointForAssistant3,
+            Code: product.Code,
+            Coefficient: product.Coefficient,
+            CompositeItemProducts: [],
+            ConversionValue: product.ConversionValue,
+            CreatedBy: 39207,
+            CreatedDate: "2021-01-09T07:30:31.9170000Z",
+            Description:product.Description,
+            Hidden: false,
+            Id: product.Id,
+            IsPercentageOfTotalOrder: product.IsPercentageOfTotalOrder,
+            IsPriceForBlock: product.IsPriceForBlock,
+            IsSerialNumberTracking: product.IsSerialNumberTracking,
+            IsTimer: true,
+            LargeUnit: product.LargeUnit,
+            LargeUnitCode: "",
+            ModifiedBy: 39207,
+            ModifiedDate: "2021-01-20T09:00:42.7030000Z",
+            Name: product.Name,
+            OrderQuickNotes: "",
+            Position: 0,
+            Price: product.Price,
+            PriceConfig: product.priceConfig,
+            PriceLargeUnit: product.PriceLargeUnit,
+            Printer: product.Printer,
+            ProductAttributes: [],
+            ProductImages: product.ProductImages,
+            ProductPartners: [],
+            ProductType: product.ProductType,
+            RetailerId: 13311,
+            SplitForSalesOrder: product.SplitForSalesOrder,
+            Unit: product.Unit
+        }
+    }
     useEffect(() => {
-        if (deviceType == Constant.PHONE) {
+        if (deviceType === Constant.PHONE) {
             getData(props.route.params)
             console.log("Image", typeof (product.ProductImages));
             setDefaultType(product.ProductType)
@@ -76,7 +125,7 @@ export default (props) => {
             }).catch((e) => {
                 console.log("error", e);
             })
-        }else{
+        } else {
             setProductOl({})
         }
 
@@ -88,6 +137,29 @@ export default (props) => {
     useEffect(() => {
         console.log('product Ol', productOl);
     }, [productOl])
+    const clickOk = () => {
+        let product1 = { ...product, ProductType: defaultType }
+        setProduct({ ...product1 })
+        setOnShowModal(false)
+    }
+    const addCategory = (data) => {
+        console.log(data);
+        let param = {
+            Category: {
+                Id: 0,
+                Name: data,
+                ShowOnBranchId: 21883
+            }
+        }
+        new HTTPService().setPath(ApiPath.CATEGORIES_PRODUCT).POST(param).then(res => {
+            if (res != null) {
+                console.log("res add", res);
+                setOnShowModal(false)
+            }
+        }).catch(err => {
+            console.log("error", err);
+        })
+    }
     const renderModal = () => {
         return (
             <View>{typeModal.current == 1 ?
@@ -105,14 +177,14 @@ export default (props) => {
                         onPress={() => setDefaultType(3)}>
                         <Text style={[styles.titleButtonOff, { color: defaultType == 3 ? '#36a3f7' : null }]}>Combo</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={{ padding: 15, marginRight: 20, marginLeft: 20, marginTop: 10, marginBottom: 10, borderRadius: 15, alignItems: 'center', backgroundColor: '#36a3f7' }}>
+                    <TouchableOpacity style={{ padding: 15, marginRight: 20, marginLeft: 20, marginTop: 10, marginBottom: 10, borderRadius: 15, alignItems: 'center', backgroundColor: '#36a3f7' }} onPress={() => clickOk()}>
                         <Text style={[styles.titleButtonOff, { color: 'white' }]}>{I18n.t('xong')}</Text>
                     </TouchableOpacity>
                 </View>
                 : typeModal.current == 2 ?
                     <DialogSingleChoice listItem={category} title={I18n.t('chon_nhom_hang_hoa')} titleButton='Ok' ></DialogSingleChoice> :
                     typeModal.current == 3 ?
-                        <DialogInput listItem={addCate.current} title={I18n.t('them_moi_nhom_hang_hoa')} titleButton={I18n.t('tao_nhom')}></DialogInput> :
+                        <DialogInput listItem={addCate.current} title={I18n.t('them_moi_nhom_hang_hoa')} titleButton={I18n.t('tao_nhom')} outputValue={addCategory}></DialogInput> :
                         typeModal.current == 4 ?
                             <DialogInput listItem={addDVT.current} title={I18n.t('don_vi_tinh_lon_va_cac_thong_so_khac')} titleButton={I18n.t('ap_dung')} /> :
                             null
@@ -138,7 +210,7 @@ export default (props) => {
                 <View style={{ padding: 3, backgroundColor: '#f2f2f2' }}></View>
                 <View>
                     <Text style={styles.title}>{I18n.t('ten_hang_hoa')}</Text>
-                    <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#36a3f7' }]} value={product ? product.Name : null}></TextInput>
+                    <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#36a3f7' }]} value={product ? product.Name : null} onChangeText={(text) => setProduct({ ...product, Name: text })}></TextInput>
                 </View>
                 <View>
                     <Text style={styles.title}>{I18n.t('loai_hang')}</Text>
@@ -149,7 +221,7 @@ export default (props) => {
                 </View>
                 <View>
                     <Text style={styles.title}>{I18n.t('ma_hang_ma_sku_ma_vach')}</Text>
-                    <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#36a3f7' }]} value={product.Code}></TextInput>
+                    <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#36a3f7' }]} value={product.Code} onChangeText={(text) => setProduct({ ...product, Code: text })}></TextInput>
                 </View>
                 <View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -221,11 +293,11 @@ export default (props) => {
                                 <View style={{ flexDirection: 'row' }}>
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.title}>{I18n.t('gia_von')}</Text>
-                                        <TextInput style={[styles.textInput, { color: '#36a3f7', fontWeight: 'bold' }]} value={productOl.Cost ? currencyToString(productOl.Cost) : null}></TextInput>
+                                        <TextInput style={[styles.textInput, { color: '#36a3f7', fontWeight: 'bold' }]} value={productOl.Cost ? currencyToString(productOl.Cost) : null} onChangeText={(text) => setProductOl({ ...productOl, Cost: parseInt(text) })}></TextInput>
                                     </View>
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.title} >{I18n.t('gia')}</Text>
-                                        <TextInput style={[styles.textInput, { color: '#36a3f7', fontWeight: 'bold' }]} value={product.Price ? currencyToString(product.Price) : null}></TextInput>
+                                        <TextInput style={[styles.textInput, { color: '#36a3f7', fontWeight: 'bold' }]} value={product.Price ? currencyToString(product.Price) : null} onChangeText={(text) => setProductOl({ ...product, Price: parseInt(text) })}></TextInput>
                                     </View>
                                 </View>
                                 {product.ProductType == 2 ?
@@ -235,20 +307,20 @@ export default (props) => {
                                     :
                                     <View>
                                         <Text style={styles.title}>{I18n.t('ton_kho')}</Text>
-                                        <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#36a3f7', textAlign: 'center' }]} value={productOl.OnHand ? productOl.OnHand + '' : null}></TextInput>
+                                        <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#36a3f7', textAlign: 'center' }]} value={productOl.OnHand ? productOl.OnHand + '' : null} onChangeText={(text) => setProductOl({ ...productOl, OnHand: parseInt(text) })}></TextInput>
                                     </View>
                                 }
 
                                 <View>
                                     <Text style={styles.title}>{I18n.t('don_vi_tinh')}</Text>
-                                    <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#36a3f7' }]} value={product.Unit ? product.Unit : null}></TextInput>
+                                    <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#36a3f7' }]} value={product.Unit ? product.Unit : null} onChangeText={(text) => setProduct({ ...product, Unit: text })}></TextInput>
                                 </View>
                                 <TouchableOpacity style={[styles.textInput, { fontWeight: 'bold', backgroundColor: '#B0E2FF', marginTop: 10, justifyContent: 'center', alignItems: 'center' }]} onPress={() => { typeModal.current = 4; setOnShowModal(true) }}>
                                     <Text style={[styles.titleButton]}>{I18n.t("don_vi_tinh_lon_va_cac_thong_so_khac")}</Text>
                                 </TouchableOpacity>
                             </View>
                             <View style={{ padding: 3, backgroundColor: '#f2f2f2', marginTop: 10, }}></View>
-                            <PrintCook product={product} config={priceConfig.current}></PrintCook>
+                            <PrintCook productOl={productOl} config={priceConfig.current}></PrintCook>
                         </View> : null}
                 </View>
                 <View style={{ backgroundColor: '#f2f2f2', padding: 10 }}>

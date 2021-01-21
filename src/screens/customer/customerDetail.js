@@ -98,7 +98,7 @@ export default (props) => {
     const renderGender = (item) => {
         return (
             <View style={{ padding: 15 }}>
-                <Text style={{ paddingBottom: 10 }}>Sex</Text>
+                <Text style={{ paddingBottom: 10 }}>{I18n.t('gioi_tinh')}</Text>
                 <View style={{ height: 50, flexDirection: "row", borderWidth: 1, borderColor: colors.colorchinh, borderRadius: 5 }}>
                     <TouchableOpacity onPress={() => {
                         setCustomerDetail({ ...customerDetail, Gender: 2 })
@@ -352,7 +352,7 @@ export default (props) => {
                         props.handleSuccess('them')
                         resetCustomer()
                     } else {
-                        toastDescription.current = `${customerDetail.Code} ${I18n.t('da_ton_tai_trong_he_thong')}`
+                        toastDescription.current = `${I18n.t('ma_khach_hang')} ${customerDetail.Code} ${I18n.t('da_ton_tai_trong_he_thong')}`
                         setShowToast(true)
                     }
                     dialogManager.hiddenLoading()
@@ -417,7 +417,7 @@ export default (props) => {
     return (
         <View style={{ flex: 1 }}>
             <View style={{ backgroundColor: colors.colorchinh, marginLeft: 5, paddingVertical: 10 }}>
-                <Text style={{ textAlign: "center", color: "white", fontSize: 15, textTransform: "uppercase", fontWeight: "bold" }}>{props.customerDetail.Id == 0 ? 'Add customer' : 'Update Customer'}</Text>
+                <Text style={{ textAlign: "center", color: "white", fontSize: 15, textTransform: "uppercase", fontWeight: "bold" }}>{props.customerDetail.Id == 0 ? I18n.t('them_khach_hang') : I18n.t('cap_nhat_khach_hang')}</Text>
             </View>
             <KeyboardAwareScrollView style={{ flexGrow: 1 }}>
                 <Surface style={styles.surface}>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
+import React, { useEffect, useState, forwardRef, useImperativeHandle, useRef } from 'react';
 import {
     View, Text, TouchableOpacity, Image, StyleSheet, TextInput, ImageBackground, Dimensions, FlatList
 } from 'react-native';
@@ -17,6 +17,7 @@ import { ScreenList } from '../../../common/ScreenList';
 export default (props) => {
 
     const [listCommodity, setListCommodity] = useState([]);
+    const numberCommodity = useRef(0)
     const numberColumn = useSelector(state => {
         console.log("useSelector state ", state);
         let numberColumn = (state.Common.orientaition == Constant.LANDSCAPE) ? 6 : 4
@@ -25,29 +26,26 @@ export default (props) => {
     });
 
     const widthRoom = Dimensions.get('screen').width / numberColumn;
-
+    let serverEvents = null;
 
     useEffect(() => {
         const getCommodityWaiting = async () => {
-            try {
-                // dialogManager.showLoading()
-                let serverEvents = await realmStore.queryServerEvents()
-                serverEvents = JSON.parse(JSON.stringify(serverEvents))
-                serverEvents = Object.values(serverEvents)
-                console.log('serverEventsserverEventsserverEvents', serverEvents);
-                setListCommodity(serverEvents)
-                // dialogManager.hiddenLoading()
-            } catch (error) {
-                console.log('getCommodityWaiting err', error);
-                // dialogManager.hiddenLoading()
-            }
+            serverEvents = await realmStore.queryServerEvents()
+            numberCommodity.current = serverEvents.length
+            let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
+            newServerEvents = Object.values(newServerEvents)
+            setListCommodity(newServerEvents)
+
+            serverEvents.addListener((collection, changes) => {
+                numberCommodity.current = serverEvents.length
+            })
         }
         getCommodityWaiting()
     }, [])
 
     const onClickCommodity = (item) => {
         props.navigation.pop()
-        props.route.params._onSelect(item, 3);
+        props.route.params._onSelect(item, 3, numberCommodity.current);
     }
 
     const onLongClickCommodity = (item) => {
@@ -67,6 +65,7 @@ export default (props) => {
 
     const clickLeftIcon = async () => {
         props.navigation.pop()
+        props.route.params._onSelect({}, 5, numberCommodity.current);
     }
 
     const renderList = () => {
@@ -80,11 +79,11 @@ export default (props) => {
                     key={item.Id}
                     style={{ borderRadius: 5, margin: numberColumn == 4 ? 2 : 2, padding: 0, width: widthRoom - (numberColumn == 4 ? 5 : 4.67), height: widthRoom - (numberColumn == 4 ? 5 : 4.67), backgroundColor: colors.colorLightBlue, borderWidth: 0, alignItems: "center" }}>
                     <View style={{ height: "35%", justifyContent: "center", alignItems: "center" }}>
-                        <Text style={{ textAlign: "center", textTransform: "uppercase", color: "#fff", fontSize: 14 }}>Order</Text>
+                        <Text style={{ textAlign: "center", textTransform: "uppercase", color: "#fff", fontSize: 14 }}>{I18n.t('don_hang')}</Text>
                     </View>
                     <View style={{ backgroundColor: "#fff", height: 0.5, width: "100%" }}></View>
                     <View style={{ flex: 1, justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
-                        <Text style={{ textAlign: "center", color: "#fff", marginTop: 0, fontSize: 10 }}>Retail customers</Text>
+                        <Text style={{ textAlign: "center", color: "#fff", marginTop: 0, fontSize: 10 }}>{I18n.t('khach_hang_ban_le')}</Text>
                         <Text style={{ textAlign: "center", color: "#fff", marginTop: 10, fontSize: 10 }}>{currencyToString(JSON.parse(item.JsonContent).Total)}</Text>
                     </View>
                 </TouchableOpacity>
@@ -101,7 +100,7 @@ export default (props) => {
                 {...props}
                 leftIcon="keyboard-backspace"
                 clickLeftIcon={clickLeftIcon}
-                title="Commodity waiting for payment" />
+                title={I18n.t('don_hang_cho_thanh_toan')} />
             {listCommodity.length > 0 ?
                 renderList()
                 :

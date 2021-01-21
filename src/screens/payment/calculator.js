@@ -171,7 +171,7 @@ export default (props) => {
                 !props.choosePoint ?
                     <>
                         <View style={{ flex: 1 }}>
-                            <Text style={{ textTransform: "uppercase", textAlign: "center", paddingVertical: 20, fontWeight: "500", fontSize: 25 }}>Calculator</Text>
+                            <Text style={{ textTransform: "uppercase", textAlign: "center", paddingVertical: 20, fontWeight: "500", fontSize: 25 }}>{I18n.t('may_tinh')}</Text>
                             <Text style={{ color: colors.colorchinh, textAlign: "center", paddingVertical: 30, fontWeight: "bold", fontSize: 18 }}>{method && method.name ? method.name : ""}</Text>
                             <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
                                 <Text style={[styles.textButton, { fontSize: 35 }]}>{results != '' || results == '0' ? results : '0'}</Text>
