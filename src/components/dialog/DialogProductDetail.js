@@ -9,6 +9,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import DatePicker from 'react-native-date-picker';
+import useDidMountEffect from '../../customHook/useDidMountEffect';
 
 const TYPE_MODAL = {
     DEFAULT: 1,
@@ -47,6 +48,12 @@ export default (props) => {
         let totalDiscount = percent ? itemOrder.UnitPrice * discount / 100 : discount
         setPrice(price - totalDiscount > 0 ? price - totalDiscount : 0)
     }, [discount, percent])
+
+    useDidMountEffect(() => {
+        let price = itemOrder.IsLargeUnit == true ? itemOrder.PriceLargeUnit : itemOrder.UnitPrice
+        let newDiscount = percent ? discount / price * 100 : discount * price / 100
+        setDiscount(newDiscount)
+    }, [percent])
 
     const onClickOk = () => {
         props.onClickSubmit({ ...itemOrder, Discount: discount, Percent: percent, Price: price })

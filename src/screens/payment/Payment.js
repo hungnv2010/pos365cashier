@@ -30,7 +30,7 @@ let timeClickPrevious = 1000;
 
 const TYPE_MODAL = { FILTER_ACCOUNT: "FILTER_ACCOUNT", QRCODE: "QRCODE", DATE: "DATE" }
 
-const CUSTOMER_DEFAULT = { Id: "", Name: I18n.t('khach_le') };
+const CUSTOMER_DEFAULT = { Id: 0, Name: 'khach_le' };
 
 const METHOD = {
     discount: { name: "Discount" },
@@ -599,12 +599,12 @@ export default (props) => {
     }
 
     const printAfterPayment = async (Code) => {
-        console.log("printAfterPayment jsonContent 1 ",  jsonContent);
+        console.log("printAfterPayment jsonContent 1 ", jsonContent);
         if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
             jsonContent.RoomName = props.route.params.Name
         }
         jsonContent.PaymentCode = Code;
-        console.log("printAfterPayment jsonContent 2 ",  jsonContent);
+        console.log("printAfterPayment jsonContent 2 ", jsonContent);
         // viewPrintRef.current.printProvisionalRef(jsonContent)
         dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: jsonContent })
     }
@@ -624,11 +624,11 @@ export default (props) => {
         dataManager.syncQRCode([params]);
 
         qrCodeRealm = await realmStore.queryQRCode()
-        qrCodeRealm.addListener((collection, changes) => {
-            if (changes.insertions.length || changes.modifications.length) {
-                console.log("handlerQRCode qrCode.addListener collection changes ", collection, changes);
-            }
-        })
+        // qrCodeRealm.addListener((collection, changes) => {
+        //     if (changes.insertions.length || changes.modifications.length) {
+        //         console.log("handlerQRCode qrCode.addListener collection changes ", collection, changes);
+        //     }
+        // })
     }
 
     const handlerError = (data) => {

@@ -27,17 +27,18 @@ const TYPE_MODAL = {
 const RetailCustomerOrder = (props) => {
 
     const [showModal, setShowModal] = useState(false)
-    const [listOrder, setListOrder] = useState([])
+    const [listOrder, setListOrder] = useState(() =>
+        (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0)
+            ? props.jsonContent.OrderDetails.filter(item => item.ProductId > 0) : []
+    )
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
     const [marginModal, setMargin] = useState(0)
-    const [numberNewOrder, setNumberNewOrder] = useState(0)
+    const [numberCommodity, setNumberCommodity] = useState(props.numberCommodity)
     const [expand, setExpand] = useState(false)
     const typeModal = useRef(TYPE_MODAL.DETAIL)
     const [itemOrder, setItemOrder] = useState({})
-    // const listPriceBookRef = useRef({})
-    // const currentCommodity = useRef({})
-    // const [jsonContent, setJsonContent] = useState({})
+
     const [isQuickPayment, setIsQuickPayment] = useState(false)
     const [promotions, setPromotions] = useState([])
 
@@ -46,47 +47,9 @@ const RetailCustomerOrder = (props) => {
         return state.Common.orientaition
     });
 
-    let serverEvents = null;
 
 
     useEffect(() => {
-
-        // const getCommodityWaiting = async () => {
-        //     let listPriceBook = await realmStore.queryPricebook()
-        //     listPriceBook = JSON.parse(JSON.stringify(listPriceBook))
-        //     listPriceBookRef.current = listPriceBook
-        //     serverEvents = await realmStore.queryServerEvents()
-        //     let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
-        //     newServerEvents = Object.values(newServerEvents)
-        //     console.log('newServerEvents', newServerEvents);
-        //     setNumberNewOrder(newServerEvents.length)
-        //     if (newServerEvents.length == 0) {
-        //         let newSE = await createNewServerEvent()
-        //         currentCommodity.current = (newSE)
-        //         setJsonContent(JSON.parse(newSE.JsonContent))
-        //     } else {
-        //         currentCommodity.current = (newServerEvents[0])
-        //         let jsonContent = JSON.parse(newServerEvents[0].JsonContent)
-        //         if (jsonContent.Partner) props.outputCustomer(jsonContent.Partner)
-        //         if (jsonContent.PriceBookId) {
-        //             for (const property in listPriceBook) {
-        //                 if (listPriceBook[property].Id == jsonContent.PriceBookId) {
-        //                     props.ouptutPriceBook(listPriceBook[property])
-        //                 }
-        //             }
-
-        //         }
-        //         setJsonContent(jsonContent)
-        //         syncListProducts(jsonContent.OrderDetails)
-        //     }
-
-        //     serverEvents.addListener((collection, changes) => {
-        //         if (changes.insertions.length || changes.modifications.length) {
-        //             setNumberNewOrder(serverEvents.length)
-        //         }
-        //     })
-        // }
-        // getCommodityWaiting()
         var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
         var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
         const getDataRealm = async () => {
@@ -97,13 +60,14 @@ const RetailCustomerOrder = (props) => {
         }
         getDataRealm();
         return () => {
-            if (serverEvents) serverEvents.removeAllListeners()
             keyboardDidShowListener.remove();
             keyboardDidHideListener.remove();
         }
     }, [])
 
-
+    useEffect(() => {
+        setNumberCommodity(props.numberCommodity)
+    }, [props.numberCommodity])
 
     useEffect(() => {
         console.log('props.jsonContent.OrderDetails', props.jsonContent);
@@ -128,7 +92,6 @@ const RetailCustomerOrder = (props) => {
 
     const syncListProducts = (data) => {
         props.outputSelectedProduct(data, 2)
-        // setDataOrder(data)
     }
 
 
@@ -169,7 +132,6 @@ const RetailCustomerOrder = (props) => {
         console.log("setDataOrder listOrder list ", listOrder, list);
 
         setListOrder([...list])
-        // updateServerEvent([...list])
 
     }
 
@@ -180,18 +142,12 @@ const RetailCustomerOrder = (props) => {
     }
 
     const onClickNewOrder = async () => {
+        if (listOrder.length == 0) {
+            setToastDescription(I18n.t("moi_chon_mon_truoc"))
+            setShowToast(true)
+            return
+        }
         props.onClickNewOrder()
-        // if (listOrder.length == 0) {
-        //     setToastDescription(I18n.t("moi_chon_mon_truoc"))
-        //     setShowToast(true)
-        //     return
-        // }
-        // let newSE = await createNewServerEvent()
-        // currentCommodity.current = (newSE)
-        // setJsonContent(JSON.parse(newSE.JsonContent))
-        // syncListProducts([])
-        // props.outputCustomer({ Name: "khach_hang", Id: 0 })
-        // props.ouptutPriceBook({ Name: "gia_niem_yet", Id: 0 })
     }
 
     const addPromotion = async (list) => {
@@ -387,8 +343,7 @@ const RetailCustomerOrder = (props) => {
                                                     removeItem(item, index)
                                                 } else {
                                                     item.Quantity--
-                                                    // setListOrder([...listOrder])
-                                                    // setDataOrder([...listOrder])
+                                                  
                                                     syncListProducts([...listOrder])
                                                 }
                                             }}>
@@ -417,8 +372,7 @@ const RetailCustomerOrder = (props) => {
                                         </View>
                                         <TouchableOpacity onPress={() => {
                                             item.Quantity++
-                                            // setListOrder([...listOrder])
-                                            // setDataOrder([...listOrder])
+
                                             syncListProducts([...listOrder])
                                         }}>
                                             <Icon name="plus-box" size={40} color={Colors.colorchinh} />
@@ -453,70 +407,17 @@ const RetailCustomerOrder = (props) => {
         props.onCLickCommodity()
     }
 
-    const onCallBack = (data, type) => {
-        switch (type) {
-            // case 1:
-            //     if (data) props.ouptutPriceBook(data)
-            //     break
-            // case 2:
-            //     if (data) props.outputCustomer(data)
-            //     break
-            case 3: // from commodity waiting
-                currentCommodity.current = (data)
-                // let jsonContent = JSON.parse(data.JsonContent)
-                // console.log('jsonContentjsonContent', jsonContent, listPriceBookRef.current);
-                // if (jsonContent.Partner) props.outputCustomer(jsonContent.Partner)
-                // else props.outputCustomer({ Name: "khach_hang", Id: 0 })
-                // if (jsonContent.PriceBookId) {
-                //     for (const property in listPriceBookRef.current) {
-                //         if (listPriceBookRef.current[property].Id == jsonContent.PriceBookId) {
-                //             props.ouptutPriceBook(listPriceBookRef.current[property])
-                //         }
-                //     }
 
-                // } else {
-                //     props.ouptutPriceBook({ Name: "gia_niem_yet", Id: 0 })
-                // }
-                // setJsonContent(jsonContent)
-                // syncListProducts(jsonContent.OrderDetails)
-                break;
-
-            default:
-                break;
-        }
-    }
 
     const onClickOptionQuickPayment = () => {
         setIsQuickPayment(!isQuickPayment)
     }
 
 
-    // const onClickListedPrice = () => {
-    //     console.log('onClickListedPrice');
-    //     props.navigation.navigate(ScreenList.PriceBook, { _onSelect: onCallBack, currentPriceBook: props.currentPriceBook })
-    // }
-
-    // const onClickRetailCustomer = () => {
-    //     console.log('onClickRetailCustomer');
-    //     props.navigation.navigate(ScreenList.Customer, { _onSelect: onCallBack, currentCustomer: props.currentCustomer })
-    // }
 
     return (
         <View style={{ flex: 1 }}>
-            {/* <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 2, borderBottomColor: Colors.colorchinh, borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5 }}>
-                <TouchableOpacity
-                    style={{ flexDirection: "row", alignItems: "center" }}
-                    onPress={onClickListedPrice}>
-                    <Entypo style={{ paddingHorizontal: 5 }} name="price-ribbon" size={25} color={Colors.colorchinh} />
-                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{props.currentPriceBook.Id == 0 ? I18n.t(props.currentPriceBook.Name) : props.currentPriceBook.Name}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={{ flexDirection: "row", alignItems: "center" }}
-                    onPress={onClickRetailCustomer}>
-                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{props.currentCustomer.Id == 0 ? I18n.t(props.currentCustomer.Name) : props.currentCustomer.Name}</Text>
-                    <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} color={Colors.colorchinh} />
-                </TouchableOpacity>
-            </View> */}
+
             <View style={{ flex: 1 }}>
                 {listOrder.length > 0 ?
                     <FlatList
@@ -586,17 +487,14 @@ const RetailCustomerOrder = (props) => {
                                 <MaterialIcons style={{ paddingHorizontal: 7 }} name="notifications" size={26} color={Colors.colorchinh} />
                                 <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('in_tam_tinh')}</Text>
                             </TouchableOpacity>
-                            {/* <TouchableOpacity onPress={onClickOptionQuickPayment} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
-                                <Icon style={{ paddingHorizontal: 10 }} name={isQuickPayment ? "check-box-outline" : "close-box-outline"} size={22} color={isQuickPayment ? Colors.colorchinh : "#000"} />
-                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('thanh_toan_nhanh')}</Text>
-                            </TouchableOpacity> */}
+
                         </View>
                     </Menu>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={onCLickCommodity} style={{ flex: .5, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%", flexDirection: 'row' }}>
                     <Icon name="file-document-edit-outline" size={30} color="white" />
                     <View style={{ backgroundColor: Colors.colorchinh, borderRadius: 40, position: "absolute", right: 0, top: -5 }}>
-                        <Text style={{ fontWeight: "bold", padding: 4, color: "white", fontSize: 14 }}>{numberNewOrder}</Text>
+                        <Text style={{ fontWeight: "bold", padding: 4, color: "white", fontSize: 14 }}>{numberCommodity}</Text>
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={onClickNewOrder} style={{ flex: .8, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>

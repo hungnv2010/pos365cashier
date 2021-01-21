@@ -96,7 +96,7 @@ const CustomerOrder = (props) => {
             let listOrder = props.jsonContent.OrderDetails.filter(item => item.ProductId > 0)
             setListOrder(listOrder)
         } else setListOrder([])
-    }, [props.jsonContent])
+    }, [props.jsonContent.OrderDetails])
 
     useEffect(() => {
         console.log(props.listTopping, 'props.listTopping');
@@ -123,7 +123,7 @@ const CustomerOrder = (props) => {
                 element.Description = description
                 element.Topping = JSON.stringify(topping)
                 element.TotalTopping = totalPrice
-                element.Price = (element.IsLargeUnit) ? element.PriceLargeUnit : element.UnitPrice + totalPrice
+                element.Price = (element.IsLargeUnit) ? element.PriceLargeUnit : element.Price + totalPrice
             }
         });
         setListOrder([...listOrder])
@@ -140,15 +140,6 @@ const CustomerOrder = (props) => {
 
     const applyDialogDetail = (product) => {
         console.log('applyDialogDetail product ', product);
-        // if (product.Quantity > 0) {
-        //     mapDataToList(product, true)
-        // } else {
-        //     removeItem(product)
-        // }
-        // // listOrder.forEach((elm, index) => {
-        // //     if (elm.ProductId == product.ProductId && index == product.index) elm = product
-        // // })
-        // // setListOrder([...listOrder])
         let price = product.IsLargeUnit == true ? product.PriceLargeUnit : product.UnitPrice
         let discount = product.Percent ? (price * product.Discount / 100) : product.Discount
         listOrder.forEach((elm, index, arr) => {
@@ -156,11 +147,14 @@ const CustomerOrder = (props) => {
                 if (product.Quantity == 0) {
                     arr.splice(index, 1)
                 }
-                elm.Quantity = product.Quantity
                 if (elm.SplitForSalesOrder) {
                     product['QuantitySplit'] = product.Quantity;
                     elm.Quantity = 1;
                 }
+                if (product.Percent) {
+                    elm.DiscountRatio = product.Discount
+                }
+                elm.Quantity = product.Quantity
                 elm.Description = product.Description
                 elm.Discount = discount - price > 0 ? price : discount
                 elm.Price = product.Price

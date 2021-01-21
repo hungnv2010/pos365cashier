@@ -1,4 +1,4 @@
-import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react';
+import React, { useEffect, useState, forwardRef, useImperativeHandle, useRef } from 'react';
 import {
     View, Text, TouchableOpacity, Image, StyleSheet, TextInput, ImageBackground, Dimensions, FlatList
 } from 'react-native';
@@ -17,6 +17,7 @@ import { ScreenList } from '../../../common/ScreenList';
 export default (props) => {
 
     const [listCommodity, setListCommodity] = useState([]);
+    const numberCommodity = useRef(0)
     const numberColumn = useSelector(state => {
         console.log("useSelector state ", state);
         let numberColumn = (state.Common.orientaition == Constant.LANDSCAPE) ? 6 : 4
@@ -25,29 +26,26 @@ export default (props) => {
     });
 
     const widthRoom = Dimensions.get('screen').width / numberColumn;
-
+    let serverEvents = null;
 
     useEffect(() => {
         const getCommodityWaiting = async () => {
-            try {
-                // dialogManager.showLoading()
-                let serverEvents = await realmStore.queryServerEvents()
-                serverEvents = JSON.parse(JSON.stringify(serverEvents))
-                serverEvents = Object.values(serverEvents)
-                console.log('serverEventsserverEventsserverEvents', serverEvents);
-                setListCommodity(serverEvents)
-                // dialogManager.hiddenLoading()
-            } catch (error) {
-                console.log('getCommodityWaiting err', error);
-                // dialogManager.hiddenLoading()
-            }
+            serverEvents = await realmStore.queryServerEvents()
+            numberCommodity.current = serverEvents.length
+            let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
+            newServerEvents = Object.values(newServerEvents)
+            setListCommodity(newServerEvents)
+
+            serverEvents.addListener((collection, changes) => {
+                numberCommodity.current = serverEvents.length
+            })
         }
         getCommodityWaiting()
     }, [])
 
     const onClickCommodity = (item) => {
         props.navigation.pop()
-        props.route.params._onSelect(item, 3);
+        props.route.params._onSelect(item, 3, numberCommodity.current);
     }
 
     const onLongClickCommodity = (item) => {
@@ -67,6 +65,7 @@ export default (props) => {
 
     const clickLeftIcon = async () => {
         props.navigation.pop()
+        props.route.params._onSelect({}, 5, numberCommodity.current);
     }
 
     const renderList = () => {

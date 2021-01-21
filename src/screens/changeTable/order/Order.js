@@ -184,9 +184,8 @@ export default (props) => {
     const onItemPress = ({ Id, Name, ProductId }) => {
         toRoomId.current = { Id: Id, Name: Name, ProductId: ProductId }
         console.log('onItemPress', toRoomId.current);
-        setTimeout(() => {
-            setShowModal(!showModal)
-        }, 500);
+        setShowModal(!showModal)
+     
     }
 
     const renderRoom = (item, widthRoom) => {
