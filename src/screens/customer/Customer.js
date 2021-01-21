@@ -27,7 +27,7 @@ import TextTicker from 'react-native-text-ticker';
 
 let GUEST = {
     Id: 0,
-    Name: "khach_le",
+    Name: I18n.t("khach_le"),
     Code: "KH_khach_le",
     Point: 0,
 }
@@ -112,7 +112,7 @@ export default (props) => {
                     <View style={{ flex: 1.3 }}>
                         <Text
                             numberOfLines={1}
-                            style={{ fontSize: 15, fontWeight: "bold", }}>{item.Id == 0 ? I18n.t(item.Name) : item.Name}</Text>
+                            style={{ fontSize: 15, fontWeight: "bold", }}>{item.Name}</Text>
                         <Text style={{ paddingVertical: 5 }}>{item.Code}</Text>
                         <Text style={{}}>{I18n.t('diem_thuong')}: {currencyToString(item.Point)}</Text>
                     </View>

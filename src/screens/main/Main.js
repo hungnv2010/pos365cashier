@@ -16,6 +16,7 @@ import RetailToolBar from '../main/retail/retailToolbar';
 import Customer from '../customer/Customer';
 import ViewPrint, { TYPE_PRINT } from '../more/ViewPrint';
 import { Colors } from '../../theme';
+import NetInfo from "@react-native-community/netinfo";
 const { Print } = NativeModules;
 
 export default (props) => {
@@ -51,7 +52,7 @@ export default (props) => {
       dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: "" })
     }
   }, [printProvisional])
-  
+
   // PRINT_PROVISIONAL
 
   useEffect(() => {
@@ -140,12 +141,27 @@ export default (props) => {
   }
 
   const clickRightIcon = async () => {
-    dialogManager.showLoading()
-    dispatch({ type: 'ALREADY', already: false })
-    await realmStore.deleteAllForFnb()
-    await dataManager.syncAllDatas()
-    dispatch({ type: 'ALREADY', already: true })
-    dialogManager.hiddenLoading()
+    NetInfo.fetch().then(async state => {
+      if (!(state.isConnected == true && state.isInternetReachable == true)) {
+        dialogManager.showPopupOneButton(I18n.t('loi_ket_noi_mang'), I18n.t('thong_bao'), () => {
+          dialogManager.destroy();
+        }, null, null, I18n.t('dong'))
+        return;
+      } else {
+        dialogManager.showLoading()
+        dispatch({ type: 'ALREADY', already: false })
+        await realmStore.deleteAllForFnb()
+        await dataManager.syncAllDatas()
+        dispatch({ type: 'ALREADY', already: true })
+        dialogManager.hiddenLoading()
+      }
+    });
+    // dialogManager.showLoading()
+    // dispatch({ type: 'ALREADY', already: false })
+    // await realmStore.deleteAllForFnb()
+    // await dataManager.syncAllDatas()
+    // dispatch({ type: 'ALREADY', already: true })
+    // dialogManager.hiddenLoading()
   }
 
   const clickSyncForRetail = async () => {
