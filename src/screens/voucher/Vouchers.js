@@ -196,7 +196,7 @@ export default (props) => {
                                 <View style={{ flexDirection: 'row', padding: 10 }}>
                                     <Text style={styles.contentTitle}>{I18n.t("ngay_het_han")}</Text>
                                     <View style={{ flex: 2, flexDirection: 'row' }}>
-                                        <TextInput style={[styles.styleTextInput, { flex: 10, }]} editable={false} placeholder={I18n.t("chon_ngay_het_han")} value={dateTmp.current ? dateToDate(dateTmp.current) : null}></TextInput>
+                                        <TextInput style={[styles.styleTextInput, { flex: 10, }]} editable={false} placeholderTextColor="#808080" placeholder={I18n.t("chon_ngay_het_han")} value={dateTmp.current ? dateToDate(dateTmp.current) : null}></TextInput>
                                         <TouchableOpacity style={{ flex: 1.5, marginLeft: 10 }} onPress={() => timePicker()}>
                                             <Image source={Images.icon_calendar} style={{ width: 23, height: 23 }} />
                                         </TouchableOpacity>
@@ -468,7 +468,7 @@ const styles = StyleSheet.create({
         alignContent: 'center'
     },
     styleTextInput: {
-        marginLeft: 10, borderColor: '#B5B5B5', borderWidth: 0.5, borderRadius: 3, height: 23, backgroundColor: '#E8E8E8', padding: 2, textAlign: 'center'
+        marginLeft: 10, borderColor: '#B5B5B5', borderWidth: 0.5, borderRadius: 3, height: 23, backgroundColor: '#E8E8E8', padding: 2, textAlign: 'center', color: "#000"
     },
     textTitle: {
         fontSize: 12, color: '#696969'

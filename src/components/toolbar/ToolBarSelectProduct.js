@@ -38,9 +38,9 @@ export default function ToolBarDefault(props) {
 
                 <View style={{ flex: 1, alignItems: "center" }}>
                     {props.clickLeftIcon && props.leftIcon ?
-                        <TouchableOpacity onPress={props.clickLeftIcon}>
-                            <Icon name={props.leftIcon} size={props.size ? props.size : 30} color="white" />
-                        </TouchableOpacity>
+                        <TouchableOpacity onPress={props.clickLeftIcon} style={{paddingLeft:19,paddingRight:19,paddingTop:16,paddingBottom:16}}>
+                        <Image source={Images.icon_back} style={{width:10,height:16,}}/>
+                    </TouchableOpacity>
                         :
                         null
                     }

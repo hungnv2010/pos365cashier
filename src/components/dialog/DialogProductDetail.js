@@ -232,7 +232,7 @@ export default (props) => {
                                             if (isNaN(text)) return
                                             setDiscount(text)
                                         }}
-                                        style={{ textAlign: "right", backgroundColor: "#D5D8DC", marginLeft: 10, flex: 1, borderWidth: 0.5, borderRadius: 5, padding: 6.8 }} />
+                                        style={{ textAlign: "right", color: "#000", backgroundColor: "#D5D8DC", marginLeft: 10, flex: 1, borderWidth: 0.5, borderRadius: 5, padding: 6.8 }} />
                                 </View>
                             </View>
                             {/* :
@@ -252,7 +252,7 @@ export default (props) => {
                                             <Text style={{ borderColor: Colors.colorchinh, borderWidth: 1, color: Colors.colorchinh, fontWeight: "bold", paddingHorizontal: 15, paddingVertical: 10, borderRadius: 5 }}>-</Text>
                                         </TouchableOpacity>
                                         <TextInput
-                                            style={{ padding: 6, textAlign: "center", margin: 10, flex: 1, borderRadius: 4, borderWidth: 0.5, backgroundColor: "#D5D8DC", color: "#000" }}
+                                            style={{ padding: 6, color: "#000", textAlign: "center", margin: 10, flex: 1, borderRadius: 4, borderWidth: 0.5, backgroundColor: "#D5D8DC", color: "#000" }}
                                             value={"" + itemOrder.Quantity}
                                             onChangeText={text => {
                                                 if (isNaN(text) || text.length > 4) return
@@ -287,8 +287,8 @@ export default (props) => {
                                             numberOfLines={3}
                                             multiline={true}
                                             value={itemOrder.Description}
-
-                                            style={{ height: 50, paddingLeft: 5, flex: 7, fontStyle: "italic", fontSize: 12, borderWidth: 0.5, borderRadius: 4, backgroundColor: "#D5D8DC", color: "#000" }}
+                                            placeholderTextColor="#808080"
+                                            style={{ height: 50, color: "#000", paddingLeft: 5, flex: 7, fontStyle: "italic", fontSize: 12, borderWidth: 0.5, borderRadius: 4, backgroundColor: "#D5D8DC", color: "#000" }}
                                             placeholder={I18n.t('nhap_ghi_chu')} />
                                     </View>
                                 </View>

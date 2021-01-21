@@ -25,6 +25,7 @@ import dataManager from '../../data/DataManager';
 import QRCode from 'react-native-qrcode-svg';
 import ViewPrint, { TYPE_PRINT } from '../more/ViewPrint';
 import DatePicker from 'react-native-date-picker';
+import moment from 'moment';
 var Sound = require('react-native-sound');
 let timeClickPrevious = 1000;
 
@@ -84,7 +85,7 @@ export default (props) => {
     let row_key = "";
     let qrCodeRealm = null
 
-    const { deviceType } = useSelector(state => {
+    const { deviceType, isFNB } = useSelector(state => {
         return state.Common
     });
 
@@ -109,9 +110,7 @@ export default (props) => {
             let total = getTotalOrder(orderDetails);
             setTotalPrice(total);
             CASH.Value = jsonContentTmp.Total;
-            // calculatorPrice(jsonContentTmp, total, false);
             setPercentVAT(jsonContentTmp.VATRates ? true : false)
-
             let isVnd = !(jsonContentTmp.DiscountRatio > 0 || jsonContentTmp.DiscountValue == 0)
             console.log("useEffect isVnd == ", isVnd);
             if (!isVnd) {
@@ -176,8 +175,10 @@ export default (props) => {
     }
 
     const onChangeTextInput = (text, type) => {
+        console.log("onChangeTextInput text ", text);
         text = text.replace(/,/g, "");
         text = Number(text);
+        console.log("onChangeTextInput text:: ", text);
         let json = { ...jsonContent }
         switch (type) {
             case 2:
@@ -224,14 +225,36 @@ export default (props) => {
 
     const onCallBackCustomer = (data) => {
         console.log("onCallBackCustomer data : ", data);
-        setCustomer(data);
-        if (currentServerEvent.current) {
-            console.log("onCallBackCustomer Partner : ", data);
-            let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
-            jsonContent.Partner = data;
-            dataManager.paymentSetServerEvent(serverEvent, jsonContent);
-            dataManager.subjectUpdateServerEvent.next(serverEvent)
-        }
+
+        let apiPath = `${ApiPath.SYNC_PARTNERS}/${data.Id}`
+        new HTTPService().setPath(apiPath).GET()
+            .then(result => {
+                if (result) {
+                    console.log('onCallBackCustomer result', result, jsonContent);
+                    let discount = dataManager.totalProducts(jsonContent.OrderDetails) * result.BestDiscount / 100
+                    console.log('discount', discount);
+                    jsonContent.Discount = discount
+                    jsonContent.Partner = data
+                    jsonContent.PartnerId = data.Id
+                    jsonContent.DiscountRatio = result.BestDiscount
+                    console.log('jsonContentjsonContent', jsonContent);
+
+                    calculatorPrice(jsonContent, totalPrice)
+                }
+                setCustomer(data);
+            }).catch(err => {
+                console.log("onCallBackCustomer err ", err);
+                setCustomer(data);
+            })
+
+        // setCustomer(data);
+        // if (currentServerEvent.current) {
+        //     console.log("onCallBackCustomer Partner : ", data);
+        //     let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
+        //     jsonContent.Partner = data;
+        //     dataManager.paymentSetServerEvent(serverEvent, jsonContent);
+        //     dataManager.subjectUpdateServerEvent.next(serverEvent)
+        // }
     }
 
     const addCustomer = () => {
@@ -543,7 +566,7 @@ export default (props) => {
             if (order) {
                 dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
                 dialogManager.hiddenLoading()
-                updateServerEvent("success")
+                updateServerEvent()
                 await printAfterPayment(order.Code)
                 if (order.QRCode != "") {
                     qrCode.current = order.QRCode
@@ -552,6 +575,8 @@ export default (props) => {
                     handlerQRCode(order)
                 } else {
                     setTimeout(() => {
+                        if (!isFNB)
+                            props.route.params.onCallBack("success")
                         props.navigation.pop()
                     }, 1000);
                     // props.navigation.pop()
@@ -566,21 +591,19 @@ export default (props) => {
     }
 
     const onError = (json) => {
-        updateServerEvent("")
+        dialogManager.showPopupOneButton(I18n.t("khong_co_ket_noi_internet_don_hang_cua_quy_khach_duoc_luu_vao_offline"))
+        updateServerEvent()
         handlerError({ JsonContent: json, RowKey: row_key })
         props.navigation.pop()
     }
 
-    const updateServerEvent = (status) => {
-        // if (props.route.params.Screen != undefined && props.route.params.Screen == ScreenList.MainRetail) {
-        //     props.route.params.onCallBack(status)
-        // } else {
+    const updateServerEvent = () => {
         let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
-        serverEvent.JsonContent = "{}"
+        // serverEvent.JsonContent = "{}"
+        serverEvent.JsonContent = JSON.stringify(dataManager.createJsonContent(props.route.params.RoomId, props.route.params.Position, moment(), []))
         serverEvent.Version += 10
         console.log("updateServerEvent serverEvent ", serverEvent);
-        dataManager.updateServerEventNow(serverEvent, true, false);
-        // }
+        dataManager.updateServerEventNow(serverEvent, true, isFNB);
         playSound()
     }
 
@@ -652,13 +675,18 @@ export default (props) => {
     }
 
     const outputResult = (value) => {
-        console.log("outputResult value ", value);
-        if (sendMethod == METHOD.discount) {
-            onChangeTextInput(currencyToString(value), 1)
-        } else if (sendMethod == METHOD.vat) {
-            onChangeTextInput(currencyToString(value), 2)
-        } else {
-            onChangeTextPaymentPaid(currencyToString(value), sendMethod)
+        console.log("outputResult value :: ", value);
+        if (value && value != "") {
+            if (sendMethod == METHOD.discount) {
+                onChangeTextInput(currencyToString(value, true), 1)
+                // onChangeTextInput(value, 1)
+            } else if (sendMethod == METHOD.vat) {
+                onChangeTextInput(currencyToString(value, true), 2)
+                // onChangeTextInput(value, 2)
+            } else {
+                onChangeTextPaymentPaid(currencyToString(value, true), sendMethod)
+                // onChangeTextPaymentPaid(value, sendMethod)
+            }
         }
     }
 
@@ -912,7 +940,7 @@ export default (props) => {
                     <TextInput
                         returnKeyType='done'
                         keyboardType="number-pad"
-                        value={"" + currencyToString(item.Value)}
+                        value={"" + currencyToString(item.Value, true)}
                         onTouchStart={() => onTouchInput({ ...item, ...METHOD.pay })}
                         editable={deviceType == Constant.TABLET ? false : true}
                         onChangeText={(text) => onChangeTextPaymentPaid(text, item, index)}
@@ -990,7 +1018,7 @@ export default (props) => {
                                 <Text style={{ flex: 3 }}>{I18n.t('chiet_khau')}</Text>
                                 <View style={{ flexDirection: "row", flex: 3, marginLeft: 5 }}>
                                     <TouchableOpacity onPress={() => selectPercent(false)} style={{ width: 55, alignItems: "center", borderWidth: 0.5, borderTopLeftRadius: 5, borderBottomLeftRadius: 5, paddingVertical: 7, borderColor: colors.colorchinh, backgroundColor: !percent ? colors.colorchinh : "#fff" }}>
-                                        <Text style={{ color: !percent ? "#fff" : "#000" }}>VNĐ</Text>
+                                        <Text style={{ color: !percent ? "#fff" : colors.colorchinh }}>VNĐ</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={() => {
 
@@ -999,17 +1027,17 @@ export default (props) => {
 
                                         selectPercent(true)
                                     }} style={{ width: 55, alignItems: "center", borderWidth: 0.5, borderColor: colors.colorchinh, borderTopRightRadius: 5, borderBottomRightRadius: 5, paddingVertical: 7, backgroundColor: !percent ? "#fff" : colors.colorchinh }}>
-                                        <Text style={{ color: percent ? "#fff" : "#000" }}>%</Text>
+                                        <Text style={{ color: percent ? "#fff" : colors.colorchinh }}>%</Text>
                                     </TouchableOpacity>
                                 </View>
                                 <TextInput
                                     returnKeyType='done'
                                     keyboardType="number-pad"
-                                    value={"" + currencyToString(!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio)}
+                                    value={"" + currencyToString((!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio), true)}
                                     onTouchStart={() => onTouchInput(METHOD.discount)}
                                     editable={deviceType == Constant.TABLET ? false : true}
                                     onChangeText={(text) => onChangeTextInput(text, 1)}
-                                    style={{ borderColor: sendMethod == METHOD.discount ? colors.colorchinh : "gray", textAlign: "right", backgroundColor: "#eeeeee", marginLeft: 10, flex: 3, borderWidth: 0.5, borderRadius: 5, padding: 6.8 }} />
+                                    style={{ borderColor: sendMethod == METHOD.discount ? colors.colorchinh : "gray", textAlign: "right", backgroundColor: "#eeeeee", marginLeft: 10, flex: 3, borderWidth: 0.5, borderRadius: 5, padding: 6.8, color: "#000" }} />
                             </View>
                             <View style={{ height: 50, backgroundColor: "#fff", flexDirection: "row", paddingHorizontal: 10, alignItems: "center", justifyContent: "space-between" }}>
                                 <Text style={{ flex: 3 }}>{I18n.t('diem_voucher')}</Text>
@@ -1027,20 +1055,20 @@ export default (props) => {
                                 <Text style={{ flex: 3 }}>VAT</Text>
                                 <View style={{ flexDirection: "row", flex: 3, marginLeft: 5 }}>
                                     <TouchableOpacity onPress={() => selectVAT(0)} style={{ width: 55, alignItems: "center", borderWidth: 0.5, borderTopLeftRadius: 5, borderBottomLeftRadius: 5, paddingVertical: 7, borderColor: colors.colorchinh, backgroundColor: !percentVAT ? colors.colorchinh : "#fff" }}>
-                                        <Text style={{ color: !percentVAT ? "#fff" : "#000" }}>0%</Text>
+                                        <Text style={{ color: !percentVAT ? "#fff" : colors.colorchinh }}>0%</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={() => selectVAT(vendorSession.Settings && vendorSession.Settings.VAT ? vendorSession.Settings.VAT : 0)} style={{ width: 55, alignItems: "center", borderWidth: 0.5, borderColor: colors.colorchinh, borderTopRightRadius: 5, borderBottomRightRadius: 5, paddingVertical: 7, backgroundColor: !percentVAT ? "#fff" : colors.colorchinh }}>
-                                        <Text style={{ color: percentVAT ? "#fff" : "#000" }}>{vendorSession.Settings && vendorSession.Settings.VAT ? vendorSession.Settings.VAT : 0}%</Text>
+                                        <Text style={{ color: percentVAT ? "#fff" : colors.colorchinh }}>{vendorSession.Settings && vendorSession.Settings.VAT ? vendorSession.Settings.VAT : 0}%</Text>
                                     </TouchableOpacity>
                                 </View>
                                 <TextInput
                                     returnKeyType='done'
                                     keyboardType="number-pad"
-                                    value={"" + currencyToString(jsonContent.VATRates)}
+                                    value={"" + currencyToString(jsonContent.VATRates, true)}
                                     onTouchStart={() => onTouchInput(METHOD.vat)}
                                     editable={deviceType == Constant.TABLET ? false : true}
                                     onChangeText={(text) => onChangeTextInput(text, 2)}
-                                    style={{ borderColor: sendMethod == METHOD.vat ? colors.colorchinh : "gray", textAlign: "right", backgroundColor: "#eeeeee", marginLeft: 10, flex: 3, borderWidth: 0.5, borderRadius: 5, padding: 6.8 }} />
+                                    style={{ borderColor: sendMethod == METHOD.vat ? colors.colorchinh : "gray", textAlign: "right", backgroundColor: "#eeeeee", marginLeft: 10, flex: 3, borderWidth: 0.5, borderRadius: 5, padding: 6.8, color: "#000" }} />
                             </View>
                         </Surface>
                         <Surface style={styles.surface}>
@@ -1164,8 +1192,8 @@ const styles = StyleSheet.create({
     viewNote: { width: "100%", flexDirection: "row", marginVertical: 10 },
     textInfo: { width: "30%", paddingVertical: 7 },
     line: { width: "100%", height: 1, backgroundColor: "#eeeeee" },
-    inputNote: { width: "70%", height: 70, backgroundColor: "#eeeeee", marginLeft: 0, borderWidth: 0.5, borderRadius: 5, padding: 6 },
-    inputListMethod: { textAlign: "right", backgroundColor: "#eeeeee", marginLeft: 0, flex: 3, borderWidth: 0.5, borderRadius: 5, padding: 6.8 },
+    inputNote: { width: "70%", height: 70, backgroundColor: "#eeeeee", marginLeft: 0, borderWidth: 0.5, borderRadius: 5, padding: 6, color: "#000" },
+    inputListMethod: { textAlign: "right", backgroundColor: "#eeeeee", marginLeft: 0, flex: 3, borderWidth: 0.5, borderRadius: 5, padding: 6.8, color: "#000" },
     buttonCaculatorMothod: { width: 32, height: 32, justifyContent: "center", alignItems: "center", borderRadius: 5, borderWidth: 0.5, borderColor: colors.colorchinh },
     viewCalculatorMethod: { flex: 3, justifyContent: "center", alignItems: "center", },
     iconArrowDown: { width: 14, height: 14, marginHorizontal: 10 },

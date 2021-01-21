@@ -295,7 +295,7 @@ const HeaderComponent = (props) => {
                         onPress={() => onClickLogOut()}>
                         <View style={{ flexDirection: 'row' }}>
                             <Text style={{ textDecorationLine: "underline", color: "#fff" }}>{I18n.t('logout')}</Text>
-                            <Image source={Images.icon_logout} style={{width:12,height:15, marginLeft:5}}></Image>
+                            <Image source={Images.icon_logout} style={{ width: 12, height: 15, marginLeft: 5 }}></Image>
                         </View>
                     </TouchableOpacity>
                 </View>
@@ -436,6 +436,7 @@ const ContentComponent = (props) => {
 
     const onClickItem = (chucnang, index) => {
         console.log("onClickItem props ", props);
+        if (chucnang.func == KEY_FUNC.VERSION) return;
         let params = {};
         if (chucnang.func == ScreenList.Home || chucnang.func == ScreenList.Customer || chucnang.func == ScreenList.Settings || chucnang.func == ScreenList.Invoice || chucnang.func == ScreenList.OverView || chucnang.func == ScreenList.RoomHistory || chucnang.func == ScreenList.Vouchers) {
             setCurrentItemMenu(index)
@@ -449,7 +450,7 @@ const ContentComponent = (props) => {
         return (
             <View key={indexchucnnag} style={{ width: "100%", backgroundColor: currentItemMenu == indexchucnnag ? "#EEEEEE" : "#fff" }}>
                 <TouchableOpacity
-                    style={{ with: Metrics.screenWidth * 1, flexDirection: "row", alignItems: "center" }}
+                    style={{ with: Metrics.screenWidth * 1, flexDirection: "row", alignItems: "center"}}
                     onPress={() => onClickItem(chucnang, indexchucnnag)}>
                     {chucnang.icon && chucnang.icon != "" ?
                         <Image

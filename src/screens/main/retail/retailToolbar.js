@@ -42,15 +42,15 @@ export default forwardRef((props, ref) => {
 
                 <View style={{ flex: 1, alignItems: "center" }}>
                     <TouchableOpacity onPress={() => { props.navigation.openDrawer() }}>
-                        <Icon name="menu" size={28} color="white" />
+                    <Image source={Images.icon_menu} style={{width:48,height:48}} />
                     </TouchableOpacity>
                 </View>
-                <View style={{ flex: 1.5, justifyContent: 'center', alignItems: 'flex-start', }}>
+                <View style={{ flex: 1.5, justifyContent: 'center', alignItems: 'flex-start' }}>
                     <Subheading numberOfLines={1} style={{ color: 'white', fontSize: 18, fontWeight: "bold" }} >
                         {I18n.t('don_hang')}
                     </Subheading>
                 </View>
-                <View style={{ flex: 3, marginRight: 10 }}>
+                <View style={{ flex: deviceType == Constant.TABLET ? 3 : 0, marginRight: 10 }}>
                     {isSearch ?
                         <View style={{ borderRadius: 3, borderColor: "#fff", borderWidth: 1, backgroundColor: "#fff", flexDirection: "row", marginRight: 2, height: "80%" }}>
                             <TextInput
@@ -64,7 +64,7 @@ export default forwardRef((props, ref) => {
                         null}
                 </View>
 
-                <View style={{ flex: deviceType == Constant.TABLET ? 3 : 4, alignItems: "center", flexDirection: "row", justifyContent: "space-around", }}>
+                <View style={{ flex: deviceType == Constant.TABLET ? 3 : 2, alignItems: "center", flexDirection: "row", justifyContent: "space-around" }}>
                     {
                         deviceType == Constant.TABLET ?
                             <TouchableOpacity style={styles.button} onPress={() => {

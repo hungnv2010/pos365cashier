@@ -251,9 +251,12 @@ class DataManager {
     }
 
     updateServerEventNow = async (serverEvent, FromServer = false, isFNB = true) => {
+        console.log("updateServerEventNow serverEvent FromServer ", serverEvent, FromServer, isFNB);
         await realmStore.insertServerEvent(serverEvent, FromServer)
-        if (isFNB)
-            signalRManager.sendMessageServerEvent(serverEvent)
+        if (isFNB){
+            console.log("updateServerEventNow FromServer ok ", FromServer)
+            signalRManager.sendMessageServerEvent(serverEvent, FromServer)
+        }
     }
 
     calculatateServerEvent = (serverEvent, newOrderDetail) => {
@@ -294,7 +297,7 @@ class DataManager {
         if (updateNow)
             serverEvent.Version += 10
         else
-            serverEvent.Version += 10
+            serverEvent.Version += 1
     }
 
     totalProducts = (products) => {
@@ -407,14 +410,14 @@ class DataManager {
         console.log("splitTable oldServerEvent:: ", oldServerEvent)
         console.log("splitTable newServerEvent:: ", newServerEvent)
 
-        // await this.updateServerEventNow(oldServerEvent, true)
-        // await this.updateServerEventNow(newServerEvent, true)
+        await this.updateServerEventNow(oldServerEvent, true)
+        await this.updateServerEventNow(newServerEvent, true)
 
-        signalRManager.sendMessageServerEvent(oldServerEvent)
-        await realmStore.insertServerEvent(oldServerEvent, true)
+        // signalRManager.sendMessageServerEvent(oldServerEvent)
+        // await realmStore.insertServerEvent(oldServerEvent, true)
 
-        signalRManager.sendMessageServerEvent(newServerEvent)
-        await realmStore.insertServerEvent(newServerEvent, true)
+        // signalRManager.sendMessageServerEvent(newServerEvent)
+        // await realmStore.insertServerEvent(newServerEvent, true)
     }
 
     createSeverEvent = async (RoomId, Position) => {

@@ -111,7 +111,7 @@ export default () => {
                     }, 2000);
                 };
                 if ((text.indexOf("Error") > -1) && check == false) {
-                    setToastDescription(I18n.t('kiem_tra_ket_noi_may_in') + " " + text.split("::")[0])
+                    setToastDescription(I18n.t('kiem_tra_ket_noi_may_in') + " " + (text.split("::")[0].indexOf('null') ? "" : text.split("::")[0]))
                     setShowToast(true)
                 }
             });

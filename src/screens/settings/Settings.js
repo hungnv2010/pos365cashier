@@ -101,18 +101,18 @@ export default (props) => {
                 size: '',
                 ip: ''
             },
-            {
-                key: Constant.KEY_PRINTER.StampPrintKey,
-                title: 'may_in_tem',
-                type: '',
-                size: '',
-                ip: ''
-            },
+            // {
+            //     key: Constant.KEY_PRINTER.StampPrintKey,
+            //     title: 'may_in_tem',
+            //     type: '',
+            //     size: '',
+            //     ip: ''
+            // },
         ],
         InfoStore: '',
         HtmlPrint: '',
         TempPrint: '',
-        tu_dong_in_bao_bep: true,
+        tu_dong_in_bao_bep: false,
         in_sau_khi_thanh_toan: false,
         in_hai_lien_cho_hoa_don: false,
         in_hai_lien_cho_che_bien: false,
@@ -414,10 +414,10 @@ export default (props) => {
                         <SettingSwitch title={"in_hai_lien_cho_hoa_don"} output={onSwitchTone} isStatus={settingObject.in_hai_lien_cho_hoa_don} />
                         <SettingSwitch title={"in_hai_lien_cho_che_bien"} output={onSwitchTone} isStatus={settingObject.in_hai_lien_cho_che_bien} />
                         <SettingSwitch title={"in_tam_tinh"} output={onSwitchTone} isStatus={settingObject.in_tam_tinh} />
-                        <SettingSwitch title={"in_tem_truoc_thanh_toan"} output={onSwitchTone} isStatus={settingObject.in_tem_truoc_thanh_toan} />
-                        <SettingSwitch title={"bao_che_bien_sau_thanh_toan"} output={onSwitchTone} isStatus={settingObject.bao_che_bien_sau_thanh_toan} />
+                        {/* <SettingSwitch title={"in_tem_truoc_thanh_toan"} output={onSwitchTone} isStatus={settingObject.in_tem_truoc_thanh_toan} /> */}
+                        {/* <SettingSwitch title={"bao_che_bien_sau_thanh_toan"} output={onSwitchTone} isStatus={settingObject.bao_che_bien_sau_thanh_toan} /> */}
                     </View>
-                    <View style={styles.viewLine}></View>
+                    {/* <View style={styles.viewLine}></View>
                     <View>
                         <Text style={styles.textTitle}>{I18n.t("thiet_lap_tinh_nang")}</Text>
                         <SettingSwitch title={"cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang"} output={onSwitchTone} isStatus={settingObject.cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang} />
@@ -425,7 +425,7 @@ export default (props) => {
                         <SettingSwitch title={"khong_cho_phep_ban_hang_khi_het_ton_kho"} output={onSwitchTone} isStatus={settingObject.khong_cho_phep_ban_hang_khi_het_ton_kho} />
                         {/* <SettingSwitch title={"mo_cashbox_sau_khi_thanh_toan"} output={onSwitchTone} isStatus={settingObject.mo_cashbox_sau_khi_thanh_toan} />
                         <SettingSwitch title={"nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly"} output={onSwitchTone} isStatus={settingObject.nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly} /> */}
-                    </View>
+                    {/* </View> */} 
                     <View style={styles.viewLine}></View>
                     <View>
                         <Text style={styles.textTitle}>{I18n.t("thiet_lap_he_thong")}</Text>
@@ -519,7 +519,7 @@ export default (props) => {
                                 <View style={{ width: Metrics.screenWidth * 0.8, }}>
                                     <Text style={styles.titleModal}>{I18n.t('thong_tin_cua_hang')}</Text>
                                     <Text style={{ fontSize: 18, justifyContent: 'center', marginTop: 10, marginLeft: 20 }}>{I18n.t('nhap_chieu_rong_kho_giay')}</Text>
-                                    <TextInput returnKeyType='done' style={styles.textInputStyle} placeholder='58..80' keyboardType="numbers-and-punctuation" onChangeText={text => setDefaultSize(text)}></TextInput>
+                                    <TextInput returnKeyType='done' style={styles.textInputStyle} placeholder='58..80' placeholderTextColor="#808080" keyboardType="numbers-and-punctuation" onChangeText={text => setDefaultSize(text)}></TextInput>
                                     <TouchableOpacity style={{ justifyContent: 'flex-end', alignItems: 'flex-end', marginTop: 10, marginBottom: 10 }} onPress={changePrintTypeKitchenA}>
                                         <View style={{ backgroundColor: colors.colorchinh, marginRight: 15, padding: 10, borderColor: colors.colorchinh, borderWidth: 1, borderRadius: 5 }}>
                                             <Text style={[styles.styleTextBtnOk, {}]} >{I18n.t("dong_y")}</Text>
@@ -616,7 +616,7 @@ export default (props) => {
                                 <View style={{ width: Metrics.screenWidth * 0.8, }}>
                                     <Text style={styles.titleModal}>{titlePrint}</Text>
                                     <Text style={{ fontSize: 18, justifyContent: 'center', marginTop: 10, marginLeft: 20 }}>{I18n.t('nhap_dia_chi_ip_may')}</Text>
-                                    <TextInput returnKeyType='done' style={styles.textInputStyle} value={stateValueIp} keyboardType='numeric' onChangeText={text => changeValueIp(text)} ></TextInput>
+                                    <TextInput returnKeyType='done' style={styles.textInputStyle} value={stateValueIp} keyboardType='numbers-and-punctuation' onChangeText={text => changeValueIp(text)} ></TextInput>
                                     <TouchableOpacity style={{ justifyContent: 'flex-end', alignItems: 'flex-end', marginTop: 10, marginBottom: 10, }} onPress={setIpLANPrint}>
                                         <View style={{ backgroundColor: colors.colorchinh, marginRight: 15, padding: 10, borderColor: colors.colorchinh, borderWidth: 1, borderRadius: 5 }}>
                                             <Text style={[styles.styleTextBtnOk, {}]} >{I18n.t("dong_y")}</Text>
@@ -710,7 +710,7 @@ export default (props) => {
 
                             </TouchableWithoutFeedback>
                             <View style={styles.styleViewModal} >
-                                <View style={{ width: Metrics.screenWidth * 0.8, height: Metrics.screenHeight * 0.85 }}>
+                                <View style={{ width: Metrics.screenWidth * 0.7, height: Metrics.screenHeight * 0.7 }}>
                                     <Text style={styles.titleModal}>{I18n.t('thong_tin_cua_hang')}</Text>
                                     <StoreInformation code={inforStore.Code} name={inforStore.Name} address={inforStore.Address} phoneNumber={inforStore.Phone} />
                                     <View style={{ justifyContent: "center", flexDirection: "row", paddingTop: 10 }}>
@@ -752,7 +752,7 @@ const StoreInformation = (props) => {
             <ItemStoreInfor title={I18n.t('ten')} titleHint={props.name}></ItemStoreInfor>
             <ItemStoreInfor title={I18n.t('dia_chi')} titleHint={props.address}></ItemStoreInfor>
             <ItemStoreInfor title={I18n.t('so_dien_thoai')} titleHint={props.phoneNumber}></ItemStoreInfor>
-            <Footer title={I18n.t('chan_trang')} titleHint='Xin cám ơn, hẹn gặp lại quý khách!'></Footer>
+            <Footer title={I18n.t('chan_trang')} titleHint={I18n.t('xin_cam_on_va_hen_gap_lai')}></Footer>
             <Footer title='Banner Ads1' titleHint='https://www.pos365.vn/wp-content'></Footer>
             <Footer title='Banner Ads2' titleHint='https://www.pos365.vn/wp-content'></Footer>
             <Footer title='Slideshow1' titleHint='https://www.pos365.vn/wp-content'></Footer>
@@ -773,7 +773,7 @@ const Footer = (props) => {
     return (
         <View style={{ flex: 1, marginTop: 15 }}>
             <Text style={styles.textTitleItemHint}>{props.title}</Text>
-            <TextInput style={{ height: 45, borderBottomWidth: 1, marginTop: 5, padding: 10, marginLeft: 20, marginRight: 20, fontSize: 16, color: 'silver' }} placeholder={props.titleHint}></TextInput>
+            <TextInput style={{ height: 45, borderBottomWidth: 1, marginTop: 5, padding: 10, marginLeft: 20, marginRight: 20, fontSize: 16, color: 'silver' }} placeholder={props.titleHint} placeholderTextColor="#808080"></TextInput>
         </View>
     )
 }
@@ -806,7 +806,7 @@ const styles = StyleSheet.create({
         fontSize: 18, fontWeight: "bold", textAlign: "center", paddingVertical: 10, color: colors.colorchinh
     },
     textInputStyle: {
-        borderWidth: 0.5, marginTop: 10, padding: 10, marginLeft: 20, marginRight: 20, fontSize: 14, borderRadius: 5
+        borderWidth: 0.5, marginTop: 10, padding: 10, marginLeft: 20, marginRight: 20, fontSize: 14, borderRadius: 5, color: "#000"
     },
     styleTextBtnHuy: { textAlign: "center", color: colors.colorchinh, fontSize: 14 },
     styleTextBtnOk: { textAlign: "center", color: "#fff", fontSize: 14 },

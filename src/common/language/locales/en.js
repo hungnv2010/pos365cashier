@@ -2,7 +2,7 @@
 
 export default {
   // TODO: A
-  ap_dung: "Áp dụng",
+  ap_dung: "Apply",
 
   // TODO: B
   bo_loc: "Filter",
@@ -68,9 +68,9 @@ export default {
   dang_goi_mon: "Order now",
   dong: "Close",
   dia_chi_ip: "IP Address",
-  danh_muc_phong_ban: "Danh mục phòng bàn",
-  danh_sach_phong_ban: "Danh sách phòng bàn",
-  dich_vu_tinh_gio: "Dịch vụ tính giờ",
+  danh_muc_phong_ban: "Table/Room group",
+  danh_sach_phong_ban: "List room table",
+  dich_vu_tinh_gio: "Timed service",
   doanh_thu_VND: "Revenue (VND)",
   dat_hang: "On order",
   diem_voucher: "Point/Voucher",
@@ -98,7 +98,7 @@ export default {
   gui_thuc_don: "Send Menu",
   gui_tin_nhan_that_bai: "Send message failed !",
   gui_tin_nhan: "Send message",
-  gio: "hours",
+  gio: "Hours",
   gia_tri_tra_lai: "Value return",
   ghi_no: "Debit",
   gia_niem_yet: "Listed price",
@@ -118,7 +118,7 @@ export default {
   khach_le: "Guest",
   kiem_ke: "Inventory",
   khach_hang: "Customer",
-  khac: "other",
+  khac: "Other",
   ket_noi_may_in: "Printer connection",
   khach_phai_tra: "Grand total",
   khach_da_tra: "Guest paid",
@@ -126,10 +126,9 @@ export default {
   khong_the_huy_tra_mat_hang_thoi_gian: "Cannot return time item",
   kiem_tra_ket_noi_may_in: "Check the printer connection. IP address",
   khach_yeu_cau: "Guest request",
-  khong_xac_dinh: "Không xác định",
+  khong_xac_dinh: "Unknown",
   ket_qua_ban_hang: "Sales results",
-  khuyen_mai: "Khuyễn mãi",
-  khuyen_mai_: "khuyễn mãi",
+  khuyen_mai: "Promotion",
   khong_tim_thay_hoa_don_nao_phu_hop: "No matching invoice was found",
 
 
@@ -185,12 +184,12 @@ export default {
   nu: "Female",
   nhan_vien_order: "Order screen",
   nhap_ghi_chu: "Enter the note",
-  ngay: "days",
+  ngay: "Days",
   ngay_ban: "Sold date",
   nhap_tu_khoa_tim_kiem: "Enter search keywords",
   ngay_sinh: "Date of birth",
   ngay_sua: "Modified date",
-  nhap_ma_hoa_don_tim_kiem: "enter your search invoice code",
+  nhap_ma_hoa_don_tim_kiem: "Enter your search invoice code",
 
 
   // TODO: O
@@ -210,7 +209,7 @@ export default {
   quy_khach_vui_long_nhap_mat_khau: "Please enter your password",
   quy_khach_vui_long_nhap_ten_tai_khoan: "Please enter your user name",
   quy_khach_vui_long_nhap_ten_cua_hang: "Please enter your store name",
-  qua_mang_lan: "through the LAN",
+  qua_mang_lan: "Through the LAN",
   quet_barcode_hoac_qrcode: "Scan BarCode or QRCode",
 
   // TODO: R
@@ -273,10 +272,10 @@ export default {
   thang_truoc: "Last month",
   toan_thoi_gian: "All time",
   tuy_chon: "Custom",
-  them_phong_ban: "Thêm phòng bàn",
-  them_moi_nhom: "Thêm mới nhóm",
-  ten_phong_ban: "Tên phòng bàn",
-  thu_tu_hien_thi: "Thứ tự hiển thị",
+  them_phong_ban: "Insert room table",
+  them_moi_nhom: "Add new group",
+  ten_phong_ban: "Table name",
+  thu_tu_hien_thi: "Display order",
   thanh_toan_nhanh: "Quick payment",
   tach_ban: "Split table",
   tien_thua: "Excess cash",
@@ -286,7 +285,7 @@ export default {
   tu_dong_tao_ma: "Automatically Generate Code",
   ten_nhom: "Group Name",
   tinh_thanh: "Province",
-  tien_khach_tra: "Tiền khách trả",
+  tien_khach_tra: "Payment paid",
 
 
   // TODO: U
@@ -324,6 +323,12 @@ export default {
   chon_ngay_het_han: "Choose expiry date",
   chua_co_lich_su_huy_tra:"No room history",
   chua_co_voucher:'No Voucher',
+  chon_loai_hang_hoa:'Chose product type',
+  chon_nhom_hang_hoa:'Choose categoty',
+  chua_co:'Empty',
+  chon_hang_hoa:'Choose product',
+  chuyen_khoan:'Transfer',
+  cong_vao_khoan_no:'Add to the debt',
 
 
   don_vi_tien_te: "Currency unit",
@@ -332,24 +337,29 @@ export default {
   don_vi_tinh:'Unit',
   dich_vu:'Service',
   don_vi_tinh_lon_va_cac_thong_so_khac:'Large unit and other',
+  don_vi_tinh_lon:'Large unit',
+  doi_tac:'Partner',
 
   giu_man_hinh_luon_sang: "Keep the screen on",
   gia: "Price",
   gia_bon_block_dau:"Price for the first 4 block",
   gia_ban_duoc_tinh_theo_phan_tram_gia_tri_don_hang:"Price is calculated by % of order",
+  gia_ban_dvt_lon:'Price large unit',
+  gia_tri_quy_doi:'Exchange value',
 
   hien_thanh_dieu_huong: "Show navigation bar",
-  hien_thi_hang_hoa:'',
+  hien_thi_hang_hoa:'Display product',
   hien_thi_san_pham_tren_man_hinh_thu_ngan:"Display product on the list of the cashier screen",
+  hang_muc_thu_chi:"Item of income/expenditure",
 
   in_sau_khi_thanh_toan: "Print after payment",
   in_hai_lien_cho_hoa_don: "Print 2 copies for invoice",
   in_hai_lien_cho_che_bien: "Print 2 copies for cook",
   in_tem_truoc_thanh_toan: "Print stamp before payment",
   in_sunmi: "Print Sunmi",
-  in_qua_mang_lan: "In qua mạng LAN",
-  in_qua_bluetooth: "In qua Bluetooth",
-  in_qua_usb: "In qua USB",
+  in_qua_mang_lan: "Print LAN",
+  in_qua_bluetooth: "Print Bluetooth",
+  in_qua_usb: "Print USB",
   in_hoa_don_truoc_khi_thanh_toan_VNPAYQR_thanh_cong: "Print bill before successfull payment VNPAY-QR? ",
   in_may_in_thu_ngan: "Print cashier printer",
   in_may_in_tem: "Print stamp printer",
@@ -364,6 +374,7 @@ export default {
   luu:'Save',
   luu_va_sao_chep:"Save & Coppy ",
   ly_do: "Reason",
+  loc_theo_trang_thai:'Filter by state',
 
   may_in_thu_ngan: "Printer cashier",
   may_in_bao_bep_a: "Printer kitchen A",
@@ -379,6 +390,7 @@ export default {
   ma_san_pham: 'Product code',
   ma_voucher: 'Code',
   ma_hang_ma_sku_ma_vach:'Product code',
+  ma_dvt_lon:'Large unit code',
 
   nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: "Receive messages / notifications from waiter, manager?",
   nhap_so_luong_the: "Enter the number of cards",
@@ -387,12 +399,15 @@ export default {
   nhan_vien: 'Staff',
   ngay_huy_tra: 'Cancellation date',
   ngay_het_han: 'Expiry Date',
+  nhap_ten_nhom_hang_hoa:'Enter category name',
+
+  quy_dau_ky:"Fun beginning",
 
   so_the_cung: "Card number",
   su_dung_hai_man_hinh: "Using two screen",
   setting: "Setting",
   so_dien_thoai: "Phone number",
-  so_luong_theo_thoi_gian:'',
+  so_luong_theo_thoi_gian:'Quantity by time',
   so_block_gio_dau_tien:'First hour block number',
   so_luong_hang_hoa_duoc_tinh_theo_thoi_gian:"The quantity is calculated by time of use",
   so_may_in_toi_da:'Maximum printers',
@@ -406,7 +421,7 @@ export default {
   thanh_toan_vnpayqr: "Payment VNPAY-QR?",
   thanh_toan_vnpaypos_qua_may_pos: "VNPAY-POS payment via POS machine?",
   them_moi_voucher:"Add new voucher",
-  thiet_lap_gia_ban_theo_block:'',
+  thiet_lap_gia_ban_theo_block:'Set price by block',
   them_moi:'Add',
   ten_hang_hoa: 'Product name',
   thanh_tien: 'Total',
@@ -414,8 +429,16 @@ export default {
   them_moi_voucher: "Add new voucher",
   thiet_lap_khung_gio_dac_biet:"Set special time frame",
   ton_kho:'Inventory',
+  them_moi_nhom_hang_hoa:'Add new category',
+  tao_nhom:'Create group',
+  tinh_theo_phan_tram:'Account by %',
+  thanh_phan_combo:"Combo Components",
+  them_moi_phieu_thu_chi:"Add new Cash flow",
+  tra_lai_tien:'Give money back',
 
   vnd: "VND",
-  voucher: "Voucher"
+  voucher: "Voucher",
+
+  xin_cam_on_va_hen_gap_lai:"Thank you, see you again!"
 
 };

@@ -46,6 +46,7 @@ const CustomerOrder = (props) => {
     const debouceWaitingList = useDebounce(waitingList)
     const [isQuickPayment, setIsQuickPayment] = useState(false)
     const [vendorSession, setVendorSession] = useState({});
+    const [QuantitySubtract, setQuantitySubtract] = useState(0)
     const orientaition = useSelector(state => {
         console.log("orientaition", state);
         return state.Common.orientaition
@@ -140,29 +141,48 @@ const CustomerOrder = (props) => {
 
     const applyDialogDetail = (product) => {
         console.log('applyDialogDetail product ', product);
-        let price = product.IsLargeUnit == true ? product.PriceLargeUnit : product.UnitPrice
-        let discount = product.Percent ? (price * product.Discount / 100) : product.Discount
-        listOrder.forEach((elm, index, arr) => {
-            if (elm.ProductId == product.ProductId && index == product.index) {
-                if (product.Quantity == 0) {
-                    arr.splice(index, 1)
+        // if (product.Quantity > 0) {
+        //     mapDataToList(product, true)
+        // } else {
+        //     removeItem(product)
+        // }
+        // // listOrder.forEach((elm, index) => {
+        // //     if (elm.ProductId == product.ProductId && index == product.index) elm = product
+        // // })
+        // // setListOrder([...listOrder])
+
+
+        if (itemOrder.Quantity > product.Quantity) {
+            setTimeout(() => {
+                setQuantitySubtract(itemOrder.Quantity - product.Quantity)
+                typeModal.current = TYPE_MODAL.RETURN
+                setShowModal(true)
+            }, 300);
+        } else {
+            let price = product.IsLargeUnit == true ? product.PriceLargeUnit : product.UnitPrice
+            let discount = product.Percent ? (price * product.Discount / 100) : product.Discount
+            listOrder.forEach((elm, index, arr) => {
+                if (elm.ProductId == product.ProductId && index == product.index) {
+                    if (product.Quantity == 0) {
+                        arr.splice(index, 1)
+                    }
+                    if (product.Percent) {
+                        elm.DiscountRatio = product.Discount
+                    }
+                    elm.Quantity = product.Quantity
+                    if (elm.SplitForSalesOrder) {
+                        product['QuantitySplit'] = product.Quantity;
+                        elm.Quantity = 1;
+                    }
+                    elm.Description = product.Description
+                    elm.Discount = discount - price > 0 ? price : discount
+                    elm.Price = product.Price
+                    elm.IsLargeUnit = product.IsLargeUnit
                 }
-                if (elm.SplitForSalesOrder) {
-                    product['QuantitySplit'] = product.Quantity;
-                    elm.Quantity = 1;
-                }
-                if (product.Percent) {
-                    elm.DiscountRatio = product.Discount
-                }
-                elm.Quantity = product.Quantity
-                elm.Description = product.Description
-                elm.Discount = discount - price > 0 ? price : discount
-                elm.Price = product.Price
-                elm.IsLargeUnit = product.IsLargeUnit
-            }
-        })
-        console.log('applyDialogDetail listOrder ', listOrder);
-        props.outputSelectedProduct(product, true)
+            })
+            console.log('applyDialogDetail listOrder ', listOrder);
+            props.outputSelectedProduct(product, true)
+        }
     }
 
     const mapDataToList = (product, isNow = true) => {
@@ -280,7 +300,7 @@ const CustomerOrder = (props) => {
                     }}>
                         <TouchableOpacity
                             style={{ marginRight: 5 }}
-                            onPress={() => onClickReturn(item)}>
+                            onPress={() => { if (!isPromotion) onClickReturn(item) }}>
                             <Icon name={!isPromotion ? "trash-can-outline" : "gift"} size={40} color={!isPromotion ? "black" : Colors.colorLightBlue} />
                         </TouchableOpacity>
                         <View style={{ flexDirection: "column", flex: 1, }}>
@@ -426,10 +446,10 @@ const CustomerOrder = (props) => {
     }
 
     const onClickPayment = () => {
-        if (isQuickPayment) {
-
-        } else {
+        if (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0) {
             props.navigation.navigate(ScreenList.Payment, { RoomId: props.route.params.room.Id, Position: props.Position });
+        } else {
+            dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
         }
     }
 
@@ -439,18 +459,27 @@ const CustomerOrder = (props) => {
 
     const printKitchen = () => {
         let jsonContent = props.jsonContent;
-        if (!checkProcessedQuantityProduct(jsonContent)) {
-            let data = dataManager.getDataPrintCook(jsonContent.OrderDetails)
-            console.log("printKitchen data ", data);
-            jsonContent.OrderDetails.forEach(element => {
-                element.Processed = element.Quantity
-            });
-            console.log("printKitchen jsonContent ", jsonContent);
-            props.handlerProcessedProduct(jsonContent)
-            dispatch({ type: 'LIST_PRINT', listPrint: data })
-            notification(I18n.t("bao_che_bien_thanh_cong"));
+        console.log("printKitchen jsonContent :: ", jsonContent);
+        if (jsonContent.OrderDetails.length > 0) {
+            if (!checkProcessedQuantityProduct(jsonContent)) {
+                jsonContent.OrderDetails.forEach(element => {
+                    element.RoomName = props.route.params.room.Name;
+                    element.Pos = jsonContent.Pos;
+                });
+                let data = dataManager.getDataPrintCook(jsonContent.OrderDetails)
+                console.log("printKitchen data ====: " + JSON.stringify(data));
+                dispatch({ type: 'LIST_PRINT', listPrint: JSON.stringify(data) })
+                jsonContent.OrderDetails.forEach(element => {
+                    element.Processed = element.Quantity
+                });
+                console.log("printKitchen jsonContent ::: ", jsonContent);
+                props.handlerProcessedProduct(jsonContent)
+                notification(I18n.t("bao_che_bien_thanh_cong"));
+            } else {
+                notification(I18n.t("cac_mon_ban_chon_dang_duoc_nha_bep_chuan_bi"));
+            }
         } else {
-            notification(I18n.t("cac_mon_ban_chon_dang_duoc_nha_bep_chuan_bi"));
+            dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
         }
     }
 
@@ -467,6 +496,16 @@ const CustomerOrder = (props) => {
             }
         });
         return isProcessed;
+    }
+
+    const onClickProvisional = async () => {
+        hideMenu()
+        let jsonContent = props.jsonContent;
+        console.log("onClickProvisional props.route.params ", props.route.params);
+        if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
+            jsonContent.RoomName = props.route.params.room.Name
+        }
+        dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: jsonContent })
     }
 
     return (
@@ -538,24 +577,16 @@ const CustomerOrder = (props) => {
                             backgroundColor: "#fff", borderRadius: 4, marginHorizontal: 5,
                         }}>
                             <TouchableOpacity onPress={() => { }} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
-                                <MaterialIcons style={{ paddingHorizontal: 7 }} name="notifications" size={26} color={Colors.colorchinh} />
+                                <MaterialIcons style={{ paddingHorizontal: 7 }} name="call-split" size={26} color={Colors.colorchinh} />
                                 <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('tach_ban')}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={changTable} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
-                                <MaterialIcons style={{ paddingHorizontal: 7 }} name="notifications" size={26} color={Colors.colorchinh} />
+                                <MaterialIcons style={{ paddingHorizontal: 7 }} name="transform" size={26} color={Colors.colorchinh} />
                                 <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('chuyen_ban')}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => { }} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
-                                <MaterialIcons style={{ paddingHorizontal: 7 }} name="notifications" size={26} color={Colors.colorchinh} />
+                            <TouchableOpacity onPress={() => onClickProvisional()} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
+                                <Icon style={{ paddingHorizontal: 7 }} name="printer" size={26} color={Colors.colorchinh} />
                                 <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('in_tam_tinh')}</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => { }} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
-                                <Icon style={{ paddingHorizontal: 10 }} name="message" size={22} color={Colors.colorchinh} />
-                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('in_tem')}</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={onClickOptionQuickPayment} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
-                                <Icon style={{ paddingHorizontal: 10 }} name={isQuickPayment ? "check-box-outline" : "close-box-outline"} size={26} color={isQuickPayment ? Colors.colorchinh : "#000"} />
-                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('thanh_toan_nhanh')}</Text>
                             </TouchableOpacity>
                         </View>
                     </Menu>
@@ -616,6 +647,7 @@ const CustomerOrder = (props) => {
                                     <ReturnProduct
                                         Name={itemOrder.Name}
                                         Quantity={itemOrder.Quantity}
+                                        QuantitySubtract={QuantitySubtract}
                                         vendorSession={vendorSession}
                                         getDataOnClick={(data) => saveOrder(data)}
                                         setShowModal={() => {
