@@ -334,13 +334,11 @@ export default (props) => {
                                 </View>
                             </View>
 
-                            {item.Description != "" ?
-                                <Text
-                                    style={{ fontStyle: "italic", fontSize: 11, color: "gray" }}>
-                                    {item.Description}
-                                </Text>
-                                :
-                                null}
+                            <Text
+                                style={{ fontStyle: "italic", fontSize: 11, color: "gray" }}>
+                                {`${item.AttributesName} \n ${item.Description}`}
+                            </Text>
+
                         </View>
                         <View style={{ alignItems: "flex-end" }}>
                             {/* <Icon style={{ paddingHorizontal: 5 }} name="bell-ring" size={20} color="grey" />
