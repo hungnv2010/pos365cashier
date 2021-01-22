@@ -54,7 +54,11 @@ export default forwardRef((props, ref) => {
                     if (!showInput) {
                         if (blockClick == false) {
                             blockClick = true;
-                            props.navigation.pop()
+                            if (clickLeftIcon) {
+                                props.clickLeftIcon
+                            } else {
+                                props.navigation.pop()
+                            }
                             setTimeout(() => {
                                 blockClick = false;
                             }, 1000);
@@ -64,8 +68,8 @@ export default forwardRef((props, ref) => {
                         setShowInput(false)
                         props.onClickBackSearch()
                     }
-                }} style={{paddingLeft:19,paddingRight:19,paddingTop:16,paddingBottom:16}}>
-                    <Image source={Images.icon_back} style={{width:10,height:16,}}/>
+                }} style={{ paddingLeft: 19, paddingRight: 19, paddingTop: 16, paddingBottom: 16 }}>
+                    <Image source={Images.icon_back} style={{ width: 10, height: 16, }} />
                 </TouchableOpacity>
                 {/* } */}
             </View>
@@ -107,7 +111,7 @@ export default forwardRef((props, ref) => {
                         }
                     </View>
                     : // flex: 2
-                    <View style={{ flexDirection: "row", flex: 1  }}>
+                    <View style={{ flexDirection: "row", flex: 1 }}>
                         {/* <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
                             <TouchableOpacity onPress={props.clickQRCode}>
                                 <Icon name="qrcode-scan" size={props.size ? props.size : 23} color="white" />
