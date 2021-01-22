@@ -369,8 +369,11 @@ export default (props) => {
                 .then(res => {
                     console.log('onClickApply res', res);
                     if (res) {
+                        if (res.ResponseStatus) {
+                            dialogManager.showPopupOneButton(`${res.ResponseStatus.Message}`, I18n.t('thong_bao'))
+                        }else
                         props.handleSuccess('sua')
-                        // resetCustomer()
+                        //resetCustomer()
                     }
                     dialogManager.hiddenLoading()
                 })
