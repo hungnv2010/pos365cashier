@@ -393,15 +393,10 @@ export default {
   mo_cashbox_sau_khi_thanh_toan: "Open cashbox after payment",
   ma_san_pham: 'Product code',
   ma_voucher: 'Code',
-<<<<<<< HEAD
-  ma_hang_ma_sku_ma_vach: 'Product code',
-  ma_dvt_lon: 'Large unit code',
-=======
+
   ma_hang_ma_sku_ma_vach:'Product code',
   ma_dvt_lon:'Large unit code',
   may_tinh:'Calculator',
->>>>>>> fa7422529bd026400beead7deef69b23cc3ba4b2
-
   nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: "Receive messages / notifications from waiter, manager?",
   nhap_so_luong_the: "Enter the number of cards",
   nhap_dia_chi_ip_may: "Enter the IP address of the machine ",
