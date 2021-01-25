@@ -494,6 +494,7 @@ export default {
   them_moi_nhom_hang_hoa:'Thêm mới nhóm hàng hoá',
   tao_nhom:'Tạo nhóm',
   thanh_phan_combo:"Combo Components",
+  tien_thieu:'Tiền thiếu',
 
   vnd: "VND",
   voucher:"Mã quà tặng",

@@ -439,6 +439,7 @@ export default {
   thanh_phan_combo:"Combo Components",
   them_moi_phieu_thu_chi:"Add new Cash flow",
   tra_lai_tien:'Give money back',
+  tien_thieu:'Missing money',
 
   vnd: "VND",
   voucher: "Voucher",
