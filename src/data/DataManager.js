@@ -253,7 +253,7 @@ class DataManager {
     updateServerEventNow = async (serverEvent, FromServer = false, isFNB = true) => {
         console.log("updateServerEventNow serverEvent FromServer ", serverEvent, FromServer, isFNB);
         await realmStore.insertServerEvent(serverEvent, FromServer)
-        if (isFNB){
+        if (isFNB) {
             console.log("updateServerEventNow FromServer ok ", FromServer)
             signalRManager.sendMessageServerEvent(serverEvent, FromServer)
         }
@@ -301,7 +301,8 @@ class DataManager {
     }
 
     totalProducts = (products) => {
-        return products.reduce((total, product) => total + (product.IsPromotion == true ? product.Price * product.Quantity : (product.IsLargeUnit ? product.PriceLargeUnit : product.Price) * product.Quantity), 0)
+        console.log('totalProducts', products);
+        return products.reduce((total, product) => total + (product.IsPromotion ? product.Price * product.Quantity : (product.IsLargeUnit ? product.PriceLargeUnit : product.UnitPrice) * product.Quantity), 0)
     }
 
     totalDiscountProducts = (products) => {
