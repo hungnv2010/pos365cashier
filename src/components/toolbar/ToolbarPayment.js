@@ -45,17 +45,12 @@ export default forwardRef((props, ref) => {
         <View style={styles.toolbarContainer}>
 
             <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-                {/* {props.clickLeftIcon ?
-                    <TouchableOpacity onPress={props.clickLeftIcon}>
-                        <Icon name="keyboard-backspace" size={props.size ? props.size : 30} color="white" />
-                    </TouchableOpacity>
-                    : */}
                 <TouchableOpacity onPress={() => {
                     if (!showInput) {
                         if (blockClick == false) {
                             blockClick = true;
-                            if (clickLeftIcon) {
-                                props.clickLeftIcon
+                            if (props.clickLeftIcon()) {
+                                props.clickLeftIcon()
                             } else {
                                 props.navigation.pop()
                             }
@@ -71,7 +66,6 @@ export default forwardRef((props, ref) => {
                 }} style={{ paddingLeft: 19, paddingRight: 19, paddingTop: 16, paddingBottom: 16 }}>
                     <Image source={Images.icon_back} style={{ width: 10, height: 16, }} />
                 </TouchableOpacity>
-                {/* } */}
             </View>
             <View style={{ flex: 5, paddingLeft: 10, alignItems: 'center', flexDirection: 'row' }}>
                 {showInput == false ?
@@ -110,13 +104,8 @@ export default forwardRef((props, ref) => {
                             </TouchableOpacity>
                         }
                     </View>
-                    : // flex: 2
+                    :
                     <View style={{ flexDirection: "row", flex: 1 }}>
-                        {/* <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-                            <TouchableOpacity onPress={props.clickQRCode}>
-                                <Icon name="qrcode-scan" size={props.size ? props.size : 23} color="white" />
-                            </TouchableOpacity>
-                        </View> */}
                         <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
                             <TouchableOpacity onPress={props.clickNote}>
                                 <Icon name="library-books" size={props.size ? props.size : 26} color="white" />

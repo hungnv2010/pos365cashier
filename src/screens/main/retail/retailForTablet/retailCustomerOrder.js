@@ -319,7 +319,7 @@ const RetailCustomerOrder = (props) => {
                             </View>
                             <Text
                                 style={{ fontStyle: "italic", fontSize: 11, color: "gray" }}>
-                                {item.Description}
+                                {`${item.AttributesName} \n ${item.Description}`}
                             </Text>
                         </View>
 
@@ -343,7 +343,7 @@ const RetailCustomerOrder = (props) => {
                                                     removeItem(item, index)
                                                 } else {
                                                     item.Quantity--
-                                                  
+
                                                     syncListProducts([...listOrder])
                                                 }
                                             }}>

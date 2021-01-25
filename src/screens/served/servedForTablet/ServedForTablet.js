@@ -371,93 +371,97 @@ const Served = (props) => {
 
     const onClickRetailCustomer = () => {
         console.log('onClickRetailCustomer');
-        props.navigation.navigate(ScreenList.Customer, { _onSelect: onCallBack })
+        props.navigation.navigate(ScreenList.Customer, { _onSelect: onCallBack, currentCustomer: currentCustomer })
     }
 
     const onCallBack = (data, type) => {
         switch (type) {
             case 1:
-                // if (data) setCurrentPriceBook(data)
-                const getOtherPrice = async () => {
-                    if (jsonContent.OrderDetails && data) {
-                        let apiPath = ApiPath.PRICE_BOOK + `/${data.Id}/manyproductprice`
-                        let params = { "pricebookId": data.Id, "ProductIds": jsonContent.OrderDetails.map((product) => product.ProductId) }
-                        let res = await new HTTPService().setPath(apiPath).POST(params)
-                        console.log('getOtherPrice res', res);
-                        if (res && res.PriceList && res.PriceList.length > 0) {
-                            jsonContent.OrderDetails.forEach((product) => {
-                                res.PriceList.forEach((priceBook) => {
-                                    if (priceBook.ProductId == product.ProductId) {
-                                        product.DiscountRatio = 0.0
-                                        if (!priceBook.PriceLargeUnit) product.PriceLargeUnit = priceBook.PriceLargeUnit
-                                        if (!priceBook.Price) product.UnitPrice = priceBook.Price
-                                        let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price
-                                        product.Price = newBasePrice + product.TotalTopping
+                {
+                    // if (data) setCurrentPriceBook(data)
+                    const getOtherPrice = async () => {
+                        if (jsonContent.OrderDetails && data) {
+                            let apiPath = ApiPath.PRICE_BOOK + `/${data.Id}/manyproductprice`
+                            let params = { "pricebookId": data.Id, "ProductIds": jsonContent.OrderDetails.map((product) => product.ProductId) }
+                            let res = await new HTTPService().setPath(apiPath).POST(params)
+                            console.log('getOtherPrice res', res);
+                            if (res && res.PriceList && res.PriceList.length > 0) {
+                                jsonContent.OrderDetails.forEach((product) => {
+                                    res.PriceList.forEach((priceBook) => {
+                                        if (priceBook.ProductId == product.ProductId) {
+                                            product.DiscountRatio = 0.0
+                                            if (!priceBook.PriceLargeUnit) product.PriceLargeUnit = priceBook.PriceLargeUnit
+                                            if (!priceBook.Price) product.UnitPrice = priceBook.Price
+                                            let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price
+                                            product.Price = newBasePrice + product.TotalTopping
+                                        }
+                                    })
+                                })
+
+                            } else {
+                                jsonContent.OrderDetails.forEach((product) => {
+                                    product.DiscountRatio = 0.0
+                                    let basePrice = (product.IsLargeUnit) ? product.PriceLargeUnit : product.UnitPrice
+                                    product.Price = basePrice + product.TotalTopping
+                                })
+                            }
+                            updateServerEvent({ ...jsonContent })
+                        }
+                    }
+
+                    const getBasePrice = () => {
+                        console.log('getBasePrice');
+                        jsonContent.OrderDetails.forEach((product) => {
+                            product.DiscountRatio = 0.0
+                            let basePrice = (product.IsLargeUnit) ? product.PriceLargeUnit : product.UnitPrice
+                            product.Price = basePrice + product.TotalTopping
+                        })
+                        updateServerEvent({ ...jsonContent })
+
+                    }
+                    if (JSON.stringify(jsonContent) != "{}") {
+                        if (data && data.Id) {
+                            jsonContent.PriceBook = data
+                            jsonContent.PriceBookId = data.Id
+                            getOtherPrice()
+                        } else {
+                            jsonContent.PriceBookId = null
+                            jsonContent.PriceBook = null
+                            getBasePrice()
+                        }
+                    }
+                    break;
+                }
+            case 2:
+                {
+                    // if (data) setCurrentCustomer(data)
+                    if (JSON.stringify(jsonContent) != "{}") {
+                        if (data && data.Id) {
+                            let apiPath = `${ApiPath.SYNC_PARTNERS}/${data.Id}`
+                            new HTTPService().setPath(apiPath).GET()
+                                .then(result => {
+                                    if (result) {
+                                        console.log('resultresult', result, jsonContent);
+                                        let discount = dataManager.totalProducts(jsonContent.OrderDetails) * result.BestDiscount / 100
+                                        console.log('discount', discount);
+                                        jsonContent.Discount = discount
+                                        jsonContent.Partner = data
+                                        jsonContent.PartnerId = data.Id
+                                        updateServerEvent({ ...jsonContent })
                                     }
                                 })
-                            })
 
                         } else {
-                            jsonContent.OrderDetails.forEach((product) => {
-                                product.DiscountRatio = 0.0
-                                let basePrice = (product.IsLargeUnit) ? product.PriceLargeUnit : product.UnitPrice
-                                product.Price = basePrice + product.TotalTopping
-                            })
+                            jsonContent.Partner = null
+                            jsonContent.PartnerId = null
+                            jsonContent.Discount = 0
+                            updateServerEvent({ ...jsonContent })
                         }
-                        updateServerEvent({ ...jsonContent })
-                    }
-                }
 
-                const getBasePrice = () => {
-                    console.log('getBasePrice');
-                    jsonContent.OrderDetails.forEach((product) => {
-                        product.DiscountRatio = 0.0
-                        let basePrice = (product.IsLargeUnit) ? product.PriceLargeUnit : product.UnitPrice
-                        product.Price = basePrice + product.TotalTopping
-                    })
-                    updateServerEvent({ ...jsonContent })
-
-                }
-                if (JSON.stringify(jsonContent) != "{}") {
-                    if (data && data.Id) {
-                        jsonContent.PriceBook = data
-                        jsonContent.PriceBookId = data.Id
-                        getOtherPrice()
-                    } else {
-                        jsonContent.PriceBookId = null
-                        jsonContent.PriceBook = null
-                        getBasePrice()
-                    }
-                }
-                break;
-            case 2:
-                // if (data) setCurrentCustomer(data)
-                if (JSON.stringify(jsonContent) != "{}") {
-                    if (data && data.Id) {
-                        let apiPath = `${ApiPath.SYNC_PARTNERS}/${data.Id}`
-                        new HTTPService().setPath(apiPath).GET()
-                            .then(result => {
-                                if (result) {
-                                    console.log('resultresult', result, jsonContent);
-                                    let discount = dataManager.totalProducts(jsonContent.OrderDetails) * result.BestDiscount / 100
-                                    console.log('discount', discount);
-                                    jsonContent.Discount = discount
-                                    jsonContent.Partner = data
-                                    jsonContent.PartnerId = data.Id
-                                    updateServerEvent({ ...jsonContent })
-                                }
-                            })
-
-                    } else {
-                        jsonContent.Partner = null
-                        jsonContent.PartnerId = null
-                        jsonContent.Discount = 0
-                        updateServerEvent({ ...jsonContent })
                     }
 
+                    break;
                 }
-
-                break;
 
             default:
                 break;
@@ -547,7 +551,6 @@ const Served = (props) => {
                     <View style={itemOrder.ProductId ? { flex: 1 } : { width: 0, height: 0 }}>
                         <Topping
                             {...props}
-                            numColumns={orientaition == Constant.LANDSCAPE ? 2 : 1}
                             position={position}
                             itemOrder={meMoItemOrder}
                             onClose={() => { setItemOrder({}) }}
