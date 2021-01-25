@@ -94,7 +94,7 @@ export default (props) => {
         if (jsonContent.Partner && jsonContent.Partner.Id && jsonContent.Partner.Id != currentCustomer.Id) setCurrentCustomer(jsonContent.Partner)
         else setCurrentCustomer({ Name: "khach_hang", Id: 0 })
 
-    }, [jsonContent.Partner])
+    }, [jsonContent])
 
     useEffect(() => {
         console.log('jsonContent.PriceBook', jsonContent.PriceBook);
@@ -318,10 +318,10 @@ export default (props) => {
         let list = jsonContent.OrderDetails ? jsonContent.OrderDetails.filter(item => (item.ProductId > 0 && (item.IsPromotion == undefined || (item.IsPromotion == false)))) : []
         let listUnCooked = []
         list.forEach(item => {
-            if (item.Processed > 0){
+            if (item.Processed > 0) {
                 listCooked.current.push(item)
-            }else{
-                
+            } else {
+
             }
         })
         // list = list.filter(item => item.Quantity > item.Processed)
@@ -439,8 +439,8 @@ export default (props) => {
                                 res.PriceList.forEach((priceBook) => {
                                     if (priceBook.ProductId == product.ProductId) {
                                         product.DiscountRatio = 0.0
-                                        if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
-                                        if (!priceBook.Price) priceBook.Price = product.UnitPrice
+                                        if (priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
+                                        if (priceBook.Price) priceBook.Price = product.UnitPrice
                                         let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price
                                         product.Price = newBasePrice + product.TotalTopping
                                     }
@@ -564,15 +564,15 @@ export default (props) => {
             </View>
             <View style={{ flexDirection: "row", justifyContent: "space-between", borderBottomColor: Colors.colorchinh, borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5 }}>
                 <TouchableOpacity
-                    style={{ flexDirection: "row", alignItems: "center" }}
+                    style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
                     onPress={onClickListedPrice}>
                     <Entypo style={{ paddingHorizontal: 5 }} name="price-ribbon" size={25} color={colors.colorchinh} />
-                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold", textTransform: "uppercase" }}>{currentPriceBook.Id == 0 ? I18n.t(currentPriceBook.Name) : currentPriceBook.Name}</Text>
+                    <Text ellipsizeMode="tail" numberOfLines={1} style={{ color: Colors.colorchinh, fontWeight: "bold", textTransform: "uppercase" }}>{currentPriceBook.Id == 0 ? I18n.t(currentPriceBook.Name) : currentPriceBook.Name}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={{ flexDirection: "row", alignItems: "center" }}
+                    style={{ flex: 1, flexDirection: "row", alignItems: "center", }}
                     onPress={onClickRetailCustomer}>
-                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold", textTransform: "uppercase" }}>{currentCustomer.Id == 0 ? I18n.t(currentCustomer.Name) : currentCustomer.Name}</Text>
+                    <Text ellipsizeMode="tail" numberOfLines={1} style={{ textAlign: "right", flex: 1, color: Colors.colorchinh, fontWeight: "bold", textTransform: "uppercase" }}>{currentCustomer.Id == 0 ? I18n.t(currentCustomer.Name) : currentCustomer.Name}</Text>
                     <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} color={colors.colorchinh} />
                 </TouchableOpacity>
             </View>

@@ -19,7 +19,6 @@ const CONTENT_FOOTER_POS365 = "Powered by POS365.VN"
 
 class PrintService {
 
-    // [html: "", ip: ""]
     listWaiting = []
 
     GenHtml = async (html, JsonContent) => {
@@ -132,10 +131,7 @@ class PrintService {
     }
 
     GenHtmlKitchen = (html, JsonContent, i, vendorSession, type = TYPE_PRINT.KITCHEN) => {
-        // let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
         console.log('GenHtmlKitchen JsonContent ', JsonContent);
-        // vendorSession = JSON.parse(vendorSession);
-        // return new Promise((resolve, reject) => {
         let HTMLBase = html;
         let listHtml = HTMLBase.split("<!--Body Table-->");
         let listTable = ""
@@ -171,7 +167,6 @@ class PrintService {
         console.log("html ", JSON.stringify(HTMLBase));
 
         return HTMLBase;
-        // })
     }
 
 }

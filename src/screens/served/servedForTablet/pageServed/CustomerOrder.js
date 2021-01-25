@@ -197,7 +197,8 @@ const CustomerOrder = (props) => {
 
     }
 
-    const onClickReturn = (product) => {
+    const onClickReturn = (product, type = 1) => {
+        setQuantitySubtract(type != 1 ? 1 : product.Quantity)
         setItemOrder(product)
         typeModal.current = TYPE_MODAL.DELETE
         setShowModal(true)
@@ -289,7 +290,7 @@ const CustomerOrder = (props) => {
                     }}>
                         <TouchableOpacity
                             style={{ marginRight: 5 }}
-                            onPress={() => { if (!isPromotion) onClickReturn(item) }}>
+                            onPress={() => { if (!isPromotion) onClickReturn(item, 1) }}>
                             <Icon name={!isPromotion ? "trash-can-outline" : "gift"} size={40} color={!isPromotion ? "black" : Colors.colorLightBlue} />
                         </TouchableOpacity>
                         <View style={{ flexDirection: "column", flex: 1, }}>
@@ -357,7 +358,7 @@ const CustomerOrder = (props) => {
                                                                 //         mapDataToList(item, false)
                                                                 //     }
                                                                 // }
-                                                                onClickReturn
+                                                                () => onClickReturn(item, 2)
                                                             }>
                                                             <Icon name="minus-box" size={40} color={Colors.colorchinh} />
                                                         </TouchableOpacity>
@@ -500,6 +501,15 @@ const CustomerOrder = (props) => {
         dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: jsonContent })
     }
 
+    const splitTable = () => {
+        hideMenu()
+        if (listOrder && listOrder.length > 0) {
+            props.navigation.navigate(ScreenList.SplitTable, props.jsonContent);
+        } else {
+            dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
+        }
+    }
+
     return (
         <View style={{ flex: 1 }}>
             <View style={{ flex: 1 }}>
@@ -568,7 +578,7 @@ const CustomerOrder = (props) => {
                         <View style={{
                             backgroundColor: "#fff", borderRadius: 4, marginHorizontal: 5,
                         }}>
-                            <TouchableOpacity onPress={() => { }} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
+                            <TouchableOpacity onPress={() => splitTable()} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
                                 <MaterialIcons style={{ paddingHorizontal: 7 }} name="call-split" size={26} color={Colors.colorchinh} />
                                 <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('tach_ban')}</Text>
                             </TouchableOpacity>

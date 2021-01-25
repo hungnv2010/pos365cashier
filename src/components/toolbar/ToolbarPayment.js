@@ -49,7 +49,7 @@ export default forwardRef((props, ref) => {
                     if (!showInput) {
                         if (blockClick == false) {
                             blockClick = true;
-                            if (props.clickLeftIcon()) {
+                            if (props.clickLeftIcon) {
                                 props.clickLeftIcon()
                             } else {
                                 props.navigation.pop()

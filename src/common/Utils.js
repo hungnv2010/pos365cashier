@@ -5,6 +5,8 @@ export const DATE_FORMAT = "YYYY-MM-DD'T'HH:mm:ss.SSFFFFF'Z'";
 
 //Convert number, currency format
 export const currencyToString = (value, decimal = false) => {
+  console.log("currencyToString value ", value);
+  if (value == 0 && value == '0') return 0;
   if (!value || (value && value == "")) {
     value = "0";
   }
@@ -14,7 +16,7 @@ export const currencyToString = (value, decimal = false) => {
   if (!decimal) {
     value = parseInt(value)
   } else {
-    if (value != "0" && value.indexOf(".") > -1) {
+    if (value.indexOf(".") > -1) {
       // alert(value)
       let arr = value.split('.')
       value = arr[0].replace(/\"/g, "")

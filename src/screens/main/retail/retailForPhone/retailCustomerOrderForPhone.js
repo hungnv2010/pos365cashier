@@ -555,9 +555,19 @@ export default (props) => {
         setNumberNewOrder(numberNewOrder + 1)
     }
 
-    const onCallBackPayment = (data) => {
-        console.log("onCallBackPayment data ", data);
+    const onCallBackPayment = (type, data) => {
+        console.log("onCallBackPayment type ,data ", type, data);
+        // setJsonContent(type == 1 ? { ...jsonContent, OrderDetails: [] } : { ...data })
         // setListOrder([])
+
+        // const row_key = `${props.route.params.room.Id}_A`
+        // serverEvent = serverEvent.filtered(`RowKey == '${row_key}'`)
+        // currentServerEvent.current = JSON.stringify(serverEvent) != '{}' ? JSON.parse(JSON.stringify(serverEvent[0]))
+        //     : await dataManager.createSeverEvent(props.route.params.room.Id, position)
+        // console.log('currentServerEvent.current', currentServerEvent.current, JSON.parse(currentServerEvent.current.JsonContent));
+        // let jsonContentObject = JSON.parse(currentServerEvent.current.JsonContent)
+
+        setJsonContent( { ...data })
     }
 
     const onClickPayment = () => {

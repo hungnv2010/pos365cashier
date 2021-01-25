@@ -350,6 +350,7 @@ const MainRetail = (props) => {
                                 </View>
                                 <RetailCustomerOrder
                                     {...props}
+                                    setJsonContent={(json)=>setJsonContent(json)}
                                     jsonContent={jsonContent}
                                     numberCommodity={numberCommodity}
                                     outputSelectedProduct={outputSelectedProduct}
