@@ -1133,7 +1133,7 @@ export default (props) => {
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.viewTextExcessCash}>
-                                <Text style={{ flex: 2 }}>{I18n.t('tien_thua')}</Text>
+                                <Text style={{ flex: 2 }}>{jsonContent.ExcessCash>=0?I18n.t( 'tien_thua'):I18n.t('tien_thieu')}</Text>
                                 <Text style={{ flex: 4, textAlign: "right", color: jsonContent.ExcessCash > 0 ? "green" : "red" }}>{currencyToString(jsonContent.ExcessCash)}</Text>
                             </View>
                             {

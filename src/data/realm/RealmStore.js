@@ -422,6 +422,7 @@ const ProductSchema = {
         Checkout: { type: 'string', default: '' },
         Topping: { type: 'string', default: "" },
         TotalTopping: { type: 'double', default: 0.0 },
+        Discount: { type: 'double', default: 0.0 },
         StopTimer: { type: 'bool', default: false },
         Hidden: { type: 'bool', default: false },
         IsCheckPriceServer: { type: 'bool', default: true },
@@ -479,7 +480,7 @@ const PromotionSchema = {
 const databaseOption = {
     path: 'Pos365Boss.realm',
     schema: [ServerEventSchema, RoomSchema, RoomGroupSchema, ProductSchema, CategoriesSchema, ToppingsSchema, CustomerSchema, PromotionSchema, OrdersOffline, QRCode, PriceBook],
-    schemaVersion: 36
+    schemaVersion: 37
 }
 
 const realm = new Realm(databaseOption);

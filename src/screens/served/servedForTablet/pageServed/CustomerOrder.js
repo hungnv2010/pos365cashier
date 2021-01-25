@@ -110,7 +110,7 @@ const CustomerOrder = (props) => {
             listTopping.forEach(item => {
                 if (item.Quantity > 0) {
                     description += ` -${item.Name} x${item.Quantity} = ${currencyToString(item.Quantity * item.Price)};\n `
-                    totalPrice += item.Quantity * item.Price
+                    totalPrice = item.Quantity * item.Price
                     topping.push({ ExtraId: item.ExtraId, QuantityExtra: item.Quantity, Price: item.Price, Quantity: item.Quantity })
                 }
             })
@@ -124,7 +124,7 @@ const CustomerOrder = (props) => {
                 element.Description = description
                 element.Topping = JSON.stringify(topping)
                 element.TotalTopping = totalPrice
-                element.Price = (element.IsLargeUnit) ? element.PriceLargeUnit : element.Price + totalPrice
+                element.Price = (element.IsLargeUnit) ? element.PriceLargeUnit : element.UnitPrice + totalPrice
             }
         });
         setListOrder([...listOrder])

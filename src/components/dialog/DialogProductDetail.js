@@ -40,10 +40,11 @@ export default (props) => {
         })
         setListQuickNote([...listQuickNote])
         setIsLargeUnit(itemOrder.IsLargeUnit)
-        setPrice(itemOrder.IsLargeUnit == true ? itemOrder.PriceLargeUnit : itemOrder.Price)
+        // setPrice(itemOrder.IsLargeUnit == true ? itemOrder.PriceLargeUnit : itemOrder.Price)
     }, [])
 
-    useEffect(() => {
+
+    useDidMountEffect(() => {
         let price = itemOrder.IsLargeUnit == true ? itemOrder.PriceLargeUnit : itemOrder.UnitPrice
         let totalDiscount = percent ? itemOrder.UnitPrice * discount / 100 : discount
         setPrice(price - totalDiscount > 0 ? price - totalDiscount : 0)
