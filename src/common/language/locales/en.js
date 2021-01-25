@@ -393,10 +393,17 @@ export default {
   mo_cashbox_sau_khi_thanh_toan: "Open cashbox after payment",
   ma_san_pham: 'Product code',
   ma_voucher: 'Code',
+<<<<<<< HEAD
   ma_hang_ma_sku_ma_vach:'Product code',
   ma_dvt_lon:'Large unit code',
   may_tinh:'Calculator',
 
+=======
+
+  ma_hang_ma_sku_ma_vach:'Product code',
+  ma_dvt_lon:'Large unit code',
+  may_tinh:'Calculator',
+>>>>>>> 50c8ef39a44cdf220534012933fc5cb2eb9a51ce
   nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: "Receive messages / notifications from waiter, manager?",
   nhap_so_luong_the: "Enter the number of cards",
   nhap_dia_chi_ip_may: "Enter the IP address of the machine ",
@@ -432,14 +439,15 @@ export default {
   thanh_tien: 'Total',
   thanh_toan_vnpaypos_qua_may_pos: "VNPAY-POS payment via POS machine?",
   them_moi_voucher: "Add new voucher",
-  thiet_lap_khung_gio_dac_biet: "Set special time frame",
-  ton_kho: 'Inventory',
-  them_moi_nhom_hang_hoa: 'Add new category',
-  tao_nhom: 'Create group',
-  tinh_theo_phan_tram: 'Account by %',
-  thanh_phan_combo: "Combo Components",
-  them_moi_phieu_thu_chi: "Add new Cash flow",
-  tra_lai_tien: 'Give money back',
+  thiet_lap_khung_gio_dac_biet:"Set special time frame",
+  ton_kho:'Inventory',
+  them_moi_nhom_hang_hoa:'Add new category',
+  tao_nhom:'Create group',
+  tinh_theo_phan_tram:'Account by %',
+  thanh_phan_combo:"Combo Components",
+  them_moi_phieu_thu_chi:"Add new Cash flow",
+  tra_lai_tien:'Give money back',
+  tien_thieu:'Missing money',
 
   vnd: "VND",
   voucher: "Voucher",

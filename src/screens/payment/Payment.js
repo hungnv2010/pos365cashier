@@ -27,12 +27,13 @@ import QRCode from 'react-native-qrcode-svg';
 import ViewPrint, { TYPE_PRINT } from '../more/ViewPrint';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
+import Customer from '../customer/Customer';
 var Sound = require('react-native-sound');
 let timeClickPrevious = 1000;
 
 const TYPE_MODAL = { FILTER_ACCOUNT: "FILTER_ACCOUNT", QRCODE: "QRCODE", DATE: "DATE" }
 
-const CUSTOMER_DEFAULT = { Id: 0, Name: 'khach_le' };
+const CUSTOMER_DEFAULT = { Id: 0, Name: I18n.t('khach_le') };
 
 const METHOD = {
     discount: { name: I18n.t('chiet_khau') },
@@ -51,6 +52,7 @@ export default (props) => {
     const dispatch = useDispatch();
     const [totalPrice, setTotalPrice] = useState(0);
     const [showToast, setShowToast] = useState(false);
+    const [isShowDetailCustomer, setIsShowDetailCustomer] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
     const [choosePoint, setChoosePoint] = useState(0)
     const [percent, setPercent] = useState(true)
@@ -72,6 +74,7 @@ export default (props) => {
     const [showDateTime, setShowDateTime] = useState(false);
     const [marginModal, setMargin] = useState(0)
     const [dataHtml, setDataHtml] = useState("");
+    const [detailCustomer, setDetailCustomer] = useState("");
     const provisional = useRef();
     const dateTmp = useRef(new Date())
     const toolBarPaymentRef = useRef();
@@ -81,18 +84,10 @@ export default (props) => {
     const currentServerEvent = useRef();
     const viewPrintRef = useRef();
     const settingObject = useRef();
-    const isClick = useRef(false);
-    const { Print } = NativeModules;
     let row_key = "";
-    let qrCodeRealm = null
 
     const { deviceType, isFNB } = useSelector(state => {
         return state.Common
-    });
-
-    const orientaition = useSelector(state => {
-        console.log("orientaition", state);
-        return state.Common.orientaition
     });
 
     useEffect(() => {
@@ -119,7 +114,6 @@ export default (props) => {
             } else {
                 setPercent(false)
             }
-
         }
 
         const getVendorSession = async () => {
@@ -176,10 +170,9 @@ export default (props) => {
     }
 
     const onChangeTextInput = (text, type) => {
-        console.log("onChangeTextInput text ", text);
+        console.log("onChangeTextInput text type ", text, type);
         text = text.replace(/,/g, "");
         text = Number(text);
-        console.log("onChangeTextInput text:: ", text);
         let json = { ...jsonContent }
         switch (type) {
             case 2:
@@ -239,7 +232,7 @@ export default (props) => {
                         jsonContent.PartnerId = data.Id
                         jsonContent.DiscountRatio = result.BestDiscount
                         console.log('jsonContentjsonContent', jsonContent);
-
+                        setDetailCustomer(result)
                         calculatorPrice(jsonContent, totalPrice)
                     }
                     setCustomer(data);
@@ -256,14 +249,6 @@ export default (props) => {
             calculatorPrice(jsonContent, totalPrice)
             setCustomer(data);
         }
-        // setCustomer(data);
-        // if (currentServerEvent.current) {
-        //     console.log("onCallBackCustomer Partner : ", data);
-        //     let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
-        //     jsonContent.Partner = data;
-        //     dataManager.paymentSetServerEvent(serverEvent, jsonContent);
-        //     dataManager.subjectUpdateServerEvent.next(serverEvent)
-        // }
     }
 
     const addCustomer = () => {
@@ -380,15 +365,12 @@ export default (props) => {
     }
 
     const onChangeTextPaymentPaid = (text, item, index = 0) => {
-
         let amountReceived = 0;
-
         listMethod.forEach((element, indexArr) => {
             if (indexArr != 0 && index != indexArr) {
                 amountReceived += element.Value
             }
         });
-
         let json = jsonContent;
         let total = 0;
         text = text.replace(/,/g, "");
@@ -411,7 +393,6 @@ export default (props) => {
                 }
             }
         }
-
         listMethod.forEach(element => {
             if (item.Id == element.Id) {
                 element.Value = text
@@ -421,7 +402,6 @@ export default (props) => {
             }
         });
         setListMethod([...listMethod])
-
         json.ExcessCash = total - jsonContent.Total;
         setJsonContent(json)
     }
@@ -465,9 +445,6 @@ export default (props) => {
     const selectPercent = (value) => {
         setPercent(value)
     }
-    const printerObject = useSelector(state => {
-        return state.Common.printerObject
-    });
 
     const onClickProvisional = async () => {
         console.log("onClickProvisional props.route.params ", props.route.params);
@@ -476,11 +453,7 @@ export default (props) => {
             if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
                 jsonContent.RoomName = props.route.params.Name
             }
-            // viewPrintRef.current.printProvisionalRef(jsonContent)
-            // viewPrintRef.current.printKitchenRef(jsonContent)
-
             dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: jsonContent })
-
             timeClickPrevious = newDate;
         }
     }
@@ -608,7 +581,6 @@ export default (props) => {
 
     const updateServerEvent = () => {
         let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
-        // serverEvent.JsonContent = "{}"
         serverEvent.JsonContent = JSON.stringify(dataManager.createJsonContent(props.route.params.RoomId, props.route.params.Position, moment(), []))
         serverEvent.Version += 10
         console.log("updateServerEvent serverEvent ", serverEvent);
@@ -637,7 +609,6 @@ export default (props) => {
         }
         jsonContent.PaymentCode = Code;
         console.log("printAfterPayment jsonContent 2 ", jsonContent);
-        // viewPrintRef.current.printProvisionalRef(jsonContent)
         dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: jsonContent })
     }
 
@@ -654,7 +625,6 @@ export default (props) => {
         }
         console.log("handlerQRCode params ", params);
         dataManager.syncQRCode([params]);
-
         qrCodeRealm = await realmStore.queryQRCode()
         // qrCodeRealm.addListener((collection, changes) => {
         //     if (changes.insertions.length || changes.modifications.length) {
@@ -688,13 +658,10 @@ export default (props) => {
         if (value && value != "") {
             if (sendMethod == METHOD.discount) {
                 onChangeTextInput(currencyToString(value, true), 1)
-                // onChangeTextInput(value, 1)
             } else if (sendMethod == METHOD.vat) {
                 onChangeTextInput(currencyToString(value, true), 2)
-                // onChangeTextInput(value, 2)
             } else {
                 onChangeTextPaymentPaid(currencyToString(value, true), sendMethod)
-                // onChangeTextPaymentPaid(value, sendMethod)
             }
         }
     }
@@ -769,12 +736,6 @@ export default (props) => {
         }
     }
 
-    const onChange = (selectedDate) => {
-        const currentDate = selectedDate;
-        console.log("onChange Date ", currentDate);
-        dateTmp.current = currentDate;
-    };
-
     const onChangeDate = (selectedDate) => {
         const currentDate = dateTmp.current;
         let date = selectedDate.getDate();
@@ -813,6 +774,23 @@ export default (props) => {
     const onClickOkAddInfo = () => {
         console.log("onClickOkAddInfo date noteInfo ", date, noteInfo);
         setShowModal(false)
+    }
+
+    const showDetailCustomer = () => {
+        setIsShowDetailCustomer(!isShowDetailCustomer)
+        console.log("showDetailCustomer Customer ", customer);
+        if (customer.Id != 0) {
+            let apiPath = `${ApiPath.SYNC_PARTNERS}/${customer.Id}`
+            new HTTPService().setPath(apiPath).GET()
+                .then(result => {
+                    if (result) {
+                        console.log('showDetailCustomer result', result);
+                        setDetailCustomer(result)
+                    }
+                }).catch(err => {
+                    console.log("showDetailCustomer err ", err);
+                })
+        }
     }
 
     const renderFilter = () => {
@@ -996,7 +974,7 @@ export default (props) => {
                 ref={toolBarPaymentRef}
                 {...props}
                 clickLeftIcon={() => {
-                    if (isFNB)
+                    if (!isFNB)
                         props.route.params.onCallBack(0, jsonContent)
                     props.navigation.pop()
                 }}
@@ -1008,33 +986,57 @@ export default (props) => {
                 <View style={{ flex: 1 }}>
                     <KeyboardAwareScrollView style={{ flexGrow: 1 }}>
                         <Surface style={styles.surface}>
-                            <View style={{ height: 50, backgroundColor: "#fff", flexDirection: "row", paddingHorizontal: 10, alignItems: "center" }}>
+                            <View style={styles.viewCustomer}>
                                 <Text style={{ flex: 3 }}>{I18n.t('khach_hang')}</Text>
-                                <TouchableOpacity onPress={addCustomer} style={{ flexDirection: "row", justifyContent: "space-between", marginLeft: 20, backgroundColor: "#eeeeee", marginLeft: 10, flex: 7, borderColor: "gray", borderWidth: 0.5, borderRadius: 5, paddingVertical: 7 }}>
+                                <TouchableOpacity onPress={addCustomer} style={styles.viewNameMethod}>
                                     <Text style={{ marginLeft: 5 }}>{customer.Name}</Text>
                                     <SimpleLineIcons style={{ marginRight: 5 }} name="user" size={15} color="gray" />
                                 </TouchableOpacity>
-                                <TouchableOpacity onPress={() => alert("ok")} style={{ padding: 10, marginRight: -10 }} >
-                                    <Image source={Images.arrow_down} style={[styles.iconArrowDown, { marginRight: 0 }]} />
+                                <TouchableOpacity onPress={showDetailCustomer} style={{ padding: 10, marginRight: -10 }} >
+                                    <Image source={isShowDetailCustomer ? Images.arrow_down : Images.icon_up} style={[styles.iconArrowDown, { marginRight: 0 }]} />
                                 </TouchableOpacity>
                             </View>
+                            {isShowDetailCustomer ?
+                                <View>
+                                    <View style={styles.rowCustomerDetai}>
+                                        <View style={styles.viewLeftCustomer}>
+                                            <Text style={{}}>{I18n.t('ma_khach_hang')} : </Text>
+                                            <Text style={{}}>{detailCustomer.Code}</Text>
+                                        </View>
+                                        <View style={styles.viewRightCustomer}>
+                                            <Text style={{}}>{I18n.t('chiet_khau')} : </Text>
+                                            <Text style={{}}>{detailCustomer.BestDiscount ? detailCustomer.BestDiscount : 0}%</Text>
+                                        </View>
+                                    </View>
+                                    <View style={styles.rowCustomerDetai}>
+                                        <View style={styles.viewLeftCustomer}>
+                                            <Text style={{}}>{I18n.t('du_no')} : </Text>
+                                            <Text style={{}}>{currencyToString(detailCustomer.TotalDebt)}</Text>
+                                        </View>
+                                        <View style={styles.viewRightCustomer}>
+                                            <Text style={{}}>{I18n.t('diem_thuong')} : </Text>
+                                            <Text style={{}}>{detailCustomer.Point ? detailCustomer.Point : 0}</Text>
+                                        </View>
+                                    </View>
+                                </View>
+                                : null}
                         </Surface>
                         <Surface style={styles.surface}>
-                            <View style={{ height: 50, backgroundColor: "#fff", flexDirection: "row", paddingHorizontal: 10, alignItems: "center", justifyContent: "space-between" }}>
+                            <View style={styles.viewTextExcessCash}>
                                 <Text style={{ flex: 3 }}>{I18n.t('tong_thanh_tien')}</Text>
-                                <Text style={{ borderColor: colors.colorchinh, paddingHorizontal: 15, paddingVertical: 7, borderRadius: 5, borderWidth: 0.5 }}>{jsonContent.OrderDetails ? jsonContent.OrderDetails.length : 0}</Text>
+                                <Text style={styles.textQuantity}>{jsonContent.OrderDetails ? jsonContent.OrderDetails.length : 0}</Text>
                                 <Text style={{ flex: 5.3, textAlign: "right" }}>{currencyToString(totalPrice)}</Text>
                             </View>
                         </Surface>
                         <Surface style={styles.surface}>
-                            <View style={{ height: 50, backgroundColor: "#fff", flexDirection: "row", paddingHorizontal: 10, alignItems: "center", justifyContent: "space-between", borderBottomWidth: 0.5, borderBottomColor: "#ccc", }}>
+                            <View style={styles.viewDiscount}>
                                 <Text style={{ flex: 2 }}>{I18n.t('tong_chiet_khau')}</Text>
                                 <Text style={{ flex: 3, textAlign: "right" }}>{currencyToString(jsonContent.Discount)}</Text>
                             </View>
-                            <View style={{ height: 50, backgroundColor: "#fff", flexDirection: "row", paddingHorizontal: 10, alignItems: "center", justifyContent: "space-between", borderBottomWidth: 0.5, borderBottomColor: "#ccc", }}>
+                            <View style={styles.viewDiscount}>
                                 <Text style={{ flex: 3 }}>{I18n.t('chiet_khau')}</Text>
                                 <View style={{ flexDirection: "row", flex: 3, marginLeft: 5 }}>
-                                    <TouchableOpacity onPress={() => selectPercent(false)} style={{ width: 55, alignItems: "center", borderWidth: 0.5, borderTopLeftRadius: 5, borderBottomLeftRadius: 5, paddingVertical: 7, borderColor: colors.colorchinh, backgroundColor: !percent ? colors.colorchinh : "#fff" }}>
+                                    <TouchableOpacity onPress={() => selectPercent(false)} style={[styles.selectPecent, { backgroundColor: !percent ? colors.colorchinh : "#fff" }]}>
                                         <Text style={{ color: !percent ? "#fff" : '#000' }}>VNĐ</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={() => {
@@ -1043,7 +1045,7 @@ export default (props) => {
                                         console.log("jsonContent.DiscountRatio ", jsonContent.DiscountRatio);
 
                                         selectPercent(true)
-                                    }} style={{ width: 55, alignItems: "center", borderWidth: 0.5, borderColor: colors.colorchinh, borderTopRightRadius: 5, borderBottomRightRadius: 5, paddingVertical: 7, backgroundColor: !percent ? "#fff" : colors.colorchinh }}>
+                                    }} style={[styles.viewSelectVAT, { backgroundColor: !percent ? "#fff" : colors.colorchinh }]}>
                                         <Text style={{ color: percent ? "#fff" : '#000' }}>%</Text>
                                     </TouchableOpacity>
                                 </View>
@@ -1056,7 +1058,7 @@ export default (props) => {
                                     onChangeText={(text) => onChangeTextInput(text, 1)}
                                     style={{ borderColor: sendMethod == METHOD.discount ? colors.colorchinh : "gray", textAlign: "right", backgroundColor: "#eeeeee", marginLeft: 10, flex: 3, borderWidth: 0.5, borderRadius: 5, padding: 6.8, color: "#000" }} />
                             </View>
-                            <View style={{ height: 50, backgroundColor: "#fff", flexDirection: "row", paddingHorizontal: 10, alignItems: "center", justifyContent: "space-between" }}>
+                            <View style={styles.viewTextExcessCash}>
                                 <Text style={{ flex: 3 }}>{I18n.t('diem_voucher')}</Text>
                                 <View style={{ flexDirection: "row", flex: 3 }}>
                                     <TouchableOpacity onPress={selectVoucher}
@@ -1068,13 +1070,13 @@ export default (props) => {
                             </View>
                         </Surface>
                         <Surface style={styles.surface}>
-                            <View style={{ height: 50, backgroundColor: "#fff", flexDirection: "row", paddingHorizontal: 10, alignItems: "center", justifyContent: "space-between" }}>
+                            <View style={styles.viewTextExcessCash}>
                                 <Text style={{ flex: 3 }}>VAT</Text>
                                 <View style={{ flexDirection: "row", flex: 3, marginLeft: 5 }}>
-                                    <TouchableOpacity onPress={() => selectVAT(0)} style={{ width: 55, alignItems: "center", borderWidth: 0.5, borderTopLeftRadius: 5, borderBottomLeftRadius: 5, paddingVertical: 7, borderColor: colors.colorchinh, backgroundColor: !percentVAT ? colors.colorchinh : "#fff" }}>
+                                    <TouchableOpacity onPress={() => selectVAT(0)} style={[styles.selectPecent, { backgroundColor: !percentVAT ? colors.colorchinh : "#fff" }]}>
                                         <Text style={{ color: !percentVAT ? "#fff" : '#000' }}>0%</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => selectVAT(vendorSession.Settings && vendorSession.Settings.VAT ? vendorSession.Settings.VAT : 0)} style={{ width: 55, alignItems: "center", borderWidth: 0.5, borderColor: colors.colorchinh, borderTopRightRadius: 5, borderBottomRightRadius: 5, paddingVertical: 7, backgroundColor: !percentVAT ? "#fff" : colors.colorchinh }}>
+                                    <TouchableOpacity onPress={() => selectVAT(vendorSession.Settings && vendorSession.Settings.VAT ? vendorSession.Settings.VAT : 0)} style={[styles.viewSelectVAT, { backgroundColor: !percentVAT ? "#fff" : colors.colorchinh }]}>
                                         <Text style={{ color: percentVAT ? "#fff" : "#000" }}>{vendorSession.Settings && vendorSession.Settings.VAT ? vendorSession.Settings.VAT : 0}%</Text>
                                     </TouchableOpacity>
                                 </View>
@@ -1089,7 +1091,7 @@ export default (props) => {
                             </View>
                         </Surface>
                         <Surface style={styles.surface}>
-                            <View style={{ height: 50, backgroundColor: "#fff", flexDirection: "row", paddingHorizontal: 10, alignItems: "center", justifyContent: "space-between", borderBottomWidth: 0.5, borderBottomColor: "#ccc", }}>
+                            <View style={styles.viewDiscount}>
                                 <View style={{ flex: 3, flexDirection: "row", alignItems: "center", }}>
                                     <IconFeather name="credit-card" size={20} color={colors.colorchinh} />
                                     <Text style={{ fontWeight: "bold", color: colors.colorchinh, marginLeft: 10 }}>{I18n.t('khach_phai_tra')}</Text>
@@ -1108,7 +1110,7 @@ export default (props) => {
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.viewTextExcessCash}>
-                                <Text style={{ flex: 2 }}>{I18n.t('tien_thua')}</Text>
+                                <Text style={{ flex: 2 }}>{jsonContent.ExcessCash>=0?I18n.t( 'tien_thua'):I18n.t('tien_thieu')}</Text>
                                 <Text style={{ flex: 4, textAlign: "right", color: jsonContent.ExcessCash > 0 ? "green" : "red" }}>{currencyToString(jsonContent.ExcessCash)}</Text>
                             </View>
                             {
@@ -1235,5 +1237,14 @@ const styles = StyleSheet.create({
     viewButtonOk: { marginLeft: 10, flex: 1, backgroundColor: colors.colorchinh, borderRadius: 4, paddingHorizontal: 20, paddingVertical: 10, justifyContent: "flex-end" },
     viewButtonCancel: { flex: 1, backgroundColor: "#fff", borderRadius: 4, borderWidth: 1, borderColor: colors.colorchinh, paddingHorizontal: 20, paddingVertical: 10, justifyContent: "flex-end" },
     viewTextExcessCash: { height: 50, backgroundColor: "#fff", flexDirection: "row", paddingHorizontal: 10, alignItems: "center", justifyContent: "space-between" },
-    logoImage: { width: Metrics.screenWidth * 2 / 3, height: Metrics.screenWidth * 2 / 3 }
+    logoImage: { width: Metrics.screenWidth * 2 / 3, height: Metrics.screenWidth * 2 / 3 },
+    rowCustomerDetai: { height: 50, borderTopWidth: 0.5, borderTopColor: "#ccc", justifyContent: "space-between", backgroundColor: "#fff", flexDirection: "row", paddingHorizontal: 10, alignItems: "center" },
+    viewLeftCustomer: { flexDirection: "row", borderRightWidth: 0.5, borderRightColor: "#ccc", height: "100%", alignItems: "center", paddingRight: 10, flex: 1, justifyContent: "space-between" },
+    viewRightCustomer: { flexDirection: "row", height: "100%", alignItems: "center", paddingLeft: 10, flex: 1, justifyContent: "space-between" },
+    viewCustomer: { height: 50, backgroundColor: "#fff", flexDirection: "row", paddingHorizontal: 10, alignItems: "center" },
+    textQuantity: { borderColor: colors.colorchinh, paddingHorizontal: 15, paddingVertical: 7, borderRadius: 5, borderWidth: 0.5 },
+    viewDiscount: { height: 50, backgroundColor: "#fff", flexDirection: "row", paddingHorizontal: 10, alignItems: "center", justifyContent: "space-between", borderBottomWidth: 0.5, borderBottomColor: "#ccc", },
+    selectPecent: { width: 55, alignItems: "center", borderWidth: 0.5, borderTopLeftRadius: 5, borderBottomLeftRadius: 5, paddingVertical: 7, borderColor: colors.colorchinh },
+    viewSelectVAT: { width: 55, alignItems: "center", borderWidth: 0.5, borderColor: colors.colorchinh, borderTopRightRadius: 5, borderBottomRightRadius: 5, paddingVertical: 7 },
+
 })
