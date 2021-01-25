@@ -335,20 +335,12 @@ export default {
   don_vi_tien_te: "Currency unit",
   dollar_my: "Dollar",
   dia_chi: "Address",
-<<<<<<< HEAD
-  don_vi_tinh: 'Unit',
-  dich_vu: 'Service',
-  don_vi_tinh_lon_va_cac_thong_so_khac: 'Large unit and other',
-  don_vi_tinh_lon: 'Large unit',
-  doi_tac: 'Partner',
-=======
   don_vi_tinh:'Unit',
   dich_vu:'Service',
   don_vi_tinh_lon_va_cac_thong_so_khac:'Large unit and other',
   don_vi_tinh_lon:'Large unit',
   doi_tac:'Partner',
   don_hang_cho_thanh_toan:"Commodity waiting for payment",
->>>>>>> fa7422529bd026400beead7deef69b23cc3ba4b2
 
   giu_man_hinh_luon_sang: "Keep the screen on",
   gia: "Price",
