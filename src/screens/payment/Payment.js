@@ -170,9 +170,13 @@ export default (props) => {
     }
 
     const onChangeTextInput = (text, type) => {
-        console.log("onChangeTextInput text type ", text, type);
+        text = text.toString();
+        console.log("onChangeTextInput text type ", text, typeof(text), type);
+        if (text == "") return;
+        console.log("onChangeTextInput text: ", text);
         text = text.replace(/,/g, "");
         text = Number(text);
+        console.log("onChangeTextInput text ", text);
         let json = { ...jsonContent }
         switch (type) {
             case 2:
@@ -365,6 +369,10 @@ export default (props) => {
     }
 
     const onChangeTextPaymentPaid = (text, item, index = 0) => {
+        console.log("onChangeTextPaymentPaid text ", text);
+        text = text.toString();
+        if (text == "") return;
+
         let amountReceived = 0;
         listMethod.forEach((element, indexArr) => {
             if (indexArr != 0 && index != indexArr) {
@@ -548,19 +556,22 @@ export default (props) => {
             if (order) {
                 dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
                 dialogManager.hiddenLoading()
-                updateServerEvent()
+                
                 await printAfterPayment(order.Code)
+
+                updateServerEvent()
+
                 if (order.QRCode != "") {
                     qrCode.current = order.QRCode
                     typeModal.current = TYPE_MODAL.QRCODE
                     setShowModal(true)
                     handlerQRCode(order)
                 } else {
-                    setTimeout(() => {
-                        if (!isFNB)
-                            props.route.params.onCallBack(1, "success")
-                        props.navigation.pop()
-                    }, 1000);
+                    // setTimeout(() => {
+                    //     if (!isFNB)
+                    //         props.route.params.onCallBack(1, jsonContent)
+                    //     props.navigation.pop()
+                    // }, 1000);
                     // props.navigation.pop()
                 }
             } else {
@@ -581,11 +592,19 @@ export default (props) => {
 
     const updateServerEvent = () => {
         let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
-        serverEvent.JsonContent = JSON.stringify(dataManager.createJsonContent(props.route.params.RoomId, props.route.params.Position, moment(), []))
+        let json = dataManager.createJsonContent(props.route.params.RoomId, props.route.params.Position, moment(), []);
+        setJsonContent(json)
+        serverEvent.JsonContent = JSON.stringify(json);
         serverEvent.Version += 10
         console.log("updateServerEvent serverEvent ", serverEvent);
         dataManager.updateServerEventNow(serverEvent, true, isFNB);
         playSound()
+
+        setTimeout(() => {
+            if (!isFNB)
+                props.route.params.onCallBack(1, json)
+            props.navigation.pop()
+        }, 1000);
     }
 
     const playSound = () => {
@@ -654,9 +673,13 @@ export default (props) => {
     }
 
     const outputResult = (value) => {
+        value = "" + value;
         console.log("outputResult value :: ", value);
+        console.log("outputResult typeof value :: ", typeof (value));
         if (value && value != "") {
+            console.log("outputResult ::: ", value);
             if (sendMethod == METHOD.discount) {
+                console.log("outputResult discount :: ", value);
                 onChangeTextInput(currencyToString(value, true), 1)
             } else if (sendMethod == METHOD.vat) {
                 onChangeTextInput(currencyToString(value, true), 2)
@@ -975,7 +998,7 @@ export default (props) => {
                 {...props}
                 clickLeftIcon={() => {
                     if (!isFNB)
-                        props.route.params.onCallBack(0, jsonContent)
+                        props.route.params.onCallBack(0, {...jsonContent})
                     props.navigation.pop()
                 }}
                 clickRightIcon={(data) => { setTextSearch(data); }}
@@ -989,7 +1012,7 @@ export default (props) => {
                             <View style={styles.viewCustomer}>
                                 <Text style={{ flex: 3 }}>{I18n.t('khach_hang')}</Text>
                                 <TouchableOpacity onPress={addCustomer} style={styles.viewNameMethod}>
-                                    <Text style={{ marginLeft: 5 }}>{customer.Name}</Text>
+                                    <Text ellipsizeMode="tail" numberOfLines={1} style={{ marginLeft: 5, flex: 1 }}>{customer.Name}</Text>
                                     <SimpleLineIcons style={{ marginRight: 5 }} name="user" size={15} color="gray" />
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={showDetailCustomer} style={{ padding: 10, marginRight: -10 }} >
@@ -1001,7 +1024,7 @@ export default (props) => {
                                     <View style={styles.rowCustomerDetai}>
                                         <View style={styles.viewLeftCustomer}>
                                             <Text style={{}}>{I18n.t('ma_khach_hang')} : </Text>
-                                            <Text style={{}}>{detailCustomer.Code}</Text>
+                                            <Text ellipsizeMode="tail" numberOfLines={1} style={{flex: 1}}>{detailCustomer.Code}</Text>
                                         </View>
                                         <View style={styles.viewRightCustomer}>
                                             <Text style={{}}>{I18n.t('chiet_khau')} : </Text>

@@ -35,6 +35,7 @@ export default (props) => {
     const [currentPriceBook, setCurrentPriceBook] = useState({ Name: "gia_niem_yet", Id: 0 })
     const [currentCustomer, setCurrentCustomer] = useState({ Name: "khach_hang", Id: 0 })
     const [promotions, setPromotions] = useState([])
+    const [listProducts, setListProducts] = useState([])
 
     let serverEvents = null;
 
@@ -89,8 +90,20 @@ export default (props) => {
 
 
     useEffect(() => {
-        if (jsonContent && jsonContent.OrderDetails) jsonContent.OrderDetails.forEach((elm, index) => elm.index = index)
+        const getPromotion = async () => {
+            if (jsonContent && jsonContent.OrderDetails) {
+                let list = []
+                if (jsonContent.OrderDetails.length > 0) list = await addPromotion(jsonContent.OrderDetails)
+                setListProducts([...list])
+
+            }
+        }
+        getPromotion()
     }, [jsonContent.OrderDetails])
+
+    useEffect(() => {
+        listProducts.forEach((elm, index) => elm.index = index)
+    }, [listProducts])
 
 
 
@@ -155,7 +168,7 @@ export default (props) => {
 
     const removeItem = (item, index) => {
         console.log('removeItem ', item.Name, item.index);
-        jsonContent.OrderDetails.splice(index, 1)
+        listProducts.splice(index, 1)
         // setDataOrder([...listOrder])
         updateServerEvent({ ...jsonContent })
     }
@@ -392,7 +405,9 @@ export default (props) => {
     }
 
     const onClickSelect = () => {
-        props.navigation.navigate(ScreenList.RetailSelectProduct, { _onSelect: onCallBack, listProducts: jsonContent.OrderDetails })
+        let list = listProducts ? listProducts.filter(item => (item.ProductId > 0 && (item.IsPromotion == undefined || (item.IsPromotion == false)))) : []
+
+        props.navigation.navigate(ScreenList.RetailSelectProduct, { _onSelect: onCallBack, listProducts: list })
     }
 
 
@@ -406,8 +421,7 @@ export default (props) => {
             return { ...productWithId, ...item, exist: false }
         })
         let list = await Promise.all(allPromise)
-        if (!jsonContent.OrderDetails) jsonContent.OrderDetails = []
-        jsonContent.OrderDetails.forEach(item => {
+        listProducts.forEach(item => {
             list.forEach(elm => {
                 if (item.Id == elm.Id && !item.SplitForSalesOrder) {
                     item.Quantity += elm.Quantity
@@ -416,7 +430,7 @@ export default (props) => {
             })
         })
         list = list.filter((newItem) => !newItem.exist)
-        setDataOrder([...list, ...jsonContent.OrderDetails])
+        setDataOrder([...list, ...listProducts])
 
     }
 
@@ -426,13 +440,13 @@ export default (props) => {
             case 1: //from listPrice
                 {
                     const getOtherPrice = async () => {
-                        if (jsonContent.OrderDetails && data) {
+                        if (listProducts && data) {
                             let apiPath = ApiPath.PRICE_BOOK + `/${data.Id}/manyproductprice`
-                            let params = { "pricebookId": data.Id, "ProductIds": jsonContent.OrderDetails.map((product) => product.ProductId) }
+                            let params = { "pricebookId": data.Id, "ProductIds": listProducts.map((product) => product.ProductId) }
                             let res = await new HTTPService().setPath(apiPath).POST(params)
                             console.log('getOtherPrice res', res);
                             if (res && res.PriceList && res.PriceList.length > 0) {
-                                jsonContent.OrderDetails.forEach((product) => {
+                                listProducts.forEach((product) => {
                                     res.PriceList.forEach((priceBook) => {
                                         if (priceBook.ProductId == product.ProductId) {
                                             product.DiscountRatio = 0.0
@@ -444,7 +458,7 @@ export default (props) => {
                                     })
                                 })
                             } else {
-                                jsonContent.OrderDetails.forEach((product) => {
+                                listProducts.forEach((product) => {
                                     product.DiscountRatio = 0.0
                                     let basePrice = (product.IsLargeUnit) ? product.PriceLargeUnit : product.UnitPrice
                                     product.Price = basePrice + product.TotalTopping
@@ -455,7 +469,7 @@ export default (props) => {
                     }
 
                     const getBasePrice = () => {
-                        jsonContent.OrderDetails.forEach((product) => {
+                        listProducts.forEach((product) => {
                             product.DiscountRatio = 0.0
                             let basePrice = (product.IsLargeUnit) ? product.PriceLargeUnit : product.UnitPrice
                             product.Price = basePrice + product.TotalTopping
@@ -484,9 +498,9 @@ export default (props) => {
                                 .then(result => {
                                     if (result) {
                                         console.log('resultresult', result, jsonContent);
-                                        let discount = dataManager.totalProducts(jsonContent.OrderDetails) * result.BestDiscount / 100
-                                        console.log('discount', discount);
-                                        jsonContent.Discount = discount
+                                        // let discount = dataManager.totalProducts(listProducts) * result.BestDiscount / 100
+                                        // console.log('discount', discount);
+                                        jsonContent.DiscountRatio = result.BestDiscount
                                         jsonContent.Partner = data
                                         jsonContent.PartnerId = data.Id
                                         console.log('jsonContentjsonContent', jsonContent);
@@ -497,7 +511,7 @@ export default (props) => {
                         } else {
                             jsonContent.Partner = null
                             jsonContent.PartnerId = null
-                            jsonContent.Discount = 0
+                            jsonContent.DiscountRatio = 0
                             updateServerEvent({ ...jsonContent })
                         }
 
@@ -517,7 +531,7 @@ export default (props) => {
             case 4: //from select products
                 {
                     let newData = await getOtherPriceList(data)
-                    jsonContent.OrderDetails = newData
+                    listProducts = newData
                     updateServerEvent({ ...jsonContent })
                     break;
                 }
@@ -544,7 +558,7 @@ export default (props) => {
     }
 
     const onClickNewOrder = async () => {
-        if (jsonContent.OrderDetails.length == 0) {
+        if (listProducts.length == 0) {
             setToastDescription(I18n.t("moi_chon_mon_truoc"))
             setShowToast(true)
             return
@@ -555,9 +569,19 @@ export default (props) => {
         setNumberNewOrder(numberNewOrder + 1)
     }
 
-    const onCallBackPayment = (data) => {
-        console.log("onCallBackPayment data ", data);
+    const onCallBackPayment = (type, data) => {
+        console.log("onCallBackPayment type ,data ", type, data);
+        // setJsonContent(type == 1 ? { ...jsonContent, OrderDetails: [] } : { ...data })
         // setListOrder([])
+
+        // const row_key = `${props.route.params.room.Id}_A`
+        // serverEvent = serverEvent.filtered(`RowKey == '${row_key}'`)
+        // currentServerEvent.current = JSON.stringify(serverEvent) != '{}' ? JSON.parse(JSON.stringify(serverEvent[0]))
+        //     : await dataManager.createSeverEvent(props.route.params.room.Id, position)
+        // console.log('currentServerEvent.current', currentServerEvent.current, JSON.parse(currentServerEvent.current.JsonContent));
+        // let jsonContentObject = JSON.parse(currentServerEvent.current.JsonContent)
+
+        setJsonContent( { ...data })
     }
 
     const onClickPayment = () => {
@@ -565,7 +589,7 @@ export default (props) => {
 
         } else {
             console.log('onClickPayment jsonContent ', jsonContent);
-            if (jsonContent.OrderDetails && jsonContent.OrderDetails.length > 0) {
+            if (listProducts && listProducts.length > 0) {
                 props.navigation.navigate(ScreenList.Payment, { onCallBack: onCallBackPayment, Screen: ScreenList.MainRetail, RoomId: jsonContent.RoomId, Name: jsonContent.RoomName ? jsonContent.RoomName : I18n.t('app_name'), Position: jsonContent.Pos });
             } else {
                 dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
@@ -574,10 +598,9 @@ export default (props) => {
     }
 
     const applyDialogDetail = (product) => {
-        console.log('applyDialogDetail listOrder ', product, jsonContent.OrderDetails);
         let price = product.IsLargeUnit == true ? product.PriceLargeUnit : product.UnitPrice
         let discount = product.Percent ? (price * product.Discount / 100) : product.Discount
-        jsonContent.OrderDetails.forEach((elm, index, arr) => {
+        listProducts.forEach((elm, index, arr) => {
             if (elm.ProductId == product.ProductId && index == product.index) {
                 if (product.Quantity == 0) {
                     arr.splice(index, 1)
@@ -590,7 +613,7 @@ export default (props) => {
         })
         // setListOrder([...listOrder])
         // setDataOrder([...listOrder].filter(item => item.Quantity > 0))
-        jsonContent.OrderDetails.filter(item => item.Quantity > 0)
+        listProducts.filter(item => item.Quantity > 0)
         updateServerEvent({ ...jsonContent })
     }
 
@@ -618,10 +641,10 @@ export default (props) => {
                 </TouchableOpacity>
             </View>
             <View style={{ flex: 1 }}>
-                {jsonContent.OrderDetails != undefined && jsonContent.OrderDetails.length > 0 ?
+                {listProducts != undefined && listProducts.length > 0 ?
                     <FlatList
-                        data={jsonContent.OrderDetails}
-                        extraData={jsonContent.OrderDetails}
+                        data={listProducts}
+                        extraData={listProducts}
                         renderItem={({ item, index }) => renderProduct(item, index)}
                         keyExtractor={(item, index) => '' + index}
                     />

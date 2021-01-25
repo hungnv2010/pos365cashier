@@ -240,9 +240,9 @@ const MainRetail = (props) => {
                                 .then(result => {
                                     if (result) {
                                         console.log('resultresult', result, jsonContent);
-                                        let discount = dataManager.totalProducts(jsonContent.OrderDetails) * result.BestDiscount / 100
-                                        console.log('discount', discount);
-                                        jsonContent.Discount = discount
+                                        // let discount = dataManager.totalProducts(jsonContent.OrderDetails) * result.BestDiscount / 100
+                                        // console.log('discount', discount);
+                                        jsonContent.DiscountRatio = result.BestDiscount
                                         jsonContent.Partner = data
                                         jsonContent.PartnerId = data.Id
                                         console.log('jsonContentjsonContent', jsonContent);
@@ -253,7 +253,7 @@ const MainRetail = (props) => {
                         } else {
                             jsonContent.Partner = null
                             jsonContent.PartnerId = null
-                            jsonContent.Discount = 0
+                            jsonContent.DiscountRatio = 0
                             updateServerEvent({ ...jsonContent })
                         }
 
@@ -350,6 +350,7 @@ const MainRetail = (props) => {
                                 </View>
                                 <RetailCustomerOrder
                                     {...props}
+                                    setJsonContent={(json)=>setJsonContent(json)}
                                     jsonContent={jsonContent}
                                     numberCommodity={numberCommodity}
                                     outputSelectedProduct={outputSelectedProduct}

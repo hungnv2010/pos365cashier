@@ -176,8 +176,7 @@ export default (props) => {
                 element.Topping = JSON.stringify(topping)
                 element.TotalTopping = totalTopping
 
-                // let basePriceProduct = element.Price > element.TotalTopping ? element.Price - element.TotalTopping : 0
-                let basePriceProduct = (element.IsLargeUnit) ? element.PriceLargeUnit : element.Price
+                let basePriceProduct = (element.IsLargeUnit) ? element.PriceLargeUnit : element.UnitPrice
                 element.Price = (basePriceProduct + totalTopping)
             }
         });
@@ -234,19 +233,6 @@ export default (props) => {
         if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
             jsonContent.RoomName = props.route.params.room.Name
         }
-
-
-        // viewPrintRef.current.printProvisionalRef(jsonContent)
-
-
-        // jsonContent.OrderDetails.forEach(element => {
-        //     element.RoomName = props.route.params.room.Name;
-        //     element.Pos = jsonContent.Pos;
-        // });
-        // let data = dataManager.getDataPrintCook(jsonContent.OrderDetails)
-        // console.log("printKitchen data ====: " + JSON.stringify(data));
-        // // isStartPrint.current = 1;
-        // dispatch({ type: 'LIST_PRINT', listPrint: JSON.stringify(data) })
 
         dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: jsonContent })
     }

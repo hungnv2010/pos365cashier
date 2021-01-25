@@ -112,7 +112,6 @@ export default forwardRef((props, ref) => {
 
     const printProvisional = async (jsonContent, checkProvisional = false) => {
         let ip = await checkIP()
-        // ip = "192.168.100.237"
         console.log("printProvisional jsonContent ", jsonContent);
         if (ip != "") {
             if (checkProvisional) {
@@ -131,8 +130,7 @@ export default forwardRef((props, ref) => {
                     printService.listWaiting.push({ html: newRes, ip: ip })
                     setDataHtmlPrint()
                 }
-            }
-            else
+            } else
                 dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
         }
     }
@@ -148,18 +146,22 @@ export default forwardRef((props, ref) => {
         console.log('vendorSession ', vendorSession);
         for (const value in data) {
             if (data.hasOwnProperty(value)) {
-                const item = data[value];
-                let i = 1;
-                for (const key in item) {
-                    if (item.hasOwnProperty(key)) {
-                        const element = item[key];
-                        console.log('element == ', element);
-                        let res = printService.GenHtmlKitchen(htmlKitchen, element, i, vendorSession, type)
-                        if (res && res != "") {
-                            printService.listWaiting.push({ html: res, ip: printObject[value] })
+                if (printObject[value] != "") {
+                    const item = data[value];
+                    let i = 1;
+                    for (const key in item) {
+                        if (item.hasOwnProperty(key)) {
+                            const element = item[key];
+                            console.log('element == ', element);
+                            let res = printService.GenHtmlKitchen(htmlKitchen, element, i, vendorSession, type)
+                            if (res && res != "") {
+                                printService.listWaiting.push({ html: res, ip: printObject[value] })
+                            }
                         }
+                        i++;
                     }
-                    i++;
+                } else {
+                    dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_may_in'), I18n.t('thong_bao'))
                 }
             }
         }

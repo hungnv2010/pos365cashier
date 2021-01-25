@@ -95,8 +95,6 @@ const Served = (props) => {
                 : await dataManager.createSeverEvent(props.route.params.room.Id, position)
             console.log('currentServerEvent.current', currentServerEvent.current, JSON.parse(currentServerEvent.current.JsonContent));
             let jsonContentObject = JSON.parse(currentServerEvent.current.JsonContent)
-            // if (jsonContentObject.Partner) setCurrentCustomer(jsonContentObject.Partner)
-            // if (jsonContentObject.PriceBook) setCurrentPriceBook(jsonContentObject.PriceBook)
 
             setJsonContent(jsonContentObject)
 
@@ -117,13 +115,20 @@ const Served = (props) => {
 
     useEffect(() => {
         console.log('jsonContent.Partner', jsonContent.Partner);
-        if (jsonContent.Partner && jsonContent.Partner.Id && jsonContent.Partner.Id != currentCustomer.Id) setCurrentCustomer(jsonContent.Partner)
+        if (jsonContent.Partner && jsonContent.Partner.Id) {
+            if (jsonContent.Partner.Id == currentCustomer.Id) return
+            setCurrentCustomer(jsonContent.Partner)
+        }
         else setCurrentCustomer({ Name: "khach_hang", Id: 0 })
+
     }, [jsonContent.Partner])
 
     useEffect(() => {
         console.log('jsonContent.PriceBook', jsonContent.PriceBook);
-        if (jsonContent.PriceBook && jsonContent.PriceBook.Id && jsonContent.PriceBook.Id != currentPriceBook.Id) setCurrentPriceBook(jsonContent.PriceBook)
+        if (jsonContent.PriceBook && jsonContent.PriceBook.Id) {
+            if (jsonContent.PriceBook.Id == currentPriceBook.Id) return
+            setCurrentPriceBook(jsonContent.PriceBook)
+        }
         else setCurrentPriceBook({ Name: "gia_niem_yet", Id: 0 })
     }, [jsonContent.PriceBook])
 
@@ -390,8 +395,8 @@ const Served = (props) => {
                                     res.PriceList.forEach((priceBook) => {
                                         if (priceBook.ProductId == product.ProductId) {
                                             product.DiscountRatio = 0.0
-                                            if (!priceBook.PriceLargeUnit) product.PriceLargeUnit = priceBook.PriceLargeUnit
-                                            if (!priceBook.Price) product.UnitPrice = priceBook.Price
+                                            if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
+                                            if (!priceBook.Price) priceBook.Price = product.UnitPrice
                                             let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price
                                             product.Price = newBasePrice + product.TotalTopping
                                         }
@@ -435,6 +440,7 @@ const Served = (props) => {
             case 2:
                 {
                     // if (data) setCurrentCustomer(data)
+                    console.log('jsonContentjsonContent',jsonContent);
                     if (JSON.stringify(jsonContent) != "{}") {
                         if (data && data.Id) {
                             let apiPath = `${ApiPath.SYNC_PARTNERS}/${data.Id}`
@@ -442,9 +448,9 @@ const Served = (props) => {
                                 .then(result => {
                                     if (result) {
                                         console.log('resultresult', result, jsonContent);
-                                        let discount = dataManager.totalProducts(jsonContent.OrderDetails) * result.BestDiscount / 100
-                                        console.log('discount', discount);
-                                        jsonContent.Discount = discount
+                                        // let discount = dataManager.totalProducts(jsonContent.OrderDetails) * result.BestDiscount / 100
+                                        // console.log('discount', discount);
+                                        jsonContent.DiscountRatio = result.BestDiscount
                                         jsonContent.Partner = data
                                         jsonContent.PartnerId = data.Id
                                         updateServerEvent({ ...jsonContent })
@@ -454,7 +460,7 @@ const Served = (props) => {
                         } else {
                             jsonContent.Partner = null
                             jsonContent.PartnerId = null
-                            jsonContent.Discount = 0
+                            jsonContent.DiscountRatio = 0
                             updateServerEvent({ ...jsonContent })
                         }
 

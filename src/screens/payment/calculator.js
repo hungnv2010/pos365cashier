@@ -26,20 +26,13 @@ export default (props) => {
     }, [props.method])
 
     useEffect(() => {
-        // let myRegex = (/[\d.]+/g)
-        // let myArr = myRegex.exec(results)
-        // console.log('myArr', myArr);
-        // if (myArr) {
-        //     props.outputResult(myArr[0])
-        // } else {
-        //     props.outputResult(0)
-        // }
         console.log("results === ", results);
-        
-        if (results != undefined && results != "") {
+        if (results != undefined && results != "" && results != "0") {
+            console.log("results ===:: ok");
             let number = results.replace(/,/g, '');
             props.outputResult(Number(number))
         } else {
+            console.log("results ===::: not ok");
             props.outputResult(0)
         }
     }, [results])
@@ -80,7 +73,7 @@ export default (props) => {
 
                 let lastIndex = results.lastIndexOf('.')
                 console.log("lastIndex ", lastIndex);
-                
+
                 if (lastIndex != -1) {
                     let rightString = results.slice(lastIndex + 1, results.length)
                     console.log("rightString ", rightString);
@@ -120,11 +113,15 @@ export default (props) => {
 
     const setDataResult = (results) => {
         console.log("setDataResult result === :: ", results);
-        let newResult = (results).toString().replace(/,/g, '');
-        console.log("setDataResult result === ::: ", newResult);
-        newResult = newResult.toString().replace(/(\d)(?=(\d{3})+\b)/g, '$&,');
-        console.log("setDataResult result === :::: ", newResult);
-        setResults(newResult)
+        if (results == '') {
+            setResults('0')
+        } else {
+            let newResult = (results).toString().replace(/,/g, '');
+            console.log("setDataResult result === ::: ", newResult);
+            newResult = newResult.toString().replace(/(\d)(?=(\d{3})+\b)/g, '$&,');
+            console.log("setDataResult result === :::: ", newResult);
+            setResults(newResult)
+        }
     }
 
     const getFinalResults = () => {
