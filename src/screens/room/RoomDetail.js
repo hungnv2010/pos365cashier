@@ -18,6 +18,7 @@ import dataManager from '../../data/DataManager';
 import { getFileDuLieuString } from '../../data/fileStore/FileStorage';
 import { Constant } from '../../common/Constant';
 import { useSelector } from 'react-redux';
+import { height } from 'react-native-daterange-picker/src/modules';
 
 const TYPE_MODAL = {
     ADD_GROUP: 1,
@@ -51,12 +52,14 @@ export default (props) => {
     useEffect(() => {
         console.log("Room detail params ====== ", props);
         getData(props.params);
+        getRoomGroup()
     }, [props.params])
 
     useEffect(() => {
         console.log("Room detail data ====== ", props);
         if (deviceType == Constant.PHONE)
             getData(props.route.params);
+            getRoomGroup()
     }, [])
 
     const getData = async (params) => {
@@ -94,6 +97,15 @@ export default (props) => {
             setProductService(product && product.length > 0 ? product[0] : "");
         }
     }
+    const getRoomGroup = ()=>{
+        new HTTPService().setPath(ApiPath.ROOM_GROUPS).GET().then((res)=>{
+            if (res) {
+                roomGroups.current = res
+            }
+        }).catch(e=>{
+            console.log("err",e);
+        })
+    }
 
     const resetRoom = () => {
         setIsEditRoom(false)
@@ -108,6 +120,7 @@ export default (props) => {
         roomGroupsTmp = roomGroupsTmp.sorted('Id')
         roomGroups.current = JSON.parse(JSON.stringify(roomGroupsTmp))
         roomGroups.current = [{ Id: "", Name: I18n.t("khong_xac_dinh") }].concat(Object.keys(roomGroups.current).map((key) => roomGroups.current[key]));
+        console.log("roomdetail",roomGroups.current);
     }
 
     const onClickAddGroup = () => {
@@ -132,7 +145,12 @@ export default (props) => {
             new HTTPService().setPath(ApiPath.ROOM_GROUPS).POST(params).then(async (res) => {
                 console.log("onClickOk ADD_GROUP res ", res);
                 if (res) {
+                    if (res.ResponseStatus) {
+                        dialogManager.showPopupOneButton(`${res.ResponseStatus.Message}`, I18n.t('thong_bao'))
+                    }else{
+                    props._onSelect('Add')
                     roomGroups.current.push(res)
+                    }
                 }
                 dialogManager.hiddenLoading();
                 setShowModal(false)
@@ -171,9 +189,9 @@ export default (props) => {
             let params = {
                 Room: {
                     BranchId: branch.Id ? branch.Id : "",
-                    CreatedBy: vendorSession.CurrentUser.Id,
+                    //CreatedBy: vendorSession.CurrentUser.Id,
                     // CreatedDate: "2020-09-16T03:11:46.8330000Z"
-                    RetailerId: vendorSession.CurrentUser.RetailerId,
+                    //RetailerId: vendorSession.CurrentUser.RetailerId,
 
                     Id: room.Id,
                     // Printer: "12"
@@ -191,10 +209,17 @@ export default (props) => {
                 console.log("onClickApply isEditRoom  res ", res);
                 if (res) {
                     if (deviceType == Constant.PHONE) {
+                        if (res.ResponseStatus) {
+                            dialogManager.showPopupOneButton(`${res.ResponseStatus.Message}`, I18n.t('thong_bao'))
+                        }else{
                         props.route.params._onSelect("Add");
-                        props.navigation.pop()
+                        props.navigation.pop()}
                     } else {
+                        if (res.ResponseStatus) {
+                            dialogManager.showPopupOneButton(`${res.ResponseStatus.Message}`, I18n.t('thong_bao'))
+                        }else{
                         props._onSelect("Add")
+                        }
                     }
                 }
                 dialogManager.hiddenLoading();
@@ -282,8 +307,9 @@ export default (props) => {
             )
         if (typeModal.current == TYPE_MODAL.SELECT_GROUP) {
             return (
-                <View style={{ padding: 10 }}>
+                <View style={{ padding: 10 ,height:Metrics.screenHeight*0.6}}>
                     <Text style={{ marginBottom: 15, fontSize: 18, fontWeight: 'bold' }}>{I18n.t('chon_nhom')}</Text>
+                    <ScrollView>
                     {roomGroups.current.map((el, index) => {
                         return (
                             <TouchableOpacity onPress={() => {
@@ -298,6 +324,7 @@ export default (props) => {
                             </TouchableOpacity>
                         )
                     })}
+                    </ScrollView>
                     <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
                         <TouchableOpacity style={{ alignItems: "flex-end", marginTop: 15 }} onPress={() => {
                             setShowModal(false)
@@ -313,9 +340,9 @@ export default (props) => {
         }
         if (typeModal.current == TYPE_MODAL.SELECT_SERVICE) {
             return (
-                <View style={{ padding: 10 }}>
+                <View style={{ padding: 10, height:Metrics.screenHeight*0.7}}>
                     <Text style={{ marginBottom: 15, fontSize: 18, fontWeight: 'bold' }}>{I18n.t('dich_vu_tinh_gio')}</Text>
-                    <View>
+                    <ScrollView>
                         {listProductService.current.map((el, index) => {
                             return (
                                 <TouchableOpacity onPress={() => { setIndexProductService(index) }} key={index} style={{ flexDirection: "row", alignItems: "center", }}>
@@ -328,7 +355,7 @@ export default (props) => {
                                 </TouchableOpacity>
                             )
                         })}
-                    </View>
+                    </ScrollView>
                     <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
                         <TouchableOpacity style={{ alignItems: "flex-end", marginTop: 15 }} onPress={() => {
                             setShowModal(false)
@@ -361,7 +388,7 @@ export default (props) => {
                     <Text>{I18n.t('ten_phong_ban')}</Text>
                     <View style={styles.view_border_input}>
                         <TextInput style={{ padding: 10, flex: 1, color: "#000" }} value={room.Name ? room.Name : ""} onChangeText={(text) => setRoom({ ...room, Name: text })} />
-                        <Ionicons name={"close"} size={25} color="black" style={{ marginRight: 10 }} />
+                        <Ionicons name={"close"} size={25} color="black" style={{ marginRight: 10 }}  onPress={()=>{setRoom({ ...room, Name: '' })}}/>
                     </View>
                 </View>
                 <View style={{ marginTop: 20 }}>

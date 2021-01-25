@@ -105,7 +105,7 @@ export default (props) => {
 
     const renderTopping = (item, index) => {
         return (
-            <View key={item.Id} style={[styles.toppingItem, { backgroundColor: item.Quantity > 0 ? "#EED6A7" : "white", flex: 1 / props.numColumns, }]}>
+            <View key={item.Id} style={[styles.toppingItem, { backgroundColor: item.Quantity > 0 ? "#EED6A7" : "white", width:"80%" }]}>
                 <View style={{ flex: 3, paddingRight: 10 }}>
                     <Text numberOfLines={2} style={{}}>{item.Name}</Text>
                     <Text numberOfLines={2} style={{ fontStyle: "italic", fontSize: 13, color: "gray" }}>{currencyToString(item.Price)}</Text>
@@ -156,9 +156,7 @@ export default (props) => {
                         showsVerticalScrollIndicator={false}
                         renderItem={({ item, index }) => renderTopping(item, index)}
                         keyExtractor={(item, index) => '' + index}
-                        extraData={topping}
-                        key={props.numColumns}
-                        numColumns={props.numColumns} />
+                        extraData={topping} />
                 </View>
             </View>
             <View style={{ height: 40, flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingHorizontal: 5, backgroundColor: "white" }}>

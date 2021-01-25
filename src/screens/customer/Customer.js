@@ -35,7 +35,6 @@ let GUEST = {
 export default (props) => {
 
     const [customerData, setCustomerData] = useState([])
-    const [currentCustomer, setCurrentCustomer] = useState(props.route.params.currentCustomer ? props.route.params.currentCustomer : {})
     const [customerItem, setCustomerItem] = useState(GUEST)
     const { deviceType } = useSelector(state => {
         console.log("useSelector state ", state);
@@ -101,7 +100,7 @@ export default (props) => {
     }
 
     const renderListItem = (item, index) => {
-        let backgroundColor = (item.Id == customerItem.Id && deviceType == Constant.TABLET) || (item.Id == currentCustomer.Id) ? "#F6DFCE" : "white"
+        let backgroundColor = (item.Id == customerItem.Id && deviceType == Constant.TABLET && !props.route.params._onSelect) || (props.route.params.currentCustomer && item.Id == props.route.params.currentCustomer.Id) ? "#F6DFCE" : "white"
         return (
             <TouchableOpacity onPress={() => onClickCustomerItem(item)} key={index.toString()}
                 style={{ flexDirection: "row", alignItems: "center", borderBottomColor: "#ddd", borderBottomWidth: 1, padding: 10, backgroundColor: backgroundColor }}>

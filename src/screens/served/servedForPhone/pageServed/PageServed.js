@@ -35,6 +35,7 @@ export default (props) => {
     const [currentPriceBook, setCurrentPriceBook] = useState({ Name: "gia_niem_yet", Id: 0 })
     const [currentCustomer, setCurrentCustomer] = useState({ Name: "khach_hang", Id: 0 })
     const toolBarPhoneServedRef = useRef();
+    const listCooked = useRef([])
     const [listPosition, setListPosition] = useState([
         { name: "A", status: false },
         { name: "B", status: false },
@@ -60,27 +61,8 @@ export default (props) => {
                 : await dataManager.createSeverEvent(props.route.params.room.Id, position)
             console.log('currentServerEvent.current', currentServerEvent.current, JSON.parse(currentServerEvent.current.JsonContent));
             let jsonContentObject = JSON.parse(currentServerEvent.current.JsonContent)
-            // if (jsonContentObject.Partner) {
-            //     setCurrentCustomer(jsonContentObject.Partner)
-            // }
-            // if (jsonContentObject.PriceBookId) {
-            //     for (const property in listPriceBook) {
-            //         if (listPriceBook[property].Id == jsonContentObject.PriceBookId) {
-            //             setCurrentPriceBook(listPriceBook[property])
-            //         }
-            //     }
-            // }
-            setJsonContent(jsonContentObject)
 
-            // if (props.route.params.room.ProductId) {
-            //     let ischeck = false;
-            //     jsonContentObject.OrderDetails.forEach(element => {
-            //         if (element.Id == props.route.params.room.ProductId) {
-            //             ischeck = true;
-            //         }
-            //     });
-            //     toolBarPhoneServedRef.current.clickCheckInRef(!ischeck)
-            // }
+            setJsonContent(jsonContentObject)
 
             serverEvent.addListener((collection, changes) => {
                 if ((changes.insertions.length || changes.modifications.length) && serverEvent[0].FromServer) {
@@ -165,7 +147,7 @@ export default (props) => {
         list = await addPromotion(list);
         if (JSON.stringify(jsonContent) != "{}") {
             // jsonContent.OrderDetails = jsonContent.OrderDetails.filter(item => item.Quantity == item.Processed).concat(list)
-            jsonContent.OrderDetails = [...list]
+            jsonContent.OrderDetails = [...listCooked.current, ...list]
             updateServerEvent({ ...jsonContent })
 
         } else {
@@ -334,8 +316,16 @@ export default (props) => {
 
     const onClickSelectProduct = () => {
         let list = jsonContent.OrderDetails ? jsonContent.OrderDetails.filter(item => (item.ProductId > 0 && (item.IsPromotion == undefined || (item.IsPromotion == false)))) : []
-        // console.log('list', list);
+        let listUnCooked = []
+        list.forEach(item => {
+            if (item.Processed > 0){
+                listCooked.current.push(item)
+            }else{
+                
+            }
+        })
         // list = list.filter(item => item.Quantity > item.Processed)
+        // listCooked.current = [...list]
         // list.forEach(item => {
         //     item.Quantity = item.Quantity - item.Processed
         // })

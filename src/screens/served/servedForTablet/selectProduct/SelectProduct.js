@@ -111,6 +111,7 @@ export default (props) => {
 
 
   const onClickCate = async (item, index) => {
+    if (item.Id == listCateId[0]) return
     setHasProducts(false)
     resetState()
     setListCateId([item.Id])
@@ -176,11 +177,9 @@ export default (props) => {
 
   const renderCateItem = (item, index) => {
     return (
-      <View style={[styles.renderCateItem, { backgroundColor: item.Id == listCateId[0] ? Colors.colorchinh : "white" }]}>
-        <TouchableOpacity onPress={() => onClickCate(item, index)} key={index} style={{}}>
-          <Text numberOfLines={2} style={[styles.textRenderCateItem, { color: item.Id == listCateId[0] ? "white" : Colors.colorchinh }]}>{item.Name}</Text>
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity onPress={() => onClickCate(item, index)} key={index} style={[styles.renderCateItem, { backgroundColor: item.Id == listCateId[0] ? Colors.colorchinh : "white" }]}>
+        <Text numberOfLines={2} style={[styles.textRenderCateItem, { color: item.Id == listCateId[0] ? "white" : Colors.colorchinh }]}>{item.Name}</Text>
+      </TouchableOpacity>
     );
   }
 

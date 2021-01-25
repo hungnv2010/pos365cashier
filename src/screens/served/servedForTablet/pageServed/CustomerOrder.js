@@ -141,16 +141,6 @@ const CustomerOrder = (props) => {
 
     const applyDialogDetail = (product) => {
         console.log('applyDialogDetail product ', product);
-        // if (product.Quantity > 0) {
-        //     mapDataToList(product, true)
-        // } else {
-        //     removeItem(product)
-        // }
-        // // listOrder.forEach((elm, index) => {
-        // //     if (elm.ProductId == product.ProductId && index == product.index) elm = product
-        // // })
-        // // setListOrder([...listOrder])
-
 
         if (itemOrder.Quantity > product.Quantity) {
             setTimeout(() => {
@@ -163,9 +153,9 @@ const CustomerOrder = (props) => {
             let discount = product.Percent ? (price * product.Discount / 100) : product.Discount
             listOrder.forEach((elm, index, arr) => {
                 if (elm.ProductId == product.ProductId && index == product.index) {
-                    if (product.Quantity == 0) {
-                        arr.splice(index, 1)
-                    }
+                    // if (product.Quantity == 0) {
+                    //     arr.splice(index, 1)
+                    // }
                     if (product.Percent) {
                         elm.DiscountRatio = product.Discount
                     }
@@ -178,10 +168,9 @@ const CustomerOrder = (props) => {
                     elm.Discount = discount - price > 0 ? price : discount
                     elm.Price = product.Price
                     elm.IsLargeUnit = product.IsLargeUnit
+                    props.outputSelectedProduct(elm, true)
                 }
             })
-            console.log('applyDialogDetail listOrder ', listOrder);
-            props.outputSelectedProduct(product, true)
         }
     }
 
@@ -358,15 +347,18 @@ const CustomerOrder = (props) => {
                                                     :
                                                     <View style={{ alignItems: "center", flexDirection: "row", flex: 1 }}>
                                                         <TouchableOpacity
-                                                            onPress={() => {
-                                                                if (item.Quantity == 1) {
-                                                                    removeItem(item)
-                                                                } else {
-                                                                    item.Quantity--
-                                                                    setListOrder([...listOrder])
-                                                                    mapDataToList(item, false)
-                                                                }
-                                                            }}>
+                                                            onPress={
+                                                                // () => {
+                                                                //     if (item.Quantity == 1) {
+                                                                //         removeItem(item)
+                                                                //     } else {
+                                                                //         item.Quantity--
+                                                                //         setListOrder([...listOrder])
+                                                                //         mapDataToList(item, false)
+                                                                //     }
+                                                                // }
+                                                                onClickReturn
+                                                            }>
                                                             <Icon name="minus-box" size={40} color={Colors.colorchinh} />
                                                         </TouchableOpacity>
                                                         <View style={{
@@ -534,7 +526,7 @@ const CustomerOrder = (props) => {
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                         <Text style={{ fontWeight: "bold" }}>{I18n.t('tong_thanh_tien')}</Text>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                            <Text style={{ fontWeight: "bold", fontSize: 16, color: Colors.colorchinh }}>{currencyToString(props.jsonContent.Total)}</Text>
+                            <Text style={{ fontWeight: "bold", fontSize: 16, color: Colors.colorchinh }}>{currencyToString(props.jsonContent.Total - (props.jsonContent.VAT ? props.jsonContent.VAT : 0) + props.jsonContent.Discount)}đ</Text>
                             {expand ?
                                 <Icon style={{}} name="chevron-up" size={30} color="black" />
                                 :

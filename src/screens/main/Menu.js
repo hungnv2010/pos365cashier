@@ -49,7 +49,7 @@ const LIST_FUNCITION = [
 
     {
         func: KEY_FUNC.ORDER_OFFLINE,
-        icon: Images.icon_cashier,
+        icon: Images.icon_oder_offline,
         title: "don_hang_offline"
     },
     // {
@@ -84,7 +84,7 @@ const LIST_FUNCITION = [
     },
     {
         func: KEY_FUNC.CASH_FLOW,
-        icon: Images.icon_cashier,
+        icon: Images.icon_income,
         title: "thu_chi_"
     },
     {
@@ -94,12 +94,12 @@ const LIST_FUNCITION = [
     },
     {
         func: KEY_FUNC.ROOM_HISTORY,
-        icon: Images.icon_cashier,
+        icon: Images.icon_room_history,
         title: 'lich_su_huy_tra_do'
     },
     {
         func: KEY_FUNC.VOUCHERS,
-        icon: Images.icon_cashier,
+        icon: Images.icon_vouchers,
         title: 'voucher'
     },
     {
@@ -109,7 +109,7 @@ const LIST_FUNCITION = [
     },
     {
         func: KEY_FUNC.VERSION,
-        icon: Images.icon_cashier,
+        icon: Images.icon_version,
         title: "phien_ban_ngay"
     },
 ]

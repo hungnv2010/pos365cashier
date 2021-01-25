@@ -27,7 +27,7 @@ export default {
   ban: "bàn",
   bao_che_bien: "Báo chế biến",
   bao_che_bien_thanh_cong: "Báo chế biến thành công",
-  ban_co_chac_chan_muon_xoa_hoa_don: "Hoá đơn đang được sử dụng. Bạn có chắc chắn muốn xoá hoá hơn?",
+  ban_co_chac_chan_muon_xoa_hoa_don: "Bạn có chắc chắn muốn xoá đơn hàng này?",
   ban_chua_chon_mon_an_de_tach: "Bạn chưa chọn món để tách.",
   ban_dang_o_dung_vi_tri_da_chon_se_khong_co_thay_doi: "Bạn đang ở đúng vị trí đã chọn. Sẽ không có thay đổi nào được thực hiện.",
   
