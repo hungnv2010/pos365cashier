@@ -142,7 +142,10 @@ const extractData = (response) => {
             }
         } else if (response.status == 204) {
             return { status: 204 };
-        } else {
+        }else if (response.status == 400) {
+            return response.json();
+        }
+         else {
             error();
         }
         // return {

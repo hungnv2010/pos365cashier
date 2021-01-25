@@ -77,9 +77,9 @@ const images = {
     default_food_image: require('../../assets/images/default-image.png'),
     icon_return: require("../../assets/icons/return.png"),
     logo_365_long_color: require("../../assets/images/logo_365_long_color.png"),
-    icon_version: require("../../assets/icons/icon_version.png"),
+    icon_version: require("../../assets/icons/icon_version1.png"),
     icon_quick_note: require("../../assets/icons/icon_quick_note.jpg"),
-    icon_vouchers: require("../../assets/icons/gift-box.png"),
+    icon_vouchers: require("../../assets/icons/icon_voucher.png"),
     icon_menu_product: require("../../assets/icons/icon_menu.png"),
     icon_cashier: require("../../assets/icons/icon_cashier.png"),
     icon_overview: require("../../assets/icons/icon_overview.png"),
@@ -88,6 +88,9 @@ const images = {
     icon_search:require("../../assets/icons/icon_search.png"),
     icon_remove:require("../../assets/icons/icon_remove.png"),
     icon_refresh:require("../../assets/icons/icon_refresh.png"),
+    icon_room_history:require("../../assets/icons/icon_roomhistory.png"),
+    icon_income: require("../../assets/icons/icon_income.png"),
+    icon_oder_offline: require("../../assets/icons/icon_oderoff.png")
     
 }
 

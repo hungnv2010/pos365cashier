@@ -86,8 +86,8 @@ export default (props) => {
                 <MainStack.Screen name={ScreenList.PriceBook}>{props => <Pricebook {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.OrderOffline}>{props => <OrderOffline {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.Vouchers}>{props => <Vouchers {...props}/>}</MainStack.Screen>
-                <MainStack.Screen name={ScreenList.Product}>{props=><Product {...props}/>}</MainStack.Screen>
-                <MainStack.Screen name={ScreenList.ProductDetail}>{props=><ProductDetail {...props}/>}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.Product}>{props=> <Product {...props}/>}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.ProductDetail}>{props=> <ProductDetail {...props}/>}</MainStack.Screen>
             </MainStack.Navigator>
         </Animated.View>
     );

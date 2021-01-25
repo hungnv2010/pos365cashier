@@ -221,9 +221,9 @@ export default {
   nhap_ghi_chu: "Nhập ghi chú",
   ngay: "ngày",
   nhom_phong_ban: "Nhóm phòng bàn",
-  nhap_tu_khoa_tim_kiem: "Nhập tự khóa tìm kiếm",
+  nhap_tu_khoa_tim_kiem: "Nhập từ khóa tìm kiếm",
   ngay: "Ngày",
-  nhap_ma_hoa_don_tim_kiem:"nhập mã hóa đơn tìm kiếm",
+  nhap_ma_hoa_don_tim_kiem:"Nhập mã hóa đơn cần tìm",
 
   // TODO: O
 
@@ -403,6 +403,7 @@ export default {
   dich_vu:'Dịch vụ',
   don_vi_tinh_lon_va_cac_thong_so_khac:"Đơn vị tính lớn và các thông số khác",
   don_vi_tinh_lon:'Đơn vị tính lớn',
+  don_hang_cho_thanh_toan:'Đơn hàng chờ thanh toán',
 
   giu_man_hinh_luon_sang: "Giữ màn hình luôn sáng",
   gia:"Giá bán",
@@ -430,6 +431,7 @@ export default {
   khong_cho_phep_ban_hang_khi_het_ton_kho: "Không cho phép bán hàng khi hết tồn kho",
   khong_in: "Không in",
   khong_hien_thi: "Không hiển thị",
+  khach_hang_ban_le:'Khách hàng bán lẻ',
 
   link_dang_nhap: "Link đăng nhập",
   ly_do:"Lý do",
@@ -451,6 +453,7 @@ export default {
   ma_voucher:'Mã Voucher',
   ma_hang_ma_sku_ma_vach:"Mã hàng/ SKU/ Mã vạch",
   ma_dvt_lon:'Mã đơn vị tính lớn',
+  may_tinh:"Máy tính",
 
   nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: "Nhận tin nhắn/ thông báo từ phục vụ, quản lý?",
   nhap_so_luong_the: "Nhập số lượng thẻ",

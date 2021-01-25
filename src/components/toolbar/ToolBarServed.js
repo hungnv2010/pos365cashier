@@ -55,7 +55,7 @@ export default forwardRef((props, ref) => {
             >
 
                 <View style={{ flex: 1, alignItems: "center" }}>
-                    <TouchableOpacity onPress={() => { props.navigation.goBack() }}>
+                    <TouchableOpacity onPress={() => { props.navigation.goBack() }} style={{paddingLeft:19,paddingRight:19,paddingTop:16,paddingBottom:16}}>
                         <Image source={Images.icon_back} style={{ width: 10, height: 16, }} />
                     </TouchableOpacity>
                 </View>

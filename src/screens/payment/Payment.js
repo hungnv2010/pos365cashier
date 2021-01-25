@@ -15,6 +15,7 @@ import PointVoucher from './pointVoucher';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import IconFeather from 'react-native-vector-icons/Feather';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons'
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import ToolBarPayment from '../../components/toolbar/ToolbarPayment';
 import SearchVoucher from './SearchVoucher';
@@ -34,9 +35,9 @@ const TYPE_MODAL = { FILTER_ACCOUNT: "FILTER_ACCOUNT", QRCODE: "QRCODE", DATE: "
 const CUSTOMER_DEFAULT = { Id: 0, Name: 'khach_le' };
 
 const METHOD = {
-    discount: { name: "Discount" },
+    discount: { name: I18n.t('chiet_khau') },
     vat: { name: "Vat" },
-    pay: { name: "Pay" }
+    pay: { name: I18n.t('tien_khach_tra') }
 }
 
 export default (props) => {
@@ -225,28 +226,36 @@ export default (props) => {
 
     const onCallBackCustomer = (data) => {
         console.log("onCallBackCustomer data : ", data);
+        if (data.Id != 0) {
+            let apiPath = `${ApiPath.SYNC_PARTNERS}/${data.Id}`
+            new HTTPService().setPath(apiPath).GET()
+                .then(result => {
+                    if (result) {
+                        console.log('onCallBackCustomer result', result, jsonContent);
+                        let discount = dataManager.totalProducts(jsonContent.OrderDetails) * result.BestDiscount / 100
+                        console.log('discount', discount);
+                        jsonContent.Discount = discount
+                        jsonContent.Partner = data
+                        jsonContent.PartnerId = data.Id
+                        jsonContent.DiscountRatio = result.BestDiscount
+                        console.log('jsonContentjsonContent', jsonContent);
 
-        let apiPath = `${ApiPath.SYNC_PARTNERS}/${data.Id}`
-        new HTTPService().setPath(apiPath).GET()
-            .then(result => {
-                if (result) {
-                    console.log('onCallBackCustomer result', result, jsonContent);
-                    let discount = dataManager.totalProducts(jsonContent.OrderDetails) * result.BestDiscount / 100
-                    console.log('discount', discount);
-                    jsonContent.Discount = discount
-                    jsonContent.Partner = data
-                    jsonContent.PartnerId = data.Id
-                    jsonContent.DiscountRatio = result.BestDiscount
-                    console.log('jsonContentjsonContent', jsonContent);
-
-                    calculatorPrice(jsonContent, totalPrice)
-                }
-                setCustomer(data);
-            }).catch(err => {
-                console.log("onCallBackCustomer err ", err);
-                setCustomer(data);
-            })
-
+                        calculatorPrice(jsonContent, totalPrice)
+                    }
+                    setCustomer(data);
+                }).catch(err => {
+                    console.log("onCallBackCustomer err ", err);
+                    setCustomer(data);
+                })
+        } else {
+            jsonContent.Discount = 0
+            delete jsonContent.Partner
+            jsonContent.PartnerId = ""
+            jsonContent.DiscountRatio = 0
+            console.log('jsonContentjsonContent', jsonContent);
+            calculatorPrice(jsonContent, totalPrice)
+            setCustomer(data);
+        }
         // setCustomer(data);
         // if (currentServerEvent.current) {
         //     console.log("onCallBackCustomer Partner : ", data);
@@ -576,7 +585,7 @@ export default (props) => {
                 } else {
                     setTimeout(() => {
                         if (!isFNB)
-                            props.route.params.onCallBack("success")
+                            props.route.params.onCallBack(1, "success")
                         props.navigation.pop()
                     }, 1000);
                     // props.navigation.pop()
@@ -986,6 +995,11 @@ export default (props) => {
             <ToolBarPayment
                 ref={toolBarPaymentRef}
                 {...props}
+                clickLeftIcon={() => {
+                    if (isFNB)
+                        props.route.params.onCallBack(0, jsonContent)
+                    props.navigation.pop()
+                }}
                 clickRightIcon={(data) => { setTextSearch(data); }}
                 onClickBackSearch={() => { setChoosePoint(1) }}
                 clickNote={onClickNote}
@@ -998,7 +1012,10 @@ export default (props) => {
                                 <Text style={{ flex: 3 }}>{I18n.t('khach_hang')}</Text>
                                 <TouchableOpacity onPress={addCustomer} style={{ flexDirection: "row", justifyContent: "space-between", marginLeft: 20, backgroundColor: "#eeeeee", marginLeft: 10, flex: 7, borderColor: "gray", borderWidth: 0.5, borderRadius: 5, paddingVertical: 7 }}>
                                     <Text style={{ marginLeft: 5 }}>{customer.Name}</Text>
-                                    <Image source={Images.arrow_down} style={styles.iconArrowDown} />
+                                    <SimpleLineIcons style={{ marginRight: 5 }} name="user" size={15} color="gray" />
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => alert("ok")} style={{ padding: 10, marginRight: -10 }} >
+                                    <Image source={Images.arrow_down} style={[styles.iconArrowDown, { marginRight: 0 }]} />
                                 </TouchableOpacity>
                             </View>
                         </Surface>
@@ -1018,7 +1035,7 @@ export default (props) => {
                                 <Text style={{ flex: 3 }}>{I18n.t('chiet_khau')}</Text>
                                 <View style={{ flexDirection: "row", flex: 3, marginLeft: 5 }}>
                                     <TouchableOpacity onPress={() => selectPercent(false)} style={{ width: 55, alignItems: "center", borderWidth: 0.5, borderTopLeftRadius: 5, borderBottomLeftRadius: 5, paddingVertical: 7, borderColor: colors.colorchinh, backgroundColor: !percent ? colors.colorchinh : "#fff" }}>
-                                        <Text style={{ color: !percent ? "#fff" : colors.colorchinh }}>VNĐ</Text>
+                                        <Text style={{ color: !percent ? "#fff" : '#000' }}>VNĐ</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={() => {
 
@@ -1027,7 +1044,7 @@ export default (props) => {
 
                                         selectPercent(true)
                                     }} style={{ width: 55, alignItems: "center", borderWidth: 0.5, borderColor: colors.colorchinh, borderTopRightRadius: 5, borderBottomRightRadius: 5, paddingVertical: 7, backgroundColor: !percent ? "#fff" : colors.colorchinh }}>
-                                        <Text style={{ color: percent ? "#fff" : colors.colorchinh }}>%</Text>
+                                        <Text style={{ color: percent ? "#fff" : '#000' }}>%</Text>
                                     </TouchableOpacity>
                                 </View>
                                 <TextInput
@@ -1055,10 +1072,10 @@ export default (props) => {
                                 <Text style={{ flex: 3 }}>VAT</Text>
                                 <View style={{ flexDirection: "row", flex: 3, marginLeft: 5 }}>
                                     <TouchableOpacity onPress={() => selectVAT(0)} style={{ width: 55, alignItems: "center", borderWidth: 0.5, borderTopLeftRadius: 5, borderBottomLeftRadius: 5, paddingVertical: 7, borderColor: colors.colorchinh, backgroundColor: !percentVAT ? colors.colorchinh : "#fff" }}>
-                                        <Text style={{ color: !percentVAT ? "#fff" : colors.colorchinh }}>0%</Text>
+                                        <Text style={{ color: !percentVAT ? "#fff" : '#000' }}>0%</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={() => selectVAT(vendorSession.Settings && vendorSession.Settings.VAT ? vendorSession.Settings.VAT : 0)} style={{ width: 55, alignItems: "center", borderWidth: 0.5, borderColor: colors.colorchinh, borderTopRightRadius: 5, borderBottomRightRadius: 5, paddingVertical: 7, backgroundColor: !percentVAT ? "#fff" : colors.colorchinh }}>
-                                        <Text style={{ color: percentVAT ? "#fff" : colors.colorchinh }}>{vendorSession.Settings && vendorSession.Settings.VAT ? vendorSession.Settings.VAT : 0}%</Text>
+                                        <Text style={{ color: percentVAT ? "#fff" : "#000" }}>{vendorSession.Settings && vendorSession.Settings.VAT ? vendorSession.Settings.VAT : 0}%</Text>
                                     </TouchableOpacity>
                                 </View>
                                 <TextInput

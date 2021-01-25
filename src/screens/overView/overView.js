@@ -67,7 +67,7 @@ export default (props) => {
     }
 
     const getDataDashBoard = () => {
-        let params = {}
+        let params = genParams(timeForRevenue, true)
         new HTTPService().setPath(ApiPath.DASHBOARD).GET(params).then((res) => {
             console.log("getDataDashBoard res ", res);
             if (res)
@@ -225,7 +225,7 @@ export default (props) => {
                                     <Image style={{ width: 55, height: 55 }} source={Images.icon_circle} />
                                     <View style={{ marginLeft: 20, justifyContent: "space-between" }}>
                                         <Text style={{ fontSize: 17, color: "gray" }}>{I18n.t('ban_dang_dung')}</Text>
-                                        <Text style={{ fontSize: 23, color: "#36a3f7", fontWeight: "bold" }}>{dataDashBoard.TableCount} / {dataDashBoard.Table} </Text>
+                                        <Text style={{ fontSize: 23, color: "#36a3f7", fontWeight: "bold" }}>  {dataDashBoard.Table} / {dataDashBoard.TableCount}</Text>
                                     </View>
                                 </View>
                                 <View style={{ flexDirection: "row", paddingVertical: 10 }}>
