@@ -208,7 +208,7 @@ export default (props) => {
                 <View style={{ padding: 20 }}>
                     <View>
                         <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingBottom: 10 }}>
-                            <Text style={{ fontSize: 20, fontWeight: "bold", }}>{I18n.t('ket_qua_ban_hang')}</Text>
+                            <Text style={{ fontSize: 16, fontWeight: "bold", }}>{I18n.t('ket_qua_ban_hang')}</Text>
                             {/* <TouchableOpacity
                                 onPress={() => {
                                     setShowModal(true);
@@ -219,36 +219,36 @@ export default (props) => {
                                 <Image style={{ width: 10, height: 10 }} source={Images.icon_path_4203} />
                             </TouchableOpacity> */}
                         </View>
-                        <View style={deviceType == Constant.TABLET ? { flexDirection: "row", } : {}}>
+                        <View style={{ flexDirection: "row", }}>
                             <View style={{ flex: 1 }}>
                                 <View style={{ flexDirection: "row", paddingVertical: 10 }}>
-                                    <Image style={{ width: 55, height: 55 }} source={Images.icon_circle} />
-                                    <View style={{ marginLeft: 20, justifyContent: "space-between" }}>
-                                        <Text style={{ fontSize: 17, color: "gray" }}>{I18n.t('ban_dang_dung')}</Text>
-                                        <Text style={{ fontSize: 23, color: "#36a3f7", fontWeight: "bold" }}>  {dataDashBoard.Table} / {dataDashBoard.TableCount}</Text>
+                                    <Image style={{ width: 48, height: 48 }} source={Images.icon_circle} />
+                                    <View style={{ marginLeft: 12, justifyContent: "space-between" }}>
+                                        <Text style={{ fontSize: 14, color: "gray" }}>{I18n.t('ban_dang_dung')}</Text>
+                                        <Text style={{ fontSize: 16, color: "#36a3f7", fontWeight: "bold" }}>  {dataDashBoard.Table} / {dataDashBoard.TableCount}</Text>
                                     </View>
                                 </View>
                                 <View style={{ flexDirection: "row", paddingVertical: 10 }}>
-                                    <Image style={{ width: 55, height: 55 }} source={Images.icon_value_return} />
-                                    <View style={{ marginLeft: 20, justifyContent: "space-between" }}>
-                                        <Text style={{ fontSize: 17, color: "gray" }}>{I18n.t('gia_tri_tra_lai')}</Text>
-                                        <Text style={{ fontSize: 23, color: "#ff5959", fontWeight: "bold" }}>{currencyToString(dataDashBoard.Return)}</Text>
+                                    <Image style={{ width: 48, height: 48 }} source={Images.icon_value_return} />
+                                    <View style={{ marginLeft: 12, justifyContent: "space-between" }}>
+                                        <Text style={{ fontSize: 14, color: "gray" }}>{I18n.t('gia_tri_tra_lai')}</Text>
+                                        <Text style={{ fontSize: 16, color: "#ff5959", fontWeight: "bold" }}>{currencyToString(dataDashBoard.Return)}</Text>
                                     </View>
                                 </View>
                             </View>
-                            <View style={{ flex: 1 }}>
+                            <View style={{ flex: 1 ,marginLeft:20}}>
                                 <View style={{ flexDirection: "row", paddingVertical: 10 }}>
-                                    <Image style={{ width: 55, height: 55 }} source={Images.icon_invoice_overview} />
-                                    <View style={{ marginLeft: 20, justifyContent: "space-between" }}>
-                                        <Text style={{ fontSize: 17, color: "gray" }}>{I18n.t('don_hang')}</Text>
-                                        <Text style={{ fontSize: 23, color: "#36a3f7", fontWeight: "bold" }}>{dataDashBoard.Orders}</Text>
+                                    <Image style={{ width: 48, height: 48 }} source={Images.icon_invoice_overview} />
+                                    <View style={{ marginLeft: 12, justifyContent: "space-between" }}>
+                                        <Text style={{ fontSize: 14, color: "gray" }}>{I18n.t('don_hang')}</Text>
+                                        <Text style={{ fontSize: 16, color: "#36a3f7", fontWeight: "bold" }}>{dataDashBoard.Orders}</Text>
                                     </View>
                                 </View>
                                 <View style={{ flexDirection: "row", paddingVertical: 10 }}>
-                                    <Image style={{ width: 55, height: 55 }} source={Images.icon_return_good} />
-                                    <View style={{ marginLeft: 20, justifyContent: "space-between" }}>
-                                        <Text style={{ fontSize: 17, color: "gray" }}>{I18n.t('huy_tra')}</Text>
-                                        <Text style={{ fontSize: 23, color: "#ff5959", fontWeight: "bold" }}>{dataDashBoard.ReturnCount}</Text>
+                                    <Image style={{ width: 48, height: 48 }} source={Images.icon_return_good} />
+                                    <View style={{ marginLeft: 12, justifyContent: "space-between" }}>
+                                        <Text style={{ fontSize: 14, color: "gray" }}>{I18n.t('huy_tra')}</Text>
+                                        <Text style={{ fontSize: 16, color: "#ff5959", fontWeight: "bold" }}>{dataDashBoard.ReturnCount}</Text>
                                     </View>
                                 </View>
                             </View>
@@ -257,29 +257,29 @@ export default (props) => {
                     <View style={{ height: 1, width: "95%", alignSelf: "center", backgroundColor: "#E6EAEF", marginVertical: 15 }}></View>
                     <View>
                         <View style={{ flexDirection: "row", paddingVertical: 20 }}>
-                            <Image style={{ width: 55, height: 55 }} source={Images.icon_revenue_overview} />
+                            <Image style={{ width: 48, height: 48 }} source={Images.icon_revenue_overview} />
                             <View style={{ marginLeft: 20, justifyContent: "space-between" }}>
-                                <Text style={{ fontSize: 17, color: "gray" }}>{I18n.t('doanh_thu_VND')}</Text>
-                                <Text style={{ fontSize: 23, color: "#00c75f", fontWeight: "bold" }}>{currencyToString(dataDashBoard.Revenue)}</Text>
+                                <Text style={{ fontSize: 14, color: "gray" }}>{I18n.t('doanh_thu_VND')}</Text>
+                                <Text style={{ fontSize: 16, color: "#00c75f", fontWeight: "bold" }}>{currencyToString(dataDashBoard.Revenue)}</Text>
                             </View>
                         </View>
                         <View style={{ flexDirection: "row", }}>
                             <View style={{ flex: 1 }}>
                                 <View style={{ paddingVertical: 10, }}>
-                                    <Text style={{ fontSize: 17, color: "gray", paddingVertical: 7 }}>{I18n.t('tien_mat')}</Text>
-                                    <Text style={{ fontSize: 23, color: "#34bfa3", fontWeight: "bold" }}>{currencyToString(dataDashBoard.Cash)}</Text>
+                                    <Text style={{ fontSize: 14, color: "gray", paddingVertical: 7 }}>{I18n.t('tien_mat')}</Text>
+                                    <Text style={{ fontSize: 16, color: "#34bfa3", fontWeight: "bold" }}>{currencyToString(dataDashBoard.Cash)}</Text>
                                 </View>
                             </View>
                             <View style={{ flex: 1 }}>
                                 <View style={{ paddingVertical: 10 }}>
-                                    <Text style={{ fontSize: 17, color: "gray", paddingVertical: 7 }}>{I18n.t('phuong_thuc_khac')}</Text>
-                                    <Text style={{ fontSize: 23, color: "#ff5959", fontWeight: "bold" }}>{currencyToString(dataDashBoard.Other)}</Text>
+                                    <Text style={{ fontSize: 14, color: "gray", paddingVertical: 7 }}>{I18n.t('phuong_thuc_khac')}</Text>
+                                    <Text style={{ fontSize: 16, color: "#ff5959", fontWeight: "bold" }}>{currencyToString(dataDashBoard.Other)}</Text>
                                 </View>
                             </View>
                         </View>
                         <View style={{ paddingVertical: 10, }}>
-                            <Text style={{ fontSize: 17, color: "gray", paddingVertical: 7 }}>{I18n.t('ghi_no')}</Text>
-                            <Text style={{ fontSize: 23, color: "#f6871e", fontWeight: "bold" }}>{dataDashBoard.Debt}</Text>
+                            <Text style={{ fontSize: 14, color: "gray", paddingVertical: 7 }}>{I18n.t('ghi_no')}</Text>
+                            <Text style={{ fontSize: 16, color: "#f6871e", fontWeight: "bold" }}>{dataDashBoard.Debt}</Text>
                         </View>
                     </View>
                 </View>
@@ -288,8 +288,8 @@ export default (props) => {
 
                     <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingBottom: 10 }}>
                         <View>
-                            <Text style={{ fontSize: 20, fontWeight: "bold", paddingBottom: 20 }}>{I18n.t('doanh_thu_VND')}</Text>
-                            <Text style={{ fontSize: 17, color: "gray" }}>{I18n.t('bieu_do_doanh_thu')}</Text>
+                            <Text style={{ fontSize: 16, fontWeight: "bold", paddingBottom: 20 }}>{I18n.t('doanh_thu_VND')}</Text>
+                            <Text style={{ fontSize: 14, color: "gray" }}>{I18n.t('bieu_do_doanh_thu')}</Text>
                         </View>
                         <TouchableOpacity
                             onPress={() => {
@@ -297,7 +297,7 @@ export default (props) => {
                                 typeDateTime.current = 1
                             }}
                             style={{ flexDirection: "row", backgroundColor: "#E6EAEF", borderRadius: 10, padding: 10 , alignItems:"center"}}>
-                            <Text style={{ marginRight: 10, fontSize: 17, }}>{timeForRevenue.name.includes('-') ? timeForRevenue.name : I18n.t(timeForRevenue.name)}</Text>
+                            <Text style={{ marginRight: 10, fontSize: 14, }}>{timeForRevenue.name.includes('-') ? timeForRevenue.name : I18n.t(timeForRevenue.name)}</Text>
                             <Image style={{ width: 10, height: 10 }} source={Images.icon_path_4203} />
                         </TouchableOpacity>
                     </View>
@@ -342,19 +342,19 @@ export default (props) => {
                     />
                         :
                         null}
-                    <Text style={{ textAlign: "center", paddingTop: 20, fontSize: 20, fontWeight: "bold" }}> {I18n.t('tong')} (VND): {currencyToString(dataDashBoard.Revenue)}</Text>
+                    <Text style={{ textAlign: "center", paddingTop: 20, fontSize: 16, fontWeight: "bold" }}> {I18n.t('tong')} (VND): {currencyToString(dataDashBoard.Revenue)}</Text>
                 </View>
                 <View style={{ height: 5, width: "100%", alignSelf: "center", backgroundColor: "#E6EAEF", marginVertical: 15 }}></View>
                 <View style={{ padding: 20 }}>
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingBottom: 20 }}>
-                        <Text style={{ fontSize: 20, fontWeight: "bold", }}>{I18n.t('san_pham_ban_chay')}</Text>
+                        <Text style={{ fontSize: 16, fontWeight: "bold", }}>{I18n.t('san_pham_ban_chay')}</Text>
                         <TouchableOpacity
                             onPress={() => {
                                 setShowModal(true);
                                 typeDateTime.current = 2
                             }}
                             style={{ flexDirection: "row", alignItems: "center", backgroundColor: "#E6EAEF", borderRadius: 10, padding: 10 }}>
-                            <Text style={{ marginRight: 10, fontSize: 17, }}>{I18n.t(timeForTopSell.name)}</Text>
+                            <Text style={{ marginRight: 10, fontSize: 14, }}>{I18n.t(timeForTopSell.name)}</Text>
                             <Image style={{ width: 10, height: 10 }} source={Images.icon_path_4203} />
                         </TouchableOpacity>
                     </View>
@@ -362,9 +362,9 @@ export default (props) => {
                         {listTopSell.map((item, index) => {
                             return (
                                 <View key={index} style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: 15 }}>
-                                    <Text style={{ fontSize: 17 }}>{item.Name}</Text>
+                                    <Text style={{ fontSize: 14 }}>{item.Name}</Text>
                                     <View style={{ backgroundColor: "#F3DAC8", borderRadius: 10, padding: 5, }}>
-                                        <Text style={{ fontSize: 20, fontWeight: "bold", color: colors.colorchinh }}>{item.Quantity}</Text>
+                                        <Text style={{ fontSize: 16, fontWeight: "bold", color: colors.colorchinh }}>{item.Quantity}</Text>
                                     </View>
                                 </View>
 

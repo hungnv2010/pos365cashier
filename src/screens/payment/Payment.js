@@ -37,7 +37,7 @@ const CUSTOMER_DEFAULT = { Id: 0, Name: I18n.t('khach_le') };
 
 const METHOD = {
     discount: { name: I18n.t('chiet_khau') },
-    vat: { name: "Vat" },
+    vat: { name: "VAT" },
     pay: { name: I18n.t('tien_khach_tra') }
 }
 
