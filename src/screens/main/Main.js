@@ -21,7 +21,7 @@ const { Print } = NativeModules;
 
 export default (props) => {
 
-  let scan = null
+  let scanFromOrder = null
   const viewPrintRef = useRef();
   const dispatch = useDispatch();
   const { listPrint, isFNB, printProvisional, printReturnProduct } = useSelector(state => {
@@ -114,9 +114,9 @@ export default (props) => {
 
         }
 
-        // scan = setInterval(() => {
-        //   getDataNewOrders()
-        // }, 15000);
+        scanFromOrder = setInterval(() => {
+          getDataNewOrders()
+        }, 15000);
         await realmStore.deleteAllForFnb()
         await dataManager.syncAllDatas()
       } else {
@@ -129,7 +129,7 @@ export default (props) => {
     syncDatas()
 
     return () => {
-      // if (scan) clearInterval(scan)
+      if (scanFromOrder) clearInterval(scanFromOrder)
     }
   }, [isFNB])
 
@@ -165,12 +165,22 @@ export default (props) => {
   }
 
   const clickSyncForRetail = async () => {
-    dialogManager.showLoading()
-    dispatch({ type: 'ALREADY', already: false })
-    await realmStore.deleteAllForRetail()
-    await dataManager.syncAllDatasForRetail()
-    dispatch({ type: 'ALREADY', already: true })
-    dialogManager.hiddenLoading()
+    NetInfo.fetch().then(async state => {
+      if (!(state.isConnected == true && state.isInternetReachable == true)) {
+        dialogManager.showPopupOneButton(I18n.t('loi_ket_noi_mang'), I18n.t('thong_bao'), () => {
+          dialogManager.destroy();
+        }, null, null, I18n.t('dong'))
+        return;
+      } else {
+        dialogManager.showLoading()
+        dispatch({ type: 'ALREADY', already: false })
+        await realmStore.deleteAllForRetail()
+        await dataManager.syncAllDatasForRetail()
+        dispatch({ type: 'ALREADY', already: true })
+        dialogManager.hiddenLoading()
+      }
+    });
+
   }
 
 

@@ -160,10 +160,7 @@ const CustomerOrder = (props) => {
                         elm.DiscountRatio = product.Discount
                     }
                     elm.Quantity = product.Quantity
-                    if (elm.SplitForSalesOrder) {
-                        product['QuantitySplit'] = product.Quantity;
-                        elm.Quantity = 1;
-                    }
+                    
                     elm.Description = product.Description
                     elm.Discount = discount - price > 0 ? price : discount
                     elm.Price = product.Price
@@ -298,7 +295,7 @@ const CustomerOrder = (props) => {
                         borderBottomColor: "#ddd", borderBottomWidth: 0.5,
                         flexDirection: "row", flex: 1, alignItems: "center", padding: 5,
                         backgroundColor: index == props.itemOrder.index ? "#EED6A7" : 'white', borderRadius: 10, marginBottom: 2
-                    }}>
+                    }}><View style={{flex:3,flexDirection:'row'}}>
                         <TouchableOpacity
                             style={{ marginRight: 5 }}
                             onPress={() => { if (!isPromotion) onClickReturn(item, 1) }}>
@@ -331,13 +328,14 @@ const CustomerOrder = (props) => {
                                 {isPromotion ? currencyToString(item.Price * item.Quantity) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit * item.Quantity) : currencyToString(item.Price * item.Quantity))}
                             </Text>
                         </View>
+                        </View>
                         {
                             orientaition == Constant.PORTRAIT ?
                                 null
                                 :
                                 (isPromotion ? null :
                                     <>
-                                        <View style={{ marginHorizontal: 5, flex: 1, }}>
+                                        <View style={{ marginHorizontal: 5, flex: 2, }}>
                                             {
                                                 item.ProductType == 2 && item.IsTimer ?
 
@@ -360,15 +358,6 @@ const CustomerOrder = (props) => {
                                                     <View style={{ alignItems: "center", flexDirection: "row", flex: 1 }}>
                                                         <TouchableOpacity
                                                             onPress={
-                                                                // () => {
-                                                                //     if (item.Quantity == 1) {
-                                                                //         removeItem(item)
-                                                                //     } else {
-                                                                //         item.Quantity--
-                                                                //         setListOrder([...listOrder])
-                                                                //         mapDataToList(item, false)
-                                                                //     }
-                                                                // }
                                                                 () => onClickReturn(item, 2)
                                                             }>
                                                             <Icon name="minus-box" size={40} color={Colors.colorchinh} />

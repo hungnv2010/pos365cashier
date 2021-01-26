@@ -431,7 +431,6 @@ export default {
   khong_cho_phep_ban_hang_khi_het_ton_kho: "Không cho phép bán hàng khi hết tồn kho",
   khong_in: "Không in",
   khong_hien_thi: "Không hiển thị",
-  khach_hang_ban_le:'Khách lẻ',
 
   link_dang_nhap: "Link đăng nhập",
   ly_do:"Lý do",

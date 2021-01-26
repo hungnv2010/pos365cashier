@@ -40,7 +40,7 @@ export default forwardRef((props, ref) => {
             }}
             >
 
-                <View style={{ flex: 1 }}>
+                <View style={{ flex: 1,alignItems:deviceType==Constant.TABLET?'center':null }}>
                     <TouchableOpacity onPress={() => { props.navigation.openDrawer() }}>
                     <Image source={Images.icon_menu} style={{width:48,height:48}} />
                     </TouchableOpacity>

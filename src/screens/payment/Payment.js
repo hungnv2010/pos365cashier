@@ -1252,7 +1252,7 @@ const styles = StyleSheet.create({
     viewBottom: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
     viewExcessCash: { flexDirection: "row", justifyContent: "flex-end", marginRight: 10 },
     viewRadioButton: { flexDirection: "row", alignItems: "center" },
-    viewFilter: { backgroundColor: "#fff", padding: 15, },
+    viewFilter: { backgroundColor: "#fff", padding: 15,height:Metrics.screenHeight*0.7,borderRadius:4 },
     titleFilter: { paddingBottom: 10, fontWeight: "bold", textTransform: "uppercase", color: colors.colorLightBlue, textAlign: "left", width: "100%" },
     buttonAddAcount: { flex: 3, padding: 10, paddingTop: 5, color: colors.colorchinh },
     viewBottomFilter: { justifyContent: "center", flexDirection: "row", paddingTop: 10 },

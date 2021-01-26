@@ -349,7 +349,8 @@ export default (props) => {
 
                             <Text
                                 style={{ fontStyle: "italic", fontSize: 11, color: "gray" }}>
-                                {`${item.AttributesName} \n ${item.Description}`}
+                                {item.AttributesName ? `${item.AttributesName} \n` : ""}
+                                {item.Description ? `${item.Description}` : ""}
                             </Text>
 
                         </View>

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState,useRef } from 'react';
 import { ScrollView } from 'react-native';
 import { Switch } from 'react-native';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, NativeModules } from 'react-native';
@@ -113,7 +113,7 @@ export default (props) => {
         HtmlPrint: '',
         TempPrint: '',
         tu_dong_in_bao_bep: false,
-        in_sau_khi_thanh_toan: false,
+        in_sau_khi_thanh_toan: true,
         in_hai_lien_cho_hoa_don: false,
         in_hai_lien_cho_che_bien: false,
         in_tam_tinh: false,
@@ -136,7 +136,7 @@ export default (props) => {
             let res = await new HTTPService().setPath(ApiPath.VENDOR_SESSION).GET()
             setSettingObject(JSON.parse(data))
             if (res.length != 0)
-            setSettingObject({ ...JSON.parse(data), strings: res.Settings })
+                setSettingObject({ ...JSON.parse(data), strings: res.Settings })
             console.log("setting object", settingObject);
 
 
@@ -144,9 +144,9 @@ export default (props) => {
 
         getSetting()
     }, []))
-    useEffect(()=>{
+    useEffect(() => {
         console.log("setting object", settingObject);
-    },[settingObject])
+    }, [settingObject])
     useFocusEffect(useCallback(() => {
         const getCurentRetailer = async () => {
             let res = await new HTTPService().setPath(ApiPath.VENDOR_SESSION).GET()
@@ -423,10 +423,10 @@ export default (props) => {
                         <SettingSwitch title={"cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang"} output={onSwitchTone} isStatus={settingObject.cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang} />
                         <SettingSwitch title={"cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang"} output={onSwitchTone} isStatus={settingObject.cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang} />
                         <SettingSwitch title={"khong_cho_phep_ban_hang_khi_het_ton_kho"} output={onSwitchTone} isStatus={settingObject.khong_cho_phep_ban_hang_khi_het_ton_kho} />
-                        {/* <SettingSwitch title={"mo_cashbox_sau_khi_thanh_toan"} output={onSwitchTone} isStatus={settingObject.mo_cashbox_sau_khi_thanh_toan} />
-                        <SettingSwitch title={"nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly"} output={onSwitchTone} isStatus={settingObject.nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly} /> */}
-                    {/* </View> */} 
-                    <View style={styles.viewLine}></View>
+                        <SettingSwitch title={"mo_cashbox_sau_khi_thanh_toan"} output={onSwitchTone} isStatus={settingObject.mo_cashbox_sau_khi_thanh_toan} />
+                        <SettingSwitch title={"nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly"} output={onSwitchTone} isStatus={settingObject.nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly} />
+                    </View>
+                    <View style={styles.viewLine}></View> */}
                     <View>
                         <Text style={styles.textTitle}>{I18n.t("thiet_lap_he_thong")}</Text>
                         <SettingSwitch title={"giu_man_hinh_luon_sang"} output={onSwitchTone} isStatus={settingObject.giu_man_hinh_luon_sang} />
