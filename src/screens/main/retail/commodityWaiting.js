@@ -83,7 +83,7 @@ export default (props) => {
                     </View>
                     <View style={{ backgroundColor: "#fff", height: 0.5, width: "100%" }}></View>
                     <View style={{ flex: 1, justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
-                        <Text style={{ textAlign: "center", color: "#fff", marginTop: 0, fontSize: 10 }}>{I18n.t('khach_hang_ban_le')}</Text>
+                        <Text style={{ textAlign: "center", color: "#fff", marginTop: 0, fontSize: 10 }}>{I18n.t('khach_le')}</Text>
                         <Text style={{ textAlign: "center", color: "#fff", marginTop: 10, fontSize: 10 }}>{currencyToString(JSON.parse(item.JsonContent).Total)}</Text>
                     </View>
                 </TouchableOpacity>

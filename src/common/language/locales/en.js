@@ -371,7 +371,6 @@ export default {
   khong_in: "Don't print",
   khong_hien_thi: "Not displayed",
   khong_co_ket_noi:'No connection',
-  khach_hang_ban_le:'Retail customers',
 
   link_dang_nhap: "Link login",
   ly_do: "Reason",

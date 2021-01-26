@@ -90,7 +90,7 @@ const images = {
     icon_refresh:require("../../assets/icons/icon_refresh.png"),
     icon_room_history:require("../../assets/icons/icon_roomhistory.png"),
     icon_income: require("../../assets/icons/icon_income.png"),
-    icon_oder_offline: require("../../assets/icons/icon_oderoff.png")
+    icon_oder_offline: require("../../assets/icons/icon_orderoff.png")
     
 }
 

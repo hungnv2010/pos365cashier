@@ -279,7 +279,7 @@ export default (props) => {
                         </View>
                         <View style={{ paddingVertical: 10, }}>
                             <Text style={{ fontSize: 14, color: "gray", paddingVertical: 7 }}>{I18n.t('ghi_no')}</Text>
-                            <Text style={{ fontSize: 16, color: "#f6871e", fontWeight: "bold" }}>{dataDashBoard.Debt}</Text>
+                            <Text style={{ fontSize: 16, color: "#f6871e", fontWeight: "bold" }}>{currencyToString(dataDashBoard.Debt)}</Text>
                         </View>
                     </View>
                 </View>
