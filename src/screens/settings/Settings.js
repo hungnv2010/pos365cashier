@@ -261,7 +261,7 @@ export default (props) => {
             setStateMoalSize(false)
             settingObject.Printer[positionPrint] = { ...settingObject.Printer[positionPrint], type: defaultType, size: '', ip: '' }
             savePrint({ ...settingObject })
-            // dispatch({ type: 'SETTING_OBJECT', printerObject: JSON.stringify(settingObject.Printer) })
+            // dispatch({ type: 'PRINT_OBJECT', printerObject: JSON.stringify(settingObject.Printer) })
 
             savePrintRedux(settingObject.Printer)
         }
@@ -352,7 +352,7 @@ export default (props) => {
             objectPrint[element.key] = element.ip;
         });
         console.log("savePrinter objectPrint ", objectPrint);
-        dispatch({ type: 'SETTING_OBJECT', printerObject: objectPrint })
+        dispatch({ type: 'PRINT_OBJECT', printerObject: objectPrint })
     }
 
     return (

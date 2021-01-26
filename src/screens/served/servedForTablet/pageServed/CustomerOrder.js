@@ -236,8 +236,19 @@ const CustomerOrder = (props) => {
         } else {
             removeItem(item)
         }
-    }
 
+        let checkPrint = false;
+        let listOrderReturn = [{ ...data, ...itemOrder, Quantity: Quantity, Description: data.Description, RoomName: props.route.params.room.Name, Pos: props.jsonContent.Pos }]
+        itemOrder.Quantity - data.QuantityChange
+        if (itemOrder.Processed > 0) {
+            checkPrint = true;
+        }
+        if (checkPrint) {
+            let listTmp = dataManager.getDataPrintCook(listOrderReturn)
+            console.log("saveOrder listTmp ====: " + JSON.stringify(listTmp));
+            dispatch({ type: 'PRINT_RETURN_PRODUCT', printReturnProduct: JSON.stringify(listTmp) })
+        }
+    }
 
     const onClickTopping = (item) => {
         props.outputItemOrder(item)
