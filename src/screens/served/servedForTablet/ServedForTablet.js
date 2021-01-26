@@ -66,10 +66,10 @@ const Served = (props) => {
         listPosition.forEach((item, index) => {
             const row_key = `${props.route.params.room.Id}_${item.name}`
             let serverEventPos = serverEvent.filtered(`RowKey == '${row_key}'`)
-            serverEventPos = JSON.parse(JSON.stringify(serverEventPos[0]))
-            let jsonContentObj = JSON.parse(serverEventPos.JsonContent)
-            if (JSON.stringify(serverEventPos) != "{}" && jsonContentObj && jsonContentObj.OrderDetails && jsonContentObj.OrderDetails.length > 0) {
+            if (JSON.stringify(serverEventPos) != "{}" && serverEventPos[0].JsonContent && JSON.parse(serverEventPos[0].JsonContent).OrderDetails && JSON.parse(serverEventPos[0].JsonContent).OrderDetails.length > 0) {
                 item.status = true
+            } else {
+                item.status = false
             }
         })
         setListPosition([...listPosition])
