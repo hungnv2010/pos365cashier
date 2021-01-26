@@ -349,7 +349,8 @@ export default (props) => {
 
                             <Text
                                 style={{ fontStyle: "italic", fontSize: 11, color: "gray" }}>
-                                {`${item.AttributesName} \n ${item.Description}`}
+                                {item.AttributesName ? `${item.AttributesName} \n` : ""}
+                                {item.Description ? `${item.Description}` : ""}
                             </Text>
 
                         </View>
@@ -531,7 +532,7 @@ export default (props) => {
             case 4: //from select products
                 {
                     let newData = await getOtherPriceList(data)
-                    listProducts = newData
+                    jsonContent.OrderDetails = newData
                     updateServerEvent({ ...jsonContent })
                     break;
                 }

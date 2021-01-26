@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, createRef, useLayoutEffect } from 'react';
-import { View, AppState, Text, TouchableOpacity } from 'react-native';
+import { View, AppState, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useSelector } from 'react-redux';
 import SelectProduct from '../../served/servedForTablet/selectProduct/SelectProduct';
 import { Constant } from '../../../common/Constant';
@@ -28,6 +28,7 @@ const MainRetail = (props) => {
         return state.Common
     });
     const currentCommodity = useRef()
+    const [isDone, setIsDone] = useState(true)
 
 
 
@@ -142,9 +143,11 @@ const MainRetail = (props) => {
         props.navigation.navigate("NoteBook", { _onSelect: onCallBack })
     }
 
-    const onClickSync = () => {
+    const onClickSync = async () => {
         console.log('onClickSync');
-        props.syncForRetail()
+        setIsDone(false)
+        await props.syncForRetail()
+        setIsDone(true)
     }
 
     const outputTextSearch = (text) => {
@@ -325,38 +328,45 @@ const MainRetail = (props) => {
                             onCLickNoteBook={onCLickNoteBook}
                             onClickSync={onClickSync}
                             outputTextSearch={outputTextSearch} />
-                        <View style={{ flex: 1, flexDirection: "row" }}>
-                            <View style={{ flex: 6 }}>
-                                <SelectProduct
-                                    valueSearch={text}
-                                    numColumns={orientaition == Constant.LANDSCAPE ? 4 : 3}
-                                    listProducts={jsonContent.OrderDetails ? jsonContent.OrderDetails : []}
-                                    outputSelectedProduct={outputSelectedProduct} />
-                            </View>
-                            <View style={{ flex: 4, marginLeft: 2 }}>
-                                <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 2, borderBottomColor: Colors.colorchinh, borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5 }}>
-                                    <TouchableOpacity
-                                        style={{ flexDirection: "row", alignItems: "center" }}
-                                        onPress={onClickListedPrice}>
-                                        <Entypo style={{ paddingHorizontal: 5 }} name="price-ribbon" size={25} color={Colors.colorchinh} />
-                                        <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{currentPriceBook.Id == 0 ? I18n.t(currentPriceBook.Name) : currentPriceBook.Name}</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
-                                        style={{ flexDirection: "row", alignItems: "center" }}
-                                        onPress={onClickRetailCustomer}>
-                                        <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{currentCustomer.Id == 0 ? I18n.t(currentCustomer.Name) : currentCustomer.Name}</Text>
-                                        <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} color={Colors.colorchinh} />
-                                    </TouchableOpacity>
+                        {
+                            isDone ?
+                                <View style={{ flex: 1, flexDirection: "row" }}>
+                                    <View style={{ flex: 6 }}>
+                                        <SelectProduct
+                                            valueSearch={text}
+                                            numColumns={orientaition == Constant.LANDSCAPE ? 4 : 3}
+                                            listProducts={jsonContent.OrderDetails ? jsonContent.OrderDetails : []}
+                                            outputSelectedProduct={outputSelectedProduct} />
+                                    </View>
+                                    <View style={{ flex: 4, marginLeft: 2 }}>
+                                        <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 2, borderBottomColor: Colors.colorchinh, borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5 }}>
+                                            <TouchableOpacity
+                                                style={{ flexDirection: "row", alignItems: "center" }}
+                                                onPress={onClickListedPrice}>
+                                                <Entypo style={{ paddingHorizontal: 5 }} name="price-ribbon" size={25} color={Colors.colorchinh} />
+                                                <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{currentPriceBook.Id == 0 ? I18n.t(currentPriceBook.Name) : currentPriceBook.Name}</Text>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity
+                                                style={{ flexDirection: "row", alignItems: "center" }}
+                                                onPress={onClickRetailCustomer}>
+                                                <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{currentCustomer.Id == 0 ? I18n.t(currentCustomer.Name) : currentCustomer.Name}</Text>
+                                                <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} color={Colors.colorchinh} />
+                                            </TouchableOpacity>
+                                        </View>
+                                        <RetailCustomerOrder
+                                            {...props}
+                                            jsonContent={jsonContent}
+                                            numberCommodity={numberCommodity}
+                                            outputSelectedProduct={outputSelectedProduct}
+                                            onCLickCommodity={onCLickCommodity}
+                                            onClickNewOrder={onClickNewOrder} />
+                                    </View>
                                 </View>
-                                <RetailCustomerOrder
-                                    {...props}
-                                    jsonContent={jsonContent}
-                                    numberCommodity={numberCommodity}
-                                    outputSelectedProduct={outputSelectedProduct}
-                                    onCLickCommodity={onCLickCommodity}
-                                    onClickNewOrder={onClickNewOrder} />
-                            </View>
-                        </View>
+                                :
+                                <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                                    <ActivityIndicator size="large" style={{}} color={Colors.colorchinh} />
+                                </View>
+                        }
                     </View>
                     :
                     <RetailCustomerOrderForPhone
