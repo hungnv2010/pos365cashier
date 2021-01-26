@@ -78,10 +78,10 @@ export default (props) => {
     useEffect(() => {
         console.log("CustomerOrder props.jsonContent.OrderDetails :: ", props.jsonContent.OrderDetails);
 
-        if (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0) {
+        if (props.jsonContent.OrderDetails) {
             let listOrder = props.jsonContent.OrderDetails.filter(item => item.ProductId > 0)
             setListOrder(listOrder)
-        } else setListOrder([])
+        }
     }, [props.jsonContent])
 
     const sendOrder = async () => {
@@ -352,11 +352,12 @@ export default (props) => {
         let listOrderReturn = []
         listOrder.forEach((element, index, arr) => {
             if (element.ProductId == itemOrder.ProductId && index == itemOrder.index) {
-                let Quantity = element.Quantity - data.QuantityChange
+                let Quantity = element.Quantity > data.QuantityChange ? element.Quantity - data.QuantityChange : 0
                 if (Quantity == 0) {
                     arr.splice(index, 1)
+                } else {
+                    element.Quantity = Quantity
                 }
-                element.Quantity = Quantity
                 listOrderReturn.push({ ...data, ...itemOrder, Quantity: Quantity, Description: data.Description, RoomName: props.route.params.room.Name, Pos: jsonContent.Pos })
                 if (element.Processed > 0) {
                     checkPrint = true;

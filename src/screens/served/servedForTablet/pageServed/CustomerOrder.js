@@ -128,7 +128,7 @@ const CustomerOrder = (props) => {
             }
         });
         setListOrder([...listOrder])
-        if (indexFind >= 0 && listOrder.length >= indexFind) mapDataToList(listOrder[indexFind], false)
+        if (indexFind >= 0 && listOrder.length >= indexFind) mapDataToList(listOrder[indexFind])
 
     }, [props.listTopping])
 
@@ -226,13 +226,10 @@ const CustomerOrder = (props) => {
         }
 
         let item = { ...itemOrder }
-        let Quantity = itemOrder.Quantity - data.QuantityChange
-        if (Quantity > 0) {
+        let Quantity = itemOrder.Quantity > data.QuantityChange ? itemOrder.Quantity - data.QuantityChange : 0
             item.Quantity = Quantity
-            mapDataToList(item, false)
-        } else {
-            removeItem(item)
-        }
+            props.outputSelectedProduct(item, true)
+     
     }
 
 
@@ -383,7 +380,7 @@ const CustomerOrder = (props) => {
                                                         <TouchableOpacity onPress={() => {
                                                             item.Quantity++
                                                             setListOrder([...listOrder])
-                                                            mapDataToList(item, false)
+                                                            mapDataToList(item)
                                                         }}>
                                                             <Icon name="plus-box" size={40} color={Colors.colorchinh} />
                                                         </TouchableOpacity>

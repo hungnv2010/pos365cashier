@@ -182,7 +182,7 @@ const Served = (props) => {
                     jsonContentTmp.OrderDetails.push(product)
                 }
             }
-        } else if (replace) {
+        } else if (product.Quantity > 0 && replace) {
             jsonContentTmp.OrderDetails = jsonContentTmp.OrderDetails.map((elm, index) => {
                 if (elm.ProductId == product.ProductId && index == product.index) elm = product
                 return elm

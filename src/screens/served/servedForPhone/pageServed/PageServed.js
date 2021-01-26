@@ -158,17 +158,13 @@ export default (props) => {
                 if (item.SplitForSalesOrder || (item.ProductType == 2 && item.IsTimer)) {
                     listTmp.push(item)
                 } else {
-                    if (listCooked.current.length > 0) {
-                        listCooked.current.forEach(elm => {
-                            if (item.Id == elm.Id) {
-                                elm.Quantity += item.Quantity
-                            } else {
-                                listTmp.push(item)
-                            }
-                        })
+                    let pos = listCooked.current.map(elm => elm.Id).indexOf(item.Id);
+                    if (pos >= 0) {
+                        listCooked.current[pos].Quantity += item.Quantity
                     } else {
                         listTmp.push(item)
                     }
+                
                 }
             })
             jsonContent.OrderDetails = [...listCooked.current, ...listTmp]
