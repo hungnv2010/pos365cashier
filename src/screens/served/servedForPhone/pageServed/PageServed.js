@@ -138,7 +138,7 @@ export default (props) => {
     }
 
 
-    const outputListProducts = async (list) => {
+    const outputListProducts = async (list, replace = true) => {
         console.log('outputListProducts', list, listCooked.current);
         if (props.route.params.room.ProductId) {
             let ischeck = false;
@@ -152,23 +152,27 @@ export default (props) => {
         list = await getOtherPrice(list)
         list = await addPromotion(list);
         if (JSON.stringify(jsonContent) != "{}" && jsonContent.OrderDetails.length > 0) {
-            console.log('listCooked.current', listCooked.current);
-            let listTmp = []
-            list.forEach(item => {
-                if (item.SplitForSalesOrder || (item.ProductType == 2 && item.IsTimer)) {
-                    listTmp.push(item)
-                } else {
-                    let pos = listCooked.current.map(elm => elm.Id).indexOf(item.Id);
-                    if (pos >= 0) {
-                        listCooked.current[pos].Quantity += item.Quantity
-                    } else {
+            if (replace) {
+                jsonContent.OrderDetails = [...list]
+                updateServerEvent({ ...jsonContent })
+            } else {
+                let listTmp = []
+                list.forEach(item => {
+                    if (item.SplitForSalesOrder || (item.ProductType == 2 && item.IsTimer)) {
                         listTmp.push(item)
+                    } else {
+                        let pos = listCooked.current.map(elm => elm.Id).indexOf(item.Id);
+                        if (pos >= 0) {
+                            listCooked.current[pos].Quantity += item.Quantity
+                        } else {
+                            listTmp.push(item)
+                        }
+
                     }
-                
-                }
-            })
-            jsonContent.OrderDetails = [...listCooked.current, ...listTmp]
-            updateServerEvent({ ...jsonContent })
+                })
+                jsonContent.OrderDetails = [...listCooked.current, ...listTmp]
+                updateServerEvent({ ...jsonContent })
+            }
 
         } else {
             let title = props.route.params.Name ? props.route.params.Name : ""
@@ -360,7 +364,7 @@ export default (props) => {
                 if (newList.length == 0) {
                     newList.push({ Id: -1, Quantity: 1 })
                 }
-                outputListProducts([...newList])
+                outputListProducts([...newList], false)
                 break;
             case 2:
                 let allPromise = newList.map(async item => {
@@ -380,7 +384,7 @@ export default (props) => {
                     })
                 })
                 list = list.filter((newItem) => !newItem.exist)
-                outputListProducts([...list, ...jsonContent.OrderDetails])
+                outputListProducts([...list, ...jsonContent.OrderDetails], false)
                 break;
             default:
                 break;

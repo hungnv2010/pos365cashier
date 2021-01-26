@@ -225,17 +225,19 @@ const CustomerOrder = (props) => {
                 })
         }
 
-        let item = { ...itemOrder }
         let Quantity = itemOrder.Quantity > data.QuantityChange ? itemOrder.Quantity - data.QuantityChange : 0
-        item.Quantity = Quantity
-        props.outputSelectedProduct(item, true)
+        itemOrder.Quantity = Quantity
+        if (Quantity < itemOrder.Processed) {
+            itemOrder.Processed = Quantity
+        }
+        props.outputSelectedProduct({ ...itemOrder }, true)
 
         let checkPrint = false;
         let listOrderReturn = [{ ...data, ...itemOrder, Quantity: Quantity, Description: data.Description, RoomName: props.route.params.room.Name, Pos: props.jsonContent.Pos }]
-        itemOrder.Quantity - data.QuantityChange
         if (itemOrder.Processed > 0) {
             checkPrint = true;
         }
+
         if (checkPrint) {
             let listTmp = dataManager.getDataPrintCook(listOrderReturn)
             console.log("saveOrder listTmp ====: " + JSON.stringify(listTmp));

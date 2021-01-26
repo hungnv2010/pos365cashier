@@ -180,7 +180,7 @@ export default (props) => {
                 element.Price = (basePriceProduct + totalTopping)
             }
         });
-        setListOrder([...listOrder])
+        // setListOrder([...listOrder])
         props.outputListProducts([...listOrder])
     }
 
@@ -358,10 +358,14 @@ export default (props) => {
                 } else {
                     element.Quantity = Quantity
                 }
-                listOrderReturn.push({ ...data, ...itemOrder, Quantity: Quantity, Description: data.Description, RoomName: props.route.params.room.Name, Pos: jsonContent.Pos })
                 if (element.Processed > 0) {
                     checkPrint = true;
                 }
+                if (Quantity < element.Processed) {
+                    element.Processed = Quantity
+                }
+                listOrderReturn.push({ ...data, ...itemOrder, Quantity: Quantity, Description: data.Description, RoomName: props.route.params.room.Name, Pos: jsonContent.Pos })
+
             }
         });
         props.outputListProducts([...listOrder])
