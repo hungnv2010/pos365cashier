@@ -57,7 +57,7 @@ export default (props) => {
     }, [percent])
 
     const onClickOk = () => {
-        props.onClickSubmit({ ...itemOrder, Discount: discount, Percent: percent, Price: price })
+        props.onClickSubmit({ ...itemOrder, Discount: discount, Percent: percent, Price: price, IsLargeUnit: IsLargeUnit })
         props.setShowModal(false)
     }
 
@@ -175,7 +175,15 @@ export default (props) => {
                             <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }} onPress={() => setShowModal(false)}>
                                 <Text style={{ fontSize: 14, flex: 3 }}>{I18n.t('don_gia')}</Text>
                                 <View style={{ alignItems: "center", flexDirection: "row", flex: 7, backgroundColor: "#D5D8DC" }}>
-                                    <Text style={{ padding: 7, flex: 1, fontSize: 14, borderWidth: 0.5, borderRadius: 4 }}>{currencyToString(price)}</Text>
+                                    <TextInput
+                                        style={{ padding: 7, flex: 1, fontSize: 14, borderWidth: 0.5, borderRadius: 4 }}
+                                        value={currencyToString(price)}
+                                        onChangeText={text => {
+                                            text = text.replace(/,/g, "");
+                                            if (isNaN(text)) return
+                                            setPrice(text)
+                                        }}>
+                                    </TextInput>
                                 </View>
                             </View>
                             {itemOrder.Unit != undefined && itemOrder.Unit != "" && itemOrder.LargeUnit != undefined && itemOrder.LargeUnit != "" ?

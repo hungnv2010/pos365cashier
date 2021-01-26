@@ -196,7 +196,7 @@ export default {
   mon_da_xac_nhan: "Món đã xác nhận",
   mac_dinh: "Mặc định",
   mat_hang: "Mặt hàng",
-  ma_khach_hang: "Mã khách hàng",
+  ma_khach_hang: "Mã KH",
   mot_gio_dau_tien : "1 giờ đầu tiên",
 
   // TODO: N

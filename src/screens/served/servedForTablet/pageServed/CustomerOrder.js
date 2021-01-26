@@ -160,10 +160,7 @@ const CustomerOrder = (props) => {
                         elm.DiscountRatio = product.Discount
                     }
                     elm.Quantity = product.Quantity
-                    if (elm.SplitForSalesOrder) {
-                        product['QuantitySplit'] = product.Quantity;
-                        elm.Quantity = 1;
-                    }
+                    
                     elm.Description = product.Description
                     elm.Discount = discount - price > 0 ? price : discount
                     elm.Price = product.Price

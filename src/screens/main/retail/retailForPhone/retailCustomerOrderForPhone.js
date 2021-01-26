@@ -33,7 +33,7 @@ export default (props) => {
     const [itemOrder, setItemOrder] = useState({})
     const [jsonContent, setJsonContent] = useState({})
     const [currentPriceBook, setCurrentPriceBook] = useState({ Name: "gia_niem_yet", Id: 0 })
-    const [currentCustomer, setCurrentCustomer] = useState({ Name: "khach_hang", Id: 0 })
+    const [currentCustomer, setCurrentCustomer] = useState({ Name: "khach_le", Id: 0 })
     const [promotions, setPromotions] = useState([])
     const [listProducts, setListProducts] = useState([])
 
@@ -78,7 +78,7 @@ export default (props) => {
     useEffect(() => {
         console.log('jsonContent.Partner', jsonContent.Partner);
         if (jsonContent.Partner && jsonContent.Partner.Id && jsonContent.Partner.Id != currentCustomer.Id) setCurrentCustomer(jsonContent.Partner)
-        else setCurrentCustomer({ Name: "khach_hang", Id: 0 })
+        else setCurrentCustomer({ Name: "khach_le", Id: 0 })
 
     }, [jsonContent.Partner])
 
@@ -349,7 +349,8 @@ export default (props) => {
 
                             <Text
                                 style={{ fontStyle: "italic", fontSize: 11, color: "gray" }}>
-                                {`${item.AttributesName} \n ${item.Description}`}
+                                {item.AttributesName ? `${item.AttributesName} \n` : ""}
+                                {item.Description ? `${item.Description}` : ""}
                             </Text>
 
                         </View>
@@ -531,7 +532,7 @@ export default (props) => {
             case 4: //from select products
                 {
                     let newData = await getOtherPriceList(data)
-                    listProducts = newData
+                    jsonContent.OrderDetails = newData
                     updateServerEvent({ ...jsonContent })
                     break;
                 }
@@ -574,14 +575,7 @@ export default (props) => {
         // setJsonContent(type == 1 ? { ...jsonContent, OrderDetails: [] } : { ...data })
         // setListOrder([])
 
-        // const row_key = `${props.route.params.room.Id}_A`
-        // serverEvent = serverEvent.filtered(`RowKey == '${row_key}'`)
-        // currentServerEvent.current = JSON.stringify(serverEvent) != '{}' ? JSON.parse(JSON.stringify(serverEvent[0]))
-        //     : await dataManager.createSeverEvent(props.route.params.room.Id, position)
-        // console.log('currentServerEvent.current', currentServerEvent.current, JSON.parse(currentServerEvent.current.JsonContent));
-        // let jsonContentObject = JSON.parse(currentServerEvent.current.JsonContent)
-
-        setJsonContent( { ...data })
+        setJsonContent({ ...data })
     }
 
     const onClickPayment = () => {
@@ -628,15 +622,15 @@ export default (props) => {
                 outputTextSearch={outputTextSearch} />
             <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 2, borderBottomColor: Colors.colorchinh, borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5 }}>
                 <TouchableOpacity
-                    style={{ flexDirection: "row", alignItems: "center" }}
+                    style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
                     onPress={onClickListedPrice}>
                     <Entypo style={{ paddingHorizontal: 5 }} name="price-ribbon" size={25} color={Colors.colorchinh} />
-                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold", textTransform: "uppercase" }}>{currentPriceBook.Id == 0 ? I18n.t(currentPriceBook.Name) : currentPriceBook.Name}</Text>
+                    <Text ellipsizeMode="tail" numberOfLines={1} style={{ flex: 1, color: Colors.colorchinh, fontWeight: "bold", textTransform: "uppercase" }}>{currentPriceBook.Id == 0 ? I18n.t(currentPriceBook.Name) : currentPriceBook.Name}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={{ flexDirection: "row", alignItems: "center" }}
+                    style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
                     onPress={onClickRetailCustomer}>
-                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold", textTransform: "uppercase" }}>{currentCustomer.Id == 0 ? I18n.t(currentCustomer.Name) : currentCustomer.Name}</Text>
+                    <Text ellipsizeMode="tail" numberOfLines={1} style={{ textAlign: "right", flex: 1, color: Colors.colorchinh, fontWeight: "bold", textTransform: "uppercase" }}>{currentCustomer.Id == 0 ? I18n.t(currentCustomer.Name) : currentCustomer.Name}</Text>
                     <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} color={Colors.colorchinh} />
                 </TouchableOpacity>
             </View>

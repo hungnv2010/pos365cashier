@@ -57,9 +57,9 @@ class DataManager {
                     for (const item of listRoom) {
                         let serverEvent = await realmStore.queryServerEvents()
                         let serverEventByRowKey = serverEvent.filtered(`RowKey == '${item.rowKey}'`)
-                        console.log('serverEventByRowKey', serverEventByRowKey, JSON.stringify(serverEventByRowKey));
                         serverEventByRowKey = JSON.stringify(serverEventByRowKey) != '{}' ? JSON.parse(JSON.stringify(serverEventByRowKey))[0]
                             : await this.createSeverEvent(item.RoomId, item.Position)
+                        console.log('serverEventByRowKey', serverEventByRowKey);
                         serverEventByRowKey.JsonContent = JSON.parse(serverEventByRowKey.JsonContent)
                         if (serverEventByRowKey.JsonContent.OrderDetails && serverEventByRowKey.JsonContent.OrderDetails.length > 0) {
                             item.products.forEach(elm => {

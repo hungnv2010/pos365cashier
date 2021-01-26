@@ -40,7 +40,7 @@ const Served = (props) => {
     const [itemOrder, setItemOrder] = useState({})
     const [listTopping, setListTopping] = useState([])
     const [currentPriceBook, setCurrentPriceBook] = useState({ Name: "gia_niem_yet", Id: 0 })
-    const [currentCustomer, setCurrentCustomer] = useState({ Name: "khach_hang", Id: 0 })
+    const [currentCustomer, setCurrentCustomer] = useState({ Name: "khach_le", Id: 0 })
     const meMoItemOrder = useMemo(() => itemOrder, [itemOrder])
     const [promotions, setPromotions] = useState([])
     const toolBarTabletServedRef = useRef();
@@ -119,7 +119,7 @@ const Served = (props) => {
             if (jsonContent.Partner.Id == currentCustomer.Id) return
             setCurrentCustomer(jsonContent.Partner)
         }
-        else setCurrentCustomer({ Name: "khach_hang", Id: 0 })
+        else setCurrentCustomer({ Name: "khach_le", Id: 0 })
 
     }, [jsonContent.Partner])
 
@@ -440,7 +440,7 @@ const Served = (props) => {
             case 2:
                 {
                     // if (data) setCurrentCustomer(data)
-                    console.log('jsonContentjsonContent',jsonContent);
+                    console.log('jsonContentjsonContent', jsonContent);
                     if (JSON.stringify(jsonContent) != "{}") {
                         if (data && data.Id) {
                             let apiPath = `${ApiPath.SYNC_PARTNERS}/${data.Id}`
@@ -586,15 +586,15 @@ const Served = (props) => {
                         </View>
                         <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 2, borderBottomColor: Colors.colorchinh, borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5 }}>
                             <TouchableOpacity
-                                style={{ flexDirection: "row", alignItems: "center" }}
+                                style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
                                 onPress={onClickListedPrice}>
                                 <Entypo style={{ paddingHorizontal: 5 }} name="price-ribbon" size={25} color={colors.colorchinh} />
-                                <Text style={{ color: Colors.colorchinh, fontWeight: "bold", textTransform: "uppercase" }}>{currentPriceBook.Id == 0 ? I18n.t(currentPriceBook.Name) : currentPriceBook.Name}</Text>
+                                <Text ellipsizeMode="tail" numberOfLines={1} style={{ flex: 1, color: Colors.colorchinh, fontWeight: "bold", textTransform: "uppercase" }}>{currentPriceBook.Id == 0 ? I18n.t(currentPriceBook.Name) : currentPriceBook.Name}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                style={{ flexDirection: "row", alignItems: "center" }}
+                                style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
                                 onPress={onClickRetailCustomer}>
-                                <Text style={{ color: Colors.colorchinh, fontWeight: "bold", textTransform: "uppercase" }}>{currentCustomer.Id == 0 ? I18n.t(currentCustomer.Name) : currentCustomer.Name}</Text>
+                                <Text ellipsizeMode="tail" numberOfLines={1} style={{ textAlign: "right", flex: 1, color: Colors.colorchinh, fontWeight: "bold", textTransform: "uppercase" }}>{currentCustomer.Id == 0 ? I18n.t(currentCustomer.Name) : currentCustomer.Name}</Text>
                                 <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} color={Colors.colorchinh} />
                             </TouchableOpacity>
                         </View>
