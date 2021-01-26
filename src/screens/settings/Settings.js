@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState,useRef } from 'react';
 import { ScrollView } from 'react-native';
 import { Switch } from 'react-native';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, NativeModules } from 'react-native';
@@ -113,7 +113,7 @@ export default (props) => {
         HtmlPrint: '',
         TempPrint: '',
         tu_dong_in_bao_bep: false,
-        in_sau_khi_thanh_toan: false,
+        in_sau_khi_thanh_toan: true,
         in_hai_lien_cho_hoa_don: false,
         in_hai_lien_cho_che_bien: false,
         in_tam_tinh: false,
@@ -261,7 +261,7 @@ export default (props) => {
             setStateMoalSize(false)
             settingObject.Printer[positionPrint] = { ...settingObject.Printer[positionPrint], type: defaultType, size: '', ip: '' }
             savePrint({ ...settingObject })
-            // dispatch({ type: 'SETTING_OBJECT', printerObject: JSON.stringify(settingObject.Printer) })
+            // dispatch({ type: 'PRINT_OBJECT', printerObject: JSON.stringify(settingObject.Printer) })
 
             savePrintRedux(settingObject.Printer)
         }
@@ -352,7 +352,7 @@ export default (props) => {
             objectPrint[element.key] = element.ip;
         });
         console.log("savePrinter objectPrint ", objectPrint);
-        dispatch({ type: 'SETTING_OBJECT', printerObject: objectPrint })
+        dispatch({ type: 'PRINT_OBJECT', printerObject: objectPrint })
     }
 
     return (

@@ -56,7 +56,7 @@ export default () => {
                     objectPrint[element.key] = element.ip;
                 });
                 console.log("savePrinter objectPrint ", objectPrint);
-                dispatch({ type: 'SETTING_OBJECT', printerObject: objectPrint })
+                dispatch({ type: 'PRINT_OBJECT', printerObject: objectPrint })
             }
         }
         savePrinter()

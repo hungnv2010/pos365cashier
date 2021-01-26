@@ -171,7 +171,7 @@ export default (props) => {
 
     const onChangeTextInput = (text, type) => {
         text = text.toString();
-        console.log("onChangeTextInput text type ", text, typeof(text), type);
+        console.log("onChangeTextInput text type ", text, typeof (text), type);
         if (text == "") return;
         console.log("onChangeTextInput text: ", text);
         text = text.replace(/,/g, "");
@@ -556,7 +556,7 @@ export default (props) => {
             if (order) {
                 dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
                 dialogManager.hiddenLoading()
-                
+
                 await printAfterPayment(order.Code)
 
                 updateServerEvent()
@@ -598,7 +598,8 @@ export default (props) => {
         serverEvent.Version += 10
         console.log("updateServerEvent serverEvent ", serverEvent);
         dataManager.updateServerEventNow(serverEvent, true, isFNB);
-        playSound()
+        if (settingObject.current.am_bao_thanh_toan == true)
+            playSound()
 
         setTimeout(() => {
             if (!isFNB)
@@ -998,7 +999,7 @@ export default (props) => {
                 {...props}
                 clickLeftIcon={() => {
                     if (!isFNB)
-                        props.route.params.onCallBack(0, {...jsonContent})
+                        props.route.params.onCallBack(0, { ...jsonContent })
                     props.navigation.pop()
                 }}
                 clickRightIcon={(data) => { setTextSearch(data); }}
@@ -1024,7 +1025,7 @@ export default (props) => {
                                     <View style={styles.rowCustomerDetai}>
                                         <View style={styles.viewLeftCustomer}>
                                             <Text style={{}}>{I18n.t('ma_khach_hang')} : </Text>
-                                            <Text ellipsizeMode="tail" numberOfLines={1} style={{flex: 1}}>{detailCustomer.Code}</Text>
+                                            <Text ellipsizeMode="tail" numberOfLines={1} style={{ flex: 1 }}>{detailCustomer.Code}</Text>
                                         </View>
                                         <View style={styles.viewRightCustomer}>
                                             <Text style={{}}>{I18n.t('chiet_khau')} : </Text>
@@ -1133,7 +1134,7 @@ export default (props) => {
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.viewTextExcessCash}>
-                                <Text style={{ flex: 2 }}>{jsonContent.ExcessCash>=0?I18n.t( 'tien_thua'):I18n.t('tien_thieu')}</Text>
+                                <Text style={{ flex: 2 }}>{jsonContent.ExcessCash >= 0 ? I18n.t('tien_thua') : I18n.t('tien_thieu')}</Text>
                                 <Text style={{ flex: 4, textAlign: "right", color: jsonContent.ExcessCash > 0 ? "green" : "red" }}>{currencyToString(jsonContent.ExcessCash)}</Text>
                             </View>
                             {
@@ -1251,7 +1252,7 @@ const styles = StyleSheet.create({
     viewBottom: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
     viewExcessCash: { flexDirection: "row", justifyContent: "flex-end", marginRight: 10 },
     viewRadioButton: { flexDirection: "row", alignItems: "center" },
-    viewFilter: { backgroundColor: "#fff", padding: 15, },
+    viewFilter: { backgroundColor: "#fff", padding: 15,height:Metrics.screenHeight*0.7,borderRadius:4 },
     titleFilter: { paddingBottom: 10, fontWeight: "bold", textTransform: "uppercase", color: colors.colorLightBlue, textAlign: "left", width: "100%" },
     buttonAddAcount: { flex: 3, padding: 10, paddingTop: 5, color: colors.colorchinh },
     viewBottomFilter: { justifyContent: "center", flexDirection: "row", paddingTop: 10 },

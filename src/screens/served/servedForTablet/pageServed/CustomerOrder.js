@@ -229,7 +229,6 @@ const CustomerOrder = (props) => {
         let Quantity = itemOrder.Quantity > data.QuantityChange ? itemOrder.Quantity - data.QuantityChange : 0
             item.Quantity = Quantity
             props.outputSelectedProduct(item, true)
-     
     }
 
 
