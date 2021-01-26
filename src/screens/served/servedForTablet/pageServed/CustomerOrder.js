@@ -160,7 +160,7 @@ const CustomerOrder = (props) => {
                         elm.DiscountRatio = product.Discount
                     }
                     elm.Quantity = product.Quantity
-                    
+
                     elm.Description = product.Description
                     elm.Discount = discount - price > 0 ? price : discount
                     elm.Price = product.Price
@@ -227,8 +227,20 @@ const CustomerOrder = (props) => {
 
         let item = { ...itemOrder }
         let Quantity = itemOrder.Quantity > data.QuantityChange ? itemOrder.Quantity - data.QuantityChange : 0
-            item.Quantity = Quantity
-            props.outputSelectedProduct(item, true)
+        item.Quantity = Quantity
+        props.outputSelectedProduct(item, true)
+
+        let checkPrint = false;
+        let listOrderReturn = [{ ...data, ...itemOrder, Quantity: Quantity, Description: data.Description, RoomName: props.route.params.room.Name, Pos: props.jsonContent.Pos }]
+        itemOrder.Quantity - data.QuantityChange
+        if (itemOrder.Processed > 0) {
+            checkPrint = true;
+        }
+        if (checkPrint) {
+            let listTmp = dataManager.getDataPrintCook(listOrderReturn)
+            console.log("saveOrder listTmp ====: " + JSON.stringify(listTmp));
+            dispatch({ type: 'PRINT_RETURN_PRODUCT', printReturnProduct: JSON.stringify(listTmp) })
+        }
     }
 
 
