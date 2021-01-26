@@ -388,10 +388,17 @@ const RetailCustomerOrder = (props) => {
         )
     }
 
-    const onCallBackPayment = (data) => {
+    const onCallBackPayment = (type, data) => {
         console.log("onCallBackPayment data ", data);
-        syncListProducts([])
+        // syncListProducts([])
+        props.setJsonContent({ ...data })
     }
+
+    // const onCallBackPayment = (type, data) => {
+    //     console.log("onCallBackPayment type ,data ", type, data);
+    //     // setJsonContent( { ...data })
+    //     props.jsonContent = { ...data }
+    // }
 
     const onClickPayment = () => {
         if (isQuickPayment) {

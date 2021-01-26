@@ -33,7 +33,7 @@ export default (props) => {
     const [itemOrder, setItemOrder] = useState({})
     const [jsonContent, setJsonContent] = useState({})
     const [currentPriceBook, setCurrentPriceBook] = useState({ Name: "gia_niem_yet", Id: 0 })
-    const [currentCustomer, setCurrentCustomer] = useState({ Name: "khach_hang", Id: 0 })
+    const [currentCustomer, setCurrentCustomer] = useState({ Name: "khach_le", Id: 0 })
     const [promotions, setPromotions] = useState([])
     const [listProducts, setListProducts] = useState([])
 
@@ -78,7 +78,7 @@ export default (props) => {
     useEffect(() => {
         console.log('jsonContent.Partner', jsonContent.Partner);
         if (jsonContent.Partner && jsonContent.Partner.Id && jsonContent.Partner.Id != currentCustomer.Id) setCurrentCustomer(jsonContent.Partner)
-        else setCurrentCustomer({ Name: "khach_hang", Id: 0 })
+        else setCurrentCustomer({ Name: "khach_le", Id: 0 })
 
     }, [jsonContent.Partner])
 
@@ -570,9 +570,12 @@ export default (props) => {
         setNumberNewOrder(numberNewOrder + 1)
     }
 
-    const onCallBackPayment = (data) => {
-        console.log("onCallBackPayment data ", data);
+    const onCallBackPayment = (type, data) => {
+        console.log("onCallBackPayment type ,data ", type, data);
+        // setJsonContent(type == 1 ? { ...jsonContent, OrderDetails: [] } : { ...data })
         // setListOrder([])
+
+        setJsonContent({ ...data })
     }
 
     const onClickPayment = () => {
@@ -619,15 +622,15 @@ export default (props) => {
                 outputTextSearch={outputTextSearch} />
             <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 2, borderBottomColor: Colors.colorchinh, borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5 }}>
                 <TouchableOpacity
-                    style={{ flexDirection: "row", alignItems: "center" }}
+                    style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
                     onPress={onClickListedPrice}>
                     <Entypo style={{ paddingHorizontal: 5 }} name="price-ribbon" size={25} color={Colors.colorchinh} />
-                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold", textTransform: "uppercase" }}>{currentPriceBook.Id == 0 ? I18n.t(currentPriceBook.Name) : currentPriceBook.Name}</Text>
+                    <Text ellipsizeMode="tail" numberOfLines={1} style={{ flex: 1, color: Colors.colorchinh, fontWeight: "bold", textTransform: "uppercase" }}>{currentPriceBook.Id == 0 ? I18n.t(currentPriceBook.Name) : currentPriceBook.Name}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={{ flexDirection: "row", alignItems: "center" }}
+                    style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
                     onPress={onClickRetailCustomer}>
-                    <Text style={{ color: Colors.colorchinh, fontWeight: "bold", textTransform: "uppercase" }}>{currentCustomer.Id == 0 ? I18n.t(currentCustomer.Name) : currentCustomer.Name}</Text>
+                    <Text ellipsizeMode="tail" numberOfLines={1} style={{ textAlign: "right", flex: 1, color: Colors.colorchinh, fontWeight: "bold", textTransform: "uppercase" }}>{currentCustomer.Id == 0 ? I18n.t(currentCustomer.Name) : currentCustomer.Name}</Text>
                     <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} color={Colors.colorchinh} />
                 </TouchableOpacity>
             </View>

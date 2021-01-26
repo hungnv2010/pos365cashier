@@ -21,7 +21,7 @@ const MainRetail = (props) => {
 
     const [text, setText] = useState("")
     const [currentPriceBook, setCurrentPriceBook] = useState({ Name: "gia_niem_yet", Id: 0 })
-    const [currentCustomer, setCurrentCustomer] = useState({ Name: "khach_hang", Id: 0 })
+    const [currentCustomer, setCurrentCustomer] = useState({ Name: "khach_le", Id: 0 })
     const [numberCommodity, setNumberCommodity] = useState(0)
     const [jsonContent, setJsonContent] = useState({})
     const { orientaition, deviceType } = useSelector(state => {
@@ -57,7 +57,7 @@ const MainRetail = (props) => {
     useEffect(() => {
         console.log('jsonContent.Partner', jsonContent.Partner);
         if (jsonContent.Partner && jsonContent.Partner.Id && jsonContent.Partner.Id != currentCustomer.Id) setCurrentCustomer(jsonContent.Partner)
-        else setCurrentCustomer({ Name: "khach_hang", Id: 0 })
+        else setCurrentCustomer({ Name: "khach_le", Id: 0 })
 
     }, [jsonContent.Partner])
 
@@ -355,6 +355,7 @@ const MainRetail = (props) => {
                                         </View>
                                         <RetailCustomerOrder
                                             {...props}
+                                            setJsonContent={(json) => setJsonContent(json)}
                                             jsonContent={jsonContent}
                                             numberCommodity={numberCommodity}
                                             outputSelectedProduct={outputSelectedProduct}
