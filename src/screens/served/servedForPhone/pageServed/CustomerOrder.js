@@ -348,34 +348,31 @@ export default (props) => {
                     console.log('saveOrder err', err);
                 })
         }
-        let checkPrint = false;
         let listOrderReturn = []
         listOrder.forEach((element, index, arr) => {
             if (element.ProductId == itemOrder.ProductId && index == itemOrder.index) {
+                
+                console.log("saveOrder itemOrder ====: " + JSON.stringify(itemOrder));
+                console.log("saveOrder data ====: " + JSON.stringify(data));
+                if (element.Processed > 0 && (((itemOrder.Quantity - itemOrder.Processed) <  data.QuantityChange))) {
+                    listOrderReturn.push({ ...data, ...element, Quantity: (itemOrder.Quantity - itemOrder.Processed -  data.QuantityChange), Description: data.Description, RoomName: props.route.params.room.Name, Pos: jsonContent.Pos })
+                    let listTmp = dataManager.getDataPrintCook(listOrderReturn)
+                    console.log("saveOrder listTmp ====: " + JSON.stringify(listTmp));
+                    dispatch({ type: 'PRINT_RETURN_PRODUCT', printReturnProduct: JSON.stringify(listTmp) })
+                }
+
                 let Quantity = element.Quantity > data.QuantityChange ? element.Quantity - data.QuantityChange : 0
                 if (Quantity == 0) {
                     arr.splice(index, 1)
                 } else {
                     element.Quantity = Quantity
                 }
-                if (element.Processed > 0) {
-                    checkPrint = true;
-                }
                 if (Quantity < element.Processed) {
                     element.Processed = Quantity
                 }
-                listOrderReturn.push({ ...data, ...itemOrder, Quantity: Quantity, Description: data.Description, RoomName: props.route.params.room.Name, Pos: jsonContent.Pos })
-
             }
         });
         props.outputListProducts([...listOrder])
-        console.log("saveOrder listOrder ====: " + JSON.stringify(listOrder));
-        console.log("saveOrder listOrderReturn ====: " + JSON.stringify(listOrderReturn));
-        if (checkPrint) {
-            let listTmp = dataManager.getDataPrintCook(listOrderReturn)
-            console.log("saveOrder listTmp ====: " + JSON.stringify(listTmp));
-            dispatch({ type: 'PRINT_RETURN_PRODUCT', printReturnProduct: JSON.stringify(listTmp) })
-        }
     }
 
     const changTable = () => {

@@ -118,11 +118,7 @@ class PrintService {
         console.log("handlerQuantityPrint el type ", el, type);
         let Quantity = 0;
         if (type != TYPE_PRINT.KITCHEN) {
-            if (el.Processed >= el.QuantityChange) {
-                Quantity = 0 - el.QuantityChange
-            } else {
-                Quantity = 0 - el.Processed
-            }
+            Quantity = el.Quantity
         } else {
             Quantity = Math.round((el.Quantity - el.Processed) * 1000) / 1000;
         }
