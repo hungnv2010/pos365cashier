@@ -12,7 +12,7 @@ import { navigationRef } from './navigator/NavigationService';
 import RNExitApp from "react-native-exit-app";
 import I18n from './common/language/i18n'
 import signalRManager, { signalRInfo } from './common/SignalR';
-import { getFileDuLieuString } from './data/fileStore/FileStorage';
+import { getFileDuLieuString, setFileLuuDuLieu } from './data/fileStore/FileStorage';
 import { Snackbar } from 'react-native-paper';
 import NetInfo from "@react-native-community/netinfo";
 const { Print } = NativeModules;
@@ -21,6 +21,7 @@ const eventSwicthScreen = new NativeEventEmitter(Print);
 import moment from 'moment';
 import 'moment/min/locales'
 import { Metrics } from './theme';
+import { DefaultSetting } from './screens/settings/Settings';
 
 var numberInternetReachable = 0;
 
@@ -53,10 +54,12 @@ export default () => {
                 console.log("savePrinter setting ", setting);
                 let objectPrint = {}
                 setting.Printer.forEach(element => {
-                    objectPrint[element.key] = element.ip;
+                    objectPrint[element.key] = { ip: element.ip, size: element.size };
                 });
                 console.log("savePrinter objectPrint ", objectPrint);
                 dispatch({ type: 'PRINT_OBJECT', printerObject: objectPrint })
+            } else {
+                setFileLuuDuLieu(Constant.OBJECT_SETTING, JSON.stringify(DefaultSetting))
             }
         }
         savePrinter()

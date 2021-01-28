@@ -64,8 +64,8 @@ export default forwardRef((props, ref) => {
             console.log('clickCaptureRef');
             clickCapture()
         },
-        printProvisionalRef(jsonContent) {
-            printProvisional(jsonContent)
+        printProvisionalRef(jsonContent, checkProvisional = false) {
+            printProvisional(jsonContent, checkProvisional)
         },
         printKitchenRef(jsonContent, type = TYPE_PRINT.KITCHEN) {
             console.log('printKitchenRef jsonContent: ', jsonContent);
@@ -83,9 +83,8 @@ export default forwardRef((props, ref) => {
         }).then(
             uri => {
                 console.log('Snapshot uri', uri, currentHtml);
-                // alert("img " + uri)
                 // setUriImg(uri)
-                Print.printImageFromClient(uri, currentHtml.current.ip, (b) => {
+                Print.printImageFromClient(uri, currentHtml.current.ip, currentHtml.current.size, (b) => {
                     console.log("printImageFromClient b ", b);
                 })
                 if (!isProvisional.current)
@@ -111,23 +110,26 @@ export default forwardRef((props, ref) => {
     }
 
     const printProvisional = async (jsonContent, checkProvisional = false) => {
-        let ip = await checkIP()
-        console.log("printProvisional jsonContent ", jsonContent);
-        if (ip != "") {
-            if (checkProvisional) {
-                let provisional = await getFileDuLieuString(Constant.PROVISIONAL_PRINT, true);
-                console.log('printProvisional provisional ', provisional);
-                if (!(provisional && provisional == Constant.PROVISIONAL_PRINT)) {
+        if (checkProvisional) {
+            let setting = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
+            if (setting && setting != "") {
+                setting = JSON.parse(setting);
+                console.log("savePrinter setting ", setting);
+                if (setting.in_tam_tinh == false) {
                     dialogManager.showPopupOneButton(I18n.t("ban_khong_co_quyen_su_dung_chuc_nang_nay"))
                     return;
                 }
             }
+        }
+        let ipObject = await checkIP()
+        console.log("printProvisional jsonContent ", jsonContent);
+        if (ipObject.ip != "") {
             if (jsonContent.OrderDetails && jsonContent.OrderDetails.length > 0) {
                 let res = await printService.GenHtml(HtmlDefault, jsonContent)
                 if (res && res != "") {
                     isProvisional.current = true;
                     let newRes = res.replace("</body>", "<p style='display: none;'>" + new Date() + "</p> </body>");
-                    printService.listWaiting.push({ html: newRes, ip: ip })
+                    printService.listWaiting.push({ html: newRes, ip: ipObject.ip, size: ipObject.size })
                     setDataHtmlPrint()
                 }
             } else
@@ -155,7 +157,8 @@ export default forwardRef((props, ref) => {
                             console.log('element == ', element);
                             let res = printService.GenHtmlKitchen(htmlKitchen, element, i, vendorSession, type)
                             if (res && res != "") {
-                                printService.listWaiting.push({ html: res, ip: printObject[value] })
+                                res = res.replace("</body>", "<p style='display: none;'>" + new Date() + "</p> </body>");
+                                printService.listWaiting.push({ html: res, ip: printObject[value].ip, size: printObject[value].size })
                             }
                         }
                         i++;
@@ -184,7 +187,7 @@ export default forwardRef((props, ref) => {
                 });
 
                 if (item.key != "" && item.ip != "") {
-                    resolve(item.ip)
+                    resolve({ ip: item.ip, size: item.size })
                 } else {
                     dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_may_in'), I18n.t('thong_bao'))
                     resolve("")

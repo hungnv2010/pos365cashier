@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState,useRef } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { ScrollView } from 'react-native';
 import { Switch } from 'react-native';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, NativeModules } from 'react-native';
@@ -22,6 +22,99 @@ import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import colors from '../../theme/Colors';
 const { Print } = NativeModules;
 
+export const DefaultSetting = {
+    am_bao_thanh_toan: true,
+    Printer: [
+        {
+            key: Constant.KEY_PRINTER.CashierKey,
+            title: 'may_in_thu_ngan',
+            type: '',
+            size: '',
+            ip: ''
+        },
+        {
+            key: Constant.KEY_PRINTER.KitchenAKey,
+            title: 'may_in_bao_bep_a',
+            type: '',
+            size: '',
+            ip: ''
+        },
+        {
+            key: Constant.KEY_PRINTER.KitchenBKey,
+            title: 'may_in_bao_bep_b',
+            type: '',
+            size: '',
+            ip: ''
+        },
+        {
+            key: Constant.KEY_PRINTER.KitchenCKey,
+            title: 'may_in_bao_bep_c',
+            type: '',
+            size: '',
+            ip: ''
+        },
+        {
+            key: Constant.KEY_PRINTER.KitchenDKey,
+            title: 'may_in_bao_bep_d',
+            type: '',
+            size: '',
+            ip: ''
+        },
+        {
+            key: Constant.KEY_PRINTER.BartenderAKey,
+            title: 'may_in_bao_pha_che_a',
+            type: '',
+            size: '',
+            ip: ''
+        },
+        {
+            key: Constant.KEY_PRINTER.BartenderBKey,
+            title: 'may_in_bao_pha_che_b',
+            type: '',
+            size: '',
+            ip: ''
+        },
+        {
+            key: Constant.KEY_PRINTER.BartenderCKey,
+            title: 'may_in_bao_pha_che_c',
+            type: '',
+            size: '',
+            ip: ''
+        },
+        {
+            key: Constant.KEY_PRINTER.BartenderDKey,
+            title: 'may_in_bao_pha_che_d',
+            type: '',
+            size: '',
+            ip: ''
+        },
+        // {
+        //     key: Constant.KEY_PRINTER.StampPrintKey,
+        //     title: 'may_in_tem',
+        //     type: '',
+        //     size: '',
+        //     ip: ''
+        // },
+    ],
+    InfoStore: '',
+    HtmlPrint: '',
+    TempPrint: '',
+    tu_dong_in_bao_bep: false,
+    in_sau_khi_thanh_toan: true,
+    in_hai_lien_cho_hoa_don: false,
+    in_hai_lien_cho_che_bien: false,
+    in_tam_tinh: false,
+    in_tem_truoc_thanh_toan: false,
+    bao_che_bien_sau_thanh_toan: false,
+    cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang: false,
+    cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang: false,
+    khong_cho_phep_ban_hang_khi_het_ton_kho: false,
+    mo_cashbox_sau_khi_thanh_toan: false,
+    nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: false,
+    giu_man_hinh_luon_sang: false,
+    CurrencyUnit: 'đ',
+}
+
 export default (props) => {
     const dispatch = useDispatch();
     const PrintType = {
@@ -35,98 +128,7 @@ export default (props) => {
         name: 'VND',
         value: 'đ'
     }
-    const DefaultSetting = {
-        am_bao_thanh_toan: true,
-        Printer: [
-            {
-                key: Constant.KEY_PRINTER.CashierKey,
-                title: 'may_in_thu_ngan',
-                type: '',
-                size: '',
-                ip: ''
-            },
-            {
-                key: Constant.KEY_PRINTER.KitchenAKey,
-                title: 'may_in_bao_bep_a',
-                type: '',
-                size: '',
-                ip: ''
-            },
-            {
-                key: Constant.KEY_PRINTER.KitchenBKey,
-                title: 'may_in_bao_bep_b',
-                type: '',
-                size: '',
-                ip: ''
-            },
-            {
-                key: Constant.KEY_PRINTER.KitchenCKey,
-                title: 'may_in_bao_bep_c',
-                type: '',
-                size: '',
-                ip: ''
-            },
-            {
-                key: Constant.KEY_PRINTER.KitchenDKey,
-                title: 'may_in_bao_bep_d',
-                type: '',
-                size: '',
-                ip: ''
-            },
-            {
-                key: Constant.KEY_PRINTER.BartenderAKey,
-                title: 'may_in_bao_pha_che_a',
-                type: '',
-                size: '',
-                ip: ''
-            },
-            {
-                key: Constant.KEY_PRINTER.BartenderBKey,
-                title: 'may_in_bao_pha_che_b',
-                type: '',
-                size: '',
-                ip: ''
-            },
-            {
-                key: Constant.KEY_PRINTER.BartenderCKey,
-                title: 'may_in_bao_pha_che_c',
-                type: '',
-                size: '',
-                ip: ''
-            },
-            {
-                key: Constant.KEY_PRINTER.BartenderDKey,
-                title: 'may_in_bao_pha_che_d',
-                type: '',
-                size: '',
-                ip: ''
-            },
-            // {
-            //     key: Constant.KEY_PRINTER.StampPrintKey,
-            //     title: 'may_in_tem',
-            //     type: '',
-            //     size: '',
-            //     ip: ''
-            // },
-        ],
-        InfoStore: '',
-        HtmlPrint: '',
-        TempPrint: '',
-        tu_dong_in_bao_bep: false,
-        in_sau_khi_thanh_toan: true,
-        in_hai_lien_cho_hoa_don: false,
-        in_hai_lien_cho_che_bien: false,
-        in_tam_tinh: false,
-        in_tem_truoc_thanh_toan: false,
-        bao_che_bien_sau_thanh_toan: false,
-        cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang: false,
-        cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang: false,
-        khong_cho_phep_ban_hang_khi_het_ton_kho: false,
-        mo_cashbox_sau_khi_thanh_toan: false,
-        nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: false,
-        giu_man_hinh_luon_sang: false,
-        CurrencyUnit: 'đ',
-    }
+
     const [settingObject, setSettingObject] = useState(DefaultSetting)
     const [inforStore, setInforStore] = useState({})
     useFocusEffect(useCallback(() => {
@@ -349,7 +351,7 @@ export default (props) => {
     const savePrintRedux = (Printer) => {
         let objectPrint = {}
         Printer.forEach(element => {
-            objectPrint[element.key] = element.ip;
+            objectPrint[element.key] = { ip: element.ip, size: element.size };
         });
         console.log("savePrinter objectPrint ", objectPrint);
         dispatch({ type: 'PRINT_OBJECT', printerObject: objectPrint })

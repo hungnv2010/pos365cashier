@@ -499,7 +499,9 @@ export default (props) => {
             paramMethod.push({ AccountId: element.Id, Value: value })
         });
         let MoreAttributes = json.MoreAttributes ? JSON.parse(json.MoreAttributes) : {}
-        MoreAttributes.PointDiscount = 0;
+        console.log("pointUse ", pointUse);
+
+        MoreAttributes.PointDiscount = pointUse && pointUse > 0 ? pointUse : 0;
         MoreAttributes.PointDiscountValue = 0;
         MoreAttributes.TemporaryPrints = [];
         MoreAttributes.Vouchers = listVoucher;
@@ -535,7 +537,7 @@ export default (props) => {
             MerchantName: vendorSession.Settings.MerchantName,
             DontSetTime: true,
             ExcessCashType: 0,
-            // Order: json,
+            Order: {},
         };
         let tilteNotification = jsonContent.RoomName;
         if (props.route.params.Screen != undefined && props.route.params.Screen == ScreenList.MainRetail) {
@@ -587,7 +589,7 @@ export default (props) => {
         dialogManager.showPopupOneButton(I18n.t("khong_co_ket_noi_internet_don_hang_cua_quy_khach_duoc_luu_vao_offline"))
         updateServerEvent()
         handlerError({ JsonContent: json, RowKey: row_key })
-        props.navigation.pop()
+        // props.navigation.pop()
     }
 
     const updateServerEvent = () => {
@@ -605,7 +607,7 @@ export default (props) => {
             if (!isFNB)
                 props.route.params.onCallBack(1, json)
             props.navigation.pop()
-        }, 1000);
+        }, 500);
     }
 
     const playSound = () => {
@@ -1252,7 +1254,7 @@ const styles = StyleSheet.create({
     viewBottom: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
     viewExcessCash: { flexDirection: "row", justifyContent: "flex-end", marginRight: 10 },
     viewRadioButton: { flexDirection: "row", alignItems: "center" },
-    viewFilter: { backgroundColor: "#fff", padding: 15,height:Metrics.screenHeight*0.7,borderRadius:4 },
+    viewFilter: { backgroundColor: "#fff", padding: 15, height: Metrics.screenHeight * 0.7, borderRadius: 4 },
     titleFilter: { paddingBottom: 10, fontWeight: "bold", textTransform: "uppercase", color: colors.colorLightBlue, textAlign: "left", width: "100%" },
     buttonAddAcount: { flex: 3, padding: 10, paddingTop: 5, color: colors.colorchinh },
     viewBottomFilter: { justifyContent: "center", flexDirection: "row", paddingTop: 10 },
