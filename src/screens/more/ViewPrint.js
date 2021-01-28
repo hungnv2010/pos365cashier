@@ -83,9 +83,8 @@ export default forwardRef((props, ref) => {
         }).then(
             uri => {
                 console.log('Snapshot uri', uri, currentHtml);
-                // alert("img " + uri)
                 // setUriImg(uri)
-                Print.printImageFromClient(uri, currentHtml.current.ip, (b) => {
+                Print.printImageFromClient(uri, currentHtml.current.ip, currentHtml.current.size, (b) => {
                     console.log("printImageFromClient b ", b);
                 })
                 if (!isProvisional.current)
@@ -111,9 +110,9 @@ export default forwardRef((props, ref) => {
     }
 
     const printProvisional = async (jsonContent, checkProvisional = false) => {
-        let ip = await checkIP()
+        let ipObject = await checkIP()
         console.log("printProvisional jsonContent ", jsonContent);
-        if (ip != "") {
+        if (ipObject.ip != "") {
             if (checkProvisional) {
                 let provisional = await getFileDuLieuString(Constant.PROVISIONAL_PRINT, true);
                 console.log('printProvisional provisional ', provisional);
@@ -127,7 +126,7 @@ export default forwardRef((props, ref) => {
                 if (res && res != "") {
                     isProvisional.current = true;
                     let newRes = res.replace("</body>", "<p style='display: none;'>" + new Date() + "</p> </body>");
-                    printService.listWaiting.push({ html: newRes, ip: ip })
+                    printService.listWaiting.push({ html: newRes, ip: ipObject.ip, size: ipObject.size })
                     setDataHtmlPrint()
                 }
             } else
@@ -155,7 +154,8 @@ export default forwardRef((props, ref) => {
                             console.log('element == ', element);
                             let res = printService.GenHtmlKitchen(htmlKitchen, element, i, vendorSession, type)
                             if (res && res != "") {
-                                printService.listWaiting.push({ html: res, ip: printObject[value] })
+                                res = res.replace("</body>", "<p style='display: none;'>" + new Date() + "</p> </body>");
+                                printService.listWaiting.push({ html: res, ip: printObject[value].ip, size: printObject[value].size })
                             }
                         }
                         i++;
@@ -184,7 +184,7 @@ export default forwardRef((props, ref) => {
                 });
 
                 if (item.key != "" && item.ip != "") {
-                    resolve(item.ip)
+                    resolve({ ip: item.ip, size: item.size })
                 } else {
                     dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_may_in'), I18n.t('thong_bao'))
                     resolve("")

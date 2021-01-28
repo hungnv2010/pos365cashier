@@ -351,7 +351,7 @@ export default (props) => {
     const savePrintRedux = (Printer) => {
         let objectPrint = {}
         Printer.forEach(element => {
-            objectPrint[element.key] = element.ip;
+            objectPrint[element.key] = { ip: element.ip, size: element.size };
         });
         console.log("savePrinter objectPrint ", objectPrint);
         dispatch({ type: 'PRINT_OBJECT', printerObject: objectPrint })
@@ -419,8 +419,8 @@ export default (props) => {
                         {/* <SettingSwitch title={"in_tem_truoc_thanh_toan"} output={onSwitchTone} isStatus={settingObject.in_tem_truoc_thanh_toan} /> */}
                         {/* <SettingSwitch title={"bao_che_bien_sau_thanh_toan"} output={onSwitchTone} isStatus={settingObject.bao_che_bien_sau_thanh_toan} /> */}
                     </View>
-                    {/* <View style={styles.viewLine}></View>
-                    <View>
+                    <View style={styles.viewLine}></View>
+                    {/* <View>
                         <Text style={styles.textTitle}>{I18n.t("thiet_lap_tinh_nang")}</Text>
                         <SettingSwitch title={"cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang"} output={onSwitchTone} isStatus={settingObject.cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang} />
                         <SettingSwitch title={"cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang"} output={onSwitchTone} isStatus={settingObject.cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang} />

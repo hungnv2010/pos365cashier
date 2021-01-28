@@ -2,7 +2,7 @@ import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
 import { Image, View, StyleSheet, Text, TouchableOpacity, TextInput, ScrollView } from "react-native";
 import { Snackbar, Surface } from 'react-native-paper';
 import I18n from '../../common/language/i18n';
-import realmStore from '../../data/realm/RealmStore';
+import realmStore, { SchemaName } from '../../data/realm/RealmStore';
 import { Images } from '../../theme';
 import { ScreenList } from '../../common/ScreenList';
 import { currencyToString } from '../../common/Utils';
@@ -56,20 +56,31 @@ export default (props) => {
 
     const getCustomer = async () => {
         dialogManager.showLoading()
-        try {
-            let customers = await realmStore.queryCustomer()
-            customers = customers.sorted('Name')
-            customers = JSON.parse(JSON.stringify(customers))
-            customers = Object.values(customers)
-            console.log('getCustomer', customers);
-            if (customers) {
-                customers.unshift(GUEST)
-                setCustomerData(customers)
+        let res = await new HTTPService().setPath(ApiPath.SYNC_PARTNERS).GET()
+        console.log("getCustomer res ", res);
+        if (res && res.Data && res.Data.length > 0) {
+            dialogManager.hiddenLoading()
+            let listCustomer = res.Data
+            listCustomer.unshift(GUEST)
+            setCustomerData(listCustomer)
+            await realmStore.insertDatas(SchemaName.CUSTOMER, res.Data)
+            
+        } else {
+            try {
+                let customers = await realmStore.queryCustomer()
+                customers = customers.sorted('Name')
+                customers = JSON.parse(JSON.stringify(customers))
+                customers = Object.values(customers)
+                console.log('getCustomer', customers);
+                if (customers) {
+                    customers.unshift(GUEST)
+                    setCustomerData(customers)
+                }
+                dialogManager.hiddenLoading()
+            } catch (error) {
+                console.log('getCustomer err', error);
+                dialogManager.hiddenLoading()
             }
-            dialogManager.hiddenLoading()
-        } catch (error) {
-            console.log('getCustomer err', error);
-            dialogManager.hiddenLoading()
         }
     }
 

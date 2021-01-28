@@ -54,7 +54,7 @@ export default () => {
                 console.log("savePrinter setting ", setting);
                 let objectPrint = {}
                 setting.Printer.forEach(element => {
-                    objectPrint[element.key] = element.ip;
+                    objectPrint[element.key] = { ip: element.ip, size: element.size };
                 });
                 console.log("savePrinter objectPrint ", objectPrint);
                 dispatch({ type: 'PRINT_OBJECT', printerObject: objectPrint })

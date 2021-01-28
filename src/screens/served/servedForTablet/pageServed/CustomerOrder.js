@@ -227,8 +227,8 @@ const CustomerOrder = (props) => {
 
         console.log("saveOrder itemOrder ====: " + JSON.stringify(itemOrder));
         console.log("saveOrder data ====: " + JSON.stringify(data));
-        if (itemOrder.Processed > 0 && (((itemOrder.Quantity - itemOrder.Processed) <  data.QuantityChange))) {
-            let listOrderReturn =  [{ ...data, ...itemOrder, Quantity: (itemOrder.Quantity - itemOrder.Processed -  data.QuantityChange), Description: data.Description, RoomName: props.route.params.room.Name, Pos: props.jsonContent.Pos }]
+        if (itemOrder.Processed > 0 && (((itemOrder.Quantity - itemOrder.Processed) < data.QuantityChange))) {
+            let listOrderReturn = [{ ...data, ...itemOrder, Quantity: (itemOrder.Quantity - itemOrder.Processed - data.QuantityChange), Description: data.Description, RoomName: props.route.params.room.Name, Pos: props.jsonContent.Pos }]
             let listTmp = dataManager.getDataPrintCook(listOrderReturn)
             console.log("saveOrder listTmp ====: " + JSON.stringify(listTmp));
             dispatch({ type: 'PRINT_RETURN_PRODUCT', printReturnProduct: JSON.stringify(listTmp) })
@@ -313,37 +313,39 @@ const CustomerOrder = (props) => {
                         flexDirection: "row", flex: 1, alignItems: "center", padding: 5,
                         backgroundColor: index == props.itemOrder.index ? "#EED6A7" : 'white', borderRadius: 10, marginBottom: 2
                     }}>
-                        <TouchableOpacity
-                            style={{ marginRight: 5 }}
-                            onPress={() => { if (!isPromotion) onClickReturn(item, 1) }}>
-                            <Icon name={!isPromotion ? "trash-can-outline" : "gift"} size={40} color={!isPromotion ? "black" : Colors.colorLightBlue} />
-                        </TouchableOpacity>
-                        <View style={{ flexDirection: "column", flex: 1, }}>
-                            <Text style={{ fontWeight: "bold", marginBottom: 7 }}>{item.Name}</Text>
-                            <View style={{ flexDirection: "row" }}>
-                                <Text style={{}}>{isPromotion ? currencyToString(item.Price) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : currencyToString(item.Price))} x </Text>
-                                <View onPress={() => onClickUnit({ ...item })}>
-                                    {
-                                        orientaition == Constant.PORTRAIT ?
-                                            <Text style={{ color: Colors.colorchinh, }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text>
-                                            :
-                                            <View>
-                                                <Text style={{ color: Colors.colorchinh, }}>{item.IsLargeUnit ? (item.LargeUnit ? "/" + item.LargeUnit : "") : (item.Unit ? "/" + item.Unit : "")}</Text>
-                                            </View>
-                                    }
+                        <View style={{ flex: 3, flexDirection: 'row' }}>
+                            <TouchableOpacity
+                                style={{ marginRight: 5 }}
+                                onPress={() => { if (!isPromotion) onClickReturn(item, 1) }}>
+                                <Icon name={!isPromotion ? "trash-can-outline" : "gift"} size={40} color={!isPromotion ? "black" : Colors.colorLightBlue} />
+                            </TouchableOpacity>
+                            <View style={{ flexDirection: "column", flex: 1, }}>
+                                <Text style={{ fontWeight: "bold", marginBottom: 7 }}>{item.Name}</Text>
+                                <View style={{ flexDirection: "row" }}>
+                                    <Text style={{}}>{isPromotion ? currencyToString(item.Price) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : currencyToString(item.Price))} x </Text>
+                                    <View onPress={() => onClickUnit({ ...item })}>
+                                        {
+                                            orientaition == Constant.PORTRAIT ?
+                                                <Text style={{ color: Colors.colorchinh, }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text>
+                                                :
+                                                <View>
+                                                    <Text style={{ color: Colors.colorchinh, }}>{item.IsLargeUnit ? (item.LargeUnit ? "/" + item.LargeUnit : "") : (item.Unit ? "/" + item.Unit : "")}</Text>
+                                                </View>
+                                        }
+                                    </View>
                                 </View>
+                                <Text
+                                    style={{ fontStyle: "italic", fontSize: 11, color: "gray" }}>
+                                    {item.Description}
+                                </Text>
                             </View>
-                            <Text
-                                style={{ fontStyle: "italic", fontSize: 11, color: "gray" }}>
-                                {item.Description}
-                            </Text>
-                        </View>
-                        <View style={{}}>
-                            <Icon style={{ alignSelf: "flex-end" }} name="bell-ring" size={20} color={item.Quantity <= item.Processed ? Colors.colorLightBlue : "gray"} />
-                            <Text
-                                style={{ color: Colors.colorchinh, alignSelf: "flex-end" }}>
-                                {isPromotion ? currencyToString(item.Price * item.Quantity) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit * item.Quantity) : currencyToString(item.Price * item.Quantity))}
-                            </Text>
+                            <View style={{}}>
+                                <Icon style={{ alignSelf: "flex-end" }} name="bell-ring" size={20} color={item.Quantity <= item.Processed ? Colors.colorLightBlue : "gray"} />
+                                <Text
+                                    style={{ color: Colors.colorchinh, alignSelf: "flex-end" }}>
+                                    {isPromotion ? currencyToString(item.Price * item.Quantity) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit * item.Quantity) : currencyToString(item.Price * item.Quantity))}
+                                </Text>
+                            </View>
                         </View>
                         {
                             orientaition == Constant.PORTRAIT ?
@@ -351,7 +353,7 @@ const CustomerOrder = (props) => {
                                 :
                                 (isPromotion ? null :
                                     <>
-                                        <View style={{ marginHorizontal: 5, flex: 1, }}>
+                                        <View style={{ marginHorizontal: 5, flex: 2, }}>
                                             {
                                                 item.ProductType == 2 && item.IsTimer ?
 
