@@ -229,11 +229,9 @@ export default (props) => {
     const onClickProvisional = async () => {
         hideMenu()
         console.log("onClickProvisional props.route.params ", props.route.params);
-
         if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
             jsonContent.RoomName = props.route.params.room.Name
         }
-
         dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: jsonContent })
     }
 
@@ -351,11 +349,11 @@ export default (props) => {
         let listOrderReturn = []
         listOrder.forEach((element, index, arr) => {
             if (element.ProductId == itemOrder.ProductId && index == itemOrder.index) {
-                
+
                 console.log("saveOrder itemOrder ====: " + JSON.stringify(itemOrder));
                 console.log("saveOrder data ====: " + JSON.stringify(data));
-                if (element.Processed > 0 && (((itemOrder.Quantity - itemOrder.Processed) <  data.QuantityChange))) {
-                    listOrderReturn.push({ ...data, ...element, Quantity: (itemOrder.Quantity - itemOrder.Processed -  data.QuantityChange), Description: data.Description, RoomName: props.route.params.room.Name, Pos: jsonContent.Pos })
+                if (element.Processed > 0 && (((itemOrder.Quantity - itemOrder.Processed) < data.QuantityChange))) {
+                    listOrderReturn.push({ ...data, ...element, Quantity: (itemOrder.Quantity - itemOrder.Processed - data.QuantityChange), Description: data.Description, RoomName: props.route.params.room.Name, Pos: jsonContent.Pos })
                     let listTmp = dataManager.getDataPrintCook(listOrderReturn)
                     console.log("saveOrder listTmp ====: " + JSON.stringify(listTmp));
                     dispatch({ type: 'PRINT_RETURN_PRODUCT', printReturnProduct: JSON.stringify(listTmp) })

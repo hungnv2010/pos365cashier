@@ -64,8 +64,8 @@ export default forwardRef((props, ref) => {
             console.log('clickCaptureRef');
             clickCapture()
         },
-        printProvisionalRef(jsonContent) {
-            printProvisional(jsonContent)
+        printProvisionalRef(jsonContent, checkProvisional = false) {
+            printProvisional(jsonContent, checkProvisional)
         },
         printKitchenRef(jsonContent, type = TYPE_PRINT.KITCHEN) {
             console.log('printKitchenRef jsonContent: ', jsonContent);
@@ -110,17 +110,20 @@ export default forwardRef((props, ref) => {
     }
 
     const printProvisional = async (jsonContent, checkProvisional = false) => {
-        let ipObject = await checkIP()
-        console.log("printProvisional jsonContent ", jsonContent);
-        if (ipObject.ip != "") {
-            if (checkProvisional) {
-                let provisional = await getFileDuLieuString(Constant.PROVISIONAL_PRINT, true);
-                console.log('printProvisional provisional ', provisional);
-                if (!(provisional && provisional == Constant.PROVISIONAL_PRINT)) {
+        if (checkProvisional) {
+            let setting = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
+            if (setting && setting != "") {
+                setting = JSON.parse(setting);
+                console.log("savePrinter setting ", setting);
+                if (setting.in_tam_tinh == false) {
                     dialogManager.showPopupOneButton(I18n.t("ban_khong_co_quyen_su_dung_chuc_nang_nay"))
                     return;
                 }
             }
+        }
+        let ipObject = await checkIP()
+        console.log("printProvisional jsonContent ", jsonContent);
+        if (ipObject.ip != "") {
             if (jsonContent.OrderDetails && jsonContent.OrderDetails.length > 0) {
                 let res = await printService.GenHtml(HtmlDefault, jsonContent)
                 if (res && res != "") {

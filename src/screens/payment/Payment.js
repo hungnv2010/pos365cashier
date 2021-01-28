@@ -537,7 +537,7 @@ export default (props) => {
             MerchantName: vendorSession.Settings.MerchantName,
             DontSetTime: true,
             ExcessCashType: 0,
-            // Order: json,
+            Order: {},
         };
         let tilteNotification = jsonContent.RoomName;
         if (props.route.params.Screen != undefined && props.route.params.Screen == ScreenList.MainRetail) {
