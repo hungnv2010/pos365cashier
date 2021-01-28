@@ -417,7 +417,7 @@ export default (props) => {
                         {/* <SettingSwitch title={"in_tem_truoc_thanh_toan"} output={onSwitchTone} isStatus={settingObject.in_tem_truoc_thanh_toan} /> */}
                         {/* <SettingSwitch title={"bao_che_bien_sau_thanh_toan"} output={onSwitchTone} isStatus={settingObject.bao_che_bien_sau_thanh_toan} /> */}
                     </View>
-                    {/* <View style={styles.viewLine}></View>
+                    <View style={styles.viewLine}></View>
                     <View>
                         <Text style={styles.textTitle}>{I18n.t("thiet_lap_tinh_nang")}</Text>
                         <SettingSwitch title={"cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang"} output={onSwitchTone} isStatus={settingObject.cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang} />
@@ -426,7 +426,7 @@ export default (props) => {
                         <SettingSwitch title={"mo_cashbox_sau_khi_thanh_toan"} output={onSwitchTone} isStatus={settingObject.mo_cashbox_sau_khi_thanh_toan} />
                         <SettingSwitch title={"nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly"} output={onSwitchTone} isStatus={settingObject.nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly} />
                     </View>
-                    <View style={styles.viewLine}></View> */}
+                    <View style={styles.viewLine}></View>
                     <View>
                         <Text style={styles.textTitle}>{I18n.t("thiet_lap_he_thong")}</Text>
                         <SettingSwitch title={"giu_man_hinh_luon_sang"} output={onSwitchTone} isStatus={settingObject.giu_man_hinh_luon_sang} />

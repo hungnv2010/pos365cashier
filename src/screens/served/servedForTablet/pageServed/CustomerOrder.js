@@ -110,7 +110,7 @@ const CustomerOrder = (props) => {
             listTopping.forEach(item => {
                 if (item.Quantity > 0) {
                     description += ` -${item.Name} x${item.Quantity} = ${currencyToString(item.Quantity * item.Price)};\n `
-                    totalPrice = item.Quantity * item.Price
+                    totalPrice += item.Quantity * item.Price
                     topping.push({ ExtraId: item.ExtraId, QuantityExtra: item.Quantity, Price: item.Price, Quantity: item.Quantity })
                 }
             })
@@ -124,7 +124,7 @@ const CustomerOrder = (props) => {
                 element.Description = description
                 element.Topping = JSON.stringify(topping)
                 element.TotalTopping = totalPrice
-                element.Price = (element.IsLargeUnit) ? element.PriceLargeUnit : element.UnitPrice + totalPrice
+                element.Price += totalPrice
             }
         });
         setListOrder([...listOrder])
@@ -153,13 +153,8 @@ const CustomerOrder = (props) => {
             let discount = product.Percent ? (price * product.Discount / 100) : product.Discount
             listOrder.forEach((elm, index, arr) => {
                 if (elm.ProductId == product.ProductId && index == product.index) {
-                    // if (product.Quantity == 0) {
-                    //     arr.splice(index, 1)
-                    // }
-                    if (product.Percent) {
-                        elm.DiscountRatio = product.Discount
-                    }
-                    elm.Quantity = product.Quantity
+                    elm.DiscountRatio = product.Percent ? product.Discount :
+                        elm.Quantity = product.Quantity
 
                     elm.Description = product.Description
                     elm.Discount = discount - price > 0 ? price : discount
@@ -645,6 +640,7 @@ const CustomerOrder = (props) => {
                                     <DialogProductDetail
                                         onClickTopping={() => onClickTopping(itemOrder)}
                                         item={itemOrder}
+                                        priceBookId={props.jsonContent.PriceBookId}
                                         onClickSubmit={(data) => {
                                             applyDialogDetail(data)
                                         }}

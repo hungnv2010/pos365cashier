@@ -32,7 +32,6 @@ export default (props) => {
     const getCategories = async () => {
       let newCategories = [{ Id: -1, Name: I18n.t('tat_ca') }];
       let results = await realmStore.queryCategories()
-      // results = results.sorted('Name')
       results.forEach(item => {
         newCategories.push(item)
       })
@@ -45,7 +44,6 @@ export default (props) => {
   const getProducts = useCallback(async () => {
     console.log('getProducts');
     let results = await realmStore.queryProducts()
-    // results = results.sorted('Name')
     if (listCateId[0] != -1) {
       results = results.filtered(`CategoryId == ${listCateId[0]}`)
     }
@@ -145,15 +143,6 @@ export default (props) => {
   const getDescription = (item) => {
     let Description = ''
     if (item.ProductType == 2 && item.IsTimer) {
-      // let date = new Date()
-      // let [day, month, hour, minute] = [
-      //   (date.getDate() < 10 ? "0" : "") + (date.getDate()),
-      //   ((date.getMonth() + 1) < 10 ? '0' : '') + (date.getMonth() + 1),
-      //   date.getHours(),
-      //   date.getMinutes()
-      // ]
-      // Description = `${day}/${month} ${hour}:${minute}=>${day}/${month} ${hour}:${minute} (0 ${I18n.t('phut')})`
-
       let checkIn = new Date();
       Description = `${dateToString(checkIn, "DD/MM HH:mm")}=>${dateToString(checkIn, "DD/MM HH:mm")} () ${I18n.t('mot_gio_dau_tien')} = ${currencyToString(item.Price)}.`;
     }
@@ -338,7 +327,6 @@ export default (props) => {
             <ActivityIndicator size="large" style={{}} color={Colors.colorchinh} />}
         </View>
       </View>
-      {/* {isLoadMore ? <ActivityIndicator style={{ position: "absolute", right: 5, bottom: 5 }} color={Colors.colorchinh} /> : null} */}
     </View>
   );
 }

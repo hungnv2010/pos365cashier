@@ -10,6 +10,8 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import DatePicker from 'react-native-date-picker';
 import useDidMountEffect from '../../customHook/useDidMountEffect';
+import { ApiPath } from '../../data/services/ApiPath';
+import { HTTPService } from '../../data/services/HttpService';
 
 const TYPE_MODAL = {
     DEFAULT: 1,
@@ -22,42 +24,67 @@ export default (props) => {
     const [itemOrder, setItemOrder] = useState({ ...props.item })
     const [showQuickNote, setShowQuickNote] = useState(false)
     const [listQuickNote, setListQuickNote] = useState([])
-    const [IsLargeUnit, setIsLargeUnit] = useState(false)
+    const [IsLargeUnit, setIsLargeUnit] = useState(props.item.IsLargeUnit)
     const [percent, selectPercent] = useState(false)
     const [discount, setDiscount] = useState(props.item.Discount ? props.item.Discount : 0)
     const [price, setPrice] = useState(props.item.Price)
     const [typeModal, setTypeModal] = useState(TYPE_MODAL.DEFAULT);
     const [date, setDate] = useState(new Date());
+    const LargePrice = useRef(props.item.PriceLargeUnit)
+    const UnitPrice = useRef(props.item.UnitPrice)
 
     useEffect(() => {
-        console.log('itemOrderitemOrder', props.item);
-        let listOrder = itemOrder.OrderQuickNotes ? itemOrder.OrderQuickNotes.split(',') : [];
-        let listQuickNote = []
-        listOrder.forEach((item, idx) => {
-            if (item != '') {
-                listQuickNote.push({ name: item.trim(), status: false })
+        console.log('itemOrderitemOrder', props.item, props.priceBookId);
+        const getListQuickNote = () => {
+            let listOrder = itemOrder.OrderQuickNotes ? itemOrder.OrderQuickNotes.split(',') : [];
+            let listQuickNote = []
+            listOrder.forEach((item, idx) => {
+                if (item != '') {
+                    listQuickNote.push({ name: item.trim(), status: false })
+                }
+            })
+            setListQuickNote([...listQuickNote])
+        }
+        const getOtherPrice = async () => {
+            if (!props.priceBookId) return
+            let apiPath = ApiPath.PRICE_BOOK + `/${props.priceBookId}/manyproductprice`
+            let params = { "pricebookId": props.priceBookId, "ProductIds": [itemOrder.ProductId] }
+            let res = await new HTTPService().setPath(apiPath).POST(params)
+            if (res && res.PriceList && res.PriceList.length > 0) {
+                res.PriceList.forEach((priceBook) => {
+                    if (priceBook.ProductId == itemOrder.ProductId) {
+                        itemOrder.DiscountRatio = 0.0
+                        itemOrder.Discount = 0
+                        if (priceBook.PriceLargeUnit) LargePrice.current = priceBook.PriceLargeUnit
+                        if (priceBook.Price) UnitPrice.current = priceBook.Price
+                    }
+                })
             }
-        })
-        setListQuickNote([...listQuickNote])
-        setIsLargeUnit(itemOrder.IsLargeUnit)
-        // setPrice(itemOrder.IsLargeUnit == true ? itemOrder.PriceLargeUnit : itemOrder.Price)
+        }
+
+        getListQuickNote()
+        getOtherPrice()
     }, [])
 
 
     useDidMountEffect(() => {
-        let price = itemOrder.IsLargeUnit == true ? itemOrder.PriceLargeUnit : itemOrder.UnitPrice
-        let totalDiscount = percent ? itemOrder.UnitPrice * discount / 100 : discount
+        let price = (itemOrder.IsLargeUnit == true ? LargePrice.current : UnitPrice.current) + itemOrder.TotalTopping
+        let totalDiscount = percent ? price * discount / 100 : discount
         setPrice(price - totalDiscount > 0 ? price - totalDiscount : 0)
-    }, [discount, percent])
+    }, [discount])
 
     useDidMountEffect(() => {
-        let price = itemOrder.IsLargeUnit == true ? itemOrder.PriceLargeUnit : itemOrder.UnitPrice
+        let price = (itemOrder.IsLargeUnit == true ? LargePrice.current : UnitPrice.current) + itemOrder.TotalTopping
         let newDiscount = percent ? discount / price * 100 : discount * price / 100
         setDiscount(newDiscount)
     }, [percent])
 
+    useDidMountEffect(() => {
+        setDiscount(0)
+    }, [IsLargeUnit])
+
     const onClickOk = () => {
-        props.onClickSubmit({ ...itemOrder, Discount: discount, Percent: percent, Price: price, IsLargeUnit: IsLargeUnit })
+        props.onClickSubmit({ ...itemOrder, Discount: discount, Percent: percent, Price: price })
         props.setShowModal(false)
     }
 
@@ -70,10 +97,10 @@ export default (props) => {
         itemOrder.IsLargeUnit = status;
         setIsLargeUnit(status)
         if (status) {
-            setPrice(itemOrder.PriceLargeUnit)
+            setPrice(LargePrice.current + itemOrder.TotalTopping)
         }
         else {
-            setPrice(itemOrder.UnitPrice)
+            setPrice(UnitPrice.current + itemOrder.TotalTopping)
         }
     }
 
