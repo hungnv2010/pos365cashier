@@ -520,7 +520,7 @@ const CustomerOrder = (props) => {
         if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
             jsonContent.RoomName = props.route.params.room.Name
         }
-        dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: jsonContent })
+        dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: true } })
     }
 
     const splitTable = () => {

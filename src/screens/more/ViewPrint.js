@@ -82,15 +82,16 @@ export default forwardRef((props, ref) => {
             // snapshotContentContainer: true,
         }).then(
             uri => {
-                console.log('Snapshot uri', uri, currentHtml);
+                console.log('Snapshot uri', uri, currentHtml.current.html);
                 // setUriImg(uri)
                 Print.printImageFromClient(uri, currentHtml.current.ip, currentHtml.current.size, (b) => {
                     console.log("printImageFromClient b ", b);
                 })
-                if (!isProvisional.current)
-                    setTimeout(() => {
-                        setDataHtmlPrint()
-                    }, 500);
+                // currentHtml.current = {};
+                // setDataHtml("");
+                // setTimeout(() => {
+                setDataHtmlPrint()
+                // }, 500);
             },
             error => console.error('Oops, snapshot failed', error)
         );
@@ -98,10 +99,7 @@ export default forwardRef((props, ref) => {
 
     const setDataHtmlPrint = () => {
         if (printService.listWaiting.length > 0) {
-            console.log("tttt setDataHtmlPrint", printService.listWaiting);
             currentHtml.current = printService.listWaiting.pop()
-            console.log("tttt setDataHtmlPrint aaa == ", currentHtml);
-            console.log("tttt setDataHtmlPrint aaa == currentHtml.current.html ", currentHtml.current.html);
             setDataHtml(currentHtml.current.html)
         }
         else {
@@ -110,28 +108,37 @@ export default forwardRef((props, ref) => {
     }
 
     const printProvisional = async (jsonContent, checkProvisional = false) => {
-        if (checkProvisional) {
-            let setting = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
-            if (setting && setting != "") {
-                setting = JSON.parse(setting);
-                console.log("savePrinter setting ", setting);
+        numberLoop = 1;
+        let setting = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
+        if (setting && setting != "") {
+            setting = JSON.parse(setting);
+            console.log("savePrinter setting ", setting);
+            if (checkProvisional) {
                 if (setting.in_tam_tinh == false) {
                     dialogManager.showPopupOneButton(I18n.t("ban_khong_co_quyen_su_dung_chuc_nang_nay"))
                     return;
                 }
+            } else {
+                if (setting.in_hai_lien_cho_hoa_don == true) {
+                    numberLoop = 2;
+                }
             }
         }
         let ipObject = await checkIP()
-        console.log("printProvisional jsonContent ", jsonContent);
+        console.log("printProvisional jsonContent numberLoop ", jsonContent, numberLoop);
         if (ipObject.ip != "") {
             if (jsonContent.OrderDetails && jsonContent.OrderDetails.length > 0) {
-                let res = await printService.GenHtml(HtmlDefault, jsonContent)
-                if (res && res != "") {
-                    isProvisional.current = true;
-                    let newRes = res.replace("</body>", "<p style='display: none;'>" + new Date() + "</p> </body>");
-                    printService.listWaiting.push({ html: newRes, ip: ipObject.ip, size: ipObject.size })
-                    setDataHtmlPrint()
+                for (let index = 0; index < numberLoop; index++) {
+                    let res = await printService.GenHtml(HtmlDefault, jsonContent)
+                    if (res && res != "") {
+                        isProvisional.current = true;
+                        let newRes = res.replace("</body>", "<p style='display: none;'>" + index.toString() + (new Date().getTime().toString()) + Math.floor((Math.random() * 1000000000) + 1) + "</p> </body>");
+                        printService.listWaiting.push({ html: newRes, ip: ipObject.ip, size: ipObject.size })
+
+                    }
                 }
+                console.log("listWaiting ==== " + JSON.stringify(printService.listWaiting))
+                setDataHtmlPrint()
             } else
                 dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
         }
@@ -141,11 +148,7 @@ export default forwardRef((props, ref) => {
         isProvisional.current = false;
         let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
         vendorSession = JSON.parse(vendorSession);
-        console.log("data ===:: " + data);
         data = JSON.parse(data)
-        console.log("data === " + data);
-        console.log("printObject ", printObject);
-        console.log('vendorSession ', vendorSession);
         for (const value in data) {
             if (data.hasOwnProperty(value)) {
                 if (printObject[value] != "") {
@@ -175,7 +178,6 @@ export default forwardRef((props, ref) => {
     const checkIP = async () => {
         return new Promise(async (resolve, reject) => {
             let objectSetting = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
-
             console.log('checkIP objectSetting == ', objectSetting);
             if (objectSetting && objectSetting != "") {
                 objectSetting = JSON.parse(objectSetting)
@@ -185,7 +187,6 @@ export default forwardRef((props, ref) => {
                         item = element;
                     }
                 });
-
                 if (item.key != "" && item.ip != "") {
                     resolve({ ip: item.ip, size: item.size })
                 } else {
@@ -200,7 +201,6 @@ export default forwardRef((props, ref) => {
     }
 
     const checkHtmlPrint = (e) => {
-        console.log("checkHtmlPrint currentHtml e ", currentHtml, e);
         if (currentHtml.current && currentHtml.current.html && currentHtml.current.html != "") {
             setTimeout(() => {
                 clickCapture()

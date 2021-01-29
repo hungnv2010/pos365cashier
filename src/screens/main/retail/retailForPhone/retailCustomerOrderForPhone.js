@@ -18,10 +18,11 @@ import { ApiPath } from '../../../../data/services/ApiPath';
 import { HTTPService } from '../../../../data/services/HttpService';
 import _, { map } from 'underscore';
 import dialogManager from '../../../../components/dialog/DialogManager';
+import { useDispatch, useSelector } from 'react-redux';
 
 export default (props) => {
 
-
+    const dispatch = useDispatch();
     const currentCommodity = useRef({})
     const [numberNewOrder, setNumberNewOrder] = useState(0)
     const [showModal, setShowModal] = useState(false)
@@ -381,7 +382,12 @@ export default (props) => {
     }
 
     const onClickPrint = () => {
-
+        hideMenu()
+        console.log("onClickProvisional jsonContent ", jsonContent);
+        // if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
+            jsonContent.RoomName = I18n.t('app_name');
+        // }
+        dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: true } })
     }
 
     const onClickOptionQuickPayment = () => {

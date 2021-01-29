@@ -8,7 +8,7 @@ import { Constant } from '../../../../common/Constant';
 import { currencyToString } from '../../../../common/Utils';
 import I18n from "../../../../common/language/i18n";
 import { Snackbar } from 'react-native-paper';
-import { useSelector } from 'react-redux';
+import { useSelector , useDispatch} from 'react-redux';
 import { ScreenList } from '../../../../common/ScreenList';
 import DialogProductDetail from '../../../../components/dialog/DialogProductDetail'
 import realmStore from '../../../../data/realm/RealmStore';
@@ -26,6 +26,7 @@ const TYPE_MODAL = {
 
 const RetailCustomerOrder = (props) => {
 
+    const dispatch = useDispatch();
     const [showModal, setShowModal] = useState(false)
     const [listOrder, setListOrder] = useState(() =>
         (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0)
@@ -421,7 +422,14 @@ const RetailCustomerOrder = (props) => {
         setIsQuickPayment(!isQuickPayment)
     }
 
-
+    const onClickPrint = () => {
+        hideMenu()
+        console.log("onClickProvisional jsonContent ", props.jsonContent);
+        // if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
+        //     jsonContent.RoomName = props.route.params.room.Name
+        // }
+        dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: props.jsonContent, provisional: true } })
+    }
 
     return (
         <View style={{ flex: 1 }}>
@@ -491,7 +499,7 @@ const RetailCustomerOrder = (props) => {
                         <View style={{
                             backgroundColor: "#fff", borderRadius: 4, marginHorizontal: 5,
                         }}>
-                            <TouchableOpacity onPress={() => { }} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
+                            <TouchableOpacity onPress={onClickPrint} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
                                 <MaterialIcons style={{ paddingHorizontal: 7 }} name="notifications" size={26} color={Colors.colorchinh} />
                                 <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('in_tam_tinh')}</Text>
                             </TouchableOpacity>
