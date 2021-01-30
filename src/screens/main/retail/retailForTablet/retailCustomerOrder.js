@@ -8,7 +8,7 @@ import { Constant } from '../../../../common/Constant';
 import { currencyToString } from '../../../../common/Utils';
 import I18n from "../../../../common/language/i18n";
 import { Snackbar } from 'react-native-paper';
-import { useSelector , useDispatch} from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { ScreenList } from '../../../../common/ScreenList';
 import DialogProductDetail from '../../../../components/dialog/DialogProductDetail'
 import realmStore from '../../../../data/realm/RealmStore';
@@ -17,6 +17,7 @@ import _, { map } from 'underscore';
 import { ApiPath } from '../../../../data/services/ApiPath';
 import { HTTPService } from '../../../../data/services/HttpService';
 import Entypo from 'react-native-vector-icons/Entypo';
+import dialogManager from '../../../../components/dialog/DialogManager';
 
 
 const TYPE_MODAL = {
@@ -402,11 +403,15 @@ const RetailCustomerOrder = (props) => {
     // }
 
     const onClickPayment = () => {
-        if (isQuickPayment) {
+        // if (isQuickPayment) {
 
-        } else {
+        // } else {
+        if (listOrder && listOrder.length > 0) {
             props.navigation.navigate(ScreenList.Payment, { onCallBack: onCallBackPayment, Screen: ScreenList.MainRetail, RoomId: props.jsonContent.RoomId, Name: props.jsonContent.RoomName ? props.jsonContent.RoomName : I18n.t('app_name'), Position: props.jsonContent.Pos });
+        } else {
+            dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
         }
+        // }
     }
 
 
@@ -425,10 +430,12 @@ const RetailCustomerOrder = (props) => {
     const onClickPrint = () => {
         hideMenu()
         console.log("onClickProvisional jsonContent ", props.jsonContent);
-        // if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
-        //     jsonContent.RoomName = props.route.params.room.Name
-        // }
-        dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: props.jsonContent, provisional: true } })
+        if (listOrder && listOrder.length > 0) {
+            props.jsonContent.RoomName = I18n.t('app_name');
+            dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: props.jsonContent, provisional: true } })
+        } else {
+            dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
+        }
     }
 
     return (

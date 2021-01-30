@@ -108,7 +108,6 @@ export default forwardRef((props, ref) => {
     }
 
     const printProvisional = async (jsonContent, checkProvisional = false) => {
-        numberLoop = 1;
         let setting = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
         if (setting && setting != "") {
             setting = JSON.parse(setting);
@@ -118,23 +117,20 @@ export default forwardRef((props, ref) => {
                     dialogManager.showPopupOneButton(I18n.t("ban_khong_co_quyen_su_dung_chuc_nang_nay"))
                     return;
                 }
-            } else {
-                if (setting.in_hai_lien_cho_hoa_don == true) {
-                    numberLoop = 2;
-                }
             }
         }
         let ipObject = await checkIP()
-        console.log("printProvisional jsonContent numberLoop ", jsonContent, numberLoop);
+        console.log("printProvisional jsonContent numberLoop ", jsonContent);
         if (ipObject.ip != "") {
             if (jsonContent.OrderDetails && jsonContent.OrderDetails.length > 0) {
-                for (let index = 0; index < numberLoop; index++) {
-                    let res = await printService.GenHtml(HtmlDefault, jsonContent)
-                    if (res && res != "") {
-                        isProvisional.current = true;
-                        let newRes = res.replace("</body>", "<p style='display: none;'>" + index.toString() + (new Date().getTime().toString()) + Math.floor((Math.random() * 1000000000) + 1) + "</p> </body>");
+                let res = await printService.GenHtml(HtmlDefault, jsonContent)
+                if (res && res != "") {
+                    isProvisional.current = true;
+                    let newRes = res.replace("</body>", "<p style='display: none;'>" + (new Date().getTime().toString()) + "</p> </body>");
+                    printService.listWaiting.push({ html: newRes, ip: ipObject.ip, size: ipObject.size })
+                    if (setting.in_hai_lien_cho_hoa_don == true) {
+                        newRes = res.replace("</body>", "<p style='display: none;'>" + (new Date().getTime().toString()) + Math.floor((Math.random() * 1000000000) + 1) + "</p> </body>");
                         printService.listWaiting.push({ html: newRes, ip: ipObject.ip, size: ipObject.size })
-
                     }
                 }
                 console.log("listWaiting ==== " + JSON.stringify(printService.listWaiting))
