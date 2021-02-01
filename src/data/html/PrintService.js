@@ -73,10 +73,10 @@ class PrintService {
                 HTMLBase = HTMLBase.replace("{Nhan_Vien}", vendorSession.CurrentUser.Name)
 
                 let partnerPhone = JsonContent.Partner && JsonContent.Partner.Phone ? JsonContent.Partner.Phone : ""
-                HTMLBase = HTMLBase.replace("{Dien_Thoai_Khach_Hang}", partnerPhone)
+                HTMLBase = HTMLBase.replace("{Dien_Thoai_Khach_Hang}", " " + partnerPhone)
                 let addressCustomer = JsonContent.Partner && JsonContent.Partner.Address ? JsonContent.Partner.Address : ""
                 let addressCustomerShow = addressCustomer != "" ? addressCustomer : "";
-                HTMLBase = HTMLBase.replace("{Dia_Chi_Khach_Hang}", addressCustomerShow)
+                HTMLBase = HTMLBase.replace("{Dia_Chi_Khach_Hang}", " " + addressCustomerShow)
 
                 HTMLBase = HTMLBase.replace("{Tong_Truoc_Chiet_Khau}", currencyToString(sum))
                 HTMLBase = HTMLBase.replace("{Chiet_Khau_Check}", JsonContent.Discount > 0 ? "style='visibility: unset;'" : "style='visibility: collapse; display: none'")

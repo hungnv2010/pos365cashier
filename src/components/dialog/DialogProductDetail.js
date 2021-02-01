@@ -203,7 +203,7 @@ export default (props) => {
                                 <Text style={{ fontSize: 14, flex: 3 }}>{I18n.t('don_gia')}</Text>
                                 <View style={{ alignItems: "center", flexDirection: "row", flex: 7, backgroundColor: "#D5D8DC" }}>
                                     <TextInput
-                                        style={{ padding: 7, flex: 1, fontSize: 14, borderWidth: 0.5, borderRadius: 4 }}
+                                        style={{ color: "#000", padding: 7, flex: 1, fontSize: 14, borderWidth: 0.5, borderRadius: 4 }}
                                         value={currencyToString(price)}
                                         onChangeText={text => {
                                             text = text.replace(/,/g, "");

@@ -138,8 +138,18 @@ export default (props) => {
     const onClickReturn = (item) => {
         console.log('onClickReturn ', item.Name, item.index);
         setItemOrder(item)
-        typeModal.current = TYPE_MODAL.DELETE
-        setShowModal(true)
+        // typeModal.current = TYPE_MODAL.DELETE
+        // setShowModal(true)
+        if (!vendorSession.Settings.ReturnHistory) {
+            typeModal.current = TYPE_MODAL.DELETE
+            setShowModal(true)
+        } else {
+            let data = {
+                QuantityChange: item.Quantity,
+                Description: "",
+            }
+            saveOrder(data, item);
+        }
     }
 
     const onClickTopping = (item, index) => {
@@ -322,7 +332,8 @@ export default (props) => {
 
 
 
-    const saveOrder = (data) => {
+    const saveOrder = (data, item) => {
+        let itemOrder = item;
         console.log('saveOrder data ', data, vendorSession.Settings.ReturnHistory, itemOrder);
         if (vendorSession.Settings.ReturnHistory) {
             let price = itemOrder.IsLargeUnit ? itemOrder.PriceLargeUnit : itemOrder.UnitPrice
@@ -527,7 +538,7 @@ export default (props) => {
                                         Quantity={itemOrder.Quantity}
                                         QuantitySubtract={QuantitySubtract}
                                         vendorSession={vendorSession}
-                                        getDataOnClick={(data) => saveOrder(data)}
+                                        getDataOnClick={(data) => saveOrder(data, itemOrder)}
                                         setShowModal={() => {
                                             setShowModal(false)
                                         }

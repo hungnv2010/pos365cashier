@@ -20,6 +20,7 @@ import _, { map } from 'underscore';
 import { ScreenList } from '../../../../common/ScreenList';
 import { currencyToString, dateToString } from '../../../../common/Utils';
 import moment from 'moment';
+import { log } from 'react-native-reanimated';
 
 export default (props) => {
 
@@ -64,10 +65,13 @@ export default (props) => {
 
             setJsonContent(jsonContentObject)
 
-            serverEvent.addListener((collection, changes) => {
+            serverEvent.addListener(async (collection, changes) => {
                 if ((changes.insertions.length || changes.modifications.length) && serverEvent[0].FromServer) {
                     currentServerEvent.current = JSON.parse(JSON.stringify(serverEvent[0]))
-                    setJsonContent(JSON.parse(serverEvent[0].JsonContent))
+                    let jsonTmp = JSON.parse(serverEvent[0].JsonContent)
+                    jsonTmp.OrderDetails = await addPromotion(jsonTmp.OrderDetails);
+                    console.log("jsonTmp ======= ", jsonTmp);
+                    setJsonContent(jsonTmp)
                 }
             })
 
@@ -189,12 +193,15 @@ export default (props) => {
     const addPromotion = async (list) => {
         console.log("addPromotion list ", list);
         console.log("addPromotion promotions ", promotions);
+        let promotionTmp = promotions
+        if (promotions.length == 0) {
+            let promotion = await realmStore.querryPromotion();
+            console.log("realmStore promotion === ", promotion);
+            promotionTmp = promotion
+            setPromotions(promotion)
+        }
         let listProduct = await realmStore.queryProducts()
         console.log("addPromotion listProduct:::: ", listProduct);
-        // promotion1 = promotion1.filtered(`Id == ${item.ProductId}`)
-        // promotion1 = JSON.parse(JSON.stringify(promotion1[0]));
-        // console.log("addPromotion promotion1:::: ", promotion1);
-
         let listNewOrder = list.filter(element => (element.IsPromotion == undefined || (element.IsPromotion == false)))
         let listOldPromotion = list.filter(element => (element.IsPromotion != undefined && (element.IsPromotion == true)))
         console.log("listNewOrder listOldPromotion ==:: ", listNewOrder, listOldPromotion);
@@ -250,12 +257,12 @@ export default (props) => {
         let listGroupByQuantity = DataGrouper.sum(listNewOrder, ["Id", "IsLargeUnit"])
 
         console.log("listGroupByQuantity === ", listGroupByQuantity);
-
+        console.log("promotionTmp ===== ", promotionTmp);
         let listPromotion = [];
         let index = 0;
         listGroupByQuantity.forEach(element => {
-            promotions.forEach(async (item) => {
-                if ((element.IsPromotion == undefined || (element.IsPromotion == false)) && element.Id == item.ProductId && checkEndDate(item.EndDate) && (item.IsLargeUnit == element.IsLargeUnit && element.Quantity >= item.QuantityCondition)) {
+            promotionTmp.forEach(async (item) => {
+                if ((element.IsPromotion == undefined || (element.IsPromotion == false)) && element.ProductId == item.ProductId && checkEndDate(item.EndDate) && (item.IsLargeUnit == element.IsLargeUnit && element.Quantity >= item.QuantityCondition)) {
                     let promotion = listProduct.filtered(`Id == ${item.ProductPromotionId}`)
                     promotion = JSON.parse(JSON.stringify(promotion[0]));
                     // let promotion = JSON.parse(item.Promotion)

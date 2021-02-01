@@ -461,6 +461,12 @@ export default (props) => {
             if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
                 jsonContent.RoomName = props.route.params.Name
             }
+            if (noteInfo != '') {
+                jsonContent.Description = noteInfo;
+            }
+            if (date && dateTmp.current) {
+                jsonContent.PurchaseDate = "" + date;
+            }
             dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: true } })
             timeClickPrevious = newDate;
         }
@@ -630,6 +636,12 @@ export default (props) => {
             jsonContent.RoomName = props.route.params.Name
         }
         jsonContent.PaymentCode = Code;
+        if (noteInfo != '') {
+            jsonContent.Description = noteInfo;
+        }
+        if (date && dateTmp.current) {
+            jsonContent.PurchaseDate = "" + date;
+        }
         console.log("printAfterPayment jsonContent 2 ", jsonContent);
         dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
     }
@@ -758,7 +770,8 @@ export default (props) => {
         if (currentServerEvent.current && update == true) {
             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
             dataManager.paymentSetServerEvent(serverEvent, jsonContent);
-            dataManager.subjectUpdateServerEvent.next(serverEvent)
+            if (isFNB)
+                dataManager.subjectUpdateServerEvent.next(serverEvent)
         }
     }
 
@@ -817,6 +830,16 @@ export default (props) => {
                     console.log("showDetailCustomer err ", err);
                 })
         }
+    }
+
+    const totalNumberProduct = () => {
+        let number = 0;
+        if (jsonContent.OrderDetails) {
+            jsonContent.OrderDetails.forEach(element => {
+                number += element.Quantity;
+            });
+        }
+        return number;
     }
 
     const renderFilter = () => {
@@ -1015,7 +1038,7 @@ export default (props) => {
                             <View style={styles.viewCustomer}>
                                 <Text style={{ flex: 3 }}>{I18n.t('khach_hang')}</Text>
                                 <TouchableOpacity onPress={addCustomer} style={styles.viewNameMethod}>
-                                    <Text ellipsizeMode="tail" numberOfLines={1} style={{ marginLeft: 5, flex: 1 }}>{customer.Name}</Text>
+                                    <Text ellipsizeMode="tail" numberOfLines={1} style={{ marginLeft: 5, flex: 1 }}>{customer.Name} {customer.Phone ? "-" : ""} {customer.Phone}</Text>
                                     <SimpleLineIcons style={{ marginRight: 5 }} name="user" size={15} color="gray" />
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={showDetailCustomer} style={{ padding: 10, marginRight: -10 }} >
@@ -1050,7 +1073,7 @@ export default (props) => {
                         <Surface style={styles.surface}>
                             <View style={styles.viewTextExcessCash}>
                                 <Text style={{ flex: 3 }}>{I18n.t('tong_thanh_tien')}</Text>
-                                <Text style={styles.textQuantity}>{jsonContent.OrderDetails ? jsonContent.OrderDetails.length : 0}</Text>
+                                <Text style={styles.textQuantity}>{totalNumberProduct()}</Text>
                                 <Text style={{ flex: 5.3, textAlign: "right" }}>{currencyToString(totalPrice)}</Text>
                             </View>
                         </Surface>
@@ -1140,7 +1163,7 @@ export default (props) => {
                                 <Text style={{ flex: 4, textAlign: "right", color: jsonContent.ExcessCash > 0 ? "green" : "red" }}>{currencyToString(jsonContent.ExcessCash)}</Text>
                             </View>
                             {
-                                (jsonContent.ExcessCash >= 0 && (customer && customer.Id && customer.Id != "")) ?
+                                (jsonContent.ExcessCash >= 0 && (customer && customer.Id && customer.Id != "") && jsonContent.ExcessCash > 0) ?
                                     <View style={styles.viewExcessCash}>
                                         <TouchableOpacity onPress={() => onSelectExcess(true)} style={styles.viewRadioButton}>
                                             <RadioButton.Android
@@ -1254,7 +1277,7 @@ const styles = StyleSheet.create({
     viewBottom: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
     viewExcessCash: { flexDirection: "row", justifyContent: "flex-end", marginRight: 10 },
     viewRadioButton: { flexDirection: "row", alignItems: "center" },
-    viewFilter: { backgroundColor: "#fff", padding: 15, height: Metrics.screenHeight * 0.7, borderRadius: 4 },
+    viewFilter: { backgroundColor: "#fff", padding: 15, maxHeight: Metrics.screenHeight * 0.7, borderRadius: 4 },
     titleFilter: { paddingBottom: 10, fontWeight: "bold", textTransform: "uppercase", color: colors.colorLightBlue, textAlign: "left", width: "100%" },
     buttonAddAcount: { flex: 3, padding: 10, paddingTop: 5, color: colors.colorchinh },
     viewBottomFilter: { justifyContent: "center", flexDirection: "row", paddingTop: 10 },

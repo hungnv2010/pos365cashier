@@ -45,6 +45,7 @@ export default (props) => {
 
     const getData = async () => {
         let orderOffline = await realmStore.queryOrdersOffline()
+        orderOffline.reverse()
         console.log("useEffect orderOffline ", orderOffline);
         setDataList(orderOffline)
         setListRefreshing(false);
