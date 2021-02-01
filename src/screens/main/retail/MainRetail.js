@@ -56,14 +56,20 @@ const MainRetail = (props) => {
 
     useEffect(() => {
         console.log('jsonContent.Partner', jsonContent.Partner);
-        if (jsonContent.Partner && jsonContent.Partner.Id && jsonContent.Partner.Id != currentCustomer.Id) setCurrentCustomer(jsonContent.Partner)
+        if (jsonContent.Partner && jsonContent.Partner.Id) {
+            if (jsonContent.Partner.Id == currentCustomer.Id) return
+            setCurrentCustomer(jsonContent.Partner)
+        }
         else setCurrentCustomer({ Name: "khach_le", Id: 0 })
 
     }, [jsonContent.Partner])
 
     useEffect(() => {
         console.log('jsonContent.PriceBook', jsonContent.PriceBook);
-        if (jsonContent.PriceBook && jsonContent.PriceBook.Id && jsonContent.PriceBook.Id != currentPriceBook.Id) setCurrentPriceBook(jsonContent.PriceBook)
+        if (jsonContent.PriceBook && jsonContent.PriceBook.Id) {
+            if (jsonContent.PriceBook.Id == currentPriceBook.Id) return
+            setCurrentPriceBook(jsonContent.PriceBook)
+        }
         else setCurrentPriceBook({ Name: "gia_niem_yet", Id: 0 })
     }, [jsonContent.PriceBook])
 
