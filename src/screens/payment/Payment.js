@@ -461,7 +461,7 @@ export default (props) => {
             if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
                 jsonContent.RoomName = props.route.params.Name
             }
-            dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: jsonContent })
+            dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: true } })
             timeClickPrevious = newDate;
         }
     }
@@ -631,7 +631,7 @@ export default (props) => {
         }
         jsonContent.PaymentCode = Code;
         console.log("printAfterPayment jsonContent 2 ", jsonContent);
-        dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: jsonContent })
+        dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
     }
 
     const handlerQRCode = async (order) => {

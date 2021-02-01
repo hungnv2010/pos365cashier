@@ -48,7 +48,7 @@ export default (props) => {
   useEffect(() => {
     if (printProvisional != "") {
       console.log("useEffect ===== printProvisional ", printProvisional);
-      viewPrintRef.current.printProvisionalRef(printProvisional, true)
+      viewPrintRef.current.printProvisionalRef(printProvisional.jsonContent, printProvisional.provisional)
       dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: "" })
     }
   }, [printProvisional])

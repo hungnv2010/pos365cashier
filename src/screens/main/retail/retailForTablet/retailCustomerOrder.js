@@ -8,7 +8,7 @@ import { Constant } from '../../../../common/Constant';
 import { currencyToString } from '../../../../common/Utils';
 import I18n from "../../../../common/language/i18n";
 import { Snackbar } from 'react-native-paper';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { ScreenList } from '../../../../common/ScreenList';
 import DialogProductDetail from '../../../../components/dialog/DialogProductDetail'
 import realmStore from '../../../../data/realm/RealmStore';
@@ -17,6 +17,7 @@ import _, { map } from 'underscore';
 import { ApiPath } from '../../../../data/services/ApiPath';
 import { HTTPService } from '../../../../data/services/HttpService';
 import Entypo from 'react-native-vector-icons/Entypo';
+import dialogManager from '../../../../components/dialog/DialogManager';
 
 
 const TYPE_MODAL = {
@@ -26,6 +27,7 @@ const TYPE_MODAL = {
 
 const RetailCustomerOrder = (props) => {
 
+    const dispatch = useDispatch();
     const [showModal, setShowModal] = useState(false)
     const [listOrder, setListOrder] = useState(() =>
         (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0)
@@ -401,11 +403,15 @@ const RetailCustomerOrder = (props) => {
     // }
 
     const onClickPayment = () => {
-        if (isQuickPayment) {
+        // if (isQuickPayment) {
 
-        } else {
+        // } else {
+        if (listOrder && listOrder.length > 0) {
             props.navigation.navigate(ScreenList.Payment, { onCallBack: onCallBackPayment, Screen: ScreenList.MainRetail, RoomId: props.jsonContent.RoomId, Name: props.jsonContent.RoomName ? props.jsonContent.RoomName : I18n.t('app_name'), Position: props.jsonContent.Pos });
+        } else {
+            dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
         }
+        // }
     }
 
 
@@ -421,7 +427,16 @@ const RetailCustomerOrder = (props) => {
         setIsQuickPayment(!isQuickPayment)
     }
 
-
+    const onClickPrint = () => {
+        hideMenu()
+        console.log("onClickProvisional jsonContent ", props.jsonContent);
+        if (listOrder && listOrder.length > 0) {
+            props.jsonContent.RoomName = I18n.t('app_name');
+            dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: props.jsonContent, provisional: true } })
+        } else {
+            dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
+        }
+    }
 
     return (
         <View style={{ flex: 1 }}>
@@ -491,7 +506,7 @@ const RetailCustomerOrder = (props) => {
                         <View style={{
                             backgroundColor: "#fff", borderRadius: 4, marginHorizontal: 5,
                         }}>
-                            <TouchableOpacity onPress={() => { }} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
+                            <TouchableOpacity onPress={onClickPrint} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
                                 <MaterialIcons style={{ paddingHorizontal: 7 }} name="notifications" size={26} color={Colors.colorchinh} />
                                 <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('in_tam_tinh')}</Text>
                             </TouchableOpacity>

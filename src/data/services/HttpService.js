@@ -21,6 +21,8 @@ export var URL = { link: "https://oke.pos365.vn/" };
 
 export var index401 = 0;
 
+var showMessage = true;
+
 export class HTTPService {
 
     _api = URL.link;
@@ -28,7 +30,7 @@ export class HTTPService {
 
     HTTP_OK = 200 | 204;
 
-    showMessage = true;
+    
 
     constructor() {
 
@@ -45,7 +47,7 @@ export class HTTPService {
 
     setPath(path, showMessage = true) {
         this._path = this._api + path;
-        this.showMessage = showMessage;
+        showMessage = showMessage;
         return this
     }
 
