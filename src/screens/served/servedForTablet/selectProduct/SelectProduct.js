@@ -29,7 +29,7 @@ export default (props) => {
   useEffect(() => {
     const getSearchResult = async () => {
 
-      if (debouncedVal) {
+      if (debouncedVal != '') {
         setHasProducts(false)
         setIsSearching(true)
         count.current = 0
@@ -111,7 +111,7 @@ export default (props) => {
 
 
   const onClickCate = async (item, index) => {
-    if (item.Id == listCateId[0]) return
+    if (item.Id == listCateId[0] && item.Id != -1) return
     setHasProducts(false)
     resetState()
     setListCateId([item.Id])

@@ -193,19 +193,22 @@ export default (props) => {
                 setShowModal(true)
             }, 300);
         } else {
+            // let price = product.IsLargeUnit == true ? product.PriceLargeUnit : product.UnitPrice
+            // let discount = product.Percent ? (price * product.Discount / 100) : product.Discount
             let price = product.IsLargeUnit == true ? product.PriceLargeUnit : product.UnitPrice
             let discount = product.Percent ? (price * product.Discount / 100) : product.Discount
+            discount = discount > price ? price : discount
+            let discountRatio = product.Percent ? product.Discount : product.Discount / price * 100
             listOrder.forEach((elm, index, arr) => {
                 if (elm.ProductId == product.ProductId && index == product.index) {
                     if (product.Quantity == 0) {
                         arr.splice(index, 1)
                     }
-                    if (product.Percent) {
-                        elm.DiscountRatio = product.Discount
-                    }
+                    elm.DiscountRatio = discountRatio
                     elm.Quantity = product.Quantity
                     elm.Description = product.Description
-                    elm.Discount = discount - price > 0 ? price : discount
+                    elm.Discount = discount
+                    elm.Name = product.Name
                     elm.Price = product.Price
                     elm.IsLargeUnit = product.IsLargeUnit
 

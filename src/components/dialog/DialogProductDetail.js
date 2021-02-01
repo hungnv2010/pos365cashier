@@ -12,6 +12,8 @@ import DatePicker from 'react-native-date-picker';
 import useDidMountEffect from '../../customHook/useDidMountEffect';
 import { ApiPath } from '../../data/services/ApiPath';
 import { HTTPService } from '../../data/services/HttpService';
+import { getFileDuLieuString } from '../../data/fileStore/FileStorage';
+import { Constant } from '../../common/Constant';
 
 const TYPE_MODAL = {
     DEFAULT: 1,
@@ -32,6 +34,10 @@ export default (props) => {
     const [date, setDate] = useState(new Date());
     const LargePrice = useRef(props.item.PriceLargeUnit)
     const UnitPrice = useRef(props.item.UnitPrice)
+    const [productName, setProductName] = useState(props.item.Name)
+    const [allowChangeNameProduct, setAllowChangeNameProduct] = useState(false)
+    const [allowChangePriceProduct, setAllowChangePriceProduct] = useState(false)
+
 
     useEffect(() => {
         console.log('itemOrderitemOrder', props.item, props.priceBookId);
@@ -61,20 +67,30 @@ export default (props) => {
                 })
             }
         }
+        const getSetting = async () => {
+            let data = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
+            console.log("setting data", JSON.parse(data));
+            data = JSON.parse(data)
+            if (data) {
+                setAllowChangeNameProduct(data.cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang)
+                setAllowChangePriceProduct(data.cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang)
 
+            }
+        }
         getListQuickNote()
         getOtherPrice()
+        getSetting()
     }, [])
 
 
     useDidMountEffect(() => {
-        let price = (itemOrder.IsLargeUnit == true ? LargePrice.current : UnitPrice.current) + itemOrder.TotalTopping
+        let price = (itemOrder.IsLargeUnit == true ? LargePrice.current : UnitPrice.current)
         let totalDiscount = percent ? price * discount / 100 : discount
-        setPrice(price - totalDiscount > 0 ? price - totalDiscount : 0)
+        setPrice((price - totalDiscount > 0 ? price - totalDiscount : 0) + itemOrder.TotalTopping)
     }, [discount])
 
     useDidMountEffect(() => {
-        let price = (itemOrder.IsLargeUnit == true ? LargePrice.current : UnitPrice.current) + itemOrder.TotalTopping
+        let price = (itemOrder.IsLargeUnit == true ? LargePrice.current : UnitPrice.current)
         let newDiscount = percent ? discount / price * 100 : discount * price / 100
         setDiscount(newDiscount)
     }, [percent])
@@ -84,7 +100,7 @@ export default (props) => {
     }, [IsLargeUnit])
 
     const onClickOk = () => {
-        props.onClickSubmit({ ...itemOrder, Discount: discount, Percent: percent, Price: price })
+        props.onClickSubmit({ ...itemOrder, Discount: discount, Percent: percent, Price: price, IsLargeUnit, Name: productName })
         props.setShowModal(false)
     }
 
@@ -94,7 +110,6 @@ export default (props) => {
     }
 
     const selectRadioButton = (status) => {
-        itemOrder.IsLargeUnit = status;
         setIsLargeUnit(status)
         if (status) {
             setPrice(LargePrice.current + itemOrder.TotalTopping)
@@ -137,7 +152,14 @@ export default (props) => {
     return (
         <View>
             <View style={{ backgroundColor: Colors.colorchinh, borderTopRightRadius: 4, borderTopLeftRadius: 4, }}>
-                <Text style={{ margin: 5, textTransform: "uppercase", fontSize: 15, fontWeight: "bold", marginLeft: 20, marginVertical: 20, color: "#fff" }}>{itemOrder.Name}</Text>
+                <TextInput
+                    style={{ margin: 5, textTransform: "uppercase", fontSize: 15, fontWeight: "bold", marginLeft: 20, marginVertical: 20, color: "#fff" }}
+                    value={productName}
+                    editable={allowChangeNameProduct}
+                    onChangeText={(text) => {
+                        setProductName(text)
+                    }}>
+                </TextInput>
             </View>
             {
                 typeModal == TYPE_MODAL.OPEN_DATE || typeModal == TYPE_MODAL.OPEN_TIME ?
@@ -205,6 +227,7 @@ export default (props) => {
                                     <TextInput
                                         style={{ padding: 7, flex: 1, fontSize: 14, borderWidth: 0.5, borderRadius: 4 }}
                                         value={currencyToString(price)}
+                                        editable={allowChangePriceProduct}
                                         onChangeText={text => {
                                             text = text.replace(/,/g, "");
                                             if (isNaN(text)) return
@@ -262,6 +285,7 @@ export default (props) => {
                                     <TextInput
                                         returnKeyType='done'
                                         keyboardType="numeric"
+                                        editable={allowChangePriceProduct}
                                         value={currencyToString(discount)}
                                         onChangeText={text => {
                                             text = text.replace(/,/g, "");

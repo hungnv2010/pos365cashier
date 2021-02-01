@@ -394,16 +394,17 @@ const Served = (props) => {
                                 jsonContent.OrderDetails.forEach((product) => {
                                     res.PriceList.forEach((priceBook) => {
                                         if (priceBook.ProductId == product.ProductId) {
-                                            let basePrice = product.IsLargeUnit ? product.PriceLargeUnit : product.UnitPrice
-                                            let hasDiscount = product.Discount != 0 || product.DiscountRatio != 0
-                                            if (product.Price - product.TotalTopping != basePrice && hasDiscount) {
-                                                product.DiscountRatio = 0.0
-                                                product.Discount = 0
-                                                if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
-                                                if (!priceBook.Price) priceBook.Price = product.UnitPrice
-                                                let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price
-                                                product.Price = newBasePrice + product.TotalTopping
-                                            }
+                                            // let basePrice = product.IsLargeUnit ? product.PriceLargeUnit : product.UnitPrice
+                                            // let hasDiscount = product.Discount != 0 || product.DiscountRatio != 0
+                                            // if (product.Price - product.TotalTopping != basePrice && hasDiscount) {
+
+                                            // }
+                                            product.DiscountRatio = 0.0
+                                            product.Discount = 0
+                                            if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
+                                            if (!priceBook.Price) priceBook.Price = product.UnitPrice
+                                            let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price
+                                            product.Price = newBasePrice + product.TotalTopping
                                         }
                                     })
                                 })

@@ -60,6 +60,7 @@ const CustomerOrder = (props) => {
             console.log('ReturnProduct data', JSON.parse(data));
             setVendorSession(JSON.parse(data))
         }
+
         getVendorSession()
         var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
         var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
@@ -151,13 +152,15 @@ const CustomerOrder = (props) => {
         } else {
             let price = product.IsLargeUnit == true ? product.PriceLargeUnit : product.UnitPrice
             let discount = product.Percent ? (price * product.Discount / 100) : product.Discount
+            discount = discount > price ? price : discount
+            let discountRatio = product.Percent ? product.Discount : product.Discount / price * 100
             listOrder.forEach((elm, index, arr) => {
                 if (elm.ProductId == product.ProductId && index == product.index) {
-                    elm.DiscountRatio = product.Percent ? product.Discount :
-                        elm.Quantity = product.Quantity
-
+                    elm.DiscountRatio = discountRatio
+                    elm.Quantity = product.Quantity
+                    elm.Name = product.Name
                     elm.Description = product.Description
-                    elm.Discount = discount - price > 0 ? price : discount
+                    elm.Discount = discount
                     elm.Price = product.Price
                     elm.IsLargeUnit = product.IsLargeUnit
                     props.outputSelectedProduct(elm, true)

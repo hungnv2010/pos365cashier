@@ -25,6 +25,8 @@ export default {
   bay_ngay: "7 days",
   bao_che_bien: "Print cook",
   ban_co_chac_chan_muon_xoa_hoa_don: "Are you sure you want to delete this order?",
+  ban_co_muon_luu_thay_doi_khong: "Do you want to save your changes?",
+
 
   // TODO: C
   cai_dat: "Setting",
@@ -131,6 +133,8 @@ export default {
   ket_qua_ban_hang: "Sales results",
   khuyen_mai: "Promotion",
   khong_tim_thay_hoa_don_nao_phu_hop: "No matching invoice was found",
+  khong: "No",
+
 
 
   // TODO: H
@@ -335,12 +339,12 @@ export default {
   don_vi_tien_te: "Currency unit",
   dollar_my: "Dollar",
   dia_chi: "Address",
-  don_vi_tinh:'Unit',
-  dich_vu:'Service',
-  don_vi_tinh_lon_va_cac_thong_so_khac:'Large unit and other',
-  don_vi_tinh_lon:'Large unit',
-  doi_tac:'Partner',
-  don_hang_cho_thanh_toan:"Commodity waiting for payment",
+  don_vi_tinh: 'Unit',
+  dich_vu: 'Service',
+  don_vi_tinh_lon_va_cac_thong_so_khac: 'Large unit and other',
+  don_vi_tinh_lon: 'Large unit',
+  doi_tac: 'Partner',
+  don_hang_cho_thanh_toan: "Commodity waiting for payment",
 
   giu_man_hinh_luon_sang: "Keep the screen on",
   gia: "Price",
@@ -370,7 +374,7 @@ export default {
   khong_cho_phep_ban_hang_khi_het_ton_kho: "Sales are not allowed when out of stock?",
   khong_in: "Don't print",
   khong_hien_thi: "Not displayed",
-  khong_co_ket_noi:'No connection',
+  khong_co_ket_noi: 'No connection',
 
   link_dang_nhap: "Link login",
   ly_do: "Reason",
@@ -393,9 +397,9 @@ export default {
   ma_san_pham: 'Product code',
   ma_voucher: 'Code',
 
-  ma_hang_ma_sku_ma_vach:'Product code',
-  ma_dvt_lon:'Large unit code',
-  may_tinh:'Calculator',
+  ma_hang_ma_sku_ma_vach: 'Product code',
+  ma_dvt_lon: 'Large unit code',
+  may_tinh: 'Calculator',
   nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: "Receive messages / notifications from waiter, manager?",
   nhap_so_luong_the: "Enter the number of cards",
   nhap_dia_chi_ip_may: "Enter the IP address of the machine ",
@@ -431,15 +435,15 @@ export default {
   thanh_tien: 'Total',
   thanh_toan_vnpaypos_qua_may_pos: "VNPAY-POS payment via POS machine?",
   them_moi_voucher: "Add new voucher",
-  thiet_lap_khung_gio_dac_biet:"Set special time frame",
-  ton_kho:'Inventory',
-  them_moi_nhom_hang_hoa:'Add new category',
-  tao_nhom:'Create group',
-  tinh_theo_phan_tram:'Account by %',
-  thanh_phan_combo:"Combo Components",
-  them_moi_phieu_thu_chi:"Add new Cash flow",
-  tra_lai_tien:'Give money back',
-  tien_thieu:'Missing money',
+  thiet_lap_khung_gio_dac_biet: "Set special time frame",
+  ton_kho: 'Inventory',
+  them_moi_nhom_hang_hoa: 'Add new category',
+  tao_nhom: 'Create group',
+  tinh_theo_phan_tram: 'Account by %',
+  thanh_phan_combo: "Combo Components",
+  them_moi_phieu_thu_chi: "Add new Cash flow",
+  tra_lai_tien: 'Give money back',
+  tien_thieu: 'Missing money',
 
   vnd: "VND",
   voucher: "Voucher",
