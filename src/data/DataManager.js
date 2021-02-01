@@ -279,8 +279,9 @@ class DataManager {
     calculatateJsonContent = (JsonContent) => {
         let totalProducts = this.totalProducts(JsonContent.OrderDetails)
         let discount = totalProducts * JsonContent.DiscountRatio / 100
-        // let discount = this.totalDiscountProducts(JsonContent.OrderDetails)
-        let totalWithVAT = totalProducts + (JsonContent.VAT ? JsonContent.VAT : 0)
+        let totalVat = (totalProducts-discount) * JsonContent.VATRates / 100
+        let totalWithVAT = totalProducts + totalVat
+        JsonContent.VAT = totalVat
         JsonContent.Total = totalWithVAT - discount
         // JsonContent.Total = totalWithVAT
         JsonContent.AmountReceived = JsonContent.Total

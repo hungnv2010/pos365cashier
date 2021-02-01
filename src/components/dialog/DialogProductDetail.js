@@ -285,7 +285,6 @@ export default (props) => {
                                     <TextInput
                                         returnKeyType='done'
                                         keyboardType="numeric"
-                                        editable={allowChangePriceProduct}
                                         value={currencyToString(discount)}
                                         onChangeText={text => {
                                             text = text.replace(/,/g, "");

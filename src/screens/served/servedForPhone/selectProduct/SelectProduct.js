@@ -362,7 +362,7 @@ export default (props) => {
               width: Metrics.screenWidth * 0.9,
             }}>
               <View style={{ paddingHorizontal: 20, paddingVertical: 10 }}>
-                <Text style={{ fontSize: 20, fontWeight: "bold", paddingVertical: 15, textTransform:"uppercase" }}>{I18n.t('thong_bao')}</Text>
+                <Text style={{ fontSize: 20, fontWeight: "bold", paddingVertical: 15, textTransform: "uppercase" }}>{I18n.t('thong_bao')}</Text>
                 <Text style={{ fontSize: 15, paddingVertical: 10, paddingBottom: 20 }}>{I18n.t('ban_co_muon_luu_thay_doi_khong')}</Text>
                 <View style={{ flexDirection: "row", justifyContent: "space-around", alignItems: "center", paddingBottom: 15 }}>
                   <TouchableOpacity
@@ -371,7 +371,7 @@ export default (props) => {
                       setShowModal(false)
                     }}
                   >
-                    <Text style={{ fontSize: 16, textTransform: "uppercase" }}>{I18n.t('huy')}</Text>
+                    <Text style={{ fontSize: 13, fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('huy')}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={{ padding: 10, borderRadius: 5, width: Metrics.screenWidth * 0.2, alignItems: "center", backgroundColor: Colors.colorPhu }}
@@ -379,7 +379,7 @@ export default (props) => {
                       props.navigation.goBack();
                     }}
                   >
-                    <Text style={{ fontSize: 16, textTransform: "uppercase", color: "white" }}>{I18n.t('khong')}</Text>
+                    <Text style={{ fontSize: 13, fontWeight: "bold", textTransform: "uppercase", color: "white" }}>{I18n.t('khong')}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={{ padding: 10, borderRadius: 5, width: Metrics.screenWidth * 0.2, alignItems: "center", backgroundColor: Colors.colorchinh }}
@@ -387,7 +387,7 @@ export default (props) => {
                       onClickDone()
                     }}
                   >
-                    <Text style={{ fontSize: 16, textTransform: "uppercase", color: "white" }}>{I18n.t('dong_y')}</Text>
+                    <Text style={{ fontSize: 13, fontWeight: "bold", textTransform: "uppercase", color: "white" }}>{I18n.t('dong_y')}</Text>
                   </TouchableOpacity>
                 </View>
               </View>

@@ -180,119 +180,7 @@ export default (props) => {
         updateServerEvent({ ...jsonContent })
     }
 
-    // const setDataOrder = async (listOrder) => {
-    //     let list = [];
-    //     if (listOrder != undefined && listOrder.length > 0)
-    //         list = await addPromotion([...listOrder])
-    //     console.log("setDataOrder listOrder list ", listOrder, list);
-
-    //     setListOrder([...list])
-    //     updateServerEvent([...listOrder])
-
-    // }
-
-    // const addPromotion = async (list) => {
-    //     console.log("addPromotion list ", list);
-    //     console.log("addPromotion promotions ", promotions);
-    //     let listProduct = await realmStore.queryProducts()
-    //     let listNewOrder = list.filter(element => (element.IsPromotion == undefined || (element.IsPromotion == false)))
-    //     let listOldPromotion = list.filter(element => (element.IsPromotion != undefined && (element.IsPromotion == true)))
-    //     console.log("listNewOrder listOldPromotion ==:: ", listNewOrder, listOldPromotion);
-
-    //     var DataGrouper = (function () {
-    //         var has = function (obj, target) {
-    //             return _.any(obj, function (value) {
-    //                 return _.isEqual(value, target);
-    //             });
-    //         };
-
-    //         var keys = function (data, names) {
-    //             return _.reduce(data, function (memo, item) {
-    //                 var key = _.pick(item, names);
-    //                 if (!has(memo, key)) {
-    //                     memo.push(key);
-    //                 }
-    //                 return memo;
-    //             }, []);
-    //         };
-
-    //         var group = function (data, names) {
-    //             var stems = keys(data, names);
-    //             return _.map(stems, function (stem) {
-    //                 return {
-    //                     key: stem,
-    //                     vals: _.map(_.where(data, stem), function (item) {
-    //                         return _.omit(item, names);
-    //                     })
-    //                 };
-    //             });
-    //         };
-
-    //         group.register = function (name, converter) {
-    //             return group[name] = function (data, names) {
-    //                 return _.map(group(data, names), converter);
-    //             };
-    //         };
-
-    //         return group;
-    //     }());
-
-    //     DataGrouper.register("sum", function (item) {
-    //         console.log("register item ", item);
-
-    //         return _.extend({ ...item.vals[0] }, item.key, {
-    //             Quantity: _.reduce(item.vals, function (memo, node) {
-    //                 return memo + Number(node.Quantity);
-    //             }, 0)
-    //         });
-    //     });
-
-    //     let listGroupByQuantity = DataGrouper.sum(listNewOrder, ["Id", "IsLargeUnit"])
-
-    //     console.log("listGroupByQuantity === ", listGroupByQuantity);
-
-    //     let listPromotion = [];
-    //     let index = 0;
-    //     listGroupByQuantity.forEach(element => {
-    //         promotions.forEach(async (item) => {
-    //             console.log("addPromotion item1:::: ", element.Id, item.ProductId);
-    //             console.log("addPromotion item2:::: ", (item.IsLargeUnit == element.IsLargeUnit && element.Quantity >= item.QuantityCondition));
-    //             if ((element.IsPromotion == undefined || (element.IsPromotion == false)) && element.Id == item.ProductId && checkEndDate(item.EndDate) && (item.IsLargeUnit == element.IsLargeUnit && element.Quantity >= item.QuantityCondition)) {
-    //                 let promotion = listProduct.filtered(`Id == ${item.ProductPromotionId}`)
-    //                 promotion = JSON.parse(JSON.stringify(promotion[0]));
-    //                 console.log("addPromotion item:::: ", promotion);
-    //                 if (index == 0) {
-    //                     promotion.FisrtPromotion = true;
-    //                 }
-
-    //                 let quantity = Math.floor(element.Quantity / item.QuantityCondition)
-    //                 promotion.Quantity = quantity
-
-    //                 if (listOldPromotion.length > 0) {
-    //                     let oldPromotion = listOldPromotion.filter(el => promotion.Id == el.Id)
-    //                     if (oldPromotion.length == 1) {
-    //                         promotion = oldPromotion[0];
-    //                         promotion.Quantity = quantity;
-    //                     }
-    //                 }
-
-    //                 promotion.Price = item.PricePromotion;
-    //                 promotion.IsLargeUnit = item.ProductPromotionIsLargeUnit;
-    //                 promotion.IsPromotion = true;
-    //                 promotion.ProductId = promotion.Id
-    //                 promotion.Description = element.Quantity + " " + element.Name + ` ${I18n.t('khuyen_mai_')} ` + Math.floor(element.Quantity / item.QuantityCondition);
-
-    //                 console.log("addPromotion promotion ", promotion, index);
-    //                 listPromotion.push(promotion)
-    //                 index++;
-    //             }
-    //         });
-    //     });
-    //     console.log("addPromotion listPromotion:: ", listPromotion);
-    //     listNewOrder = listNewOrder.concat(listPromotion);
-    //     console.log("addPromotion listNewOrder::::: ", listNewOrder);
-    //     return listNewOrder;
-    // }
+  
 
     const addPromotion = async (list) => {
         console.log("addPromotion list ", list);
@@ -703,7 +591,7 @@ export default (props) => {
         // setJsonContent(type == 1 ? { ...jsonContent, OrderDetails: [] } : { ...data })
         // setListOrder([])
 
-        setJsonContent({ ...data })
+        updateServerEvent({ ...data })
     }
 
     const onClickPayment = () => {
