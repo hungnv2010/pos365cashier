@@ -140,7 +140,7 @@ export default (props) => {
         setItemOrder(item)
         // typeModal.current = TYPE_MODAL.DELETE
         // setShowModal(true)
-        if (!vendorSession.Settings.ReturnHistory) {
+        if (vendorSession.Settings.ReturnHistory) {
             typeModal.current = TYPE_MODAL.DELETE
             setShowModal(true)
         } else {

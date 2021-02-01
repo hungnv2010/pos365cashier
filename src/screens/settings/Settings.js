@@ -30,63 +30,72 @@ export const DefaultSetting = {
             title: 'may_in_thu_ngan',
             type: '',
             size: '',
-            ip: ''
+            ip: '',
+            show: true
         },
         {
             key: Constant.KEY_PRINTER.KitchenAKey,
             title: 'may_in_bao_bep_a',
             type: '',
             size: '',
-            ip: ''
+            ip: '',
+            show: true
         },
         {
             key: Constant.KEY_PRINTER.KitchenBKey,
             title: 'may_in_bao_bep_b',
             type: '',
             size: '',
-            ip: ''
+            ip: '',
+            show: true
         },
         {
             key: Constant.KEY_PRINTER.KitchenCKey,
             title: 'may_in_bao_bep_c',
             type: '',
             size: '',
-            ip: ''
+            ip: '',
+            show: true
         },
         {
             key: Constant.KEY_PRINTER.KitchenDKey,
             title: 'may_in_bao_bep_d',
             type: '',
             size: '',
-            ip: ''
+            ip: '',
+            show: true
         },
         {
             key: Constant.KEY_PRINTER.BartenderAKey,
             title: 'may_in_bao_pha_che_a',
             type: '',
             size: '',
-            ip: ''
+            ip: '',
+            show: true
         },
         {
             key: Constant.KEY_PRINTER.BartenderBKey,
             title: 'may_in_bao_pha_che_b',
             type: '',
             size: '',
-            ip: ''
+            ip: '',
+            show: true
         },
         {
             key: Constant.KEY_PRINTER.BartenderCKey,
             title: 'may_in_bao_pha_che_c',
             type: '',
             size: '',
-            ip: ''
+            ip: '',
+            show: true
         },
         {
             key: Constant.KEY_PRINTER.BartenderDKey,
             title: 'may_in_bao_pha_che_d',
             type: '',
             size: '',
-            ip: ''
+            ip: '',
+            show: true
         },
         // {
         //     key: Constant.KEY_PRINTER.StampPrintKey,
@@ -128,20 +137,40 @@ export default (props) => {
         name: 'VND',
         value: 'đ'
     }
-
+    const { printerObject, isFNB } = useSelector(state => {
+        return state.Common
+    });
     const [settingObject, setSettingObject] = useState(DefaultSetting)
     const [inforStore, setInforStore] = useState({})
     useFocusEffect(useCallback(() => {
         const getSetting = async () => {
+
+
+
             let data = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
             console.log("setting data", JSON.parse(data));
-            let res = await new HTTPService().setPath(ApiPath.VENDOR_SESSION).GET()
-            setSettingObject(JSON.parse(data))
-            if (res.length != 0)
-                setSettingObject({ ...JSON.parse(data), strings: res.Settings })
-            console.log("setting object", settingObject);
+            if (data != "") {
+                data = JSON.parse(data);
+                data.Printer.forEach(element => {
+                    if (isFNB || element.key == Constant.KEY_PRINTER.CashierKey) {
+                        element.show = true;
+                    } else {
+                        element.show = false;
+                    }
+                });
+                setSettingObject({ ...data })
 
-
+            } else {
+                DefaultSetting.Printer.forEach(element => {
+                    if (isFNB || element.key == Constant.KEY_PRINTER.CashierKey) {
+                        element.show = true;
+                    } else {
+                        element.show = false;
+                    }
+                });
+                console.log("{ ...data, Printer: printer }2 ", { ...DefaultSetting, Printer: printer });
+                setSettingObject({ ...DefaultSetting })
+            }
         }
 
         getSetting()
@@ -156,9 +185,7 @@ export default (props) => {
         }
         getCurentRetailer()
     }, []))
-    const printerObject = useSelector(state => {
-        return state.Common.printerObject
-    });
+
     useEffect(() => {
         console.log("Printer Object", (printerObject));
     }, [settingObject])
@@ -392,11 +419,14 @@ export default (props) => {
                     <View>
                         <Text style={styles.textTitle}>Print Connect</Text>
                         {
-                            settingObject.Printer.map((item, index) => {
-                                return (
-                                    <PrintConnect key={index.toString()} title={I18n.t(item.title)} onSet={index == 9 ? onShowModalStampPrint : onShowModal} stylePrinter={(item.type ? I18n.t(item.type) : I18n.t('khong_in')) + (item.size ? ', size ' + item.size + ' mm ' : '') + (item.ip ? '(' + item.ip + ')' : '')} pos={index} status={showModal} />
-                                )
-                            })
+                            settingObject.Printer && settingObject.Printer.length > 0 ?
+                                settingObject.Printer.map((item, index) => {
+                                    if (item.show)
+                                        return (
+                                            <PrintConnect key={index.toString()} title={I18n.t(item.title)} onSet={index == 9 ? onShowModalStampPrint : onShowModal} stylePrinter={(item.type ? I18n.t(item.type) : I18n.t('khong_in')) + (item.size ? ', size ' + item.size + ' mm ' : '') + (item.ip ? '(' + item.ip + ')' : '')} pos={index} status={showModal} />
+                                        )
+                                })
+                                : null
                         }
                     </View>
                     <View style={styles.viewLine}></View>

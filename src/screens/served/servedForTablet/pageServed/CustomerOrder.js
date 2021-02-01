@@ -195,11 +195,23 @@ const CustomerOrder = (props) => {
     const onClickReturn = (product, type = 1) => {
         setQuantitySubtract(type != 1 ? 1 : product.Quantity)
         setItemOrder(product)
-        typeModal.current = TYPE_MODAL.DELETE
-        setShowModal(true)
+        // typeModal.current = TYPE_MODAL.DELETE
+        // setShowModal(true)
+
+        if (vendorSession.Settings.ReturnHistory) {
+            typeModal.current = TYPE_MODAL.DELETE
+            setShowModal(true)
+        } else {
+            let data = {
+                QuantityChange: product.Quantity,
+                Description: "",
+            }
+            saveOrder(data, product);
+        }
     }
 
-    const saveOrder = (data) => {
+    const saveOrder = (data, item) => {
+        let itemOrder = item;
         console.log('saveOrder data ', data, vendorSession.Settings.ReturnHistory, itemOrder);
         if (vendorSession.Settings.ReturnHistory) {
             let price = itemOrder.IsLargeUnit ? itemOrder.PriceLargeUnit : itemOrder.UnitPrice
@@ -677,7 +689,7 @@ const CustomerOrder = (props) => {
                                         Quantity={itemOrder.Quantity}
                                         QuantitySubtract={QuantitySubtract}
                                         vendorSession={vendorSession}
-                                        getDataOnClick={(data) => saveOrder(data)}
+                                        getDataOnClick={(data) => saveOrder(data, itemOrder)}
                                         setShowModal={() => {
                                             setShowModal(false)
                                         }

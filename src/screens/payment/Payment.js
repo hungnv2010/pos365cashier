@@ -419,17 +419,17 @@ export default (props) => {
     }
 
     const onSelectExcess = (type) => {
-        if (type) {
-            let total = listMethod.reduce(getSumValue, 0);
-            console.log("onSelectExcess total jsonContent.Total ", total, jsonContent.Total);
-            let json = jsonContent;
-            json.ExcessCash = total - json.Total;
-            console.log("onSelectExcess json ", json)
-            setJsonContent({ ...json })
-        } else {
-            jsonContent.ExcessCash = 0;
-            setJsonContent(jsonContent)
-        }
+        // if (type) {
+        //     let total = listMethod.reduce(getSumValue, 0);
+        //     console.log("onSelectExcess total jsonContent.Total ", total, jsonContent.Total);
+        //     let json = jsonContent;
+        //     json.ExcessCash = total - json.Total;
+        //     console.log("onSelectExcess json ", json)
+        //     setJsonContent({ ...json })
+        // } else {
+        //     jsonContent.ExcessCash = 0;
+        //     setJsonContent(jsonContent)
+        // }
         setGiveMoneyBack(type)
     }
 
