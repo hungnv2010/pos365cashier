@@ -517,7 +517,7 @@ const RetailCustomerOrder = (props) => {
 
         // } else {
         if (listOrder && listOrder.length > 0) {
-            props.navigation.navigate(ScreenList.Payment, { onCallBack: onCallBackPayment, Screen: ScreenList.MainRetail, RoomId: props.jsonContent.RoomId, Name: props.jsonContent.RoomName ? props.jsonContent.RoomName : I18n.t('app_name'), Position: props.jsonContent.Pos });
+            props.navigation.navigate(ScreenList.Payment, { onCallBack: onCallBackPayment, Screen: ScreenList.MainRetail, RoomId: props.jsonContent.RoomId, Name: props.jsonContent.RoomName ? props.jsonContent.RoomName : I18n.t('don_hang'), Position: props.jsonContent.Pos });
         } else {
             dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
         }
@@ -541,7 +541,7 @@ const RetailCustomerOrder = (props) => {
         hideMenu()
         console.log("onClickProvisional jsonContent ", props.jsonContent);
         if (listOrder && listOrder.length > 0) {
-            props.jsonContent.RoomName = I18n.t('app_name');
+            props.jsonContent.RoomName = I18n.t('don_hang');
             dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: props.jsonContent, provisional: true } })
         } else {
             dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
