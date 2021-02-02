@@ -75,6 +75,10 @@ export default (props) => {
     const [marginModal, setMargin] = useState(0)
     const [dataHtml, setDataHtml] = useState("");
     const [detailCustomer, setDetailCustomer] = useState("");
+    const [selection, setSelection] = useState({
+        start: 0,
+        end: 0
+    })
     const provisional = useRef();
     const dateTmp = useRef(new Date())
     const toolBarPaymentRef = useRef();
@@ -194,6 +198,7 @@ export default (props) => {
             default:
                 break;
         }
+        setSelection({ start: currencyToString((!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio), true).length, end: currencyToString((!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio), true).length })
     }
 
     const addAccount = () => {
@@ -569,19 +574,15 @@ export default (props) => {
 
                 updateServerEvent()
 
-                if (order.QRCode != "") {
-                    qrCode.current = order.QRCode
-                    typeModal.current = TYPE_MODAL.QRCODE
-                    setShowModal(true)
-                    handlerQRCode(order)
-                } else {
-                    // setTimeout(() => {
-                    //     if (!isFNB)
-                    //         props.route.params.onCallBack(1, jsonContent)
-                    //     props.navigation.pop()
-                    // }, 1000);
-                    // props.navigation.pop()
+                if (order.ResponseStatus && order.ResponseStatus.Message && order.ResponseStatus.Message != "") {
+                    dialogManager.showPopupOneButton(order.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, ""))
                 }
+                // if (order.QRCode != "") {
+                //     qrCode.current = order.QRCode
+                //     typeModal.current = TYPE_MODAL.QRCODE
+                //     setShowModal(true)
+                //     handlerQRCode(order)
+                // }
             } else {
                 onError(json)
             }
@@ -643,7 +644,7 @@ export default (props) => {
             jsonContent.PurchaseDate = "" + date;
         }
         console.log("printAfterPayment jsonContent 2 ", jsonContent);
-        dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
+        // dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
     }
 
     const handlerQRCode = async (order) => {
@@ -976,6 +977,14 @@ export default (props) => {
                     <TextInput
                         returnKeyType='done'
                         keyboardType="number-pad"
+                        selection={selection}
+                        placeholder="0"
+                        placeholderTextColor="#808080"
+                        onSelectionChange={() => {
+                            let length = currencyToString(item.Value, true).length;
+                            if (length == undefined) length = 1;
+                            setSelection({ start: length, end: length })
+                        }}
                         value={"" + currencyToString(item.Value, true)}
                         onTouchStart={() => onTouchInput({ ...item, ...METHOD.pay })}
                         editable={deviceType == Constant.TABLET ? false : true}
@@ -1101,6 +1110,21 @@ export default (props) => {
                                 <TextInput
                                     returnKeyType='done'
                                     keyboardType="number-pad"
+                                    selection={selection}
+                                    // onFocus={() => {
+                                    //     let length = currencyToString((!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio), true).length;
+                                    //     if(length == undefined) length = 1;
+                                    //     // alert(length)
+                                    //     setSelection({ start: length, end: length})
+                                    // }
+                                    // }
+                                    placeholder="0"
+                                    placeholderTextColor="#808080"
+                                    onSelectionChange={() => {
+                                        let length = currencyToString((!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio), true).length;
+                                        if (length == undefined) length = 1;
+                                        setSelection({ start: length, end: length })
+                                    }}
                                     value={"" + currencyToString((!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio), true)}
                                     onTouchStart={() => onTouchInput(METHOD.discount)}
                                     editable={deviceType == Constant.TABLET ? false : true}
@@ -1132,6 +1156,14 @@ export default (props) => {
                                 <TextInput
                                     returnKeyType='done'
                                     keyboardType="number-pad"
+                                    selection={selection}
+                                    placeholder="0"
+                                    placeholderTextColor="#808080"
+                                    onSelectionChange={() => {
+                                        let length = currencyToString(jsonContent.VATRates, true).length;
+                                        if (length == undefined) length = 1;
+                                        setSelection({ start: length, end: length })
+                                    }}
                                     value={"" + currencyToString(jsonContent.VATRates, true)}
                                     onTouchStart={() => onTouchInput(METHOD.vat)}
                                     editable={deviceType == Constant.TABLET ? false : true}
