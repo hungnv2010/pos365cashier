@@ -100,7 +100,7 @@ export default (props) => {
     }, [IsLargeUnit])
 
     const onClickOk = () => {
-        props.onClickSubmit({ ...itemOrder, Discount: discount, Percent: percent, Price: price, IsLargeUnit, Name: productName })
+        props.onClickSubmit({ ...itemOrder, Discount: discount, Percent: percent, Price: price, Name: productName })
         props.setShowModal(false)
     }
 
@@ -110,6 +110,7 @@ export default (props) => {
     }
 
     const selectRadioButton = (status) => {
+        itemOrder.IsLargeUnit = status
         setIsLargeUnit(status)
         if (status) {
             setPrice(LargePrice.current + itemOrder.TotalTopping)

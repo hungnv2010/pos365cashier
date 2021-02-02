@@ -503,7 +503,7 @@ const RetailCustomerOrder = (props) => {
     const onCallBackPayment = (type, data) => {
         console.log("onCallBackPayment data ", data);
         // syncListProducts([])
-        props.setJsonContent({ ...data })
+        props.updateServerEvent({ ...data })
     }
 
     // const onCallBackPayment = (type, data) => {
