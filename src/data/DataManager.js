@@ -355,8 +355,6 @@ class DataManager {
         newServerEvent.JsonContent.OrderDetails = [...OrderDetails]
         newServerEvent.JsonContent.Partner = oldServerEvent.JsonContent.Partner ? oldServerEvent.JsonContent.Partner : null
         newServerEvent.JsonContent.PartnerId = oldServerEvent.JsonContent.PartnerId ? oldServerEvent.JsonContent.PartnerId : null
-        newServerEvent.JsonContent.Partner = oldServerEvent.JsonContent.Partner ? oldServerEvent.JsonContent.Partner : null
-        newServerEvent.JsonContent.PartnerId = oldServerEvent.JsonContent.PartnerId ? oldServerEvent.JsonContent.PartnerId : null
         newServerEvent.JsonContent.PriceBookId = oldServerEvent.JsonContent.PriceBookId ? oldServerEvent.JsonContent.PriceBookId : null
         newServerEvent.JsonContent.PriceBook = oldServerEvent.JsonContent.PriceBook ? oldServerEvent.JsonContent.PriceBook : null
         newServerEvent.JsonContent.ActiveDate = oldServerEvent.JsonContent.ActiveDate ? oldServerEvent.JsonContent.ActiveDate : ""

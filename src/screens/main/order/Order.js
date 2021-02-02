@@ -68,7 +68,7 @@ export default (props) => {
 
             let newDatas = insertServerEvent(getDatas(rooms, roomGroups), serverEvents)
             console.log("init: newDatas ", newDatas);
-            dataRef.current = newDatas
+            // dataRef.current = newDatas
             setData(newDatas)
 
             let list = newDatas.filter(item => item.isGroup)
@@ -78,7 +78,7 @@ export default (props) => {
             serverEvents.addListener((collection, changes) => {
                 if (changes.insertions.length || changes.modifications.length) {
                     let newDatas = insertServerEvent(getDatas(rooms, roomGroups), serverEvents)
-                    dataRef.current = newDatas
+                    // dataRef.current = newDatas
                     setData(newDatas)
                 }
             })

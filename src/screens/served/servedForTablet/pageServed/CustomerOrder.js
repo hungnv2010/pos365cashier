@@ -332,7 +332,7 @@ const CustomerOrder = (props) => {
                             <View style={{ flexDirection: "column", flex: 1, }}>
                                 <Text style={{ fontWeight: "bold", marginBottom: 7 }}>{item.Name}</Text>
                                 <View style={{ flexDirection: "row" }}>
-                                    <Text style={{}}>{isPromotion ? currencyToString(item.Price) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : currencyToString(item.Price))} x </Text>
+                                    <Text style={{}}>{currencyToString(item.Price)} x </Text>
                                     <View onPress={() => onClickUnit({ ...item })}>
                                         {
                                             orientaition == Constant.PORTRAIT ?
@@ -353,7 +353,7 @@ const CustomerOrder = (props) => {
                                 <Icon style={{ alignSelf: "flex-end" }} name="bell-ring" size={20} color={item.Quantity <= item.Processed ? Colors.colorLightBlue : "gray"} />
                                 <Text
                                     style={{ color: Colors.colorchinh, alignSelf: "flex-end" }}>
-                                    {isPromotion ? currencyToString(item.Price * item.Quantity) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit * item.Quantity) : currencyToString(item.Price * item.Quantity))}
+                                    {currencyToString(item.Price * item.Quantity)}
                                 </Text>
                             </View>
                         </View>
