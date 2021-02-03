@@ -51,8 +51,17 @@ export default (props) => {
     }
 
     useLayoutEffect(() => {
+        let listener = async (collection, changes) => {
+            if ((changes.insertions.length || changes.modifications.length) && serverEvent[0].FromServer) {
+                currentServerEvent.current = JSON.parse(JSON.stringify(serverEvent[0]))
+                let jsonTmp = JSON.parse(serverEvent[0].JsonContent)
+                jsonTmp.OrderDetails = await addPromotion(jsonTmp.OrderDetails);
+                console.log("jsonTmp ======= ", jsonTmp);
+                setJsonContent(jsonTmp)
+            }
+        }
+        
         const getListPos = async () => {
-
             serverEvent = await realmStore.queryServerEvents()
             // let listPriceBook = await realmStore.queryPricebook()
             // listPriceBook = JSON.parse(JSON.stringify(listPriceBook))
@@ -83,15 +92,6 @@ export default (props) => {
         }
     }, [position])
 
-    let listener = async (collection, changes) => {
-        if ((changes.insertions.length || changes.modifications.length) && serverEvent[0].FromServer) {
-            currentServerEvent.current = JSON.parse(JSON.stringify(serverEvent[0]))
-            let jsonTmp = JSON.parse(serverEvent[0].JsonContent)
-            jsonTmp.OrderDetails = await addPromotion(jsonTmp.OrderDetails);
-            console.log("jsonTmp ======= ", jsonTmp);
-            setJsonContent(jsonTmp)
-        }
-    }
 
     useEffect(() => {
         console.log('jsonContent.Partner', jsonContent.Partner);

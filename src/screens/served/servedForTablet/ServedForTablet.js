@@ -86,19 +86,24 @@ const Served = (props) => {
     }, [])
 
     useLayoutEffect(() => {
-        const getListPos = async () => {
-            let serverEvent = await realmStore.queryServerEvents()
+        let listener = async (collection, changes) => {
+            if ((changes.insertions.length || changes.modifications.length) && serverEvent[0].FromServer) {
+                currentServerEvent.current = JSON.parse(JSON.stringify(serverEvent[0]))
+                let jsonTmp = JSON.parse(serverEvent[0].JsonContent)
+                jsonTmp.OrderDetails = await addPromotion(jsonTmp.OrderDetails);
+                setJsonContent(JSON.parse(serverEvent[0].JsonContent))
+            }
+        }
 
+        const getListPos = async () => {
+            serverEvent = await realmStore.queryServerEvents()
             const row_key = `${props.route.params.room.Id}_${position}`
             serverEvent = serverEvent.filtered(`RowKey == '${row_key}'`)
             currentServerEvent.current = JSON.stringify(serverEvent) != '{}' ? JSON.parse(JSON.stringify(serverEvent[0]))
                 : await dataManager.createSeverEvent(props.route.params.room.Id, position)
             console.log('currentServerEvent.current', currentServerEvent.current, JSON.parse(currentServerEvent.current.JsonContent));
             let jsonContentObject = JSON.parse(currentServerEvent.current.JsonContent)
-
             setJsonContent(jsonContentObject)
-
-
             serverEvent.addListener(listener)
         }
 
@@ -108,14 +113,7 @@ const Served = (props) => {
         }
     }, [position])
 
-    const listener = async (collection, changes) => {
-        if ((changes.insertions.length || changes.modifications.length) && serverEvent[0].FromServer) {
-            currentServerEvent.current = JSON.parse(JSON.stringify(serverEvent[0]))
-            let jsonTmp = JSON.parse(serverEvent[0].JsonContent)
-            jsonTmp.OrderDetails = await addPromotion(jsonTmp.OrderDetails);
-            setJsonContent(JSON.parse(serverEvent[0].JsonContent))
-        }
-    }
+
 
     useEffect(() => {
         console.log('jsonContent.Partner', jsonContent.Partner);
