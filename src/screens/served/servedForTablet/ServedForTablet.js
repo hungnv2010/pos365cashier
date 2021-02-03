@@ -99,19 +99,23 @@ const Served = (props) => {
             setJsonContent(jsonContentObject)
 
 
-            serverEvent.addListener((collection, changes) => {
-                if ((changes.insertions.length || changes.modifications.length) && serverEvent[0].FromServer) {
-                    currentServerEvent.current = JSON.parse(JSON.stringify(serverEvent[0]))
-                    setJsonContent(JSON.parse(serverEvent[0].JsonContent))
-                }
-            })
+            serverEvent.addListener(listener)
         }
 
         getListPos()
         return () => {
-            if (serverEvent) serverEvent.removeAllListeners()
+            if (serverEvent) serverEvent.removeListener(listener)
         }
     }, [position])
+
+    const listener = async (collection, changes) => {
+        if ((changes.insertions.length || changes.modifications.length) && serverEvent[0].FromServer) {
+            currentServerEvent.current = JSON.parse(JSON.stringify(serverEvent[0]))
+            let jsonTmp = JSON.parse(serverEvent[0].JsonContent)
+            jsonTmp.OrderDetails = await addPromotion(jsonTmp.OrderDetails);
+            setJsonContent(JSON.parse(serverEvent[0].JsonContent))
+        }
+    }
 
     useEffect(() => {
         console.log('jsonContent.Partner', jsonContent.Partner);

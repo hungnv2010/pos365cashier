@@ -528,6 +528,7 @@ export default (props) => {
                                     <DialogProductDetail
                                         onClickTopping={() => onClickTopping(itemOrder)}
                                         item={itemOrder}
+                                        priceBookId={props.jsonContent.PriceBookId}
                                         onClickSubmit={(data) => {
                                             mapDataToList(data)
                                         }}

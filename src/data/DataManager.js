@@ -278,8 +278,13 @@ class DataManager {
 
     calculatateJsonContent = (JsonContent) => {
         let totalProducts = this.totalProducts(JsonContent.OrderDetails)
-        let discount = totalProducts * JsonContent.DiscountRatio / 100
-        let totalVat = (totalProducts-discount) * JsonContent.VATRates / 100
+        let discount = 0
+        if (JsonContent.DiscountValue) {
+            discount = JsonContent.DiscountValue
+        } else {
+            discount = totalProducts * JsonContent.DiscountRatio / 100
+        }
+        let totalVat = (totalProducts - discount) * JsonContent.VATRates / 100
         let totalWithVAT = totalProducts + totalVat
         JsonContent.VAT = totalVat
         JsonContent.Total = totalWithVAT - discount
@@ -304,7 +309,7 @@ class DataManager {
 
     totalProducts = (products) => {
         console.log('totalProducts', products);
-        return products.reduce((total, product) => total + (product.IsPromotion ? product.Price * product.Quantity : (product.IsLargeUnit ? product.PriceLargeUnit : product.Price) * product.Quantity), 0)
+        return products.reduce((total, product) => total + (product.Price * product.Quantity), 0)
     }
 
     totalDiscountProducts = (products) => {

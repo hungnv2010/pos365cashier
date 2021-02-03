@@ -53,7 +53,7 @@ export default (props) => {
     useLayoutEffect(() => {
         const getListPos = async () => {
 
-            let serverEvent = await realmStore.queryServerEvents()
+            serverEvent = await realmStore.queryServerEvents()
             // let listPriceBook = await realmStore.queryPricebook()
             // listPriceBook = JSON.parse(JSON.stringify(listPriceBook))
             const row_key = `${props.route.params.room.Id}_${position}`
@@ -65,14 +65,7 @@ export default (props) => {
 
             setJsonContent(jsonContentObject)
 
-            serverEvent.addListener(async (collection, changes) => {
-              
-                    currentServerEvent.current = JSON.parse(JSON.stringify(serverEvent[0]))
-                    let jsonTmp = JSON.parse(serverEvent[0].JsonContent)
-                    jsonTmp.OrderDetails = await addPromotion(jsonTmp.OrderDetails);
-                    console.log("jsonTmp ======= ", jsonTmp);
-                    setJsonContent(jsonTmp)
-            })
+            serverEvent.addListener(listener)
 
         }
 
@@ -86,11 +79,19 @@ export default (props) => {
         getListPos()
 
         return () => {
-            if (serverEvent) serverEvent.removeListeners()
+            if (serverEvent) serverEvent.removeListener(listener)
         }
     }, [position])
 
-
+    let listener = async (collection, changes) => {
+        if ((changes.insertions.length || changes.modifications.length) && serverEvent[0].FromServer) {
+            currentServerEvent.current = JSON.parse(JSON.stringify(serverEvent[0]))
+            let jsonTmp = JSON.parse(serverEvent[0].JsonContent)
+            jsonTmp.OrderDetails = await addPromotion(jsonTmp.OrderDetails);
+            console.log("jsonTmp ======= ", jsonTmp);
+            setJsonContent(jsonTmp)
+        }
+    }
 
     useEffect(() => {
         console.log('jsonContent.Partner', jsonContent.Partner);
@@ -124,11 +125,14 @@ export default (props) => {
                     list.map((product) => {
                         res.PriceList.forEach((priceBook) => {
                             if (priceBook.ProductId == product.ProductId) {
-                                product.DiscountRatio = 0.0
-                                if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
-                                if (!priceBook.Price) priceBook.Price = product.UnitPrice
-                                let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price
-                                product.Price = newBasePrice + product.TotalTopping
+                                if (product.Discount == 0){
+                                    product.DiscountRatio = 0.0
+                                    product.Discount = 0
+                                    if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
+                                    if (!priceBook.Price) priceBook.Price = product.UnitPrice
+                                    let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price
+                                    product.Price = newBasePrice + product.TotalTopping
+                                }
                             }
                         })
                     })
@@ -160,6 +164,7 @@ export default (props) => {
                 updateServerEvent({ ...jsonContent })
             } else {
                 let listTmp = []
+                list = await getOtherPrice(list)
                 list.forEach(item => {
                     if (item.SplitForSalesOrder || (item.ProductType == 2 && item.IsTimer)) {
                         listTmp.push(item)
