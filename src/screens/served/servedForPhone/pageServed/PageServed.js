@@ -66,13 +66,12 @@ export default (props) => {
             setJsonContent(jsonContentObject)
 
             serverEvent.addListener(async (collection, changes) => {
-                if ((changes.insertions.length || changes.modifications.length) && serverEvent[0].FromServer) {
+              
                     currentServerEvent.current = JSON.parse(JSON.stringify(serverEvent[0]))
                     let jsonTmp = JSON.parse(serverEvent[0].JsonContent)
                     jsonTmp.OrderDetails = await addPromotion(jsonTmp.OrderDetails);
                     console.log("jsonTmp ======= ", jsonTmp);
                     setJsonContent(jsonTmp)
-                }
             })
 
         }

@@ -740,8 +740,8 @@ export default (props) => {
         if (total < 0) total = 0.0
         let excess = amountReceived() - total
         let excessCash = (excess < 0.0 && excess > -0.001) ? 0 : excess;
-        jsonContent.Discount = totalDiscount
-        jsonContent.DiscountValue = disCountValue
+        jsonContent.Discount = totalDiscount;
+        jsonContent.DiscountValue = disCountValue > total ? total : disCountValue;
 
         jsonContent.VAT = vat
         jsonContent.Total = total
@@ -841,6 +841,12 @@ export default (props) => {
             });
         }
         return number;
+    }
+
+    const setSelectionInput = (value) => {
+        let length = value.length;
+        if(length == undefined) length = 1;
+        setSelection({ start: length, end: length})
     }
 
     const renderFilter = () => {
@@ -980,11 +986,8 @@ export default (props) => {
                         selection={selection}
                         placeholder="0"
                         placeholderTextColor="#808080"
-                        onSelectionChange={() => {
-                            let length = currencyToString(item.Value, true).length;
-                            if (length == undefined) length = 1;
-                            setSelection({ start: length, end: length })
-                        }}
+                        onFocus={() => setSelectionInput(currencyToString(item.Value, true))}
+                        onSelectionChange={() => setSelectionInput(currencyToString(item.Value, true))}
                         value={"" + currencyToString(item.Value, true)}
                         onTouchStart={() => onTouchInput({ ...item, ...METHOD.pay })}
                         editable={deviceType == Constant.TABLET ? false : true}
@@ -1111,20 +1114,10 @@ export default (props) => {
                                     returnKeyType='done'
                                     keyboardType="number-pad"
                                     selection={selection}
-                                    // onFocus={() => {
-                                    //     let length = currencyToString((!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio), true).length;
-                                    //     if(length == undefined) length = 1;
-                                    //     // alert(length)
-                                    //     setSelection({ start: length, end: length})
-                                    // }
-                                    // }
+                                    onFocus={() => setSelectionInput(currencyToString((!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio), true))}
                                     placeholder="0"
                                     placeholderTextColor="#808080"
-                                    onSelectionChange={() => {
-                                        let length = currencyToString((!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio), true).length;
-                                        if (length == undefined) length = 1;
-                                        setSelection({ start: length, end: length })
-                                    }}
+                                    onSelectionChange={() => setSelectionInput(currencyToString((!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio), true))}
                                     value={"" + currencyToString((!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio), true)}
                                     onTouchStart={() => onTouchInput(METHOD.discount)}
                                     editable={deviceType == Constant.TABLET ? false : true}
@@ -1159,11 +1152,8 @@ export default (props) => {
                                     selection={selection}
                                     placeholder="0"
                                     placeholderTextColor="#808080"
-                                    onSelectionChange={() => {
-                                        let length = currencyToString(jsonContent.VATRates, true).length;
-                                        if (length == undefined) length = 1;
-                                        setSelection({ start: length, end: length })
-                                    }}
+                                    onFocus={() => setSelectionInput(currencyToString(jsonContent.VATRates, true))}
+                                    onSelectionChange={() => setSelectionInput(currencyToString(jsonContent.VATRates, true))}
                                     value={"" + currencyToString(jsonContent.VATRates, true)}
                                     onTouchStart={() => onTouchInput(METHOD.vat)}
                                     editable={deviceType == Constant.TABLET ? false : true}

@@ -22,13 +22,13 @@ class DataManager {
 
     initComfirmOrder = async () => {
         try {
-            let intNewOrder = await new HTTPService().setPath(ApiPath.WAIT_FOR_COMFIRMATION).GET()
-            let changeTableComfirm = await new HTTPService().setPath(ApiPath.CHANGE_TABLE_COMFIRM).GET()
+            let intNewOrder = await new HTTPService().setPath(ApiPath.WAIT_FOR_COMFIRMATION, false).GET()
+            let changeTableComfirm = await new HTTPService().setPath(ApiPath.CHANGE_TABLE_COMFIRM, false).GET()
             if (intNewOrder == 0 && changeTableComfirm.length == 0) {
                 return Promise.resolve(null)
             } else {
                 if (intNewOrder > 0) {
-                    let newOrders = await new HTTPService().setPath(ApiPath.WAIT_FOR_COMFIRMATION_ALL).GET()
+                    let newOrders = await new HTTPService().setPath(ApiPath.WAIT_FOR_COMFIRMATION_ALL, false).GET()
                     let listRoom = []
                     let listOrders = []
                     console.log('newOrders', newOrders);
@@ -146,14 +146,14 @@ class DataManager {
 
     //Synchoronous
     syncServerEvent = async () => {
-        let res = await new HTTPService().setPath(ApiPath.SERVER_EVENT).GET()
+        let res = await new HTTPService().setPath(ApiPath.SERVER_EVENT, false).GET()
 
         if (res && res.length > 0)
             realmStore.insertServerEvents(res).subscribe((res, serverEvent) => { })
     }
 
     syncProduct = async () => {
-        let res = await new HTTPService().setPath(ApiPath.SYNC_PRODUCTS).GET()
+        let res = await new HTTPService().setPath(ApiPath.SYNC_PRODUCTS, false).GET()
 
         if (res && res.Data && res.Data.length > 0)
             await realmStore.insertProducts(res.Data)
@@ -161,21 +161,21 @@ class DataManager {
 
     syncPromotion = async () => {
         let params = { Includes: ['Product', 'Promotion'] }
-        let res = await new HTTPService().setPath(ApiPath.PROMOTION).GET(params)
+        let res = await new HTTPService().setPath(ApiPath.PROMOTION, false).GET(params)
         if (res && res.results.length > 0) {
             realmStore.insertPromotion(res.results)
         }
     }
 
     syncTopping = async () => {
-        let results = await new HTTPService().setPath(ApiPath.SYNC_EXTRAEXT).GET()
+        let results = await new HTTPService().setPath(ApiPath.SYNC_EXTRAEXT, false).GET()
         if (results && results.length > 0) {
             realmStore.insertTopping(results)
         }
     }
 
     syncData = async (apiPath, schemaName) => {
-        let res = await new HTTPService().setPath(apiPath).GET()
+        let res = await new HTTPService().setPath(apiPath, false).GET()
         if (res && res.Data && res.Data.length > 0)
             await realmStore.insertDatas(schemaName, res.Data)
     }
@@ -215,7 +215,7 @@ class DataManager {
     }
 
     syncPriceBook = async () => {
-        let res = await new HTTPService().setPath(ApiPath.SYNC_PRICE_BOOK).GET()
+        let res = await new HTTPService().setPath(ApiPath.SYNC_PRICE_BOOK, false).GET()
         if (res.results && res.results.length > 0) {
             res.results.unshift({ Name: "gia_niem_yet", Id: 0 })
             await realmStore.insertDatas(SchemaName.PRICE_BOOK, res.results)

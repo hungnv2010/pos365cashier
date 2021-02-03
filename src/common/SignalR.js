@@ -71,19 +71,28 @@ class SignalRManager {
             this.init(this.data, true)
         });
 
-        // this.connectionHub.error((error) => {
-        //     // alert("error")
-        //     NetInfo.fetch().then(state => {
-        //         console.log("Connection type", state.type); 
-        //         console.log("Is connected?", state.isConnected);
-        //         if (state.isConnected == true) {
-        //             this.getAllData();
-        //         }
-        //     });
-        //     setTimeout(() => {
-        //         this.init(this.data, true);
-        //     }, 5000);
-        // });
+        this.connectionHub.error((error) => {
+
+            NetInfo.fetch().then(state => {
+                if (state.isConnected == true && state.isInternetReachable == true) {
+                    this.getAllData();
+                    this.init(this.data, true)
+                }
+            });
+            // alert("error")
+            console.log("connectionHub error ", error);
+     
+            // NetInfo.fetch().then(state => {
+            //     console.log("Connection type", state.type); 
+            //     console.log("Is connected?", state.isConnected);
+            //     if (state.isConnected == true) {
+            //         this.getAllData();
+            //     }
+            // });
+            // setTimeout(() => {
+            //     this.init(this.data, true);
+            // }, 5000);
+        });
 
         this.subjectSend = new Subject()
         this.subjectSend.debounceTime(300)
@@ -122,6 +131,7 @@ class SignalRManager {
     }
 
     async getAllData() {
+        
         dialogManager.showLoading()
         await dataManager.syncAllDatas()
             .then(() => {

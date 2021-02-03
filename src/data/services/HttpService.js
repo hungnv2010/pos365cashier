@@ -48,6 +48,7 @@ export class HTTPService {
     setPath(path, showMessage = true) {
         this._path = this._api + path;
         showMessage = showMessage;
+        // alert(showMessage)
         return this
     }
 
@@ -109,7 +110,7 @@ export class HTTPService {
 }
 
 const error = () => {
-    if (showMessage)
+    if (showMessage == true)
         NetInfo.fetch().then(state => {
             if (state.isConnected == true) {
                 dialogManager.showPopupOneButton(I18n.t('loi_server'), I18n.t('thong_bao'), () => {

@@ -45,9 +45,12 @@ export default (props) => {
 
     const getData = async () => {
         let orderOffline = await realmStore.queryOrdersOffline()
-        orderOffline.reverse()
-        console.log("useEffect orderOffline ", orderOffline);
-        setDataList(orderOffline)
+        let orderOfflineReverse = [];
+        orderOffline.forEach(element => {
+            orderOfflineReverse.push(element);
+        });
+        console.log("useEffect orderOffline ", orderOfflineReverse);
+        setDataList(orderOfflineReverse.reverse())
         setListRefreshing(false);
     }
 
