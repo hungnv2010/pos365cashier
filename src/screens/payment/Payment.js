@@ -632,7 +632,7 @@ export default (props) => {
     }
 
     const printAfterPayment = async (Code) => {
-        console.log("printAfterPayment jsonContent 1 ", jsonContent);
+        console.log("printAfterPayment jsonContent 1 ", jsonContent, props.route.params);
         if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
             jsonContent.RoomName = props.route.params.Name
         }
@@ -644,7 +644,7 @@ export default (props) => {
             jsonContent.PurchaseDate = "" + date;
         }
         console.log("printAfterPayment jsonContent 2 ", jsonContent);
-        // dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
+        dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
     }
 
     const handlerQRCode = async (order) => {

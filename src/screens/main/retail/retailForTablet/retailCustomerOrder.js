@@ -438,10 +438,10 @@ const RetailCustomerOrder = (props) => {
 
                         <View style={{ alignItems: "flex-end" }}>
                             {/* <Icon style={{ paddingHorizontal: 5 }} name="bell-ring" size={20} color="grey" /> */}
-                            {/* <Text
+                            <Text
                                 style={{ color: Colors.colorchinh, marginRight: 5 }}>
                                 {isPromotion ? currencyToString(item.Price * item.Quantity) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit * item.Quantity) : currencyToString(item.Price * item.Quantity))}
-                            </Text> */}
+                            </Text>
                         </View>
 
                         {
@@ -572,7 +572,7 @@ const RetailCustomerOrder = (props) => {
                     onPress={() => { setExpand(!expand) }}
                     style={{ borderTopWidth: .5, borderTopColor: "red", paddingVertical: 3, backgroundColor: "white", marginLeft: 10 }}>
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
-                        <Text style={{ fontWeight: "bold" }}>{I18n.t('khach_phai_tra')}</Text>
+                        <Text style={{ fontWeight: "bold" }}>{I18n.t('tong_thanh_tien')}</Text>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
                             <Text style={{ fontWeight: "bold", fontSize: 16, color: Colors.colorchinh }}>{currencyToString(props.jsonContent.Total - props.jsonContent.VAT + props.jsonContent.Discount)}</Text>
                             {expand ?
@@ -595,7 +595,7 @@ const RetailCustomerOrder = (props) => {
                                 </View>
                             </View>
                             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
-                                <Text style={{ fontWeight: "bold" }}>{I18n.t('tong_thanh_tien')}</Text>
+                                <Text style={{ fontWeight: "bold" }}>{I18n.t('khach_phai_tra')}</Text>
                                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
                                     <Text style={{ fontWeight: "bold", fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(props.jsonContent.Total)}</Text>
                                 </View>
