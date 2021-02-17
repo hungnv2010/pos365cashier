@@ -574,7 +574,7 @@ const RetailCustomerOrder = (props) => {
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                         <Text style={{ fontWeight: "bold" }}>{I18n.t('tong_thanh_tien')}</Text>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                            <Text style={{ fontWeight: "bold", fontSize: 16, color: Colors.colorchinh }}>{currencyToString(props.jsonContent.Total - props.jsonContent.VAT + props.jsonContent.Discount)}</Text>
+                            <Text style={{ fontWeight: "bold", fontSize: 16, color: Colors.colorchinh }}>{currencyToString(props.jsonContent.Total - props.jsonContent.VAT + props.jsonContent.Discount)}đ</Text>
                             {expand ?
                                 <Icon style={{}} name="chevron-up" size={30} color="black" />
                                 :
