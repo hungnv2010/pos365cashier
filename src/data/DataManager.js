@@ -216,8 +216,8 @@ class DataManager {
 
     syncPriceBook = async () => {
         let res = await new HTTPService().setPath(ApiPath.SYNC_PRICE_BOOK, false).GET()
-        if (res && res.results && res.results.length > 0) {
-            res.results.unshift({ Name: "gia_niem_yet", Id: 0 })
+        if (res.results && res.results.length > 0) {
+            // res.results.unshift({ Name: "gia_niem_yet", Id: 0 })
             await realmStore.insertDatas(SchemaName.PRICE_BOOK, res.results)
         }
     }

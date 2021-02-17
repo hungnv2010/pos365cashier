@@ -15,7 +15,7 @@ export default (props) => {
     useEffect(() => {
         const initPricebook = async () => {
             dialogManager.showLoading()
-            let newPricebooks = []
+            let newPricebooks = [{ Name: "gia_niem_yet", Id: 0 }]
             let results = await realmStore.queryPricebook()
             results.forEach(item => {
                 newPricebooks.push({ ...JSON.parse(JSON.stringify(item)) })
@@ -39,7 +39,7 @@ export default (props) => {
                 props.navigation.pop()
             }}>
                 <View key={item.Id} style={{ ...styles.Item, backgroundColor: index % 2 == 0 ? "#f9f2e4" : "white", flex: 1 }}>
-                    <Text numberOfLines={2} style={{ color: isSelected ? colors.colorchinh : "black", textTransform:"uppercase" }}>{item.Id == 0 ? I18n.t(item.Name) : item.Name}</Text>
+                    <Text numberOfLines={2} style={{ color: isSelected ? colors.colorchinh : "black", textTransform: "uppercase" }}>{item.Id == 0 ? I18n.t(item.Name) : item.Name}</Text>
                 </View >
             </TouchableOpacity>
         )
