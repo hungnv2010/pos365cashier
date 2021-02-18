@@ -21,7 +21,6 @@ import DeviceInfo from 'react-native-device-info';
 import signalRManager from '../../common/SignalR';
 import { ScreenList } from '../../common/ScreenList';
 import NetInfo from "@react-native-community/netinfo";
-import {  useSelector } from 'react-redux';
 const { Print } = NativeModules;
 const IP_DEFAULT = "192.168.99.";
 
@@ -389,9 +388,6 @@ const ContentComponent = (props) => {
         console.log("Abc orderOffline ", orderOffline.length);
         setNumberOrderOffline(orderOffline.length)
     })
-    const {  isFNB } = useSelector(state => {
-        return state.Common
-      })
 
     useEffect(() => {
         const getCurrentIP = async () => {
