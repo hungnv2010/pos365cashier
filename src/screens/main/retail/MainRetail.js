@@ -56,14 +56,20 @@ const MainRetail = (props) => {
 
     useEffect(() => {
         console.log('jsonContent.Partner', jsonContent.Partner);
-        if (jsonContent.Partner && jsonContent.Partner.Id && jsonContent.Partner.Id != currentCustomer.Id) setCurrentCustomer(jsonContent.Partner)
+        if (jsonContent.Partner && jsonContent.Partner.Id) {
+            if (jsonContent.Partner.Id == currentCustomer.Id) return
+            setCurrentCustomer(jsonContent.Partner)
+        }
         else setCurrentCustomer({ Name: "khach_le", Id: 0 })
 
     }, [jsonContent.Partner])
 
     useEffect(() => {
         console.log('jsonContent.PriceBook', jsonContent.PriceBook);
-        if (jsonContent.PriceBook && jsonContent.PriceBook.Id && jsonContent.PriceBook.Id != currentPriceBook.Id) setCurrentPriceBook(jsonContent.PriceBook)
+        if (jsonContent.PriceBook && jsonContent.PriceBook.Id) {
+            if (jsonContent.PriceBook.Id == currentPriceBook.Id) return
+            setCurrentPriceBook(jsonContent.PriceBook)
+        }
         else setCurrentPriceBook({ Name: "gia_niem_yet", Id: 0 })
     }, [jsonContent.PriceBook])
 
@@ -194,6 +200,7 @@ const MainRetail = (props) => {
                                 jsonContent.OrderDetails.forEach((product) => {
                                     res.PriceList.forEach((priceBook) => {
                                         if (priceBook.ProductId == product.ProductId) {
+                                            console.log('product',product);
                                             product.DiscountRatio = 0.0
                                             if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
                                             if (!priceBook.Price) priceBook.Price = product.UnitPrice
@@ -341,21 +348,21 @@ const MainRetail = (props) => {
                                     <View style={{ flex: 4, marginLeft: 2 }}>
                                         <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 2, borderBottomColor: Colors.colorchinh, borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5 }}>
                                             <TouchableOpacity
-                                                style={{ flexDirection: "row", alignItems: "center" }}
+                                                style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
                                                 onPress={onClickListedPrice}>
                                                 <Entypo style={{ paddingHorizontal: 5 }} name="price-ribbon" size={25} color={Colors.colorchinh} />
-                                                <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{currentPriceBook.Id == 0 ? I18n.t(currentPriceBook.Name) : currentPriceBook.Name}</Text>
+                                                <Text ellipsizeMode="tail" numberOfLines={1} style={{ flex: 1, color: Colors.colorchinh, fontWeight: "bold" }}>{currentPriceBook.Id == 0 ? I18n.t(currentPriceBook.Name) : currentPriceBook.Name}</Text>
                                             </TouchableOpacity>
                                             <TouchableOpacity
-                                                style={{ flexDirection: "row", alignItems: "center" }}
+                                                style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
                                                 onPress={onClickRetailCustomer}>
-                                                <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{currentCustomer.Id == 0 ? I18n.t(currentCustomer.Name) : currentCustomer.Name}</Text>
+                                                <Text ellipsizeMode="tail" numberOfLines={1} style={{textAlign: "right", flex: 1, color: Colors.colorchinh, fontWeight: "bold" }}>{currentCustomer.Id == 0 ? I18n.t(currentCustomer.Name) : currentCustomer.Name}</Text>
                                                 <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} color={Colors.colorchinh} />
                                             </TouchableOpacity>
                                         </View>
                                         <RetailCustomerOrder
                                             {...props}
-                                            setJsonContent={(json) => setJsonContent(json)}
+                                            updateServerEvent={updateServerEvent}
                                             jsonContent={jsonContent}
                                             numberCommodity={numberCommodity}
                                             outputSelectedProduct={outputSelectedProduct}

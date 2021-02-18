@@ -78,10 +78,10 @@ export default (props) => {
     useEffect(() => {
         console.log("CustomerOrder props.jsonContent.OrderDetails :: ", props.jsonContent.OrderDetails);
 
-        if (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0) {
+        if (props.jsonContent.OrderDetails) {
             let listOrder = props.jsonContent.OrderDetails.filter(item => item.ProductId > 0)
             setListOrder(listOrder)
-        } else setListOrder([])
+        }
     }, [props.jsonContent])
 
     const sendOrder = async () => {
@@ -138,8 +138,18 @@ export default (props) => {
     const onClickReturn = (item) => {
         console.log('onClickReturn ', item.Name, item.index);
         setItemOrder(item)
-        typeModal.current = TYPE_MODAL.DELETE
-        setShowModal(true)
+        // typeModal.current = TYPE_MODAL.DELETE
+        // setShowModal(true)
+        if (vendorSession.Settings.ReturnHistory) {
+            typeModal.current = TYPE_MODAL.DELETE
+            setShowModal(true)
+        } else {
+            let data = {
+                QuantityChange: item.Quantity,
+                Description: "",
+            }
+            saveOrder(data, item);
+        }
     }
 
     const onClickTopping = (item, index) => {
@@ -176,11 +186,10 @@ export default (props) => {
                 element.Topping = JSON.stringify(topping)
                 element.TotalTopping = totalTopping
 
-                let basePriceProduct = (element.IsLargeUnit) ? element.PriceLargeUnit : element.UnitPrice
-                element.Price = (basePriceProduct + totalTopping)
+                element.Price += totalTopping
             }
         });
-        setListOrder([...listOrder])
+        // setListOrder([...listOrder])
         props.outputListProducts([...listOrder])
     }
 
@@ -194,19 +203,22 @@ export default (props) => {
                 setShowModal(true)
             }, 300);
         } else {
+            // let price = product.IsLargeUnit == true ? product.PriceLargeUnit : product.UnitPrice
+            // let discount = product.Percent ? (price * product.Discount / 100) : product.Discount
             let price = product.IsLargeUnit == true ? product.PriceLargeUnit : product.UnitPrice
             let discount = product.Percent ? (price * product.Discount / 100) : product.Discount
+            discount = discount > price ? price : discount
+            let discountRatio = product.Percent ? product.Discount : product.Discount / price * 100
             listOrder.forEach((elm, index, arr) => {
                 if (elm.ProductId == product.ProductId && index == product.index) {
                     if (product.Quantity == 0) {
                         arr.splice(index, 1)
                     }
-                    if (product.Percent) {
-                        elm.DiscountRatio = product.Discount
-                    }
+                    elm.DiscountRatio = discountRatio
                     elm.Quantity = product.Quantity
                     elm.Description = product.Description
-                    elm.Discount = discount - price > 0 ? price : discount
+                    elm.Discount = discount
+                    elm.Name = product.Name
                     elm.Price = product.Price
                     elm.IsLargeUnit = product.IsLargeUnit
 
@@ -229,12 +241,10 @@ export default (props) => {
     const onClickProvisional = async () => {
         hideMenu()
         console.log("onClickProvisional props.route.params ", props.route.params);
-
         if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
             jsonContent.RoomName = props.route.params.room.Name
         }
-
-        dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: jsonContent })
+        dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: true } })
     }
 
     let _menu = null;
@@ -303,7 +313,7 @@ export default (props) => {
                             <Icon style={{ paddingHorizontal: 5 }} name="bell-ring" size={20} color={item.Quantity <= item.Processed ? Colors.colorLightBlue : "gray"} />
                             <Text
                                 style={{ color: colors.colorchinh, marginRight: 5 }}>
-                                {isPromotion ? currencyToString(item.Price * item.Quantity) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit * item.Quantity) : currencyToString(item.Price * item.Quantity))}
+                                {currencyToString(item.Price * item.Quantity)}
                             </Text>
                         </View>
                         {/* {item.ProductType == 2 && item.IsTimer ?
@@ -325,7 +335,8 @@ export default (props) => {
 
 
 
-    const saveOrder = (data) => {
+    const saveOrder = (data, item) => {
+        let itemOrder = item;
         console.log('saveOrder data ', data, vendorSession.Settings.ReturnHistory, itemOrder);
         if (vendorSession.Settings.ReturnHistory) {
             let price = itemOrder.IsLargeUnit ? itemOrder.PriceLargeUnit : itemOrder.UnitPrice
@@ -348,29 +359,31 @@ export default (props) => {
                     console.log('saveOrder err', err);
                 })
         }
-        let checkPrint = false;
         let listOrderReturn = []
         listOrder.forEach((element, index, arr) => {
             if (element.ProductId == itemOrder.ProductId && index == itemOrder.index) {
-                let Quantity = element.Quantity - data.QuantityChange
+
+                console.log("saveOrder itemOrder ====: " + JSON.stringify(itemOrder));
+                console.log("saveOrder data ====: " + JSON.stringify(data));
+                if (element.Processed > 0 && (((itemOrder.Quantity - itemOrder.Processed) < data.QuantityChange))) {
+                    listOrderReturn.push({ ...data, ...element, Quantity: (itemOrder.Quantity - itemOrder.Processed - data.QuantityChange), Description: data.Description, RoomName: props.route.params.room.Name, Pos: jsonContent.Pos })
+                    let listTmp = dataManager.getDataPrintCook(listOrderReturn)
+                    console.log("saveOrder listTmp ====: " + JSON.stringify(listTmp));
+                    dispatch({ type: 'PRINT_RETURN_PRODUCT', printReturnProduct: JSON.stringify(listTmp) })
+                }
+
+                let Quantity = element.Quantity > data.QuantityChange ? element.Quantity - data.QuantityChange : 0
                 if (Quantity == 0) {
                     arr.splice(index, 1)
+                } else {
+                    element.Quantity = Quantity
                 }
-                element.Quantity = Quantity
-                listOrderReturn.push({ ...data, ...itemOrder, Quantity: Quantity, Description: data.Description, RoomName: props.route.params.room.Name, Pos: jsonContent.Pos })
-                if (element.Processed > 0) {
-                    checkPrint = true;
+                if (Quantity < element.Processed) {
+                    element.Processed = Quantity
                 }
             }
         });
         props.outputListProducts([...listOrder])
-        console.log("saveOrder listOrder ====: " + JSON.stringify(listOrder));
-        console.log("saveOrder listOrderReturn ====: " + JSON.stringify(listOrderReturn));
-        if (checkPrint) {
-            let listTmp = dataManager.getDataPrintCook(listOrderReturn)
-            console.log("saveOrder listTmp ====: " + JSON.stringify(listTmp));
-            dispatch({ type: 'PRINT_RETURN_PRODUCT', printReturnProduct: JSON.stringify(listTmp) })
-        }
     }
 
     const changTable = () => {
@@ -515,6 +528,7 @@ export default (props) => {
                                     <DialogProductDetail
                                         onClickTopping={() => onClickTopping(itemOrder)}
                                         item={itemOrder}
+                                        priceBookId={props.jsonContent.PriceBookId}
                                         onClickSubmit={(data) => {
                                             mapDataToList(data)
                                         }}
@@ -528,7 +542,7 @@ export default (props) => {
                                         Quantity={itemOrder.Quantity}
                                         QuantitySubtract={QuantitySubtract}
                                         vendorSession={vendorSession}
-                                        getDataOnClick={(data) => saveOrder(data)}
+                                        getDataOnClick={(data) => saveOrder(data, itemOrder)}
                                         setShowModal={() => {
                                             setShowModal(false)
                                         }

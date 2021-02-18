@@ -49,7 +49,7 @@ export default (props) => {
   useEffect(() => {
     if (printProvisional != "") {
       console.log("useEffect ===== printProvisional ", printProvisional);
-      viewPrintRef.current.printProvisionalRef(printProvisional)
+      viewPrintRef.current.printProvisionalRef(printProvisional.jsonContent, printProvisional.provisional)
       dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: "" })
     }
   }, [printProvisional])
@@ -68,6 +68,7 @@ export default (props) => {
         if (currentBranch && currentBranch.FieldId) {
           if (currentBranch.FieldId == 3 || currentBranch.FieldId == 11) {
             let state = store.getState()
+            alert("1")
             signalRManager.init({ ...vendorSession, SessionId: state.Common.info.SessionId }, true)
             dispatch({ type: 'IS_FNB', isFNB: true })
           } else {
@@ -76,6 +77,7 @@ export default (props) => {
         } else {
           if (vendorSession.CurrentRetailer && (vendorSession.CurrentRetailer.FieldId == 3 || vendorSession.CurrentRetailer.FieldId == 11)) {
             let state = store.getState()
+            alert("2")
             signalRManager.init({ ...vendorSession, SessionId: state.Common.info.SessionId }, true)
             dispatch({ type: 'IS_FNB', isFNB: true })
           } else {
@@ -115,9 +117,9 @@ export default (props) => {
 
         }
 
-        scanFromOrder = setInterval(() => {
-          getDataNewOrders()
-        }, 15000);
+        // scanFromOrder = setInterval(() => {
+        //   getDataNewOrders()
+        // }, 15000);
         await realmStore.deleteAllForFnb()
         await dataManager.syncAllDatas()
       } else {

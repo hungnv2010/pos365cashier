@@ -75,6 +75,10 @@ export default (props) => {
     const [marginModal, setMargin] = useState(0)
     const [dataHtml, setDataHtml] = useState("");
     const [detailCustomer, setDetailCustomer] = useState("");
+    const [selection, setSelection] = useState({
+        start: 0,
+        end: 0
+    })
     const provisional = useRef();
     const dateTmp = useRef(new Date())
     const toolBarPaymentRef = useRef();
@@ -171,7 +175,7 @@ export default (props) => {
 
     const onChangeTextInput = (text, type) => {
         text = text.toString();
-        console.log("onChangeTextInput text type ", text, typeof(text), type);
+        console.log("onChangeTextInput text type ", text, typeof (text), type);
         if (text == "") return;
         console.log("onChangeTextInput text: ", text);
         text = text.replace(/,/g, "");
@@ -194,6 +198,7 @@ export default (props) => {
             default:
                 break;
         }
+        setSelection({ start: currencyToString((!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio), true).length, end: currencyToString((!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio), true).length })
     }
 
     const addAccount = () => {
@@ -419,17 +424,17 @@ export default (props) => {
     }
 
     const onSelectExcess = (type) => {
-        if (type) {
-            let total = listMethod.reduce(getSumValue, 0);
-            console.log("onSelectExcess total jsonContent.Total ", total, jsonContent.Total);
-            let json = jsonContent;
-            json.ExcessCash = total - json.Total;
-            console.log("onSelectExcess json ", json)
-            setJsonContent({ ...json })
-        } else {
-            jsonContent.ExcessCash = 0;
-            setJsonContent(jsonContent)
-        }
+        // if (type) {
+        //     let total = listMethod.reduce(getSumValue, 0);
+        //     console.log("onSelectExcess total jsonContent.Total ", total, jsonContent.Total);
+        //     let json = jsonContent;
+        //     json.ExcessCash = total - json.Total;
+        //     console.log("onSelectExcess json ", json)
+        //     setJsonContent({ ...json })
+        // } else {
+        //     jsonContent.ExcessCash = 0;
+        //     setJsonContent(jsonContent)
+        // }
         setGiveMoneyBack(type)
     }
 
@@ -461,7 +466,13 @@ export default (props) => {
             if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
                 jsonContent.RoomName = props.route.params.Name
             }
-            dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: jsonContent })
+            if (noteInfo != '') {
+                jsonContent.Description = noteInfo;
+            }
+            if (date && dateTmp.current) {
+                jsonContent.PurchaseDate = "" + date;
+            }
+            dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: true } })
             timeClickPrevious = newDate;
         }
     }
@@ -499,7 +510,9 @@ export default (props) => {
             paramMethod.push({ AccountId: element.Id, Value: value })
         });
         let MoreAttributes = json.MoreAttributes ? JSON.parse(json.MoreAttributes) : {}
-        MoreAttributes.PointDiscount = 0;
+        console.log("pointUse ", pointUse);
+
+        MoreAttributes.PointDiscount = pointUse && pointUse > 0 ? pointUse : 0;
         MoreAttributes.PointDiscountValue = 0;
         MoreAttributes.TemporaryPrints = [];
         MoreAttributes.Vouchers = listVoucher;
@@ -535,7 +548,7 @@ export default (props) => {
             MerchantName: vendorSession.Settings.MerchantName,
             DontSetTime: true,
             ExcessCashType: 0,
-            // Order: json,
+            Order: {},
         };
         let tilteNotification = jsonContent.RoomName;
         if (props.route.params.Screen != undefined && props.route.params.Screen == ScreenList.MainRetail) {
@@ -556,24 +569,20 @@ export default (props) => {
             if (order) {
                 dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
                 dialogManager.hiddenLoading()
-                
+
                 await printAfterPayment(order.Code)
 
                 updateServerEvent()
 
-                if (order.QRCode != "") {
-                    qrCode.current = order.QRCode
-                    typeModal.current = TYPE_MODAL.QRCODE
-                    setShowModal(true)
-                    handlerQRCode(order)
-                } else {
-                    // setTimeout(() => {
-                    //     if (!isFNB)
-                    //         props.route.params.onCallBack(1, jsonContent)
-                    //     props.navigation.pop()
-                    // }, 1000);
-                    // props.navigation.pop()
+                if (order.ResponseStatus && order.ResponseStatus.Message && order.ResponseStatus.Message != "") {
+                    dialogManager.showPopupOneButton(order.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, ""))
                 }
+                // if (order.QRCode != "") {
+                //     qrCode.current = order.QRCode
+                //     typeModal.current = TYPE_MODAL.QRCODE
+                //     setShowModal(true)
+                //     handlerQRCode(order)
+                // }
             } else {
                 onError(json)
             }
@@ -587,7 +596,7 @@ export default (props) => {
         dialogManager.showPopupOneButton(I18n.t("khong_co_ket_noi_internet_don_hang_cua_quy_khach_duoc_luu_vao_offline"))
         updateServerEvent()
         handlerError({ JsonContent: json, RowKey: row_key })
-        props.navigation.pop()
+        // props.navigation.pop()
     }
 
     const updateServerEvent = () => {
@@ -598,13 +607,14 @@ export default (props) => {
         serverEvent.Version += 10
         console.log("updateServerEvent serverEvent ", serverEvent);
         dataManager.updateServerEventNow(serverEvent, true, isFNB);
-        playSound()
+        if (settingObject.current.am_bao_thanh_toan == true)
+            playSound()
 
         setTimeout(() => {
             if (!isFNB)
                 props.route.params.onCallBack(1, json)
             props.navigation.pop()
-        }, 1000);
+        }, 500);
     }
 
     const playSound = () => {
@@ -622,13 +632,19 @@ export default (props) => {
     }
 
     const printAfterPayment = async (Code) => {
-        console.log("printAfterPayment jsonContent 1 ", jsonContent);
+        console.log("printAfterPayment jsonContent 1 ", jsonContent, props.route.params);
         if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
             jsonContent.RoomName = props.route.params.Name
         }
         jsonContent.PaymentCode = Code;
+        if (noteInfo != '') {
+            jsonContent.Description = noteInfo;
+        }
+        if (date && dateTmp.current) {
+            jsonContent.PurchaseDate = "" + date;
+        }
         console.log("printAfterPayment jsonContent 2 ", jsonContent);
-        dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: jsonContent })
+        dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
     }
 
     const handlerQRCode = async (order) => {
@@ -724,8 +740,8 @@ export default (props) => {
         if (total < 0) total = 0.0
         let excess = amountReceived() - total
         let excessCash = (excess < 0.0 && excess > -0.001) ? 0 : excess;
-        jsonContent.Discount = totalDiscount
-        jsonContent.DiscountValue = disCountValue
+        jsonContent.Discount = totalDiscount;
+        jsonContent.DiscountValue = disCountValue > total ? total : disCountValue;
 
         jsonContent.VAT = vat
         jsonContent.Total = total
@@ -755,7 +771,8 @@ export default (props) => {
         if (currentServerEvent.current && update == true) {
             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
             dataManager.paymentSetServerEvent(serverEvent, jsonContent);
-            dataManager.subjectUpdateServerEvent.next(serverEvent)
+            if (isFNB)
+                dataManager.subjectUpdateServerEvent.next(serverEvent)
         }
     }
 
@@ -814,6 +831,22 @@ export default (props) => {
                     console.log("showDetailCustomer err ", err);
                 })
         }
+    }
+
+    const totalNumberProduct = () => {
+        let number = 0;
+        if (jsonContent.OrderDetails) {
+            jsonContent.OrderDetails.forEach(element => {
+                number += element.Quantity;
+            });
+        }
+        return number;
+    }
+
+    const setSelectionInput = (value) => {
+        let length = value.length;
+        if(length == undefined) length = 1;
+        setSelection({ start: length, end: length})
     }
 
     const renderFilter = () => {
@@ -950,6 +983,11 @@ export default (props) => {
                     <TextInput
                         returnKeyType='done'
                         keyboardType="number-pad"
+                        selection={selection}
+                        placeholder="0"
+                        placeholderTextColor="#808080"
+                        onFocus={() => setSelectionInput(currencyToString(item.Value, true))}
+                        onSelectionChange={() => setSelectionInput(currencyToString(item.Value, true))}
                         value={"" + currencyToString(item.Value, true)}
                         onTouchStart={() => onTouchInput({ ...item, ...METHOD.pay })}
                         editable={deviceType == Constant.TABLET ? false : true}
@@ -998,7 +1036,7 @@ export default (props) => {
                 {...props}
                 clickLeftIcon={() => {
                     if (!isFNB)
-                        props.route.params.onCallBack(0, {...jsonContent})
+                        props.route.params.onCallBack(0, { ...jsonContent })
                     props.navigation.pop()
                 }}
                 clickRightIcon={(data) => { setTextSearch(data); }}
@@ -1012,7 +1050,7 @@ export default (props) => {
                             <View style={styles.viewCustomer}>
                                 <Text style={{ flex: 3 }}>{I18n.t('khach_hang')}</Text>
                                 <TouchableOpacity onPress={addCustomer} style={styles.viewNameMethod}>
-                                    <Text ellipsizeMode="tail" numberOfLines={1} style={{ marginLeft: 5, flex: 1 }}>{customer.Name}</Text>
+                                    <Text ellipsizeMode="tail" numberOfLines={1} style={{ marginLeft: 5, flex: 1 }}>{customer.Name} {customer.Phone ? "-" : ""} {customer.Phone}</Text>
                                     <SimpleLineIcons style={{ marginRight: 5 }} name="user" size={15} color="gray" />
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={showDetailCustomer} style={{ padding: 10, marginRight: -10 }} >
@@ -1024,7 +1062,7 @@ export default (props) => {
                                     <View style={styles.rowCustomerDetai}>
                                         <View style={styles.viewLeftCustomer}>
                                             <Text style={{}}>{I18n.t('ma_khach_hang')} : </Text>
-                                            <Text ellipsizeMode="tail" numberOfLines={1} style={{flex: 1}}>{detailCustomer.Code}</Text>
+                                            <Text ellipsizeMode="tail" numberOfLines={1} style={{ flex: 1 }}>{detailCustomer.Code}</Text>
                                         </View>
                                         <View style={styles.viewRightCustomer}>
                                             <Text style={{}}>{I18n.t('chiet_khau')} : </Text>
@@ -1047,7 +1085,7 @@ export default (props) => {
                         <Surface style={styles.surface}>
                             <View style={styles.viewTextExcessCash}>
                                 <Text style={{ flex: 3 }}>{I18n.t('tong_thanh_tien')}</Text>
-                                <Text style={styles.textQuantity}>{jsonContent.OrderDetails ? jsonContent.OrderDetails.length : 0}</Text>
+                                <Text style={styles.textQuantity}>{totalNumberProduct()}</Text>
                                 <Text style={{ flex: 5.3, textAlign: "right" }}>{currencyToString(totalPrice)}</Text>
                             </View>
                         </Surface>
@@ -1075,6 +1113,11 @@ export default (props) => {
                                 <TextInput
                                     returnKeyType='done'
                                     keyboardType="number-pad"
+                                    selection={selection}
+                                    onFocus={() => setSelectionInput(currencyToString((!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio), true))}
+                                    placeholder="0"
+                                    placeholderTextColor="#808080"
+                                    onSelectionChange={() => setSelectionInput(currencyToString((!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio), true))}
                                     value={"" + currencyToString((!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio), true)}
                                     onTouchStart={() => onTouchInput(METHOD.discount)}
                                     editable={deviceType == Constant.TABLET ? false : true}
@@ -1106,6 +1149,11 @@ export default (props) => {
                                 <TextInput
                                     returnKeyType='done'
                                     keyboardType="number-pad"
+                                    selection={selection}
+                                    placeholder="0"
+                                    placeholderTextColor="#808080"
+                                    onFocus={() => setSelectionInput(currencyToString(jsonContent.VATRates, true))}
+                                    onSelectionChange={() => setSelectionInput(currencyToString(jsonContent.VATRates, true))}
                                     value={"" + currencyToString(jsonContent.VATRates, true)}
                                     onTouchStart={() => onTouchInput(METHOD.vat)}
                                     editable={deviceType == Constant.TABLET ? false : true}
@@ -1133,11 +1181,11 @@ export default (props) => {
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.viewTextExcessCash}>
-                                <Text style={{ flex: 2 }}>{jsonContent.ExcessCash>=0?I18n.t( 'tien_thua'):I18n.t('tien_thieu')}</Text>
+                                <Text style={{ flex: 2 }}>{jsonContent.ExcessCash >= 0 ? I18n.t('tien_thua') : I18n.t('tien_thieu')}</Text>
                                 <Text style={{ flex: 4, textAlign: "right", color: jsonContent.ExcessCash > 0 ? "green" : "red" }}>{currencyToString(jsonContent.ExcessCash)}</Text>
                             </View>
                             {
-                                (jsonContent.ExcessCash >= 0 && (customer && customer.Id && customer.Id != "")) ?
+                                (jsonContent.ExcessCash >= 0 && (customer && customer.Id && customer.Id != "") && jsonContent.ExcessCash > 0) ?
                                     <View style={styles.viewExcessCash}>
                                         <TouchableOpacity onPress={() => onSelectExcess(true)} style={styles.viewRadioButton}>
                                             <RadioButton.Android
@@ -1251,7 +1299,7 @@ const styles = StyleSheet.create({
     viewBottom: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
     viewExcessCash: { flexDirection: "row", justifyContent: "flex-end", marginRight: 10 },
     viewRadioButton: { flexDirection: "row", alignItems: "center" },
-    viewFilter: { backgroundColor: "#fff", padding: 15,height:Metrics.screenHeight*0.7,borderRadius:4 },
+    viewFilter: { backgroundColor: "#fff", padding: 15, maxHeight: Metrics.screenHeight * 0.7, borderRadius: 4 },
     titleFilter: { paddingBottom: 10, fontWeight: "bold", textTransform: "uppercase", color: colors.colorLightBlue, textAlign: "left", width: "100%" },
     buttonAddAcount: { flex: 3, padding: 10, paddingTop: 5, color: colors.colorchinh },
     viewBottomFilter: { justifyContent: "center", flexDirection: "row", paddingTop: 10 },

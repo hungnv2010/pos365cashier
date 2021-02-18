@@ -45,14 +45,19 @@ export default (props) => {
 
     const getData = async () => {
         let orderOffline = await realmStore.queryOrdersOffline()
-        console.log("useEffect orderOffline ", orderOffline);
-        setDataList(orderOffline)
+        let orderOfflineReverse = [];
+        orderOffline.forEach(element => {
+            orderOfflineReverse.push(element);
+        });
+        console.log("useEffect orderOffline ", orderOfflineReverse);
+        setDataList(orderOfflineReverse.reverse())
         setListRefreshing(false);
     }
 
     const clickUpload = async () => {
         console.log("clickUpload ");
-
+        let updateSuccess = 0;
+        let updateError = 0;
         let serverEvents = await realmStore.queryServerEvents()
         dataList.forEach((element, index) => {
             dialogManager.showLoading();
@@ -77,7 +82,7 @@ export default (props) => {
             }
             console.log("clickUpload params ", params);
 
-            new HTTPService().setPath(ApiPath.ORDERS).POST(params).then(async order => {
+            new HTTPService().setPath(ApiPath.ORDERS, false).POST(params).then(async order => {
                 console.log("clickUpload order ", order);
                 if (order) {
                     dataManager.sentNotification(jsonContent.RoomName, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
@@ -89,6 +94,7 @@ export default (props) => {
                         dataManager.subjectUpdateServerEvent.next(serverEvent)
                     }
                     dataManager.deleteRow(SchemaName.ORDERS_OFFLINE, element.Id);
+                    updateSuccess++;
                     dialogManager.hiddenLoading()
                 }
                 getData();

@@ -7,9 +7,14 @@ import { useSelector } from 'react-redux';
 import { Snackbar } from 'react-native-paper';
 import I18n from '../../common/language/i18n'
 import moment from "moment";
-import { TYPE_PRINT } from '../../screens/more/ViewPrint';
+// import { TYPE_PRINT } from '../../screens/more/ViewPrint';
 const { Print } = NativeModules;
 const eventSwicthScreen = new NativeEventEmitter(Print);
+
+export const TYPE_PRINT = {
+    KITCHEN: "KITCHEN",
+    RETURN_PRODUCT: "RETURN_PRODUCT"
+}
 
 const typeHeader = "HOÁ ĐƠN TEST PRINT"
 const code = "HD000000"
@@ -40,10 +45,12 @@ class PrintService {
                 itemTable = itemTable.replace("{Ghi_Chu_Hang_Hoa}", description)
                 itemTable = itemTable.replace("{So_Luong}", Math.round(el.Quantity * 1000) / 1000)
                 itemTable = itemTable.replace("{Thanh_Tien_Hang_Hoa}", currencyToString(this.getPrice(el)))
+                // itemTable = itemTable.replace("{Thanh_Tien_Hang_Hoa}", currencyToString(BasePriceCustomAndTopping * el.Quantity))
                 itemTable = itemTable.replace("{Don_Gia}", currencyToString(el.Price))
                 itemTable = itemTable.replace("{Don_Gia_Goc_Hien_Thi_Check}", BasePriceCustomAndTopping > el.Price ? "style='display: block'" : "style='display: none'")
                 itemTable = itemTable.replace("{Don_Gia_Goc_Hien_Thi}", currencyToString(BasePriceCustomAndTopping))
                 sum += this.getPrice(el);
+                // sum += BasePriceCustomAndTopping * el.Quantity
                 listTable += itemTable;
             });
             HTMLBase = listHtml[0] + listTable + listHtml[2];
@@ -73,10 +80,10 @@ class PrintService {
                 HTMLBase = HTMLBase.replace("{Nhan_Vien}", vendorSession.CurrentUser.Name)
 
                 let partnerPhone = JsonContent.Partner && JsonContent.Partner.Phone ? JsonContent.Partner.Phone : ""
-                HTMLBase = HTMLBase.replace("{Dien_Thoai_Khach_Hang}", partnerPhone)
+                HTMLBase = HTMLBase.replace("{Dien_Thoai_Khach_Hang}", " " + partnerPhone)
                 let addressCustomer = JsonContent.Partner && JsonContent.Partner.Address ? JsonContent.Partner.Address : ""
                 let addressCustomerShow = addressCustomer != "" ? addressCustomer : "";
-                HTMLBase = HTMLBase.replace("{Dia_Chi_Khach_Hang}", addressCustomerShow)
+                HTMLBase = HTMLBase.replace("{Dia_Chi_Khach_Hang}", " " + addressCustomerShow)
 
                 HTMLBase = HTMLBase.replace("{Tong_Truoc_Chiet_Khau}", currencyToString(sum))
                 HTMLBase = HTMLBase.replace("{Chiet_Khau_Check}", JsonContent.Discount > 0 ? "style='visibility: unset;'" : "style='visibility: collapse; display: none'")
@@ -110,19 +117,15 @@ class PrintService {
 
     getPrice = (item) => {
         console.log('getPrice', item);
-        let price = item.IsLargeUnit ? item.PriceLargeUnit : item.Price
-        return item.Quantity * price
+        // let price = item.IsLargeUnit ? item.PriceLargeUnit : item.Price
+        return item.Quantity * item.Price
     }
 
     handlerQuantityPrint(el, type) {
         console.log("handlerQuantityPrint el type ", el, type);
         let Quantity = 0;
         if (type != TYPE_PRINT.KITCHEN) {
-            if (el.Processed >= el.QuantityChange) {
-                Quantity = 0 - el.QuantityChange
-            } else {
-                Quantity = 0 - el.Processed
-            }
+            Quantity = el.Quantity
         } else {
             Quantity = Math.round((el.Quantity - el.Processed) * 1000) / 1000;
         }

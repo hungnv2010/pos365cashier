@@ -18,10 +18,11 @@ import { ApiPath } from '../../../../data/services/ApiPath';
 import { HTTPService } from '../../../../data/services/HttpService';
 import _, { map } from 'underscore';
 import dialogManager from '../../../../components/dialog/DialogManager';
+import { useDispatch, useSelector } from 'react-redux';
 
 export default (props) => {
 
-
+    const dispatch = useDispatch();
     const currentCommodity = useRef({})
     const [numberNewOrder, setNumberNewOrder] = useState(0)
     const [showModal, setShowModal] = useState(false)
@@ -77,14 +78,20 @@ export default (props) => {
 
     useEffect(() => {
         console.log('jsonContent.Partner', jsonContent.Partner);
-        if (jsonContent.Partner && jsonContent.Partner.Id && jsonContent.Partner.Id != currentCustomer.Id) setCurrentCustomer(jsonContent.Partner)
+        if (jsonContent.Partner && jsonContent.Partner.Id) {
+            if (jsonContent.Partner.Id == currentCustomer.Id) return
+            setCurrentCustomer(jsonContent.Partner)
+        }
         else setCurrentCustomer({ Name: "khach_le", Id: 0 })
 
     }, [jsonContent.Partner])
 
     useEffect(() => {
         console.log('jsonContent.PriceBook', jsonContent.PriceBook);
-        if (jsonContent.PriceBook && jsonContent.PriceBook.Id && jsonContent.PriceBook.Id != currentPriceBook.Id) setCurrentPriceBook(jsonContent.PriceBook)
+        if (jsonContent.PriceBook && jsonContent.PriceBook.Id) {
+            if (jsonContent.PriceBook.Id == currentPriceBook.Id) return
+            setCurrentPriceBook(jsonContent.PriceBook)
+        }
         else setCurrentPriceBook({ Name: "gia_niem_yet", Id: 0 })
     }, [jsonContent.PriceBook])
 
@@ -119,11 +126,14 @@ export default (props) => {
                     list.map((product) => {
                         res.PriceList.forEach((priceBook) => {
                             if (priceBook.ProductId == product.ProductId) {
-                                product.DiscountRatio = 0.0
-                                if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
-                                if (!priceBook.Price) priceBook.Price = product.UnitPrice
-                                let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price
-                                product.Price = newBasePrice + product.TotalTopping
+                                if (product.Discount == 0) {
+                                    product.DiscountRatio = 0.0
+                                    product.Discount = 0
+                                    if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
+                                    if (!priceBook.Price) priceBook.Price = product.UnitPrice
+                                    let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price
+                                    product.Price = newBasePrice + product.TotalTopping
+                                }
                             }
                         })
                     })
@@ -169,25 +179,24 @@ export default (props) => {
     const removeItem = (item, index) => {
         console.log('removeItem ', item.Name, item.index);
         listProducts.splice(index, 1)
-        // setDataOrder([...listOrder])
+        jsonContent.OrderDetails = [...listProducts]
         updateServerEvent({ ...jsonContent })
     }
 
-    // const setDataOrder = async (listOrder) => {
-    //     let list = [];
-    //     if (listOrder != undefined && listOrder.length > 0)
-    //         list = await addPromotion([...listOrder])
-    //     console.log("setDataOrder listOrder list ", listOrder, list);
 
-    //     setListOrder([...list])
-    //     updateServerEvent([...listOrder])
-
-    // }
 
     const addPromotion = async (list) => {
         console.log("addPromotion list ", list);
         console.log("addPromotion promotions ", promotions);
+        let promotionTmp = promotions
+        if (promotions.length == 0) {
+            let promotion = await realmStore.querryPromotion();
+            console.log("realmStore promotion === ", promotion);
+            promotionTmp = promotion
+            setPromotions(promotion)
+        }
         let listProduct = await realmStore.queryProducts()
+        console.log("addPromotion listProduct:::: ", listProduct);
         let listNewOrder = list.filter(element => (element.IsPromotion == undefined || (element.IsPromotion == false)))
         let listOldPromotion = list.filter(element => (element.IsPromotion != undefined && (element.IsPromotion == true)))
         console.log("listNewOrder listOldPromotion ==:: ", listNewOrder, listOldPromotion);
@@ -243,16 +252,15 @@ export default (props) => {
         let listGroupByQuantity = DataGrouper.sum(listNewOrder, ["Id", "IsLargeUnit"])
 
         console.log("listGroupByQuantity === ", listGroupByQuantity);
-
+        console.log("promotionTmp ===== ", promotionTmp);
         let listPromotion = [];
         let index = 0;
         listGroupByQuantity.forEach(element => {
-            promotions.forEach(async (item) => {
-                console.log("addPromotion item1:::: ", element.Id, item.ProductId);
-                console.log("addPromotion item2:::: ", (item.IsLargeUnit == element.IsLargeUnit && element.Quantity >= item.QuantityCondition));
-                if ((element.IsPromotion == undefined || (element.IsPromotion == false)) && element.Id == item.ProductId && checkEndDate(item.EndDate) && (item.IsLargeUnit == element.IsLargeUnit && element.Quantity >= item.QuantityCondition)) {
+            promotionTmp.forEach(async (item) => {
+                if ((element.IsPromotion == undefined || (element.IsPromotion == false)) && element.ProductId == item.ProductId && checkEndDate(item.EndDate) && (item.IsLargeUnit == element.IsLargeUnit && element.Quantity >= item.QuantityCondition)) {
                     let promotion = listProduct.filtered(`Id == ${item.ProductPromotionId}`)
                     promotion = JSON.parse(JSON.stringify(promotion[0]));
+                    // let promotion = JSON.parse(item.Promotion)
                     console.log("addPromotion item:::: ", promotion);
                     if (index == 0) {
                         promotion.FisrtPromotion = true;
@@ -355,11 +363,11 @@ export default (props) => {
 
                         </View>
                         <View style={{ alignItems: "flex-end" }}>
-                            {/* <Icon style={{ paddingHorizontal: 5 }} name="bell-ring" size={20} color="grey" />
+                            {/* <Icon style={{ paddingHorizontal: 5 }} name="bell-ring" size={20} color="grey" /> */}
                             <Text
                                 style={{ color: Colors.colorchinh, marginRight: 5 }}>
                                 {isPromotion ? currencyToString(item.Price * item.Quantity) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit * item.Quantity) : currencyToString(item.Price * item.Quantity))}
-                            </Text> */}
+                            </Text>
                         </View>
                     </View>
                 </TouchableOpacity>
@@ -381,7 +389,18 @@ export default (props) => {
     }
 
     const onClickPrint = () => {
-
+        hideMenu()
+        console.log("onClickProvisional jsonContent ", jsonContent);
+        if (listProducts && listProducts.length > 0) {
+            jsonContent.RoomName = I18n.t('don_hang');
+            dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: true } })
+        } else {
+            dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
+        }
+        // if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
+        //     jsonContent.RoomName = I18n.t('app_name');
+        // // }
+        //     dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: true } })
     }
 
     const onClickOptionQuickPayment = () => {
@@ -575,34 +594,39 @@ export default (props) => {
         // setJsonContent(type == 1 ? { ...jsonContent, OrderDetails: [] } : { ...data })
         // setListOrder([])
 
-        setJsonContent({ ...data })
+        updateServerEvent({ ...data })
     }
 
     const onClickPayment = () => {
-        if (isQuickPayment) {
+        // if (isQuickPayment) {
 
+        // } else {
+        console.log('onClickPayment jsonContent ', jsonContent);
+        if (listProducts && listProducts.length > 0) {
+            props.navigation.navigate(ScreenList.Payment, { onCallBack: onCallBackPayment, Screen: ScreenList.MainRetail, RoomId: jsonContent.RoomId, Name: jsonContent.RoomName ? jsonContent.RoomName : I18n.t('don_hang'), Position: jsonContent.Pos });
         } else {
-            console.log('onClickPayment jsonContent ', jsonContent);
-            if (listProducts && listProducts.length > 0) {
-                props.navigation.navigate(ScreenList.Payment, { onCallBack: onCallBackPayment, Screen: ScreenList.MainRetail, RoomId: jsonContent.RoomId, Name: jsonContent.RoomName ? jsonContent.RoomName : I18n.t('app_name'), Position: jsonContent.Pos });
-            } else {
-                dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
-            }
+            dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
         }
+        // }
     }
 
     const applyDialogDetail = (product) => {
         let price = product.IsLargeUnit == true ? product.PriceLargeUnit : product.UnitPrice
         let discount = product.Percent ? (price * product.Discount / 100) : product.Discount
+        discount = discount > price ? price : discount
+        let discountRatio = product.Percent ? product.Discount : product.Discount / price * 100
         listProducts.forEach((elm, index, arr) => {
             if (elm.ProductId == product.ProductId && index == product.index) {
                 if (product.Quantity == 0) {
                     arr.splice(index, 1)
                 }
+                elm.DiscountRatio = discountRatio
                 elm.Quantity = product.Quantity
                 elm.Description = product.Description
-                elm.Discount = discount - price > 0 ? price : discount
+                elm.Discount = discount
+                elm.Name = product.Name
                 elm.Price = product.Price
+                elm.IsLargeUnit = product.IsLargeUnit
             }
         })
         // setListOrder([...listOrder])

@@ -92,9 +92,9 @@ export default (props) => {
     const onClickItem = (el) => {
         roomItem.current = el;
         if (deviceType == Constant.PHONE)
-            props.navigation.navigate(ScreenList.RoomDetail, { room: roomItem.current, listRoom: rooms, roomGroups: props.route.params.roomGroups, _onSelect: onCallBack })
+            props.navigation.navigate(ScreenList.RoomDetail, { room: roomItem.current, listRoom: rooms, roomGroups: roomGroups, _onSelect: onCallBack })
         else {
-            setDataParams({ ...{ room: roomItem.current, listRoom: rooms, roomGroups: props.route.params.roomGroups } })
+            setDataParams({ ...{ room: roomItem.current, listRoom: rooms, roomGroups: roomGroups } })
         }
     }
 
@@ -165,7 +165,7 @@ export default (props) => {
                 title={I18n.t('danh_sach_phong_ban')}
             />
 
-            <View style={{ flexDirection: "row", flex: 1}}>
+            <View style={{ flexDirection: "row", flex: 1 }}>
                 <View style={{ flex: 1, flexDirection: "column" }}>
                     <View
                         onLayout={(event) => {
@@ -185,6 +185,20 @@ export default (props) => {
                             })}
                     </View>
                     {_renderScrollViewContent()}
+                    <FAB
+                        style={styles.fab}
+                        big
+                        icon="plus"
+                        color="#fff"
+                        onPress={() => {
+                            clickAdd.current = true;
+                            if (deviceType == Constant.PHONE)
+                                props.navigation.navigate(ScreenList.RoomDetail, { _onSelect: onCallBack })
+                            else {
+                                setDataParams({})
+                            }
+                        }}
+                    />
                 </View>
                 {deviceType == Constant.TABLET ?
                     <View style={{ flex: 1, borderLeftWidth: 0.5, borderLeftColor: "#ccc" }}>
@@ -192,7 +206,7 @@ export default (props) => {
                     </View>
                     : null}
             </View>
-            <FAB
+            {/* <FAB
                 style={styles.fab}
                 big
                 icon="plus"
@@ -205,7 +219,7 @@ export default (props) => {
                         setDataParams({})
                     }
                 }}
-            />
+            /> */}
         </View>
 
     );

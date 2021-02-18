@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef, useCallback, forwardRef, useImperativeHandle } from 'react';
-import { ActivityIndicator, View, StyleSheet, Text, TouchableOpacity, FlatList } from 'react-native';
+import React, { useEffect, useState, useRef, useCallback, } from 'react';
+import { ActivityIndicator, View, StyleSheet, Text, TouchableOpacity, FlatList, TouchableWithoutFeedback, Modal } from 'react-native';
 import realmStore from '../../../../data/realm/RealmStore';
 import ProductsItemForPhone from './ProductsItemForPhone';
 import { Constant } from '../../../../common/Constant';
@@ -22,6 +22,7 @@ export default (props) => {
   const listProducts = useRef([...props.route.params.listProducts])
   const [valueSearch, setValueSearch] = useState('')
   const count = useRef(0)
+  const [showModal, setShowModal] = useState(false)
   const debouncedVal = useDebounce(valueSearch)
   const listChangeText = useRef([])
 
@@ -32,7 +33,6 @@ export default (props) => {
     const getCategories = async () => {
       let newCategories = [{ Id: -1, Name: I18n.t('tat_ca') }];
       let results = await realmStore.queryCategories()
-      // results = results.sorted('Name')
       results.forEach(item => {
         newCategories.push(item)
       })
@@ -45,7 +45,6 @@ export default (props) => {
   const getProducts = useCallback(async () => {
     console.log('getProducts');
     let results = await realmStore.queryProducts()
-    // results = results.sorted('Name')
     if (listCateId[0] != -1) {
       results = results.filtered(`CategoryId == ${listCateId[0]}`)
     }
@@ -145,15 +144,6 @@ export default (props) => {
   const getDescription = (item) => {
     let Description = ''
     if (item.ProductType == 2 && item.IsTimer) {
-      // let date = new Date()
-      // let [day, month, hour, minute] = [
-      //   (date.getDate() < 10 ? "0" : "") + (date.getDate()),
-      //   ((date.getMonth() + 1) < 10 ? '0' : '') + (date.getMonth() + 1),
-      //   date.getHours(),
-      //   date.getMinutes()
-      // ]
-      // Description = `${day}/${month} ${hour}:${minute}=>${day}/${month} ${hour}:${minute} (0 ${I18n.t('phut')})`
-
       let checkIn = new Date();
       Description = `${dateToString(checkIn, "DD/MM HH:mm")}=>${dateToString(checkIn, "DD/MM HH:mm")} () ${I18n.t('mot_gio_dau_tien')} = ${currencyToString(item.Price)}.`;
     }
@@ -251,13 +241,14 @@ export default (props) => {
 
   const clickLeftIcon = () => {
     if (JSON.stringify(props.route.params.listProducts) != JSON.stringify(listProducts.current)) {
-      dialogManager.showPopupTwoButton(I18n.t('ban_co_muon_luu'), I18n.t('thong_bao'), (value) => {
-        if (value == 1) {
-          onClickDone()
-        } else {
-          props.navigation.goBack();
-        }
-      })
+      // dialogManager.showPopupTwoButton(I18n.t('ban_co_muon_luu'), I18n.t('thong_bao'), (value) => {
+      //   if (value == 1) {
+      //     onClickDone()
+      //   } else {
+      //     props.navigation.goBack();
+      //   }
+      // })
+      setShowModal(true)
     } else {
       props.navigation.goBack();
     }
@@ -338,7 +329,72 @@ export default (props) => {
             <ActivityIndicator size="large" style={{}} color={Colors.colorchinh} />}
         </View>
       </View>
-      {/* {isLoadMore ? <ActivityIndicator style={{ position: "absolute", right: 5, bottom: 5 }} color={Colors.colorchinh} /> : null} */}
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={showModal}
+        supportedOrientations={['portrait', 'landscape']}
+        onRequestClose={() => {
+        }}>
+        <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+          <TouchableWithoutFeedback
+            onPress={() => { setShowModal(false) }}
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0
+            }}>
+            <View style={[{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0
+            }, { backgroundColor: 'rgba(0,0,0,0.5)' }]}></View>
+
+          </TouchableWithoutFeedback>
+          <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+            <View style={{
+              padding: 0,
+              backgroundColor: "#fff", borderRadius: 4, marginHorizontal: 20,
+              width: Metrics.screenWidth * 0.9,
+            }}>
+              <View style={{ paddingHorizontal: 20, paddingVertical: 10 }}>
+                <Text style={{ fontSize: 20, fontWeight: "bold", paddingVertical: 15, textTransform: "uppercase" }}>{I18n.t('thong_bao')}</Text>
+                <Text style={{ fontSize: 15, paddingVertical: 10, paddingBottom: 20 }}>{I18n.t('ban_co_muon_luu_thay_doi_khong')}</Text>
+                <View style={{ flexDirection: "row", justifyContent: "space-around", alignItems: "center", paddingBottom: 15 }}>
+                  <TouchableOpacity
+                    style={{ padding: 10, borderRadius: 5, width: Metrics.screenWidth * 0.2, alignItems: "center" }}
+                    onPress={() => {
+                      setShowModal(false)
+                    }}
+                  >
+                    <Text style={{ fontSize: 13, fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('huy')}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{ padding: 10, borderRadius: 5, width: Metrics.screenWidth * 0.2, alignItems: "center", backgroundColor: Colors.colorPhu }}
+                    onPress={() => {
+                      props.navigation.goBack();
+                    }}
+                  >
+                    <Text style={{ fontSize: 13, fontWeight: "bold", textTransform: "uppercase", color: "white" }}>{I18n.t('khong')}</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={{ padding: 10, borderRadius: 5, width: Metrics.screenWidth * 0.2, alignItems: "center", backgroundColor: Colors.colorchinh }}
+                    onPress={() => {
+                      onClickDone()
+                    }}
+                  >
+                    <Text style={{ fontSize: 13, fontWeight: "bold", textTransform: "uppercase", color: "white" }}>{I18n.t('dong_y')}</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }

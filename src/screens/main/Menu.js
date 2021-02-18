@@ -16,7 +16,7 @@ import colors from '../../theme/Colors';
 import { Checkbox, RadioButton } from 'react-native-paper';
 import dataManager from '../../data/DataManager';
 import { navigate } from '../../navigator/NavigationService';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import DeviceInfo from 'react-native-device-info';
 import signalRManager from '../../common/SignalR';
 import { ScreenList } from '../../common/ScreenList';
@@ -372,7 +372,9 @@ const HeaderComponent = (props) => {
 }
 
 const ContentComponent = (props) => {
-
+    const { isFNB } = useSelector(state => {
+        return state.Common
+    })
     const [showModal, setShowModal] = useState(false);
     const [ipInput, setIpInput] = useState(IP_DEFAULT);
     const [ip, setIp] = useState(IP_DEFAULT);
@@ -513,7 +515,7 @@ const ContentComponent = (props) => {
         return (
             <View key={indexchucnnag} style={{ width: "100%", backgroundColor: currentItemMenu == indexchucnnag ? "#EEEEEE" : "#fff" }}>
                 <TouchableOpacity
-                    style={{ with: Metrics.screenWidth * 1, flexDirection: "row", alignItems: "center"}}
+                    style={{ with: Metrics.screenWidth * 1, flexDirection: "row", alignItems: "center" }}
                     onPress={() => onClickItem(chucnang, indexchucnnag)}>
                     {chucnang.icon && chucnang.icon != "" ?
                         <Image
@@ -543,9 +545,10 @@ const ContentComponent = (props) => {
         <View style={{ flex: 1 }}>
             <ScrollView style={{ flex: 1, width: "100%", }} keyboardShouldPersistTaps={'handled'}>
                 {LIST_FUNCITION.map((item, index) => {
-                    return (
-                        _renderItem(item, index)
-                    )
+                    if (isFNB || (!isFNB && item.func != KEY_FUNC.ROOM_CATALOG))
+                        return (
+                            _renderItem(item, index)
+                        )
                 })}
             </ScrollView>
             <Modal

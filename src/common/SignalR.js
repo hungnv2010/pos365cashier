@@ -71,19 +71,16 @@ class SignalRManager {
             this.init(this.data, true)
         });
 
-        // this.connectionHub.error((error) => {
-        //     // alert("error")
-        //     NetInfo.fetch().then(state => {
-        //         console.log("Connection type", state.type); 
-        //         console.log("Is connected?", state.isConnected);
-        //         if (state.isConnected == true) {
-        //             this.getAllData();
-        //         }
-        //     });
-        //     setTimeout(() => {
-        //         this.init(this.data, true);
-        //     }, 5000);
-        // });
+        this.connectionHub.error((error) => {
+
+            NetInfo.fetch().then(state => {
+                if (state.isConnected == true && state.isInternetReachable == true) {
+                    this.getAllData();
+                    this.init(this.data, true)
+                }
+            });
+            console.log("connectionHub error ", error);
+        });
 
         this.subjectSend = new Subject()
         this.subjectSend.debounceTime(300)
@@ -114,7 +111,7 @@ class SignalRManager {
                     dialogManager.hiddenLoading();
             })
             .fail(() => {
-                console.log("Failed");
+                alert("Failed");
                 this.isStartSignalR = false;
                 if (dialogManager)
                     dialogManager.hiddenLoading()
@@ -122,6 +119,7 @@ class SignalRManager {
     }
 
     async getAllData() {
+        
         dialogManager.showLoading()
         await dataManager.syncAllDatas()
             .then(() => {
@@ -205,10 +203,10 @@ class SignalRManager {
         if (this.isStartSignalR) {
             this.proxy.invoke(type, message)
                 .done((response) => {
-                    console.log('sendMessage ', response)
+                    console.log('sendMessage done', response)
                 })
                 .fail(() => {
-                    console.warn('Something went wrong when calling server, it might not be up and running?')
+                    console.warn('sendMessage fail')
                 });
         } else {
             console.log("settimeout");

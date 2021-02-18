@@ -8,7 +8,7 @@ import { Constant } from '../../../../common/Constant';
 import { currencyToString } from '../../../../common/Utils';
 import I18n from "../../../../common/language/i18n";
 import { Snackbar } from 'react-native-paper';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { ScreenList } from '../../../../common/ScreenList';
 import DialogProductDetail from '../../../../components/dialog/DialogProductDetail'
 import realmStore from '../../../../data/realm/RealmStore';
@@ -17,6 +17,7 @@ import _, { map } from 'underscore';
 import { ApiPath } from '../../../../data/services/ApiPath';
 import { HTTPService } from '../../../../data/services/HttpService';
 import Entypo from 'react-native-vector-icons/Entypo';
+import dialogManager from '../../../../components/dialog/DialogManager';
 
 
 const TYPE_MODAL = {
@@ -26,6 +27,7 @@ const TYPE_MODAL = {
 
 const RetailCustomerOrder = (props) => {
 
+    const dispatch = useDispatch();
     const [showModal, setShowModal] = useState(false)
     const [listOrder, setListOrder] = useState(() =>
         (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0)
@@ -110,15 +112,20 @@ const RetailCustomerOrder = (props) => {
         console.log('applyDialogDetail', product);
         let price = product.IsLargeUnit == true ? product.PriceLargeUnit : product.UnitPrice
         let discount = product.Percent ? (price * product.Discount / 100) : product.Discount
+        let discountRatio = product.Percent ? product.Discount : product.Discount / price * 100
+        discount = discount > price ? price : discount
         listOrder.forEach((elm, index, arr) => {
             if (elm.ProductId == product.ProductId && index == product.index) {
                 if (product.Quantity == 0) {
                     arr.splice(index, 1)
                 }
+                elm.DiscountRatio = discountRatio
                 elm.Quantity = product.Quantity
                 elm.Description = product.Description
-                elm.Discount = discount - price > 0 ? price : discount
+                elm.Discount = discount
+                elm.Name = product.Name
                 elm.Price = product.Price
+                elm.IsLargeUnit = product.IsLargeUnit
             }
         })
         syncListProducts([...listOrder])
@@ -150,12 +157,122 @@ const RetailCustomerOrder = (props) => {
         props.onClickNewOrder()
     }
 
+    // const addPromotion = async (list) => {
+    //     console.log("addPromotion list ", list);
+    //     console.log("addPromotion promotions ", promotions);
+    //     let listProduct = await realmStore.queryProducts()
+    //     // console.log("addPromotion listProduct:::: ", listProduct);
+
+    //     let listNewOrder = list.filter(element => (element.IsPromotion == undefined || (element.IsPromotion == false)))
+    //     let listOldPromotion = list.filter(element => (element.IsPromotion != undefined && (element.IsPromotion == true)))
+    //     console.log("listNewOrder listOldPromotion ==:: ", listNewOrder, listOldPromotion);
+
+    //     var DataGrouper = (function () {
+    //         var has = function (obj, target) {
+    //             return _.any(obj, function (value) {
+    //                 return _.isEqual(value, target);
+    //             });
+    //         };
+
+    //         var keys = function (data, names) {
+    //             return _.reduce(data, function (memo, item) {
+    //                 var key = _.pick(item, names);
+    //                 if (!has(memo, key)) {
+    //                     memo.push(key);
+    //                 }
+    //                 return memo;
+    //             }, []);
+    //         };
+
+    //         var group = function (data, names) {
+    //             var stems = keys(data, names);
+    //             return _.map(stems, function (stem) {
+    //                 return {
+    //                     key: stem,
+    //                     vals: _.map(_.where(data, stem), function (item) {
+    //                         return _.omit(item, names);
+    //                     })
+    //                 };
+    //             });
+    //         };
+
+    //         group.register = function (name, converter) {
+    //             return group[name] = function (data, names) {
+    //                 return _.map(group(data, names), converter);
+    //             };
+    //         };
+
+    //         return group;
+    //     }());
+
+    //     DataGrouper.register("sum", function (item) {
+    //         console.log("register item ", item);
+
+    //         return _.extend({ ...item.vals[0] }, item.key, {
+    //             Quantity: _.reduce(item.vals, function (memo, node) {
+    //                 return memo + Number(node.Quantity);
+    //             }, 0)
+    //         });
+    //     });
+
+    //     let listGroupByQuantity = DataGrouper.sum(listNewOrder, ["Id", "IsLargeUnit"])
+
+    //     console.log("listGroupByQuantity === ", listGroupByQuantity);
+
+    //     let listPromotion = [];
+    //     let index = 0;
+    //     listGroupByQuantity.forEach(element => {
+    //         promotions.forEach(async (item) => {
+    //             if ((element.IsPromotion == undefined || (element.IsPromotion == false)) && element.Id == item.ProductId && checkEndDate(item.EndDate) && (item.IsLargeUnit == element.IsLargeUnit && element.Quantity >= item.QuantityCondition)) {
+    //                 let promotion = listProduct.filtered(`Id == ${item.ProductPromotionId}`)
+    //                 promotion = JSON.parse(JSON.stringify(promotion[0]));
+    //                 // let promotion = JSON.parse(item.Promotion)
+    //                 console.log("addPromotion item:::: ", promotion);
+    //                 if (index == 0) {
+    //                     promotion.FisrtPromotion = true;
+    //                 }
+
+    //                 let quantity = Math.floor(element.Quantity / item.QuantityCondition)
+    //                 promotion.Quantity = quantity
+
+    //                 if (listOldPromotion.length > 0) {
+    //                     let oldPromotion = listOldPromotion.filter(el => promotion.Id == el.Id)
+    //                     if (oldPromotion.length == 1) {
+    //                         promotion = oldPromotion[0];
+    //                         promotion.Quantity = quantity;
+    //                     }
+    //                 }
+
+    //                 promotion.Price = item.PricePromotion;
+    //                 promotion.IsLargeUnit = item.ProductPromotionIsLargeUnit;
+    //                 promotion.IsPromotion = true;
+    //                 promotion.ProductId = promotion.Id
+    //                 promotion.Description = element.Quantity + " " + element.Name + ` ${I18n.t('khuyen_mai_')} ` + Math.floor(element.Quantity / item.QuantityCondition);
+
+    //                 console.log("addPromotion promotion ", promotion, index);
+    //                 listPromotion.push(promotion)
+    //                 index++;
+    //             }
+    //         });
+    //     });
+    //     console.log("addPromotion listPromotion:: ", listPromotion);
+    //     listNewOrder = listNewOrder.concat(listPromotion);
+    //     console.log("addPromotion listNewOrder::::: ", listNewOrder);
+    //     return listNewOrder;
+    // }
+
     const addPromotion = async (list) => {
         console.log("addPromotion list ", list);
         console.log("addPromotion promotions ", promotions);
+        let promotionTmp = promotions
+        if (promotions.length == 0) {
+            let promotion = await realmStore.querryPromotion();
+            console.log("realmStore promotion === ", promotion);
+            promotionTmp = promotion
+            setPromotions(promotion)
+        }
         let listProduct = await realmStore.queryProducts()
-        // console.log("addPromotion listProduct:::: ", listProduct);
-
+        console.log("addPromotion listProduct:::: ", listProduct);
         let listNewOrder = list.filter(element => (element.IsPromotion == undefined || (element.IsPromotion == false)))
         let listOldPromotion = list.filter(element => (element.IsPromotion != undefined && (element.IsPromotion == true)))
         console.log("listNewOrder listOldPromotion ==:: ", listNewOrder, listOldPromotion);
@@ -211,12 +328,12 @@ const RetailCustomerOrder = (props) => {
         let listGroupByQuantity = DataGrouper.sum(listNewOrder, ["Id", "IsLargeUnit"])
 
         console.log("listGroupByQuantity === ", listGroupByQuantity);
-
+        console.log("promotionTmp ===== ", promotionTmp);
         let listPromotion = [];
         let index = 0;
         listGroupByQuantity.forEach(element => {
-            promotions.forEach(async (item) => {
-                if ((element.IsPromotion == undefined || (element.IsPromotion == false)) && element.Id == item.ProductId && checkEndDate(item.EndDate) && (item.IsLargeUnit == element.IsLargeUnit && element.Quantity >= item.QuantityCondition)) {
+            promotionTmp.forEach(async (item) => {
+                if ((element.IsPromotion == undefined || (element.IsPromotion == false)) && element.ProductId == item.ProductId && checkEndDate(item.EndDate) && (item.IsLargeUnit == element.IsLargeUnit && element.Quantity >= item.QuantityCondition)) {
                     let promotion = listProduct.filtered(`Id == ${item.ProductPromotionId}`)
                     promotion = JSON.parse(JSON.stringify(promotion[0]));
                     // let promotion = JSON.parse(item.Promotion)
@@ -326,10 +443,10 @@ const RetailCustomerOrder = (props) => {
 
                         <View style={{ alignItems: "flex-end" }}>
                             {/* <Icon style={{ paddingHorizontal: 5 }} name="bell-ring" size={20} color="grey" /> */}
-                            {/* <Text
+                            <Text
                                 style={{ color: Colors.colorchinh, marginRight: 5 }}>
                                 {isPromotion ? currencyToString(item.Price * item.Quantity) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit * item.Quantity) : currencyToString(item.Price * item.Quantity))}
-                            </Text> */}
+                            </Text>
                         </View>
 
                         {
@@ -391,7 +508,7 @@ const RetailCustomerOrder = (props) => {
     const onCallBackPayment = (type, data) => {
         console.log("onCallBackPayment data ", data);
         // syncListProducts([])
-        props.setJsonContent({ ...data })
+        props.updateServerEvent({ ...data })
     }
 
     // const onCallBackPayment = (type, data) => {
@@ -401,11 +518,15 @@ const RetailCustomerOrder = (props) => {
     // }
 
     const onClickPayment = () => {
-        if (isQuickPayment) {
+        // if (isQuickPayment) {
 
+        // } else {
+        if (listOrder && listOrder.length > 0) {
+            props.navigation.navigate(ScreenList.Payment, { onCallBack: onCallBackPayment, Screen: ScreenList.MainRetail, RoomId: props.jsonContent.RoomId, Name: props.jsonContent.RoomName ? props.jsonContent.RoomName : I18n.t('don_hang'), Position: props.jsonContent.Pos });
         } else {
-            props.navigation.navigate(ScreenList.Payment, { onCallBack: onCallBackPayment, Screen: ScreenList.MainRetail, RoomId: props.jsonContent.RoomId, Name: props.jsonContent.RoomName ? props.jsonContent.RoomName : I18n.t('app_name'), Position: props.jsonContent.Pos });
+            dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
         }
+        // }
     }
 
 
@@ -421,7 +542,16 @@ const RetailCustomerOrder = (props) => {
         setIsQuickPayment(!isQuickPayment)
     }
 
-
+    const onClickPrint = () => {
+        hideMenu()
+        console.log("onClickProvisional jsonContent ", props.jsonContent);
+        if (listOrder && listOrder.length > 0) {
+            props.jsonContent.RoomName = I18n.t('don_hang');
+            dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: props.jsonContent, provisional: true } })
+        } else {
+            dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
+        }
+    }
 
     return (
         <View style={{ flex: 1 }}>
@@ -447,9 +577,9 @@ const RetailCustomerOrder = (props) => {
                     onPress={() => { setExpand(!expand) }}
                     style={{ borderTopWidth: .5, borderTopColor: "red", paddingVertical: 3, backgroundColor: "white", marginLeft: 10 }}>
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
-                        <Text style={{ fontWeight: "bold" }}>{I18n.t('khach_phai_tra')}</Text>
+                        <Text style={{ fontWeight: "bold" }}>{I18n.t('tong_thanh_tien')}</Text>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                            <Text style={{ fontWeight: "bold", fontSize: 16, color: Colors.colorchinh }}>{currencyToString(props.jsonContent.Total - props.jsonContent.VAT + props.jsonContent.Discount)}</Text>
+                            <Text style={{ fontWeight: "bold", fontSize: 16, color: Colors.colorchinh }}>{currencyToString(props.jsonContent.Total - props.jsonContent.VAT + props.jsonContent.Discount)}đ</Text>
                             {expand ?
                                 <Icon style={{}} name="chevron-up" size={30} color="black" />
                                 :
@@ -470,9 +600,9 @@ const RetailCustomerOrder = (props) => {
                                 </View>
                             </View>
                             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
-                                <Text style={{ fontWeight: "bold" }}>{I18n.t('tong_thanh_tien')}</Text>
+                                <Text style={{ fontWeight: "bold" }}>{I18n.t('khach_phai_tra')}</Text>
                                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                                    <Text style={{ fontWeight: "bold", fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(props.jsonContent.Total)}</Text>
+                                    <Text style={{ fontWeight: "bold", fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(props.jsonContent.Total)}đ</Text>
                                 </View>
                             </View>
                         </View>
@@ -491,7 +621,7 @@ const RetailCustomerOrder = (props) => {
                         <View style={{
                             backgroundColor: "#fff", borderRadius: 4, marginHorizontal: 5,
                         }}>
-                            <TouchableOpacity onPress={() => { }} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
+                            <TouchableOpacity onPress={onClickPrint} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
                                 <MaterialIcons style={{ paddingHorizontal: 7 }} name="notifications" size={26} color={Colors.colorchinh} />
                                 <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('in_tam_tinh')}</Text>
                             </TouchableOpacity>

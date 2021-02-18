@@ -60,6 +60,7 @@ const CustomerOrder = (props) => {
             console.log('ReturnProduct data', JSON.parse(data));
             setVendorSession(JSON.parse(data))
         }
+
         getVendorSession()
         var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
         var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
@@ -110,7 +111,7 @@ const CustomerOrder = (props) => {
             listTopping.forEach(item => {
                 if (item.Quantity > 0) {
                     description += ` -${item.Name} x${item.Quantity} = ${currencyToString(item.Quantity * item.Price)};\n `
-                    totalPrice = item.Quantity * item.Price
+                    totalPrice += item.Quantity * item.Price
                     topping.push({ ExtraId: item.ExtraId, QuantityExtra: item.Quantity, Price: item.Price, Quantity: item.Quantity })
                 }
             })
@@ -124,11 +125,11 @@ const CustomerOrder = (props) => {
                 element.Description = description
                 element.Topping = JSON.stringify(topping)
                 element.TotalTopping = totalPrice
-                element.Price = (element.IsLargeUnit) ? element.PriceLargeUnit : element.UnitPrice + totalPrice
+                element.Price += totalPrice
             }
         });
         setListOrder([...listOrder])
-        if (indexFind >= 0 && listOrder.length >= indexFind) mapDataToList(listOrder[indexFind], false)
+        if (indexFind >= 0 && listOrder.length >= indexFind) mapDataToList(listOrder[indexFind])
 
     }, [props.listTopping])
 
@@ -151,18 +152,15 @@ const CustomerOrder = (props) => {
         } else {
             let price = product.IsLargeUnit == true ? product.PriceLargeUnit : product.UnitPrice
             let discount = product.Percent ? (price * product.Discount / 100) : product.Discount
+            discount = discount > price ? price : discount
+            let discountRatio = product.Percent ? product.Discount : product.Discount / price * 100
             listOrder.forEach((elm, index, arr) => {
                 if (elm.ProductId == product.ProductId && index == product.index) {
-                    // if (product.Quantity == 0) {
-                    //     arr.splice(index, 1)
-                    // }
-                    if (product.Percent) {
-                        elm.DiscountRatio = product.Discount
-                    }
+                    elm.DiscountRatio = discountRatio
                     elm.Quantity = product.Quantity
-                    
+                    elm.Name = product.Name
                     elm.Description = product.Description
-                    elm.Discount = discount - price > 0 ? price : discount
+                    elm.Discount = discount
                     elm.Price = product.Price
                     elm.IsLargeUnit = product.IsLargeUnit
                     props.outputSelectedProduct(elm, true)
@@ -197,11 +195,23 @@ const CustomerOrder = (props) => {
     const onClickReturn = (product, type = 1) => {
         setQuantitySubtract(type != 1 ? 1 : product.Quantity)
         setItemOrder(product)
-        typeModal.current = TYPE_MODAL.DELETE
-        setShowModal(true)
+        // typeModal.current = TYPE_MODAL.DELETE
+        // setShowModal(true)
+
+        if (vendorSession.Settings.ReturnHistory) {
+            typeModal.current = TYPE_MODAL.DELETE
+            setShowModal(true)
+        } else {
+            let data = {
+                QuantityChange: type == 1 ? product.Quantity : 1,
+                Description: "",
+            }
+            saveOrder(data, product);
+        }
     }
 
-    const saveOrder = (data) => {
+    const saveOrder = (data, item) => {
+        let itemOrder = item;
         console.log('saveOrder data ', data, vendorSession.Settings.ReturnHistory, itemOrder);
         if (vendorSession.Settings.ReturnHistory) {
             let price = itemOrder.IsLargeUnit ? itemOrder.PriceLargeUnit : itemOrder.UnitPrice
@@ -225,14 +235,42 @@ const CustomerOrder = (props) => {
                 })
         }
 
-        let item = { ...itemOrder }
-        let Quantity = itemOrder.Quantity - data.QuantityChange
-        if (Quantity > 0) {
-            item.Quantity = Quantity
-            mapDataToList(item, false)
-        } else {
-            removeItem(item)
+        console.log("saveOrder itemOrder ====: " + JSON.stringify(itemOrder));
+        console.log("saveOrder data ====: " + JSON.stringify(data));
+        if (itemOrder.Processed > 0 && (((itemOrder.Quantity - itemOrder.Processed) < data.QuantityChange))) {
+            let listOrderReturn = [{ ...data, ...itemOrder, Quantity: (itemOrder.Quantity - itemOrder.Processed - data.QuantityChange), Description: data.Description, RoomName: props.route.params.room.Name, Pos: props.jsonContent.Pos }]
+            let listTmp = dataManager.getDataPrintCook(listOrderReturn)
+            console.log("saveOrder listTmp ====: " + JSON.stringify(listTmp));
+            dispatch({ type: 'PRINT_RETURN_PRODUCT', printReturnProduct: JSON.stringify(listTmp) })
         }
+
+        let Quantity = itemOrder.Quantity > data.QuantityChange ? itemOrder.Quantity - data.QuantityChange : 0
+        itemOrder.Quantity = Quantity
+        if (Quantity < itemOrder.Processed) {
+            itemOrder.Processed = Quantity
+        }
+        props.outputSelectedProduct({ ...itemOrder }, true)
+
+
+        // if (itemOrder.Processed > 0 && (((itemOrder.Quantity - itemOrder.Processed) <  data.QuantityChange))) {
+        //     let listOrderReturn =  [{ ...data, ...itemOrder, Quantity: (itemOrder.Quantity - itemOrder.Processed -  data.QuantityChange), Description: data.Description, RoomName: props.route.params.room.Name, Pos: props.jsonContent.Pos }]
+        //     // [{ ...data, ...element, Quantity: (itemOrder.Quantity - itemOrder.Processed -  data.QuantityChange), Description: data.Description, RoomName: props.route.params.room.Name, Pos: jsonContent.Pos }]
+        //     let listTmp = dataManager.getDataPrintCook(listOrderReturn)
+        //     console.log("saveOrder listTmp ====: " + JSON.stringify(listTmp));
+        //     dispatch({ type: 'PRINT_RETURN_PRODUCT', printReturnProduct: JSON.stringify(listTmp) })
+        // }
+
+        // let checkPrint = false;
+        // let listOrderReturn = [{ ...data, ...itemOrder, Quantity: Quantity, Description: data.Description, RoomName: props.route.params.room.Name, Pos: props.jsonContent.Pos }]
+        // if (itemOrder.Processed > 0) {
+        //     checkPrint = true;
+        // }
+
+        // if (checkPrint) {
+        //     let listTmp = dataManager.getDataPrintCook(listOrderReturn)
+        //     console.log("saveOrder listTmp ====: " + JSON.stringify(listTmp));
+        //     dispatch({ type: 'PRINT_RETURN_PRODUCT', printReturnProduct: JSON.stringify(listTmp) })
+        // }
     }
 
 
@@ -284,39 +322,40 @@ const CustomerOrder = (props) => {
                         borderBottomColor: "#ddd", borderBottomWidth: 0.5,
                         flexDirection: "row", flex: 1, alignItems: "center", padding: 5,
                         backgroundColor: index == props.itemOrder.index ? "#EED6A7" : 'white', borderRadius: 10, marginBottom: 2
-                    }}><View style={{flex:3,flexDirection:'row'}}>
-                        <TouchableOpacity
-                            style={{ marginRight: 5 }}
-                            onPress={() => { if (!isPromotion) onClickReturn(item, 1) }}>
-                            <Icon name={!isPromotion ? "trash-can-outline" : "gift"} size={40} color={!isPromotion ? "black" : Colors.colorLightBlue} />
-                        </TouchableOpacity>
-                        <View style={{ flexDirection: "column", flex: 1, }}>
-                            <Text style={{ fontWeight: "bold", marginBottom: 7 }}>{item.Name}</Text>
-                            <View style={{ flexDirection: "row" }}>
-                                <Text style={{}}>{isPromotion ? currencyToString(item.Price) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : currencyToString(item.Price))} x </Text>
-                                <View onPress={() => onClickUnit({ ...item })}>
-                                    {
-                                        orientaition == Constant.PORTRAIT ?
-                                            <Text style={{ color: Colors.colorchinh, }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text>
-                                            :
-                                            <View>
-                                                <Text style={{ color: Colors.colorchinh, }}>{item.IsLargeUnit ? (item.LargeUnit ? "/" + item.LargeUnit : "") : (item.Unit ? "/" + item.Unit : "")}</Text>
-                                            </View>
-                                    }
+                    }}>
+                        <View style={{ flex: 3, flexDirection: 'row' }}>
+                            <TouchableOpacity
+                                style={{ marginRight: 5 }}
+                                onPress={() => { if (!isPromotion) onClickReturn(item, 1) }}>
+                                <Icon name={!isPromotion ? "trash-can-outline" : "gift"} size={40} color={!isPromotion ? "black" : Colors.colorLightBlue} />
+                            </TouchableOpacity>
+                            <View style={{ flexDirection: "column", flex: 1, }}>
+                                <Text style={{ fontWeight: "bold", marginBottom: 7 }}>{item.Name}</Text>
+                                <View style={{ flexDirection: "row" }}>
+                                    <Text style={{}}>{currencyToString(item.Price)} x </Text>
+                                    <View onPress={() => onClickUnit({ ...item })}>
+                                        {
+                                            orientaition == Constant.PORTRAIT ?
+                                                <Text style={{ color: Colors.colorchinh, }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text>
+                                                :
+                                                <View>
+                                                    <Text style={{ color: Colors.colorchinh, }}>{item.IsLargeUnit ? (item.LargeUnit ? "/" + item.LargeUnit : "") : (item.Unit ? "/" + item.Unit : "")}</Text>
+                                                </View>
+                                        }
+                                    </View>
                                 </View>
+                                <Text
+                                    style={{ fontStyle: "italic", fontSize: 11, color: "gray" }}>
+                                    {item.Description}
+                                </Text>
                             </View>
-                            <Text
-                                style={{ fontStyle: "italic", fontSize: 11, color: "gray" }}>
-                                {item.Description}
-                            </Text>
-                        </View>
-                        <View style={{}}>
-                            <Icon style={{ alignSelf: "flex-end" }} name="bell-ring" size={20} color={item.Quantity <= item.Processed ? Colors.colorLightBlue : "gray"} />
-                            <Text
-                                style={{ color: Colors.colorchinh, alignSelf: "flex-end" }}>
-                                {isPromotion ? currencyToString(item.Price * item.Quantity) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit * item.Quantity) : currencyToString(item.Price * item.Quantity))}
-                            </Text>
-                        </View>
+                            <View style={{}}>
+                                <Icon style={{ alignSelf: "flex-end" }} name="bell-ring" size={20} color={item.Quantity <= item.Processed ? Colors.colorLightBlue : "gray"} />
+                                <Text
+                                    style={{ color: Colors.colorchinh, alignSelf: "flex-end" }}>
+                                    {currencyToString(item.Price * item.Quantity)}
+                                </Text>
+                            </View>
                         </View>
                         {
                             orientaition == Constant.PORTRAIT ?
@@ -347,6 +386,15 @@ const CustomerOrder = (props) => {
                                                     <View style={{ alignItems: "center", flexDirection: "row", flex: 1 }}>
                                                         <TouchableOpacity
                                                             onPress={
+                                                                // () => {
+                                                                //     if (item.Quantity == 1) {
+                                                                //         removeItem(item)
+                                                                //     } else {
+                                                                //         item.Quantity--
+                                                                //         setListOrder([...listOrder])
+                                                                //         mapDataToList(item, false)
+                                                                //     }
+                                                                // }
                                                                 () => onClickReturn(item, 2)
                                                             }>
                                                             <Icon name="minus-box" size={40} color={Colors.colorchinh} />
@@ -375,7 +423,7 @@ const CustomerOrder = (props) => {
                                                         <TouchableOpacity onPress={() => {
                                                             item.Quantity++
                                                             setListOrder([...listOrder])
-                                                            mapDataToList(item, false)
+                                                            mapDataToList(item)
                                                         }}>
                                                             <Icon name="plus-box" size={40} color={Colors.colorchinh} />
                                                         </TouchableOpacity>
@@ -384,7 +432,7 @@ const CustomerOrder = (props) => {
                                         </View>
 
                                         <TouchableOpacity
-                                            style={{ borderWidth: 1, borderRadius: 50, borderColor: Colors.colorchinh, }}
+                                            style={{ borderWidth: 1, borderRadius: 20, alignItems: "center", width: 40, height: 40, borderColor: Colors.colorchinh, }}
                                             onPress={() => {
                                                 props.outputItemOrder(item, index)
                                             }}>
@@ -429,7 +477,7 @@ const CustomerOrder = (props) => {
 
     const onClickPayment = () => {
         if (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0) {
-            props.navigation.navigate(ScreenList.Payment, { RoomId: props.route.params.room.Id, Position: props.Position });
+            props.navigation.navigate(ScreenList.Payment, { RoomId: props.route.params.room.Id, Name: props.route.params.room.Name, Position: props.Position });
         } else {
             dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
         }
@@ -487,7 +535,7 @@ const CustomerOrder = (props) => {
         if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
             jsonContent.RoomName = props.route.params.room.Name
         }
-        dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: jsonContent })
+        dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: true } })
     }
 
     const splitTable = () => {
@@ -548,7 +596,7 @@ const CustomerOrder = (props) => {
                             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                                 <Text style={{ fontWeight: "bold" }}>{I18n.t('khach_phai_tra')}</Text>
                                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                                    <Text style={{ fontWeight: "bold", fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(props.jsonContent.Total)}</Text>
+                                    <Text style={{ fontWeight: "bold", fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(props.jsonContent.Total)}đ</Text>
                                 </View>
                             </View>
                         </View>
@@ -627,6 +675,7 @@ const CustomerOrder = (props) => {
                                     <DialogProductDetail
                                         onClickTopping={() => onClickTopping(itemOrder)}
                                         item={itemOrder}
+                                        priceBookId={props.jsonContent.PriceBookId}
                                         onClickSubmit={(data) => {
                                             applyDialogDetail(data)
                                         }}
@@ -640,7 +689,7 @@ const CustomerOrder = (props) => {
                                         Quantity={itemOrder.Quantity}
                                         QuantitySubtract={QuantitySubtract}
                                         vendorSession={vendorSession}
-                                        getDataOnClick={(data) => saveOrder(data)}
+                                        getDataOnClick={(data) => saveOrder(data, itemOrder)}
                                         setShowModal={() => {
                                             setShowModal(false)
                                         }

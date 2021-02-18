@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { ScrollView } from 'react-native';
 import { Switch } from 'react-native';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, NativeModules } from 'react-native';
+import { View, Platform,Text, StyleSheet, TouchableOpacity, Modal, TextInput, NativeModules, Keyboard } from 'react-native';
 import ToolBarDefault from '../../components/toolbar/ToolBarDefault'
 import I18n from '../../common/language/i18n'
 import MainToolBar from '../main/MainToolBar';
@@ -23,6 +23,108 @@ import colors from '../../theme/Colors';
 //import { in } from 'react-native/Libraries/Animated/src/Easing';
 const { Print } = NativeModules;
 
+export const DefaultSetting = {
+    am_bao_thanh_toan: true,
+    Printer: [
+        {
+            key: Constant.KEY_PRINTER.CashierKey,
+            title: 'may_in_thu_ngan',
+            type: '',
+            size: '',
+            ip: '',
+            show: true
+        },
+        {
+            key: Constant.KEY_PRINTER.KitchenAKey,
+            title: 'may_in_bao_bep_a',
+            type: '',
+            size: '',
+            ip: '',
+            show: true
+        },
+        {
+            key: Constant.KEY_PRINTER.KitchenBKey,
+            title: 'may_in_bao_bep_b',
+            type: '',
+            size: '',
+            ip: '',
+            show: true
+        },
+        {
+            key: Constant.KEY_PRINTER.KitchenCKey,
+            title: 'may_in_bao_bep_c',
+            type: '',
+            size: '',
+            ip: '',
+            show: true
+        },
+        {
+            key: Constant.KEY_PRINTER.KitchenDKey,
+            title: 'may_in_bao_bep_d',
+            type: '',
+            size: '',
+            ip: '',
+            show: true
+        },
+        {
+            key: Constant.KEY_PRINTER.BartenderAKey,
+            title: 'may_in_bao_pha_che_a',
+            type: '',
+            size: '',
+            ip: '',
+            show: true
+        },
+        {
+            key: Constant.KEY_PRINTER.BartenderBKey,
+            title: 'may_in_bao_pha_che_b',
+            type: '',
+            size: '',
+            ip: '',
+            show: true
+        },
+        {
+            key: Constant.KEY_PRINTER.BartenderCKey,
+            title: 'may_in_bao_pha_che_c',
+            type: '',
+            size: '',
+            ip: '',
+            show: true
+        },
+        {
+            key: Constant.KEY_PRINTER.BartenderDKey,
+            title: 'may_in_bao_pha_che_d',
+            type: '',
+            size: '',
+            ip: '',
+            show: true
+        },
+        // {
+        //     key: Constant.KEY_PRINTER.StampPrintKey,
+        //     title: 'may_in_tem',
+        //     type: '',
+        //     size: '',
+        //     ip: ''
+        // },
+    ],
+    InfoStore: '',
+    HtmlPrint: '',
+    TempPrint: '',
+    tu_dong_in_bao_bep: false,
+    in_sau_khi_thanh_toan: true,
+    in_hai_lien_cho_hoa_don: false,
+    in_hai_lien_cho_che_bien: false,
+    in_tam_tinh: false,
+    in_tem_truoc_thanh_toan: false,
+    bao_che_bien_sau_thanh_toan: false,
+    cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang: false,
+    cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang: false,
+    khong_cho_phep_ban_hang_khi_het_ton_kho: false,
+    mo_cashbox_sau_khi_thanh_toan: false,
+    nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: false,
+    giu_man_hinh_luon_sang: false,
+    CurrencyUnit: 'đ',
+}
+
 export default (props) => {
     const dispatch = useDispatch();
     const PrintType = {
@@ -36,111 +138,42 @@ export default (props) => {
         name: 'VND',
         value: 'đ'
     }
-    const DefaultSetting = {
-        am_bao_thanh_toan: true,
-        Printer: [
-            {
-                key: Constant.KEY_PRINTER.CashierKey,
-                title: 'may_in_thu_ngan',
-                type: '',
-                size: '',
-                ip: ''
-            },
-            {
-                key: Constant.KEY_PRINTER.KitchenAKey,
-                title: 'may_in_bao_bep_a',
-                type: '',
-                size: '',
-                ip: ''
-            },
-            {
-                key: Constant.KEY_PRINTER.KitchenBKey,
-                title: 'may_in_bao_bep_b',
-                type: '',
-                size: '',
-                ip: ''
-            },
-            {
-                key: Constant.KEY_PRINTER.KitchenCKey,
-                title: 'may_in_bao_bep_c',
-                type: '',
-                size: '',
-                ip: ''
-            },
-            {
-                key: Constant.KEY_PRINTER.KitchenDKey,
-                title: 'may_in_bao_bep_d',
-                type: '',
-                size: '',
-                ip: ''
-            },
-            {
-                key: Constant.KEY_PRINTER.BartenderAKey,
-                title: 'may_in_bao_pha_che_a',
-                type: '',
-                size: '',
-                ip: ''
-            },
-            {
-                key: Constant.KEY_PRINTER.BartenderBKey,
-                title: 'may_in_bao_pha_che_b',
-                type: '',
-                size: '',
-                ip: ''
-            },
-            {
-                key: Constant.KEY_PRINTER.BartenderCKey,
-                title: 'may_in_bao_pha_che_c',
-                type: '',
-                size: '',
-                ip: ''
-            },
-            {
-                key: Constant.KEY_PRINTER.BartenderDKey,
-                title: 'may_in_bao_pha_che_d',
-                type: '',
-                size: '',
-                ip: ''
-            },
-            // {
-            //     key: Constant.KEY_PRINTER.StampPrintKey,
-            //     title: 'may_in_tem',
-            //     type: '',
-            //     size: '',
-            //     ip: ''
-            // },
-        ],
-        InfoStore: '',
-        HtmlPrint: '',
-        TempPrint: '',
-        tu_dong_in_bao_bep: false,
-        in_sau_khi_thanh_toan: true,
-        in_hai_lien_cho_hoa_don: false,
-        in_hai_lien_cho_che_bien: false,
-        in_tam_tinh: false,
-        in_tem_truoc_thanh_toan: false,
-        bao_che_bien_sau_thanh_toan: false,
-        cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang: false,
-        cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang: false,
-        khong_cho_phep_ban_hang_khi_het_ton_kho: false,
-        mo_cashbox_sau_khi_thanh_toan: false,
-        nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: false,
-        giu_man_hinh_luon_sang: false,
-        CurrencyUnit: 'đ',
-    }
+    const { printerObject, isFNB } = useSelector(state => {
+        return state.Common
+    });
     const [settingObject, setSettingObject] = useState(DefaultSetting)
     const [inforStore, setInforStore] = useState({})
+    const [marginModal, setMargin] = useState(0)
+
     useFocusEffect(useCallback(() => {
         const getSetting = async () => {
+
+
+
             let data = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
             console.log("setting data", JSON.parse(data));
-            let res = await new HTTPService().setPath(ApiPath.VENDOR_SESSION).GET()
-            setSettingObject(JSON.parse(data))
-            if (res.length != 0)
-                setSettingObject({ ...JSON.parse(data), strings: res.Settings })
-            console.log("setting object", settingObject);
+            if (data != "") {
+                data = JSON.parse(data);
+                data.Printer.forEach(element => {
+                    if (isFNB || element.key == Constant.KEY_PRINTER.CashierKey) {
+                        element.show = true;
+                    } else {
+                        element.show = false;
+                    }
+                });
+                setSettingObject({ ...data })
 
-
+            } else {
+                DefaultSetting.Printer.forEach(element => {
+                    if (isFNB || element.key == Constant.KEY_PRINTER.CashierKey) {
+                        element.show = true;
+                    } else {
+                        element.show = false;
+                    }
+                });
+                console.log("{ ...data, Printer: printer }2 ", { ...DefaultSetting, Printer: printer });
+                setSettingObject({ ...DefaultSetting })
+            }
         }
 
         getSetting()
@@ -150,14 +183,26 @@ export default (props) => {
     }, [settingObject])
     useFocusEffect(useCallback(() => {
         getCurentRetailer()
+
+        var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
+        var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        }
+
+
     }, []))
-    const getCurentRetailer = async () => {
-        let res = await new HTTPService().setPath(ApiPath.VENDOR_SESSION).GET()
-        setInforStore(res.CurrentRetailer)
+
+    const _keyboardDidShow = () => {
+        setMargin(Metrics.screenWidth / 2)
     }
-    const printerObject = useSelector(state => {
-        return state.Common.printerObject
-    });
+
+    const _keyboardDidHide = () => {
+        setMargin(0)
+    }
+
     useEffect(() => {
         console.log("Printer Object", (printerObject));
     }, [settingObject])
@@ -262,7 +307,7 @@ export default (props) => {
             setStateMoalSize(false)
             settingObject.Printer[positionPrint] = { ...settingObject.Printer[positionPrint], type: defaultType, size: '', ip: '' }
             savePrint({ ...settingObject })
-            // dispatch({ type: 'SETTING_OBJECT', printerObject: JSON.stringify(settingObject.Printer) })
+            // dispatch({ type: 'PRINT_OBJECT', printerObject: JSON.stringify(settingObject.Printer) })
 
             savePrintRedux(settingObject.Printer)
         }
@@ -350,10 +395,10 @@ export default (props) => {
     const savePrintRedux = (Printer) => {
         let objectPrint = {}
         Printer.forEach(element => {
-            objectPrint[element.key] = element.ip;
+            objectPrint[element.key] = { ip: element.ip, size: element.size };
         });
         console.log("savePrinter objectPrint ", objectPrint);
-        dispatch({ type: 'SETTING_OBJECT', printerObject: objectPrint })
+        dispatch({ type: 'PRINT_OBJECT', printerObject: objectPrint })
     }
     const vendor = useRef({Name:inforStore.Name,Address:inforStore.Address,Phone:inforStore.Phone})
     
@@ -426,11 +471,14 @@ export default (props) => {
                     <View>
                         <Text style={styles.textTitle}>Print Connect</Text>
                         {
-                            settingObject.Printer.map((item, index) => {
-                                return (
-                                    <PrintConnect key={index.toString()} title={I18n.t(item.title)} onSet={index == 9 ? onShowModalStampPrint : onShowModal} stylePrinter={(item.type ? I18n.t(item.type) : I18n.t('khong_in')) + (item.size ? ', size ' + item.size + ' mm ' : '') + (item.ip ? '(' + item.ip + ')' : '')} pos={index} status={showModal} />
-                                )
-                            })
+                            settingObject.Printer && settingObject.Printer.length > 0 ?
+                                settingObject.Printer.map((item, index) => {
+                                    if (item.show)
+                                        return (
+                                            <PrintConnect key={index.toString()} title={I18n.t(item.title)} onSet={index == 9 ? onShowModalStampPrint : onShowModal} stylePrinter={(item.type ? I18n.t(item.type) : I18n.t('khong_in')) + (item.size ? ', size ' + item.size + ' mm ' : '') + (item.ip ? '(' + item.ip + ')' : '')} pos={index} status={showModal} />
+                                        )
+                                })
+                                : null
                         }
                     </View>
                     <View style={styles.viewLine}></View>
@@ -445,24 +493,29 @@ export default (props) => {
                         {/* <TouchableOpacity onPress={() => screenSwitch(ScreenList.PrintWebview)}>
                             <Text style={styles.textTitleItem}>Temp print</Text>
                         </TouchableOpacity> */}
-                        <SettingSwitch title={"tu_dong_in_bao_bep"} output={onSwitchTone} isStatus={settingObject.tu_dong_in_bao_bep} />
+                        {isFNB ?
+                            <SettingSwitch title={"tu_dong_in_bao_bep"} output={onSwitchTone} isStatus={settingObject.tu_dong_in_bao_bep} />
+                            : null
+                        }
                         <SettingSwitch title={"in_sau_khi_thanh_toan"} output={onSwitchTone} isStatus={settingObject.in_sau_khi_thanh_toan} />
                         <SettingSwitch title={"in_hai_lien_cho_hoa_don"} output={onSwitchTone} isStatus={settingObject.in_hai_lien_cho_hoa_don} />
-                        <SettingSwitch title={"in_hai_lien_cho_che_bien"} output={onSwitchTone} isStatus={settingObject.in_hai_lien_cho_che_bien} />
+                        {isFNB ?
+                            <SettingSwitch title={"in_hai_lien_cho_che_bien"} output={onSwitchTone} isStatus={settingObject.in_hai_lien_cho_che_bien} />
+                            : null}
                         <SettingSwitch title={"in_tam_tinh"} output={onSwitchTone} isStatus={settingObject.in_tam_tinh} />
                         {/* <SettingSwitch title={"in_tem_truoc_thanh_toan"} output={onSwitchTone} isStatus={settingObject.in_tem_truoc_thanh_toan} /> */}
                         {/* <SettingSwitch title={"bao_che_bien_sau_thanh_toan"} output={onSwitchTone} isStatus={settingObject.bao_che_bien_sau_thanh_toan} /> */}
                     </View>
                     <View style={styles.viewLine}></View>
-                    {/*<View>
+                    <View>
                         <Text style={styles.textTitle}>{I18n.t("thiet_lap_tinh_nang")}</Text>
                         <SettingSwitch title={"cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang"} output={onSwitchTone} isStatus={settingObject.cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang} />
-                        <SettingSwitch title={"cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang"} output={onSwitchTone} isStatus={settingObject.cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang} />
-                        <SettingSwitch title={"khong_cho_phep_ban_hang_khi_het_ton_kho"} output={onSwitchTone} isStatus={settingObject.khong_cho_phep_ban_hang_khi_het_ton_kho} />
+                        {/* <SettingSwitch title={"cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang"} output={onSwitchTone} isStatus={settingObject.cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang} /> */}
+                        {/* <SettingSwitch title={"khong_cho_phep_ban_hang_khi_het_ton_kho"} output={onSwitchTone} isStatus={settingObject.khong_cho_phep_ban_hang_khi_het_ton_kho} />
                         <SettingSwitch title={"mo_cashbox_sau_khi_thanh_toan"} output={onSwitchTone} isStatus={settingObject.mo_cashbox_sau_khi_thanh_toan} />
-                        <SettingSwitch title={"nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly"} output={onSwitchTone} isStatus={settingObject.nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly} />
+                        <SettingSwitch title={"nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly"} output={onSwitchTone} isStatus={settingObject.nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly} /> */}
                     </View>
-                    <View style={styles.viewLine}></View> */}
+                    <View style={styles.viewLine}></View>
                     <View>
                         <Text style={styles.textTitle}>{I18n.t("thiet_lap_he_thong")}</Text>
                         <SettingSwitch title={"giu_man_hinh_luon_sang"} output={onSwitchTone} isStatus={settingObject.giu_man_hinh_luon_sang} />
@@ -551,8 +604,8 @@ export default (props) => {
                                     bottom: 0
                                 }}></View>
                             </TouchableWithoutFeedback>
-                            <View style={styles.styleViewModal} >
-                                <View style={{ width: Metrics.screenWidth * 0.8 }}>
+                            <View style={[styles.styleViewModal,{ marginBottom: Platform.OS == 'ios' ? marginModal : 0 }]} >
+                                <View style={{ width: Metrics.screenWidth * 0.8, }}>
                                     <Text style={styles.titleModal}>{I18n.t('thong_tin_cua_hang')}</Text>
                                     <Text style={{ fontSize: 18, justifyContent: 'center', marginTop: 10, marginLeft: 20 }}>{I18n.t('nhap_chieu_rong_kho_giay')}</Text>
                                     <TextInput returnKeyType='done' style={styles.textInputStyle} placeholder='58..80' placeholderTextColor="#808080" keyboardType="numbers-and-punctuation" onChangeText={text => setDefaultSize(parseInt(text) > 80 ? '80' : parseInt(text) < 58 ? '58' : text)}></TextInput>
@@ -648,7 +701,7 @@ export default (props) => {
                                 }}></View>
 
                             </TouchableWithoutFeedback>
-                            <View style={styles.styleViewModal} >
+                            <View style={[styles.styleViewModal,{ marginBottom: Platform.OS == 'ios' ? marginModal : 0 }]} >
                                 <View style={{ width: Metrics.screenWidth * 0.8, }}>
                                     <Text style={styles.titleModal}>{titlePrint}</Text>
                                     <Text style={{ fontSize: 18, justifyContent: 'center', marginTop: 10, marginLeft: 20 }}>{I18n.t('nhap_dia_chi_ip_may')}</Text>
@@ -745,7 +798,7 @@ export default (props) => {
                                 }}></View>
 
                             </TouchableWithoutFeedback>
-                            <View style={styles.styleViewModal} >
+                            <View style={[styles.styleViewModal]} >
                                 <View style={{ width: Metrics.screenWidth * 0.7, height: Metrics.screenHeight * 0.7 }}>
                                     <Text style={styles.titleModal}>{I18n.t('thong_tin_cua_hang')}</Text>
                                     <StoreInformation code={inforStore.Code} name={inforStore.Name} address={inforStore.Address} phoneNumber={inforStore.Phone} outPut={outPut}/>

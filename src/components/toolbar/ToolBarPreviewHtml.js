@@ -21,52 +21,41 @@ export default function ToolBarPreviewHtml(props) {
     };
 
     return (
-        // <LinearGradient
-        //     start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }}
-        //     colors={['#FFAB40', '#FF5722']}
-        //     style={{ height: 44, zIndex: 9999999999}}
-        // >
-            <View style={styles.toolbarContainer}>
-                <View style={{
-                    flex: 1,
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    justifyContent: "center"
-                }}
-                >
-
-                    <View style={{ flex: 1, alignItems: "center" }}>
-                        <TouchableOpacity onPress={props.clickRightIcon} style={{height: "100%", justifyContent: "center", paddingHorizontal: 10}}>
-                            {props.rightIcon && props.clickRightIcon ?
-                                <Icon name={props.rightIcon} size={props.size ? props.size : 30} color="white" />
-                                :
-                                <Image source={Images.icon_back} style={{width:10,height:16,}}/>
-                            }
-                        </TouchableOpacity>
-                    </View>
-                    <View style={{ flex: 4, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
-                        <Subheading
-                            numberOfLines={1}
-                            style={{
-                                color: 'white'
-                            }}
-                        >
-                            {props.title}
-                        </Subheading>
-                    </View>
-                    <View style={{ flex: 1, alignItems: "center" }}>
-                        <TouchableOpacity onPress={props.clickPrint} style={{ height: "100%", width: 50, justifyContent: "center", alignItems: "center"}}>
-                            <Text style={{ color: 'white', textTransform: "uppercase" }}>{I18n.t('in')}</Text>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={{ flex: 1, alignItems: "center" }}>
-                        <TouchableOpacity onPress={props.clickCheck} style={{ height: "100%", width: 50, justifyContent: "center", alignItems: "center"}}>
-                            <Icon delayPressIn={0} name="check" size={24} color="#fff" />
-                        </TouchableOpacity>
-                    </View>
+        <View style={styles.toolbarContainer}>
+            <View style={{
+                flex: 1,
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: "center"
+            }}
+            >
+                <View style={{ flex: 1, alignItems: "center" }}>
+                    <TouchableOpacity onPress={() => props.navigation.pop()} style={{ height: "100%", justifyContent: "center", paddingHorizontal: 10 }}>
+                        <Image source={Images.icon_back} style={{ width: 10, height: 16 }} />
+                    </TouchableOpacity>
+                </View>
+                <View style={{ flex: 4, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
+                    <Subheading
+                        numberOfLines={1}
+                        style={{
+                            color: 'white'
+                        }}
+                    >
+                        {props.title}
+                    </Subheading>
+                </View>
+                <View style={{ flex: 1, alignItems: "center" }}>
+                    <TouchableOpacity onPress={props.clickPrint} style={{ height: "100%", width: 50, justifyContent: "center", alignItems: "center" }}>
+                        <Text style={{ color: 'white', textTransform: "uppercase" }}>{I18n.t('in')}</Text>
+                    </TouchableOpacity>
+                </View>
+                <View style={{ flex: 1, alignItems: "center" }}>
+                    <TouchableOpacity onPress={props.clickCheck} style={{ height: "100%", width: 50, justifyContent: "center", alignItems: "center" }}>
+                        <Icon delayPressIn={0} name="check" size={24} color="#fff" />
+                    </TouchableOpacity>
                 </View>
             </View>
-        // </LinearGradient>
+        </View >
     )
 
 }

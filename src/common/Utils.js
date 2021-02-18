@@ -107,7 +107,7 @@ export const getTimeFromNow = (item) => {
 export const dateToString = (date, formatOutput = "DD/MM/YYYY") => {
   let momentdate = "";
   try {
-    momentdate = moment(date, "YYYY-MM-DD HH:mm:ss").format(formatOutput);
+    momentdate = moment(date, "YYYY-MM-DD HH:mm:ss").local().format(formatOutput);
     if (momentdate == "Invalid date") {
       momentdate = date;
     }

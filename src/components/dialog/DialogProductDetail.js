@@ -10,6 +10,10 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import DatePicker from 'react-native-date-picker';
 import useDidMountEffect from '../../customHook/useDidMountEffect';
+import { ApiPath } from '../../data/services/ApiPath';
+import { HTTPService } from '../../data/services/HttpService';
+import { getFileDuLieuString } from '../../data/fileStore/FileStorage';
+import { Constant } from '../../common/Constant';
 
 const TYPE_MODAL = {
     DEFAULT: 1,
@@ -22,42 +26,81 @@ export default (props) => {
     const [itemOrder, setItemOrder] = useState({ ...props.item })
     const [showQuickNote, setShowQuickNote] = useState(false)
     const [listQuickNote, setListQuickNote] = useState([])
-    const [IsLargeUnit, setIsLargeUnit] = useState(false)
+    const [IsLargeUnit, setIsLargeUnit] = useState(props.item.IsLargeUnit)
     const [percent, selectPercent] = useState(false)
     const [discount, setDiscount] = useState(props.item.Discount ? props.item.Discount : 0)
     const [price, setPrice] = useState(props.item.Price)
     const [typeModal, setTypeModal] = useState(TYPE_MODAL.DEFAULT);
     const [date, setDate] = useState(new Date());
+    const LargePrice = useRef(props.item.PriceLargeUnit)
+    const UnitPrice = useRef(props.item.UnitPrice)
+    const [productName, setProductName] = useState(props.item.Name)
+    const [allowChangeNameProduct, setAllowChangeNameProduct] = useState(false)
+    const [allowChangePriceProduct, setAllowChangePriceProduct] = useState(false)
+
 
     useEffect(() => {
-        console.log('itemOrderitemOrder', props.item);
-        let listOrder = itemOrder.OrderQuickNotes ? itemOrder.OrderQuickNotes.split(',') : [];
-        let listQuickNote = []
-        listOrder.forEach((item, idx) => {
-            if (item != '') {
-                listQuickNote.push({ name: item.trim(), status: false })
+        console.log('itemOrderitemOrder', props.item, props.priceBookId);
+        const getListQuickNote = () => {
+            let listOrder = itemOrder.OrderQuickNotes ? itemOrder.OrderQuickNotes.split(',') : [];
+            let listQuickNote = []
+            listOrder.forEach((item, idx) => {
+                if (item != '') {
+                    listQuickNote.push({ name: item.trim(), status: false })
+                }
+            })
+            setListQuickNote([...listQuickNote])
+        }
+        const getOtherPrice = async () => {
+            if (!props.priceBookId) return
+            let apiPath = ApiPath.PRICE_BOOK + `/${props.priceBookId}/manyproductprice`
+            let params = { "pricebookId": props.priceBookId, "ProductIds": [itemOrder.ProductId] }
+            let res = await new HTTPService().setPath(apiPath).POST(params)
+            if (res && res.PriceList && res.PriceList.length > 0) {
+                res.PriceList.forEach((priceBook) => {
+                    if (priceBook.ProductId == itemOrder.ProductId) {
+                        itemOrder.DiscountRatio = 0.0
+                        itemOrder.Discount = 0
+                        if (priceBook.PriceLargeUnit) LargePrice.current = priceBook.PriceLargeUnit
+                        if (priceBook.Price) UnitPrice.current = priceBook.Price
+                    }
+                })
             }
-        })
-        setListQuickNote([...listQuickNote])
-        setIsLargeUnit(itemOrder.IsLargeUnit)
-        // setPrice(itemOrder.IsLargeUnit == true ? itemOrder.PriceLargeUnit : itemOrder.Price)
+        }
+        const getSetting = async () => {
+            let data = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
+            console.log("setting data", JSON.parse(data));
+            data = JSON.parse(data)
+            if (data) {
+                setAllowChangeNameProduct(data.cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang)
+                setAllowChangePriceProduct(data.cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang)
+
+            }
+        }
+        getListQuickNote()
+        getOtherPrice()
+        getSetting()
     }, [])
 
 
     useDidMountEffect(() => {
-        let price = itemOrder.IsLargeUnit == true ? itemOrder.PriceLargeUnit : itemOrder.UnitPrice
-        let totalDiscount = percent ? itemOrder.UnitPrice * discount / 100 : discount
-        setPrice(price - totalDiscount > 0 ? price - totalDiscount : 0)
-    }, [discount, percent])
+        let price = (itemOrder.IsLargeUnit == true ? LargePrice.current : UnitPrice.current)
+        let totalDiscount = percent ? price * discount / 100 : discount
+        setPrice((price - totalDiscount > 0 ? price - totalDiscount : 0) + itemOrder.TotalTopping)
+    }, [discount])
 
     useDidMountEffect(() => {
-        let price = itemOrder.IsLargeUnit == true ? itemOrder.PriceLargeUnit : itemOrder.UnitPrice
+        let price = (itemOrder.IsLargeUnit == true ? LargePrice.current : UnitPrice.current)
         let newDiscount = percent ? discount / price * 100 : discount * price / 100
         setDiscount(newDiscount)
     }, [percent])
 
+    useDidMountEffect(() => {
+        setDiscount(0)
+    }, [IsLargeUnit])
+
     const onClickOk = () => {
-        props.onClickSubmit({ ...itemOrder, Discount: discount, Percent: percent, Price: price, IsLargeUnit: IsLargeUnit })
+        props.onClickSubmit({ ...itemOrder, Discount: discount, Percent: percent, Price: price, Name: productName })
         props.setShowModal(false)
     }
 
@@ -67,13 +110,13 @@ export default (props) => {
     }
 
     const selectRadioButton = (status) => {
-        itemOrder.IsLargeUnit = status;
+        itemOrder.IsLargeUnit = status
         setIsLargeUnit(status)
         if (status) {
-            setPrice(itemOrder.PriceLargeUnit)
+            setPrice(LargePrice.current + itemOrder.TotalTopping)
         }
         else {
-            setPrice(itemOrder.UnitPrice)
+            setPrice(UnitPrice.current + itemOrder.TotalTopping)
         }
     }
 
@@ -110,7 +153,14 @@ export default (props) => {
     return (
         <View>
             <View style={{ backgroundColor: Colors.colorchinh, borderTopRightRadius: 4, borderTopLeftRadius: 4, }}>
-                <Text style={{ margin: 5, textTransform: "uppercase", fontSize: 15, fontWeight: "bold", marginLeft: 20, marginVertical: 20, color: "#fff" }}>{itemOrder.Name}</Text>
+                <TextInput
+                    style={{ margin: 5, textTransform: "uppercase", fontSize: 15, fontWeight: "bold", marginLeft: 20, marginVertical: 20, color: "#fff" }}
+                    value={productName}
+                    editable={allowChangeNameProduct}
+                    onChangeText={(text) => {
+                        setProductName(text)
+                    }}>
+                </TextInput>
             </View>
             {
                 typeModal == TYPE_MODAL.OPEN_DATE || typeModal == TYPE_MODAL.OPEN_TIME ?
@@ -176,8 +226,9 @@ export default (props) => {
                                 <Text style={{ fontSize: 14, flex: 3 }}>{I18n.t('don_gia')}</Text>
                                 <View style={{ alignItems: "center", flexDirection: "row", flex: 7, backgroundColor: "#D5D8DC" }}>
                                     <TextInput
-                                        style={{ padding: 7, flex: 1, fontSize: 14, borderWidth: 0.5, borderRadius: 4 }}
+                                        style={{ color: "#000", padding: 7, flex: 1, fontSize: 14, borderWidth: 0.5, borderRadius: 4 }}
                                         value={currencyToString(price)}
+                                        editable={allowChangePriceProduct}
                                         onChangeText={text => {
                                             text = text.replace(/,/g, "");
                                             if (isNaN(text)) return

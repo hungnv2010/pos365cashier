@@ -100,7 +100,7 @@ const commonReducer = (state = initState, action = {}) => {
 				...state,
 				isFNB: action.isFNB
 			}
-		case "SETTING_OBJECT":
+		case "PRINT_OBJECT":
 			return {
 				...state,
 				printerObject: action.printerObject

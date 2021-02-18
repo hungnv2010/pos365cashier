@@ -2,10 +2,10 @@ import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
 import { Image, View, StyleSheet, Text, TouchableOpacity, TextInput, ScrollView } from "react-native";
 import { Snackbar, Surface } from 'react-native-paper';
 import I18n from '../../common/language/i18n';
-import realmStore from '../../data/realm/RealmStore';
+import realmStore, { SchemaName } from '../../data/realm/RealmStore';
 import { Images } from '../../theme';
 import { ScreenList } from '../../common/ScreenList';
-import { currencyToString } from '../../common/Utils';
+import { currencyToString, change_alias } from '../../common/Utils';
 import colors from '../../theme/Colors';
 import { useSelector } from 'react-redux';
 import { Constant } from '../../common/Constant';
@@ -13,7 +13,6 @@ import { getFileDuLieuString } from '../../data/fileStore/FileStorage';
 import images from '../../theme/Images';
 import { FAB } from 'react-native-paper';
 import CustomerDetail from './customerDetail';
-import MainToolBar from '../main/MainToolBar';
 import { FlatList } from 'react-native-gesture-handler';
 import { HTTPService } from '../../data/services/HttpService';
 import { ApiPath } from '../../data/services/ApiPath';
@@ -24,6 +23,8 @@ import IconFeather from 'react-native-vector-icons/Feather';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import TextTicker from 'react-native-text-ticker';
+import useDebounce from '../../customHook/useDebounce';
+import CustomerToolBar from './CustomerToolBar';
 
 let GUEST = {
     Id: 0,
@@ -36,6 +37,9 @@ export default (props) => {
 
     const [customerData, setCustomerData] = useState([])
     const [customerItem, setCustomerItem] = useState(GUEST)
+    const [textSearch, setTextSearch] = useState('')
+    const debouncedVal = useDebounce(textSearch)
+    const backUpCustomer = useRef([])
     const { deviceType } = useSelector(state => {
         console.log("useSelector state ", state);
         return state.Common
@@ -44,6 +48,24 @@ export default (props) => {
     useEffect(() => {
         getCustomer()
     }, [])
+
+    useEffect(() => {
+        const getSearchResult = async () => {
+            if (debouncedVal != '') {
+
+                // let valueSearchLatin = change_alias(debouncedVal)
+                let results = await realmStore.queryCustomer()
+                let searchResult = results.filtered(`Name CONTAINS "${debouncedVal}" OR Code CONTAINS "${debouncedVal}" OR Phone CONTAINS "${debouncedVal}"`)
+                searchResult = JSON.parse(JSON.stringify(searchResult))
+                searchResult = Object.values(searchResult)
+                setCustomerData(searchResult)
+
+            } else {
+                setCustomerData(backUpCustomer.current)
+            }
+        }
+        getSearchResult()
+    }, [debouncedVal])
 
     const onClickAddCustomer = () => {
         console.log('onClickAddCustomer');
@@ -56,20 +78,32 @@ export default (props) => {
 
     const getCustomer = async () => {
         dialogManager.showLoading()
-        try {
-            let customers = await realmStore.queryCustomer()
-            customers = customers.sorted('Name')
-            customers = JSON.parse(JSON.stringify(customers))
-            customers = Object.values(customers)
-            console.log('getCustomer', customers);
-            if (customers) {
-                customers.unshift(GUEST)
-                setCustomerData(customers)
+        let res = await new HTTPService().setPath(ApiPath.SYNC_PARTNERS).GET()
+        console.log("getCustomer res ", res);
+        if (res && res.Data && res.Data.length > 0) {
+            dialogManager.hiddenLoading()
+            let listCustomer = res.Data.reverse()
+            listCustomer.unshift(GUEST)
+            setCustomerData(listCustomer)
+            await realmStore.insertDatas(SchemaName.CUSTOMER, res.Data)
+            
+        } else {
+            try {
+                let customers = await realmStore.queryCustomer()
+                customers = customers.sorted('Name')
+                customers = JSON.parse(JSON.stringify(customers))
+                customers = Object.values(customers)
+                console.log('getCustomer', customers);
+                if (customers) {
+                    customers.unshift(GUEST)
+                    backUpCustomer.current = customers
+                    setCustomerData(customers)
+                }
+                dialogManager.hiddenLoading()
+            } catch (error) {
+                console.log('getCustomer err', error);
+                dialogManager.hiddenLoading()
             }
-            dialogManager.hiddenLoading()
-        } catch (error) {
-            console.log('getCustomer err', error);
-            dialogManager.hiddenLoading()
         }
     }
 
@@ -133,7 +167,7 @@ export default (props) => {
     const handleSuccess = async (type) => {
         dialogManager.showLoading()
         try {
-            if (type == 'xoa') await realmStore.deletePartner()
+            await realmStore.deletePartner()
             await dataManager.syncPartner()
             getCustomer()
             dialogManager.showPopupOneButton(`${I18n.t(type)} ${I18n.t('thanh_cong')}`, I18n.t('thong_bao'))
@@ -144,9 +178,14 @@ export default (props) => {
         }
     }
 
+    const outputTextSearch = (value) => {
+        console.log('outputTextSearch', value);
+        setTextSearch(value)
+    }
+
     return (
         <View style={{ flex: 1, }}>
-            {
+            {/* {
                 props.route.params._onSelect ?
                     <ToolBarDefault
                         {...props}
@@ -155,13 +194,15 @@ export default (props) => {
                             props.navigation.goBack()
                         }}
                         title={props.route.params._onSelect ? I18n.t('chon_khach_hang') : I18n.t('thanh_toan')} />
-                    :
-                    <MainToolBar
-                        navigation={props.navigation}
-                        title={I18n.t('khach_hang')}
-                        outPutTextSearch={()=>{}}
-                    />
-            }
+                    : */}
+            <CustomerToolBar
+                {...props}
+                navigation={props.navigation}
+                title={I18n.t('khach_hang')}
+                outputTextSearch={outputTextSearch}
+                size={30}
+            />
+            {/* } */}
             <View style={{ flexDirection: "row", flex: 1 }}>
                 <View style={{ flex: 1, }}>
                     <FlatList

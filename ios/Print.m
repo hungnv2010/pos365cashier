@@ -53,11 +53,21 @@ RCT_EXPORT_METHOD(registerPrint:(NSString *)param) {
   [_printerManager AddConnectObserver:self selector:@selector(handleNotification:)];//Add
 }
 
-RCT_EXPORT_METHOD(printImageFromClient:(NSString *)param ip:(NSString *)ip callback:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(printImageFromClient:(NSString *)param ip:(NSString *)ip size:(NSString *)size callback:(RCTResponseSenderBlock)callback) {
   NSLog(@"printImageFromClient param %@ ip %@", param, ip);
   PrintImageClient = YES;
   isConnectAndPrint = YES;
   isHtml = NO;
+  if(![size isEqualToString:@""]){
+    SizeInput = [size integerValue];
+    if(SizeInput > 72) {
+      SizeInput = 72;
+    }else if(SizeInput < 58){
+      SizeInput = 58;
+    }
+  }else {
+    SizeInput = 72;
+  }
   [_printerManager DoConnectwifi:ip Port:9100];
   
   NSURL *URL = [RCTConvert NSURL:param];
