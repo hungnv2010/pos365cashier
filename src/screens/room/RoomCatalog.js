@@ -46,6 +46,7 @@ export default (props) => {
             <MainToolBar
                 navigation={props.navigation}
                 title={I18n.t('danh_muc_phong_ban')}
+                outPutTextSearch={()=>{}}
             />
 
             {/* <TouchableOpacity onPress={() => onClickRoomCategori()} style={styles.view_item}>

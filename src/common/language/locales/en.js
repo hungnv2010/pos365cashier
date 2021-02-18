@@ -341,6 +341,7 @@ export default {
   don_vi_tinh_lon:'Large unit',
   doi_tac:'Partner',
   don_hang_cho_thanh_toan:"Commodity waiting for payment",
+  dong_bo_du_lieu:'Synchronize data',
 
   giu_man_hinh_luon_sang: "Keep the screen on",
   gia: "Price",

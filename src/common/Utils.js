@@ -1,5 +1,7 @@
 import I18n from "./language/i18n";
 import moment from "moment";
+import { Text, View } from 'react-native';
+import React from 'react'
 
 export const DATE_FORMAT = "YYYY-MM-DD'T'HH:mm:ss.SSFFFFF'Z'";
 
@@ -149,4 +151,16 @@ export const groupBy = (array, key) => {
     // Return the current iteration `result` value, this will be taken as next iteration `result` value and accumulate
     return result;
   }, {}); // empty object is the initial value for result object
+};
+
+export const text_highlight = (text, input,IsActive) => {
+  return (
+    <View style={{flexDirection:'row'}}numberOfLines={2} ellipsizeMode='tail'>{
+      text.split(" ").map((word, i) => (
+        <Text key={i} >
+          <Text style={[input != null && input.length != 0 ? word.toLowerCase().indexOf(input.toLowerCase()) != -1 ? { backgroundColor: 'red' } : { backgroundColor: null } : { backgroundColor: null },{textTransform: "uppercase",color:IsActive ? 'white' : 'black',textAlign: "center", textAlignVertical: "center",}]} >{word} </Text>
+        </Text>
+      ))
+    }
+    </View>)
 };

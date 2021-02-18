@@ -61,7 +61,7 @@ export default (props) => {
     
     const renderCategory = (item, index) => {
         return (
-            <View key={index.toString()} style={{ alignItems: 'center', justifyContent: 'center', padding: 10, marginLeft: 5, marginRight: 10, marginBottom: 5, marginTop: 5, backgroundColor: idCategory == item.Id ? colors.colorchinh : null, borderRadius: 10 }}>
+            <View key={index.toString()} style={{ alignItems: 'center', justifyContent: 'center', paddingHorizontal: 15,paddingVertical:10, marginLeft: 5, marginRight: 10, marginBottom: 5, marginTop: 5, backgroundColor: idCategory == item.Id ? colors.colorchinh : null, borderRadius: 10 }}>
                 <TouchableOpacity style={{}} onPress={() => { filterByCategory(item) }}>
                     <Text style={{ color: idCategory == item.Id ? 'white' : 'black', fontWeight: idCategory == item.Id ? 'bold' : null }} >{item.Name}</Text>
                 </TouchableOpacity>

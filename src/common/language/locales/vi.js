@@ -404,6 +404,7 @@ export default {
   don_vi_tinh_lon_va_cac_thong_so_khac:"Đơn vị tính lớn và các thông số khác",
   don_vi_tinh_lon:'Đơn vị tính lớn',
   don_hang_cho_thanh_toan:'Đơn hàng chờ thanh toán',
+  dong_bo_du_lieu:'Đồng bộ dữ liệu',
 
   giu_man_hinh_luon_sang: "Giữ màn hình luôn sáng",
   gia:"Giá bán",

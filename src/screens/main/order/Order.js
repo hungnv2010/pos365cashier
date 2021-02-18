@@ -14,7 +14,7 @@ import {
 import I18n from '../../../common/language/i18n';
 import realmStore from '../../../data/realm/RealmStore'
 import { useSelector, useDispatch } from 'react-redux';
-import { currencyToString, dateUTCToMoment, getTimeFromNow } from '../../../common/Utils'
+import { currencyToString, dateUTCToMoment, getTimeFromNow, text_highlight } from '../../../common/Utils'
 import { Constant } from '../../../common/Constant';
 import { Images, Metrics } from '../../../theme';
 import colors from '../../../theme/Colors';
@@ -22,6 +22,9 @@ import TextTicker from 'react-native-text-ticker';
 import dataManager from '../../../data/DataManager';
 import { useFocusEffect } from '@react-navigation/native';
 import moment from 'moment';
+import Menu from 'react-native-material-menu';
+import { get } from 'react-native/Libraries/Utilities/PixelRatio';
+import useDebounce from '../../../customHook/useDebounce';
 // import 'moment/min/locales'
 
 const _nodes = new Map();
@@ -30,6 +33,8 @@ export default (props) => {
 
     const [indexRoom, setIndexRoom] = useState(0)
     const [loadDone, setLoadDone] = useState(false)
+    const [textSearch, setTextSearch] = useState(() => props.textSearch)
+    const debouncedVal = useDebounce(textSearch)
     const { already } = useSelector(state => {
         return state.Common
     });
@@ -55,6 +60,10 @@ export default (props) => {
     const RoomAll = { Name: "Tất cả", Id: "All" }
     const [listRoom, setListRoom] = useState([])
     const dataRef = useRef([])
+    const roomGroupRef = useRef([])
+    const roomRef = useRef([])
+    const severEventRef = useRef([])
+    const [filterStatus, setFilterStatus] = useState('tat_ca')
 
     useEffect(() => {
         if (!already) return
@@ -70,7 +79,6 @@ export default (props) => {
             console.log("init: newDatas ", newDatas);
             dataRef.current = newDatas
             setData(newDatas)
-
             let list = newDatas.filter(item => item.isGroup)
 
             setListRoom(list)
@@ -80,8 +88,10 @@ export default (props) => {
                     let newDatas = insertServerEvent(getDatas(rooms, roomGroups), serverEvents)
                     dataRef.current = newDatas
                     setData(newDatas)
+                    setFilterStatus('tat_ca')
                 }
             })
+            setTextSearch(props.textSearch)
 
             setLoadDone(true)
         }
@@ -90,9 +100,9 @@ export default (props) => {
             setLoadDone(false)
             if (serverEvents) serverEvents.removeAllListeners()
         }
+
+
     }, [already])
-
-
 
     const reloadTime = async () => {
         console.log('reloadTime', dataRef.current);
@@ -108,6 +118,7 @@ export default (props) => {
                 let lengthRoomsInside = roomsInside.length
                 if (roomsInside && lengthRoomsInside > 0) {
                     roomGroup.isGroup = true
+                    roomGroup.sum = lengthRoomsInside
                     newDatas.push(roomGroup)
                     newDatas = newDatas.concat(roomsInside.slice())
                 }
@@ -117,6 +128,7 @@ export default (props) => {
             let roomsInside = rooms.filtered(`RoomGroupId == ${otherGroup.Id}`)
             let lengthRoomsInside = roomsInside.length
             if (roomsInside && lengthRoomsInside > 0) {
+                otherGroup.sum = lengthRoomsInside
                 newDatas.push(otherGroup)
                 newDatas = newDatas.concat(roomsInside.slice())
             }
@@ -125,6 +137,7 @@ export default (props) => {
             newDatas = rooms
 
         console.log("getDatas", newDatas);
+        console.log("roomRef", roomRef.current);
 
         return newDatas
     }
@@ -164,15 +177,11 @@ export default (props) => {
 
         return newDatas
     }
-
-
-
     let refScroll = null;
 
     const scrollToInitialPosition = () => {
         refScroll.scrollTo({ y: 500 })
     }
-
     const onItemPress = (item) => {
         const { Id, Name, ProductId, IsActive } = item
         deviceType == Constant.TABLET ?
@@ -180,7 +189,70 @@ export default (props) => {
             :
             props.navigation.navigate('PageServed', { room: { Id: Id, Name: Name, ProductId: ProductId, IsActive: IsActive } })
     }
+    //filter---------------------------------------------------------------
+    const filterRoom = (value) => {
+        if (value == true || value == false) {
+            let room = dataRef.current.filter(item => item.IsActive == value)
+            let roomGroup = dataRef.current.filter(item => item.isGroup == true)
+            console.log("Room", room);
+            console.log("group", roomGroup);
+            let newDatas = []
+            if (roomGroup) {
+                roomGroup.forEach(roomGroup => {
+                    let roomsInside = room.filter(item => item.RoomGroupId == roomGroup.Id && (item.Name).toLowerCase().indexOf(debouncedVal.toLowerCase()) != -1)
+                    let lengthRoomsInside = roomsInside.length
+                    if (roomsInside && lengthRoomsInside > 0) {
+                        roomGroup.isGroup = true
+                        roomGroup.sum = lengthRoomsInside
+                        newDatas.push(roomGroup)
+                        newDatas = newDatas.concat(roomsInside.slice())
+                    }
+                })
+            }
+            setData(newDatas)
+            hideMenu()
+        } else {
+            setData([...dataRef.current])
+            hideMenu()
+        }
+    }
+    useEffect(() => {
+        console.log("rooom", datas);
+        console.log("textsearch", props.textSearch);
+    }, [datas])
 
+    const searchRoom = () => {
+        if (debouncedVal) {
+            let room = dataRef.current.filter(item => item.RoomGroupId != null)
+            let roomGroup = dataRef.current.filter(item => item.isGroup == true)
+            let newDatas = []
+            if (roomGroup) {
+                roomGroup.forEach(roomGroup => {
+                    let roomsInside = room.filter(item => item.RoomGroupId == roomGroup.Id && (item.Name).toLowerCase().indexOf(debouncedVal.toLowerCase()) != -1)
+                    let lengthRoomsInside = roomsInside.length
+                    if (roomsInside && lengthRoomsInside > 0) {
+                        roomGroup.isGroup = true
+                        roomGroup.sum = lengthRoomsInside
+                        newDatas.push(roomGroup)
+                        newDatas = newDatas.concat(roomsInside.slice())
+                    }
+                })
+            }
+            setData(newDatas)
+        } else {
+            setData([...dataRef.current])
+
+        }
+        setFilterStatus('tat_ca')
+
+    }
+    useEffect(() => {
+        setTextSearch(props.textSearch)
+    }, [props.textSearch])
+    useEffect(() => {
+        searchRoom()
+    }, [debouncedVal])
+    //
     const renderRoom = (item, widthRoom) => {
         widthRoom = parseInt(widthRoom)
         return item.isEmpty ?
@@ -202,7 +274,6 @@ export default (props) => {
                                 {item.Name}
                             </TextTicker>
                         </View>
-
                     </View>
                     <View style={{ height: 0.5, width: "90%", backgroundColor: "#ddd", justifyContent: "center", alignItems: "center" }}></View>
                     <View style={{ justifyContent: "center", paddingHorizontal: 10, alignItems: "center", flex: 2 }}>
@@ -218,7 +289,6 @@ export default (props) => {
                                     marqueeDelay={1000}>
                                     {item.RoomMoment && item.IsActive ? getTimeFromNow(item) : ""}
                                 </TextTicker>
-
                             </View>
                             //      <TextTicker
                             //         style={{ fontSize: 10, textAlign: "center", color: item.IsActive ? 'white' : 'black', fontSize: 8 }}
@@ -250,12 +320,68 @@ export default (props) => {
             </View>
         )
     }
+    //menu filter
+    let _menu = null;
 
+    const setMenuRef = ref => {
+        _menu = ref;
+    };
+
+    const hideMenu = () => {
+        _menu.hide();
+    };
+
+    const showMenu = () => {
+        _menu.show();
+    };
+    //
 
     return loadDone ? (
         <View style={{ flex: 1 }}>
-            <View style={{ height: 40 }}>
-                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{ backgroundColor: colors.colorchinh }}>
+            <View style={{ flexDirection: 'row', borderWidth: 5, borderColor: '#f2f2f2', backgroundColor: 'white', borderRadius: 16, paddingVertical: 5, flexWrap: true }}>
+                <View style={{ flexDirection: "row", width: deviceType == Constant.PHONE ? "100%" : "33%", justifyContent: "flex-start", alignItems: 'center', paddingLeft: 13, paddingBottom: 5 }}>
+                    <Image source={Images.icon_transfer_money} style={{ width: 32, height: 32, paddingStart: 13 }}></Image>
+                    <View style={{ flexDirection: 'row', paddingLeft: 8, }}>
+                        <Text style={{ paddingRight: 5, color: '#c3c3c3', fontSize: 14 }}>{I18n.t('tam_tinh')}: </Text>
+                        <Text style={{ fontWeight: 'bold', color: colors.colorchinh, fontSize: 16 }}>{currencyToString(valueAll.cash)}</Text>
+                    </View>
+                </View>
+                <View style={{ flexDirection: "row", width: deviceType == Constant.PHONE ? "50%" : "33%", justifyContent: deviceType == Constant.PHONE ? "flex-start" : 'center', alignItems: 'center', paddingBottom: 5, paddingLeft: 13 }}>
+                    <Image source={Images.icon_using} style={{ width: 32, height: 32, paddingLeft: 13 }}></Image>
+                    <View style={{ flexDirection: 'row', paddingLeft: 8 }}>
+                        <Text style={{ color: "#c3c3c3", fontSize: 14 }}>{I18n.t('dang_dung')}: </Text>
+                        <View style={{ justifyContent: "center", borderRadius: 5, }}>
+                            <Text style={{ color: "#36a3f7", fontSize: 12, paddingHorizontal: 2, fontWeight: 'bold', fontSize: 16 }}>{valueAll.use}/{valueAll.room}</Text>
+                        </View>
+                    </View>
+                </View>
+                <View style={{ flexDirection: "row", width: deviceType == Constant.PHONE ? "50%" : "34%", alignItems: "center", justifyContent: "flex-end", paddingRight: 13 }}>
+                    <Menu style={{ alignItems: 'center', borderRadius: 16, justifyContent: 'center' }}
+                        ref={setMenuRef}
+                        button={<View style={{}} >
+                            <TouchableOpacity style={{ flexDirection: 'row', backgroundColor: colors.colorLightBlue, padding: 5, borderRadius: 16, alignItems: 'center', paddingVertical: 7, paddingHorizontal: 20 }} onPress={showMenu}>
+                                <Text style={{ fontSize: 14, color: 'white', paddingRight: 5, fontWeight: 'bold' }} >{I18n.t(filterStatus)}</Text>
+                                <Image style={{ width: 10, height: 6, paddingLeft: 5, alignItems: 'center' }} source={Images.icon_arrow_down_white} />
+                            </TouchableOpacity>
+                        </View>}
+                    >
+                        <View style={{ backgroundColor: '#f2f2f2', borderRadius: 16, elevation: 2, borderWidth: 0.5, borderColor: 'gray' }}>
+                            <TouchableOpacity onPress={() => { filterRoom(null), setFilterStatus('tat_ca') }} style={{ backgroundColor: filterStatus == 'tat_ca' ? colors.colorLightBlue : null, borderTopLeftRadius: 16, borderTopRightRadius: 16 }}>
+                                <Text style={[styles.titleMenu, { paddingHorizontal: 15, color: filterStatus == 'tat_ca' ? 'white' : null, fontWeight: filterStatus == 'tat_ca' ? 'bold' : null, }]} >{I18n.t('tat_ca')}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => { filterRoom(true), setFilterStatus('dang_dung') }} style={{ backgroundColor: filterStatus == 'dang_dung' ? colors.colorLightBlue : null, }}>
+                                <Text style={[styles.titleMenu, { paddingHorizontal: 15, color: filterStatus == 'dang_dung' ? 'white' : null, fontWeight: filterStatus == 'dang_dung' ? 'bold' : null }]}>{I18n.t('dang_dung')}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => { filterRoom(false), setFilterStatus('dang_trong') }} style={{ backgroundColor: filterStatus == 'dang_trong' ? colors.colorLightBlue : null, borderBottomLeftRadius: 16, borderBottomRightRadius: 16 }}>
+                                <Text style={[styles.titleMenu, { paddingHorizontal: 15, color: filterStatus == 'dang_trong' ? 'white' : null, fontWeight: filterStatus == 'dang_trong' ? 'bold' : null }]}>{I18n.t('dang_trong')}</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </Menu>
+                </View>
+
+            </View>
+            <View style={{ height: 40, backgroundColor: 'white', paddingHorizontal: 10, paddingVertical: 5 }}>
+                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{ backgroundColor: '#f2f2f2', borderTopLeftRadius: 16, borderBottomLeftRadius: 16 }}>
                     {listRoom ?
                         listRoom.map((data, index) =>
                             <TouchableOpacity
@@ -266,28 +392,12 @@ export default (props) => {
                                     const node = _nodes.get(data.Id);
                                     console.log("node ", node);
                                     refScroll.scrollTo({ y: node })
-                                }} style={{ height: "100%", justifyContent: "center", alignItems: "center", paddingHorizontal: 15 }}>
-                                <Text style={{ color: indexRoom == index ? "#444444" : "#fff", textTransform: 'uppercase' }}>{data.Name}</Text>
+                                }} style={{ height: "100%", justifyContent: "center", alignItems: "center", paddingHorizontal: 15, paddingVertical: 5, backgroundColor: indexRoom == index ? colors.colorLightBlue : null, paddingVertical: 5, borderRadius: 16 }}>
+                                <Text style={{ color: indexRoom == index ? "#fff" : "#000", textTransform: 'uppercase', fontWeight: indexRoom == index ? 'bold' : null }}>{data.Name}</Text>
                             </TouchableOpacity>
                         )
                         : null}
                 </ScrollView>
-            </View>
-            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingHorizontal: 12, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: "red" }}>
-                <View style={{ flexDirection: "row", flex: 1.2, justifyContent: "flex-start" }}>
-                    <Image source={Images.icon_transfer_money} style={{ width: 20, height: 20 }}></Image>
-                    <Text style={{ marginTop: 2 }}>{currencyToString(valueAll.cash)}</Text>
-                </View>
-                <View style={{ flexDirection: "row", flex: 1, justifyContent: "center" }}>
-                    <View style={{ backgroundColor: colors.colorLightBlue, justifyContent: "center", borderRadius: 5, marginRight: 5 }}>
-                        <Text style={{ color: "white", fontSize: 12, paddingHorizontal: 2 }}>{valueAll.use}/{valueAll.room}</Text>
-                    </View>
-                    <Text>{I18n.t('dang_dung')}</Text>
-                </View>
-                <View style={{ flexDirection: "row", flex: 1, alignItems: "center", justifyContent: "flex-end" }}>
-                    <View style={{ backgroundColor: "white", height: 20, width: 20, borderRadius: 5, marginRight: 5 }}></View>
-                    <Text>{I18n.t('dang_trong')}</Text>
-                </View>
             </View>
             <View style={{ flex: 1, padding: 2 }}>
                 <ScrollView scrollToOverflowEnabled={true} showsVerticalScrollIndicator={false} ref={(ref) => refScroll = ref} style={{ flex: 1 }}>
@@ -304,7 +414,7 @@ export default (props) => {
                                         }
                                     }}
                                     style={{ flexDirection: "row" }}>
-                                    {data.isGroup ? renderRoomGroup(data) : renderRoom(data, widthRoom)}
+                                    {data.isGroup && data.sum > 0 ? renderRoomGroup(data) : renderRoom(data, widthRoom)}
                                 </View>
                             ) : null
                         }
@@ -350,5 +460,8 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 24
+    },
+    titleMenu: {
+        textAlign: 'center', paddingVertical: 5
     }
 });

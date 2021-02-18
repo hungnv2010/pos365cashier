@@ -20,6 +20,8 @@ import { useDispatch } from 'react-redux';
 import DeviceInfo from 'react-native-device-info';
 import signalRManager from '../../common/SignalR';
 import { ScreenList } from '../../common/ScreenList';
+import NetInfo from "@react-native-community/netinfo";
+import {  useSelector } from 'react-redux';
 const { Print } = NativeModules;
 const IP_DEFAULT = "192.168.99.";
 
@@ -38,9 +40,15 @@ const KEY_FUNC = {
     ORDER_OFFLINE: ScreenList.OrderOffline,
     VOUCHERS: ScreenList.Vouchers,
     PRODUCT: ScreenList.Product,
+    SYNCHRONIZE:'SYNCHRONIZE'
 }
 
 const LIST_FUNCITION = [
+    { 
+        func:KEY_FUNC.SYNCHRONIZE,
+        icon:Images.icon_refresh,
+        title:"dong_bo_du_lieu"
+    },
     {
         func: KEY_FUNC.HOME,
         icon: Images.icon_cashier,
@@ -379,6 +387,9 @@ const ContentComponent = (props) => {
         console.log("Abc orderOffline ", orderOffline.length);
         setNumberOrderOffline(orderOffline.length)
     })
+    const {  isFNB } = useSelector(state => {
+        return state.Common
+      })
 
     useEffect(() => {
         const getCurrentIP = async () => {
@@ -437,6 +448,14 @@ const ContentComponent = (props) => {
     const onClickItem = (chucnang, index) => {
         console.log("onClickItem props ", props);
         if (chucnang.func == KEY_FUNC.VERSION) return;
+        if (chucnang.func == KEY_FUNC.SYNCHRONIZE) {
+            if (isFNB==true) {
+            clickRightIcon()
+            }else
+            clickSyncForRetail()  
+            props.navigation.closeDrawer();
+            return;
+        }
         let params = {};
         if (chucnang.func == ScreenList.Home || chucnang.func == ScreenList.Customer || chucnang.func == ScreenList.Settings || chucnang.func == ScreenList.Invoice || chucnang.func == ScreenList.OverView || chucnang.func == ScreenList.RoomHistory || chucnang.func == ScreenList.Vouchers) {
             setCurrentItemMenu(index)
@@ -444,6 +463,50 @@ const ContentComponent = (props) => {
         props.navigation.navigate(chucnang.func, params)
         props.navigation.closeDrawer();
     }
+    const clickRightIcon = async () => {
+        NetInfo.fetch().then(async state => {
+          if (!(state.isConnected == true && state.isInternetReachable == true)) {
+            dialogManager.showPopupOneButton(I18n.t('loi_ket_noi_mang'), I18n.t('thong_bao'), () => {
+              dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
+            return;
+          } else {
+            dialogManager.showLoading()
+            dispatch({ type: 'ALREADY', already: false })
+            await realmStore.deleteAllForFnb()
+            await dataManager.syncAllDatas()
+            dispatch({ type: 'ALREADY', already: true })
+            dialogManager.hiddenLoading()
+            console.log("FNB");
+          }
+        });
+        // dialogManager.showLoading()
+        // dispatch({ type: 'ALREADY', already: false })
+        // await realmStore.deleteAllForFnb()
+        // await dataManager.syncAllDatas()
+        // dispatch({ type: 'ALREADY', already: true })
+        // dialogManager.hiddenLoading()
+      }
+      const clickSyncForRetail = async () => {
+        NetInfo.fetch().then(async state => {
+          if (!(state.isConnected == true && state.isInternetReachable == true)) {
+            dialogManager.showPopupOneButton(I18n.t('loi_ket_noi_mang'), I18n.t('thong_bao'), () => {
+              dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
+            return;
+          } else {
+            dialogManager.showLoading()
+            dispatch({ type: 'ALREADY', already: false })
+            await realmStore.deleteAllForRetail()
+            await dataManager.syncAllDatasForRetail()
+            dispatch({ type: 'ALREADY', already: true })
+            dialogManager.hiddenLoading()
+            console.log("not fnb");
+            
+          }
+        });
+    
+      }
 
 
     const _renderItem = (chucnang = {}, indexchucnnag = 0) => {

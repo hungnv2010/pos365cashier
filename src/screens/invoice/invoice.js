@@ -319,6 +319,7 @@ const Invoice = (props) => {
             <MainToolBar
                 navigation={props.navigation}
                 title={I18n.t('hoa_don')}
+                outPutTextSearch={()=>{}}
             />
             <View style={{ flex: 1, flexDirection: "row" }}>
                 <View style={{ flex: 1, borderRightWidth: 1, borderRightColor: "grey" }}>

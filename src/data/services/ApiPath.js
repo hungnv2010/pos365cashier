@@ -41,5 +41,6 @@ export const ApiPath = {
     UPDATE_SETTING: "api/setting/updatesinglefeatureconfiguration",
     ROOM_HISTORY: "api/rooms/history",
     SYNC_PRICE_BOOK: "api/pricebooks",
-    PRICE_BOOK: "api/pricebooks"
+    PRICE_BOOK: "api/pricebooks",
+    VENDOR:"api/vendors/current",
 }
