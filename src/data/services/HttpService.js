@@ -11,7 +11,7 @@ const { AzureHub } = NativeModules;
 import NavigationService from "../../navigator/NavigationService";
 // import * as StackNavigation from '../../navigator/stack/StackNavigation';
 import { navigate } from '../../navigator/NavigationService';
-import dataManager from '../DataManager';
+// import dataManager from '../DataManager';
 import realmStore from '../realm/RealmStore';
 import NetInfo from "@react-native-community/netinfo";
 

@@ -7,9 +7,14 @@ import { useSelector } from 'react-redux';
 import { Snackbar } from 'react-native-paper';
 import I18n from '../../common/language/i18n'
 import moment from "moment";
-import { TYPE_PRINT } from '../../screens/more/ViewPrint';
+// import { TYPE_PRINT } from '../../screens/more/ViewPrint';
 const { Print } = NativeModules;
 const eventSwicthScreen = new NativeEventEmitter(Print);
+
+export const TYPE_PRINT = {
+    KITCHEN: "KITCHEN",
+    RETURN_PRODUCT: "RETURN_PRODUCT"
+}
 
 const typeHeader = "HOÁ ĐƠN TEST PRINT"
 const code = "HD000000"
@@ -40,10 +45,12 @@ class PrintService {
                 itemTable = itemTable.replace("{Ghi_Chu_Hang_Hoa}", description)
                 itemTable = itemTable.replace("{So_Luong}", Math.round(el.Quantity * 1000) / 1000)
                 itemTable = itemTable.replace("{Thanh_Tien_Hang_Hoa}", currencyToString(this.getPrice(el)))
+                // itemTable = itemTable.replace("{Thanh_Tien_Hang_Hoa}", currencyToString(BasePriceCustomAndTopping * el.Quantity))
                 itemTable = itemTable.replace("{Don_Gia}", currencyToString(el.Price))
                 itemTable = itemTable.replace("{Don_Gia_Goc_Hien_Thi_Check}", BasePriceCustomAndTopping > el.Price ? "style='display: block'" : "style='display: none'")
                 itemTable = itemTable.replace("{Don_Gia_Goc_Hien_Thi}", currencyToString(BasePriceCustomAndTopping))
                 sum += this.getPrice(el);
+                // sum += BasePriceCustomAndTopping * el.Quantity
                 listTable += itemTable;
             });
             HTMLBase = listHtml[0] + listTable + listHtml[2];
@@ -110,8 +117,8 @@ class PrintService {
 
     getPrice = (item) => {
         console.log('getPrice', item);
-        let price = item.IsLargeUnit ? item.PriceLargeUnit : item.Price
-        return item.Quantity * price
+        // let price = item.IsLargeUnit ? item.PriceLargeUnit : item.Price
+        return item.Quantity * item.Price
     }
 
     handlerQuantityPrint(el, type) {

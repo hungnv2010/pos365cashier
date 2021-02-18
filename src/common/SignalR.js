@@ -79,19 +79,7 @@ class SignalRManager {
                     this.init(this.data, true)
                 }
             });
-            // alert("error")
             console.log("connectionHub error ", error);
-     
-            // NetInfo.fetch().then(state => {
-            //     console.log("Connection type", state.type); 
-            //     console.log("Is connected?", state.isConnected);
-            //     if (state.isConnected == true) {
-            //         this.getAllData();
-            //     }
-            // });
-            // setTimeout(() => {
-            //     this.init(this.data, true);
-            // }, 5000);
         });
 
         this.subjectSend = new Subject()
@@ -123,7 +111,7 @@ class SignalRManager {
                     dialogManager.hiddenLoading();
             })
             .fail(() => {
-                console.log("Failed");
+                alert("Failed");
                 this.isStartSignalR = false;
                 if (dialogManager)
                     dialogManager.hiddenLoading()
