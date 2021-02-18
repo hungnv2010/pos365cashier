@@ -20,6 +20,7 @@ import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
 import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import colors from '../../theme/Colors';
+//import { in } from 'react-native/Libraries/Animated/src/Easing';
 const { Print } = NativeModules;
 
 export const DefaultSetting = {
@@ -181,10 +182,6 @@ export default (props) => {
         console.log("setting object", settingObject);
     }, [settingObject])
     useFocusEffect(useCallback(() => {
-        const getCurentRetailer = async () => {
-            let res = await new HTTPService().setPath(ApiPath.VENDOR_SESSION).GET()
-            setInforStore(res.CurrentRetailer)
-        }
         getCurentRetailer()
 
         var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
@@ -403,6 +400,40 @@ export default (props) => {
         console.log("savePrinter objectPrint ", objectPrint);
         dispatch({ type: 'PRINT_OBJECT', printerObject: objectPrint })
     }
+    const vendor = useRef({Name:inforStore.Name,Address:inforStore.Address,Phone:inforStore.Phone})
+    
+    const outPut = (data) =>{
+        vendor.current = data
+    }
+    useEffect(()=>{
+        console.log("vendor",vendor.current);
+    },[vendor.current])
+    const onClickOk = () =>{
+        let param = {Vendor:{
+            Address:vendor.current.Address?vendor.current.Address:inforStore.Address ,
+            Code: inforStore.Code,
+            ExpiryDate:inforStore.ExpiryDate ,
+            FieldId:inforStore.FieldId ,
+            Id: inforStore.Id,
+            LatestClearData: inforStore.LatestClearData,
+            Logo: inforStore.Logo,
+            Name:vendor.current.Name?vendor.current.Name:inforStore.Name,
+            Phone: vendor.current.Phone?vendor.current.Phone:inforStore.Phone,
+            Province: inforStore.Province,
+            Status: inforStore.Status,
+            TelephoneOfShopkeepers: inforStore.TelephoneOfShopkeepers,
+            URL: "https://"+inforStore.Code+".pos365.vn",
+        }}
+        new HTTPService().setPath(ApiPath.VENDOR).POST(param).then((res) => {
+            console.log("mess", res);
+
+        }).catch((e) => {
+            console.log("error del", e);
+        })
+        setModalStoreInfor(false)
+        getCurentRetailer()
+
+    }
 
     return (
         <View style={{ flex: 1 }}>
@@ -419,6 +450,7 @@ export default (props) => {
                     <MainToolBar
                         navigation={props.navigation}
                         title={I18n.t('setting')}
+                        outPutTextSearch={()=>{}}
                     />
             }
             <ScrollView style={{ marginBottom: 1 }}>
@@ -576,7 +608,7 @@ export default (props) => {
                                 <View style={{ width: Metrics.screenWidth * 0.8, }}>
                                     <Text style={styles.titleModal}>{I18n.t('thong_tin_cua_hang')}</Text>
                                     <Text style={{ fontSize: 18, justifyContent: 'center', marginTop: 10, marginLeft: 20 }}>{I18n.t('nhap_chieu_rong_kho_giay')}</Text>
-                                    <TextInput returnKeyType='done' style={styles.textInputStyle} placeholder='58..80' placeholderTextColor="#808080" keyboardType="numbers-and-punctuation" onChangeText={text => setDefaultSize(text)}></TextInput>
+                                    <TextInput returnKeyType='done' style={styles.textInputStyle} placeholder='58..80' placeholderTextColor="#808080" keyboardType="numbers-and-punctuation" onChangeText={text => setDefaultSize(parseInt(text) > 80 ? '80' : parseInt(text) < 58 ? '58' : text)}></TextInput>
                                     <TouchableOpacity style={{ justifyContent: 'flex-end', alignItems: 'flex-end', marginTop: 10, marginBottom: 10 }} onPress={changePrintTypeKitchenA}>
                                         <View style={{ backgroundColor: colors.colorchinh, marginRight: 15, padding: 10, borderColor: colors.colorchinh, borderWidth: 1, borderRadius: 5 }}>
                                             <Text style={[styles.styleTextBtnOk, {}]} >{I18n.t("dong_y")}</Text>
@@ -769,12 +801,12 @@ export default (props) => {
                             <View style={[styles.styleViewModal]} >
                                 <View style={{ width: Metrics.screenWidth * 0.7, height: Metrics.screenHeight * 0.7 }}>
                                     <Text style={styles.titleModal}>{I18n.t('thong_tin_cua_hang')}</Text>
-                                    <StoreInformation code={inforStore.Code} name={inforStore.Name} address={inforStore.Address} phoneNumber={inforStore.Phone} />
+                                    <StoreInformation code={inforStore.Code} name={inforStore.Name} address={inforStore.Address} phoneNumber={inforStore.Phone} outPut={outPut}/>
                                     <View style={{ justifyContent: "center", flexDirection: "row", paddingTop: 10 }}>
                                         <TouchableOpacity style={styles.styleButtonHuy} onPress={() => setModalStoreInfor(false)} >
                                             <Text style={styles.styleTextBtnHuy}>{I18n.t("huy")}</Text>
                                         </TouchableOpacity>
-                                        <TouchableOpacity style={styles.styleButtonOK} onPress={onShowModalSize}>
+                                        <TouchableOpacity style={styles.styleButtonOK} onPress={onClickOk}>
                                             <Text style={styles.styleTextBtnOk}>{I18n.t("dong_y")}</Text>
                                         </TouchableOpacity>
                                     </View>
@@ -800,15 +832,29 @@ const CurrencyUnit = (props) => {
     )
 }
 const StoreInformation = (props) => {
+    const vendor = useRef({})
+    const getdata = (data) =>{
+        if (data.title == I18n.t('ten')) {
+            vendor.current.Name = data.value
+        }else if (data.title == I18n.t('dia_chi')) {
+            vendor.current.Address = data.value
+        }else{
+            vendor.current.Phone = data.value
+        }
+    }
+    useEffect(()=>{
+        props.outPut(vendor.current)
+    },[])
+
     return (
         <ScrollView style={{ marginTop: 10 }} >
             <View style={{ flex: 1, justifyContent: 'center', alignContent: 'center' }}>
                 <Text style={styles.textTitleItemHint}>{I18n.t('link_dang_nhap')}</Text>
                 <Text style={{ fontSize: 16, marginLeft: 20, marginTop: 10 }}>https://{props.code}.pos365.vn</Text>
             </View>
-            <ItemStoreInfor title={I18n.t('ten')} titleHint={props.name}></ItemStoreInfor>
-            <ItemStoreInfor title={I18n.t('dia_chi')} titleHint={props.address}></ItemStoreInfor>
-            <ItemStoreInfor title={I18n.t('so_dien_thoai')} titleHint={props.phoneNumber}></ItemStoreInfor>
+            <ItemStoreInfor title={I18n.t('ten')} titleHint={props.name} output={getdata}></ItemStoreInfor>
+            <ItemStoreInfor title={I18n.t('dia_chi')} titleHint={props.address} output={getdata}></ItemStoreInfor>
+            <ItemStoreInfor title={I18n.t('so_dien_thoai')} titleHint={props.phoneNumber} output={getdata}></ItemStoreInfor>
             <Footer title={I18n.t('chan_trang')} titleHint={I18n.t('xin_cam_on_va_hen_gap_lai')}></Footer>
             <Footer title='Banner Ads1' titleHint='https://www.pos365.vn/wp-content'></Footer>
             <Footer title='Banner Ads2' titleHint='https://www.pos365.vn/wp-content'></Footer>
@@ -819,10 +865,14 @@ const StoreInformation = (props) => {
     )
 }
 const ItemStoreInfor = (props) => {
+    const [titleHint,setTitleHint] = useState(props.titleHint)
+    const sendInput = (text) =>{
+        props.output({title:props.title,value:text})
+    }
     return (
         <View style={{ flex: 1, marginTop: 15 }}>
             <Text style={styles.textTitleItemHint}>{props.title}</Text>
-            <TextInput style={styles.textInputStyle} value={props.titleHint}></TextInput>
+            <TextInput style={styles.textInputStyle} value={titleHint} onChangeText={text=>{sendInput(text),setTitleHint(text)}}></TextInput>
         </View>
     )
 }

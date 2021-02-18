@@ -164,7 +164,7 @@ class DataManager {
     syncPromotion = async () => {
         let params = { Includes: ['Product', 'Promotion'] }
         let res = await new HTTPService().setPath(ApiPath.PROMOTION, false).GET(params)
-        if (res && res.results.length > 0) {
+        if (res && res.results && res.results.length > 0) {
             realmStore.insertPromotion(res.results)
         }
     }

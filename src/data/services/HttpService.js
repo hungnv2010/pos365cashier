@@ -11,7 +11,7 @@ const { AzureHub } = NativeModules;
 import NavigationService from "../../navigator/NavigationService";
 // import * as StackNavigation from '../../navigator/stack/StackNavigation';
 import { navigate } from '../../navigator/NavigationService';
-import dataManager from '../DataManager';
+// import dataManager from '../DataManager';
 import realmStore from '../realm/RealmStore';
 import NetInfo from "@react-native-community/netinfo";
 
@@ -21,7 +21,7 @@ export var URL = { link: "https://oke.pos365.vn/" };
 
 export var index401 = 0;
 
-var showMessage = true;
+// var showMessage = true;
 
 export class HTTPService {
 
@@ -30,7 +30,7 @@ export class HTTPService {
 
     HTTP_OK = 200 | 204;
 
-    
+    showMessage = true;
 
     constructor() {
 
@@ -45,10 +45,9 @@ export class HTTPService {
         return this
     }
 
-    setPath(path, showMessage = true) {
+    setPath(path, isShowMessage = true) {
         this._path = this._api + path;
-        showMessage = showMessage;
-        // alert(showMessage)
+        this.showMessage = isShowMessage;
         return this
     }
 
@@ -67,8 +66,8 @@ export class HTTPService {
             method: 'GET',
             headers: headers,
             credentials: "omit",
-        }).then(extractData).catch((e) => {
-            error();
+        }).then(this.extractData).catch((e) => {
+            this.error();
             console.log("GET err ", e);
         })
 
@@ -82,8 +81,8 @@ export class HTTPService {
             credentials: "omit",
             headers: headers,
             body: JSON.stringify(jsonParam),
-        }).then(extractData).catch((e) => {
-            error();
+        }).then(this.extractData).catch((e) => {
+            this.error();
             console.log("POST err ", e);
         })
     }
@@ -95,7 +94,7 @@ export class HTTPService {
             credentials: "omit",
             headers: headers,
             body: JSON.stringify(jsonParam),
-        }).then(extractData);
+        }).then(this.extractData);
     }
 
     DELETE(jsonParam, headers = getHeaders()) {
@@ -104,57 +103,57 @@ export class HTTPService {
             method: 'DELETE',
             credentials: "omit",
             headers: headers,
-        }).then(extractData);
+        }).then(this.extractData);
     }
 
-}
-
-const error = () => {
-    if (showMessage == true)
-        NetInfo.fetch().then(state => {
-            if (state.isConnected == true) {
-                dialogManager.showPopupOneButton(I18n.t('loi_server'), I18n.t('thong_bao'), () => {
-                    dialogManager.destroy();
-                }, null, null, I18n.t('dong'))
-            } else {
-                dialogManager.showPopupOneButton(I18n.t('loi_ket_noi_mang'), I18n.t('thong_bao'), () => {
-                    dialogManager.destroy();
-                }, null, null, I18n.t('dong'))
-            }
-        });
-}
-
-const extractData = (response) => {
-    console.log("extractData Responses === ", response)
-    if (response.status == 200) {
-        return response.json();
-    }
-    else {
-        if (response.status == 401) {
-            if (!(response.url.includes(ApiPath.VENDOR_SESSION) || response.url.includes(ApiPath.LOGIN))) {
-                index401++;
-                if (index401 >= 10) {
-                    setFileLuuDuLieu(Constant.CURRENT_ACCOUNT, "");
-                    setFileLuuDuLieu(Constant.CURRENT_BRANCH, "");
-                    navigate('Login', {}, true);
-                    index401 = 0
-                } else
-                    dialogManager.showPopupOneButton(I18n.t('het_phien_lam_viec'), I18n.t('thong_bao'), () => {
-                        dialogManager.destroy();
-                    }, null, null, I18n.t('dong'))
-            }
-        } else if (response.status == 204) {
-            return { status: 204 };
-        }else if (response.status == 400) {
+    extractData(response) {
+        console.log("extractData Responses === ", response)
+        if (response.status == 200) {
             return response.json();
         }
-         else {
-            error();
+        else {
+            if (response.status == 401) {
+                if (!(response.url.includes(ApiPath.VENDOR_SESSION) || response.url.includes(ApiPath.LOGIN))) {
+                    index401++;
+                    if (index401 >= 10) {
+                        setFileLuuDuLieu(Constant.CURRENT_ACCOUNT, "");
+                        setFileLuuDuLieu(Constant.CURRENT_BRANCH, "");
+                        navigate('Login', {}, true);
+                        index401 = 0
+                    } else
+                        dialogManager.showPopupOneButton(I18n.t('het_phien_lam_viec'), I18n.t('thong_bao'), () => {
+                            dialogManager.destroy();
+                        }, null, null, I18n.t('dong'))
+                }
+            } else if (response.status == 204) {
+                return { status: 204 };
+            } else if (response.status == 400) {
+                return response.json();
+            }
+            else {
+                this.error();
+            }
+            // return {
+            //     status: response.status
+            // };
+            return null;
         }
-        // return {
-        //     status: response.status
-        // };
-        return null;
+
+    }
+
+    error() {
+        if (this.showMessage == true)
+            NetInfo.fetch().then(state => {
+                if (state.isConnected == true) {
+                    dialogManager.showPopupOneButton(I18n.t('loi_server'), I18n.t('thong_bao'), () => {
+                        dialogManager.destroy();
+                    }, null, null, I18n.t('dong'))
+                } else {
+                    dialogManager.showPopupOneButton(I18n.t('loi_ket_noi_mang'), I18n.t('thong_bao'), () => {
+                        dialogManager.destroy();
+                    }, null, null, I18n.t('dong'))
+                }
+            });
     }
 
 }

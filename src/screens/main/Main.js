@@ -24,6 +24,7 @@ export default (props) => {
   let scanFromOrder = null
   const viewPrintRef = useRef();
   const dispatch = useDispatch();
+  const [textSearch,setTextSearch] = useState('')
   const { listPrint, isFNB, printProvisional, printReturnProduct } = useSelector(state => {
     return state.Common
   })
@@ -67,6 +68,7 @@ export default (props) => {
         if (currentBranch && currentBranch.FieldId) {
           if (currentBranch.FieldId == 3 || currentBranch.FieldId == 11) {
             let state = store.getState()
+            alert("1")
             signalRManager.init({ ...vendorSession, SessionId: state.Common.info.SessionId }, true)
             dispatch({ type: 'IS_FNB', isFNB: true })
           } else {
@@ -75,6 +77,7 @@ export default (props) => {
         } else {
           if (vendorSession.CurrentRetailer && (vendorSession.CurrentRetailer.FieldId == 3 || vendorSession.CurrentRetailer.FieldId == 11)) {
             let state = store.getState()
+            alert("2")
             signalRManager.init({ ...vendorSession, SessionId: state.Common.info.SessionId }, true)
             dispatch({ type: 'IS_FNB', isFNB: true })
           } else {
@@ -163,6 +166,9 @@ export default (props) => {
     // dispatch({ type: 'ALREADY', already: true })
     // dialogManager.hiddenLoading()
   }
+  const onClickSearch = (text)=>{
+    setTextSearch(text)
+  }
 
   const clickSyncForRetail = async () => {
     NetInfo.fetch().then(async state => {
@@ -200,10 +206,10 @@ export default (props) => {
               <MainToolBar
                 navigation={props.navigation}
                 title={I18n.t('thu_ngan')}
-                rightIcon="refresh"
-                clickRightIcon={() => clickRightIcon()}
+                rightIcon="md-search"
+                outPutTextSearch={onClickSearch}
               />
-              <Order {...props} />
+              <Order {...props} textSearch={textSearch}/>
             </>
             :
             <MainRetail

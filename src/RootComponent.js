@@ -138,6 +138,7 @@ export default () => {
                 signalRManager.startSignalR();
             }
             let currentLocale = I18n.currentLocale()
+            currentLocale = "vi";
             console.log("currentLocale ", currentLocale);
             if (currentLocale.indexOf('vi') > -1) {
                 I18n.locale = "vi";

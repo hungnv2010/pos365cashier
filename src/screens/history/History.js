@@ -184,6 +184,7 @@ export default (props) => {
             <MainToolBar
                 navigation={props.navigation}
                 title={I18n.t('lich_su_goi_mon')}
+                outPutTextSearch={()=>{}}
             />
             {listHistoryOrder.length > 0 ?
                 renderList()

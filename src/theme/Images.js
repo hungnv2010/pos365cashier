@@ -45,7 +45,7 @@ const images = {
     icon_home: require('../../assets/icons/icon_home.png'),
     icon_home_active: require('../../assets/icons/home_active.png'),
     icon_invoice: require('../../assets/icons/icon_invoice.png'),
-    icon_transfer_money: require('../../assets/icons/icon_transfer_money.png'),
+    icon_transfer_money: require('../../assets/icons/icon_money.png'),
     icon_table: require('../../assets/icons/icon_table.png'),
     icon_more: require('../../assets/icons/icon_more.png'),
     icon_more_active: require('../../assets/icons/icon_more_active.png'),
@@ -90,7 +90,10 @@ const images = {
     icon_refresh:require("../../assets/icons/icon_refresh.png"),
     icon_room_history:require("../../assets/icons/icon_roomhistory.png"),
     icon_income: require("../../assets/icons/icon_income.png"),
-    icon_oder_offline: require("../../assets/icons/icon_orderoff.png")
+    icon_oder_offline: require("../../assets/icons/icon_orderoff.png"),
+    icon_using: require("../../assets/icons/icon_using.png"),
+    icon_wallet: require("../../assets/icons/icon_wallet.png"),
+    icon_arrow_down_white: require("../../assets/icons/icon_arrow_down_white.png"),
     
 }
 

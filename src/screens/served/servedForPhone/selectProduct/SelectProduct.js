@@ -269,7 +269,7 @@ export default (props) => {
 
   const renderCateItem = (item, index) => {
     return (
-      <TouchableOpacity onPress={() => onClickCate(item, index)} key={index} style={[styles.renderCateItem, { backgroundColor: item.Id == listCateId[0] ? Colors.colorchinh : "white" }]}>
+      <TouchableOpacity onPress={() => onClickCate(item, index)} key={index} style={[styles.renderCateItem, { backgroundColor: item.Id == listCateId[0] ? Colors.colorchinh : "white",borderRadius:4}]}>
         <Text numberOfLines={2} style={[styles.textRenderCateItem, { color: item.Id == listCateId[0] ? "white" : Colors.colorchinh }]}>{item.Name}</Text>
       </TouchableOpacity>
     );
@@ -288,7 +288,7 @@ export default (props) => {
         isSearching ?
           null
           :
-          <View style={{ flex: 0.5, flexDirection: "row", marginVertical: 5, marginHorizontal: 2 }}>
+          <View style={{ flex: 0.4, flexDirection: "row", marginVertical: 5, marginHorizontal: 2 }}>
             <View style={{ flex: 1 }}>
               <FlatList
                 extraData={listCateId}

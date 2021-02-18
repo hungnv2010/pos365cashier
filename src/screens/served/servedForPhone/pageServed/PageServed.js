@@ -198,16 +198,15 @@ export default (props) => {
         let promotionTmp = promotions
         if (promotions.length == 0) {
             let promotion = await realmStore.querryPromotion();
-            console.log("realmStore promotion === ", promotion);
+            // console.log("realmStore promotion === ", promotion);
             promotionTmp = promotion
             setPromotions(promotion)
         }
         let listProduct = await realmStore.queryProducts()
-        console.log("addPromotion listProduct:::: ", listProduct);
+        // console.log("addPromotion listProduct:::: ", listProduct);
         let listNewOrder = list.filter(element => (element.IsPromotion == undefined || (element.IsPromotion == false)))
         let listOldPromotion = list.filter(element => (element.IsPromotion != undefined && (element.IsPromotion == true)))
-        console.log("listNewOrder listOldPromotion ==:: ", listNewOrder, listOldPromotion);
-
+        // console.log("listNewOrder listOldPromotion ==:: ", listNewOrder, listOldPromotion);
         var DataGrouper = (function () {
             var has = function (obj, target) {
                 return _.any(obj, function (value) {
@@ -248,18 +247,14 @@ export default (props) => {
 
         DataGrouper.register("sum", function (item) {
             console.log("register item ", item);
-
             return _.extend({ ...item.vals[0] }, item.key, {
                 Quantity: _.reduce(item.vals, function (memo, node) {
                     return memo + Number(node.Quantity);
                 }, 0)
             });
         });
-
-        let listGroupByQuantity = DataGrouper.sum(listNewOrder, ["Id", "IsLargeUnit"])
-
-        console.log("listGroupByQuantity === ", listGroupByQuantity);
-        console.log("promotionTmp ===== ", promotionTmp);
+        // let listGroupByQuantity = DataGrouper.sum(listNewOrder, ["Id", "IsLargeUnit"])
+        let listGroupByQuantity = DataGrouper.sum(listNewOrder, ["ProductId", "IsLargeUnit"])
         let listPromotion = [];
         let index = 0;
         listGroupByQuantity.forEach(element => {
@@ -267,8 +262,6 @@ export default (props) => {
                 if ((element.IsPromotion == undefined || (element.IsPromotion == false)) && element.ProductId == item.ProductId && checkEndDate(item.EndDate) && (item.IsLargeUnit == element.IsLargeUnit && element.Quantity >= item.QuantityCondition)) {
                     let promotion = listProduct.filtered(`Id == ${item.ProductPromotionId}`)
                     promotion = JSON.parse(JSON.stringify(promotion[0]));
-                    // let promotion = JSON.parse(item.Promotion)
-                    console.log("addPromotion item:::: ", promotion);
                     if (index == 0) {
                         promotion.FisrtPromotion = true;
                     }
@@ -283,14 +276,11 @@ export default (props) => {
                             promotion.Quantity = quantity;
                         }
                     }
-
                     promotion.Price = item.PricePromotion;
                     promotion.IsLargeUnit = item.ProductPromotionIsLargeUnit;
                     promotion.IsPromotion = true;
                     promotion.ProductId = promotion.Id
                     promotion.Description = element.Quantity + " " + element.Name + ` ${I18n.t('khuyen_mai_')} ` + Math.floor(element.Quantity / item.QuantityCondition);
-
-                    console.log("addPromotion promotion ", promotion, index);
                     listPromotion.push(promotion)
                     index++;
                 }

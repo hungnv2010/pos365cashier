@@ -18,7 +18,7 @@ const ProductsItemForPhone = ({ item, index, onClickProduct, handleButtonDecreas
     return (
         <TouchableOpacity key={index} onPress={onClickItem} style={[styles.item, { backgroundColor: item.Quantity > 0 ? "#EED6A7" : "white", }]}>
             <Image
-                style={{ height: 70, width: 70, borderRadius: 50 }}
+                style={{ height: 70, width: 70, borderRadius: 20,marginLeft:5 }}
                 source={JSON.parse(item.ProductImages).length > 0 ? { uri: JSON.parse(item.ProductImages)[0].ImageURL } : Images.default_food_image}
             />
             <View style={styles.viewInfo}>
