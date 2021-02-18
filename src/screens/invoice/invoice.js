@@ -9,7 +9,7 @@ import { URL, HTTPService } from '../../data/services/HttpService';
 import { ApiPath } from '../../data/services/ApiPath';
 import { Constant } from '../../common/Constant';
 import { getFileDuLieuString } from '../../data/fileStore/FileStorage';
-import { currencyToString, dateToString, momentToStringDateLocal } from '../../common/Utils';
+import { currencyToString, dateToString, momentToStringDateLocal, momentToDateUTC } from '../../common/Utils';
 import InvoiceDetail from '../invoice/invoiceDetail';
 import { FlatList } from 'react-native-gesture-handler';
 import DateTime from '../../components/filter/DateTime';
@@ -17,6 +17,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import useDebounce from '../../customHook/useDebounce';
 import { ScreenList } from '../../common/ScreenList';
 import dialogManager from '../../components/dialog/DialogManager';
+import moment from "moment";
 
 const Invoice = (props) => {
 
@@ -261,7 +262,7 @@ const Invoice = (props) => {
                         <View style={{ alignItems: "flex-end" }}>
                             <Text style={{ fontSize: 14, color: checkColor(item) ? "black" : "red" }}>{currencyToString(item.TotalPayment)}</Text>
                             <Text style={{ color: '#689f38', fontSize: 13 }}>{item.AccountId ? getPaymentMethod(item.AccountId) : I18n.t("tien_mat")}</Text>
-                            <Text style={{ color: "#0072bc", fontSize: 12 }}>{dateToString(item.CreatedDate, "HH:mm DD/MM/YYYY")}</Text>
+                            <Text style={{ color: "#0072bc", fontSize: 12 }}>{moment.utc(momentToDateUTC(item.CreatedDate)).local().format("HH:mm DD/MM/YYYY")}</Text>
                         </View>
                     </View>
                     {

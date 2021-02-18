@@ -381,6 +381,7 @@ export default {
 
   bao_che_bien_sau_khi_thanh_toan: "Báo chế biến sau khi thanh toán",
   ban_co_chac_muon_xoa_voucher_nay: "Bạn có chắc muốn xoá voucher này?",
+  ban_co_chac_chan_muon_xoa_khach_hang:"Bạn có chắc muốn xóa khách hàng này",
   block_theo_phut: "Block tính theo phút",
 
   chon_cong_nghe_in: "Chọn công nghệ in",

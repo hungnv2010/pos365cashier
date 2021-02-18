@@ -313,6 +313,7 @@ export default {
 
   bao_che_bien_sau_khi_thanh_toan: "Report processing after payment",
   ban_co_chac_muon_xoa_voucher_nay: "Do you want to delete voucher?",
+  ban_co_chac_chan_muon_xoa_khach_hang: "Do you want to delete customer?",
   block_theo_phut: "Block per minute",
 
 

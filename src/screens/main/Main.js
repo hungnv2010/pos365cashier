@@ -114,9 +114,9 @@ export default (props) => {
 
         }
 
-        scanFromOrder = setInterval(() => {
-          getDataNewOrders()
-        }, 15000);
+        // scanFromOrder = setInterval(() => {
+        //   getDataNewOrders()
+        // }, 15000);
         await realmStore.deleteAllForFnb()
         await dataManager.syncAllDatas()
       } else {

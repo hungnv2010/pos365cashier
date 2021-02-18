@@ -371,8 +371,8 @@ export default (props) => {
                     if (res) {
                         if (res.ResponseStatus) {
                             dialogManager.showPopupOneButton(`${res.ResponseStatus.Message}`, I18n.t('thong_bao'))
-                        }else
-                        props.handleSuccess('sua')
+                        } else
+                            props.handleSuccess('sua')
                         //resetCustomer()
                     }
                     dialogManager.hiddenLoading()
@@ -386,12 +386,17 @@ export default (props) => {
 
 
     const onClickDelete = () => {
-        new HTTPService().setPath(`${ApiPath.CUSTOMER}/${customerDetail.Id}`).DELETE()
-            .then(res => {
-                console.log('onClickDelete', res)
-                if (res) props.handleSuccess('xoa')
-            })
-            .catch(err => console.log('onClickDelete err', err))
+        dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_xoa_khach_hang'), I18n.t("thong_bao"), res => {
+            if (res == 1) {
+                new HTTPService().setPath(`${ApiPath.CUSTOMER}/${customerDetail.Id}`).DELETE()
+                    .then(res => {
+                        console.log('onClickDelete', res)
+                        if (res) props.handleSuccess('xoa')
+                    })
+                    .catch(err => console.log('onClickDelete err', err))
+            }
+        })
+
     }
 
     const onClickPrint = () => {

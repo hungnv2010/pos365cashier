@@ -50,7 +50,7 @@ export default (props) => {
         // alert("ok")
     }
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         let listener = async (collection, changes) => {
             if ((changes.insertions.length || changes.modifications.length) && serverEvent[0].FromServer) {
                 currentServerEvent.current = JSON.parse(JSON.stringify(serverEvent[0]))
@@ -63,8 +63,6 @@ export default (props) => {
         
         const getListPos = async () => {
             serverEvent = await realmStore.queryServerEvents()
-            // let listPriceBook = await realmStore.queryPricebook()
-            // listPriceBook = JSON.parse(JSON.stringify(listPriceBook))
             const row_key = `${props.route.params.room.Id}_${position}`
             serverEvent = serverEvent.filtered(`RowKey == '${row_key}'`)
             currentServerEvent.current = JSON.stringify(serverEvent) != '{}' ? JSON.parse(JSON.stringify(serverEvent[0]))

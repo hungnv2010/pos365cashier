@@ -112,15 +112,20 @@ const RetailCustomerOrder = (props) => {
         console.log('applyDialogDetail', product);
         let price = product.IsLargeUnit == true ? product.PriceLargeUnit : product.UnitPrice
         let discount = product.Percent ? (price * product.Discount / 100) : product.Discount
+        let discountRatio = product.Percent ? product.Discount : product.Discount / price * 100
+        discount = discount > price ? price : discount
         listOrder.forEach((elm, index, arr) => {
             if (elm.ProductId == product.ProductId && index == product.index) {
                 if (product.Quantity == 0) {
                     arr.splice(index, 1)
                 }
+                elm.DiscountRatio = discountRatio
                 elm.Quantity = product.Quantity
                 elm.Description = product.Description
-                elm.Discount = discount - price > 0 ? price : discount
+                elm.Discount = discount
+                elm.Name = product.Name
                 elm.Price = product.Price
+                elm.IsLargeUnit = product.IsLargeUnit
             }
         })
         syncListProducts([...listOrder])
