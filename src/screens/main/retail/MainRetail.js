@@ -200,6 +200,7 @@ const MainRetail = (props) => {
                                 jsonContent.OrderDetails.forEach((product) => {
                                     res.PriceList.forEach((priceBook) => {
                                         if (priceBook.ProductId == product.ProductId) {
+                                            console.log('product',product);
                                             product.DiscountRatio = 0.0
                                             if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
                                             if (!priceBook.Price) priceBook.Price = product.UnitPrice

@@ -215,10 +215,10 @@ class SignalRManager {
         if (this.isStartSignalR) {
             this.proxy.invoke(type, message)
                 .done((response) => {
-                    console.log('sendMessage ', response)
+                    console.log('sendMessage done', response)
                 })
                 .fail(() => {
-                    console.warn('Something went wrong when calling server, it might not be up and running?')
+                    console.warn('sendMessage fail')
                 });
         } else {
             console.log("settimeout");

@@ -82,7 +82,7 @@ export default (props) => {
         console.log("getCustomer res ", res);
         if (res && res.Data && res.Data.length > 0) {
             dialogManager.hiddenLoading()
-            let listCustomer = res.Data
+            let listCustomer = res.Data.reverse()
             listCustomer.unshift(GUEST)
             setCustomerData(listCustomer)
             await realmStore.insertDatas(SchemaName.CUSTOMER, res.Data)
@@ -167,7 +167,7 @@ export default (props) => {
     const handleSuccess = async (type) => {
         dialogManager.showLoading()
         try {
-            if (type == 'xoa') await realmStore.deletePartner()
+            await realmStore.deletePartner()
             await dataManager.syncPartner()
             getCustomer()
             dialogManager.showPopupOneButton(`${I18n.t(type)} ${I18n.t('thanh_cong')}`, I18n.t('thong_bao'))

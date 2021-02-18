@@ -85,7 +85,7 @@ const Served = (props) => {
         getDataRealm();
     }, [])
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         let listener = async (collection, changes) => {
             if ((changes.insertions.length || changes.modifications.length) && serverEvent[0].FromServer) {
                 currentServerEvent.current = JSON.parse(JSON.stringify(serverEvent[0]))
