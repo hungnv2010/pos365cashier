@@ -56,6 +56,7 @@ export default (props) => {
             let apiPath = ApiPath.PRICE_BOOK + `/${props.priceBookId}/manyproductprice`
             let params = { "pricebookId": props.priceBookId, "ProductIds": [itemOrder.ProductId] }
             let res = await new HTTPService().setPath(apiPath).POST(params)
+            console.log('getOtherPrice res', res);
             if (res && res.PriceList && res.PriceList.length > 0) {
                 res.PriceList.forEach((priceBook) => {
                     if (priceBook.ProductId == itemOrder.ProductId) {

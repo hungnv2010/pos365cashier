@@ -60,7 +60,7 @@ export default (props) => {
                 setJsonContent(jsonTmp)
             }
         }
-        
+
         const getListPos = async () => {
             serverEvent = await realmStore.queryServerEvents()
             const row_key = `${props.route.params.room.Id}_${position}`
@@ -123,7 +123,7 @@ export default (props) => {
                     list.map((product) => {
                         res.PriceList.forEach((priceBook) => {
                             if (priceBook.ProductId == product.ProductId) {
-                                if (product.Discount == 0){
+                                if (product.Discount == 0) {
                                     product.DiscountRatio = 0.0
                                     product.Discount = 0
                                     if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
@@ -192,7 +192,7 @@ export default (props) => {
         }
     }
 
-    const addPromotion = async (list) => {
+    const addPromotion = async (list = []) => {
         console.log("addPromotion list ", list);
         console.log("addPromotion promotions ", promotions);
         let promotionTmp = promotions

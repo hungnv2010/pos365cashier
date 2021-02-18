@@ -202,6 +202,7 @@ const MainRetail = (props) => {
                                         if (priceBook.ProductId == product.ProductId) {
                                             console.log('product',product);
                                             product.DiscountRatio = 0.0
+                                            product.Discount = 0
                                             if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
                                             if (!priceBook.Price) priceBook.Price = product.UnitPrice
                                             let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price

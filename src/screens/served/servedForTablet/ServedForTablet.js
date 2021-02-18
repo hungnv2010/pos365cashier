@@ -516,7 +516,9 @@ const Served = (props) => {
                                             if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
                                             if (!priceBook.Price) priceBook.Price = product.UnitPrice
                                             let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price
+                                            console.log('newBasePrice', newBasePrice);
                                             product.Price = newBasePrice + product.TotalTopping
+                                            console.log('newBasePrice product', product);
                                         }
                                     })
                                 })

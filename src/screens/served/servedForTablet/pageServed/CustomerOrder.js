@@ -156,12 +156,12 @@ const CustomerOrder = (props) => {
             let discountRatio = product.Percent ? product.Discount : product.Discount / price * 100
             listOrder.forEach((elm, index, arr) => {
                 if (elm.ProductId == product.ProductId && index == product.index) {
-                    elm.DiscountRatio = discountRatio
-                    elm.Quantity = product.Quantity
+                    elm.DiscountRatio = +discountRatio
+                    elm.Quantity = +product.Quantity
                     elm.Name = product.Name
                     elm.Description = product.Description
-                    elm.Discount = discount
-                    elm.Price = product.Price
+                    elm.Discount = +discount
+                    elm.Price = +product.Price
                     elm.IsLargeUnit = product.IsLargeUnit
                     props.outputSelectedProduct(elm, true)
                 }

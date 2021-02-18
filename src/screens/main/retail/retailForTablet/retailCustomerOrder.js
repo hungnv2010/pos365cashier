@@ -119,12 +119,12 @@ const RetailCustomerOrder = (props) => {
                 if (product.Quantity == 0) {
                     arr.splice(index, 1)
                 }
-                elm.DiscountRatio = discountRatio
-                elm.Quantity = product.Quantity
+                elm.DiscountRatio = +discountRatio
+                elm.Quantity = +product.Quantity
                 elm.Description = product.Description
-                elm.Discount = discount
+                elm.Discount = +discount
                 elm.Name = product.Name
-                elm.Price = product.Price
+                elm.Price = +product.Price
                 elm.IsLargeUnit = product.IsLargeUnit
             }
         })
@@ -422,7 +422,7 @@ const RetailCustomerOrder = (props) => {
                         <View style={{ flexDirection: "column", flex: 1, }}>
                             <Text style={{ fontWeight: "bold", marginBottom: 7 }}>{item.Name}</Text>
                             <View style={{ flexDirection: "row" }}>
-                                <Text style={{}}>{isPromotion ? currencyToString(item.Price) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : currencyToString(item.Price))} x </Text>
+                                <Text style={{}}>{ currencyToString(item.Price)} x </Text>
                                 <View onPress={() => onClickUnit({ ...item })}>
                                     {
                                         orientaition == Constant.PORTRAIT ?
@@ -680,6 +680,7 @@ const RetailCustomerOrder = (props) => {
                                 <DialogProductDetail
                                     fromRetail={true}
                                     item={itemOrder}
+                                    priceBookId={props.jsonContent.PriceBookId}
                                     onClickSubmit={data => { applyDialogDetail(data) }}
                                     setShowModal={() => {
                                         setShowModal(false)

@@ -5,7 +5,6 @@ export const DATE_FORMAT = "YYYY-MM-DD'T'HH:mm:ss.SSFFFFF'Z'";
 
 //Convert number, currency format
 export const currencyToString = (value, decimal = false) => {
-  console.log("currencyToString value ", value);
   if (value == 0 && value == '0') return 0;
   if (!value || (value && value == "")) {
     value = "0";
@@ -150,3 +149,20 @@ export const groupBy = (array, key) => {
     return result;
   }, {}); // empty object is the initial value for result object
 };
+
+export const mergeTwoArray = (newArray, oldArray) => {
+  let array = []
+  newArray.forEach(elm => {
+    if (elm.SplitForSalesOrder || (elm.ProductType == 2 && elm.IsTimer)) {
+      array.unshift({ ...elm })
+    } else {
+      let pos = oldArray.map(item => item.Id).indexOf(elm.Id);
+      if (pos >= 0) {
+        oldArray[pos].Quantity += elm.Quantity
+      } else {
+        array.unshift({ ...elm })
+      }
+    }
+  });
+  return [...array, ...oldArray]
+}

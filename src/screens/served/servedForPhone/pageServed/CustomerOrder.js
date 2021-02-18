@@ -214,12 +214,12 @@ export default (props) => {
                     if (product.Quantity == 0) {
                         arr.splice(index, 1)
                     }
-                    elm.DiscountRatio = discountRatio
-                    elm.Quantity = product.Quantity
+                    elm.DiscountRatio = +discountRatio
+                    elm.Quantity = +product.Quantity
                     elm.Description = product.Description
-                    elm.Discount = discount
+                    elm.Discount = +discount
                     elm.Name = product.Name
-                    elm.Price = product.Price
+                    elm.Price = +product.Price
                     elm.IsLargeUnit = product.IsLargeUnit
 
                 }

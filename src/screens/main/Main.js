@@ -107,16 +107,16 @@ export default (props) => {
       if (isFNB === true) {
         const getDataNewOrders = async () => {
           let newOrders = await dataManager.initComfirmOrder()
-          console.log('getDataNewOrders', newOrders);
+          // console.log('getDataNewOrders', newOrders);
 
-          if (newOrders != null)
-            viewPrintRef.current.printKitchenRef(newOrders)
+          // if (newOrders != null)
+          //   viewPrintRef.current.printKitchenRef(newOrders)
 
         }
 
-        // scanFromOrder = setInterval(() => {
-        //   getDataNewOrders()
-        // }, 15000);
+        scanFromOrder = setInterval(() => {
+          getDataNewOrders()
+        }, 15000);
         await realmStore.deleteAllForFnb()
         await dataManager.syncAllDatas()
       } else {

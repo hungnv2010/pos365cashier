@@ -18,6 +18,7 @@ import useDebounce from '../../customHook/useDebounce';
 import { ScreenList } from '../../common/ScreenList';
 import dialogManager from '../../components/dialog/DialogManager';
 import moment from "moment";
+import { useFocusEffect } from '@react-navigation/native';
 
 const Invoice = (props) => {
 
@@ -47,6 +48,14 @@ const Invoice = (props) => {
     })
     const debounceTextSearch = useDebounce(textSearch)
 
+    // useFocusEffect(() => {
+    //     onRefresh()
+    // }, [])
+
+    useEffect(()=>{
+        console.log('useEffectuseEffect');
+    },[])
+
 
     useEffect(() => {
         const getBranch = async () => {
@@ -57,7 +66,7 @@ const Invoice = (props) => {
         }
         const getAccount = async () => {
             let results = await new HTTPService().setPath(ApiPath.ACCOUNT).GET()
-            listAccount.current = results
+            listAccount.current = [{ Id: 0, Name: I18n.t("tien_mat") }, ...results]
 
         }
         getAccount()
@@ -150,10 +159,10 @@ const Invoice = (props) => {
 
     const outputDateTime = (item) => {
         console.log('outputDateTime', item);
-        if(item == null){
+        if (item == null) {
             setShowModal(false)
         }
-         else if (item.key == 'custom' && !item.startDate) {
+        else if (item.key == 'custom' && !item.startDate) {
             setShowModal(false)
         } else {
             setFilter({
@@ -238,11 +247,20 @@ const Invoice = (props) => {
         return HasTemporaryPrints ? MoreAttributes : false
     }
 
-    const getPaymentMethod = (accountId) => {
-        if (listAccount.current) {
-            let account = listAccount.current.filter(item => item.Id == accountId)
-            return account[0].Name
+    const getPaymentMethod = (MoreAttributes) => {
+        let listPaymentMethod = []
+        if (MoreAttributes.PaymentMethods && MoreAttributes.PaymentMethods.length > 0) {
+            if (listAccount.current && listAccount.current.length > 0) {
+                listAccount.current.forEach(item => {
+                    MoreAttributes.PaymentMethods.forEach(elm => {
+                        if (item.Id == elm.AccountId) {
+                            listPaymentMethod.push(item.Name)
+                        }
+                    })
+                })
+            }
         }
+        return listPaymentMethod.join(', ')
     }
 
     const renderItemList = (item, index) => {
@@ -261,7 +279,7 @@ const Invoice = (props) => {
 
                         <View style={{ alignItems: "flex-end" }}>
                             <Text style={{ fontSize: 14, color: checkColor(item) ? "black" : "red" }}>{currencyToString(item.TotalPayment)}</Text>
-                            <Text style={{ color: '#689f38', fontSize: 13 }}>{item.AccountId ? getPaymentMethod(item.AccountId) : I18n.t("tien_mat")}</Text>
+                            <Text style={{ color: '#689f38', fontSize: 13 }}>{item.MoreAttributes ? getPaymentMethod(JSON.parse(item.MoreAttributes)) : I18n.t("tien_mat")}</Text>
                             <Text style={{ color: "#0072bc", fontSize: 12 }}>{moment.utc(momentToDateUTC(item.CreatedDate)).local().format("HH:mm DD/MM/YYYY")}</Text>
                         </View>
                     </View>
@@ -287,8 +305,8 @@ const Invoice = (props) => {
                 justifyContent: 'center',
             }}>
                 <View>
-                    <View style={{backgroundColor:"#FF4500",borderTopEndRadius:4,borderTopStartRadius:4}}>
-                    <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", paddingVertical: 10,color:'white' }}>{I18n.t('loc_theo_trang_thai')}</Text>
+                    <View style={{ backgroundColor: "#FF4500", borderTopEndRadius: 4, borderTopStartRadius: 4 }}>
+                        <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", paddingVertical: 10, color: 'white' }}>{I18n.t('loc_theo_trang_thai')}</Text>
                     </View>
                     {
                         Constant.STATUS_FILTER.map((item, index) => {
@@ -332,7 +350,7 @@ const Invoice = (props) => {
                             <Image source={Images.icon_arrow_down} style={{ width: 14, height: 14, marginLeft: 5 }} />
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={{ flexDirection: "row", alignItems: "center" ,padding:20}}
+                            style={{ flexDirection: "row", alignItems: "center", padding: 20 }}
                             onPress={() => onClickFilter(2)}>
                             <Image source={Images.icon_filter} style={{ width: 17, height: 18 }} />
                             <Text style={{ marginHorizontal: 10 }}>{I18n.t(filter.status.name)}</Text>
@@ -342,7 +360,7 @@ const Invoice = (props) => {
 
                     <View style={{ alignItems: "center", justifyContent: "center", backgroundColor: "#f2f2f2", height: 60, }}>
                         <View style={{ backgroundColor: "white", height: 40, width: " 95%", borderRadius: 10, flexDirection: "row", alignItems: "center", paddingHorizontal: 10 }}>
-                            <Ionicons name="md-search" size={20} color="black" style={{marginRight: 20}}/>
+                            <Ionicons name="md-search" size={20} color="black" style={{ marginRight: 20 }} />
                             <TextInput
                                 style={{ flex: 1, color: "#000", height: 35 }}
                                 value={textSearch}

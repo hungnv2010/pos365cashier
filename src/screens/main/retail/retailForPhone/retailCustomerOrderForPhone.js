@@ -349,7 +349,7 @@ export default (props) => {
                                 {item.Name}
                             </TextTicker>
                             <View style={{ flexDirection: "row" }}>
-                                <Text style={{}}>{isPromotion ? currencyToString(item.Price) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit) : currencyToString(item.Price))} x </Text>
+                                <Text style={{}}>{currencyToString(item.Price)} x </Text>
                                 <View>
                                     <Text style={{ color: Colors.colorchinh }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text>
                                 </View>
@@ -620,12 +620,12 @@ export default (props) => {
                 if (product.Quantity == 0) {
                     arr.splice(index, 1)
                 }
-                elm.DiscountRatio = discountRatio
-                elm.Quantity = product.Quantity
+                elm.DiscountRatio = +discountRatio
+                elm.Quantity = +product.Quantity
                 elm.Description = product.Description
-                elm.Discount = discount
+                elm.Discount = +discount
                 elm.Name = product.Name
-                elm.Price = product.Price
+                elm.Price = +product.Price
                 elm.IsLargeUnit = product.IsLargeUnit
             }
         })
@@ -786,6 +786,7 @@ export default (props) => {
                         }}>
                             <DialogProductDetail
                                 fromRetail={true}
+                                priceBookId={jsonContent.PriceBookId ? jsonContent.PriceBookId : null}
                                 item={itemOrder}
                                 onClickSubmit={data => { applyDialogDetail(data) }}
                                 setShowModal={() => {

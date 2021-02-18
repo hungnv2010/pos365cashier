@@ -348,7 +348,7 @@ export default (props) => {
             new HTTPService().setPath(ApiPath.CUSTOMER).POST(params)
                 .then(res => {
                     console.log('onClickDone res', res);
-                    if (res.ResponseStatus.ErrorCode) {
+                    if (res && res.ResponseStatus && res.ResponseStatus.ErrorCode) {
                         dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
                             dialogManager.destroy();
                         }, null, null, I18n.t('dong'))

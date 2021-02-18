@@ -5,7 +5,7 @@ import { getFileDuLieuString, setFileLuuDuLieu } from "../data/fileStore/FileSto
 import { Subject } from 'rxjs';
 import moment from "moment";
 import signalRManager from "../common/SignalR";
-import { momentToDateUTC, momentToStringDateLocal, groupBy, randomUUID } from "../common/Utils";
+import { momentToDateUTC, momentToStringDateLocal, groupBy, randomUUID, mergeTwoArray } from "../common/Utils";
 import { Constant } from "../common/Constant";
 class DataManager {
     constructor() {
@@ -53,6 +53,7 @@ class DataManager {
                         }
                     }
 
+                    console.log('listRoomlistRoomlistRoom', listRoom);
 
                     for (const item of listRoom) {
                         let serverEvent = await realmStore.queryServerEvents()
@@ -62,18 +63,19 @@ class DataManager {
                         console.log('serverEventByRowKey', serverEventByRowKey);
                         serverEventByRowKey.JsonContent = JSON.parse(serverEventByRowKey.JsonContent)
                         if (serverEventByRowKey.JsonContent.OrderDetails && serverEventByRowKey.JsonContent.OrderDetails.length > 0) {
-                            item.products.forEach(elm => {
-                                if ((elm.SplitForSalesOrder || (elm.ProductType == 2 && elm.IsTimer))) {
-                                    serverEventByRowKey.JsonContent.OrderDetails.unshift({ ...elm })
-                                } else {
-                                    serverEventByRowKey.JsonContent.OrderDetails.forEach(order => {
-                                        if (order.Id == elm.Id) {
-                                            order.Quantity += elm.Quantity
-                                            order.Processed = order.Quantity
-                                        }
-                                    })
-                                }
-                            })
+                            // item.products.forEach(elm => {
+                            //     if ((elm.SplitForSalesOrder || (elm.ProductType == 2 && elm.IsTimer))) {
+                            //         serverEventByRowKey.JsonContent.OrderDetails.unshift({ ...elm })
+                            //     } else {
+                            //         serverEventByRowKey.JsonContent.OrderDetails.forEach(order => {
+                            //             if (order.Id == elm.Id) {
+                            //                 order.Quantity += elm.Quantity
+                            //                 order.Processed = order.Quantity
+                            //             }
+                            //         })
+                            //     }
+                            // })
+                            serverEventByRowKey.JsonContent.OrderDetails = mergeTwoArray(item.products, serverEventByRowKey.JsonContent.OrderDetails,)
                         } else {
                             serverEventByRowKey.JsonContent.OrderDetails = [...item.products]
                         }
@@ -348,15 +350,14 @@ class DataManager {
 
         oldServerEvent = (JSON.stringify(oldServerEvent) != '{}') ? JSON.parse(JSON.stringify(oldServerEvent))[0]
             : await this.createSeverEvent(oldRoomId, oldPosition)
-        oldServerEvent.JsonContent = oldServerEvent.JsonContent ? JSON.parse(oldServerEvent.JsonContent) : {}
+        oldServerEvent.JsonContent = oldServerEvent.JsonContent ? JSON.parse(oldServerEvent.JsonContent) : this.createJsonContent(oldRoomId, oldPosition, moment())
         if (!oldServerEvent.JsonContent.OrderDetails) oldServerEvent.JsonContent.OrderDetails = []
 
         newServerEvent = (JSON.stringify(newServerEvent) != '{}') ? JSON.parse(JSON.stringify(newServerEvent))[0]
             : await this.createSeverEvent(newRoomId, newPosition)
-        newServerEvent.JsonContent = JSON.parse(newServerEvent.JsonContent)
-        let OrderDetails = newServerEvent.JsonContent.OrderDetails ?
-            [...newServerEvent.JsonContent.OrderDetails, ...oldServerEvent.JsonContent.OrderDetails]
-            : oldServerEvent.JsonContent.OrderDetails
+        newServerEvent.JsonContent = newServerEvent.JsonContent? JSON.parse(newServerEvent.JsonContent) : this.createJsonContent(newRoomId, newPosition, moment())
+        if (!newServerEvent.JsonContent.OrderDetails) newServerEvent.JsonContent.OrderDetails = []
+        let OrderDetails = newServerEvent.JsonContent.OrderDetails ? mergeTwoArray(newServerEvent.JsonContent.OrderDetails, oldServerEvent.JsonContent.OrderDetails) : oldServerEvent.JsonContent.OrderDetails
         newServerEvent.JsonContent.OrderDetails = [...OrderDetails]
         newServerEvent.JsonContent.Partner = oldServerEvent.JsonContent.Partner ? oldServerEvent.JsonContent.Partner : null
         newServerEvent.JsonContent.PartnerId = oldServerEvent.JsonContent.PartnerId ? oldServerEvent.JsonContent.PartnerId : null
@@ -365,7 +366,7 @@ class DataManager {
         newServerEvent.JsonContent.ActiveDate = oldServerEvent.JsonContent.ActiveDate ? oldServerEvent.JsonContent.ActiveDate : ""
 
         oldServerEvent.Version += 1
-        oldServerEvent.JsonContent = JSON.stringify({})
+        oldServerEvent.JsonContent = JSON.stringify(this.createJsonContent(oldRoomId, oldPosition, moment()))
         newServerEvent.Version += 1
         this.calculatateJsonContent(newServerEvent.JsonContent)
         newServerEvent.JsonContent = JSON.stringify(newServerEvent.JsonContent)
@@ -393,9 +394,7 @@ class DataManager {
         //         this.createJsonContent(RoomId, NewPosition, momentToDateUTC(moment()), ListNewSplit)
         // } else {
         newServerEvent.JsonContent = JSON.parse(newServerEvent.JsonContent)
-        let OrderDetails = newServerEvent.JsonContent.OrderDetails ?
-            [...newServerEvent.JsonContent.OrderDetails, ...ListNewSplit]
-            : ListNewSplit
+        let OrderDetails = newServerEvent.JsonContent.OrderDetails ? mergeTwoArray(ListNewSplit, newServerEvent.JsonContent.OrderDetails) : ListNewSplit
         newServerEvent.JsonContent.OrderDetails = [...OrderDetails]
         // }
 
