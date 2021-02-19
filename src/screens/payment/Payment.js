@@ -610,6 +610,7 @@ export default (props) => {
         serverEvent.JsonContent = JSON.stringify(json);
         serverEvent.Version += 10
         console.log("updateServerEvent serverEvent ", serverEvent);
+        delete serverEvent.Timestamp
         dataManager.updateServerEventNow(serverEvent, true, isFNB);
         if (settingObject.current.am_bao_thanh_toan == true)
             playSound()
@@ -775,8 +776,10 @@ export default (props) => {
         if (currentServerEvent.current && update == true) {
             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
             dataManager.paymentSetServerEvent(serverEvent, jsonContent);
-            if (isFNB)
+            if (isFNB) {
+                delete serverEvent.Timestamp
                 dataManager.subjectUpdateServerEvent.next(serverEvent)
+            }
         }
     }
 
