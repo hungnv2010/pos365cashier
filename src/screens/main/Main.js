@@ -25,7 +25,7 @@ export default (props) => {
   const viewPrintRef = useRef();
   const dispatch = useDispatch();
   const [textSearch,setTextSearch] = useState('')
-  const { listPrint, isFNB, printProvisional, printReturnProduct } = useSelector(state => {
+  const { listPrint, isFNB, printProvisional, printReturnProduct, syncRetail } = useSelector(state => {
     return state.Common
   })
 
@@ -53,6 +53,13 @@ export default (props) => {
       dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: "" })
     }
   }, [printProvisional])
+
+  // useEffect(() => {
+  //   if (syncRetail != false) {
+  //     clickSyncForRetail()
+  //     dispatch({ type: 'SYNCRETAIL', syncRetail: false })
+  //   }
+  // }, [syncRetail])
 
   // PRINT_PROVISIONAL
 

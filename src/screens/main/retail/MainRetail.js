@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, createRef, useLayoutEffect } from 'react';
 import { View, AppState, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import SelectProduct from '../../served/servedForTablet/selectProduct/SelectProduct';
 import { Constant } from '../../../common/Constant';
 import RetailCustomerOrder from './retailForTablet/retailCustomerOrder';
@@ -24,13 +24,20 @@ const MainRetail = (props) => {
     const [currentCustomer, setCurrentCustomer] = useState({ Name: "khach_le", Id: 0 })
     const [numberCommodity, setNumberCommodity] = useState(0)
     const [jsonContent, setJsonContent] = useState({})
-    const { orientaition, deviceType } = useSelector(state => {
+    const { orientaition, deviceType, syncRetail } = useSelector(state => {
         return state.Common
     });
     const currentCommodity = useRef()
     const [isDone, setIsDone] = useState(true)
 
+    const dispatch = useDispatch()
 
+    useEffect(() => {
+        if (syncRetail != false) {
+            onClickSync()
+            dispatch({ type: 'SYNCRETAIL', syncRetail: false })
+        }
+    }, [syncRetail])
 
     useEffect(() => {
         const getCommodityWaiting = async () => {
@@ -200,7 +207,7 @@ const MainRetail = (props) => {
                                 jsonContent.OrderDetails.forEach((product) => {
                                     res.PriceList.forEach((priceBook) => {
                                         if (priceBook.ProductId == product.ProductId) {
-                                            console.log('product',product);
+                                            console.log('product', product);
                                             product.DiscountRatio = 0.0
                                             product.Discount = 0
                                             if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
@@ -357,7 +364,7 @@ const MainRetail = (props) => {
                                             <TouchableOpacity
                                                 style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
                                                 onPress={onClickRetailCustomer}>
-                                                <Text ellipsizeMode="tail" numberOfLines={1} style={{textAlign: "right", flex: 1, color: Colors.colorchinh, fontWeight: "bold" }}>{currentCustomer.Id == 0 ? I18n.t(currentCustomer.Name) : currentCustomer.Name}</Text>
+                                                <Text ellipsizeMode="tail" numberOfLines={1} style={{ textAlign: "right", flex: 1, color: Colors.colorchinh, fontWeight: "bold" }}>{currentCustomer.Id == 0 ? I18n.t(currentCustomer.Name) : currentCustomer.Name}</Text>
                                                 <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} color={Colors.colorchinh} />
                                             </TouchableOpacity>
                                         </View>

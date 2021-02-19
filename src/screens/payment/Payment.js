@@ -5,7 +5,7 @@ import I18n from '../../common/language/i18n';
 import realmStore from '../../data/realm/RealmStore';
 import { Images, Metrics } from '../../theme';
 import { ScreenList } from '../../common/ScreenList';
-import { currencyToString, dateToStringFormatUTC } from '../../common/Utils';
+import { currencyToString, dateToStringFormatUTC, randomUUID } from '../../common/Utils';
 import colors from '../../theme/Colors';
 import { useSelector, useDispatch } from 'react-redux';
 import { Constant } from '../../common/Constant';
@@ -45,7 +45,7 @@ export default (props) => {
 
     const CASH = {
         Id: 0,
-        MethodId: 0,
+        UUID: randomUUID(),
         Name: I18n.t('tien_mat'),
         Value: 0,
     }
@@ -205,9 +205,11 @@ export default (props) => {
         let newDate = new Date().getTime();
         if (timeClickPrevious + 500 < newDate) {
             let list = listMethod;
-            list.push({ ...CASH, Id: timeClickPrevious, MethodId: 0, Value: list.length > 0 ? 0 : jsonContent.Total })
+            list.push({ ...CASH, UUID: randomUUID(), Value: list.length > 0 ? 0 : jsonContent.Total })
             setListMethod([...list])
             timeClickPrevious = newDate;
+            console.log("addAccount [...list] ", [...list]);
+
         }
     }
 
@@ -334,12 +336,14 @@ export default (props) => {
     }
 
     const onClickOkFilter = () => {
-        console.log("onClickOkFilter ", listMethod);
+        console.log("onClickOkFilter 1 ", listMethod);
+        console.log("onClickOkFilter 2 ", itemAccountRef.current);
+        console.log("onClickOkFilter 3 ", itemMethod);
         setShowModal(false)
         let list = [];
         listMethod.forEach(element => {
-            if (itemAccountRef.current.Id == element.Id) {
-                list.push({ ...itemMethod, Value: element.Value })
+            if (itemAccountRef.current.Id == element.Id && itemAccountRef.current.UUID == element.UUID) {
+                list.push({ ...itemAccountRef.current, ...itemMethod, Value: element.Value })
             } else
                 list.push(element)
         });
@@ -348,7 +352,7 @@ export default (props) => {
 
     const onSelectMethod = (item) => {
         console.log("onSelectMethod ", item, itemMethod);
-        setItemMethod({ ...item, MethodId: item.Id });
+        setItemMethod({ ...item });
     }
 
     const getSumValue = (total, num) => {
@@ -845,8 +849,8 @@ export default (props) => {
 
     const setSelectionInput = (value) => {
         let length = value.length;
-        if(length == undefined) length = 1;
-        setSelection({ start: length, end: length})
+        if (length == undefined) length = 1;
+        setSelection({ start: length, end: length })
     }
 
     const renderFilter = () => {
@@ -861,7 +865,7 @@ export default (props) => {
                                 return (
                                     <TouchableOpacity key={index.toString()} onPress={() => onSelectMethod(item)} style={styles.viewRadioButton}>
                                         <RadioButton.Android
-                                            status={itemMethod.MethodId == item.Id ? 'checked' : 'unchecked'}
+                                            status={itemMethod.Id == item.Id ? 'checked' : 'unchecked'}
                                             onPress={() => onSelectMethod(item)}
                                             color={colors.colorchinh}
                                         />
