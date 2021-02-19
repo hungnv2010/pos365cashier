@@ -106,11 +106,6 @@ class SignalRManager {
                     dialogManager.hiddenLoading();
             })
             .fail(() => {
-<<<<<<< HEAD
-                console.log("Failed");
-=======
-                console.warn("Failed");
->>>>>>> b00c96297e70f12681936ba1189800279304759f
                 this.isStartSignalR = false;
                 if (dialogManager)
                     dialogManager.hiddenLoading()
