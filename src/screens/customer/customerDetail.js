@@ -348,12 +348,13 @@ export default (props) => {
             new HTTPService().setPath(ApiPath.CUSTOMER).POST(params)
                 .then(res => {
                     console.log('onClickApply res', res);
-                    if (res) {
+                    if (res && res.ResponseStatus && res.ResponseStatus.Message) {
+                        dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
+                            dialogManager.destroy();
+                        }, null, null, I18n.t('dong'))
+                    } else {
                         props.handleSuccess('them')
                         resetCustomer()
-                    } else {
-                        toastDescription.current = `${I18n.t('ma_khach_hang')} ${customerDetail.Code} ${I18n.t('da_ton_tai_trong_he_thong')}`
-                        setShowToast(true)
                     }
                     dialogManager.hiddenLoading()
                 })
@@ -368,12 +369,13 @@ export default (props) => {
             new HTTPService().setPath(ApiPath.CUSTOMER).POST(params)
                 .then(res => {
                     console.log('onClickApply res', res);
-                    if (res) {
-                        if (res.ResponseStatus) {
-                            dialogManager.showPopupOneButton(`${res.ResponseStatus.Message}`, I18n.t('thong_bao'))
-                        } else
-                            props.handleSuccess('sua')
-                        //resetCustomer()
+                    if (res && res.ResponseStatus && res.ResponseStatus.Message) {
+                        dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
+                            dialogManager.destroy();
+                        }, null, null, I18n.t('dong'))
+                    } else {
+                        props.handleSuccess('sua')
+                        // resetCustomer()
                     }
                     dialogManager.hiddenLoading()
                 })
