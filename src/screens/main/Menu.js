@@ -388,7 +388,6 @@ const ContentComponent = (props) => {
         console.log("Abc orderOffline ", orderOffline.length);
         setNumberOrderOffline(orderOffline.length)
     })
-   
 
     useEffect(() => {
         const getCurrentIP = async () => {

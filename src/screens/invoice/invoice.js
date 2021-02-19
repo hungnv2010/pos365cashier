@@ -48,14 +48,6 @@ const Invoice = (props) => {
     })
     const debounceTextSearch = useDebounce(textSearch)
 
-    // useFocusEffect(() => {
-    //     onRefresh()
-    // }, [])
-
-    useEffect(()=>{
-        console.log('useEffectuseEffect');
-    },[])
-
 
     useEffect(() => {
         const getBranch = async () => {

@@ -86,7 +86,7 @@ export default (props) => {
             serverEvents.addListener((collection, changes) => {
                 if (changes.insertions.length || changes.modifications.length) {
                     let newDatas = insertServerEvent(getDatas(rooms, roomGroups), serverEvents)
-                    // dataRef.current = newDatas
+                    dataRef.current = newDatas
                     setData(newDatas)
                     setFilterStatus('tat_ca')
                 }

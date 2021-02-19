@@ -366,7 +366,7 @@ export default (props) => {
                             {/* <Icon style={{ paddingHorizontal: 5 }} name="bell-ring" size={20} color="grey" /> */}
                             <Text
                                 style={{ color: Colors.colorchinh, marginRight: 5 }}>
-                                {isPromotion ? currencyToString(item.Price * item.Quantity) : (item.IsLargeUnit ? currencyToString(item.PriceLargeUnit * item.Quantity) : currencyToString(item.Price * item.Quantity))}
+                                {currencyToString(item.Price * item.Quantity)}
                             </Text>
                         </View>
                     </View>
