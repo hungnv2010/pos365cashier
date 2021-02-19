@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
-import { Image, View, StyleSheet, Text, TouchableOpacity, TextInput, ScrollView, Modal, TouchableWithoutFeedback } from "react-native";
+import { Image, View, StyleSheet, Text, TouchableOpacity, TextInput, ScrollView, Modal, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { Snackbar, RadioButton } from 'react-native-paper';
 import MainToolBar from '../main/MainToolBar';
 import I18n from '../../common/language/i18n';
@@ -180,7 +180,7 @@ export default (props) => {
     }
 
     const onClickApply = () => {
-
+        Keyboard.dismiss();
         if (!(room && room.Name && room.Name.trim() != "")) {
             setToastDescription(I18n.t("vui_long_nhap_day_du_thong_tin_truoc_khi_luu"))
             setShowToast(true)
@@ -247,6 +247,12 @@ export default (props) => {
             new HTTPService().setPath(ApiPath.ROOMS).POST(params).then(async (res) => {
                 console.log("onClickApply  res ", res);
                 if (res) {
+                    dialogManager.hiddenLoading();
+                    if (res.ResponseStatus && res.ResponseStatus.ErrorCode) {
+                        dialogManager.showPopupOneButton(res.ResponseStatus.Message)
+                        // props.navigation.pop()
+                        return;
+                    }
                     if (deviceType == Constant.PHONE) {
                         props.route.params._onSelect("Add");
                         props.navigation.pop()
@@ -255,7 +261,7 @@ export default (props) => {
                         resetRoom();
                     }
                 }
-                dialogManager.hiddenLoading();
+                
             }).catch((e) => {
                 dialogManager.hiddenLoading();
                 console.log("onClickApply err ", e);

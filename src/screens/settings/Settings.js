@@ -203,6 +203,11 @@ export default (props) => {
         setMargin(0)
     }
 
+    const getCurentRetailer = async () => {
+        let res = await new HTTPService().setPath(ApiPath.VENDOR_SESSION).GET()
+        setInforStore(res.CurrentRetailer)
+    }
+
     useEffect(() => {
         console.log("Printer Object", (printerObject));
     }, [settingObject])

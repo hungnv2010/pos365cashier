@@ -380,24 +380,26 @@ export default (props) => {
                 </View>
 
             </View>
-            <View style={{ height: 40, backgroundColor: 'white', paddingHorizontal: 10, paddingVertical: 5 }}>
-                <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{ backgroundColor: '#f2f2f2', borderTopLeftRadius: 16, borderBottomLeftRadius: 16 }}>
-                    {listRoom ?
-                        listRoom.map((data, index) =>
-                            <TouchableOpacity
-                                key={index}
-                                onPress={() => {
-                                    setIndexRoom(index)
-                                    console.log("_nodes.size ", _nodes.size);
-                                    const node = _nodes.get(data.Id);
-                                    console.log("node ", node);
-                                    refScroll.scrollTo({ y: node })
-                                }} style={{ height: "100%", justifyContent: "center", alignItems: "center", paddingHorizontal: 15, paddingVertical: 5, backgroundColor: indexRoom == index ? colors.colorLightBlue : null, paddingVertical: 5, borderRadius: 16 }}>
-                                <Text style={{ color: indexRoom == index ? "#fff" : "#000", textTransform: 'uppercase', fontWeight: indexRoom == index ? 'bold' : null }}>{data.Name}</Text>
-                            </TouchableOpacity>
-                        )
-                        : null}
-                </ScrollView>
+            <View style={{ height: 45, backgroundColor: 'white', padding: 5 }}>
+                <View style={{ backgroundColor: '#f2f2f2', paddingHorizontal: 5, height: "100%", borderRadius: 18}}>
+                    <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{}}>
+                        {listRoom ?
+                            listRoom.map((data, index) =>
+                                <TouchableOpacity
+                                    key={index}
+                                    onPress={() => {
+                                        setIndexRoom(index)
+                                        console.log("_nodes.size ", _nodes.size);
+                                        const node = _nodes.get(data.Id);
+                                        console.log("node ", node);
+                                        refScroll.scrollTo({ y: node })
+                                    }} style={{ alignSelf: "center", height: "80%", justifyContent: "center", alignItems: "center", paddingHorizontal: 15, paddingVertical: 5, backgroundColor: indexRoom == index ? colors.colorLightBlue : null, paddingVertical: 5, borderRadius: 16 }}>
+                                    <Text style={{ color: indexRoom == index ? "#fff" : "#000", textTransform: 'uppercase', fontWeight: indexRoom == index ? 'bold' : null }}>{data.Name}</Text>
+                                </TouchableOpacity>
+                            )
+                            : null}
+                    </ScrollView>
+                </View>
             </View>
             <View style={{ flex: 1, padding: 2 }}>
                 <ScrollView scrollToOverflowEnabled={true} showsVerticalScrollIndicator={false} ref={(ref) => refScroll = ref} style={{ flex: 1 }}>

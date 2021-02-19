@@ -9,7 +9,7 @@ import { Chip, Snackbar, FAB } from 'react-native-paper';
 import colors from '../../theme/Colors';
 import { ScreenList } from '../../common/ScreenList';
 import dataManager from '../../data/DataManager';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Constant } from '../../common/Constant';
 import RoomDetail from './RoomDetail'
 
@@ -30,6 +30,8 @@ export default (props) => {
     const roomItem = useRef({});
     const clickAdd = useRef(false);
     const [roomGroups, setRoomGroups] = useState([])
+
+    const dispatch = useDispatch()
 
     const [statescrollY, setScrollY] = useState(new Animated.Value(
         Platform.OS === 'ios' ? -HEADER_MAX_HEIGHT : 0,
@@ -78,8 +80,11 @@ export default (props) => {
 
     const onCallBack = async (data) => {
         console.log("onCallBack data ", data);
-        if (data != "Add")
+        if (data != "Add") {
+            setRooms([])
+            dispatch({ type: 'ALREADY', already: false })
             await realmStore.deleteRoom()
+        }
         await dataManager.syncRoomsReInsert()
         getDataInRealm();
         isReLoad.current = true;
@@ -117,7 +122,7 @@ export default (props) => {
                         setExpand(false)
                     }
                 }}
-                style={{ flexGrow: 1 }}
+                style={{ flex: 1 }}
             >
                 {
                     rooms.map((item, index) => {
@@ -129,14 +134,14 @@ export default (props) => {
                                             <View style={{}}>
                                                 <View style={{ flexDirection: "row", justifyContent: "space-between", backgroundColor: "#eeeeee", }}>
                                                     <Text style={{ textTransform: "uppercase", fontWeight: "bold", padding: 15 }}>{item.Name}</Text>
-                                                    <Text style={{ padding: 15 }}>{item.list.length} {I18n.t('ban')}</Text>
+                                                    <Text style={{ padding: 15 }}>{item.list.length} {/* {I18n.t('ban')} */}</Text>
                                                 </View>
 
                                                 {
                                                     item.list.map((el, indexEl) => {
                                                         return (
                                                             <TouchableOpacity key={indexEl.toString()} onPress={() => onClickItem(el)} style={{ backgroundColor: "#fff", padding: 15, flexDirection: "column" }}>
-                                                                <Text style={{ textTransform: "uppercase", fontWeight: "bold" }}>{el.Name}</Text>
+                                                                <Text style={{ color: colors.colorLightBlue }}>{el.Name}</Text>
                                                             </TouchableOpacity>
                                                         )
                                                     })
@@ -157,8 +162,9 @@ export default (props) => {
         <View style={styles.fill}>
             <ToolBarDefault
                 clickLeftIcon={() => {
-                    if (isReLoad.current == true)
-                        props.route.params._onSelect();
+                    if (isReLoad.current == true) {
+                        dispatch({ type: 'ALREADY', already: true })
+                    }
                     props.navigation.goBack()
                 }}
                 navigation={props.navigation}
@@ -166,8 +172,10 @@ export default (props) => {
             />
 
             <View style={{ flexDirection: "row", flex: 1 }}>
-                <View style={{ flex: 1, flexDirection: "column" }}>
-                    <View
+                <View
+                // style={{ flex: 1}}
+                >
+                    {/* <View
                         onLayout={(event) => {
                             var { x, y, width, height } = event.nativeEvent.layout;
                         }}
@@ -183,7 +191,34 @@ export default (props) => {
                                     </TouchableOpacity>
                                 );
                             })}
+                    </View> */}
+                    <View style={{ height: 45, backgroundColor: 'white', padding: 5 }}>
+                        <View style={{ backgroundColor: '#f2f2f2', paddingHorizontal: 5, height: "100%", borderRadius: 18 }}>
+                            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{}}>{
+                                [{ Id: "", Name: I18n.t("tat_ca") }].concat(rooms).map((item, index) => {
+                                    return (
+                                        <TouchableOpacity key={index.toString()} onPress={() => onClickTab(item, index)} style={{
+                                            alignSelf: "center",
+                                            height: "80%", justifyContent: "center", alignItems: "center", paddingHorizontal: 15, paddingVertical: 5, backgroundColor: indexTab == index ? colors.colorLightBlue : null, paddingVertical: 5, borderRadius: 18
+                                        }}>
+                                            <Text style={{ color: indexTab == index ? "#fff" : "#000", textTransform: 'uppercase', fontWeight: indexTab == index ? 'bold' : null }}>{item.Name}</Text>
+                                        </TouchableOpacity>
+                                    );
+                                })}
+                            </ScrollView>
+                        </View>
                     </View>
+                    {/* <ScrollView horizontal style={{backgroundColor: "red"}}>{
+                        [{ Id: "", Name: I18n.t("tat_ca") }].concat(rooms).map((item, index) => {
+                            return (
+                                <TouchableOpacity key={index.toString()} onPress={() => onClickTab(item, index)} style={{
+                                    padding: 10,
+                                }}>
+                                    <Text style={{ color: indexTab == index ? colors.colorLightBlue : "black", fontSize: 15 }}>{item.Name}</Text>
+                                </TouchableOpacity>
+                            );
+                        })}
+                    </ScrollView> */}
                     {_renderScrollViewContent()}
                     <FAB
                         style={styles.fab}
@@ -200,11 +235,11 @@ export default (props) => {
                         }}
                     />
                 </View>
-                {deviceType == Constant.TABLET ?
+                {/* {deviceType == Constant.TABLET ?
                     <View style={{ flex: 1, borderLeftWidth: 0.5, borderLeftColor: "#ccc" }}>
                         <RoomDetail params={dataParams} _onSelect={(data) => onCallBack(data)} />
                     </View>
-                    : null}
+                    : null} */}
             </View>
             {/* <FAB
                 style={styles.fab}
