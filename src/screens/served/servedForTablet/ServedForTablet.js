@@ -358,6 +358,7 @@ const Served = (props) => {
             serverEvent.Version += 1
             serverEvent.JsonContent = JSON.stringify(jsonContent)
             console.log('updateServerEvent serverEvent', jsonContent);
+            delete serverEvent.Timestamp
             dataManager.updateServerEvent(serverEvent)
         }
     }
