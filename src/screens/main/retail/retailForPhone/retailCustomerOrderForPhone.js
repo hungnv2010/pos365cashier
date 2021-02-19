@@ -185,7 +185,7 @@ export default (props) => {
 
 
 
-    const addPromotion = async (list) => {
+    const addPromotion = async (list = []) => {
         console.log("addPromotion list ", list);
         console.log("addPromotion promotions ", promotions);
         let promotionTmp = promotions

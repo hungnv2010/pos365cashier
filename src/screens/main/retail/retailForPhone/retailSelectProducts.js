@@ -183,13 +183,13 @@ export default (props) => {
     let pos_2 = listChangeText.current.map(elm => elm.Id).indexOf(item.Id);
     if (pos > -1) {
       if (item.SplitForSalesOrder || (item.ProductType == 2 && item.IsTimer)) {
-        if (listProducts.current[pos].Quantity >= qtt) {
+        if (listProducts.current[pos].Quantity > qtt) {
           listProducts.current[pos].Quantity -= qtt
         } else {
           listProducts.current.splice(pos, 1)
         }
       } else {
-        if (listProducts.current[pos].Quantity >= qtt) {
+        if (listProducts.current[pos].Quantity > qtt) {
           listProducts.current[pos].Quantity -= qtt
         } else {
           listProducts.current = listProducts.current.filter(elm => elm.Id != item.Id)

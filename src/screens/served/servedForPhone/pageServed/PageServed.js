@@ -67,7 +67,7 @@ export default (props) => {
             serverEvent = serverEvent.filtered(`RowKey == '${row_key}'`)
             currentServerEvent.current = JSON.stringify(serverEvent) != '{}' ? JSON.parse(JSON.stringify(serverEvent[0]))
                 : await dataManager.createSeverEvent(props.route.params.room.Id, position)
-            console.log('currentServerEvent.current', currentServerEvent.current, JSON.parse(currentServerEvent.current.JsonContent));
+            console.log('currentServerEvent.current', currentServerEvent.current,await dataManager.createSeverEvent(props.route.params.room.Id, position));
             let jsonContentObject = JSON.parse(currentServerEvent.current.JsonContent)
 
             setJsonContent(jsonContentObject)
@@ -312,6 +312,7 @@ export default (props) => {
             setJsonContent({ ...jsonContent })
             serverEvent.Version += 1
             serverEvent.JsonContent = JSON.stringify(jsonContent)
+            delete serverEvent.Timestamp
             dataManager.updateServerEvent(serverEvent)
         }
     }
@@ -551,7 +552,7 @@ export default (props) => {
     const handlerProcessedProduct = (jsonContent) => {
         console.log("handlerProcessedProduct jsonContent ", jsonContent);
         if (currentServerEvent.current) {
-            let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current))
+            let serverEvent = currentServerEvent.current
             dataManager.calculatateJsonContent(jsonContent)
             setJsonContent({ ...jsonContent })
             serverEvent.Version += 1

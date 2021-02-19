@@ -43,11 +43,14 @@ class SignalRManager {
         this.subjectReceive = new Subject()
         console.log(" subjectReceive === ", this.subjectReceive);
 
-        this.subjectReceive.map(serverEvent => {
-            return serverEvent
-        })
+        this.subjectReceive
             .distinct(serverEvent => serverEvent.Version)
             .subscribe(serverEvent => this.onReceiveServerEvent(serverEvent))
+
+        this.subjectSend = new Subject()
+        this.subjectSend.debounceTime(300)
+            .subscribe(serverEvent => this.sendMessageServerEventNow(serverEvent))
+
         this.connectionHub = signalr.hubConnection("https://signalr.pos365.vn/signalr", {
             headers: {
                 "User-Agent": "vn.pos365.cashierspos365",
@@ -82,13 +85,6 @@ class SignalRManager {
             console.log("connectionHub error ", error);
         });
 
-        this.subjectSend = new Subject()
-        this.subjectSend.debounceTime(300)
-            .map(serverEvent => {
-                return serverEvent
-            })
-            .subscribe(serverEvent => this.sendMessageServerEventNow(serverEvent))
-
         // Subscribe
         const unsubscribe = NetInfo.addEventListener(state => {
             statusInternet = { currentStatus: state.isConnected, previousStatus: statusInternet.currentStatus }
@@ -105,13 +101,13 @@ class SignalRManager {
     startSignalR() {
         this.connectionHub.start()
             .done(() => {
-                // alert('Now connected, connection ID=' + this.connectionHub.id);
+                alert('Now connected, connection ID=' + this.connectionHub.id);
                 this.isStartSignalR = true;
                 if (dialogManager)
                     dialogManager.hiddenLoading();
             })
             .fail(() => {
-                alert("Failed");
+                console.log("Failed");
                 this.isStartSignalR = false;
                 if (dialogManager)
                     dialogManager.hiddenLoading()
@@ -119,7 +115,7 @@ class SignalRManager {
     }
 
     async getAllData() {
-        
+
         dialogManager.showLoading()
         await dataManager.syncAllDatas()
             .then(() => {
@@ -169,22 +165,6 @@ class SignalRManager {
 
     sendMessageServerEventNow = (serverEvent) => {
         console.log('sendMessageServerEventNow serverEvent ');
-        // let jsonContentObject = JSON.parse(serverEvent.JsonContent)
-        // if(jsonContentObject.orderDetails)
-        //     jsonContentObject.orderDetails.forEach(element => {
-        //         element.productImages = []
-        //     });
-        // if(!jsonContentObject.OfflineId || jsonContentObject.OfflineId == "")
-        //     jsonContentObject.OfflineId = randomUUID()
-        // serverEvent.JsonContent = JSON.stringify(jsonContentObject)
-
-        // try {
-        //     serverEvent.JsonContent = encodeBase64(serverEvent.JsonContent)
-        //     serverEvent.Compress = true
-        // } catch (error) {
-        //     serverEvent.Compress = false
-        // }
-
         this.sendMessage(serverEvent)
     }
 
@@ -200,6 +180,7 @@ class SignalRManager {
     }
 
     sendMessage = (message, type = 'SynchronizationOrder') => {
+        console.log('sendMessage1', message);
         if (this.isStartSignalR) {
             this.proxy.invoke(type, message)
                 .done((response) => {

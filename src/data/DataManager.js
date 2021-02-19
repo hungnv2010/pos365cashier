@@ -11,12 +11,10 @@ class DataManager {
     constructor() {
         this.subjectUpdateServerEvent = new Subject()
         this.subjectUpdateServerEvent.debounceTime(300)
-            .map(serverEvent => {
-                return serverEvent
-            })
             .subscribe(async (serverEvent) => {
                 await realmStore.insertServerEvent(serverEvent)
-                signalRManager.sendMessageServerEvent(serverEvent)
+                signalRManager.sendMessageServerEvent(serverEvent, true)
+                // this.updateServerEventNow(serverEvent, true)
             })
     }
 
@@ -63,27 +61,16 @@ class DataManager {
                         console.log('serverEventByRowKey', serverEventByRowKey);
                         serverEventByRowKey.JsonContent = JSON.parse(serverEventByRowKey.JsonContent)
                         if (serverEventByRowKey.JsonContent.OrderDetails && serverEventByRowKey.JsonContent.OrderDetails.length > 0) {
-                            // item.products.forEach(elm => {
-                            //     if ((elm.SplitForSalesOrder || (elm.ProductType == 2 && elm.IsTimer))) {
-                            //         serverEventByRowKey.JsonContent.OrderDetails.unshift({ ...elm })
-                            //     } else {
-                            //         serverEventByRowKey.JsonContent.OrderDetails.forEach(order => {
-                            //             if (order.Id == elm.Id) {
-                            //                 order.Quantity += elm.Quantity
-                            //                 order.Processed = order.Quantity
-                            //             }
-                            //         })
-                            //     }
-                            // })
-                            serverEventByRowKey.JsonContent.OrderDetails = mergeTwoArray(item.products, serverEventByRowKey.JsonContent.OrderDetails,)
+                            serverEventByRowKey.JsonContent.OrderDetails = mergeTwoArray(item.products, serverEventByRowKey.JsonContent.OrderDetails)
                         } else {
                             serverEventByRowKey.JsonContent.OrderDetails = [...item.products]
                         }
                         serverEventByRowKey.Version += 1
+                        console.log('serverEventByRowKey.JsonContent 1', serverEventByRowKey.JsonContent);
                         this.calculatateJsonContent(serverEventByRowKey.JsonContent)
-                        console.log('serverEventByRowKey.JsonContent', serverEventByRowKey.JsonContent);
+                        console.log('serverEventByRowKey.JsonContent 2', serverEventByRowKey.JsonContent);
                         serverEventByRowKey.JsonContent = JSON.stringify(serverEventByRowKey.JsonContent)
-                        this.updateServerEventNow(serverEventByRowKey, true)
+                        this.updateServerEvent(serverEventByRowKey)
                     }
                     return Promise.resolve(this.getDataPrintCook(listOrders))
                 }
@@ -283,7 +270,7 @@ class DataManager {
         let discount = 0
         if (JsonContent.DiscountValue) {
             discount = JsonContent.DiscountValue
-        } else {
+        } else if (JsonContent.DiscountRatio) {
             discount = totalProducts * JsonContent.DiscountRatio / 100
         }
         let totalVat = (totalProducts - discount) * JsonContent.VATRates / 100
@@ -439,17 +426,14 @@ class DataManager {
             RowKey: RowKey,
             Timestamp: moment().format("YYYY-MM-DD'T'HH:mm:ssZ"),
             ETag: `W/\"datetime'${momentToStringDateLocal(moment())}'\"`,
-            JsonContent: JSON.stringify(objectJsonContent)
+            JsonContent: JSON.stringify(objectJsonContent),
+            Compress: false,
+            FromServer: false
         }
     }
 
     createJsonContent = (RoomId, Position, ActiveDate, OrderDetails = []) => {
         return {
-            // OfflineId: randomUUID(),
-            // RoomId: RoomId,
-            // Pos: Position,
-            // OrderDetails: OrderDetails,
-            // ActiveDate: ActiveDate
             OfflineId: randomUUID(),
             Status: 2,
             Discount: 0,
