@@ -38,7 +38,7 @@ export default (props) => {
         product.PriceConfig? product.PriceConfig!=null ? setPriceConfig(JSON.parse(product.PriceConfig)):null:null
 }
     const onClick = (item) => {
-        alert(item)
+        // alert(item)
     }
 
     const renderItem = (item, index) => {

@@ -67,19 +67,18 @@ class SignalRManager {
         }
 
         this.connectionHub.connectionSlow(() => {
-            console.log('We are currently experiencing difficulties with the connection.')
+            console.warn('We are currently experiencing difficulties with the connection.')
             this.init(this.data, true)
         });
 
         this.connectionHub.error((error) => {
-
             NetInfo.fetch().then(state => {
                 if (state.isConnected == true && state.isInternetReachable == true) {
                     this.getAllData();
                     this.init(this.data, true)
                 }
             });
-            console.log("connectionHub error ", error);
+            console.warn("connectionHub error ", error);
         });
 
         this.subjectSend = new Subject()
@@ -111,7 +110,7 @@ class SignalRManager {
                     dialogManager.hiddenLoading();
             })
             .fail(() => {
-                alert("Failed");
+                console.warn("Failed");
                 this.isStartSignalR = false;
                 if (dialogManager)
                     dialogManager.hiddenLoading()
@@ -119,7 +118,7 @@ class SignalRManager {
     }
 
     async getAllData() {
-        
+
         dialogManager.showLoading()
         await dataManager.syncAllDatas()
             .then(() => {
@@ -200,6 +199,7 @@ class SignalRManager {
     }
 
     sendMessage = (message, type = 'SynchronizationOrder') => {
+        console.log("sendMessage message ", message);
         if (this.isStartSignalR) {
             this.proxy.invoke(type, message)
                 .done((response) => {
