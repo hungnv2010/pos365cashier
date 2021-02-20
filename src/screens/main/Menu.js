@@ -16,10 +16,11 @@ import colors from '../../theme/Colors';
 import { Checkbox, RadioButton } from 'react-native-paper';
 import dataManager from '../../data/DataManager';
 import { navigate } from '../../navigator/NavigationService';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import DeviceInfo from 'react-native-device-info';
 import signalRManager from '../../common/SignalR';
 import { ScreenList } from '../../common/ScreenList';
+import NetInfo from "@react-native-community/netinfo";
 const { Print } = NativeModules;
 const IP_DEFAULT = "192.168.99.";
 
@@ -38,9 +39,15 @@ const KEY_FUNC = {
     ORDER_OFFLINE: ScreenList.OrderOffline,
     VOUCHERS: ScreenList.Vouchers,
     PRODUCT: ScreenList.Product,
+    SYNCHRONIZE: 'SYNCHRONIZE'
 }
 
 const LIST_FUNCITION = [
+    {
+        func: KEY_FUNC.SYNCHRONIZE,
+        icon: Images.icon_refresh,
+        title: "dong_bo_du_lieu"
+    },
     {
         func: KEY_FUNC.HOME,
         icon: Images.icon_cashier,
@@ -364,7 +371,9 @@ const HeaderComponent = (props) => {
 }
 
 const ContentComponent = (props) => {
-
+    const { isFNB } = useSelector(state => {
+        return state.Common
+    })
     const [showModal, setShowModal] = useState(false);
     const [ipInput, setIpInput] = useState(IP_DEFAULT);
     const [ip, setIp] = useState(IP_DEFAULT);
@@ -437,6 +446,15 @@ const ContentComponent = (props) => {
     const onClickItem = (chucnang, index) => {
         console.log("onClickItem props ", props);
         if (chucnang.func == KEY_FUNC.VERSION) return;
+        if (chucnang.func == KEY_FUNC.SYNCHRONIZE) {
+            if (isFNB == true) {
+                clickRightIcon()
+            } else {
+                dispatch({ type: 'SYNCRETAIL', syncRetail: true })
+            }
+            props.navigation.closeDrawer();
+            return;
+        }
         let params = {};
         if (chucnang.func == ScreenList.Home || chucnang.func == ScreenList.Customer || chucnang.func == ScreenList.Settings || chucnang.func == ScreenList.Invoice || chucnang.func == ScreenList.OverView || chucnang.func == ScreenList.RoomHistory || chucnang.func == ScreenList.Vouchers) {
             setCurrentItemMenu(index)
@@ -444,13 +462,36 @@ const ContentComponent = (props) => {
         props.navigation.navigate(chucnang.func, params)
         props.navigation.closeDrawer();
     }
-
+    const clickRightIcon = async () => {
+        NetInfo.fetch().then(async state => {
+            if (!(state.isConnected == true && state.isInternetReachable == true)) {
+                dialogManager.showPopupOneButton(I18n.t('loi_ket_noi_mang'), I18n.t('thong_bao'), () => {
+                    dialogManager.destroy();
+                }, null, null, I18n.t('dong'))
+                return;
+            } else {
+                dialogManager.showLoading()
+                dispatch({ type: 'ALREADY', already: false })
+                await realmStore.deleteAllForFnb()
+                await dataManager.syncAllDatas()
+                dispatch({ type: 'ALREADY', already: true })
+                dialogManager.hiddenLoading()
+                console.log("FNB");
+            }
+        });
+        // dialogManager.showLoading()
+        // dispatch({ type: 'ALREADY', already: false })
+        // await realmStore.deleteAllForFnb()
+        // await dataManager.syncAllDatas()
+        // dispatch({ type: 'ALREADY', already: true })
+        // dialogManager.hiddenLoading()
+    }
 
     const _renderItem = (chucnang = {}, indexchucnnag = 0) => {
         return (
             <View key={indexchucnnag} style={{ width: "100%", backgroundColor: currentItemMenu == indexchucnnag ? "#EEEEEE" : "#fff" }}>
                 <TouchableOpacity
-                    style={{ with: Metrics.screenWidth * 1, flexDirection: "row", alignItems: "center"}}
+                    style={{ with: Metrics.screenWidth * 1, flexDirection: "row", alignItems: "center" }}
                     onPress={() => onClickItem(chucnang, indexchucnnag)}>
                     {chucnang.icon && chucnang.icon != "" ?
                         <Image
@@ -480,9 +521,10 @@ const ContentComponent = (props) => {
         <View style={{ flex: 1 }}>
             <ScrollView style={{ flex: 1, width: "100%", }} keyboardShouldPersistTaps={'handled'}>
                 {LIST_FUNCITION.map((item, index) => {
-                    return (
-                        _renderItem(item, index)
-                    )
+                    if (isFNB || (!isFNB && item.func != KEY_FUNC.ROOM_CATALOG))
+                        return (
+                            _renderItem(item, index)
+                        )
                 })}
             </ScrollView>
             <Modal

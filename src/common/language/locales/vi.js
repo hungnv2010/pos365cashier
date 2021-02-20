@@ -382,6 +382,7 @@ export default {
 
   bao_che_bien_sau_khi_thanh_toan: "Báo chế biến sau khi thanh toán",
   ban_co_chac_muon_xoa_voucher_nay: "Bạn có chắc muốn xoá voucher này?",
+  ban_co_chac_chan_muon_xoa_khach_hang:"Bạn có chắc muốn xóa khách hàng này",
   block_theo_phut: "Block tính theo phút",
 
   chon_cong_nghe_in: "Chọn công nghệ in",
@@ -402,11 +403,12 @@ export default {
   don_vi_tien_te: "Đơn vị tiền tệ",
   dollar_my: "Dollar Mỹ",
   dia_chi: "Địa chỉ",
-  don_vi_tinh: "Đơn vị tính",
-  dich_vu: 'Dịch vụ',
-  don_vi_tinh_lon_va_cac_thong_so_khac: "Đơn vị tính lớn và các thông số khác",
-  don_vi_tinh_lon: 'Đơn vị tính lớn',
-  don_hang_cho_thanh_toan: 'Đơn hàng chờ thanh toán',
+  don_vi_tinh:"Đơn vị tính",
+  dich_vu:'Dịch vụ',
+  don_vi_tinh_lon_va_cac_thong_so_khac:"Đơn vị tính lớn và các thông số khác",
+  don_vi_tinh_lon:'Đơn vị tính lớn',
+  don_hang_cho_thanh_toan:'Đơn hàng chờ thanh toán',
+  dong_bo_du_lieu:'Đồng bộ dữ liệu',
 
   giu_man_hinh_luon_sang: "Giữ màn hình luôn sáng",
   gia: "Giá bán",

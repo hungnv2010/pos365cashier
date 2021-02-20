@@ -5,7 +5,7 @@ import I18n from '../../common/language/i18n';
 import realmStore from '../../data/realm/RealmStore';
 import { Images, Metrics } from '../../theme';
 import { ScreenList } from '../../common/ScreenList';
-import { currencyToString, dateToStringFormatUTC } from '../../common/Utils';
+import { currencyToString, dateToStringFormatUTC, randomUUID } from '../../common/Utils';
 import colors from '../../theme/Colors';
 import { useSelector, useDispatch } from 'react-redux';
 import { Constant } from '../../common/Constant';
@@ -45,7 +45,7 @@ export default (props) => {
 
     const CASH = {
         Id: 0,
-        MethodId: 0,
+        UUID: randomUUID(),
         Name: I18n.t('tien_mat'),
         Value: 0,
     }
@@ -205,9 +205,11 @@ export default (props) => {
         let newDate = new Date().getTime();
         if (timeClickPrevious + 500 < newDate) {
             let list = listMethod;
-            list.push({ ...CASH, Id: timeClickPrevious, MethodId: 0, Value: list.length > 0 ? 0 : jsonContent.Total })
+            list.push({ ...CASH, UUID: randomUUID(), Value: list.length > 0 ? 0 : jsonContent.Total })
             setListMethod([...list])
             timeClickPrevious = newDate;
+            console.log("addAccount [...list] ", [...list]);
+
         }
     }
 
@@ -334,12 +336,14 @@ export default (props) => {
     }
 
     const onClickOkFilter = () => {
-        console.log("onClickOkFilter ", listMethod);
+        console.log("onClickOkFilter 1 ", listMethod);
+        console.log("onClickOkFilter 2 ", itemAccountRef.current);
+        console.log("onClickOkFilter 3 ", itemMethod);
         setShowModal(false)
         let list = [];
         listMethod.forEach(element => {
-            if (itemAccountRef.current.Id == element.Id) {
-                list.push({ ...itemMethod, Value: element.Value })
+            if (itemAccountRef.current.Id == element.Id && itemAccountRef.current.UUID == element.UUID) {
+                list.push({ ...itemAccountRef.current, ...itemMethod, Value: element.Value })
             } else
                 list.push(element)
         });
@@ -348,7 +352,7 @@ export default (props) => {
 
     const onSelectMethod = (item) => {
         console.log("onSelectMethod ", item, itemMethod);
-        setItemMethod({ ...item, MethodId: item.Id });
+        setItemMethod({ ...item });
     }
 
     const getSumValue = (total, num) => {
@@ -606,6 +610,7 @@ export default (props) => {
         serverEvent.JsonContent = JSON.stringify(json);
         serverEvent.Version += 10
         console.log("updateServerEvent serverEvent ", serverEvent);
+        delete serverEvent.Timestamp
         dataManager.updateServerEventNow(serverEvent, true, isFNB);
         if (settingObject.current.am_bao_thanh_toan == true)
             playSound()
@@ -632,7 +637,7 @@ export default (props) => {
     }
 
     const printAfterPayment = async (Code) => {
-        console.log("printAfterPayment jsonContent 1 ", jsonContent);
+        console.log("printAfterPayment jsonContent 1 ", jsonContent, props.route.params);
         if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
             jsonContent.RoomName = props.route.params.Name
         }
@@ -644,7 +649,7 @@ export default (props) => {
             jsonContent.PurchaseDate = "" + date;
         }
         console.log("printAfterPayment jsonContent 2 ", jsonContent);
-        // dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
+        dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
     }
 
     const handlerQRCode = async (order) => {
@@ -740,8 +745,8 @@ export default (props) => {
         if (total < 0) total = 0.0
         let excess = amountReceived() - total
         let excessCash = (excess < 0.0 && excess > -0.001) ? 0 : excess;
-        jsonContent.Discount = totalDiscount
-        jsonContent.DiscountValue = disCountValue
+        jsonContent.Discount = totalDiscount;
+        jsonContent.DiscountValue = disCountValue > total ? total : disCountValue;
 
         jsonContent.VAT = vat
         jsonContent.Total = total
@@ -771,8 +776,10 @@ export default (props) => {
         if (currentServerEvent.current && update == true) {
             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
             dataManager.paymentSetServerEvent(serverEvent, jsonContent);
-            if (isFNB)
+            if (isFNB) {
+                delete serverEvent.Timestamp
                 dataManager.subjectUpdateServerEvent.next(serverEvent)
+            }
         }
     }
 
@@ -843,6 +850,12 @@ export default (props) => {
         return number;
     }
 
+    const setSelectionInput = (value) => {
+        let length = value.length;
+        if (length == undefined) length = 1;
+        setSelection({ start: length, end: length })
+    }
+
     const renderFilter = () => {
         if (typeModal.current == TYPE_MODAL.FILTER_ACCOUNT) {
             let listAccount = vendorSession.Accounts.filter(item => item.Id != Constant.ID_VNPAY_QR)
@@ -855,7 +868,7 @@ export default (props) => {
                                 return (
                                     <TouchableOpacity key={index.toString()} onPress={() => onSelectMethod(item)} style={styles.viewRadioButton}>
                                         <RadioButton.Android
-                                            status={itemMethod.MethodId == item.Id ? 'checked' : 'unchecked'}
+                                            status={itemMethod.Id == item.Id ? 'checked' : 'unchecked'}
                                             onPress={() => onSelectMethod(item)}
                                             color={colors.colorchinh}
                                         />
@@ -980,11 +993,8 @@ export default (props) => {
                         selection={selection}
                         placeholder="0"
                         placeholderTextColor="#808080"
-                        onSelectionChange={() => {
-                            let length = currencyToString(item.Value, true).length;
-                            if (length == undefined) length = 1;
-                            setSelection({ start: length, end: length })
-                        }}
+                        onFocus={() => setSelectionInput(currencyToString(item.Value, true))}
+                        onSelectionChange={() => setSelectionInput(currencyToString(item.Value, true))}
                         value={"" + currencyToString(item.Value, true)}
                         onTouchStart={() => onTouchInput({ ...item, ...METHOD.pay })}
                         editable={deviceType == Constant.TABLET ? false : true}
@@ -1111,20 +1121,10 @@ export default (props) => {
                                     returnKeyType='done'
                                     keyboardType="number-pad"
                                     selection={selection}
-                                    // onFocus={() => {
-                                    //     let length = currencyToString((!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio), true).length;
-                                    //     if(length == undefined) length = 1;
-                                    //     // alert(length)
-                                    //     setSelection({ start: length, end: length})
-                                    // }
-                                    // }
+                                    onFocus={() => setSelectionInput(currencyToString((!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio), true))}
                                     placeholder="0"
                                     placeholderTextColor="#808080"
-                                    onSelectionChange={() => {
-                                        let length = currencyToString((!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio), true).length;
-                                        if (length == undefined) length = 1;
-                                        setSelection({ start: length, end: length })
-                                    }}
+                                    onSelectionChange={() => setSelectionInput(currencyToString((!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio), true))}
                                     value={"" + currencyToString((!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio), true)}
                                     onTouchStart={() => onTouchInput(METHOD.discount)}
                                     editable={deviceType == Constant.TABLET ? false : true}
@@ -1159,11 +1159,8 @@ export default (props) => {
                                     selection={selection}
                                     placeholder="0"
                                     placeholderTextColor="#808080"
-                                    onSelectionChange={() => {
-                                        let length = currencyToString(jsonContent.VATRates, true).length;
-                                        if (length == undefined) length = 1;
-                                        setSelection({ start: length, end: length })
-                                    }}
+                                    onFocus={() => setSelectionInput(currencyToString(jsonContent.VATRates, true))}
+                                    onSelectionChange={() => setSelectionInput(currencyToString(jsonContent.VATRates, true))}
                                     value={"" + currencyToString(jsonContent.VATRates, true)}
                                     onTouchStart={() => onTouchInput(METHOD.vat)}
                                     editable={deviceType == Constant.TABLET ? false : true}

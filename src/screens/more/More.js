@@ -36,6 +36,7 @@ export default (props) => {
             <MainToolBar
                 navigation={props.navigation}
                 title={I18n.t('them')}
+                outPutTextSearch={()=>{}}
             />
             {/* <HeaderComponent {...props} showToast={(text) => handlerToast(text)} /> */}
 

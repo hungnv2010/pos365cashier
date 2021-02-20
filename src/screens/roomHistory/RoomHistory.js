@@ -250,6 +250,7 @@ export default (props) => {
             <MainToolBar
                 navigation={props.navigation}
                 title={I18n.t('lich_su_huy_tra_do')}
+                outPutTextSearch={()=>{}}
             />
             <View style={{ flex: 1, flexDirection: "row" }}>
                 <View style={{ flex: 1 }}>

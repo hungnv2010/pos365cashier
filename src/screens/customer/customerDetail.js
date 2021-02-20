@@ -348,12 +348,13 @@ export default (props) => {
             new HTTPService().setPath(ApiPath.CUSTOMER).POST(params)
                 .then(res => {
                     console.log('onClickApply res', res);
-                    if (res) {
+                    if (res && res.ResponseStatus && res.ResponseStatus.Message) {
+                        dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
+                            dialogManager.destroy();
+                        }, null, null, I18n.t('dong'))
+                    } else {
                         props.handleSuccess('them')
                         resetCustomer()
-                    } else {
-                        toastDescription.current = `${I18n.t('ma_khach_hang')} ${customerDetail.Code} ${I18n.t('da_ton_tai_trong_he_thong')}`
-                        setShowToast(true)
                     }
                     dialogManager.hiddenLoading()
                 })
@@ -368,12 +369,13 @@ export default (props) => {
             new HTTPService().setPath(ApiPath.CUSTOMER).POST(params)
                 .then(res => {
                     console.log('onClickApply res', res);
-                    if (res) {
-                        if (res.ResponseStatus) {
-                            dialogManager.showPopupOneButton(`${res.ResponseStatus.Message}`, I18n.t('thong_bao'))
-                        }else
+                    if (res && res.ResponseStatus && res.ResponseStatus.Message) {
+                        dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
+                            dialogManager.destroy();
+                        }, null, null, I18n.t('dong'))
+                    } else {
                         props.handleSuccess('sua')
-                        //resetCustomer()
+                        // resetCustomer()
                     }
                     dialogManager.hiddenLoading()
                 })
@@ -386,12 +388,17 @@ export default (props) => {
 
 
     const onClickDelete = () => {
-        new HTTPService().setPath(`${ApiPath.CUSTOMER}/${customerDetail.Id}`).DELETE()
-            .then(res => {
-                console.log('onClickDelete', res)
-                if (res) props.handleSuccess('xoa')
-            })
-            .catch(err => console.log('onClickDelete err', err))
+        dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_xoa_khach_hang'), I18n.t("thong_bao"), res => {
+            if (res == 1) {
+                new HTTPService().setPath(`${ApiPath.CUSTOMER}/${customerDetail.Id}`).DELETE()
+                    .then(res => {
+                        console.log('onClickDelete', res)
+                        if (res) props.handleSuccess('xoa')
+                    })
+                    .catch(err => console.log('onClickDelete err', err))
+            }
+        })
+
     }
 
     const onClickPrint = () => {

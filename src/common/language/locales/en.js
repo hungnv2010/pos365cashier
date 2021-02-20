@@ -314,6 +314,7 @@ export default {
 
   bao_che_bien_sau_khi_thanh_toan: "Report processing after payment",
   ban_co_chac_muon_xoa_voucher_nay: "Do you want to delete voucher?",
+  ban_co_chac_chan_muon_xoa_khach_hang: "Do you want to delete customer?",
   block_theo_phut: "Block per minute",
 
 
@@ -340,12 +341,13 @@ export default {
   don_vi_tien_te: "Currency unit",
   dollar_my: "Dollar",
   dia_chi: "Address",
-  don_vi_tinh: 'Unit',
-  dich_vu: 'Service',
-  don_vi_tinh_lon_va_cac_thong_so_khac: 'Large unit and other',
-  don_vi_tinh_lon: 'Large unit',
-  doi_tac: 'Partner',
-  don_hang_cho_thanh_toan: "Commodity waiting for payment",
+  don_vi_tinh:'Unit',
+  dich_vu:'Service',
+  don_vi_tinh_lon_va_cac_thong_so_khac:'Large unit and other',
+  don_vi_tinh_lon:'Large unit',
+  doi_tac:'Partner',
+  don_hang_cho_thanh_toan:"Commodity waiting for payment",
+  dong_bo_du_lieu:'Synchronize data',
 
   giu_man_hinh_luon_sang: "Keep the screen on",
   gia: "Price",

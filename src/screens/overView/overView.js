@@ -201,6 +201,7 @@ export default (props) => {
             <MainToolBar
                 navigation={props.navigation}
                 title={I18n.t('tong_quan')}
+                outPutTextSearch={()=>{}}
 
             />
             <ScrollView

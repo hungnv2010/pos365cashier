@@ -128,7 +128,7 @@ export default forwardRef((props, ref) => {
                     isProvisional.current = true;
                     let newRes = res.replace("</body>", "<p style='display: none;'>" + (new Date().getTime().toString()) + "</p> </body>");
                     printService.listWaiting.push({ html: newRes, ip: ipObject.ip, size: ipObject.size })
-                    if (setting.in_hai_lien_cho_hoa_don == true) {
+                    if (setting.in_hai_lien_cho_hoa_don == true && !checkProvisional) {
                         newRes = res.replace("</body>", "<p style='display: none;'>" + (new Date().getTime().toString()) + Math.floor((Math.random() * 1000000000) + 1) + "</p> </body>");
                         printService.listWaiting.push({ html: newRes, ip: ipObject.ip, size: ipObject.size })
                     }

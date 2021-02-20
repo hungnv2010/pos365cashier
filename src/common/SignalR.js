@@ -43,11 +43,14 @@ class SignalRManager {
         this.subjectReceive = new Subject()
         console.log(" subjectReceive === ", this.subjectReceive);
 
-        this.subjectReceive.map(serverEvent => {
-            return serverEvent
-        })
+        this.subjectReceive
             .distinct(serverEvent => serverEvent.Version)
             .subscribe(serverEvent => this.onReceiveServerEvent(serverEvent))
+
+        this.subjectSend = new Subject()
+        this.subjectSend.debounceTime(300)
+            .subscribe(serverEvent => this.sendMessageServerEventNow(serverEvent))
+
         this.connectionHub = signalr.hubConnection("https://signalr.pos365.vn/signalr", {
             headers: {
                 "User-Agent": "vn.pos365.cashierspos365",
@@ -67,30 +70,19 @@ class SignalRManager {
         }
 
         this.connectionHub.connectionSlow(() => {
-            console.log('We are currently experiencing difficulties with the connection.')
+            console.warn('We are currently experiencing difficulties with the connection.')
             this.init(this.data, true)
         });
 
-        // this.connectionHub.error((error) => {
-        //     // alert("error")
-        //     NetInfo.fetch().then(state => {
-        //         console.log("Connection type", state.type); 
-        //         console.log("Is connected?", state.isConnected);
-        //         if (state.isConnected == true) {
-        //             this.getAllData();
-        //         }
-        //     });
-        //     setTimeout(() => {
-        //         this.init(this.data, true);
-        //     }, 5000);
-        // });
-
-        this.subjectSend = new Subject()
-        this.subjectSend.debounceTime(300)
-            .map(serverEvent => {
-                return serverEvent
-            })
-            .subscribe(serverEvent => this.sendMessageServerEventNow(serverEvent))
+        this.connectionHub.error((error) => {
+            NetInfo.fetch().then(state => {
+                if (state.isConnected == true && state.isInternetReachable == true) {
+                    this.getAllData();
+                    this.init(this.data, true)
+                }
+            });
+            console.warn("connectionHub error ", error);
+        });
 
         // Subscribe
         const unsubscribe = NetInfo.addEventListener(state => {
@@ -108,13 +100,12 @@ class SignalRManager {
     startSignalR() {
         this.connectionHub.start()
             .done(() => {
-                // alert('Now connected, connection ID=' + this.connectionHub.id);
+                alert('Now connected, connection ID=' + this.connectionHub.id);
                 this.isStartSignalR = true;
                 if (dialogManager)
                     dialogManager.hiddenLoading();
             })
             .fail(() => {
-                console.log("Failed");
                 this.isStartSignalR = false;
                 if (dialogManager)
                     dialogManager.hiddenLoading()
@@ -122,6 +113,7 @@ class SignalRManager {
     }
 
     async getAllData() {
+
         dialogManager.showLoading()
         await dataManager.syncAllDatas()
             .then(() => {
@@ -171,22 +163,7 @@ class SignalRManager {
 
     sendMessageServerEventNow = (serverEvent) => {
         console.log('sendMessageServerEventNow serverEvent ');
-        // let jsonContentObject = JSON.parse(serverEvent.JsonContent)
-        // if(jsonContentObject.orderDetails)
-        //     jsonContentObject.orderDetails.forEach(element => {
-        //         element.productImages = []
-        //     });
-        // if(!jsonContentObject.OfflineId || jsonContentObject.OfflineId == "")
-        //     jsonContentObject.OfflineId = randomUUID()
-        // serverEvent.JsonContent = JSON.stringify(jsonContentObject)
-
-        // try {
-        //     serverEvent.JsonContent = encodeBase64(serverEvent.JsonContent)
-        //     serverEvent.Compress = true
-        // } catch (error) {
-        //     serverEvent.Compress = false
-        // }
-
+        delete serverEvent.Timestamp
         this.sendMessage(serverEvent)
     }
 
@@ -205,10 +182,10 @@ class SignalRManager {
         if (this.isStartSignalR) {
             this.proxy.invoke(type, message)
                 .done((response) => {
-                    console.log('sendMessage ', response)
+                    console.log('sendMessage done', response)
                 })
                 .fail(() => {
-                    console.warn('Something went wrong when calling server, it might not be up and running?')
+                    console.warn('sendMessage fail')
                 });
         } else {
             console.log("settimeout");

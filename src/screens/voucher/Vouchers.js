@@ -364,6 +364,7 @@ export default (props) => {
             <MainToolBar
                 navigation={props.navigation}
                 title={I18n.t('voucher')}
+                outPutTextSearch={()=>{}}
             />
             <View style={{ justifyContent: 'space-between', backgroundColor: 'white', flexDirection: 'row',  marginBottom: 2 }}>
                 <TouchableOpacity

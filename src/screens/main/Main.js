@@ -24,7 +24,8 @@ export default (props) => {
   let scanFromOrder = null
   const viewPrintRef = useRef();
   const dispatch = useDispatch();
-  const { listPrint, isFNB, printProvisional, printReturnProduct } = useSelector(state => {
+  const [textSearch,setTextSearch] = useState('')
+  const { listPrint, isFNB, printProvisional, printReturnProduct, syncRetail } = useSelector(state => {
     return state.Common
   })
 
@@ -52,6 +53,13 @@ export default (props) => {
       dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: "" })
     }
   }, [printProvisional])
+
+  // useEffect(() => {
+  //   if (syncRetail != false) {
+  //     clickSyncForRetail()
+  //     dispatch({ type: 'SYNCRETAIL', syncRetail: false })
+  //   }
+  // }, [syncRetail])
 
   // PRINT_PROVISIONAL
 
@@ -107,7 +115,7 @@ export default (props) => {
       if (isFNB === true) {
         const getDataNewOrders = async () => {
           let newOrders = await dataManager.initComfirmOrder()
-          console.log('getDataNewOrders', newOrders);
+          // console.log('getDataNewOrders', newOrders);
 
           if (newOrders != null)
             viewPrintRef.current.printKitchenRef(newOrders)
@@ -163,6 +171,9 @@ export default (props) => {
     // dispatch({ type: 'ALREADY', already: true })
     // dialogManager.hiddenLoading()
   }
+  const onClickSearch = (text)=>{
+    setTextSearch(text)
+  }
 
   const clickSyncForRetail = async () => {
     NetInfo.fetch().then(async state => {
@@ -200,10 +211,10 @@ export default (props) => {
               <MainToolBar
                 navigation={props.navigation}
                 title={I18n.t('thu_ngan')}
-                rightIcon="refresh"
-                clickRightIcon={() => clickRightIcon()}
+                rightIcon="md-search"
+                outPutTextSearch={onClickSearch}
               />
-              <Order {...props} />
+              <Order {...props} textSearch={textSearch}/>
             </>
             :
             <MainRetail

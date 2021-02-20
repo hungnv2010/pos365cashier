@@ -161,12 +161,12 @@ const CustomerOrder = (props) => {
             let discountRatio = product.Percent ? product.Discount : product.Discount / price * 100
             listOrder.forEach((elm, index, arr) => {
                 if (elm.ProductId == product.ProductId && index == product.index) {
-                    elm.DiscountRatio = discountRatio
-                    elm.Quantity = product.Quantity
+                    elm.DiscountRatio = +discountRatio
+                    elm.Quantity = +product.Quantity
                     elm.Name = product.Name
                     elm.Description = product.Description
-                    elm.Discount = discount
-                    elm.Price = product.Price
+                    elm.Discount = +discount
+                    elm.Price = +product.Price
                     elm.IsLargeUnit = product.IsLargeUnit
                     props.outputSelectedProduct(elm, true)
                 }
@@ -208,7 +208,7 @@ const CustomerOrder = (props) => {
             setShowModal(true)
         } else {
             let data = {
-                QuantityChange: product.Quantity,
+                QuantityChange: type == 1 ? product.Quantity : 1,
                 Description: "",
             }
             saveOrder(data, product);
@@ -437,7 +437,7 @@ const CustomerOrder = (props) => {
                                         </View>
 
                                         <TouchableOpacity
-                                            style={{ borderWidth: 1, borderRadius: 50, borderColor: Colors.colorchinh, }}
+                                            style={{ borderWidth: 1, borderRadius: 20, alignItems: "center", width: 40, height: 40, borderColor: Colors.colorchinh, }}
                                             onPress={() => {
                                                 props.outputItemOrder(item, index)
                                             }}>
@@ -482,7 +482,7 @@ const CustomerOrder = (props) => {
 
     const onClickPayment = () => {
         if (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0) {
-            props.navigation.navigate(ScreenList.Payment, { RoomId: props.route.params.room.Id, Position: props.Position });
+            props.navigation.navigate(ScreenList.Payment, { RoomId: props.route.params.room.Id, Name: props.route.params.room.Name, Position: props.Position });
         } else {
             dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
         }
@@ -601,7 +601,7 @@ const CustomerOrder = (props) => {
                             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                                 <Text style={{ fontWeight: "bold" }}>{I18n.t('khach_phai_tra')}</Text>
                                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                                    <Text style={{ fontWeight: "bold", fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(props.jsonContent.Total)}</Text>
+                                    <Text style={{ fontWeight: "bold", fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(props.jsonContent.Total)}đ</Text>
                                 </View>
                             </View>
                         </View>

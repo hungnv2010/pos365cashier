@@ -170,18 +170,19 @@ export default (props) => {
   }
 
   const handleButtonDecrease = (item, index) => {
+    console.log('asdasdasd');
     let qtt = getQuantity(item)
     let pos = listProducts.current.map(elm => elm.Id).indexOf(item.Id);
     let pos_2 = listChangeText.current.map(elm => elm.Id).indexOf(item.Id);
     if (pos > -1) {
       if (item.SplitForSalesOrder || (item.ProductType == 2 && item.IsTimer)) {
-        if (listProducts.current[pos].Quantity >= qtt) {
+        if (listProducts.current[pos].Quantity > qtt) {
           listProducts.current[pos].Quantity -= qtt
         } else {
           listProducts.current.splice(pos, 1)
         }
       } else {
-        if (listProducts.current[pos].Quantity >= qtt) {
+        if (listProducts.current[pos].Quantity > qtt) {
           listProducts.current[pos].Quantity -= qtt
         } else {
           listProducts.current = listProducts.current.filter(elm => elm.Id != item.Id)
@@ -269,7 +270,7 @@ export default (props) => {
 
   const renderCateItem = (item, index) => {
     return (
-      <TouchableOpacity onPress={() => onClickCate(item, index)} key={index} style={[styles.renderCateItem, { backgroundColor: item.Id == listCateId[0] ? Colors.colorchinh : "white" }]}>
+      <TouchableOpacity onPress={() => onClickCate(item, index)} key={index} style={[styles.renderCateItem, { backgroundColor: item.Id == listCateId[0] ? Colors.colorchinh : "white",borderRadius:4}]}>
         <Text numberOfLines={2} style={[styles.textRenderCateItem, { color: item.Id == listCateId[0] ? "white" : Colors.colorchinh }]}>{item.Name}</Text>
       </TouchableOpacity>
     );
@@ -288,7 +289,7 @@ export default (props) => {
         isSearching ?
           null
           :
-          <View style={{ flex: 0.5, flexDirection: "row", marginVertical: 5, marginHorizontal: 2 }}>
+          <View style={{ flex: 0.4, flexDirection: "row", marginVertical: 5, marginHorizontal: 2 }}>
             <View style={{ flex: 1 }}>
               <FlatList
                 extraData={listCateId}

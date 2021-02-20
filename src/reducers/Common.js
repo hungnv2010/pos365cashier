@@ -26,7 +26,8 @@ const initState = {
 
 	listPrint: "",
 	printProvisional: "",
-	printReturnProduct: ""
+	printReturnProduct: "",
+	syncRetail: false
 }
 
 const commonReducer = (state = initState, action = {}) => {
@@ -93,6 +94,11 @@ const commonReducer = (state = initState, action = {}) => {
 			return {
 				...state,
 				already: action.already
+			}
+		case "SYNCRETAIL":
+			return {
+				...state,
+				syncRetail: action.syncRetail
 			}
 
 		case "IS_FNB":

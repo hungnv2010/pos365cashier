@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
-import { Image, View, StyleSheet, Text, TouchableOpacity, TextInput, ScrollView, Modal, TouchableWithoutFeedback } from "react-native";
+import { Image, View, StyleSheet, Text, TouchableOpacity, TextInput, ScrollView, Modal, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { Snackbar, RadioButton } from 'react-native-paper';
 import MainToolBar from '../main/MainToolBar';
 import I18n from '../../common/language/i18n';
@@ -59,21 +59,23 @@ export default (props) => {
         console.log("Room detail data ====== ", props);
         if (deviceType == Constant.PHONE)
             getData(props.route.params);
-            getRoomGroup()
+        getRoomGroup()
     }, [])
 
     const getData = async (params) => {
-
-        if (params) {
-            setIsEditRoom(true)
+        console.log("getData detail params ====== ", params);
+        if (params && params.room) {
+            setIsEditRoom((params.room && params.room != undefined) ? true : false)
             if (params.room && params.room != undefined)
                 setRoom(JSON.parse(JSON.stringify(params.room)))
             if (params.roomGroups && params.roomGroups != undefined)
                 roomGroups.current = JSON.parse(JSON.stringify(params.roomGroups))
             roomGroups.current = [{ Id: "", Name: I18n.t("khong_xac_dinh") }].concat(Object.keys(roomGroups.current).map((key) => roomGroups.current[key]));
-            setIndexRoomGroups(roomGroups.current.findIndex(item => item.Id == params.room.RoomGroupId))
-            let array = roomGroups.current.filter(item => (item.Id == params.room.RoomGroupId && params.room.RoomGroupId != 0));
-            setRoomGroup(array.length > 0 ? array[0] : "")
+            if (params.room && params.room.RoomGroupId) {
+                setIndexRoomGroups(roomGroups.current.findIndex(item => item.Id == params.room.RoomGroupId))
+                let array = roomGroups.current.filter(item => (item.Id == params.room.RoomGroupId && params.room.RoomGroupId != 0));
+                setRoomGroup(array.length > 0 ? array[0] : "")
+            }
         } else {
             resetRoom();
         }
@@ -97,19 +99,19 @@ export default (props) => {
             setProductService(product && product.length > 0 ? product[0] : "");
         }
     }
-    const getRoomGroup = ()=>{
-        new HTTPService().setPath(ApiPath.ROOM_GROUPS).GET().then((res)=>{
+    const getRoomGroup = () => {
+        new HTTPService().setPath(ApiPath.ROOM_GROUPS).GET().then((res) => {
             if (res) {
                 roomGroups.current = res
             }
-        }).catch(e=>{
-            console.log("err",e);
+        }).catch(e => {
+            console.log("err", e);
         })
     }
 
     const resetRoom = () => {
         setIsEditRoom(false)
-        setRoom({})
+        setRoom("")
         setRoomGroup("")
         setProductService({})
         getDataRoomGroup()
@@ -120,7 +122,7 @@ export default (props) => {
         roomGroupsTmp = roomGroupsTmp.sorted('Id')
         roomGroups.current = JSON.parse(JSON.stringify(roomGroupsTmp))
         roomGroups.current = [{ Id: "", Name: I18n.t("khong_xac_dinh") }].concat(Object.keys(roomGroups.current).map((key) => roomGroups.current[key]));
-        console.log("roomdetail",roomGroups.current);
+        console.log("roomdetail", roomGroups.current);
     }
 
     const onClickAddGroup = () => {
@@ -147,9 +149,9 @@ export default (props) => {
                 if (res) {
                     if (res.ResponseStatus) {
                         dialogManager.showPopupOneButton(`${res.ResponseStatus.Message}`, I18n.t('thong_bao'))
-                    }else{
-                    props._onSelect('Add')
-                    roomGroups.current.push(res)
+                    } else {
+                        props._onSelect('Add')
+                        roomGroups.current.push(res)
                     }
                 }
                 dialogManager.hiddenLoading();
@@ -178,7 +180,7 @@ export default (props) => {
     }
 
     const onClickApply = () => {
-
+        Keyboard.dismiss();
         if (!(room && room.Name && room.Name.trim() != "")) {
             setToastDescription(I18n.t("vui_long_nhap_day_du_thong_tin_truoc_khi_luu"))
             setShowToast(true)
@@ -211,14 +213,15 @@ export default (props) => {
                     if (deviceType == Constant.PHONE) {
                         if (res.ResponseStatus) {
                             dialogManager.showPopupOneButton(`${res.ResponseStatus.Message}`, I18n.t('thong_bao'))
-                        }else{
-                        props.route.params._onSelect("Add");
-                        props.navigation.pop()}
+                        } else {
+                            props.route.params._onSelect("Add");
+                            props.navigation.pop()
+                        }
                     } else {
                         if (res.ResponseStatus) {
                             dialogManager.showPopupOneButton(`${res.ResponseStatus.Message}`, I18n.t('thong_bao'))
-                        }else{
-                        props._onSelect("Add")
+                        } else {
+                            props._onSelect("Add")
                         }
                     }
                 }
@@ -244,6 +247,12 @@ export default (props) => {
             new HTTPService().setPath(ApiPath.ROOMS).POST(params).then(async (res) => {
                 console.log("onClickApply  res ", res);
                 if (res) {
+                    dialogManager.hiddenLoading();
+                    if (res.ResponseStatus && res.ResponseStatus.ErrorCode) {
+                        dialogManager.showPopupOneButton(res.ResponseStatus.Message)
+                        // props.navigation.pop()
+                        return;
+                    }
                     if (deviceType == Constant.PHONE) {
                         props.route.params._onSelect("Add");
                         props.navigation.pop()
@@ -252,7 +261,7 @@ export default (props) => {
                         resetRoom();
                     }
                 }
-                dialogManager.hiddenLoading();
+                
             }).catch((e) => {
                 dialogManager.hiddenLoading();
                 console.log("onClickApply err ", e);
@@ -307,23 +316,23 @@ export default (props) => {
             )
         if (typeModal.current == TYPE_MODAL.SELECT_GROUP) {
             return (
-                <View style={{ padding: 10 ,height:Metrics.screenHeight*0.6}}>
+                <View style={{ padding: 10, height: Metrics.screenHeight * 0.6 }}>
                     <Text style={{ marginBottom: 15, fontSize: 18, fontWeight: 'bold' }}>{I18n.t('chon_nhom')}</Text>
                     <ScrollView>
-                    {roomGroups.current.map((el, index) => {
-                        return (
-                            <TouchableOpacity onPress={() => {
-                                setIndexRoomGroups(index)
-                            }} key={index} style={{ flexDirection: "row", alignItems: "center", }}>
-                                <RadioButton.Android
-                                    color={colors.colorLightBlue}
-                                    status={indexRoomGroups == index ? 'checked' : 'unchecked'}
-                                    onPress={() => { setIndexRoomGroups(index) }}
-                                />
-                                <Text style={{ marginLeft: 20 }}>{el.Name}</Text>
-                            </TouchableOpacity>
-                        )
-                    })}
+                        {roomGroups.current.map((el, index) => {
+                            return (
+                                <TouchableOpacity onPress={() => {
+                                    setIndexRoomGroups(index)
+                                }} key={index} style={{ flexDirection: "row", alignItems: "center", }}>
+                                    <RadioButton.Android
+                                        color={colors.colorLightBlue}
+                                        status={indexRoomGroups == index ? 'checked' : 'unchecked'}
+                                        onPress={() => { setIndexRoomGroups(index) }}
+                                    />
+                                    <Text style={{ marginLeft: 20 }}>{el.Name}</Text>
+                                </TouchableOpacity>
+                            )
+                        })}
                     </ScrollView>
                     <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
                         <TouchableOpacity style={{ alignItems: "flex-end", marginTop: 15 }} onPress={() => {
@@ -340,7 +349,7 @@ export default (props) => {
         }
         if (typeModal.current == TYPE_MODAL.SELECT_SERVICE) {
             return (
-                <View style={{ padding: 10, height:Metrics.screenHeight*0.7}}>
+                <View style={{ padding: 10, height: Metrics.screenHeight * 0.7 }}>
                     <Text style={{ marginBottom: 15, fontSize: 18, fontWeight: 'bold' }}>{I18n.t('dich_vu_tinh_gio')}</Text>
                     <ScrollView>
                         {listProductService.current.map((el, index) => {
@@ -388,7 +397,7 @@ export default (props) => {
                     <Text>{I18n.t('ten_phong_ban')}</Text>
                     <View style={styles.view_border_input}>
                         <TextInput style={{ padding: 10, flex: 1, color: "#000" }} value={room.Name ? room.Name : ""} onChangeText={(text) => setRoom({ ...room, Name: text })} />
-                        <Ionicons name={"close"} size={25} color="black" style={{ marginRight: 10 }}  onPress={()=>{setRoom({ ...room, Name: '' })}}/>
+                        <Ionicons name={"close"} size={25} color="black" style={{ marginRight: 10 }} onPress={() => { setRoom({ ...room, Name: '' }) }} />
                     </View>
                 </View>
                 <View style={{ marginTop: 20 }}>
