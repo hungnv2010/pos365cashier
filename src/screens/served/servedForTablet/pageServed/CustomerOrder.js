@@ -11,6 +11,7 @@ import { Snackbar } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { ScreenList } from '../../../../common/ScreenList';
 import useDebounce from '../../../../customHook/useDebounce';
+import useInterval from '../../../../customHook/useInterval';
 import DialogProductDetail from '../../../../components/dialog/DialogProductDetail'
 import DialogProductUnit from '../../../../components/dialog/DialogProductUnit'
 import dialogManager from '../../../../components/dialog/DialogManager';
@@ -53,6 +54,10 @@ const CustomerOrder = (props) => {
     });
     const dispatch = useDispatch();
 
+    useInterval(() => {//60s kiem tra va tinh lai hang hoa tính gio
+        let reload = dataManager.calculateProductTime(listOrder)
+        if(reload) props.outPutSetNewOrderDetail(listOrder)
+    }, 60 * 1000)
 
     useEffect(() => {
         const getVendorSession = async () => {

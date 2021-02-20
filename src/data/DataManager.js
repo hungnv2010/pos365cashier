@@ -5,8 +5,9 @@ import { getFileDuLieuString, setFileLuuDuLieu } from "../data/fileStore/FileSto
 import { Subject } from 'rxjs';
 import moment from "moment";
 import signalRManager from "../common/SignalR";
-import { momentToDateUTC, momentToStringDateLocal, groupBy, randomUUID, mergeTwoArray } from "../common/Utils";
+import { momentToDateUTC, momentToStringDateLocal, momentToDate, groupBy, randomUUID, getTimeFromNow, getDifferenceSeconds, dateToDate, mergeTwoArray } from "../common/Utils";
 import { Constant } from "../common/Constant";
+import productManager from './objectManager/ProductManager';
 class DataManager {
     constructor() {
         this.subjectUpdateServerEvent = new Subject()
@@ -285,6 +286,27 @@ class DataManager {
             JsonContent.ActiveDate = moment()
         else if (!JsonContent.OrderDetails || JsonContent.OrderDetails.length == 0)
             JsonContent.ActiveDate = ""
+    }
+
+    calculateProductTime = (listProduct) => {
+        let reload = listProduct.filter(product => product.IsTimer && !product.StopTimer).length > 0
+        this.count = this.count + 1
+        if (reload) {
+            listProduct.forEach(product => {
+                if( product.IsTimer && !product.StopTimer) {
+                    let momentNow = moment().utc()
+                    product.Checkout = momentToDate(momentNow)
+                    product.Description = dateToDate(product.Checkin, "YYYY-MM-DD[T]HH:mm:ss.SS[Z]", "DD/MM HH:mm") + "=>" +
+                    dateToDate(new Date(), "YYYY-MM-DD[T]HH:mm:ss.SS[Z]", "DD/MM HH:mm") +
+                    " (" + getTimeFromNow(product.Checkin) + ") "
+                    let minutes = getDifferenceSeconds( product.Checkin, new Date() ) / 60
+                    product.Quantity = productManager.getProductTimeQuantity(product, minutes)
+                    productManager.getProductTimePrice(product)
+                }
+            })
+        }
+
+        return reload
     }
 
     paymentSetServerEvent = (serverEvent, newJsonContent, updateNow = false) => {

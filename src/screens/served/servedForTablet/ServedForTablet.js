@@ -228,6 +228,14 @@ const Served = (props) => {
         updateServerEvent({ ...jsonContent })
     }
 
+    const setNewOrderDetails = (listProduct) => {
+        jsonContent.OrderDetails = [...listProduct]
+
+        checkHasItemOrder(listProduct)
+        checkRoomProductId(listProduct, props.route.params.room.ProductId)
+
+        updateServerEvent({ ...jsonContent })
+    }
 
     const addPromotion = async (list = []) => {
         console.log("addPromotion list ", list);
@@ -627,7 +635,8 @@ const Served = (props) => {
                             outputSelectedProduct={outputSelectedProduct}
                             listTopping={listTopping}
                             Position={position}
-                            handlerProcessedProduct={(jsonContent) => handlerProcessedProduct(jsonContent)} />
+                            handlerProcessedProduct={(jsonContent) => handlerProcessedProduct(jsonContent)}
+                            outPutSetNewOrderDetail={setNewOrderDetails} />
                     </View >
 
                 </View>
