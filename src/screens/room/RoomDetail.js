@@ -389,7 +389,7 @@ export default (props) => {
                     clickLeftIcon={() => {
                         props.navigation.goBack()
                     }}
-                    title={I18n.t('them_phong_ban')}
+                    title={(props.route.params.room && props.route.params.room.Name) ? I18n.t('cap_nhat_phong_ban') :  I18n.t('them_phong_ban')}
                 /> : null}
 
             <KeyboardAwareScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" style={styles.view_content}>

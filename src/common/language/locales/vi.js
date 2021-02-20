@@ -67,6 +67,7 @@ export default {
   moi_chon_mon_truoc: "Mời bạn chọn hàng hóa trước",
   chon_vi_tri: "Chọn vị trí",
   chon_khach_hang: "Chọn khách hàng",
+  cap_nhat_phong_ban: "Cập nhật phòng bàn",
 
   // TODO: D
   dang_dung: "Đang dùng",

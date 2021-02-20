@@ -26,6 +26,7 @@ export default (props) => {
     const roomItem = useRef({});
     const clickAdd = useRef(false);
     const [roomGroups, setRoomGroups] = useState([])
+    const [titleAddEdit, setTitleAddEdit] = useState(I18n.t('them_phong_ban'))
 
     const dispatch = useDispatch()
 
@@ -91,6 +92,7 @@ export default (props) => {
         if (deviceType == Constant.PHONE)
             props.navigation.navigate(ScreenList.RoomDetail, { room: roomItem.current, listRoom: rooms, roomGroups: roomGroups, _onSelect: onCallBack })
         else {
+            setTitleAddEdit(I18n.t('cap_nhat_phong_ban'))
             setDataParams({ ...{ room: roomItem.current, listRoom: rooms, roomGroups: roomGroups } })
         }
     }
@@ -194,6 +196,7 @@ export default (props) => {
                             if (deviceType == Constant.PHONE)
                                 props.navigation.navigate(ScreenList.RoomDetail, { _onSelect: onCallBack })
                             else {
+                                setTitleAddEdit(I18n.t('them_phong_ban'))
                                 setDataParams({})
                             }
                         }}
@@ -201,6 +204,9 @@ export default (props) => {
                 </View>
                 {deviceType == Constant.TABLET ?
                     <View style={{ flex: 1, borderLeftWidth: 0.5, borderLeftColor: "#ccc" }}>
+                        <View style={{height: 45,backgroundColor: colors.colorchinh, justifyContent: "center", alignItems: "center"}}>
+                            <Text style={{color: "#fff", textTransform: "uppercase"}}>{titleAddEdit}</Text>
+                        </View>
                         <RoomDetail params={dataParams} _onSelect={(data) => onCallBack(data)} />
                     </View>
                     : null}
