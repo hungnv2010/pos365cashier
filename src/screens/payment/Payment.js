@@ -176,7 +176,9 @@ export default (props) => {
     const onChangeTextInput = (text, type) => {
         text = text.toString();
         console.log("onChangeTextInput text type ", text, typeof (text), type);
-        if (text == "") return;
+        if (text == "") {
+            text = "0";
+        }
         console.log("onChangeTextInput text: ", text);
         text = text.replace(/,/g, "");
         text = Number(text);
