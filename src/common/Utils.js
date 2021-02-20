@@ -5,7 +5,6 @@ export const DATE_FORMAT = "YYYY-MM-DD'T'HH:mm:ss.SSFFFFF'Z'";
 
 //Convert number, currency format
 export const currencyToString = (value, decimal = false) => {
-  console.log("currencyToString value ", value);
   if (value == 0 && value == '0') return 0;
   if (!value || (value && value == "")) {
     value = "0";
@@ -85,21 +84,38 @@ export const momentToDateUTC = (momentInput, outputFormat = "YYYY-MM-DDTHH:mm:ss
   return dateUTC
 }
 
-export const getTimeFromNow = (item) => {
-  let [day, hour, minute] = [0, 0, 0]
-  let date = new Date()
-  let timeFromNow = date.getTime() - moment(item.RoomMoment).valueOf()
-  if (timeFromNow < 0) timeFromNow = 0
-  day = Math.floor(timeFromNow / (1000 * 60 * 60 * 24))
-  timeFromNow -= day * 24 * 60 * 60 * 1000
-  hour = Math.floor(timeFromNow / (1000 * 60 * 60))
-  timeFromNow -= hour * 60 * 60 * 1000
-  minute = Math.ceil(timeFromNow / (1000 * 60))
+export const momentToDate = (momentInput, outputFormat = "YYYY-MM-DD[T]HH:mm:ss.SS[Z]") => {
+  let dateUTC = moment(momentInput).format(outputFormat)
+  return dateUTC
+}
 
-  let getDay = day > 0 ? `${day} ${I18n.t('ngay')}` : '';
-  let getHour = +hour > 0 ? `${hour} ${I18n.t('gio')}` : '';
+export const getTimeFromNow = (roomMoment) => {
+  let date = new Date()
+  let timeFromNow = date.getTime() - ((roomMoment instanceof moment )? roomMoment.valueOf() : moment(roomMoment).valueOf())
+  if (timeFromNow < 0) timeFromNow = 0
+  
+  return displayTimeSeconds(timeFromNow /1000)
+}
+
+export const displayTimeSeconds = (seconds) => {
+  let [day, hour, minute] = [0, 0, 0]
+  let secondsClone = seconds
+
+  day = Math.floor(secondsClone / (60 * 60 * 24))
+  secondsClone -= day * 24 * 60 * 60
+  hour = Math.floor(secondsClone / ( 60 * 60))
+  secondsClone -= hour * 60 * 60
+  minute = Math.ceil(secondsClone / 60)
+
+  let getDay = day > 0 ? `${day} ${I18n.t('ngay')} ` : '';
+  let getHour = +hour > 0 ? `${hour} ${I18n.t('gio')} ` : '';
   let getMinute = +minute > 0 ? `${minute} ${I18n.t('phut')}` : '';
-  return `${getDay} ${getHour} ${getMinute}`
+  return `${getDay}${getHour}${getMinute}`
+}
+
+export const getDifferenceSeconds = (startTime, endDate) => {
+  let differenceTime = endDate.getTime() - moment(startTime).valueOf()
+  return Math.ceil(differenceTime / 1000)
 }
 
 export const dateToString = (date, formatOutput = "DD/MM/YYYY") => {

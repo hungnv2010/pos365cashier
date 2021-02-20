@@ -190,6 +190,14 @@ export default (props) => {
         }
     }
 
+    const setNewOrderDetails = (listProduct) => {
+        jsonContent.OrderDetails = [...listProduct]
+
+        checkRoomProductId(listProduct, props.route.params.room.ProductId)
+
+        updateServerEvent({ ...jsonContent })
+    }
+
     const addPromotion = async (list) => {
         console.log("addPromotion list ", list);
         console.log("addPromotion promotions ", promotions);
@@ -619,7 +627,8 @@ export default (props) => {
                 Position={position}
                 jsonContent={jsonContent}
                 outputListProducts={outputListProducts}
-                handlerProcessedProduct={(jsonContent) => handlerProcessedProduct(jsonContent)} />
+                handlerProcessedProduct={(jsonContent) => handlerProcessedProduct(jsonContent)} 
+                outPutSetNewOrderDetail={setNewOrderDetails}/>
             <Snackbar
                 duration={5000}
                 visible={showToast}

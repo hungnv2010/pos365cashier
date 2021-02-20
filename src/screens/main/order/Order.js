@@ -216,7 +216,7 @@ export default (props) => {
                                     duration={6000}
                                     bounce={false}
                                     marqueeDelay={1000}>
-                                    {item.RoomMoment && item.IsActive ? getTimeFromNow(item) : ""}
+                                    {item.RoomMoment && item.IsActive ? getTimeFromNow(item.RoomMoment) : ""}
                                 </TextTicker>
 
                             </View>

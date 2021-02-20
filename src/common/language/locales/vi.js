@@ -69,6 +69,7 @@ export default {
   chon_khach_hang: "Chọn khách hàng",
 
   // TODO: D
+  dau_tien: "đầu tiên",
   dang_dung: "Đang dùng",
   dang_trong: "Đang trống",
   dong_y: "Đồng ý",

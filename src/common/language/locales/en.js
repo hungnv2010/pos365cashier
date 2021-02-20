@@ -60,6 +60,7 @@ export default {
   chon_khach_hang: "Select customer",
 
   // TODO: D
+  dau_tien: "first",
   dang_dung: "Serving",
   dang_trong: "Space",
   dong_y: "Accept",
