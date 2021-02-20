@@ -163,6 +163,7 @@ class SignalRManager {
 
     sendMessageServerEventNow = (serverEvent) => {
         console.log('sendMessageServerEventNow serverEvent ');
+        delete serverEvent.Timestamp
         this.sendMessage(serverEvent)
     }
 
