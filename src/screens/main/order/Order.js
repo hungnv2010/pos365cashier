@@ -52,6 +52,7 @@ export default (props) => {
     let rooms = null
     let roomGroups = null
     let serverEvents = null
+    const updateTime = null
     const [datas, setData] = useState([])
     const [valueAll, setValueAll] = useState({})
     const widthRoom = Dimensions.get('screen').width / numberColumn;
@@ -77,12 +78,12 @@ export default (props) => {
 
     useEffect(() => {
         if (!netInfo) {
-            const updateTime = setInterval(() => {
+            updateTime = setInterval(() => {
                 reloadTime()
             }, 1000 * 60);
         }
         return () => {
-            clearInterval(updateTime)
+            if (netInfo && updateTime) clearInterval(updateTime)
         }
     }, [netInfo])
 
