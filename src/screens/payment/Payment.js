@@ -176,7 +176,9 @@ export default (props) => {
     const onChangeTextInput = (text, type) => {
         text = text.toString();
         console.log("onChangeTextInput text type ", text, typeof (text), type);
-        if (text == "") return;
+        if (text == "") {
+            text = "0";
+        }
         console.log("onChangeTextInput text: ", text);
         text = text.replace(/,/g, "");
         text = Number(text);
@@ -215,7 +217,7 @@ export default (props) => {
 
     const deleteMethod = (item) => {
         let total = listMethod.reduce(getSumValue, 0);
-        setListMethod([...listMethod.filter(el => el.Id != item.Id)])
+        setListMethod([...listMethod.filter(el => (el.UUID != item.UUID))])
         let json = jsonContent;
         json.ExcessCash = total - item.Value - jsonContent.Total;
         setJsonContent(json)
@@ -411,7 +413,7 @@ export default (props) => {
             }
         }
         listMethod.forEach(element => {
-            if (item.Id == element.Id) {
+            if (item.Id == element.Id && item.UUID == element.UUID) {
                 element.Value = text
                 total += text;
             } else {
@@ -715,7 +717,7 @@ export default (props) => {
         setSendMethod(value)
         if (value.name == METHOD.pay.name) {
             listMethod.forEach(element => {
-                if (value.Id == element.Id) {
+                if (value.Id == element.Id && element.UUID == value.UUID) {
                     element.Value = 0;
                     onChangeTextPaymentPaid("0", element)
                 }
@@ -997,7 +999,7 @@ export default (props) => {
                         onTouchStart={() => onTouchInput({ ...item, ...METHOD.pay })}
                         editable={deviceType == Constant.TABLET ? false : true}
                         onChangeText={(text) => onChangeTextPaymentPaid(text, item, index)}
-                        style={[styles.inputListMethod, { borderColor: sendMethod.Id == item.Id ? colors.colorchinh : "gray" }]} />
+                        style={[styles.inputListMethod, { borderColor: (sendMethod.Id == item.Id && item.UUID == sendMethod.UUID) ? colors.colorchinh : "gray" }]} />
                 </View>
             )
         })

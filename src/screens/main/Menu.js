@@ -65,6 +65,21 @@ const LIST_FUNCITION = [
     //     title: "lich_su_goi_mon"
     // },
     {
+        func: KEY_FUNC.INVOICE,
+        icon: Images.icon_invoice,
+        title: "hoa_don"
+    },
+    {
+        func: KEY_FUNC.CUSTOMER,
+        icon: Images.icon_customer,
+        title: "khach_hang"
+    },
+    {
+        func: KEY_FUNC.OVERVIEW,
+        icon: Images.icon_overview,
+        title: "tong_quan"
+    },
+    {
         func: KEY_FUNC.ROOM_CATALOG,
         icon: Images.icon_room_table,
         title: "danh_muc_phong_ban"
@@ -74,41 +89,28 @@ const LIST_FUNCITION = [
     //     icon: Images.icon_star,
     //     title: "them"
     // },
-    {
-        func: KEY_FUNC.OVERVIEW,
-        icon: Images.icon_overview,
-        title: "tong_quan"
-    },
-    {
-        func: KEY_FUNC.CUSTOMER,
-        icon: Images.icon_customer,
-        title: "khach_hang"
-    },
-    {
-        func: KEY_FUNC.PRODUCT,
-        icon: Images.icon_product,
-        title: "hang_hoa"
-    },
-    {
-        func: KEY_FUNC.CASH_FLOW,
-        icon: Images.icon_income,
-        title: "thu_chi_"
-    },
-    {
-        func: KEY_FUNC.INVOICE,
-        icon: Images.icon_invoice,
-        title: "hoa_don"
-    },
-    {
-        func: KEY_FUNC.ROOM_HISTORY,
-        icon: Images.icon_room_history,
-        title: 'lich_su_huy_tra_do'
-    },
-    {
-        func: KEY_FUNC.VOUCHERS,
-        icon: Images.icon_vouchers,
-        title: 'voucher'
-    },
+   
+    // {
+    //     func: KEY_FUNC.PRODUCT,
+    //     icon: Images.icon_product,
+    //     title: "hang_hoa"
+    // },
+    // {
+    //     func: KEY_FUNC.CASH_FLOW,
+    //     icon: Images.icon_income,
+    //     title: "thu_chi_"
+    // },
+   
+    // {
+    //     func: KEY_FUNC.ROOM_HISTORY,
+    //     icon: Images.icon_room_history,
+    //     title: 'lich_su_huy_tra_do'
+    // },
+    // {
+    //     func: KEY_FUNC.VOUCHERS,
+    //     icon: Images.icon_vouchers,
+    //     title: 'voucher'
+    // },
     {
         func: KEY_FUNC.SETTING_FUNC,
         icon: Images.icon_setting,

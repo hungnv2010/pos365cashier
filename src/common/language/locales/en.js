@@ -58,6 +58,7 @@ export default {
   chua_cap_nhat: "No infomation",
   cap_nhat_khach_hang: "Update customer",
   chon_khach_hang: "Select customer",
+  cap_nhat_phong_ban: "Edit room table",
 
   // TODO: D
   dau_tien: "first",
