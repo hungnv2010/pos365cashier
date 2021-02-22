@@ -240,6 +240,7 @@ export default {
   phut: "phút",
   phien_ban_ngay: "Phiên bản",
   phuong_thuc_khac: "Phương thức khác",
+  phuong_thuc_thanh_toan:"Phương thức thanh toán",
 
   // TODO: Q
   quy_dau_ky: "Quỹ đầu kỳ",

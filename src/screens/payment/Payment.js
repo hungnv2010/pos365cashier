@@ -610,7 +610,6 @@ export default (props) => {
         serverEvent.JsonContent = JSON.stringify(json);
         serverEvent.Version += 10
         console.log("updateServerEvent serverEvent ", serverEvent);
-        delete serverEvent.Timestamp
         dataManager.updateServerEventNow(serverEvent, true, isFNB);
         if (settingObject.current.am_bao_thanh_toan == true)
             playSound()
@@ -759,25 +758,24 @@ export default (props) => {
             jsonContent.ExcessCash = 0
         }
         setJsonContent({ ...jsonContent })
-        console.log("calculator percent ", percent);
-        console.log("calculator jsonContent.DiscountValue ", jsonContent.DiscountValue);
-        console.log("calculator realPriceValue ", realPriceValue);
-        console.log("calculator disCountValue ", disCountValue);
-        console.log("calculator totalDiscount ", totalDiscount);
-        console.log("calculator totalDiscount ==  ", totalDiscount);
-        console.log("calculator notVat ", notVat);
-        console.log("calculator VATRates ", jsonContent.VATRates);
-        console.log("calculator vat ", vat);
-        console.log("calculator totalPrice== ", total);
-        console.log("calculator excess ", excess);
-        console.log("calculator excessCash ", excessCash);
-        console.log("calculator jsonContent ", jsonContent);
+        // console.log("calculator percent ", percent);
+        // console.log("calculator jsonContent.DiscountValue ", jsonContent.DiscountValue);
+        // console.log("calculator realPriceValue ", realPriceValue);
+        // console.log("calculator disCountValue ", disCountValue);
+        // console.log("calculator totalDiscount ", totalDiscount);
+        // console.log("calculator totalDiscount ==  ", totalDiscount);
+        // console.log("calculator notVat ", notVat);
+        // console.log("calculator VATRates ", jsonContent.VATRates);
+        // console.log("calculator vat ", vat);
+        // console.log("calculator totalPrice== ", total);
+        // console.log("calculator excess ", excess);
+        // console.log("calculator excessCash ", excessCash);
+        // console.log("calculator jsonContent ", jsonContent);
 
         if (currentServerEvent.current && update == true) {
             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
             dataManager.paymentSetServerEvent(serverEvent, jsonContent);
             if (isFNB) {
-                delete serverEvent.Timestamp
                 dataManager.subjectUpdateServerEvent.next(serverEvent)
             }
         }

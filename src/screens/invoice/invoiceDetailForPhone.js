@@ -20,6 +20,15 @@ const InvoiceDetail = (props) => {
         console.log("useSelector state ", state);
         return state.Common.deviceType
     });
+    const listAccount = useRef([])
+
+    useEffect(() => {
+        const getAccount = async () => {
+            let results = await new HTTPService().setPath(ApiPath.ACCOUNT).GET()
+            listAccount.current = [{ Id: 0, Name: I18n.t("tien_mat") }, ...results]
+        }
+        getAccount()
+    }, [])
 
     useEffect(() => {
         console.log('InvoiceDetail', props.route.params.item);
@@ -70,6 +79,22 @@ const InvoiceDetail = (props) => {
                 return 'dang_xu_ly';
                 break;
         }
+    }
+
+    const getPaymentMethod = (MoreAttributes) => {
+        let listPaymentMethod = []
+        if (MoreAttributes.PaymentMethods && MoreAttributes.PaymentMethods.length > 0) {
+            if (listAccount.current && listAccount.current.length > 0) {
+                listAccount.current.forEach(item => {
+                    MoreAttributes.PaymentMethods.forEach(elm => {
+                        if (item.Id == elm.AccountId) {
+                            listPaymentMethod.push(item.Name)
+                        }
+                    })
+                })
+            }
+        }
+        return listPaymentMethod
     }
 
     const renderItemList = (item) => {
@@ -123,6 +148,20 @@ const InvoiceDetail = (props) => {
                     <View style={{ margin: 5, flexDirection: "row", justifyContent: "space-between" }}>
                         <Text style={{ padding: 0, flex: 1 }}>VAT</Text>
                         <Text style={{ paddingLeft: 5 }}>+ {currencyToString(invoiceDetail.VAT)}</Text>
+                    </View>
+                    : null
+                }
+                {invoiceDetail.MoreAttributes ?
+                    <View style={{ margin: 5, flexDirection: "row", justifyContent: "space-between" }}>
+                        <Text style={{ padding: 0, flex: 1 }}>{I18n.t('phuong_thuc_thanh_toan')}</Text>
+                        {/* <Text style={{ paddingLeft: 5 }}>+ {currencyToString(invoiceDetail.VAT)}</Text> */}
+                        <View style={{alignItems:"flex-end"}}>
+                            {getPaymentMethod(JSON.parse(invoiceDetail.MoreAttributes)).map(item => {
+                                return (
+                                    <Text style={{fontStyle:"italic", color:"gray"}}>{item}</Text>
+                                )
+                            })}
+                        </View>
                     </View>
                     : null
                 }

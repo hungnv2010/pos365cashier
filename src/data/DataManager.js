@@ -14,7 +14,7 @@ class DataManager {
         this.subjectUpdateServerEvent.debounceTime(300)
             .subscribe(async (serverEvent) => {
                 await realmStore.insertServerEvent(serverEvent)
-                signalRManager.sendMessageServerEvent(serverEvent, true)
+                signalRManager.sendMessageServerEvent(serverEvent)
                 // this.updateServerEventNow(serverEvent, true)
             })
     }
@@ -38,7 +38,7 @@ class DataManager {
                         let products = await realmStore.queryProducts()
                         let productItem = products.filtered(`Id == '${newOrder.ProductId}'`)
                         productItem = JSON.parse(JSON.stringify(productItem))[0];
-                        productItem = { ...productItem, ...newOrder, Processed: newOrder.Quantity }
+                        productItem = { ...productItem, ...newOrder, Processed: newOrder.Quantity, Price: newOrder.IsLargeUnit ? productItem.PriceLargeUnit : productItem.UnitPrice }
                         console.log('productItem', productItem);
                         listOrders.push({ ...productItem })
                         for (const item of listRoom) {
@@ -293,13 +293,13 @@ class DataManager {
         this.count = this.count + 1
         if (reload) {
             listProduct.forEach(product => {
-                if( product.IsTimer && !product.StopTimer) {
+                if (product.IsTimer && !product.StopTimer) {
                     let momentNow = moment().utc()
                     product.Checkout = momentToDate(momentNow)
                     product.Description = dateToDate(product.Checkin, "YYYY-MM-DD[T]HH:mm:ss.SS[Z]", "DD/MM HH:mm") + "=>" +
-                    dateToDate(new Date(), "YYYY-MM-DD[T]HH:mm:ss.SS[Z]", "DD/MM HH:mm") +
-                    " (" + getTimeFromNow(product.Checkin) + ") "
-                    let minutes = getDifferenceSeconds( product.Checkin, new Date() ) / 60
+                        dateToDate(new Date(), "YYYY-MM-DD[T]HH:mm:ss.SS[Z]", "DD/MM HH:mm") +
+                        " (" + getTimeFromNow(product.Checkin) + ") "
+                    let minutes = getDifferenceSeconds(product.Checkin, new Date()) / 60
                     product.Quantity = productManager.getProductTimeQuantity(product, minutes)
                     productManager.getProductTimePrice(product)
                 }
