@@ -1,7 +1,7 @@
 
 
-import React, { Component,useEffect,useState } from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet ,TextInput} from 'react-native';
+import React, { Component, useEffect, useState } from 'react';
+import { View, Text, TouchableOpacity, Image, StyleSheet, TextInput } from 'react-native';
 import { Colors, Metrics, Images } from '../../theme'
 import { IconButton, Subheading } from "react-native-paper";
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -18,9 +18,9 @@ export default function MainToolBar(props) {
         console.log("useSelector state ", state);
         return state.Common
     });
-    useEffect(()=>{
+    useEffect(() => {
         props.outPutTextSearch(value)
-    },[value])
+    }, [value])
 
     return (
         <View style={styles.toolbarContainer}>
@@ -35,10 +35,10 @@ export default function MainToolBar(props) {
                 <TouchableOpacity onPress={() => {
                     console.log("Click this.props ", props);
                     props.navigation.openDrawer();
-                }} style={[{ }, deviceType == Constant.TABLET ? { alignSelf: "flex-start" } : { alignItems: "center" }]}>
+                }} style={[{}, deviceType == Constant.TABLET ? { alignSelf: "flex-start" } : { alignItems: "center" }]}>
                     {/* <Image source={Images.logo_365_boss_white}
                         style={{ width: 172, height: 40, resizeMode: 'contain' }} /> */}
-                    <Image source={Images.icon_menu} style={{width:48,height:48}} />
+                    <Image source={Images.icon_menu} style={{ width: 48, height: 48 }} />
                 </TouchableOpacity>
                 <View style={{ flex: 3, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
                     <Subheading
@@ -54,7 +54,7 @@ export default function MainToolBar(props) {
                 </View>
                 <View style={{ flex: 5, marginRight: 10 }}>
                     {isSearch ?
-                        <View style={{ borderRadius: 10, borderColor: "#fff", borderWidth: 1, backgroundColor: "#f2f2f2", flexDirection: "row", marginRight: 2, height: "70%" }}>
+                        <View style={{ borderRadius: 3, borderColor: "#fff", borderWidth: 1, backgroundColor: "#f2f2f2", flexDirection: "row", marginRight: 2, height: "80%" }}>
                             <TextInput
                                 autoFocus={true}
                                 style={{ flex: 1, color: "#000" }}
@@ -65,9 +65,9 @@ export default function MainToolBar(props) {
                         :
                         null}
                 </View>
-                
 
-                <View style={{  alignItems: "flex-end",marginRight:13 ,flex:1}}>
+
+                <View style={{ alignItems: "flex-end", marginRight: 13, flex: 1 }}>
                     {props.rightIcon ?
                         <TouchableOpacity style={styles.button} onPress={() => {
                             if (value != '') onChangeText('')
@@ -77,7 +77,7 @@ export default function MainToolBar(props) {
                                 <Ionicons name={!isSearch ? "md-search" : "md-close"} size={30} color="white" style={{}} />
                             </View>
                         </TouchableOpacity>
-                        :null
+                        : null
                         // <TouchableOpacity onPress={props.clickRightIcon}>
                         //     <Image source={Images.icon_refresh} style={{width:48,height:48}}></Image>
                         // </TouchableOpacity>

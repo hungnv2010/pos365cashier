@@ -115,7 +115,7 @@ export default (props) => {
       if (isFNB === true) {
         const getDataNewOrders = async () => {
           let newOrders = await dataManager.initComfirmOrder()
-          // console.log('getDataNewOrders', newOrders);
+          console.log('getDataNewOrders', newOrders);
 
           if (newOrders != null)
             viewPrintRef.current.printKitchenRef(newOrders)

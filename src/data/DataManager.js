@@ -120,7 +120,6 @@ class DataManager {
         for (const property in listResultGroupBy) {
             listResultGroupBy[property] = groupBy(listResultGroupBy[property], "RoomName")
         }
-        console.log('printCook listResultGroupBy', JSON.stringify(listResultGroupBy));
         return listResultGroupBy;
     }
 
