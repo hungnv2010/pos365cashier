@@ -87,11 +87,10 @@ export default forwardRef((props, ref) => {
                 Print.printImageFromClient(uri, currentHtml.current.ip, currentHtml.current.size, (b) => {
                     console.log("printImageFromClient b ", b);
                 })
-                // currentHtml.current = {};
-                // setDataHtml("");
-                // setTimeout(() => {
-                setDataHtmlPrint()
-                // }, 500);
+                setTimeout(() => {
+                    setDataHtmlPrint()
+                }, 500);
+                
             },
             error => console.error('Oops, snapshot failed', error)
         );
@@ -154,10 +153,18 @@ export default forwardRef((props, ref) => {
                         if (item.hasOwnProperty(key)) {
                             const element = item[key];
                             console.log('element == ', element);
-                            let res = printService.GenHtmlKitchen(htmlKitchen, element, i, vendorSession, type)
-                            if (res && res != "") {
-                                res = res.replace("</body>", "<p style='display: none;'>" + new Date() + "</p> </body>");
-                                printService.listWaiting.push({ html: res, ip: printObject[value].ip, size: printObject[value].size })
+                            let checkPrint = false;
+                            element.forEach(el => {
+                                if (el.Quantity > el.Processed) {
+                                    checkPrint = true;
+                                }
+                            });
+                            if (checkPrint) {
+                                let res = printService.GenHtmlKitchen(htmlKitchen, element, i, vendorSession, type)
+                                if (res && res != "") {
+                                    res = res.replace("</body>", "<p style='display: none;'>" + new Date() + "</p> </body>");
+                                    printService.listWaiting.push({ html: res, ip: printObject[value].ip, size: printObject[value].size })
+                                }
                             }
                         }
                         i++;
@@ -200,7 +207,7 @@ export default forwardRef((props, ref) => {
         if (currentHtml.current && currentHtml.current.html && currentHtml.current.html != "") {
             setTimeout(() => {
                 clickCapture()
-            }, 100
+            }, 300
             );
         }
     }
@@ -208,7 +215,7 @@ export default forwardRef((props, ref) => {
     const childRef = useRef();
     return (
         <View style={{ position: "absolute" }}>
-            <View style={{ opacity: 0 }}>
+            <View style={{ opacity: 1 }}>
                 <ScrollView>
                     <View
                         ref={childRef}
@@ -233,7 +240,7 @@ export default forwardRef((props, ref) => {
                 </ScrollView>
             </View>
             {/* <TouchableOpacity style={{backgroundColor:"red", padding: 20, flex: 1}} onPress={() => data.callback("ClickHung")}><Text>Click</Text></TouchableOpacity> */}
-            {/* <Image source={{ uri: uriImg ? uriImg : "" }} resizeMode="contain" style={{ position: "absolute", top: 50, width: 100, height: 100, flex: 1 }} /> */}
+            <Image source={{ uri: uriImg ? uriImg : "" }} resizeMode="contain" style={{ position: "absolute", top: 50, width: 100, height: 100, flex: 1 }} />
         </View>
     )
 

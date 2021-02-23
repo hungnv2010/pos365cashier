@@ -77,7 +77,7 @@ export default (props) => {
 
             let newDatas = insertServerEvent(getDatas(rooms, roomGroups), serverEvents)
             console.log("init: newDatas ", newDatas);
-            // dataRef.current = newDatas
+            dataRef.current = newDatas
             setData(newDatas)
             let list = newDatas.filter(item => item.isGroup)
 
@@ -138,7 +138,7 @@ export default (props) => {
 
         console.log("getDatas", newDatas);
         console.log("roomRef", roomRef.current);
-
+        console.log("dataRef", dataRef.current);
         return newDatas
     }
 
