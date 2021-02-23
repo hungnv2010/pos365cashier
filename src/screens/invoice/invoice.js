@@ -49,6 +49,12 @@ const Invoice = (props) => {
     const debounceTextSearch = useDebounce(textSearch)
 
 
+    useFocusEffect(
+        useCallback(() => {
+            onRefresh()
+        }, [])
+    )
+
     useEffect(() => {
         const getBranch = async () => {
             let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
@@ -61,7 +67,7 @@ const Invoice = (props) => {
             listAccount.current = [{ Id: 0, Name: I18n.t("tien_mat") }, ...results]
 
         }
-        getAccount()
+        // getAccount()
         getBranch()
         getInvoice(true)
     }, [])
@@ -271,7 +277,7 @@ const Invoice = (props) => {
 
                         <View style={{ alignItems: "flex-end" }}>
                             <Text style={{ fontSize: 14, color: checkColor(item) ? "black" : "red" }}>{currencyToString(item.TotalPayment)}</Text>
-                            <Text style={{ color: '#689f38', fontSize: 13 }}>{item.MoreAttributes ? getPaymentMethod(JSON.parse(item.MoreAttributes)) : I18n.t("tien_mat")}</Text>
+                            <Text style={{ color: '#689f38', fontSize: 13 }}></Text>
                             <Text style={{ color: "#0072bc", fontSize: 12 }}>{moment.utc(momentToDateUTC(item.CreatedDate)).local().format("HH:mm DD/MM/YYYY")}</Text>
                         </View>
                     </View>
@@ -330,7 +336,7 @@ const Invoice = (props) => {
             <MainToolBar
                 navigation={props.navigation}
                 title={I18n.t('hoa_don')}
-                outPutTextSearch={()=>{}}
+                outPutTextSearch={() => { }}
             />
             <View style={{ flex: 1, flexDirection: "row" }}>
                 <View style={{ flex: 1, borderRightWidth: 1, borderRightColor: "grey" }}>

@@ -186,6 +186,7 @@ export default (props) => {
             let { RoomId, Position } = currentServerEvent.current
             let jsonContentObj = JSON.stringify(jsonContent) == "{}" ? dataManager.createJsonContent(RoomId, Position, moment()) : jsonContent
             jsonContentObj.OrderDetails = [...list]
+            jsonContentObj.ActiveDate = moment()
             updateServerEvent(jsonContentObj)
             dataManager.sentNotification(title, body)
 
@@ -320,7 +321,6 @@ export default (props) => {
             setJsonContent({ ...jsonContent })
             serverEvent.Version += 1
             serverEvent.JsonContent = JSON.stringify(jsonContent)
-            delete serverEvent.Timestamp
             dataManager.updateServerEvent(serverEvent)
         }
     }

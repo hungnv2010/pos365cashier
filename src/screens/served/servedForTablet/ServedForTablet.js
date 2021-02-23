@@ -165,6 +165,7 @@ const Served = (props) => {
             if (jsonContentTmp.OrderDetails.length == 0) {
                 let title = props.route.params.Name ? props.route.params.Name : ""
                 let body = I18n.t('gio_khach_vao') + moment().format('HH:mm dd/MM')
+                jsonContentTmp.ActiveDate = moment()
                 dataManager.sentNotification(title, body)
             }
             if (product.SplitForSalesOrder) {
@@ -366,7 +367,6 @@ const Served = (props) => {
             serverEvent.Version += 1
             serverEvent.JsonContent = JSON.stringify(jsonContent)
             console.log('updateServerEvent serverEvent', jsonContent);
-            delete serverEvent.Timestamp
             dataManager.updateServerEvent(serverEvent)
         }
     }

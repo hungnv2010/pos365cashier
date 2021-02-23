@@ -61,7 +61,8 @@ export default (props) => {
                 setCustomerData(searchResult)
 
             } else {
-                setCustomerData(backUpCustomer.current)
+                // setCustomerData(backUpCustomer.current)
+                getCustomer()
             }
         }
         getSearchResult()
@@ -85,7 +86,7 @@ export default (props) => {
             let listCustomer = res.Data.reverse()
             listCustomer.unshift(GUEST)
             setCustomerData(listCustomer)
-            await realmStore.insertDatas(SchemaName.CUSTOMER, res.Data)
+            // await realmStore.insertDatas(SchemaName.CUSTOMER, res.Data)
             
         } else {
             try {

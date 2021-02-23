@@ -211,6 +211,8 @@ export default {
   phut: "minutes",
   phien_ban_ngay: "Version",
   phuong_thuc_khac: "Other method",
+  phuong_thuc_thanh_toan:"Payment methods",
+
 
   // TODO: Q
   quy_khach_vui_long_nhap_mat_khau: "Please enter your password",

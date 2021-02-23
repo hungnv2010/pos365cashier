@@ -16,6 +16,15 @@ const InvoiceDetail = (props) => {
     const [invoiceDetail, setInvoiceDetail] = useState({})
     const [dataDetail, setDataDetail] = useState([])
     const moreAttributes = useRef(null)
+    const listAccount = useRef([])
+
+    useEffect(() => {
+        const getAccount = async () => {
+            let results = await new HTTPService().setPath(ApiPath.ACCOUNT).GET()
+            listAccount.current = [{ Id: 0, Name: I18n.t("tien_mat") }, ...results]
+        }
+        getAccount()
+    }, [])
 
     useEffect(() => {
         if (props.currentItem) {
@@ -118,6 +127,20 @@ const InvoiceDetail = (props) => {
                     <View style={{ margin: 5, flexDirection: "row", justifyContent: "space-between" }}>
                         <Text style={{ padding: 0, flex: 1 }}>VAT</Text>
                         <Text style={{ paddingLeft: 5 }}>+ {currencyToString(invoiceDetail.VAT)}</Text>
+                    </View>
+                    : null
+                }
+                {invoiceDetail.MoreAttributes ?
+                    <View style={{ margin: 5, flexDirection: "row", justifyContent: "space-between" }}>
+                        <Text style={{ padding: 0, flex: 1 }}>{I18n.t('phuong_thuc_thanh_toan')}</Text>
+                        {/* <Text style={{ paddingLeft: 5 }}>+ {currencyToString(invoiceDetail.VAT)}</Text> */}
+                        <View style={{alignItems:"flex-end"}}>
+                            {getPaymentMethod(JSON.parse(invoiceDetail.MoreAttributes)).map(item => {
+                                return (
+                                    <Text style={{fontStyle:"italic", color:"gray"}}>{item}</Text>
+                                )
+                            })}
+                        </View>
                     </View>
                     : null
                 }

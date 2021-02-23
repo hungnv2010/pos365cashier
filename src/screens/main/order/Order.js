@@ -19,11 +19,9 @@ import { Constant } from '../../../common/Constant';
 import { Images, Metrics } from '../../../theme';
 import colors from '../../../theme/Colors';
 import TextTicker from 'react-native-text-ticker';
-import dataManager from '../../../data/DataManager';
-import { useFocusEffect } from '@react-navigation/native';
+import NetInfo from "@react-native-community/netinfo";
 import moment from 'moment';
 import Menu from 'react-native-material-menu';
-import { get } from 'react-native/Libraries/Utilities/PixelRatio';
 import useDebounce from '../../../customHook/useDebounce';
 // import 'moment/min/locales'
 
@@ -54,16 +52,40 @@ export default (props) => {
     let rooms = null
     let roomGroups = null
     let serverEvents = null
+    const updateTime = null
     const [datas, setData] = useState([])
     const [valueAll, setValueAll] = useState({})
     const widthRoom = Dimensions.get('screen').width / numberColumn;
     const RoomAll = { Name: "Tất cả", Id: "All" }
     const [listRoom, setListRoom] = useState([])
     const dataRef = useRef([])
-    const roomGroupRef = useRef([])
     const roomRef = useRef([])
-    const severEventRef = useRef([])
+    const [netInfo, setNetInfo] = useState(true);
     const [filterStatus, setFilterStatus] = useState('tat_ca')
+
+    useEffect(() => {
+        const unsubscribe = NetInfo.addEventListener(state => {
+            if (state.isConnected == true && state.isInternetReachable == true) {
+                setNetInfo(true)
+            } else {
+                setNetInfo(false)
+            }
+        });
+        return () => {
+            unsubscribe()
+        }
+    }, [])
+
+    useEffect(() => {
+        if (!netInfo) {
+            updateTime = setInterval(() => {
+                reloadTime()
+            }, 1000 * 60);
+        }
+        return () => {
+            if (netInfo && updateTime) clearInterval(updateTime)
+        }
+    }, [netInfo])
 
     useEffect(() => {
         if (!already) return
@@ -381,7 +403,7 @@ export default (props) => {
 
             </View>
             <View style={{ height: 45, backgroundColor: 'white', padding: 5 }}>
-                <View style={{ backgroundColor: '#f2f2f2', paddingHorizontal: 5, height: "100%", borderRadius: 18}}>
+                <View style={{ backgroundColor: '#f2f2f2', paddingHorizontal: 5, height: "100%", borderRadius: 18 }}>
                     <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{}}>
                         {listRoom ?
                             listRoom.map((data, index) =>
