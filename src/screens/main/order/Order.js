@@ -23,7 +23,7 @@ import NetInfo from "@react-native-community/netinfo";
 import moment from 'moment';
 import Menu from 'react-native-material-menu';
 import useDebounce from '../../../customHook/useDebounce';
-// import 'moment/min/locales'
+import { useFocusEffect } from '@react-navigation/native';
 
 const _nodes = new Map();
 
@@ -60,32 +60,20 @@ export default (props) => {
     const [listRoom, setListRoom] = useState([])
     const dataRef = useRef([])
     const roomRef = useRef([])
-    const [netInfo, setNetInfo] = useState(true);
     const [filterStatus, setFilterStatus] = useState('tat_ca')
 
-    useEffect(() => {
-        const unsubscribe = NetInfo.addEventListener(state => {
-            if (state.isConnected == true && state.isInternetReachable == true) {
-                setNetInfo(true)
-            } else {
-                setNetInfo(false)
-            }
-        });
-        return () => {
-            unsubscribe()
-        }
-    }, [])
+  
 
-    useEffect(() => {
-        if (!netInfo) {
-            updateTime = setInterval(() => {
+    useFocusEffect(
+        React.useCallback(() => {
+             updateTime = setInterval(() => {
                 reloadTime()
             }, 1000 * 60);
-        }
-        return () => {
-            if (netInfo && updateTime) clearInterval(updateTime)
-        }
-    }, [netInfo])
+            return () => {
+                clearInterval(updateTime)
+            }
+        }, [])
+    );
 
     useEffect(() => {
         if (!already) return
@@ -127,7 +115,6 @@ export default (props) => {
     }, [already])
 
     const reloadTime = async () => {
-        console.log('reloadTime', dataRef.current);
         setData([...dataRef.current])
     }
 

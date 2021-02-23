@@ -760,28 +760,14 @@ export default (props) => {
             jsonContent.ExcessCash = 0
         }
         setJsonContent({ ...jsonContent })
-        // console.log("calculator percent ", percent);
-        // console.log("calculator jsonContent.DiscountValue ", jsonContent.DiscountValue);
-        // console.log("calculator realPriceValue ", realPriceValue);
-        // console.log("calculator disCountValue ", disCountValue);
-        // console.log("calculator totalDiscount ", totalDiscount);
-        // console.log("calculator totalDiscount ==  ", totalDiscount);
-        // console.log("calculator notVat ", notVat);
-        // console.log("calculator VATRates ", jsonContent.VATRates);
-        // console.log("calculator vat ", vat);
-        // console.log("calculator totalPrice== ", total);
-        // console.log("calculator excess ", excess);
-        // console.log("calculator excessCash ", excessCash);
-        // console.log("calculator jsonContent ", jsonContent);
 
         if (currentServerEvent.current && update == true) {
             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
-            dataManager.paymentSetServerEvent(serverEvent, jsonContent);
-            if (isFNB) {
-                dataManager.subjectUpdateServerEvent.next(serverEvent)
-            }
+            dataManager.calculatateJsonContent(jsonContent)
+            serverEvent.JsonContent = JSON.stringify(jsonContent)
+            dataManager.updateServerEventNow(serverEvent, true, isFNB);
         }
-    }
+    } 
 
     const onChangeDate = (selectedDate) => {
         const currentDate = dateTmp.current;
