@@ -37,24 +37,15 @@ export default (propsFunc) => {
           return <DrawerContent {...props} />;
         }}
       >
-        {/* <Drawer.Screen name={ScreenList.Main} options={{ title: ScreenList.Main }}>
-          {props => <Main  {...props} params={propsFunc.route.state ? propsFunc.route.state : ""} />}
-        </Drawer.Screen> */}
-        {/* <Drawer.Screen name={ScreenList.Home} options={{ title: ScreenList.Home }}>
-          {props => <BottomTabNavigation {...props} />}
-        </Drawer.Screen> */}
+    
         <Drawer.Screen name={ScreenList.Home} options={{ title: ScreenList.Home }}>
           {props => <Main  {...props} params={propsFunc.route.state ? propsFunc.route.state : ""} />}
         </Drawer.Screen>
-        {/* <Drawer.Screen name={ScreenList.History} options={{ title: ScreenList.History }}>
-          {props => <History {...props} />}
-        </Drawer.Screen> */}
+     
         <Drawer.Screen name={ScreenList.OverView} options={{ title: ScreenList.OverView }}>
           {props => <OverView {...props} />}
         </Drawer.Screen>
-        {/* <Drawer.Screen name={ScreenList.More} options={{ title: ScreenList.More }}>
-          {props => <More {...props} />}
-        </Drawer.Screen> */}
+       
         <Drawer.Screen name={ScreenList.Invoice} options={{ title: ScreenList.Invoice }}>
           {props => <Invoice {...props} />}
         </Drawer.Screen>
