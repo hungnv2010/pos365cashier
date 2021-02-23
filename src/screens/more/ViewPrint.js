@@ -162,7 +162,7 @@ export default forwardRef((props, ref) => {
                                     checkPrint = true;
                                 }
                             });
-                            if (checkPrint) {
+                            if (checkPrint || type != TYPE_PRINT.KITCHEN) {
                                 let res = printService.GenHtmlKitchen(htmlKitchen, element, i, vendorSession, type)
                                 if (res && res != "") {
                                     res = res.replace("</body>", "<p style='display: none;'>" + new Date() + "</p> </body>");

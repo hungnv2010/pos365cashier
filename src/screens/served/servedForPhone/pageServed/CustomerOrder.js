@@ -147,6 +147,7 @@ export default (props) => {
         // typeModal.current = TYPE_MODAL.DELETE
         // setShowModal(true)
         if (vendorSession.Settings.ReturnHistory) {
+            setQuantitySubtract(item.Quantity)
             typeModal.current = TYPE_MODAL.DELETE
             setShowModal(true)
         } else {
