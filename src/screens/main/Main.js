@@ -24,7 +24,7 @@ export default (props) => {
   let scanFromOrder = null
   const viewPrintRef = useRef();
   const dispatch = useDispatch();
-  const [textSearch,setTextSearch] = useState('')
+  const [textSearch, setTextSearch] = useState('')
   const { listPrint, isFNB, printProvisional, printReturnProduct, syncRetail } = useSelector(state => {
     return state.Common
   })
@@ -114,12 +114,14 @@ export default (props) => {
       // await realmStore.deleteAllForFnb()
       if (isFNB === true) {
         const getDataNewOrders = async () => {
-          let newOrders = await dataManager.initComfirmOrder()
-          // console.log('getDataNewOrders', newOrders);
-
-          if (newOrders != null)
-            viewPrintRef.current.printKitchenRef(newOrders)
-
+          let result = await dataManager.initComfirmOrder()
+          console.log('getDataNewOrders', result);
+          if (result != null) {
+            if (result.newOrders && result.newOrders != null)
+              viewPrintRef.current.printKitchenRef(JSON.stringify(result.newOrders))
+            if (result.listRoom && result.listRoom != null)
+              dataManager.updateFromOrder(result.listRoom)
+          }
         }
 
         scanFromOrder = setInterval(() => {
@@ -171,7 +173,7 @@ export default (props) => {
     // dispatch({ type: 'ALREADY', already: true })
     // dialogManager.hiddenLoading()
   }
-  const onClickSearch = (text)=>{
+  const onClickSearch = (text) => {
     setTextSearch(text)
   }
 
@@ -214,7 +216,7 @@ export default (props) => {
                 rightIcon="md-search"
                 outPutTextSearch={onClickSearch}
               />
-              <Order {...props} textSearch={textSearch}/>
+              <Order {...props} textSearch={textSearch} />
             </>
             :
             <MainRetail

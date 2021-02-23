@@ -363,7 +363,7 @@ export default (props) => {
 
     const setListVoucherTemp = (item, value) => {
         listMethod.forEach(element => {
-            if (item.Id == element.Id) {
+            if (item.Id == element.Id && item.UUID == element.UUID) {
                 element.Value = value
             }
         });

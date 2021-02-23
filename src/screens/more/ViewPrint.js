@@ -87,10 +87,8 @@ export default forwardRef((props, ref) => {
                 Print.printImageFromClient(uri, currentHtml.current.ip, currentHtml.current.size, (b) => {
                     console.log("printImageFromClient b ", b);
                 })
-                setTimeout(() => {
-                    setDataHtmlPrint()
-                }, 500);
-                
+
+                setDataHtmlPrint()
             },
             error => console.error('Oops, snapshot failed', error)
         );
@@ -140,10 +138,15 @@ export default forwardRef((props, ref) => {
     }
 
     const printKitchen = async (data, type = TYPE_PRINT.KITCHEN) => {
+        console.log("printKitchen data ", data);
         isProvisional.current = false;
         let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
-        vendorSession = JSON.parse(vendorSession);
+        if (vendorSession && vendorSession != "")
+            vendorSession = JSON.parse(vendorSession);
+        console.log("printKitchen vendorSession ", vendorSession);
         data = JSON.parse(data)
+        console.log("printKitchen data2 ", data);
+        console.log("printKitchen printObject ", printObject);
         for (const value in data) {
             if (data.hasOwnProperty(value)) {
                 if (printObject[value] != "") {
@@ -207,7 +210,7 @@ export default forwardRef((props, ref) => {
         if (currentHtml.current && currentHtml.current.html && currentHtml.current.html != "") {
             setTimeout(() => {
                 clickCapture()
-            }, 300
+            }, 100
             );
         }
     }
@@ -215,7 +218,7 @@ export default forwardRef((props, ref) => {
     const childRef = useRef();
     return (
         <View style={{ position: "absolute" }}>
-            <View style={{ opacity: 1 }}>
+            <View style={{ opacity: 0 }}>
                 <ScrollView>
                     <View
                         ref={childRef}
@@ -240,7 +243,7 @@ export default forwardRef((props, ref) => {
                 </ScrollView>
             </View>
             {/* <TouchableOpacity style={{backgroundColor:"red", padding: 20, flex: 1}} onPress={() => data.callback("ClickHung")}><Text>Click</Text></TouchableOpacity> */}
-            <Image source={{ uri: uriImg ? uriImg : "" }} resizeMode="contain" style={{ position: "absolute", top: 50, width: 100, height: 100, flex: 1 }} />
+            {/* <Image source={{ uri: uriImg ? uriImg : "" }} resizeMode="contain" style={{ position: "absolute", top: 50, width: 100, height: 100, flex: 1 }} /> */}
         </View>
     )
 
