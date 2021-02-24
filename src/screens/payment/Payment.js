@@ -612,7 +612,7 @@ export default (props) => {
         serverEvent.JsonContent = JSON.stringify(json);
         serverEvent.Version += 10
         console.log("updateServerEvent serverEvent ", serverEvent);
-        dataManager.updateServerEventNow(serverEvent, true, isFNB);
+        dataManager.updateServerEventNow(serverEvent, false, isFNB);
         if (settingObject.current.am_bao_thanh_toan == true)
             playSound()
 
@@ -765,9 +765,10 @@ export default (props) => {
             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
             dataManager.calculatateJsonContent(jsonContent)
             serverEvent.JsonContent = JSON.stringify(jsonContent)
-            dataManager.updateServerEventNow(serverEvent, true, isFNB);
+            serverEvent.Version += 1
+            dataManager.updateServerEventNow(serverEvent, false, isFNB);
         }
-    } 
+    }
 
     const onChangeDate = (selectedDate) => {
         const currentDate = dateTmp.current;

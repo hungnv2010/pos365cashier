@@ -128,7 +128,7 @@ export default (props) => {
         try {
             let res = results.replace(/,/g, '');
             res = eval(res);
-            res = res.toString().replace(/(\d)(?=(\d{3})+\b)/g, '$&,');
+            res = ("" + res).replace(/(\d)(?=(\d{3})+\b)/g, '$&,');
             setResults("" + res)
         } catch (error) {
             console.log('getFinalResults err', error);

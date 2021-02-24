@@ -91,7 +91,7 @@ const Served = (props) => {
                 currentServerEvent.current = JSON.parse(JSON.stringify(serverEvent[0]))
                 let jsonTmp = JSON.parse(serverEvent[0].JsonContent)
                 jsonTmp.OrderDetails = await addPromotion(jsonTmp.OrderDetails);
-                setJsonContent(JSON.parse(serverEvent[0].JsonContent))
+                setJsonContent(jsonTmp)
             }
         }
 

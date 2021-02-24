@@ -509,14 +509,18 @@ export default (props) => {
                             onChangeText={(text) => { onChangeText(text, 4) }}
                         />
                     </View>
-                    <View style={{ padding: 15 }}>
-                        <Text style={{ paddingBottom: 10 }}>{I18n.t('ten_nhom')}</Text>
-                        <TouchableOpacity onPress={() => {
-                            typeModal.current = 3
-                            setShowModal(true)
-                        }} style={{ flexDirection: "row", alignItems: "center" }}>
-                            <Text style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1, color: getGroupName(customerDetail.PartnerGroupMembers) ? null : "#CECCCB" }}>{getGroupName(customerDetail.PartnerGroupMembers) ? getGroupName(customerDetail.PartnerGroupMembers) : I18n.t('ten_nhom')}</Text>
-                            {/* <TextInput
+                    {
+                        props.customerDetail.Id == 0 ?
+                            null
+                            :
+                            <View style={{ padding: 15 }}>
+                                <Text style={{ paddingBottom: 10 }}>{I18n.t('ten_nhom')}</Text>
+                                <TouchableOpacity onPress={() => {
+                                    typeModal.current = 3
+                                    setShowModal(true)
+                                }} style={{ flexDirection: "row", alignItems: "center" }}>
+                                    <Text style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1, color: getGroupName(customerDetail.PartnerGroupMembers) ? null : "#CECCCB" }}>{getGroupName(customerDetail.PartnerGroupMembers) ? getGroupName(customerDetail.PartnerGroupMembers) : I18n.t('ten_nhom')}</Text>
+                                    {/* <TextInput
                                 placeholder={I18n.t('ten_nhom')}
                                 value={getGroupName(customerDetail.PartnerGroupMembers)}
                                 editable={false}
@@ -527,9 +531,10 @@ export default (props) => {
                                 }
                                 style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1 }}
                             /> */}
-                            <Image source={Images.icon_arrow_down} style={{ width: 20, height: 20, position: "absolute", right: 15 }} />
-                        </TouchableOpacity>
-                    </View>
+                                    <Image source={Images.icon_arrow_down} style={{ width: 20, height: 20, position: "absolute", right: 15 }} />
+                                </TouchableOpacity>
+                            </View>
+                    }
 
                 </Surface>
                 <Surface style={styles.surface}>
