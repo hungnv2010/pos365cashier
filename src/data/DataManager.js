@@ -256,7 +256,7 @@ class DataManager {
     }
 
     updateServerEventNow = async (serverEvent, FromServer = false, isFNB = true) => {
-        if(!(typeof jsonContent === "string")) {
+        if(typeof serverEvent.JsonContent === "object") {
             let cloneJsoncontent = serverEvent.JsonContent
             cloneJsoncontent.OrderDetails.forEach(product => {
                 product.ProductImages = []
@@ -326,7 +326,7 @@ class DataManager {
 
     paymentSetServerEvent = (serverEvent, newJsonContent, updateNow = false) => {
         if (!serverEvent.JsonContent) return
-        serverEvent.JsonContent = JSON.stringify(newJsonContent)
+        // serverEvent.JsonContent = JSON.stringify(newJsonContent)
         if (updateNow)
             serverEvent.Version += 10
         else

@@ -203,7 +203,7 @@ export default (props) => {
         }
     }
 
-    const onChangeTextInput = (text, type) => {
+    const onChangeTextInput = (text, type, update = false) => {
 
         // debounceTimeInput.current.next(text)
 
@@ -221,7 +221,7 @@ export default (props) => {
             case 2:
                 json['VATRates'] = text;
                 setInputVAT(text)
-                calculatorPrice(json, totalPrice, false)
+                calculatorPrice(json, totalPrice, update)
                 break;
             case 1:
                 if (!percent) {
@@ -230,7 +230,7 @@ export default (props) => {
                     json['DiscountRatio'] = text;
                 }
                 // setInputDiscount(text);
-                calculatorPrice(json, totalPrice, false)
+                calculatorPrice(json, totalPrice, update)
                 break;
             default:
                 break;
@@ -650,6 +650,7 @@ export default (props) => {
         let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
         let json = dataManager.createJsonContent(props.route.params.RoomId, props.route.params.Position, moment(), []);
         setJsonContent(json)
+        serverEvent.JsonContent = json;
         serverEvent.Version += 10
         console.log("updateServerEvent serverEvent ", serverEvent);
         dataManager.updateServerEventNow(serverEvent, true, isFNB);
@@ -742,9 +743,9 @@ export default (props) => {
             console.log("outputResult ::: ", value);
             if (sendMethod == METHOD.discount) {
                 console.log("outputResult discount :: ", value);
-                onChangeTextInput(currencyToString(value, true), 1)
+                onChangeTextInput(currencyToString(value, true), 1, true)
             } else if (sendMethod == METHOD.vat) {
-                onChangeTextInput(currencyToString(value, true), 2)
+                onChangeTextInput(currencyToString(value, true), 2, true)
             } else {
                 onChangeTextPaymentPaid(currencyToString(value, true), sendMethod)
             }
@@ -1201,10 +1202,14 @@ export default (props) => {
                             <View style={styles.viewTextExcessCash}>
                                 <Text style={{ flex: 3 }}>VAT</Text>
                                 <View style={{ flexDirection: "row", flex: 3, marginLeft: 5 }}>
-                                    <TouchableOpacity onPress={() => selectVAT(0)} style={[styles.selectPecent, { backgroundColor: !percentVAT ? colors.colorchinh : "#fff" }]}>
+                                    <TouchableOpacity onPress={() => { setInputVAT(0), selectVAT(0) }} style={[styles.selectPecent, { backgroundColor: !percentVAT ? colors.colorchinh : "#fff" }]}>
                                         <Text style={{ color: !percentVAT ? "#fff" : '#000' }}>0%</Text>
                                     </TouchableOpacity>
-                                    <TouchableOpacity onPress={() => selectVAT(vendorSession.Settings && vendorSession.Settings.VAT ? vendorSession.Settings.VAT : 0)} style={[styles.viewSelectVAT, { backgroundColor: !percentVAT ? "#fff" : colors.colorchinh }]}>
+                                    <TouchableOpacity onPress={() => {
+                                        setInputVAT(vendorSession.Settings && vendorSession.Settings.VAT ? vendorSession.Settings.VAT : 0)
+                                        selectVAT(vendorSession.Settings && vendorSession.Settings.VAT ? vendorSession.Settings.VAT : 0)
+                                    }
+                                    } style={[styles.viewSelectVAT, { backgroundColor: !percentVAT ? "#fff" : colors.colorchinh }]}>
                                         <Text style={{ color: percentVAT ? "#fff" : "#000" }}>{vendorSession.Settings && vendorSession.Settings.VAT ? vendorSession.Settings.VAT : 0}%</Text>
                                     </TouchableOpacity>
                                 </View>
