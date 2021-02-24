@@ -27,7 +27,7 @@ import QRCode from 'react-native-qrcode-svg';
 import ViewPrint, { TYPE_PRINT } from '../more/ViewPrint';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
-import Customer from '../customer/Customer';
+import { Subject } from 'rxjs';
 var Sound = require('react-native-sound');
 let timeClickPrevious = 1000;
 
@@ -88,6 +88,7 @@ export default (props) => {
     const currentServerEvent = useRef();
     const viewPrintRef = useRef();
     const settingObject = useRef();
+    const debounceTimeInput = useRef(new Subject());
     let row_key = "";
 
     const { deviceType, isFNB } = useSelector(state => {
@@ -134,6 +135,17 @@ export default (props) => {
             console.log("settingObject.current ", settingObject.current);
         }
 
+        // debounceTimeInput.current.debounceTime(300)
+        //     .subscribe(value => {
+        //         console.log("debounceTimeInput value ", value);
+        //         if (value != "0" && currentServerEvent.current) {
+        //             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
+        //             dataManager.calculatateJsonContent(jsonContent)
+        //             serverEvent.JsonContent = JSON.stringify(jsonContent)
+        //             dataManager.updateServerEventNow(serverEvent, true, isFNB);
+        //         }
+        //     })
+
         getRoom()
         getVendorSession()
         getObjectSetting()
@@ -173,7 +185,22 @@ export default (props) => {
         return total;
     }
 
+    const onBlurInput = () => {
+        console.log("onBlurInput =============");
+        setSendMethod("")
+        if (currentServerEvent.current) {
+            let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
+            dataManager.calculatateJsonContent(jsonContent)
+            serverEvent.JsonContent = JSON.stringify(jsonContent)
+            serverEvent.Version += 1
+            dataManager.updateServerEventNow(serverEvent, false, isFNB);
+        }
+    }
+
     const onChangeTextInput = (text, type) => {
+
+        // debounceTimeInput.current.next(text)
+
         text = text.toString();
         console.log("onChangeTextInput text type ", text, typeof (text), type);
         if (text == "") {
@@ -187,7 +214,7 @@ export default (props) => {
         switch (type) {
             case 2:
                 json['VATRates'] = text;
-                calculatorPrice(json, totalPrice)
+                calculatorPrice(json, totalPrice, false)
                 break;
             case 1:
                 if (!percent) {
@@ -195,7 +222,7 @@ export default (props) => {
                 } else {
                     json['DiscountRatio'] = text;
                 }
-                calculatorPrice(json, totalPrice)
+                calculatorPrice(json, totalPrice, false)
                 break;
             default:
                 break;
@@ -363,7 +390,7 @@ export default (props) => {
 
     const setListVoucherTemp = (item, value) => {
         listMethod.forEach(element => {
-            if (item.Id == element.Id) {
+            if (item.Id == element.Id && item.UUID == element.UUID) {
                 element.Value = value
             }
         });
@@ -609,10 +636,9 @@ export default (props) => {
         let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
         let json = dataManager.createJsonContent(props.route.params.RoomId, props.route.params.Position, moment(), []);
         setJsonContent(json)
-        serverEvent.JsonContent = JSON.stringify(json);
         serverEvent.Version += 10
         console.log("updateServerEvent serverEvent ", serverEvent);
-        dataManager.updateServerEventNow(serverEvent, false, isFNB);
+        dataManager.updateServerEventNow(serverEvent, true, isFNB);
         if (settingObject.current.am_bao_thanh_toan == true)
             playSound()
 
@@ -760,13 +786,14 @@ export default (props) => {
             jsonContent.ExcessCash = 0
         }
         setJsonContent({ ...jsonContent })
+        console.log("jsonContent ============== ", jsonContent);
 
         if (currentServerEvent.current && update == true) {
             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
             dataManager.calculatateJsonContent(jsonContent)
             serverEvent.JsonContent = JSON.stringify(jsonContent)
             serverEvent.Version += 1
-            dataManager.updateServerEventNow(serverEvent, false, isFNB);
+            dataManager.updateServerEventNow(serverEvent, true, isFNB);
         }
     }
 
@@ -1105,6 +1132,7 @@ export default (props) => {
                                     </TouchableOpacity>
                                 </View>
                                 <TextInput
+                                    onBlur={onBlurInput}
                                     returnKeyType='done'
                                     keyboardType="number-pad"
                                     selection={selection}
@@ -1141,6 +1169,7 @@ export default (props) => {
                                     </TouchableOpacity>
                                 </View>
                                 <TextInput
+                                    onBlur={onBlurInput}
                                     returnKeyType='done'
                                     keyboardType="number-pad"
                                     selection={selection}

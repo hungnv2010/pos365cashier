@@ -295,6 +295,8 @@ export default {
   ten_nhom: "Group Name",
   tinh_thanh: "Province",
   tien_khach_tra: "Payment paid",
+  tong_tam_tinh:"Total provisional",
+  tong_thanh_toan:"Total payment",
 
 
   // TODO: U

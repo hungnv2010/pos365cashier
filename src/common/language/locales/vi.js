@@ -350,6 +350,8 @@ export default {
   tach_ban: "Tách bàn",
   tach_tai_ban: "Tách tại bàn",
   thanh_cong: "thành công",
+  tong_tam_tinh:"Tổng tạm tính",
+  tong_thanh_toan:"Tổng thanh toán",
 
   // TODO: U
 

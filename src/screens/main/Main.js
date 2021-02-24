@@ -135,12 +135,14 @@ export default (props) => {
   useEffect(() => {
     if (autoPrintKitchen && isFNB) {
       const getDataNewOrders = async () => {
-        let newOrders = await dataManager.initComfirmOrder()
-        console.log('getDataNewOrders', newOrders);
-
-        if (newOrders != null)
-          viewPrintRef.current.printKitchenRef(newOrders)
-
+        let result = await dataManager.initComfirmOrder()
+        console.log('getDataNewOrders', result);
+        if (result != null) {
+          if (result.newOrders && result.newOrders != null)
+            viewPrintRef.current.printKitchenRef(JSON.stringify(result.newOrders))
+          if (result.listRoom && result.listRoom != null)
+            dataManager.updateFromOrder(result.listRoom)
+        }
       }
 
       scanFromOrder = setInterval(() => {

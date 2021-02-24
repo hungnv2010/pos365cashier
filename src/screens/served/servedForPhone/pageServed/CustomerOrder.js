@@ -46,10 +46,12 @@ export default (props) => {
     const typeModal = useRef(TYPE_MODAL.DETAIL)
     const isStartPrint = useRef(-1)
 
+    const [delay, setDelay] = useState(1);
     useInterval(() => {//60s kiem tra va tinh lai hang hoa tính gio
+        if(delay == 1) setDelay(60)
         let reload = dataManager.calculateProductTime(listOrder)
         if(reload) props.outPutSetNewOrderDetail(listOrder)
-    }, 60 * 1000)
+    }, delay * 1000)
 
     useEffect(() => {
         const getVendorSession = async () => {
@@ -147,6 +149,7 @@ export default (props) => {
         // typeModal.current = TYPE_MODAL.DELETE
         // setShowModal(true)
         if (vendorSession.Settings.ReturnHistory) {
+            setQuantitySubtract(item.Quantity)
             typeModal.current = TYPE_MODAL.DELETE
             setShowModal(true)
         } else {

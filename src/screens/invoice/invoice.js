@@ -229,6 +229,23 @@ const Invoice = (props) => {
         }
     }
 
+    const getStatus = (status) => {
+        switch (status) {
+            case 2:
+                return 'hoan_thanh';
+                break;
+            case 1:
+                return 'dang_xu_ly';
+                break;
+            case 3:
+                return 'huy';
+                break;
+            default:
+                return 'dang_xu_ly';
+                break;
+        }
+    }
+
     const checkColor = (item) => {
         let MoreAttributes = getMoreAttributes(item);
         if (MoreAttributes) {
@@ -277,7 +294,7 @@ const Invoice = (props) => {
 
                         <View style={{ alignItems: "flex-end" }}>
                             <Text style={{ fontSize: 14, color: checkColor(item) ? "black" : "red" }}>{currencyToString(item.TotalPayment)}</Text>
-                            <Text style={{ color: '#689f38', fontSize: 13 }}></Text>
+                            <Text style={{ color: colors.colorchinh, fontSize: 13 }}>{"Status" in item ? I18n.t(getStatus(item.Status)) : ""}</Text>
                             <Text style={{ color: "#0072bc", fontSize: 12 }}>{moment.utc(momentToDateUTC(item.CreatedDate)).local().format("HH:mm DD/MM/YYYY")}</Text>
                         </View>
                     </View>
