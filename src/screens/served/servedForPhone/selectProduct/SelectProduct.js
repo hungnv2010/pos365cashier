@@ -9,6 +9,7 @@ import useDebounce from '../../../../customHook/useDebounce';
 import { Colors, Metrics, Images } from '../../../../theme'
 import ToolBarSelectProduct from '../../../../components/toolbar/ToolBarSelectProduct'
 import dialogManager from '../../../../components/dialog/DialogManager'
+import ProductManager from '../../../../data/objectManager/ProductManager'
 
 
 export default (props) => {
@@ -118,7 +119,6 @@ export default (props) => {
   const onClickProduct = (item, index) => {
     console.log('onClickProduct', item);
     item.index = undefined
-    item.Description = getDescription(item)
     let pos = listProducts.current.map(elm => elm.Id).indexOf(item.Id);
     let pos_2 = listChangeText.current.map(elm => elm.Id).indexOf(item.Id);
     if (pos == -1 && pos_2 == -1) {
@@ -129,6 +129,7 @@ export default (props) => {
       listProducts.current = listProducts.current.filter(elm => elm.Id != item.Id)
       listChangeText.current = listChangeText.current.filter(elm => elm.Id != item.Id)
     }
+
     console.log('onClickProduct listProducts ', listProducts.current);
     setProduct([...product])
   }
@@ -139,15 +140,6 @@ export default (props) => {
       Quantity = item.BlockOfTimeToUseService / 60
     }
     return Quantity
-  }
-
-  const getDescription = (item) => {
-    let Description = ''
-    if (item.ProductType == 2 && item.IsTimer) {
-      let checkIn = new Date();
-      Description = `${dateToString(checkIn, "DD/MM HH:mm")}=>${dateToString(checkIn, "DD/MM HH:mm")} () ${I18n.t('mot_gio_dau_tien')} = ${currencyToString(item.Price)}.`;
-    }
-    return Description
   }
 
   const handleButtonIncrease = (item, index) => {

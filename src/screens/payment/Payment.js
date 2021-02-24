@@ -607,10 +607,8 @@ export default (props) => {
         let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
         let json = dataManager.createJsonContent(props.route.params.RoomId, props.route.params.Position, moment(), []);
         setJsonContent(json)
-        serverEvent.JsonContent = JSON.stringify(json);
         serverEvent.Version += 10
         console.log("updateServerEvent serverEvent ", serverEvent);
-        delete serverEvent.Timestamp
         dataManager.updateServerEventNow(serverEvent, true, isFNB);
         if (settingObject.current.am_bao_thanh_toan == true)
             playSound()
@@ -777,8 +775,7 @@ export default (props) => {
             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
             dataManager.paymentSetServerEvent(serverEvent, jsonContent);
             if (isFNB) {
-                delete serverEvent.Timestamp
-                dataManager.subjectUpdateServerEvent.next(serverEvent)
+                dataManager.updateServerEvent(serverEvent)
             }
         }
     }

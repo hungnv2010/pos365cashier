@@ -21,6 +21,7 @@ import { ScreenList } from '../../../../common/ScreenList';
 import { currencyToString, dateToString } from '../../../../common/Utils';
 import moment from 'moment';
 import { log } from 'react-native-reanimated';
+import ProductManager from '../../../../data/objectManager/ProductManager'
 
 export default (props) => {
 
@@ -165,6 +166,7 @@ export default (props) => {
                 list = await getOtherPrice(list)
                 list.forEach(item => {
                     if (item.SplitForSalesOrder || (item.ProductType == 2 && item.IsTimer)) {
+                        if(item.IsTimer) ProductManager.getProductTimePrice(item)
                         listTmp.push(item)
                     } else {
                         let pos = listCooked.current.map(elm => elm.Id).indexOf(item.Id);
@@ -197,7 +199,7 @@ export default (props) => {
 
         checkRoomProductId(listProduct, props.route.params.room.ProductId)
 
-        updateServerEvent({ ...jsonContent })
+        updateServerEvent({ ...jsonContent }, 0)
     }
 
     const addPromotion = async (list = []) => {
@@ -310,18 +312,14 @@ export default (props) => {
         return true;
     }
 
-    const updateServerEvent = (jsonContent) => {
-        console.log('updateServerEvent', currentPriceBook.Id);
-        console.log('updateServerEvent jsonContent :: ', jsonContent);
+    const updateServerEvent = (jsonContent, versionIncrease = 1) => {
         if (currentServerEvent.current) {
             let serverEvent = currentServerEvent.current
             dataManager.calculatateJsonContent(jsonContent)
             console.log('jsonContentjsonContent', jsonContent);
             setJsonContent({ ...jsonContent })
-            serverEvent.Version += 1
-            serverEvent.JsonContent = JSON.stringify(jsonContent)
-            delete serverEvent.Timestamp
-            dataManager.updateServerEvent(serverEvent)
+            serverEvent.Version += versionIncrease
+            dataManager.updateServerEvent(serverEvent, jsonContent)
         }
     }
 
@@ -564,8 +562,7 @@ export default (props) => {
             dataManager.calculatateJsonContent(jsonContent)
             setJsonContent({ ...jsonContent })
             serverEvent.Version += 1
-            serverEvent.JsonContent = JSON.stringify(jsonContent)
-            dataManager.updateServerEvent(serverEvent)
+            dataManager.updateServerEvent(serverEvent, jsonContent)
         }
     }
 
