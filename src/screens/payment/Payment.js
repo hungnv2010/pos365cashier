@@ -198,7 +198,8 @@ export default (props) => {
             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
             dataManager.calculatateJsonContent(jsonContent)
             serverEvent.JsonContent = JSON.stringify(jsonContent)
-            dataManager.updateServerEventNow(serverEvent, true, isFNB);
+            serverEvent.Version += 1
+            dataManager.updateServerEventNow(serverEvent, false, isFNB);
         }
     }
 
@@ -649,7 +650,6 @@ export default (props) => {
         let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
         let json = dataManager.createJsonContent(props.route.params.RoomId, props.route.params.Position, moment(), []);
         setJsonContent(json)
-        serverEvent.JsonContent = JSON.stringify(json);
         serverEvent.Version += 10
         console.log("updateServerEvent serverEvent ", serverEvent);
         dataManager.updateServerEventNow(serverEvent, true, isFNB);
@@ -820,6 +820,7 @@ export default (props) => {
             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
             dataManager.calculatateJsonContent(jsonContent)
             serverEvent.JsonContent = JSON.stringify(jsonContent)
+            serverEvent.Version += 1
             dataManager.updateServerEventNow(serverEvent, true, isFNB);
         }
     }

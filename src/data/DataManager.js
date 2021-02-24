@@ -241,15 +241,31 @@ class DataManager {
 
 
     //calculator and send ServerEvent
-    updateServerEvent = (serverEvent) => {
+    updateServerEvent = (serverEvent, jsonContent) => {
+        if(typeof jsonContent === "string") 
+            serverEvent.JsonContent = jsonContent
+        else {
+            let cloneJsoncontent = jsonContent
+            cloneJsoncontent.OrderDetails.forEach(product => {
+                product.ProductImages = []
+            });
+            serverEvent.JsonContent = JSON.stringify(cloneJsoncontent)
+        }
+        delete serverEvent.Timestamp
         this.subjectUpdateServerEvent.next(serverEvent)
     }
 
     updateServerEventNow = async (serverEvent, FromServer = false, isFNB = true) => {
-        console.log("updateServerEventNow serverEvent FromServer ", serverEvent, FromServer, isFNB);
+        if(!(typeof jsonContent === "string")) {
+            let cloneJsoncontent = serverEvent.JsonContent
+            cloneJsoncontent.OrderDetails.forEach(product => {
+                product.ProductImages = []
+            });
+            serverEvent.JsonContent = JSON.stringify(cloneJsoncontent)
+        }
+        delete serverEvent.Timestamp
         await realmStore.insertServerEvent(serverEvent, FromServer)
         if (isFNB) {
-            console.log("updateServerEventNow FromServer ok ", FromServer)
             signalRManager.sendMessageServerEvent(serverEvent, FromServer)
         }
     }
@@ -295,17 +311,11 @@ class DataManager {
 
     calculateProductTime = (listProduct) => {
         let reload = listProduct.filter(product => product.IsTimer && !product.StopTimer).length > 0
-        this.count = this.count + 1
         if (reload) {
             listProduct.forEach(product => {
                 if (product.IsTimer && !product.StopTimer) {
                     let momentNow = moment().utc()
                     product.Checkout = momentToDate(momentNow)
-                    product.Description = dateToDate(product.Checkin, "YYYY-MM-DD[T]HH:mm:ss.SS[Z]", "DD/MM HH:mm") + "=>" +
-                        dateToDate(new Date(), "YYYY-MM-DD[T]HH:mm:ss.SS[Z]", "DD/MM HH:mm") +
-                        " (" + getTimeFromNow(product.Checkin) + ") "
-                    let minutes = getDifferenceSeconds(product.Checkin, new Date()) / 60
-                    product.Quantity = productManager.getProductTimeQuantity(product, minutes)
                     productManager.getProductTimePrice(product)
                 }
             })
@@ -380,10 +390,9 @@ class DataManager {
         newServerEvent.JsonContent.ActiveDate = oldServerEvent.JsonContent.ActiveDate ? oldServerEvent.JsonContent.ActiveDate : ""
 
         oldServerEvent.Version += 1
-        oldServerEvent.JsonContent = JSON.stringify(this.createJsonContent(oldRoomId, oldPosition, moment()))
+        oldServerEvent.JsonContent = this.createJsonContent(oldRoomId, oldPosition, moment())
         newServerEvent.Version += 1
         this.calculatateJsonContent(newServerEvent.JsonContent)
-        newServerEvent.JsonContent = JSON.stringify(newServerEvent.JsonContent)
         await this.updateServerEventNow(oldServerEvent, true)
         await this.updateServerEventNow(newServerEvent, true)
 
@@ -417,7 +426,6 @@ class DataManager {
         oldServerEvent.Version += 1
         oldServerEvent.JsonContent.OrderDetails = ListOldSplit
         this.calculatateJsonContent(oldServerEvent.JsonContent)
-        oldServerEvent.JsonContent = JSON.stringify(oldServerEvent.JsonContent)
         // oldServerEvent.JsonContent.OrderDetails = ListOldSplit
         // if (ListOldSplit == undefined || ListOldSplit.length == 0)
         //     oldServerEvent.JsonContent = JSON.stringify(this.removeJsonContent(oldServerEvent.JsonContent))
@@ -425,7 +433,6 @@ class DataManager {
         //     oldServerEvent.JsonContent = JSON.stringify(oldServerEvent.JsonContent)
         newServerEvent.Version += 1
         this.calculatateJsonContent(newServerEvent.JsonContent)
-        newServerEvent.JsonContent = JSON.stringify(newServerEvent.JsonContent)
 
         console.log("splitTable oldServerEvent:: ", oldServerEvent)
         console.log("splitTable newServerEvent:: ", newServerEvent)

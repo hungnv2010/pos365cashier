@@ -62,11 +62,11 @@ export default (props) => {
     const roomRef = useRef([])
     const [filterStatus, setFilterStatus] = useState('tat_ca')
 
-  
+
 
     useFocusEffect(
         React.useCallback(() => {
-             updateTime = setInterval(() => {
+            updateTime = setInterval(() => {
                 reloadTime()
             }, 1000 * 60);
             return () => {

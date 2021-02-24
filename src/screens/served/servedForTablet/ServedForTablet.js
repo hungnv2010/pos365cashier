@@ -21,6 +21,7 @@ import { ApiPath } from '../../../data/services/ApiPath';
 import { HTTPService } from '../../../data/services/HttpService';
 import { ScreenList } from '../../../common/ScreenList';
 import _, { map } from 'underscore';
+import ProductManager from '../../../data/objectManager/ProductManager'
 
 const Served = (props) => {
     let serverEvent = null;
@@ -91,7 +92,7 @@ const Served = (props) => {
                 currentServerEvent.current = JSON.parse(JSON.stringify(serverEvent[0]))
                 let jsonTmp = JSON.parse(serverEvent[0].JsonContent)
                 jsonTmp.OrderDetails = await addPromotion(jsonTmp.OrderDetails);
-                setJsonContent(JSON.parse(serverEvent[0].JsonContent))
+                setJsonContent(jsonTmp)
             }
         }
 
@@ -168,9 +169,12 @@ const Served = (props) => {
                 jsonContentTmp.ActiveDate = moment()
                 dataManager.sentNotification(title, body)
             }
-            if (product.SplitForSalesOrder) {
+            if (product.SplitForSalesOrder || (product.ProductType == 2 && product.IsTimer)) {
                 product = await getOtherPrice(product)
-                jsonContentTmp.OrderDetails.push(product)
+                {
+                    if(product.IsTimer) ProductManager.getProductTimePrice(product)
+                    jsonContentTmp.OrderDetails.push(product)
+                }
             } else {
                 let isExist = false
                 jsonContentTmp.OrderDetails.forEach(elm => {
@@ -359,15 +363,12 @@ const Served = (props) => {
     }
 
     const updateServerEvent = (jsonContent) => {
-        console.log('updateServerEvent currentPriceBook', currentPriceBook);
         if (currentServerEvent.current) {
             let serverEvent = currentServerEvent.current
             dataManager.calculatateJsonContent(jsonContent)
             setJsonContent({ ...jsonContent })
             serverEvent.Version += 1
-            serverEvent.JsonContent = JSON.stringify(jsonContent)
-            console.log('updateServerEvent serverEvent', jsonContent);
-            dataManager.updateServerEvent(serverEvent)
+            dataManager.updateServerEvent(serverEvent), jsonContent
         }
     }
 
