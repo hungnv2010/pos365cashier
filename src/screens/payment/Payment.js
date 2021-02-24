@@ -47,7 +47,7 @@ export default (props) => {
         Id: 0,
         UUID: randomUUID(),
         Name: I18n.t('tien_mat'),
-        Value: 0,
+        Value: "",
     }
     const dispatch = useDispatch();
     const [totalPrice, setTotalPrice] = useState(0);
@@ -79,6 +79,9 @@ export default (props) => {
         start: 0,
         end: 0
     })
+
+    const [inputDiscount, setInputDiscount] = useState("");
+    const [inputVAT, setInputVAT] = useState("");
     const provisional = useRef();
     const dateTmp = useRef(new Date())
     const toolBarPaymentRef = useRef();
@@ -111,12 +114,15 @@ export default (props) => {
             let total = getTotalOrder(orderDetails);
             setTotalPrice(total);
             CASH.Value = jsonContentTmp.Total;
-            setPercentVAT(jsonContentTmp.VATRates ? true : false)
+            setPercentVAT(jsonContentTmp.VATRates && jsonContentTmp.VATRates < 100 ? true : false)
+            setInputVAT(jsonContentTmp.VATRates)
             let isVnd = !(jsonContentTmp.DiscountRatio > 0 || jsonContentTmp.DiscountValue == 0)
             console.log("useEffect isVnd == ", isVnd);
             if (!isVnd) {
+                setInputDiscount(jsonContentTmp.DiscountRatio)
                 setPercent(true)
             } else {
+                setInputDiscount(jsonContentTmp.DiscountValue)
                 setPercent(false)
             }
         }
@@ -186,7 +192,7 @@ export default (props) => {
     }
 
     const onBlurInput = () => {
-        console.log("onBlurInput =============");
+        console.log("onBlurInput ============= jsonContent ", jsonContent);
         setSendMethod("")
         if (currentServerEvent.current) {
             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
@@ -213,6 +219,7 @@ export default (props) => {
         switch (type) {
             case 2:
                 json['VATRates'] = text;
+                setInputVAT(text)
                 calculatorPrice(json, totalPrice, false)
                 break;
             case 1:
@@ -221,6 +228,7 @@ export default (props) => {
                 } else {
                     json['DiscountRatio'] = text;
                 }
+                // setInputDiscount(text);
                 calculatorPrice(json, totalPrice, false)
                 break;
             default:
@@ -233,7 +241,7 @@ export default (props) => {
         let newDate = new Date().getTime();
         if (timeClickPrevious + 500 < newDate) {
             let list = listMethod;
-            list.push({ ...CASH, UUID: randomUUID(), Value: list.length > 0 ? 0 : jsonContent.Total })
+            list.push({ ...CASH, UUID: randomUUID(), Value: list.length > 0 ? "" : jsonContent.Total })
             setListMethod([...list])
             timeClickPrevious = newDate;
             console.log("addAccount [...list] ", [...list]);
@@ -254,6 +262,7 @@ export default (props) => {
         setListVoucher(data.listVoucher)
         setPointUse(data.pointUse)
         setPoint((data.rewardPoints + data.sumVoucher))
+        calculatorPrice(jsonContent, totalPrice)
     }
 
     const onCallBackCustomer = (data) => {
@@ -488,6 +497,11 @@ export default (props) => {
     }
 
     const selectPercent = (value) => {
+        // if(value){
+        //     setInputDiscount(value)
+        // } else {
+
+        // }
         setPercent(value)
     }
 
@@ -539,7 +553,7 @@ export default (props) => {
             if (index == 0 && giveMoneyBack && amountReceived > json.Total) {
                 value = (amountReceived - value) > json.Total ? 0 : json.Total - (amountReceived - value)
             }
-            paramMethod.push({ AccountId: element.Id, Value: value })
+            paramMethod.push({ AccountId: element.Id, Value: value != "" ? value : 0 })
         });
         let MoreAttributes = json.MoreAttributes ? JSON.parse(json.MoreAttributes) : {}
         console.log("pointUse ", pointUse);
@@ -740,41 +754,55 @@ export default (props) => {
     const onTouchInput = (value) => {
         console.log("onTouchInput value ", value);
         setChoosePoint(0);
-        setSendMethod(value)
-        if (value.name == METHOD.pay.name) {
-            listMethod.forEach(element => {
-                if (value.Id == element.Id && element.UUID == value.UUID) {
-                    element.Value = 0;
-                    onChangeTextPaymentPaid("0", element)
-                }
-            });
-        } else {
-            onChangeTextInput("0", value == METHOD.vat ? 2 : 1)
+        if (value != sendMethod) {
+            setSendMethod(value)
+            if (value.name == METHOD.pay.name) {
+                listMethod.forEach(element => {
+                    if (value.Id == element.Id && element.UUID == value.UUID) {
+                        element.Value = 0;
+                        onChangeTextPaymentPaid("0", element)
+                    }
+                });
+            } else {
+                onChangeTextInput("0", value == METHOD.vat ? 2 : 1)
+            }
         }
     }
 
     const calculatorPrice = (jsonContent, totalPrice, update = true) => {
         console.log("calculator jsonContent ==  ", jsonContent);
+
         let realPriceValue = totalPrice;
         let disCountValue = 0;
         if (!percent) {
-            disCountValue = jsonContent.DiscountValue ? jsonContent.DiscountValue : 0;
+            disCountValue = jsonContent.DiscountValue ? (jsonContent.DiscountValue > realPriceValue ? realPriceValue : jsonContent.DiscountValue) : 0;
             jsonContent.DiscountRatio = 0
+            setInputDiscount(jsonContent.DiscountValue > realPriceValue ? realPriceValue : jsonContent.DiscountValue)
         } else {
+            jsonContent.DiscountRatio = jsonContent.DiscountRatio > 100 ? 100 : jsonContent.DiscountRatio
+            setInputDiscount(jsonContent.DiscountRatio)
             disCountValue = realPriceValue / 100 * jsonContent.DiscountRatio
         }
+        console.log("jsonContent ============== disCountValue ", disCountValue);
         let MoreAttributes = jsonContent.MoreAttributes ? JSON.parse(jsonContent.MoreAttributes) : {};
         let totalDiscount = parseFloat(disCountValue) + (MoreAttributes.PointDiscountValue ? parseFloat(MoreAttributes.PointDiscountValue) : 0) + (point);
         totalDiscount = (totalDiscount >= realPriceValue) ? realPriceValue : totalDiscount;
+        console.log("jsonContent ============== totalDiscount1 ", totalDiscount);
+        console.log("jsonContent ============== realPriceValue ", realPriceValue);
         let notVat = (realPriceValue - totalDiscount + (jsonContent.SafeShippingCost ? jsonContent.SafeShippingCost : 0))
         let vat = notVat / 100 * parseFloat(jsonContent.VATRates ? jsonContent.VATRates : 0);
+        console.log("jsonContent ============== point ", point);
+        console.log("jsonContent ============== notVat ", notVat);
+        console.log("jsonContent ============== vat ", vat);
         let total = notVat + vat
         if (total < 0) total = 0.0
         let excess = amountReceived() - total
         let excessCash = (excess < 0.0 && excess > -0.001) ? 0 : excess;
-        jsonContent.Discount = totalDiscount;
-        jsonContent.DiscountValue = disCountValue > total ? total : disCountValue;
-
+        console.log("jsonContent ============== totalDiscount ", totalDiscount);
+        console.log("jsonContent ============== total ", total);
+        jsonContent.Discount = totalDiscount > realPriceValue ? realPriceValue : totalDiscount;
+        jsonContent.DiscountValue = disCountValue > realPriceValue ? realPriceValue : disCountValue;
+        console.log("jsonContent ============== jsonContent.DiscountValue ", jsonContent.DiscountValue);
         jsonContent.VAT = vat
         jsonContent.Total = total
         jsonContent.ExcessCash = excessCash
@@ -861,6 +889,18 @@ export default (props) => {
             });
         }
         return number;
+    }
+
+    const onFocusVAT = () => {
+        jsonContent.VATRates = 0;
+        calculatorPrice(jsonContent, totalPrice)
+        setInputVAT("")
+    }
+
+    const onFocusDiscount = () => {
+        jsonContent.DiscountValue = 0;
+        jsonContent.DiscountRatio = 0;
+        calculatorPrice(jsonContent, totalPrice)
     }
 
     const setSelectionInput = (value) => {
@@ -1003,12 +1043,12 @@ export default (props) => {
                     <TextInput
                         returnKeyType='done'
                         keyboardType="number-pad"
-                        selection={selection}
+                        // selection={selection}
                         placeholder="0"
                         placeholderTextColor="#808080"
                         onFocus={() => setSelectionInput(currencyToString(item.Value, true))}
-                        onSelectionChange={() => setSelectionInput(currencyToString(item.Value, true))}
-                        value={"" + currencyToString(item.Value, true)}
+                        // onSelectionChange={() => setSelectionInput(currencyToString(item.Value, true))}
+                        value={item.Value == "" ? "" : "" + currencyToString(item.Value, true)}
                         onTouchStart={() => onTouchInput({ ...item, ...METHOD.pay })}
                         editable={deviceType == Constant.TABLET ? false : true}
                         onChangeText={(text) => onChangeTextPaymentPaid(text, item, index)}
@@ -1134,12 +1174,12 @@ export default (props) => {
                                     onBlur={onBlurInput}
                                     returnKeyType='done'
                                     keyboardType="number-pad"
-                                    selection={selection}
-                                    onFocus={() => setSelectionInput(currencyToString((!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio), true))}
+                                    onFocus={() => onFocusDiscount()}
+                                    // onFocus={() => setSelectionInput(currencyToString((!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio), true))}
                                     placeholder="0"
                                     placeholderTextColor="#808080"
-                                    onSelectionChange={() => setSelectionInput(currencyToString((!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio), true))}
-                                    value={"" + currencyToString((!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio), true)}
+                                    // onSelectionChange={() => setSelectionInput(currencyToString((!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio), true))}
+                                    value={inputDiscount == "" ? "" : currencyToString(inputDiscount, true)}
                                     onTouchStart={() => onTouchInput(METHOD.discount)}
                                     editable={deviceType == Constant.TABLET ? false : true}
                                     onChangeText={(text) => onChangeTextInput(text, 1)}
@@ -1171,12 +1211,14 @@ export default (props) => {
                                     onBlur={onBlurInput}
                                     returnKeyType='done'
                                     keyboardType="number-pad"
-                                    selection={selection}
+                                    // selection={selection}
                                     placeholder="0"
                                     placeholderTextColor="#808080"
-                                    onFocus={() => setSelectionInput(currencyToString(jsonContent.VATRates, true))}
-                                    onSelectionChange={() => setSelectionInput(currencyToString(jsonContent.VATRates, true))}
-                                    value={"" + currencyToString(jsonContent.VATRates, true)}
+                                    // onFocus={() => setSelectionInput(currencyToString(jsonContent.VATRates, true))}
+                                    // onSelectionChange={() => setSelectionInput(currencyToString(jsonContent.VATRates, true))}
+                                    // value={"" + currencyToString(jsonContent.VATRates, true)}
+                                    value={inputVAT == "" ? "" : currencyToString(inputVAT)}
+                                    onFocus={() => onFocusVAT()}
                                     onTouchStart={() => onTouchInput(METHOD.vat)}
                                     editable={deviceType == Constant.TABLET ? false : true}
                                     onChangeText={(text) => onChangeTextInput(text, 2)}
