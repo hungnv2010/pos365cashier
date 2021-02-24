@@ -13,10 +13,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Constant } from '../../common/Constant';
 import RoomDetail from './RoomDetail'
 
-var HEADER_MAX_HEIGHT = 200;
-const HEADER_MIN_HEIGHT = Platform.OS === 'ios' ? 70 : 0;
-const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
-
 export default (props) => {
 
     const [showToast, setShowToast] = useState(false);
@@ -30,12 +26,9 @@ export default (props) => {
     const roomItem = useRef({});
     const clickAdd = useRef(false);
     const [roomGroups, setRoomGroups] = useState([])
+    const [titleAddEdit, setTitleAddEdit] = useState(I18n.t('them_phong_ban'))
 
     const dispatch = useDispatch()
-
-    const [statescrollY, setScrollY] = useState(new Animated.Value(
-        Platform.OS === 'ios' ? -HEADER_MAX_HEIGHT : 0,
-    ))
 
     const deviceType = useSelector(state => {
         console.log("useSelector state ", state);
@@ -99,6 +92,7 @@ export default (props) => {
         if (deviceType == Constant.PHONE)
             props.navigation.navigate(ScreenList.RoomDetail, { room: roomItem.current, listRoom: rooms, roomGroups: roomGroups, _onSelect: onCallBack })
         else {
+            setTitleAddEdit(I18n.t('cap_nhat_phong_ban'))
             setDataParams({ ...{ room: roomItem.current, listRoom: rooms, roomGroups: roomGroups } })
         }
     }
@@ -173,25 +167,8 @@ export default (props) => {
 
             <View style={{ flexDirection: "row", flex: 1 }}>
                 <View
-                // style={{ flex: 1}}
+                    style={{ flex: 1 }}
                 >
-                    {/* <View
-                        onLayout={(event) => {
-                            var { x, y, width, height } = event.nativeEvent.layout;
-                        }}
-                        // flexShrink: expand < true && rooms.length > 5 ? 3.5 : 0 
-                        style={[styles.header, {}]}>
-                        {
-                            [{ Id: "", Name: I18n.t("tat_ca") }].concat(rooms).map((item, index) => {
-                                return (
-                                    <TouchableOpacity key={index.toString()} onPress={() => onClickTab(item, index)} style={{
-                                        padding: 10,
-                                    }}>
-                                        <Text style={{ color: indexTab == index ? colors.colorLightBlue : "black", fontSize: 15 }}>{item.Name}</Text>
-                                    </TouchableOpacity>
-                                );
-                            })}
-                    </View> */}
                     <View style={{ height: 45, backgroundColor: 'white', padding: 5 }}>
                         <View style={{ backgroundColor: '#f2f2f2', paddingHorizontal: 5, height: "100%", borderRadius: 18 }}>
                             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{}}>{
@@ -208,17 +185,6 @@ export default (props) => {
                             </ScrollView>
                         </View>
                     </View>
-                    {/* <ScrollView horizontal style={{backgroundColor: "red"}}>{
-                        [{ Id: "", Name: I18n.t("tat_ca") }].concat(rooms).map((item, index) => {
-                            return (
-                                <TouchableOpacity key={index.toString()} onPress={() => onClickTab(item, index)} style={{
-                                    padding: 10,
-                                }}>
-                                    <Text style={{ color: indexTab == index ? colors.colorLightBlue : "black", fontSize: 15 }}>{item.Name}</Text>
-                                </TouchableOpacity>
-                            );
-                        })}
-                    </ScrollView> */}
                     {_renderScrollViewContent()}
                     <FAB
                         style={styles.fab}
@@ -230,16 +196,20 @@ export default (props) => {
                             if (deviceType == Constant.PHONE)
                                 props.navigation.navigate(ScreenList.RoomDetail, { _onSelect: onCallBack })
                             else {
+                                setTitleAddEdit(I18n.t('them_phong_ban'))
                                 setDataParams({})
                             }
                         }}
                     />
                 </View>
-                {/* {deviceType == Constant.TABLET ?
+                {deviceType == Constant.TABLET ?
                     <View style={{ flex: 1, borderLeftWidth: 0.5, borderLeftColor: "#ccc" }}>
+                        <View style={{height: 45,backgroundColor: colors.colorchinh, justifyContent: "center", alignItems: "center"}}>
+                            <Text style={{color: "#fff", textTransform: "uppercase"}}>{titleAddEdit}</Text>
+                        </View>
                         <RoomDetail params={dataParams} _onSelect={(data) => onCallBack(data)} />
                     </View>
-                    : null} */}
+                    : null}
             </View>
             {/* <FAB
                 style={styles.fab}

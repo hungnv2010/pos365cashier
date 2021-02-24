@@ -20,7 +20,7 @@ export default (props) => {
   const [skip, setSkip] = useState(0)
   const [isSearching, setIsSearching] = useState(false)
   const [listCateId, setListCateId] = useState([-1])
-  const listProducts = useRef([...props.route.params.listProducts])
+  const listProducts = useRef(JSON.parse(JSON.stringify(props.route.params.listProducts)))
   const [valueSearch, setValueSearch] = useState('')
   const count = useRef(0)
   const [showModal, setShowModal] = useState(false)
@@ -234,13 +234,6 @@ export default (props) => {
 
   const clickLeftIcon = () => {
     if (JSON.stringify(props.route.params.listProducts) != JSON.stringify(listProducts.current)) {
-      // dialogManager.showPopupTwoButton(I18n.t('ban_co_muon_luu'), I18n.t('thong_bao'), (value) => {
-      //   if (value == 1) {
-      //     onClickDone()
-      //   } else {
-      //     props.navigation.goBack();
-      //   }
-      // })
       setShowModal(true)
     } else {
       props.navigation.goBack();
@@ -262,7 +255,7 @@ export default (props) => {
 
   const renderCateItem = (item, index) => {
     return (
-      <TouchableOpacity onPress={() => onClickCate(item, index)} key={index} style={[styles.renderCateItem, { backgroundColor: item.Id == listCateId[0] ? Colors.colorchinh : "white",borderRadius:4}]}>
+      <TouchableOpacity onPress={() => onClickCate(item, index)} key={index} style={[styles.renderCateItem, { backgroundColor: item.Id == listCateId[0] ? Colors.colorchinh : "white", borderRadius: 4 }]}>
         <Text numberOfLines={2} style={[styles.textRenderCateItem, { color: item.Id == listCateId[0] ? "white" : Colors.colorchinh }]}>{item.Name}</Text>
       </TouchableOpacity>
     );
@@ -369,6 +362,7 @@ export default (props) => {
                   <TouchableOpacity
                     style={{ padding: 10, borderRadius: 5, width: Metrics.screenWidth * 0.2, alignItems: "center", backgroundColor: Colors.colorPhu }}
                     onPress={() => {
+                      setShowModal(false)
                       props.navigation.goBack();
                     }}
                   >
@@ -377,6 +371,7 @@ export default (props) => {
                   <TouchableOpacity
                     style={{ padding: 10, borderRadius: 5, width: Metrics.screenWidth * 0.2, alignItems: "center", backgroundColor: Colors.colorchinh }}
                     onPress={() => {
+                      setShowModal(false)
                       onClickDone()
                     }}
                   >

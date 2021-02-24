@@ -67,6 +67,7 @@ export default {
   moi_chon_mon_truoc: "Mời bạn chọn hàng hóa trước",
   chon_vi_tri: "Chọn vị trí",
   chon_khach_hang: "Chọn khách hàng",
+  cap_nhat_phong_ban: "Cập nhật phòng bàn",
 
   // TODO: D
   dau_tien: "đầu tiên",
@@ -240,6 +241,7 @@ export default {
   phut: "phút",
   phien_ban_ngay: "Phiên bản",
   phuong_thuc_khac: "Phương thức khác",
+  phuong_thuc_thanh_toan:"Phương thức thanh toán",
 
   // TODO: Q
   quy_dau_ky: "Quỹ đầu kỳ",

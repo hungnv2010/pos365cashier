@@ -203,10 +203,8 @@ const CustomerOrder = (props) => {
     const onClickReturn = (product, type = 1) => {
         setQuantitySubtract(type != 1 ? 1 : product.Quantity)
         setItemOrder(product)
-        // typeModal.current = TYPE_MODAL.DELETE
-        // setShowModal(true)
-
         if (vendorSession.Settings.ReturnHistory) {
+            setQuantitySubtract(product.Quantity)
             typeModal.current = TYPE_MODAL.DELETE
             setShowModal(true)
         } else {

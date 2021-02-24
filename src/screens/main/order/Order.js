@@ -19,13 +19,11 @@ import { Constant } from '../../../common/Constant';
 import { Images, Metrics } from '../../../theme';
 import colors from '../../../theme/Colors';
 import TextTicker from 'react-native-text-ticker';
-import dataManager from '../../../data/DataManager';
-import { useFocusEffect } from '@react-navigation/native';
+import NetInfo from "@react-native-community/netinfo";
 import moment from 'moment';
 import Menu from 'react-native-material-menu';
-import { get } from 'react-native/Libraries/Utilities/PixelRatio';
 import useDebounce from '../../../customHook/useDebounce';
-// import 'moment/min/locales'
+import { useFocusEffect } from '@react-navigation/native';
 
 const _nodes = new Map();
 
@@ -54,16 +52,28 @@ export default (props) => {
     let rooms = null
     let roomGroups = null
     let serverEvents = null
+    let updateTime = null
     const [datas, setData] = useState([])
     const [valueAll, setValueAll] = useState({})
     const widthRoom = Dimensions.get('screen').width / numberColumn;
     const RoomAll = { Name: "Tất cả", Id: "All" }
     const [listRoom, setListRoom] = useState([])
     const dataRef = useRef([])
-    const roomGroupRef = useRef([])
     const roomRef = useRef([])
-    const severEventRef = useRef([])
     const [filterStatus, setFilterStatus] = useState('tat_ca')
+
+  
+
+    useFocusEffect(
+        React.useCallback(() => {
+             updateTime = setInterval(() => {
+                reloadTime()
+            }, 1000 * 60);
+            return () => {
+                clearInterval(updateTime)
+            }
+        }, [])
+    );
 
     useEffect(() => {
         if (!already) return
@@ -77,7 +87,7 @@ export default (props) => {
 
             let newDatas = insertServerEvent(getDatas(rooms, roomGroups), serverEvents)
             console.log("init: newDatas ", newDatas);
-            // dataRef.current = newDatas
+            dataRef.current = newDatas
             setData(newDatas)
             let list = newDatas.filter(item => item.isGroup)
 
@@ -105,7 +115,6 @@ export default (props) => {
     }, [already])
 
     const reloadTime = async () => {
-        console.log('reloadTime', dataRef.current);
         setData([...dataRef.current])
     }
 
@@ -138,7 +147,7 @@ export default (props) => {
 
         console.log("getDatas", newDatas);
         console.log("roomRef", roomRef.current);
-
+        console.log("dataRef", dataRef.current);
         return newDatas
     }
 
@@ -381,7 +390,7 @@ export default (props) => {
 
             </View>
             <View style={{ height: 45, backgroundColor: 'white', padding: 5 }}>
-                <View style={{ backgroundColor: '#f2f2f2', paddingHorizontal: 5, height: "100%", borderRadius: 18}}>
+                <View style={{ backgroundColor: '#f2f2f2', paddingHorizontal: 5, height: "100%", borderRadius: 18 }}>
                     <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={{}}>
                         {listRoom ?
                             listRoom.map((data, index) =>

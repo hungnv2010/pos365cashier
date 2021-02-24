@@ -27,7 +27,7 @@ import QRCode from 'react-native-qrcode-svg';
 import ViewPrint, { TYPE_PRINT } from '../more/ViewPrint';
 import DatePicker from 'react-native-date-picker';
 import moment from 'moment';
-import Customer from '../customer/Customer';
+import { Subject } from 'rxjs';
 var Sound = require('react-native-sound');
 let timeClickPrevious = 1000;
 
@@ -88,6 +88,7 @@ export default (props) => {
     const currentServerEvent = useRef();
     const viewPrintRef = useRef();
     const settingObject = useRef();
+    const debounceTimeInput = useRef(new Subject());
     let row_key = "";
 
     const { deviceType, isFNB } = useSelector(state => {
@@ -134,6 +135,17 @@ export default (props) => {
             console.log("settingObject.current ", settingObject.current);
         }
 
+        // debounceTimeInput.current.debounceTime(300)
+        //     .subscribe(value => {
+        //         console.log("debounceTimeInput value ", value);
+        //         if (value != "0" && currentServerEvent.current) {
+        //             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
+        //             dataManager.calculatateJsonContent(jsonContent)
+        //             serverEvent.JsonContent = JSON.stringify(jsonContent)
+        //             dataManager.updateServerEventNow(serverEvent, true, isFNB);
+        //         }
+        //     })
+
         getRoom()
         getVendorSession()
         getObjectSetting()
@@ -173,10 +185,26 @@ export default (props) => {
         return total;
     }
 
+    const onBlurInput = () => {
+        console.log("onBlurInput =============");
+        setSendMethod("")
+        if (currentServerEvent.current) {
+            let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
+            dataManager.calculatateJsonContent(jsonContent)
+            serverEvent.JsonContent = JSON.stringify(jsonContent)
+            dataManager.updateServerEventNow(serverEvent, true, isFNB);
+        }
+    }
+
     const onChangeTextInput = (text, type) => {
+
+        // debounceTimeInput.current.next(text)
+
         text = text.toString();
         console.log("onChangeTextInput text type ", text, typeof (text), type);
-        if (text == "") return;
+        if (text == "") {
+            text = "0";
+        }
         console.log("onChangeTextInput text: ", text);
         text = text.replace(/,/g, "");
         text = Number(text);
@@ -185,7 +213,7 @@ export default (props) => {
         switch (type) {
             case 2:
                 json['VATRates'] = text;
-                calculatorPrice(json, totalPrice)
+                calculatorPrice(json, totalPrice, false)
                 break;
             case 1:
                 if (!percent) {
@@ -193,7 +221,7 @@ export default (props) => {
                 } else {
                     json['DiscountRatio'] = text;
                 }
-                calculatorPrice(json, totalPrice)
+                calculatorPrice(json, totalPrice, false)
                 break;
             default:
                 break;
@@ -215,7 +243,7 @@ export default (props) => {
 
     const deleteMethod = (item) => {
         let total = listMethod.reduce(getSumValue, 0);
-        setListMethod([...listMethod.filter(el => el.Id != item.Id)])
+        setListMethod([...listMethod.filter(el => (el.UUID != item.UUID))])
         let json = jsonContent;
         json.ExcessCash = total - item.Value - jsonContent.Total;
         setJsonContent(json)
@@ -361,7 +389,7 @@ export default (props) => {
 
     const setListVoucherTemp = (item, value) => {
         listMethod.forEach(element => {
-            if (item.Id == element.Id) {
+            if (item.Id == element.Id && item.UUID == element.UUID) {
                 element.Value = value
             }
         });
@@ -411,7 +439,7 @@ export default (props) => {
             }
         }
         listMethod.forEach(element => {
-            if (item.Id == element.Id) {
+            if (item.Id == element.Id && item.UUID == element.UUID) {
                 element.Value = text
                 total += text;
             } else {
@@ -714,7 +742,7 @@ export default (props) => {
         setSendMethod(value)
         if (value.name == METHOD.pay.name) {
             listMethod.forEach(element => {
-                if (value.Id == element.Id) {
+                if (value.Id == element.Id && element.UUID == value.UUID) {
                     element.Value = 0;
                     onChangeTextPaymentPaid("0", element)
                 }
@@ -757,19 +785,7 @@ export default (props) => {
             jsonContent.ExcessCash = 0
         }
         setJsonContent({ ...jsonContent })
-        console.log("calculator percent ", percent);
-        console.log("calculator jsonContent.DiscountValue ", jsonContent.DiscountValue);
-        console.log("calculator realPriceValue ", realPriceValue);
-        console.log("calculator disCountValue ", disCountValue);
-        console.log("calculator totalDiscount ", totalDiscount);
-        console.log("calculator totalDiscount ==  ", totalDiscount);
-        console.log("calculator notVat ", notVat);
-        console.log("calculator VATRates ", jsonContent.VATRates);
-        console.log("calculator vat ", vat);
-        console.log("calculator totalPrice== ", total);
-        console.log("calculator excess ", excess);
-        console.log("calculator excessCash ", excessCash);
-        console.log("calculator jsonContent ", jsonContent);
+        console.log("jsonContent ============== ", jsonContent);
 
         if (currentServerEvent.current && update == true) {
             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
@@ -996,7 +1012,7 @@ export default (props) => {
                         onTouchStart={() => onTouchInput({ ...item, ...METHOD.pay })}
                         editable={deviceType == Constant.TABLET ? false : true}
                         onChangeText={(text) => onChangeTextPaymentPaid(text, item, index)}
-                        style={[styles.inputListMethod, { borderColor: sendMethod.Id == item.Id ? colors.colorchinh : "gray" }]} />
+                        style={[styles.inputListMethod, { borderColor: (sendMethod.Id == item.Id && item.UUID == sendMethod.UUID) ? colors.colorchinh : "gray" }]} />
                 </View>
             )
         })
@@ -1115,6 +1131,7 @@ export default (props) => {
                                     </TouchableOpacity>
                                 </View>
                                 <TextInput
+                                    onBlur={onBlurInput}
                                     returnKeyType='done'
                                     keyboardType="number-pad"
                                     selection={selection}
@@ -1151,6 +1168,7 @@ export default (props) => {
                                     </TouchableOpacity>
                                 </View>
                                 <TextInput
+                                    onBlur={onBlurInput}
                                     returnKeyType='done'
                                     keyboardType="number-pad"
                                     selection={selection}

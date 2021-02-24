@@ -159,7 +159,7 @@ class PrintService {
             }
         });
         HTMLBase = listHtml[0] + listTable + listHtml[2];
-        HTMLBase = HTMLBase.replace("{Ten_Phong_Ban}", JsonContent[0].RoomName + "[" + JsonContent[0].Pos + "]")
+        HTMLBase = HTMLBase.replace("{Ten_Phong_Ban}", JsonContent[0].RoomName + "[" + (JsonContent[0].Pos ? JsonContent[0].Pos : (JsonContent[0].Position ? JsonContent[0].Position : "")) + "]")
         HTMLBase = HTMLBase.replace("{Gio_Hien_Tai}", moment(new Date()).format('DD/MM/YYYY - HH:mm'))
         HTMLBase = HTMLBase.replace("{STT_Don_Hang}", i)
         HTMLBase = HTMLBase.replace("{Lien_check}", 1 != 1 ? "style='visibility: unset'" : "style='visibility: collapse; display: none'")
