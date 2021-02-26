@@ -17,12 +17,15 @@ import PrintCook from '../../screens/products/PrintCook'
 export default (props) => {
     const [product, setProduct] = useState({})
     const [productOl, setProductOl] = useState({})
-    const [category, setCategory] = useState({})
+    const [category, setCategory] = useState([])
     const [displayProduct, setDisplayProduct] = useState(true)
     const [showModal, setOnShowModal] = useState(false)
     const [defaultType, setDefaultType] = useState()
+    const itemProduct = useRef({})
     const typeModal = useRef()
-    const priceConfig = useRef()
+    const [priceConfig, setPriceConfig] = useState({})
+    const [printer, setPrinter] = useState([])
+    const countPrint = useRef(0)
     const addCate = useRef([{
         Name: 'ten_nhom',
         Hint: 'nhap_ten_nhom_hang_hoa'
@@ -44,80 +47,108 @@ export default (props) => {
         Hint: 'Lorem ipsum'
     },
     ])
-    const { deviceType } = useSelector(state => {
-        return state.Common
-    })
-    let params = {
-        CompareCost: 200000,
-        CompareOnHand: 57,
-        Cost: productOl.Cost,
-        MaxQuantity: productOl.MaxQuantity,
-        MinQuantity: productOl.MinQuantity,
-        OnHand: product.OnHand,
-        PriceByBranch: productOl.PriceByBranch,
-        PriceByBranchLargeUnit: productOl.PriceByBranchLargeUnit,
-        Product: {
-            AttributesName: product.AttributesName,
-            BlockOfTimeToUseService: product.BlockOfTimeToUseService,
-            BonusPoint: product.BonusPoint,
-            BonusPointForAssistant: product.BonusPointForAssistant,
-            BonusPointForAssistant2: product.BonusPointForAssistant2,
-            BonusPointForAssistant3: product.BonusPointForAssistant3,
-            Code: product.Code,
-            Coefficient: product.Coefficient,
-            CompositeItemProducts: [],
-            ConversionValue: product.ConversionValue,
-            CreatedBy: 39207,
-            CreatedDate: "2021-01-09T07:30:31.9170000Z",
-            Description:product.Description,
-            Hidden: false,
-            Id: product.Id,
-            IsPercentageOfTotalOrder: product.IsPercentageOfTotalOrder,
-            IsPriceForBlock: product.IsPriceForBlock,
-            IsSerialNumberTracking: product.IsSerialNumberTracking,
-            IsTimer: true,
-            LargeUnit: product.LargeUnit,
-            LargeUnitCode: "",
-            ModifiedBy: 39207,
-            ModifiedDate: "2021-01-20T09:00:42.7030000Z",
-            Name: product.Name,
-            OrderQuickNotes: "",
-            Position: 0,
-            Price: product.Price,
-            PriceConfig: product.priceConfig,
-            PriceLargeUnit: product.PriceLargeUnit,
-            Printer: product.Printer,
-            ProductAttributes: [],
-            ProductImages: product.ProductImages,
-            ProductPartners: [],
-            ProductType: product.ProductType,
-            RetailerId: 13311,
-            SplitForSalesOrder: product.SplitForSalesOrder,
-            Unit: product.Unit
-        }
-    }
+    let printCook = [{ Name: 'may_in_bao_bep_a', Key: 'KitchenA', Status: false },
+    { Name: 'may_in_bao_bep_b', Key: 'KitchenB', Status: false },
+    { Name: 'may_in_bao_bep_c', Key: 'KitchenC', Status: false },
+    { Name: 'may_in_bao_bep_d', Key: 'KitchenD', Status: false },
+    { Name: 'may_in_bao_pha_che_a', Key: 'BartenderA', Status: false },
+    { Name: 'may_in_bao_pha_che_b', Key: 'BartenderB', Status: false },
+    { Name: 'may_in_bao_pha_che_c', Key: 'BartenderC', Status: false },
+    { Name: 'may_in_bao_pha_che_d', Key: 'BartenderD', Status: false },]
+    const deviceType = useSelector(state => {
+        console.log("useSelector state ", state);
+        return state.Common.deviceType
+    });
+    // let params = {
+    //     CompareCost: 200000,
+    //     CompareOnHand: 57,
+    //     Cost: productOl.Cost,
+    //     MaxQuantity: productOl.MaxQuantity,
+    //     MinQuantity: productOl.MinQuantity,
+    //     OnHand: productOl.OnHand,
+    //     PriceByBranch: productOl.PriceByBranch,
+    //     PriceByBranchLargeUnit: productOl.PriceByBranchLargeUnit,
+    //     Product: {
+    //         AttributesName: product.AttributesName,
+    //         BlockOfTimeToUseService: product.BlockOfTimeToUseService,
+    //         BonusPoint: product.BonusPoint,
+    //         BonusPointForAssistant: product.BonusPointForAssistant,
+    //         BonusPointForAssistant2: product.BonusPointForAssistant2,
+    //         BonusPointForAssistant3: product.BonusPointForAssistant3,
+    //         Code: product.Code,
+    //         Coefficient: product.Coefficient,
+    //         CompositeItemProducts: [],
+    //         ConversionValue: product.ConversionValue,
+    //         CreatedBy: 39207,
+    //         CreatedDate: "2021-01-09T07:30:31.9170000Z",
+    //         Description:product.Description,
+    //         Hidden: false,
+    //         Id: product.Id,
+    //         IsPercentageOfTotalOrder: product.IsPercentageOfTotalOrder,
+    //         IsPriceForBlock: product.IsPriceForBlock,
+    //         IsSerialNumberTracking: product.IsSerialNumberTracking,
+    //         IsTimer: true,
+    //         LargeUnit: product.LargeUnit,
+    //         LargeUnitCode: "",
+    //         ModifiedBy: 39207,
+    //         ModifiedDate: "2021-01-20T09:00:42.7030000Z",
+    //         Name: product.Name,
+    //         OrderQuickNotes: "",
+    //         Position: 0,
+    //         Price: product.Price,
+    //         PriceConfig: product.priceConfig,
+    //         PriceLargeUnit: product.PriceLargeUnit,
+    //         Printer: product.Printer,
+    //         ProductAttributes: [],
+    //         ProductImages: product.ProductImages,
+    //         ProductPartners: [],
+    //         ProductType: product.ProductType,
+    //         RetailerId: 13311,
+    //         SplitForSalesOrder: product.SplitForSalesOrder,
+    //         Unit: product.Unit
+    //     }
+    // }
     useEffect(() => {
-        if (deviceType === Constant.PHONE) {
+        if (deviceType == Constant.PHONE) {
             getData(props.route.params)
             console.log("Image", typeof (product.ProductImages));
             setDefaultType(product.ProductType)
         }
     }, [])
     useEffect(() => {
-        setProduct(props.iproduct)
-        setCategory(props.iCategory)
+        if (deviceType == Constant.TABLET) {
+            setProduct(props.iproduct)
+            setCategory(props.iCategory)
+        }
+
     }, [props.iproduct])
+    useEffect(() => {
+        product.PriceConfig ? product.PriceConfig != null ? setPriceConfig(JSON.parse(product.PriceConfig)) : null : null
+    }, [product])
+    useEffect(() => {
+        countPrint.current = 0
+        printCook.forEach(printer => {
+            if (product.Printer == printer.Key || priceConfig.SecondPrinter && priceConfig.SecondPrinter == printer.Key || priceConfig.Printer3 && priceConfig.Printer3 == printer.Key || priceConfig.Printer4 && priceConfig.Printer4 == printer.Key || priceConfig.Printer5 && priceConfig.Printer5 == printer.Key) {
+                printer.Status = true
+                countPrint.current = countPrint.current + 1
+            } else {
+                printer.Status = false
+            }
+        })
+        setPrinter([...printCook])
+    }, [priceConfig])
     const getData = (param) => {
-        setProduct(JSON.parse(JSON.stringify(param.product)))
-        console.log("afsdfsa", product.Id);
-        console.log("data product", product);
+        console.log("param", param);
+        itemProduct.current = JSON.parse(JSON.stringify(param.product))
+        setProduct({ ...JSON.parse(JSON.stringify(param.product)) })
+        console.log("data product", itemProduct.current);
         setCategory(JSON.parse(JSON.stringify(param.category)))
     }
 
     const getProduct = () => {
-        if (product.Code != null) {
+        if (product != null && product.Code != null) {
             let paramFilter = `(substringof('${product.Code}',Code) or substringof('${product.Code}',Name) or substringof('${product.Code}',Code2) or substringof('${product.Code}',Code3) or substringof('${product.Code}',Code4) or substringof('${product.Code}',Code5))`
-            new HTTPService().setPath(ApiPath.PRODUCT).GET({ ncludeSummary: true, Inlinecount: 'allpages', CategoryId: -1, PartnerId: 0, top: 20, filter: paramFilter }).then((res) => {
+            new HTTPService().setPath(ApiPath.PRODUCT).GET({ IncludeSummary: true, Inlinecount: 'allpages', CategoryId: -1, PartnerId: 0, top: 20, filter: paramFilter }).then((res) => {
                 if (res != null) {
                     setProductOl({ ...res.results[0] })
                     console.log("res product", res);
@@ -160,6 +191,20 @@ export default (props) => {
             console.log("error", err);
         })
     }
+    const outPut = (data) => {
+        setPrinter([...data.printer])
+        countPrint.current = 0
+        printer.forEach(item => {
+            if (item.Status == true) {
+                countPrint.current = countPrint.current + 1
+            }
+        })
+        let listP = data.listP
+        console.log("abc",listP);
+        console.log("config",priceConfig);
+
+    }
+    
     const renderModal = () => {
         return (
             <View>{typeModal.current == 1 ?
@@ -215,13 +260,13 @@ export default (props) => {
                 <View>
                     <Text style={styles.title}>{I18n.t('loai_hang')}</Text>
                     <TouchableOpacity style={[styles.textInput, { justifyContent: 'space-between', flexDirection: 'row' }]} onPress={() => { typeModal.current = 1; setOnShowModal(true), setDefaultType(product.ProductType) }} >
-                        <Text style={styles.titleButton}>{product.ProductType ? product.ProductType == 1 ? I18n.t('hang_hoa') : product.ProductType == 2 ? I18n.t('dich_vu') : product.ProductType == 3 ? 'Combo' : null : null}</Text>
+                        <Text style={styles.titleButton}>{product ? product.ProductType == 1 ? I18n.t('hang_hoa') : product.ProductType == 2 ? I18n.t('dich_vu') : product.ProductType == 3 ? 'Combo' : null : null}</Text>
                         <Image style={{ width: 20, height: 20, marginTop: 5 }} source={Images.icon_arrow_down} />
                     </TouchableOpacity>
                 </View>
                 <View>
                     <Text style={styles.title}>{I18n.t('ma_hang_ma_sku_ma_vach')}</Text>
-                    <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#36a3f7' }]} value={product.Code} onChangeText={(text) => setProduct({ ...product, Code: text })}></TextInput>
+                    <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#36a3f7' }]} value={product ? product.Code : null} onChangeText={(text) => setProduct({ ...product, Code: text })}></TextInput>
                 </View>
                 <View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -243,7 +288,7 @@ export default (props) => {
                     {
                         displayProduct == true ? <View style={{ flexDirection: 'column' }}>
                             {
-                                product.ProductType == 2 ?
+                                product ? product.ProductType == 2 ?
                                     <View>
                                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 5, alignItems: 'center' }}>
                                             <Text style={styles.titleBold}>{I18n.t('tinh_theo_phan_tram')}</Text>
@@ -269,7 +314,7 @@ export default (props) => {
                                                 <TextInput style={{ color: productOl.IsPriceForBlock == true ? '#36a3f7' : '#B5B5B5', marginLeft: 5, fontWeight: 'bold', padding: 10 }} value={product.Price ? currencyToString(product.Price) : null}></TextInput>
                                             </View> : null}
                                     </View>
-                                    : product.ProductType == 3 ?
+                                    : product ? product.ProductType == 3 ?
                                         <View>
                                             <View style={{ padding: 3, backgroundColor: '#f2f2f2', marginTop: 10, marginBottom: 10 }}></View>
                                             <Text style={styles.titleBold}>{I18n.t('thanh_phan_combo')}</Text>
@@ -286,7 +331,7 @@ export default (props) => {
                                                 </View>
                                             }
                                         </View>
-                                        : null
+                                        : null : null : null
                             }
                             <View style={{ padding: 3, backgroundColor: '#f2f2f2', marginTop: 10 }}></View>
                             <View>
@@ -297,10 +342,10 @@ export default (props) => {
                                     </View>
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.title} >{I18n.t('gia')}</Text>
-                                        <TextInput style={[styles.textInput, { color: '#36a3f7', fontWeight: 'bold' }]} value={product.Price ? currencyToString(product.Price) : null} onChangeText={(text) => setProductOl({ ...product, Price: parseInt(text) })}></TextInput>
+                                        <TextInput style={[styles.textInput, { color: '#36a3f7', fontWeight: 'bold' }]} value={product ? currencyToString(product.Price) : '0'} onChangeText={(text) => setProductOl({ ...product, Price: parseInt(text) })}></TextInput>
                                     </View>
                                 </View>
-                                {product.ProductType == 2 ?
+                                {product ? product.ProductType == 2 ?
                                     <TouchableOpacity style={[styles.textInput, { fontWeight: 'bold', backgroundColor: '#B0E2FF', marginTop: 10, justifyContent: 'center', alignItems: 'center' }]}>
                                         <Text style={[styles.titleButton]}>{I18n.t("thiet_lap_khung_gio_dac_biet")}</Text>
                                     </TouchableOpacity>
@@ -308,19 +353,20 @@ export default (props) => {
                                     <View>
                                         <Text style={styles.title}>{I18n.t('ton_kho')}</Text>
                                         <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#36a3f7', textAlign: 'center' }]} value={productOl.OnHand ? productOl.OnHand + '' : null} onChangeText={(text) => setProductOl({ ...productOl, OnHand: parseInt(text) })}></TextInput>
-                                    </View>
+                                    </View> : null
                                 }
 
                                 <View>
                                     <Text style={styles.title}>{I18n.t('don_vi_tinh')}</Text>
-                                    <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#36a3f7' }]} value={product.Unit ? product.Unit : null} onChangeText={(text) => setProduct({ ...product, Unit: text })}></TextInput>
+                                    <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#36a3f7' }]} value={product ? product.Unit : null} onChangeText={(text) => setProduct({ ...product, Unit: text })}></TextInput>
                                 </View>
                                 <TouchableOpacity style={[styles.textInput, { fontWeight: 'bold', backgroundColor: '#B0E2FF', marginTop: 10, justifyContent: 'center', alignItems: 'center' }]} onPress={() => { typeModal.current = 4; setOnShowModal(true) }}>
                                     <Text style={[styles.titleButton]}>{I18n.t("don_vi_tinh_lon_va_cac_thong_so_khac")}</Text>
                                 </TouchableOpacity>
                             </View>
                             <View style={{ padding: 3, backgroundColor: '#f2f2f2', marginTop: 10, }}></View>
-                            <PrintCook productOl={productOl} config={priceConfig.current}></PrintCook>
+                            {product ?
+                                <PrintCook productOl={product} config={priceConfig.current} printer={printer} countPrint={countPrint.current} outPut={outPut}></PrintCook> : null}
                         </View> : null}
                 </View>
                 <View style={{ backgroundColor: '#f2f2f2', padding: 10 }}>

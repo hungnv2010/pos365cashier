@@ -14,38 +14,72 @@ import { currencyToString, dateToString, momentToStringDateLocal, dateToStringFo
 
 export default (props) => {
     const [product, setProduct] = useState(props.productOl)
-    const [priceConfig, setPriceConfig] = useState({})
-    const [countPrint, setCountPrint] = useState(0)
+    const [countPrint, setCountPrint] = useState(props.countPrint)
+    const [printer, setPrinter] = useState(props.printer)
+    const [priceConfig,setPriceConfig] = useState(props.config)
+    let data = null
 
-    const [printCook, setPrintCook] = useState([{ Name: 'may_in_bao_bep_a', Key: 'KitchenA', Status: '' },
-    { Name: 'may_in_bao_bep_b', Key: 'KitchenB', Status: '' },
-    { Name: 'may_in_bao_bep_c', Key: 'KitchenC', Status: '' },
-    { Name: 'may_in_bao_bep_d', Key: 'KitchenD', Status: '' },
-    { Name: 'may_in_bao_pha_che_a', Key: 'BartenderA', Status: '' },
-    { Name: 'may_in_bao_pha_che_b', Key: 'BartenderB', Status: '' },
-    { Name: 'may_in_bao_pha_che_c', Key: 'BartenderC', Status: '' },
-    { Name: 'may_in_bao_pha_che_d', Key: 'BartenderD', Status: '' },])
     useEffect(() => {
-        console.log("printcook", product);
-        setProduct(props.productOl)
-        setTimeout(()=>{
-            getPriceConfig()
-        },1000)
-        
-
-    }, [props.productOl])
-    const getPriceConfig = ()=>{
-        product.PriceConfig? product.PriceConfig!=null ? setPriceConfig(JSON.parse(product.PriceConfig)):null:null
-}
-    const onClick = (item) => {
-        alert(item)
+        setPrinter(props.printer)
+        setCountPrint(props.countPrint)
+    }, [props.printer])
+    const onClick = (item, index) => {
+        console.log("item", item);
+        if (item.Status == false && countPrint < 5) {
+            item.Status = true
+            printer[index] = item 
+            setPrinter(printer)
+        } else {
+            item.Status = false
+            item.Pos = null
+            printer[index] = item
+            setPrinter(printer)
+        }
+        data = printer.filter(item => item.Status == true)
+        console.log("Data",data);
+        setPrinter(printer)
+        props.outPut({printer:printer, listP:priceConfig})
     }
+    const setPrint = (listP) =>{
+        switch(listP.length){
+            case 1:
+                product.Printer = listP[0]
+                setPriceConfig({...priceConfig})
+                break
+            case 2:
+                product.Printer = listP[0]
+                setPriceConfig({...priceConfig,SecondPrinter:listP[1]})
+                break
+            case 3:
+                product.Printer = listP[0]
+                setPriceConfig({...priceConfig,SecondPrinter:listP[1],Printer3:listP[2]})
+                break
+            case 4:
+                product.Printer = listP[0]
+                setPriceConfig({...priceConfig,SecondPrinter:listP[1],Printer3:listP[2],Printer4:listP[3]})
+                break
+            case 5:
+                product.Printer = listP[0]
+                setPriceConfig({...priceConfig,SecondPrinter:listP[1],Printer3:listP[2],Printer4:listP[3],Printer5:listP[4]})
+                break
+        }
+    }
+    useEffect(() => {
+        console.log("Printer", printer);
+        setPrinter(props.printer)
+    }, [printer])
+    useEffect(() => {
+        console.log("count Print", countPrint);
+    }, [countPrint])
+    useEffect(()=>{
+        setPriceConfig(props.config)
+    },[priceConfig])
 
     const renderItem = (item, index) => {
         return (
-            <View style={{ flex: 1, marginBottom: 10 }}>
-                <TouchableOpacity style={[product.Printer == item.Key ? styles.styleButtonOn : styles.styleButton, { marginLeft: 15 }]} onPress={() => onClick(priceConfig)}>
-                    <Text style={[product.Printer == item.Key ? styles.titleButtonOn : styles.titleButtonOff, {}]}>{I18n.t(item.Name)}</Text>
+            <View style={{ flex: 1, marginBottom: 10 }} key={index.toString()}>
+                <TouchableOpacity style={[item.Status == true ? styles.styleButtonOn : styles.styleButton, { marginLeft: 15 }]} onPress={() => onClick(item, index)}>
+                    <Text style={[item.Status == true ? styles.titleButtonOn : styles.titleButtonOff, {}]}>{I18n.t(item.Name)}</Text>
                 </TouchableOpacity>
             </View>
         )
@@ -59,7 +93,7 @@ export default (props) => {
             </View>
             <View style={{ flexDirection: 'row' }}>
                 <FlatList
-                    data={printCook}
+                    data={printer}
                     numColumns={4}
                     renderItem={({ item, index }) => renderItem(item, index)}
                     keyExtractor={(item, index) => index.toString()}

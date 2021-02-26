@@ -25,15 +25,16 @@ export default (props) => {
     }])
     const itemProduct = useRef()
     const typeBtn = useRef()
-    const [itProduct, setItProduct] = useState()
+    const [itProduct, setItProduct] = useState({})
     useEffect(() => {
         getData()
 
     }, [])
     const [idCategory, setIdCategory] = useState(-1)
-    const { deviceType } = useSelector(state => {
-        return state.Common
-    })
+    const deviceType = useSelector(state => {
+        console.log("useSelector state ", state);
+        return state.Common.deviceType
+    });
     const getData = async () => {
         productTmp = await realmStore.queryProducts()
         console.log("product", productTmp.ProductImages);
@@ -53,15 +54,16 @@ export default (props) => {
     const onClickItem = (el) => {
         itemProduct.current = el
         if (deviceType == Constant.PHONE) {
-            props.navigation.navigate(ScreenList.ProductDetail, { product: el, category: category })
+            console.log("navigation",deviceType);
+            props.navigation.navigate(ScreenList.ProductDetail, { product: itemProduct.current, category: category })
         } else {
-            setItProduct(el)
+            setItProduct({...itemProduct.current})
         }
     }
     
     const renderCategory = (item, index) => {
         return (
-            <View key={index.toString()} style={{ alignItems: 'center', justifyContent: 'center', paddingHorizontal: 15,paddingVertical:10, marginLeft: 5, marginRight: 10, marginBottom: 5, marginTop: 5, backgroundColor: idCategory == item.Id ? colors.colorchinh : null, borderRadius: 10 }}>
+            <View key={index.toString()} style={{ alignItems: 'center', justifyContent: 'center', paddingHorizontal: 15,paddingVertical:10, marginLeft: 5, marginRight: 10, marginBottom: 5, marginTop: 5, backgroundColor: idCategory == item.Id ? colors.colorchinh : null, borderRadius: 18 }}>
                 <TouchableOpacity style={{}} onPress={() => { filterByCategory(item) }}>
                     <Text style={{ color: idCategory == item.Id ? 'white' : 'black', fontWeight: idCategory == item.Id ? 'bold' : null }} >{item.Name}</Text>
                 </TouchableOpacity>
@@ -123,7 +125,7 @@ export default (props) => {
             />
             <View style={{ flex: 1, flexDirection: 'row' }}>
                 <View style={{ backgroundColor: '#F5F5F5', flexDirection: 'column', flex: 1 }}>
-                    <View style={{ backgroundColor: "#FFDEAD", marginTop: 5, borderRadius: 10, marginLeft: 5, marginRight: 5 }}>
+                    <View style={{ backgroundColor: "#FFDEAD", marginTop: 5, borderRadius: 18, marginLeft: 5, marginRight: 5 }}>
 
                         <FlatList
                             data={category}

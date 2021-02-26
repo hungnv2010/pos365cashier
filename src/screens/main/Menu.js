@@ -449,8 +449,9 @@ const ContentComponent = (props) => {
         if (chucnang.func == KEY_FUNC.SYNCHRONIZE) {
             if (isFNB==true) {
             clickRightIcon()
-            }else
-            clickSyncForRetail()  
+            }else{
+            clickSyncForRetail()
+            }  
             props.navigation.closeDrawer();
             return;
         }
@@ -475,7 +476,6 @@ const ContentComponent = (props) => {
             await dataManager.syncAllDatas()
             dispatch({ type: 'ALREADY', already: true })
             dialogManager.hiddenLoading()
-            console.log("FNB");
           }
         });
         // dialogManager.showLoading()
@@ -487,23 +487,20 @@ const ContentComponent = (props) => {
       }
       const clickSyncForRetail = async () => {
         NetInfo.fetch().then(async state => {
-          if (!(state.isConnected == true && state.isInternetReachable == true)) {
-            dialogManager.showPopupOneButton(I18n.t('loi_ket_noi_mang'), I18n.t('thong_bao'), () => {
-              dialogManager.destroy();
-            }, null, null, I18n.t('dong'))
-            return;
-          } else {
-            dialogManager.showLoading()
-            dispatch({ type: 'ALREADY', already: false })
-            await realmStore.deleteAllForRetail()
-            await dataManager.syncAllDatasForRetail()
-            dispatch({ type: 'ALREADY', already: true })
-            dialogManager.hiddenLoading()
-            console.log("not fnb");
-            
-          }
-        });
-    
+            if (!(state.isConnected == true && state.isInternetReachable == true)) {
+              dialogManager.showPopupOneButton(I18n.t('loi_ket_noi_mang'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+              }, null, null, I18n.t('dong'))
+              return;
+            } else {
+              dialogManager.showLoading()
+              dispatch({ type: 'ALREADY', already: false })
+              await realmStore.deleteAllForRetail()
+              await dataManager.syncAllDatasForRetail()
+              dispatch({ type: 'ALREADY', already: true })
+              dialogManager.hiddenLoading()
+            }
+          });
       }
 
 

@@ -24,7 +24,7 @@ export default {
   ban_dang_dung: "Bàn đang dùng",
   bieu_do_doanh_thu: "Biểu đồ doanh thu",
   bay_ngay: "Bảy ngày",
-  ban: "bàn",
+  ban: "Bàn",
   bao_che_bien: "Báo chế biến",
   bao_che_bien_thanh_cong: "Báo chế biến thành công",
   ban_co_chac_chan_muon_xoa_hoa_don: "Bạn có chắc chắn muốn xoá đơn hàng này?",
@@ -90,15 +90,12 @@ export default {
   diem_voucher: "Điểm/Voucher",
   diem_hien_tai: "Điểm hiện có",
   diem_thuong: "Điểm thưởng",
-  don_hang_moi: "Đơn mới",
   du_no: "Dư nợ",
   dien_thoai: "Điện thoại",
   don_hang_moi: "Đơn mới",
-  don_hang_offline: "Đơn hàng offline",
   danh_sach_gia: "Chọn bảng giá",
   don_hang_offline: "Đơn hàng offline",
   da_ket_noi: "Đã kết nối",
-
   // TODO: E
 
 
@@ -114,10 +111,8 @@ export default {
   gui_tin_nhan_thanh_cong: "Gửi tin nhắn thành công !",
   gui_thong_bao_toi_thu_ngan: "Gửi thông báo tới thu ngân",
   gui_thuc_don: "Gửi thực đơn",
-  gui_tin_nhan_thanh_cong: "Gửi tin nhắn thành công !",
   gui_tin_nhan_that_bai: "Gửi tin nhắn thất bại!",
   gui_tin_nhan: "Gửi tin nhắn",
-  gui_thuc_don: "Gửi thực đơn",
   gio: "giờ",
   gia_tri_tra_lai: "Giá trị trả lại",
   ghi_no: "Ghi nợ",
@@ -221,7 +216,6 @@ export default {
   nu: "Nữ",
   nhan_vien_order: "Nhân viên Order",
   nhap_ghi_chu: "Nhập ghi chú",
-  ngay: "ngày",
   nhom_phong_ban: "Nhóm phòng bàn",
   nhap_tu_khoa_tim_kiem: "Nhập từ khóa tìm kiếm",
   ngay: "Ngày",
@@ -279,7 +273,6 @@ export default {
   thoat: "Đăng xuất",
   thu_chi: "Thu - chi",
   thu_chi_: "Thu chi",
-  tong_thu: "Tổng thu",
   tong_chi: "Tổng chi",
   ton_quy: "Tồn quỹ",
   tien_mat: "Tiền mặt",
@@ -314,7 +307,6 @@ export default {
   tra_hang: "Trả hàng",
   tong_thu: "Tổng thu",
   tong_cong: "Tổng cộng",
-  them: "Thêm",
   tong_giao_dich: "Tổng giao dịch",
   tinh_thanh: "Tỉnh thành",
   tong_giao_dich_theo_thoi_gian: "TỔNG GIAO DỊCH THEO THỜI GIAN",
@@ -344,7 +336,6 @@ export default {
   thu_ngan: "Thu ngân",
   them_khach_hang: "Thêm khách hàng",
   tu_dong_tao_ma: "Tự động tạo mã",
-  tach_ban: "Tách bàn",
   tach_tai_ban: "Tách tại bàn",
   thanh_cong: "thành công",
 
@@ -368,12 +359,6 @@ export default {
   xoa: "Xóa",
 
   // TODO: Y
-
-  bay_ngay: "7 ngày",
-  thang_nay: "Tháng này",
-  hom_qua: "Hôm qua",
-  hom_nay: "Hôm nay",
-  tuy_chon: "Tuỳ chọn",
   yeu_cau_thanh_toan: "Yêu cầu thanh toán",
 
   //Vuong
@@ -396,8 +381,8 @@ export default {
   chua_co_voucher: 'Chưa có Voucher',
   chon_loai_hang_hoa: 'Chọn loại hàng hoá ',
   chon_nhom_hang_hoa: 'Chọn nhóm hàng hoá',
-  chua_co: 'Empty',
-  chon_hang_hoa: 'Choose product',
+  chua_co: 'Chưa có',
+  chon_hang_hoa: 'Chọn hàng hoá',
 
   don_vi_tien_te: "Đơn vị tiền tệ",
   dollar_my: "Dollar Mỹ",
@@ -414,7 +399,7 @@ export default {
   gia_ban_duoc_tinh_theo_phan_tram_gia_tri_don_hang: "Giá bán được tính theo % giá trị đơn hàng",
   gia_bon_block_dau: "Giá 4 block đầu tiên",
   gia_ban_dvt_lon: 'Giá bán đơn vị tính lớn',
-  gia_tri_quy_doi: 'Giá trij quy đổi',
+  gia_tri_quy_doi: 'Giá trị quy đổi',
 
   hien_thanh_dieu_huong: "Hiện thanh điều hướng",
   hien_thi_hang_hoa: 'Hiển thị hàng hoá',
@@ -468,7 +453,6 @@ export default {
   nhap_ten_nhom_hang_hoa: 'Nhập tên nhóm hàng hoá',
 
   setting: 'Thiết lập',
-
   so_the_cung: "Số thẻ cứng",
   su_dung_hai_man_hinh: "Sử dụng hai màn hình",
   so_dien_thoai: "Số điện thoại",
@@ -477,7 +461,6 @@ export default {
   so_block_gio_dau_tien: "Số block giờ đầu tiên",
   so_may_in_toi_da: "Số máy in tối đa",
 
-  tien_khach_tra: "Tiền khách trả",
   thiet_lap_thanh_toan_vnpay: "Thiết lập thanh toán VNPAY",
   thong_tin_cua_hang: "Thông tin cửa hàng",
   tu_dong_in_bao_bep: "Tự động in báo bếp",
@@ -485,7 +468,6 @@ export default {
   thiet_lap_tinh_nang: "Thiết lập tính năng",
   ten: "Tên",
   thanh_toan_vnpayqr: "Thanh toán VNPAY-QR?",
-  thanh_toan_vnpaypos_qua_may_pos: "Thanh toán VNPAY-POS qua máy POS?",
   ten_hang_hoa: "Tên hàng hóa",
   thanh_tien: "Thành tiền",
   thanh_toan_vnpaypos_qua_may_pos: "Thanh toán VNPAY-POS qua máy POS?",
@@ -496,10 +478,9 @@ export default {
   thiet_lap_khung_gio_dac_biet: "Thiết lập khung giờ đặc biệt",
   them_moi_nhom_hang_hoa: 'Thêm mới nhóm hàng hoá',
   tao_nhom: 'Tạo nhóm',
-  thanh_phan_combo: "Combo Components",
+  thanh_phan_combo: "Thành phần combo",
   tien_thieu: 'Tiền thiếu',
 
-  vnd: "VND",
   voucher: "Mã quà tặng",
 
   xin_cam_on_va_hen_gap_lai: "Xin cám ơn, hẹn gặp lại quý khách!"
