@@ -44,7 +44,7 @@ class SignalRManager {
         console.log(" subjectReceive === ", this.subjectReceive);
 
         this.subjectReceive
-            .distinct(serverEvent => serverEvent.Version)
+            // .distinct(serverEvent => serverEvent.Version)
             .subscribe(serverEvent => this.onReceiveServerEvent(serverEvent))
 
         this.subjectSend = new Subject()

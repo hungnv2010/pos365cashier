@@ -56,7 +56,7 @@ export default (props) => {
     const [datas, setData] = useState([])
     const [valueAll, setValueAll] = useState({})
     const widthRoom = Dimensions.get('screen').width / numberColumn;
-    const RoomAll = { Name: "Tất cả", Id: -1, isGroup: true }
+    const RoomAll = { Name: I18n.t('tat_ca'), Id: -1, isGroup: true }
     const [listRoom, setListRoom] = useState([])
     const dataRef = useRef([])
     const roomRef = useRef([])
@@ -93,7 +93,9 @@ export default (props) => {
             dataRef.current = newDatas
             setData(newDatas)
             let list = newDatas.filter(item => item.isGroup)
+            console.log("init: list ", list);
             list.unshift(RoomAll)
+            console.log("init: list=== ", list);
             setListRoom(list)
 
             serverEvents.addListener((collection, changes) => {
@@ -139,7 +141,7 @@ export default (props) => {
                 }
             })
 
-            let otherGroup = { Id: 0, Name: newDatas.length > 0 ? I18n.t('khac') : I18n.t('tat_ca'), isGroup: true }
+            let otherGroup = { Id: 0, Name: newDatas.length > 0 ? I18n.t('khac') : null, isGroup: true }
             let roomsInside = rooms.filtered(`RoomGroupId == ${otherGroup.Id}`)
             let lengthRoomsInside = roomsInside.length
             if (roomsInside && lengthRoomsInside > 0) {
@@ -426,7 +428,7 @@ export default (props) => {
                     </View>
                 </View>
                 <View style={{ flexDirection: "row", width: deviceType == Constant.PHONE ? "50%" : "34%", alignItems: "center", justifyContent: "flex-end", paddingRight: 13 }}>
-                    <Menu style={{ alignItems: 'center',width:150, borderRadius: 16, justifyContent: 'center' }}
+                    <Menu style={{ alignItems: 'center', borderRadius: 16, justifyContent: 'center', width: 150 }}
                         ref={setMenuRef}
                         button={<View style={{}} >
                             <TouchableOpacity style={{ flexDirection: 'row', backgroundColor: colors.colorLightBlue, padding: 5, borderRadius: 16, alignItems: 'center', paddingVertical: 7, paddingHorizontal: 20 }} onPress={showMenu}>

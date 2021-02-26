@@ -257,26 +257,6 @@ const CustomerOrder = (props) => {
         }
         props.outputSelectedProduct({ ...itemOrder }, true)
 
-
-        // if (itemOrder.Processed > 0 && (((itemOrder.Quantity - itemOrder.Processed) <  data.QuantityChange))) {
-        //     let listOrderReturn =  [{ ...data, ...itemOrder, Quantity: (itemOrder.Quantity - itemOrder.Processed -  data.QuantityChange), Description: data.Description, RoomName: props.route.params.room.Name, Pos: props.jsonContent.Pos }]
-        //     // [{ ...data, ...element, Quantity: (itemOrder.Quantity - itemOrder.Processed -  data.QuantityChange), Description: data.Description, RoomName: props.route.params.room.Name, Pos: jsonContent.Pos }]
-        //     let listTmp = dataManager.getDataPrintCook(listOrderReturn)
-        //     console.log("saveOrder listTmp ====: " + JSON.stringify(listTmp));
-        //     dispatch({ type: 'PRINT_RETURN_PRODUCT', printReturnProduct: JSON.stringify(listTmp) })
-        // }
-
-        // let checkPrint = false;
-        // let listOrderReturn = [{ ...data, ...itemOrder, Quantity: Quantity, Description: data.Description, RoomName: props.route.params.room.Name, Pos: props.jsonContent.Pos }]
-        // if (itemOrder.Processed > 0) {
-        //     checkPrint = true;
-        // }
-
-        // if (checkPrint) {
-        //     let listTmp = dataManager.getDataPrintCook(listOrderReturn)
-        //     console.log("saveOrder listTmp ====: " + JSON.stringify(listTmp));
-        //     dispatch({ type: 'PRINT_RETURN_PRODUCT', printReturnProduct: JSON.stringify(listTmp) })
-        // }
     }
 
 
