@@ -307,8 +307,8 @@ export default (props) => {
             listRoom = dataRef.current.filter(item => item.isGroup == true)
             sumTable = dataRef.current.length - listRoom.length
             console.log("list room", listRoom);
-            data = dataRef.current.filter(item => item.IsActive == true && item.RoomGroupId != idFilter)
-            uses = data.length -1;
+            data = dataRef.current.filter(item => item.IsActive == true && item.RoomGroupId != idFilter && item.Id != 0)
+            uses = data.length;
             console.log("data true", data);
         }
         if (data && data.length > 0) {
@@ -426,7 +426,7 @@ export default (props) => {
                     </View>
                 </View>
                 <View style={{ flexDirection: "row", width: deviceType == Constant.PHONE ? "50%" : "34%", alignItems: "center", justifyContent: "flex-end", paddingRight: 13 }}>
-                    <Menu style={{ alignItems: 'center', borderRadius: 16, justifyContent: 'center' }}
+                    <Menu style={{ alignItems: 'center',width:150, borderRadius: 16, justifyContent: 'center' }}
                         ref={setMenuRef}
                         button={<View style={{}} >
                             <TouchableOpacity style={{ flexDirection: 'row', backgroundColor: colors.colorLightBlue, padding: 5, borderRadius: 16, alignItems: 'center', paddingVertical: 7, paddingHorizontal: 20 }} onPress={showMenu}>

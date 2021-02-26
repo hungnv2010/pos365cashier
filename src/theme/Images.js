@@ -94,6 +94,8 @@ const images = {
     icon_using: require("../../assets/icons/icon_using.png"),
     icon_wallet: require("../../assets/icons/icon_wallet.png"),
     icon_arrow_down_white: require("../../assets/icons/icon_arrow_down_white.png"),
+    icon_trash: require("../../assets/icons/recycle-bin.png"),
+    icon_gift: require("../../assets/icons/icon_gift.png"),
     
 }
 
