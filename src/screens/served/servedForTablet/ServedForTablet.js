@@ -368,7 +368,7 @@ const Served = (props) => {
             dataManager.calculatateJsonContent(jsonContent)
             setJsonContent({ ...jsonContent })
             serverEvent.Version += 1
-            dataManager.updateServerEvent(serverEvent), jsonContent
+            dataManager.updateServerEvent(serverEvent, jsonContent)
         }
     }
 
