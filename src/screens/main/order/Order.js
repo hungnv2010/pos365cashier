@@ -57,13 +57,15 @@ export default (props) => {
     const [datas, setData] = useState([])
     const [valueAll, setValueAll] = useState({})
     const widthRoom = Dimensions.get('screen').width / numberColumn;
-    const RoomAll = { Name: "Tất cả", Id: "All" }
+    const RoomAll = { Name: "Tất cả", Id: -1, isGroup: true }
     const [listRoom, setListRoom] = useState([])
     const dataRef = useRef([])
     const roomGroupRef = useRef([])
     const roomRef = useRef([])
     const severEventRef = useRef([])
     const [filterStatus, setFilterStatus] = useState('tat_ca')
+    const [status, setStatus] = useState()
+    const [idFilter, setIdFilter] = useState(-1)
 
     useEffect(() => {
         if (!already) return
@@ -72,23 +74,26 @@ export default (props) => {
             rooms = rooms.sorted('Position')
             roomGroups = await realmStore.queryRoomGroups()
             roomGroups = roomGroups.sorted('Id')
+            //roomGroups.push(RoomAll)
             serverEvents = await realmStore.queryServerEvents()
             console.log("init: ", JSON.parse(JSON.stringify(rooms, roomGroups, serverEvents)));
 
             let newDatas = insertServerEvent(getDatas(rooms, roomGroups), serverEvents)
             console.log("init: newDatas ", newDatas);
-            // dataRef.current = newDatas
+            dataRef.current = newDatas
             setData(newDatas)
             let list = newDatas.filter(item => item.isGroup)
-
+            list.unshift(RoomAll)
             setListRoom(list)
 
             serverEvents.addListener((collection, changes) => {
                 if (changes.insertions.length || changes.modifications.length) {
                     let newDatas = insertServerEvent(getDatas(rooms, roomGroups), serverEvents)
-                    // dataRef.current = newDatas
+                    dataRef.current = newDatas
                     setData(newDatas)
                     setFilterStatus('tat_ca')
+                    setStatus()
+                    setIndexRoom(0)
                 }
             })
             setTextSearch(props.textSearch)
@@ -111,6 +116,7 @@ export default (props) => {
 
     const getDatas = (rooms, roomGroups) => {
         let newDatas = []
+        //newDatas.push(RoomAll)
         if (rooms && rooms.length > 1) rooms.sorted('Position')
         if (roomGroups) {
             roomGroups.forEach(roomGroup => {
@@ -138,7 +144,7 @@ export default (props) => {
 
         console.log("getDatas", newDatas);
         console.log("roomRef", roomRef.current);
-
+        console.log("dataRef.current", dataRef.current);
         return newDatas
     }
 
@@ -191,34 +197,15 @@ export default (props) => {
     }
     //filter---------------------------------------------------------------
     const filterRoom = (value) => {
-        if (value == true || value == false) {
-            let room = dataRef.current.filter(item => item.IsActive == value)
-            let roomGroup = dataRef.current.filter(item => item.isGroup == true)
-            console.log("Room", room);
-            console.log("group", roomGroup);
-            let newDatas = []
-            if (roomGroup) {
-                roomGroup.forEach(roomGroup => {
-                    let roomsInside = room.filter(item => item.RoomGroupId == roomGroup.Id && (item.Name).toLowerCase().indexOf(debouncedVal.toLowerCase()) != -1)
-                    let lengthRoomsInside = roomsInside.length
-                    if (roomsInside && lengthRoomsInside > 0) {
-                        roomGroup.isGroup = true
-                        roomGroup.sum = lengthRoomsInside
-                        newDatas.push(roomGroup)
-                        newDatas = newDatas.concat(roomsInside.slice())
-                    }
-                })
-            }
-            setData(newDatas)
-            hideMenu()
-        } else {
-            setData([...dataRef.current])
-            hideMenu()
-        }
+        setStatus(value)
+        filterByCategory(idFilter)
+        hideMenu()
+
     }
     useEffect(() => {
         console.log("rooom", datas);
         console.log("textsearch", props.textSearch);
+        setValueCategory()
     }, [datas])
 
     const searchRoom = () => {
@@ -244,7 +231,6 @@ export default (props) => {
 
         }
         setFilterStatus('tat_ca')
-
     }
     useEffect(() => {
         setTextSearch(props.textSearch)
@@ -252,6 +238,81 @@ export default (props) => {
     useEffect(() => {
         searchRoom()
     }, [debouncedVal])
+    const filterByCategory = () => {
+        if (status == null) {
+            if (idFilter == -1) {
+                setData(dataRef.current)
+
+            } else {
+                let room = dataRef.current.filter(item => item.RoomGroupId == idFilter)
+                setData(room)
+            }
+        } else {
+            if (idFilter == -1) {
+                if (status == true || status == false) {
+                    let room = dataRef.current.filter(item => item.IsActive == status)
+                    let roomGroup = dataRef.current.filter(item => item.isGroup == true)
+                    console.log("Room", room);
+                    console.log("group", roomGroup);
+                    let newDatas = []
+                    if (roomGroup) {
+                        roomGroup.forEach(roomGroup => {
+                            let roomsInside = room.filter(item => item.RoomGroupId == roomGroup.Id && (item.Name).toLowerCase().indexOf(debouncedVal.toLowerCase()) != -1)
+                            let lengthRoomsInside = roomsInside.length
+                            if (roomsInside && lengthRoomsInside > 0) {
+                                roomGroup.isGroup = true
+                                roomGroup.sum = lengthRoomsInside
+                                newDatas.push(roomGroup)
+                                newDatas = newDatas.concat(roomsInside.slice())
+                            }
+                        })
+                    }
+                    setData(newDatas)
+
+                } else {
+                    setData([...dataRef.current])
+                }
+            } else {
+                let room = dataRef.current.filter(item => item.RoomGroupId == idFilter && item.IsActive == status)
+                setData(room)
+
+            }
+        }
+
+    }
+    useEffect(() => {
+        filterByCategory()
+    }, [idFilter, status])
+    const setValueCategory = (list) => {
+        let total = 0
+        let listRoom = []
+        let data = []
+        let sumTable = 0
+        let uses = 0
+        if (idFilter != -1) {
+            listRoom = dataRef.current.filter(item => item.RoomGroupId == idFilter)
+            sumTable = listRoom.length
+            data = dataRef.current.filter(item => item.IsActive == true && item.RoomGroupId == idFilter)
+            uses = data.length
+        } else {
+            listRoom = dataRef.current.filter(item => item.isGroup == true)
+            sumTable = dataRef.current.length - listRoom.length
+            console.log("list room", listRoom);
+            data = dataRef.current.filter(item => item.IsActive == true && item.RoomGroupId != idFilter)
+            uses = data.length -1;
+            console.log("data true", data);
+        }
+        if (data && data.length > 0) {
+            data.forEach(item => {
+                let itemTotal = item.Total
+                total += itemTotal
+            })
+        } else {
+            total = 0
+        }
+        setValueAll({ ...valueAll, cash: total, use: uses, room: sumTable })
+
+    }
     //
     const renderRoom = (item, widthRoom) => {
         widthRoom = parseInt(widthRoom)
@@ -365,15 +426,15 @@ export default (props) => {
                             </TouchableOpacity>
                         </View>}
                     >
-                        <View style={{ backgroundColor: '#f2f2f2', borderRadius: 16, elevation: 2, borderWidth: 0.5, borderColor: 'gray' }}>
+                        <View style={{ backgroundColor: '#f2f2f2', borderRadius: 16, elevation: 5, borderWidth: 0.5, borderColor: 'gray' }}>
                             <TouchableOpacity onPress={() => { filterRoom(null), setFilterStatus('tat_ca') }} style={{ backgroundColor: filterStatus == 'tat_ca' ? colors.colorLightBlue : null, borderTopLeftRadius: 16, borderTopRightRadius: 16 }}>
-                                <Text style={[styles.titleMenu, { paddingHorizontal: 15, color: filterStatus == 'tat_ca' ? 'white' : null, fontWeight: filterStatus == 'tat_ca' ? 'bold' : null, }]} >{I18n.t('tat_ca')}</Text>
+                                <Text style={[styles.titleMenu, { color: filterStatus == 'tat_ca' ? 'white' : null, fontWeight: filterStatus == 'tat_ca' ? 'bold' : null, }]} >{I18n.t('tat_ca')}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity onPress={() => { filterRoom(true), setFilterStatus('dang_dung') }} style={{ backgroundColor: filterStatus == 'dang_dung' ? colors.colorLightBlue : null, }}>
-                                <Text style={[styles.titleMenu, { paddingHorizontal: 15, color: filterStatus == 'dang_dung' ? 'white' : null, fontWeight: filterStatus == 'dang_dung' ? 'bold' : null }]}>{I18n.t('dang_dung')}</Text>
+                            <TouchableOpacity onPress={() => { filterRoom(true), setFilterStatus('dang_dung') }} style={{ backgroundColor: filterStatus == 'dang_dung' ? colors.colorLightBlue : null }}>
+                                <Text style={[styles.titleMenu, { color: filterStatus == 'dang_dung' ? 'white' : null, fontWeight: filterStatus == 'dang_dung' ? 'bold' : null }]}>{I18n.t('dang_dung')}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => { filterRoom(false), setFilterStatus('dang_trong') }} style={{ backgroundColor: filterStatus == 'dang_trong' ? colors.colorLightBlue : null, borderBottomLeftRadius: 16, borderBottomRightRadius: 16 }}>
-                                <Text style={[styles.titleMenu, { paddingHorizontal: 15, color: filterStatus == 'dang_trong' ? 'white' : null, fontWeight: filterStatus == 'dang_trong' ? 'bold' : null }]}>{I18n.t('dang_trong')}</Text>
+                                <Text style={[styles.titleMenu, { color: filterStatus == 'dang_trong' ? 'white' : null, fontWeight: filterStatus == 'dang_trong' ? 'bold' : null }]}>{I18n.t('dang_trong')}</Text>
                             </TouchableOpacity>
                         </View>
                     </Menu>
@@ -388,10 +449,11 @@ export default (props) => {
                                 key={index}
                                 onPress={() => {
                                     setIndexRoom(index)
-                                    console.log("_nodes.size ", _nodes.size);
-                                    const node = _nodes.get(data.Id);
-                                    console.log("node ", node);
-                                    refScroll.scrollTo({ y: node })
+                                    // console.log("_nodes.size ", _nodes.size);
+                                    // const node = _nodes.get(data.Id);
+                                    // console.log("node ", node);
+                                    // refScroll.scrollTo({ y: node })
+                                    setIdFilter(data.Id)
                                 }} style={{ height: "100%", justifyContent: "center", alignItems: "center", paddingHorizontal: 15, paddingVertical: 5, backgroundColor: indexRoom == index ? colors.colorLightBlue : null, paddingVertical: 5, borderRadius: 16 }}>
                                 <Text style={{ color: indexRoom == index ? "#fff" : "#000", textTransform: 'uppercase', fontWeight: indexRoom == index ? 'bold' : null }}>{data.Name}</Text>
                             </TouchableOpacity>
@@ -414,7 +476,7 @@ export default (props) => {
                                         }
                                     }}
                                     style={{ flexDirection: "row" }}>
-                                    {data.isGroup && data.sum > 0 ? renderRoomGroup(data) : renderRoom(data, widthRoom)}
+                                    {data.isGroup ? renderRoomGroup(data) : renderRoom(data, widthRoom)}
                                 </View>
                             ) : null
                         }
@@ -462,6 +524,6 @@ const styles = StyleSheet.create({
         fontSize: 24
     },
     titleMenu: {
-        textAlign: 'center', paddingVertical: 5
+        textAlign: 'center', paddingHorizontal: 20, paddingVertical: 10
     }
 });

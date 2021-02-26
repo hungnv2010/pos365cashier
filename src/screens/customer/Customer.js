@@ -44,21 +44,32 @@ export default (props) => {
         console.log("useSelector state ", state);
         return state.Common
     });
+    const currentBranch = useRef()
 
     useEffect(() => {
         getCustomer()
+        getCurrentBranch()
+
     }, [])
+    const getCurrentBranch = async () => {
+        let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
+        currentBranch.current = JSON.parse(branch)
+        console.log("branh", currentBranch.current.Id);
+    }
 
     useEffect(() => {
         const getSearchResult = async () => {
             if (debouncedVal != '') {
-
                 // let valueSearchLatin = change_alias(debouncedVal)
-                let results = await realmStore.queryCustomer()
-                let searchResult = results.filtered(`Name CONTAINS "${debouncedVal}" OR Code CONTAINS "${debouncedVal}" OR Phone CONTAINS "${debouncedVal}"`)
-                searchResult = JSON.parse(JSON.stringify(searchResult))
-                searchResult = Object.values(searchResult)
-                setCustomerData(searchResult)
+                // let results = await realmStore.queryCustomer()
+                // let searchResult = results.filtered(`Name CONTAINS "${debouncedVal}" OR Code CONTAINS "${debouncedVal}" OR Phone CONTAINS "${debouncedVal}"`)
+                // searchResult = JSON.parse(JSON.stringify(searchResult))
+                // searchResult = Object.values(searchResult)
+                //filter
+                let paramFilter = `(substringof('${debouncedVal}',Code)  or substringof('${debouncedVal}',Phone) or substringof('${debouncedVal}',Name))`
+                let res = await new HTTPService().setPath(ApiPath.CUSTOMER).GET({ IncludeSummary: true, inlinecount: 'allpages', GroupId: -1, Type: 1, BranchId: currentBranch.current.Id, Birthday: '', filter: paramFilter })
+                console.log("abc", res);
+                setCustomerData(res.results)
 
             } else {
                 setCustomerData(backUpCustomer.current)
@@ -84,9 +95,10 @@ export default (props) => {
             dialogManager.hiddenLoading()
             let listCustomer = res.Data.reverse()
             listCustomer.unshift(GUEST)
+            backUpCustomer.current = listCustomer
             setCustomerData(listCustomer)
             await realmStore.insertDatas(SchemaName.CUSTOMER, res.Data)
-            
+
         } else {
             try {
                 let customers = await realmStore.queryCustomer()
