@@ -40,9 +40,9 @@ export default forwardRef((props, ref) => {
             }}
             >
 
-                <View style={{ flex: 1,alignItems:deviceType==Constant.TABLET?'center':null }}>
+                <View style={{ flex: 1, alignItems: deviceType == Constant.TABLET ? 'center' : null }}>
                     <TouchableOpacity onPress={() => { props.navigation.openDrawer() }}>
-                    <Image source={Images.icon_menu} style={{width:48,height:48}} />
+                        <Image source={Images.icon_menu} style={{ width: 48, height: 48 }} />
                     </TouchableOpacity>
                 </View>
                 <View style={{ flex: 1.5, justifyContent: 'center', alignItems: 'flex-start' }}>
@@ -64,7 +64,7 @@ export default forwardRef((props, ref) => {
                         null}
                 </View>
 
-                <View style={{ flex: deviceType == Constant.TABLET ? 3 : 2, alignItems: "center", flexDirection: "row", justifyContent: "space-around" }}>
+                <View style={{ flex: deviceType == Constant.TABLET ? 2 : 2, alignItems: "center", flexDirection: "row", justifyContent: "space-around" }}>
                     {
                         deviceType == Constant.TABLET ?
                             <TouchableOpacity style={styles.button} onPress={() => {
@@ -90,11 +90,11 @@ export default forwardRef((props, ref) => {
                             <Icon name="library-books" size={28} color="white" style={{}} />
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={props.onClickSync} >
+                    {/* <TouchableOpacity style={styles.button} onPress={props.onClickSync} >
                         <View style={{}}>
                             <Icon name="refresh" size={25} color="white" style={{}} />
                         </View>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
 
                     {
                         deviceType == Constant.TABLET ?

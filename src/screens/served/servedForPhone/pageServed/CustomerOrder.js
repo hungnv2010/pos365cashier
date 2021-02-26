@@ -13,6 +13,7 @@ import { ScreenList } from '../../../../common/ScreenList';
 import DialogProductDetail from '../../../../components/dialog/DialogProductDetail'
 import dialogManager from '../../../../components/dialog/DialogManager';
 import dataManager from '../../../../data/DataManager';
+import useInterval from '../../../../customHook/useInterval';
 import { useDispatch, useSelector } from 'react-redux';
 import { defaultMultiKitchen } from '../../../more/ViewPrint';
 import { color } from 'react-native-reanimated';
@@ -44,6 +45,13 @@ export default (props) => {
     const [vendorSession, setVendorSession] = useState({});
     const typeModal = useRef(TYPE_MODAL.DETAIL)
     const isStartPrint = useRef(-1)
+
+    const [delay, setDelay] = useState(1);
+    useInterval(() => {//60s kiem tra va tinh lai hang hoa tính gio
+        if(delay == 1) setDelay(60)
+        let reload = dataManager.calculateProductTime(listOrder)
+        if(reload) props.outPutSetNewOrderDetail(listOrder)
+    }, delay * 1000)
 
     useEffect(() => {
         const getVendorSession = async () => {
@@ -141,6 +149,7 @@ export default (props) => {
         // typeModal.current = TYPE_MODAL.DELETE
         // setShowModal(true)
         if (vendorSession.Settings.ReturnHistory) {
+            setQuantitySubtract(item.Quantity)
             typeModal.current = TYPE_MODAL.DELETE
             setShowModal(true)
         } else {

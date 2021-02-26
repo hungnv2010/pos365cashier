@@ -91,7 +91,7 @@ export default (props) => {
                     if (currentServerEvent) {
                         let serverEvent = JSON.parse(JSON.stringify(currentServerEvent));
                         dataManager.paymentSetServerEvent(serverEvent, {});
-                        dataManager.subjectUpdateServerEvent.next(serverEvent)
+                        dataManager.updateServerEventNow(serverEvent)
                     }
                     dataManager.deleteRow(SchemaName.ORDERS_OFFLINE, element.Id);
                     updateSuccess++;

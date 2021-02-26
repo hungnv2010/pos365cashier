@@ -175,8 +175,9 @@ RCT_EXPORT_METHOD(keepTheScreenOff:(NSString *)param) {
     data = [cmd GetBitMapCmd:bitmapSetting image:[images objectAtIndex:i]];
     [cmd Append:data];
     NSLog(@"printImageFromClient URL 5");
+    [cmd Append:[cmd GetLFCmd]];
   }
-  [cmd Append:[cmd GetLFCRCmd]];
+  // [cmd Append:[cmd GetLFCRCmd]];
   //[cmd Append:[cmd GetCutPaperCmd:CutterMode_half]];
 //  [cmd Append:[cmd GetFeedAndCutPaperCmd:true FeedDistance:10]];
   [cmd Append:[cmd GetCutPaperCmd:CutterMode_half]];//for ESC

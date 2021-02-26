@@ -19,13 +19,11 @@ import { Constant } from '../../../common/Constant';
 import { Images, Metrics } from '../../../theme';
 import colors from '../../../theme/Colors';
 import TextTicker from 'react-native-text-ticker';
-import dataManager from '../../../data/DataManager';
-import { useFocusEffect } from '@react-navigation/native';
+import NetInfo from "@react-native-community/netinfo";
 import moment from 'moment';
 import Menu from 'react-native-material-menu';
-import { get } from 'react-native/Libraries/Utilities/PixelRatio';
 import useDebounce from '../../../customHook/useDebounce';
-// import 'moment/min/locales'
+import { useFocusEffect } from '@react-navigation/native';
 
 const _nodes = new Map();
 
@@ -54,18 +52,30 @@ export default (props) => {
     let rooms = null
     let roomGroups = null
     let serverEvents = null
+    let updateTime = null
     const [datas, setData] = useState([])
     const [valueAll, setValueAll] = useState({})
     const widthRoom = Dimensions.get('screen').width / numberColumn;
     const RoomAll = { Name: "Tất cả", Id: -1, isGroup: true }
     const [listRoom, setListRoom] = useState([])
     const dataRef = useRef([])
-    const roomGroupRef = useRef([])
     const roomRef = useRef([])
-    const severEventRef = useRef([])
     const [filterStatus, setFilterStatus] = useState('tat_ca')
     const [status, setStatus] = useState()
     const [idFilter, setIdFilter] = useState(-1)
+
+
+
+    useFocusEffect(
+        React.useCallback(() => {
+            updateTime = setInterval(() => {
+                reloadTime()
+            }, 1000 * 60);
+            return () => {
+                clearInterval(updateTime)
+            }
+        }, [])
+    );
 
     useEffect(() => {
         if (!already) return
@@ -110,7 +120,6 @@ export default (props) => {
     }, [already])
 
     const reloadTime = async () => {
-        console.log('reloadTime', dataRef.current);
         setData([...dataRef.current])
     }
 
@@ -348,7 +357,7 @@ export default (props) => {
                                     duration={6000}
                                     bounce={false}
                                     marqueeDelay={1000}>
-                                    {item.RoomMoment && item.IsActive ? getTimeFromNow(item) : ""}
+                                    {item.RoomMoment && item.IsActive ? getTimeFromNow(item.RoomMoment) : ""}
                                 </TextTicker>
                             </View>
                             //      <TextTicker

@@ -9,6 +9,7 @@ import useDebounce from '../../../../customHook/useDebounce';
 import { Colors, Metrics, Images } from '../../../../theme'
 import ToolBarSelectProduct from '../../../../components/toolbar/ToolBarSelectProduct'
 import dialogManager from '../../../../components/dialog/DialogManager'
+import ProductManager from '../../../../data/objectManager/ProductManager'
 
 
 export default (props) => {
@@ -19,7 +20,7 @@ export default (props) => {
   const [skip, setSkip] = useState(0)
   const [isSearching, setIsSearching] = useState(false)
   const [listCateId, setListCateId] = useState([-1])
-  const listProducts = useRef([...props.route.params.listProducts])
+  const listProducts = useRef(JSON.parse(JSON.stringify(props.route.params.listProducts)))
   const [valueSearch, setValueSearch] = useState('')
   const count = useRef(0)
   const [showModal, setShowModal] = useState(false)
@@ -118,7 +119,6 @@ export default (props) => {
   const onClickProduct = (item, index) => {
     console.log('onClickProduct', item);
     item.index = undefined
-    item.Description = getDescription(item)
     let pos = listProducts.current.map(elm => elm.Id).indexOf(item.Id);
     let pos_2 = listChangeText.current.map(elm => elm.Id).indexOf(item.Id);
     if (pos == -1 && pos_2 == -1) {
@@ -129,6 +129,7 @@ export default (props) => {
       listProducts.current = listProducts.current.filter(elm => elm.Id != item.Id)
       listChangeText.current = listChangeText.current.filter(elm => elm.Id != item.Id)
     }
+
     console.log('onClickProduct listProducts ', listProducts.current);
     setProduct([...product])
   }
@@ -139,15 +140,6 @@ export default (props) => {
       Quantity = item.BlockOfTimeToUseService / 60
     }
     return Quantity
-  }
-
-  const getDescription = (item) => {
-    let Description = ''
-    if (item.ProductType == 2 && item.IsTimer) {
-      let checkIn = new Date();
-      Description = `${dateToString(checkIn, "DD/MM HH:mm")}=>${dateToString(checkIn, "DD/MM HH:mm")} () ${I18n.t('mot_gio_dau_tien')} = ${currencyToString(item.Price)}.`;
-    }
-    return Description
   }
 
   const handleButtonIncrease = (item, index) => {
@@ -170,18 +162,19 @@ export default (props) => {
   }
 
   const handleButtonDecrease = (item, index) => {
+    console.log('asdasdasd');
     let qtt = getQuantity(item)
     let pos = listProducts.current.map(elm => elm.Id).indexOf(item.Id);
     let pos_2 = listChangeText.current.map(elm => elm.Id).indexOf(item.Id);
     if (pos > -1) {
       if (item.SplitForSalesOrder || (item.ProductType == 2 && item.IsTimer)) {
-        if (listProducts.current[pos].Quantity >= qtt) {
+        if (listProducts.current[pos].Quantity > qtt) {
           listProducts.current[pos].Quantity -= qtt
         } else {
           listProducts.current.splice(pos, 1)
         }
       } else {
-        if (listProducts.current[pos].Quantity >= qtt) {
+        if (listProducts.current[pos].Quantity > qtt) {
           listProducts.current[pos].Quantity -= qtt
         } else {
           listProducts.current = listProducts.current.filter(elm => elm.Id != item.Id)
@@ -241,13 +234,6 @@ export default (props) => {
 
   const clickLeftIcon = () => {
     if (JSON.stringify(props.route.params.listProducts) != JSON.stringify(listProducts.current)) {
-      // dialogManager.showPopupTwoButton(I18n.t('ban_co_muon_luu'), I18n.t('thong_bao'), (value) => {
-      //   if (value == 1) {
-      //     onClickDone()
-      //   } else {
-      //     props.navigation.goBack();
-      //   }
-      // })
       setShowModal(true)
     } else {
       props.navigation.goBack();
@@ -269,7 +255,7 @@ export default (props) => {
 
   const renderCateItem = (item, index) => {
     return (
-      <TouchableOpacity onPress={() => onClickCate(item, index)} key={index} style={[styles.renderCateItem, { backgroundColor: item.Id == listCateId[0] ? Colors.colorchinh : "white",borderRadius:4}]}>
+      <TouchableOpacity onPress={() => onClickCate(item, index)} key={index} style={[styles.renderCateItem, { backgroundColor: item.Id == listCateId[0] ? Colors.colorchinh : "white", borderRadius: 4 }]}>
         <Text numberOfLines={2} style={[styles.textRenderCateItem, { color: item.Id == listCateId[0] ? "white" : Colors.colorchinh }]}>{item.Name}</Text>
       </TouchableOpacity>
     );
@@ -376,6 +362,7 @@ export default (props) => {
                   <TouchableOpacity
                     style={{ padding: 10, borderRadius: 5, width: Metrics.screenWidth * 0.2, alignItems: "center", backgroundColor: Colors.colorPhu }}
                     onPress={() => {
+                      setShowModal(false)
                       props.navigation.goBack();
                     }}
                   >
@@ -384,6 +371,7 @@ export default (props) => {
                   <TouchableOpacity
                     style={{ padding: 10, borderRadius: 5, width: Metrics.screenWidth * 0.2, alignItems: "center", backgroundColor: Colors.colorchinh }}
                     onPress={() => {
+                      setShowModal(false)
                       onClickDone()
                     }}
                   >

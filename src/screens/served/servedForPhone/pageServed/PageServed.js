@@ -21,6 +21,7 @@ import { ScreenList } from '../../../../common/ScreenList';
 import { currencyToString, dateToString } from '../../../../common/Utils';
 import moment from 'moment';
 import { log } from 'react-native-reanimated';
+import ProductManager from '../../../../data/objectManager/ProductManager'
 
 export default (props) => {
 
@@ -67,7 +68,7 @@ export default (props) => {
             serverEvent = serverEvent.filtered(`RowKey == '${row_key}'`)
             currentServerEvent.current = JSON.stringify(serverEvent) != '{}' ? JSON.parse(JSON.stringify(serverEvent[0]))
                 : await dataManager.createSeverEvent(props.route.params.room.Id, position)
-            console.log('currentServerEvent.current', currentServerEvent.current, JSON.parse(currentServerEvent.current.JsonContent));
+            console.log('currentServerEvent.current', currentServerEvent.current,await dataManager.createSeverEvent(props.route.params.room.Id, position));
             let jsonContentObject = JSON.parse(currentServerEvent.current.JsonContent)
 
             setJsonContent(jsonContentObject)
@@ -165,6 +166,7 @@ export default (props) => {
                 list = await getOtherPrice(list)
                 list.forEach(item => {
                     if (item.SplitForSalesOrder || (item.ProductType == 2 && item.IsTimer)) {
+                        if(item.IsTimer) ProductManager.getProductTimePrice(item)
                         listTmp.push(item)
                     } else {
                         let pos = listCooked.current.map(elm => elm.Id).indexOf(item.Id);
@@ -186,10 +188,19 @@ export default (props) => {
             let { RoomId, Position } = currentServerEvent.current
             let jsonContentObj = JSON.stringify(jsonContent) == "{}" ? dataManager.createJsonContent(RoomId, Position, moment()) : jsonContent
             jsonContentObj.OrderDetails = [...list]
+            jsonContentObj.ActiveDate = moment()
             updateServerEvent(jsonContentObj)
             dataManager.sentNotification(title, body)
 
         }
+    }
+
+    const setNewOrderDetails = (listProduct) => {
+        jsonContent.OrderDetails = [...listProduct]
+
+        checkRoomProductId(listProduct, props.route.params.room.ProductId)
+
+        updateServerEvent({ ...jsonContent }, 0)
     }
 
     const addPromotion = async (list = []) => {
@@ -302,17 +313,14 @@ export default (props) => {
         return true;
     }
 
-    const updateServerEvent = (jsonContent) => {
-        console.log('updateServerEvent', currentPriceBook.Id);
-        console.log('updateServerEvent jsonContent :: ', jsonContent);
+    const updateServerEvent = (jsonContent, versionIncrease = 1) => {
         if (currentServerEvent.current) {
             let serverEvent = currentServerEvent.current
             dataManager.calculatateJsonContent(jsonContent)
             console.log('jsonContentjsonContent', jsonContent);
             setJsonContent({ ...jsonContent })
-            serverEvent.Version += 1
-            serverEvent.JsonContent = JSON.stringify(jsonContent)
-            dataManager.updateServerEvent(serverEvent)
+            serverEvent.Version += versionIncrease
+            dataManager.updateServerEvent(serverEvent, jsonContent)
         }
     }
 
@@ -551,12 +559,11 @@ export default (props) => {
     const handlerProcessedProduct = (jsonContent) => {
         console.log("handlerProcessedProduct jsonContent ", jsonContent);
         if (currentServerEvent.current) {
-            let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current))
+            let serverEvent = currentServerEvent.current
             dataManager.calculatateJsonContent(jsonContent)
             setJsonContent({ ...jsonContent })
             serverEvent.Version += 1
-            serverEvent.JsonContent = JSON.stringify(jsonContent)
-            dataManager.updateServerEvent(serverEvent)
+            dataManager.updateServerEvent(serverEvent, jsonContent)
         }
     }
 
@@ -611,7 +618,8 @@ export default (props) => {
                 Position={position}
                 jsonContent={jsonContent}
                 outputListProducts={outputListProducts}
-                handlerProcessedProduct={(jsonContent) => handlerProcessedProduct(jsonContent)} />
+                handlerProcessedProduct={(jsonContent) => handlerProcessedProduct(jsonContent)} 
+                outPutSetNewOrderDetail={setNewOrderDetails}/>
             <Snackbar
                 duration={5000}
                 visible={showToast}

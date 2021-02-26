@@ -348,7 +348,7 @@ export default (props) => {
             new HTTPService().setPath(ApiPath.CUSTOMER).POST(params)
                 .then(res => {
                     console.log('onClickDone res', res);
-                    if (res && res.ResponseStatus && res.ResponseStatus.ErrorCode) {
+                    if (res && res.ResponseStatus && res.ResponseStatus.Message) {
                         dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
                             dialogManager.destroy();
                         }, null, null, I18n.t('dong'))
@@ -369,7 +369,11 @@ export default (props) => {
             new HTTPService().setPath(ApiPath.CUSTOMER).POST(params)
                 .then(res => {
                     console.log('onClickDone res', res);
-                    if (res) {
+                    if (res && res.ResponseStatus && res.ResponseStatus.Message) {
+                        dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
+                            dialogManager.destroy();
+                        }, null, null, I18n.t('dong'))
+                    } else {
                         props.route.params.onCallBack('sua')
                         props.navigation.pop()
                     }
@@ -498,17 +502,22 @@ export default (props) => {
                             onChangeText={(text) => { onChangeText(text, 4) }}
                         />
                     </View>
-                    <View style={{ padding: 15 }}>
-                        <Text style={{ paddingBottom: 10 }}>{I18n.t('ten_nhom')}</Text>
-                        <TouchableOpacity onPress={() => {
-                            typeModal.current = 3
-                            setShowModal(true)
-                        }} style={{ flexDirection: "row", alignItems: "center" }}>
-                            <Text style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1, color: getGroupName(customerDetail.PartnerGroupMembers) ? null : "#CECCCB" }}>{getGroupName(customerDetail.PartnerGroupMembers) ? getGroupName(customerDetail.PartnerGroupMembers) : I18n.t('ten_nhom')}</Text>
+                    {
+                        props.route.params.item.Id == 0 ?
+                            null
+                            :
+                            <View style={{ padding: 15 }}>
+                                <Text style={{ paddingBottom: 10 }}>{I18n.t('ten_nhom')}</Text>
+                                <TouchableOpacity onPress={() => {
+                                    typeModal.current = 3
+                                    setShowModal(true)
+                                }} style={{ flexDirection: "row", alignItems: "center" }}>
+                                    <Text style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1, color: getGroupName(customerDetail.PartnerGroupMembers) ? null : "#CECCCB" }}>{getGroupName(customerDetail.PartnerGroupMembers) ? getGroupName(customerDetail.PartnerGroupMembers) : I18n.t('ten_nhom')}</Text>
 
-                            <Image source={Images.icon_arrow_down} style={{ width: 20, height: 20, position: "absolute", right: 15 }} />
-                        </TouchableOpacity>
-                    </View>
+                                    <Image source={Images.icon_arrow_down} style={{ width: 20, height: 20, position: "absolute", right: 15 }} />
+                                </TouchableOpacity>
+                            </View>
+                    }
 
                 </Surface>
                 <Surface style={styles.surface}>

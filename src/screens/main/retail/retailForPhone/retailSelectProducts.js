@@ -19,7 +19,7 @@ export default (props) => {
   const [skip, setSkip] = useState(0)
   const [isSearching, setIsSearching] = useState(false)
   const [listCateId, setListCateId] = useState([-1])
-  const listProducts = useRef([...props.route.params.listProducts])
+  const listProducts = useRef(JSON.parse(JSON.stringify(props.route.params.listProducts)))
   const [valueSearch, setValueSearch] = useState('')
   const count = useRef(0)
   const [showModal, setShowModal] = useState(false)
@@ -183,13 +183,13 @@ export default (props) => {
     let pos_2 = listChangeText.current.map(elm => elm.Id).indexOf(item.Id);
     if (pos > -1) {
       if (item.SplitForSalesOrder || (item.ProductType == 2 && item.IsTimer)) {
-        if (listProducts.current[pos].Quantity >= qtt) {
+        if (listProducts.current[pos].Quantity > qtt) {
           listProducts.current[pos].Quantity -= qtt
         } else {
           listProducts.current.splice(pos, 1)
         }
       } else {
-        if (listProducts.current[pos].Quantity >= qtt) {
+        if (listProducts.current[pos].Quantity > qtt) {
           listProducts.current[pos].Quantity -= qtt
         } else {
           listProducts.current = listProducts.current.filter(elm => elm.Id != item.Id)

@@ -4,6 +4,7 @@ import { Colors, Images, Metrics } from '../../../../theme';
 import Menu from 'react-native-material-menu';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import { Constant } from '../../../../common/Constant';
 import { currencyToString } from '../../../../common/Utils';
 import I18n from "../../../../common/language/i18n";
@@ -11,6 +12,7 @@ import { Snackbar } from 'react-native-paper';
 import { useSelector } from 'react-redux';
 import { ScreenList } from '../../../../common/ScreenList';
 import useDebounce from '../../../../customHook/useDebounce';
+import useInterval from '../../../../customHook/useInterval';
 import DialogProductDetail from '../../../../components/dialog/DialogProductDetail'
 import DialogProductUnit from '../../../../components/dialog/DialogProductUnit'
 import dialogManager from '../../../../components/dialog/DialogManager';
@@ -53,6 +55,12 @@ const CustomerOrder = (props) => {
     });
     const dispatch = useDispatch();
 
+    const [delay, setDelay] = useState(1);
+    useInterval(() => {//60s kiem tra va tinh lai hang hoa tính gio
+        if (delay == 1) setDelay(60)
+        let reload = dataManager.calculateProductTime(listOrder)
+        if (reload) props.outPutSetNewOrderDetail(listOrder)
+    }, delay * 1000)
 
     useEffect(() => {
         const getVendorSession = async () => {
@@ -195,10 +203,8 @@ const CustomerOrder = (props) => {
     const onClickReturn = (product, type = 1) => {
         setQuantitySubtract(type != 1 ? 1 : product.Quantity)
         setItemOrder(product)
-        // typeModal.current = TYPE_MODAL.DELETE
-        // setShowModal(true)
-
         if (vendorSession.Settings.ReturnHistory) {
+            setQuantitySubtract(product.Quantity)
             typeModal.current = TYPE_MODAL.DELETE
             setShowModal(true)
         } else {
@@ -298,7 +304,7 @@ const CustomerOrder = (props) => {
     const renderForTablet = (item, index) => {
         const isPromotion = !(item.IsPromotion == undefined || (item.IsPromotion == false))
         return (
-            <>
+            <View>
                 {
                     isPromotion && item.FisrtPromotion != undefined ?
                         <View style={{ backgroundColor: "#ffedd6", padding: 7, paddingHorizontal: 10 }}>
@@ -321,131 +327,138 @@ const CustomerOrder = (props) => {
                     <View style={{
                         borderBottomColor: "#ddd", borderBottomWidth: 0.5,
                         flexDirection: "row", flex: 1, alignItems: "center", padding: 5,
-                        backgroundColor: index == props.itemOrder.index ? "#EED6A7" : 'white', borderRadius: 10, marginBottom: 2
+                        backgroundColor: index == props.itemOrder.index ? "#EED6A7" : "white",
+                        borderRadius: 10, marginBottom: 4
                     }}>
-                        <View style={{ flex: 3, flexDirection: 'row' }}>
-                            <TouchableOpacity
-                                style={{ marginRight: 5 }}
-                                onPress={() => { if (!isPromotion) onClickReturn(item, 1) }}>
-                                <Icon name={!isPromotion ? "trash-can-outline" : "gift"} size={40} color={!isPromotion ? "black" : Colors.colorLightBlue} />
-                            </TouchableOpacity>
-                            <View style={{ flexDirection: "column", flex: 1, }}>
-                                <Text style={{ fontWeight: "bold", marginBottom: 7 }}>{item.Name}</Text>
-                                <View style={{ flexDirection: "row" }}>
-                                    <Text style={{}}>{currencyToString(item.Price)} x </Text>
-                                    <View onPress={() => onClickUnit({ ...item })}>
-                                        {
-                                            orientaition == Constant.PORTRAIT ?
-                                                <Text style={{ color: Colors.colorchinh, }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text>
-                                                :
-                                                <View>
-                                                    <Text style={{ color: Colors.colorchinh, }}>{item.IsLargeUnit ? (item.LargeUnit ? "/" + item.LargeUnit : "") : (item.Unit ? "/" + item.Unit : "")}</Text>
-                                                </View>
-                                        }
-                                    </View>
-                                </View>
-                                <Text
-                                    style={{ fontStyle: "italic", fontSize: 11, color: "gray" }}>
-                                    {item.Description}
-                                </Text>
-                            </View>
-                            <View style={{}}>
-                                <Icon style={{ alignSelf: "flex-end" }} name="bell-ring" size={20} color={item.Quantity <= item.Processed ? Colors.colorLightBlue : "gray"} />
-                                <Text
-                                    style={{ color: Colors.colorchinh, alignSelf: "flex-end" }}>
-                                    {currencyToString(item.Price * item.Quantity)}
-                                </Text>
-                            </View>
-                        </View>
-                        {
-                            orientaition == Constant.PORTRAIT ?
-                                null
-                                :
-                                (isPromotion ? null :
-                                    <>
-                                        <View style={{ marginHorizontal: 5, flex: 2, }}>
-                                            {
-                                                item.ProductType == 2 && item.IsTimer ?
 
-                                                    <View style={{
-                                                        flex: 1, justifyContent: "center",
-                                                        alignItems: "center", paddingVertical: 10,
-                                                        shadowColor: "#000",
-                                                        shadowOffset: {
-                                                            width: 0,
-                                                            height: 1,
-                                                        },
-                                                        shadowOpacity: 0.18,
-                                                        shadowRadius: 1.00,
-                                                        elevation: 2,
-                                                        borderRadius: 2
-                                                    }}>
-                                                        <Text style={{ fontWeight: "bold" }}>{Math.round(item.Quantity * 1000) / 1000}</Text>
-                                                    </View>
-                                                    :
-                                                    <View style={{ alignItems: "center", flexDirection: "row", flex: 1 }}>
-                                                        <TouchableOpacity
-                                                            onPress={
-                                                                // () => {
-                                                                //     if (item.Quantity == 1) {
-                                                                //         removeItem(item)
-                                                                //     } else {
-                                                                //         item.Quantity--
-                                                                //         setListOrder([...listOrder])
-                                                                //         mapDataToList(item, false)
-                                                                //     }
-                                                                // }
-                                                                () => onClickReturn(item, 2)
-                                                            }>
-                                                            <Icon name="minus-box" size={40} color={Colors.colorchinh} />
-                                                        </TouchableOpacity>
-                                                        <View style={{
-                                                            width: 60,
-                                                            height: 35,
-                                                            shadowColor: "#000",
-                                                            shadowOffset: {
-                                                                width: 0,
-                                                                height: 1,
-                                                            },
-                                                            shadowOpacity: 0.18,
-                                                            shadowRadius: 1.00,
-                                                            elevation: 2,
-                                                            borderRadius: 2,
-                                                            justifyContent: "center",
-                                                            alignItems: "center"
-                                                        }}>
-                                                            <Text
-                                                                style={{
-                                                                    fontSize: 16,
-                                                                    fontWeight: "bold",
-                                                                }}>{item.Quantity}</Text>
+                        <TouchableOpacity
+                            style={{ marginRight: 5 }}
+                            onPress={() => { if (!isPromotion) onClickReturn(item, 1) }}>
+                            <Icon name={!isPromotion ? "trash-can-outline" : "gift"} size={40} color={!isPromotion ? "black" : Colors.colorLightBlue} />
+                        </TouchableOpacity>
+
+                        <View style={{ flexDirection: "column", flex: 1, alignItems: "flex-start" }}>
+
+                            <View style={{ flexDirection: "row", flex: 1, alignItems: "center" }}>
+                                <View style={{ flex: 3, flexDirection: 'row' }}>
+                                    <View style={{ flexDirection: "column", flex: 1, }}>
+                                        <Text style={{ fontWeight: "bold", marginBottom: 7 }}>{item.Name}</Text>
+                                        <View style={{ flexDirection: "row" }}>
+                                            <Text style={{}}>{currencyToString(item.Price)} x </Text>
+                                            <View>
+                                                {
+                                                    orientaition == Constant.PORTRAIT ?
+                                                        <Text style={{ color: Colors.colorchinh, }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text>
+                                                        :
+                                                        <View>
+                                                            <Text style={{ color: Colors.colorchinh, }}>{item.IsLargeUnit ? (item.LargeUnit ? "/" + item.LargeUnit : "") : (item.Unit ? "/" + item.Unit : "")}</Text>
                                                         </View>
-                                                        <TouchableOpacity onPress={() => {
-                                                            item.Quantity++
-                                                            setListOrder([...listOrder])
-                                                            mapDataToList(item)
-                                                        }}>
-                                                            <Icon name="plus-box" size={40} color={Colors.colorchinh} />
-                                                        </TouchableOpacity>
-                                                    </View>
-                                            }
+                                                }
+                                            </View>
                                         </View>
 
-                                        <TouchableOpacity
-                                            style={{ borderWidth: 1, borderRadius: 20, alignItems: "center", width: 40, height: 40, borderColor: Colors.colorchinh, }}
-                                            onPress={() => {
-                                                props.outputItemOrder(item, index)
-                                            }}>
-                                            <Icon name="puzzle" size={25} color={Colors.colorchinh} style={{ padding: 5 }} />
-                                        </TouchableOpacity>
-                                    </>
-                                )
-                        }
+                                    </View>
+                                    <View style={{}}>
+                                        <Icon style={{ alignSelf: "flex-end" }} name="bell-ring" size={20} color={item.Quantity <= item.Processed ? Colors.colorLightBlue : "gray"} />
+                                        <Text
+                                            style={{ color: Colors.colorchinh, alignSelf: "flex-end" }}>
+                                            {currencyToString(item.Price * item.Quantity)}
+                                        </Text>
+                                    </View>
+                                </View>
+                                {
+                                    orientaition == Constant.PORTRAIT ?
+                                        null
+                                        :
+                                        (isPromotion ? null :
+                                            <>
+                                                <View style={{ marginHorizontal: 5, flex: 2, }}>
+                                                    {
+                                                        item.ProductType == 2 && item.IsTimer ?
 
+                                                            <View style={{
+                                                                flex: 1, justifyContent: "center",
+                                                                alignItems: "center", paddingVertical: 10,
+                                                                shadowColor: "#000",
+                                                                shadowOffset: {
+                                                                    width: 0,
+                                                                    height: 1,
+                                                                },
+                                                                shadowOpacity: 0.18,
+                                                                shadowRadius: 1.00,
+                                                                elevation: 2,
+                                                                borderRadius: 2
+                                                            }}>
+                                                                <Text style={{ fontWeight: "bold" }}>{Math.round(item.Quantity * 1000) / 1000}</Text>
+                                                            </View>
+                                                            :
+                                                            <View style={{ alignItems: "center", flexDirection: "row", flex: 1 }}>
+                                                                <TouchableOpacity
+                                                                    onPress={
+                                                                        () => onClickReturn(item, 2)
+                                                                    }>
+                                                                    <Icon name="minus-box" size={40} color={Colors.colorchinh} />
+                                                                </TouchableOpacity>
+                                                                <View style={{
+                                                                    width: 50,
+                                                                    height: 35,
+                                                                    shadowColor: "#000",
+                                                                    shadowOffset: {
+                                                                        width: 0,
+                                                                        height: 1,
+                                                                    },
+                                                                    shadowOpacity: 0.18,
+                                                                    shadowRadius: 1.00,
+                                                                    elevation: 2,
+                                                                    borderRadius: 2,
+                                                                    justifyContent: "center",
+                                                                    alignItems: "center"
+                                                                }}>
+                                                                    <Text
+                                                                        style={{
+                                                                            fontSize: 16,
+                                                                            fontWeight: "bold",
+                                                                        }}>{item.Quantity}</Text>
+                                                                </View>
+                                                                <TouchableOpacity onPress={() => {
+                                                                    item.Quantity++
+                                                                    setListOrder([...listOrder])
+                                                                    mapDataToList(item, false)
+                                                                }}>
+                                                                    <Icon name="plus-box" size={40} color={Colors.colorchinh} />
+                                                                </TouchableOpacity>
+                                                            </View>
+                                                    }
+                                                </View>
 
+                                                {
+                                                    item.ProductType == 2 && item.IsTimer ?
+
+                                                        <SimpleLineIcons name="clock" size={37} color={Colors.colorchinh} />
+
+                                                        : <TouchableOpacity
+                                                            style={{ borderWidth: 1, borderRadius: 20, alignItems: "center", justifyContent: "center", width: 40, height: 40, borderColor: Colors.colorchinh, }}
+                                                            onPress={() => {
+                                                                props.outputItemOrder(item, index)
+                                                            }}>
+                                                            <Icon name="puzzle" size={23} color={Colors.colorchinh} />
+                                                        </TouchableOpacity>
+                                                }
+                                            </>
+                                        )
+                                }
+
+                            </View>
+
+                            <Text
+                                style={{ fontStyle: "italic", fontSize: 11, color: "gray" }}>
+                                {item.Description}
+                            </Text>
+
+                        </View>
                     </View>
                 </TouchableOpacity>
-            </>
+            </View>
         )
     }
 
@@ -464,12 +477,13 @@ const CustomerOrder = (props) => {
     const changTable = () => {
         hideMenu()
         if (listOrder && listOrder.length > 0) {
-            hideMenu()
-            props.navigation.navigate("ChangeTable", {
-                FromRoomId: props.route.params.room.Id,
-                FromPos: props.Position,
-                Name: props.route.params.room.Name
-            });
+            setTimeout(() => {
+                props.navigation.navigate(ScreenList.ChangeTable, {
+                    FromRoomId: props.route.params.room.Id,
+                    FromPos: props.Position,
+                    Name: props.route.params.room.Name,
+                });
+            }, 300);
         } else {
             dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
         }
@@ -541,6 +555,7 @@ const CustomerOrder = (props) => {
     const splitTable = () => {
         hideMenu()
         if (listOrder && listOrder.length > 0) {
+            props.jsonContent.RoomName = props.route.params.room.Name
             props.navigation.navigate(ScreenList.SplitTable, props.jsonContent);
         } else {
             dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
@@ -569,7 +584,7 @@ const CustomerOrder = (props) => {
 
                 <TouchableOpacity
                     onPress={() => { setExpand(!expand) }}
-                    style={{ borderTopWidth: .5, borderTopColor: "red", paddingVertical: 3, backgroundColor: "white", marginLeft: 10 }}>
+                    style={{ borderTopWidth: .5, borderTopColor: Colors.colorLightBlue, paddingVertical: 3, backgroundColor: "white", marginLeft: 10 }}>
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                         <Text style={{ fontWeight: "bold" }}>{I18n.t('tong_thanh_tien')}</Text>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>

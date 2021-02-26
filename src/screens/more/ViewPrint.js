@@ -87,11 +87,8 @@ export default forwardRef((props, ref) => {
                 Print.printImageFromClient(uri, currentHtml.current.ip, currentHtml.current.size, (b) => {
                     console.log("printImageFromClient b ", b);
                 })
-                // currentHtml.current = {};
-                // setDataHtml("");
-                // setTimeout(() => {
+
                 setDataHtmlPrint()
-                // }, 500);
             },
             error => console.error('Oops, snapshot failed', error)
         );
@@ -141,10 +138,15 @@ export default forwardRef((props, ref) => {
     }
 
     const printKitchen = async (data, type = TYPE_PRINT.KITCHEN) => {
+        console.log("printKitchen data ", data);
         isProvisional.current = false;
         let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
-        vendorSession = JSON.parse(vendorSession);
+        if (vendorSession && vendorSession != "")
+            vendorSession = JSON.parse(vendorSession);
+        console.log("printKitchen vendorSession ", vendorSession);
         data = JSON.parse(data)
+        console.log("printKitchen data2 ", data);
+        console.log("printKitchen printObject ", printObject);
         for (const value in data) {
             if (data.hasOwnProperty(value)) {
                 if (printObject[value] != "") {
@@ -154,10 +156,18 @@ export default forwardRef((props, ref) => {
                         if (item.hasOwnProperty(key)) {
                             const element = item[key];
                             console.log('element == ', element);
-                            let res = printService.GenHtmlKitchen(htmlKitchen, element, i, vendorSession, type)
-                            if (res && res != "") {
-                                res = res.replace("</body>", "<p style='display: none;'>" + new Date() + "</p> </body>");
-                                printService.listWaiting.push({ html: res, ip: printObject[value].ip, size: printObject[value].size })
+                            let checkPrint = false;
+                            element.forEach(el => {
+                                if (el.Quantity > el.Processed) {
+                                    checkPrint = true;
+                                }
+                            });
+                            if (checkPrint || type != TYPE_PRINT.KITCHEN) {
+                                let res = printService.GenHtmlKitchen(htmlKitchen, element, i, vendorSession, type)
+                                if (res && res != "") {
+                                    res = res.replace("</body>", "<p style='display: none;'>" + new Date() + "</p> </body>");
+                                    printService.listWaiting.push({ html: res, ip: printObject[value].ip, size: printObject[value].size })
+                                }
                             }
                         }
                         i++;

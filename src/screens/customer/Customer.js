@@ -72,7 +72,8 @@ export default (props) => {
                 setCustomerData(res.results)
 
             } else {
-                setCustomerData(backUpCustomer.current)
+                // setCustomerData(backUpCustomer.current)
+                getCustomer()
             }
         }
         getSearchResult()

@@ -21,6 +21,7 @@ import { ApiPath } from '../../../data/services/ApiPath';
 import { HTTPService } from '../../../data/services/HttpService';
 import { ScreenList } from '../../../common/ScreenList';
 import _, { map } from 'underscore';
+import ProductManager from '../../../data/objectManager/ProductManager'
 
 const Served = (props) => {
     let serverEvent = null;
@@ -91,7 +92,7 @@ const Served = (props) => {
                 currentServerEvent.current = JSON.parse(JSON.stringify(serverEvent[0]))
                 let jsonTmp = JSON.parse(serverEvent[0].JsonContent)
                 jsonTmp.OrderDetails = await addPromotion(jsonTmp.OrderDetails);
-                setJsonContent(JSON.parse(serverEvent[0].JsonContent))
+                setJsonContent(jsonTmp)
             }
         }
 
@@ -161,15 +162,20 @@ const Served = (props) => {
     const outputSelectedProduct = async (product, replace = false) => {
         let { RoomId, Position } = currentServerEvent.current
         let jsonContentTmp = JSON.stringify(jsonContent) == "{}" ? dataManager.createJsonContent(RoomId, Position, moment()) : jsonContent
+        console.log('outputSelectedProduct', product, jsonContentTmp);
         if (product.Quantity > 0 && !replace) {
             if (jsonContentTmp.OrderDetails.length == 0) {
                 let title = props.route.params.Name ? props.route.params.Name : ""
                 let body = I18n.t('gio_khach_vao') + moment().format('HH:mm dd/MM')
+                jsonContentTmp.ActiveDate = moment()
                 dataManager.sentNotification(title, body)
             }
-            if (product.SplitForSalesOrder) {
+            if (product.SplitForSalesOrder || (product.ProductType == 2 && product.IsTimer)) {
                 product = await getOtherPrice(product)
-                jsonContentTmp.OrderDetails.push(product)
+                {
+                    if(product.IsTimer) ProductManager.getProductTimePrice(product)
+                    jsonContentTmp.OrderDetails.push(product)
+                }
             } else {
                 let isExist = false
                 jsonContentTmp.OrderDetails.forEach(elm => {
@@ -228,110 +234,16 @@ const Served = (props) => {
         updateServerEvent({ ...jsonContent })
     }
 
-    // const addPromotion = async (list) => {
-    //     console.log("addPromotion list ", list);
-    //     console.log("addPromotion promotions ", promotions);
-    //     let listProduct = await realmStore.queryProducts()
-    //     console.log("addPromotion listProduct:::: ", listProduct);
-    //     let listNewOrder = list.filter(element => (element.IsPromotion == undefined || (element.IsPromotion == false)))
-    //     let listOldPromotion = list.filter(element => (element.IsPromotion != undefined && (element.IsPromotion == true)))
-    //     console.log("listNewOrder listOldPromotion ==:: ", listNewOrder, listOldPromotion);
+    const setNewOrderDetails = (listProduct) => {
+        jsonContent.OrderDetails = [...listProduct]
 
-    //     var DataGrouper = (function () {
-    //         var has = function (obj, target) {
-    //             return _.any(obj, function (value) {
-    //                 return _.isEqual(value, target);
-    //             });
-    //         };
+        checkHasItemOrder(listProduct)
+        checkRoomProductId(listProduct, props.route.params.room.ProductId)
 
-    //         var keys = function (data, names) {
-    //             return _.reduce(data, function (memo, item) {
-    //                 var key = _.pick(item, names);
-    //                 if (!has(memo, key)) {
-    //                     memo.push(key);
-    //                 }
-    //                 return memo;
-    //             }, []);
-    //         };
+        updateServerEvent({ ...jsonContent })
+    }
 
-    //         var group = function (data, names) {
-    //             var stems = keys(data, names);
-    //             return _.map(stems, function (stem) {
-    //                 return {
-    //                     key: stem,
-    //                     vals: _.map(_.where(data, stem), function (item) {
-    //                         return _.omit(item, names);
-    //                     })
-    //                 };
-    //             });
-    //         };
-
-    //         group.register = function (name, converter) {
-    //             return group[name] = function (data, names) {
-    //                 return _.map(group(data, names), converter);
-    //             };
-    //         };
-
-    //         return group;
-    //     }());
-
-    //     DataGrouper.register("sum", function (item) {
-    //         console.log("register item ", item);
-
-    //         return _.extend({ ...item.vals[0] }, item.key, {
-    //             Quantity: _.reduce(item.vals, function (memo, node) {
-    //                 return memo + Number(node.Quantity);
-    //             }, 0)
-    //         });
-    //     });
-
-    //     let listGroupByQuantity = DataGrouper.sum(listNewOrder, ["Id", "IsLargeUnit"])
-
-    //     console.log("listGroupByQuantity === ", listGroupByQuantity);
-
-    //     let listPromotion = [];
-    //     let index = 0;
-    //     listGroupByQuantity.forEach(element => {
-    //         promotions.forEach(async (item) => {
-    //             if ((element.IsPromotion == undefined || (element.IsPromotion == false)) && element.Id == item.ProductId && checkEndDate(item.EndDate) && (item.IsLargeUnit == element.IsLargeUnit && element.Quantity >= item.QuantityCondition)) {
-    //                 let promotion = listProduct.filtered(`Id == ${item.ProductPromotionId}`)
-    //                 promotion = JSON.parse(JSON.stringify(promotion[0]));
-    //                 // let promotion = JSON.parse(item.Promotion)
-    //                 console.log("addPromotion item:::: ", promotion);
-    //                 if (index == 0) {
-    //                     promotion.FisrtPromotion = true;
-    //                 }
-
-    //                 let quantity = Math.floor(element.Quantity / item.QuantityCondition)
-    //                 promotion.Quantity = quantity
-
-    //                 if (listOldPromotion.length > 0) {
-    //                     let oldPromotion = listOldPromotion.filter(el => promotion.Id == el.Id)
-    //                     if (oldPromotion.length == 1) {
-    //                         promotion = oldPromotion[0];
-    //                         promotion.Quantity = quantity;
-    //                     }
-    //                 }
-
-    //                 promotion.Price = item.PricePromotion;
-    //                 promotion.IsLargeUnit = item.ProductPromotionIsLargeUnit;
-    //                 promotion.IsPromotion = true;
-    //                 promotion.ProductId = promotion.Id
-    //                 promotion.Description = element.Quantity + " " + element.Name + ` ${I18n.t('khuyen_mai_')} ` + Math.floor(element.Quantity / item.QuantityCondition);
-
-    //                 console.log("addPromotion promotion ", promotion, index);
-    //                 listPromotion.push(promotion)
-    //                 index++;
-    //             }
-    //         });
-    //     });
-    //     console.log("addPromotion listPromotion:: ", listPromotion);
-    //     listNewOrder = listNewOrder.concat(listPromotion);
-    //     console.log("addPromotion listNewOrder:::: ", listNewOrder);
-    //     return listNewOrder;
-    // }
-
-    const addPromotion = async (list) => {
+    const addPromotion = async (list = []) => {
         console.log("addPromotion list ", list);
         console.log("addPromotion promotions ", promotions);
         let promotionTmp = promotions
@@ -452,16 +364,12 @@ const Served = (props) => {
     }
 
     const updateServerEvent = (jsonContent) => {
-        console.log('updateServerEvent currentPriceBook', currentPriceBook);
         if (currentServerEvent.current) {
             let serverEvent = currentServerEvent.current
             dataManager.calculatateJsonContent(jsonContent)
             setJsonContent({ ...jsonContent })
             serverEvent.Version += 1
-            serverEvent.JsonContent = JSON.stringify(jsonContent)
-            console.log('updateServerEvent serverEvent', jsonContent);
-
-            dataManager.updateServerEvent(serverEvent)
+            dataManager.updateServerEvent(serverEvent, jsonContent)
         }
     }
 
@@ -669,7 +577,7 @@ const Served = (props) => {
                     <View style={!itemOrder.ProductId ? { flex: 1 } : { width: 0, height: 0 }}>
                         <SelectProduct
                             valueSearch={value}
-                            numColumns={orientaition == Constant.LANDSCAPE ? 4 : 3}
+                            numColumns={orientaition == Constant.LANDSCAPE ? 3 : 3}
                             listProducts={jsonContent.OrderDetails ? [...jsonContent.OrderDetails] : []}
                             outputSelectedProduct={outputSelectedProduct} />
                     </View>
@@ -685,7 +593,7 @@ const Served = (props) => {
                     </View>
                 </View>
                 <View style={{ flex: 4, marginLeft: 2 }}>
-                    <View style={{ flex: 1, backgroundColor: "#fff" }}>
+                    <View style={{ flex: 1,  }}>
 
                         <View style={{ backgroundColor: colors.colorchinh, alignItems: "center", flexDirection: "row", justifyContent: "space-between", borderTopColor: "#EAECEE", borderTopWidth: 1.5, height: 35 }}>
                             <View style={{ flex: 1, justifyContent: "center", }}>
@@ -704,7 +612,7 @@ const Served = (props) => {
                                 <Icon style={{}} name="chevron-down" size={20} color="white" />
                             </TouchableOpacity>
                         </View>
-                        <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 2, borderBottomColor: Colors.colorchinh, borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5 }}>
+                        <View style={{ backgroundColor:"white",flexDirection: "row", justifyContent: "space-between", marginTop: 2, borderBottomColor: Colors.colorchinh, borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5 }}>
                             <TouchableOpacity
                                 style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
                                 onPress={onClickListedPrice}>
@@ -729,7 +637,8 @@ const Served = (props) => {
                             outputSelectedProduct={outputSelectedProduct}
                             listTopping={listTopping}
                             Position={position}
-                            handlerProcessedProduct={(jsonContent) => handlerProcessedProduct(jsonContent)} />
+                            handlerProcessedProduct={(jsonContent) => handlerProcessedProduct(jsonContent)}
+                            outPutSetNewOrderDetail={setNewOrderDetails} />
                     </View >
 
                 </View>

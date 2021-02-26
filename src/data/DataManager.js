@@ -5,18 +5,17 @@ import { getFileDuLieuString, setFileLuuDuLieu } from "../data/fileStore/FileSto
 import { Subject } from 'rxjs';
 import moment from "moment";
 import signalRManager from "../common/SignalR";
-import { momentToDateUTC, momentToStringDateLocal, groupBy, randomUUID, mergeTwoArray } from "../common/Utils";
+import { momentToDateUTC, momentToStringDateLocal, momentToDate, groupBy, randomUUID, getTimeFromNow, getDifferenceSeconds, dateToDate, mergeTwoArray } from "../common/Utils";
 import { Constant } from "../common/Constant";
+import productManager from './objectManager/ProductManager';
 class DataManager {
     constructor() {
         this.subjectUpdateServerEvent = new Subject()
         this.subjectUpdateServerEvent.debounceTime(300)
-            .map(serverEvent => {
-                return serverEvent
-            })
             .subscribe(async (serverEvent) => {
                 await realmStore.insertServerEvent(serverEvent)
                 signalRManager.sendMessageServerEvent(serverEvent)
+                // this.updateServerEventNow(serverEvent, true)
             })
     }
 
@@ -39,7 +38,7 @@ class DataManager {
                         let products = await realmStore.queryProducts()
                         let productItem = products.filtered(`Id == '${newOrder.ProductId}'`)
                         productItem = JSON.parse(JSON.stringify(productItem))[0];
-                        productItem = { ...productItem, ...newOrder, Processed: newOrder.Quantity }
+                        productItem = { ...productItem, ...newOrder, Price: newOrder.IsLargeUnit ? productItem.PriceLargeUnit : productItem.UnitPrice }
                         console.log('productItem', productItem);
                         listOrders.push({ ...productItem })
                         for (const item of listRoom) {
@@ -55,37 +54,8 @@ class DataManager {
 
                     console.log('listRoomlistRoomlistRoom', listRoom);
 
-                    for (const item of listRoom) {
-                        let serverEvent = await realmStore.queryServerEvents()
-                        let serverEventByRowKey = serverEvent.filtered(`RowKey == '${item.rowKey}'`)
-                        serverEventByRowKey = JSON.stringify(serverEventByRowKey) != '{}' ? JSON.parse(JSON.stringify(serverEventByRowKey))[0]
-                            : await this.createSeverEvent(item.RoomId, item.Position)
-                        console.log('serverEventByRowKey', serverEventByRowKey);
-                        serverEventByRowKey.JsonContent = JSON.parse(serverEventByRowKey.JsonContent)
-                        if (serverEventByRowKey.JsonContent.OrderDetails && serverEventByRowKey.JsonContent.OrderDetails.length > 0) {
-                            // item.products.forEach(elm => {
-                            //     if ((elm.SplitForSalesOrder || (elm.ProductType == 2 && elm.IsTimer))) {
-                            //         serverEventByRowKey.JsonContent.OrderDetails.unshift({ ...elm })
-                            //     } else {
-                            //         serverEventByRowKey.JsonContent.OrderDetails.forEach(order => {
-                            //             if (order.Id == elm.Id) {
-                            //                 order.Quantity += elm.Quantity
-                            //                 order.Processed = order.Quantity
-                            //             }
-                            //         })
-                            //     }
-                            // })
-                            serverEventByRowKey.JsonContent.OrderDetails = mergeTwoArray(item.products, serverEventByRowKey.JsonContent.OrderDetails,)
-                        } else {
-                            serverEventByRowKey.JsonContent.OrderDetails = [...item.products]
-                        }
-                        serverEventByRowKey.Version += 1
-                        this.calculatateJsonContent(serverEventByRowKey.JsonContent)
-                        console.log('serverEventByRowKey.JsonContent', serverEventByRowKey.JsonContent);
-                        serverEventByRowKey.JsonContent = JSON.stringify(serverEventByRowKey.JsonContent)
-                        this.updateServerEventNow(serverEventByRowKey, true)
-                    }
-                    return Promise.resolve(this.getDataPrintCook(listOrders))
+
+                    return Promise.resolve({ newOrders: this.getDataPrintCook(listOrders), listRoom: listRoom })
                 }
 
                 if (changeTableComfirm.length > 0) {
@@ -103,6 +73,28 @@ class DataManager {
         }
     }
 
+    updateFromOrder = async (listRoom) => {
+        for (const item of listRoom) {
+            let serverEvent = await realmStore.queryServerEvents()
+            let serverEventByRowKey = serverEvent.filtered(`RowKey == '${item.rowKey}'`)
+            serverEventByRowKey = JSON.stringify(serverEventByRowKey) != '{}' ? JSON.parse(JSON.stringify(serverEventByRowKey))[0]
+                : await this.createSeverEvent(item.RoomId, item.Position)
+            console.log('serverEventByRowKey', serverEventByRowKey);
+            serverEventByRowKey.JsonContent = JSON.parse(serverEventByRowKey.JsonContent)
+            item.products.forEach(element => {
+                element.Processed = element.Quantity > 0 ? element.Quantity : 0;
+            });
+            if (serverEventByRowKey.JsonContent.OrderDetails && serverEventByRowKey.JsonContent.OrderDetails.length > 0) {
+                serverEventByRowKey.JsonContent.OrderDetails = mergeTwoArray(item.products, serverEventByRowKey.JsonContent.OrderDetails)
+            } else {
+                serverEventByRowKey.JsonContent.OrderDetails = [...item.products]
+            }
+            serverEventByRowKey.Version += 1
+            this.calculatateJsonContent(serverEventByRowKey.JsonContent)
+            serverEventByRowKey.JsonContent = JSON.stringify(serverEventByRowKey.JsonContent)
+            this.updateServerEvent(serverEventByRowKey, serverEventByRowKey.JsonContent)
+        }
+    }
 
     getDataPrintCook = (newOrders) => {
         let listResult = []
@@ -132,7 +124,6 @@ class DataManager {
         for (const property in listResultGroupBy) {
             listResultGroupBy[property] = groupBy(listResultGroupBy[property], "RoomName")
         }
-        console.log('printCook listResultGroupBy', JSON.stringify(listResultGroupBy));
         return listResultGroupBy;
     }
 
@@ -248,15 +239,31 @@ class DataManager {
 
 
     //calculator and send ServerEvent
-    updateServerEvent = (serverEvent) => {
+    updateServerEvent = (serverEvent, jsonContent) => {
+        if (typeof jsonContent === "string")
+            serverEvent.JsonContent = jsonContent
+        else {
+            let cloneJsoncontent = jsonContent
+            cloneJsoncontent.OrderDetails.forEach(product => {
+                product.ProductImages = []
+            });
+            serverEvent.JsonContent = JSON.stringify(cloneJsoncontent)
+        }
+        delete serverEvent.Timestamp
         this.subjectUpdateServerEvent.next(serverEvent)
     }
 
     updateServerEventNow = async (serverEvent, FromServer = false, isFNB = true) => {
-        console.log("updateServerEventNow serverEvent FromServer ", serverEvent, FromServer, isFNB);
+        if (typeof serverEvent.JsonContent === "object") {
+            let cloneJsoncontent = serverEvent.JsonContent
+            cloneJsoncontent.OrderDetails.forEach(product => {
+                product.ProductImages = []
+            });
+            serverEvent.JsonContent = JSON.stringify(cloneJsoncontent)
+        }
+        delete serverEvent.Timestamp
         await realmStore.insertServerEvent(serverEvent, FromServer)
         if (isFNB) {
-            console.log("updateServerEventNow FromServer ok ", FromServer)
             signalRManager.sendMessageServerEvent(serverEvent, FromServer)
         }
     }
@@ -283,7 +290,7 @@ class DataManager {
         let discount = 0
         if (JsonContent.DiscountValue) {
             discount = JsonContent.DiscountValue
-        } else {
+        } else if (JsonContent.DiscountRatio) {
             discount = totalProducts * JsonContent.DiscountRatio / 100
         }
         let totalVat = (totalProducts - discount) * JsonContent.VATRates / 100
@@ -300,9 +307,24 @@ class DataManager {
             JsonContent.ActiveDate = ""
     }
 
+    calculateProductTime = (listProduct) => {
+        let reload = listProduct.filter(product => product.IsTimer && !product.StopTimer).length > 0
+        if (reload) {
+            listProduct.forEach(product => {
+                if (product.IsTimer && !product.StopTimer) {
+                    let momentNow = moment().utc()
+                    product.Checkout = momentToDate(momentNow)
+                    productManager.getProductTimePrice(product)
+                }
+            })
+        }
+
+        return reload
+    }
+
     paymentSetServerEvent = (serverEvent, newJsonContent, updateNow = false) => {
         if (!serverEvent.JsonContent) return
-        serverEvent.JsonContent = JSON.stringify(newJsonContent)
+        // serverEvent.JsonContent = JSON.stringify(newJsonContent)
         if (updateNow)
             serverEvent.Version += 10
         else
@@ -355,7 +377,7 @@ class DataManager {
 
         newServerEvent = (JSON.stringify(newServerEvent) != '{}') ? JSON.parse(JSON.stringify(newServerEvent))[0]
             : await this.createSeverEvent(newRoomId, newPosition)
-        newServerEvent.JsonContent = newServerEvent.JsonContent? JSON.parse(newServerEvent.JsonContent) : this.createJsonContent(newRoomId, newPosition, moment())
+        newServerEvent.JsonContent = newServerEvent.JsonContent ? JSON.parse(newServerEvent.JsonContent) : this.createJsonContent(newRoomId, newPosition, moment())
         if (!newServerEvent.JsonContent.OrderDetails) newServerEvent.JsonContent.OrderDetails = []
         let OrderDetails = newServerEvent.JsonContent.OrderDetails ? mergeTwoArray(newServerEvent.JsonContent.OrderDetails, oldServerEvent.JsonContent.OrderDetails) : oldServerEvent.JsonContent.OrderDetails
         newServerEvent.JsonContent.OrderDetails = [...OrderDetails]
@@ -366,34 +388,35 @@ class DataManager {
         newServerEvent.JsonContent.ActiveDate = oldServerEvent.JsonContent.ActiveDate ? oldServerEvent.JsonContent.ActiveDate : ""
 
         oldServerEvent.Version += 1
-        oldServerEvent.JsonContent = JSON.stringify(this.createJsonContent(oldRoomId, oldPosition, moment()))
+        oldServerEvent.JsonContent = this.createJsonContent(oldRoomId, oldPosition, moment())
         newServerEvent.Version += 1
         this.calculatateJsonContent(newServerEvent.JsonContent)
-        newServerEvent.JsonContent = JSON.stringify(newServerEvent.JsonContent)
         await this.updateServerEventNow(oldServerEvent, true)
         await this.updateServerEventNow(newServerEvent, true)
 
     }
 
-    splitTable = async (RoomId, OldPosition, NewPosition, ListOldSplit, ListNewSplit) => {
-        console.log("splitTable ", RoomId, OldPosition, NewPosition, ListOldSplit, ListNewSplit);
+    splitTable = async (OldRoomId, OldPosition, NewRoomId, NewPosition, ListOldSplit, ListNewSplit) => {
+        console.log("splitTable ", OldRoomId, OldPosition, NewRoomId, NewPosition, ListOldSplit, ListNewSplit);
         let serverEvents = await realmStore.queryServerEvents()
 
-        let oldServerEvent = serverEvents.filtered(`RowKey == '${RoomId}_${OldPosition}'`)
-        let newServerEvent = serverEvents.filtered(`RowKey == '${RoomId}_${NewPosition}'`)
+        let oldServerEvent = serverEvents.filtered(`RowKey == '${OldRoomId}_${OldPosition}'`)
+        let newServerEvent = serverEvents.filtered(`RowKey == '${NewRoomId}_${NewPosition}'`)
 
         oldServerEvent = (JSON.stringify(oldServerEvent) != '{}') ? JSON.parse(JSON.stringify(oldServerEvent))[0]
-            : await this.createSeverEvent(RoomId, OldPosition)
-        oldServerEvent.JsonContent = oldServerEvent.JsonContent ? JSON.parse(oldServerEvent.JsonContent) : {}
+            : await this.createSeverEvent(OldRoomId, OldPosition)
+        oldServerEvent.JsonContent = oldServerEvent.JsonContent ? JSON.parse(oldServerEvent.JsonContent) : this.createJsonContent(OldRoomId, oldPosition, moment())
         if (!oldServerEvent.JsonContent.OrderDetails) oldServerEvent.JsonContent.OrderDetails = []
 
         newServerEvent = (JSON.stringify(newServerEvent) != '{}') ? JSON.parse(JSON.stringify(newServerEvent))[0]
-            : await this.createSeverEvent(RoomId, NewPosition)
+            : await this.createSeverEvent(NewRoomId, NewPosition)
+        newServerEvent.JsonContent = newServerEvent.JsonContent ? JSON.parse(newServerEvent.JsonContent) : this.createJsonContent(NewRoomId, NewPosition, moment())
+        if (!newServerEvent.JsonContent.OrderDetails) newServerEvent.JsonContent.OrderDetails = []
         // if (!newServerEvent.JsonContent) {
         //     newServerEvent.JsonContent =
         //         this.createJsonContent(RoomId, NewPosition, momentToDateUTC(moment()), ListNewSplit)
         // } else {
-        newServerEvent.JsonContent = JSON.parse(newServerEvent.JsonContent)
+        // newServerEvent.JsonContent = JSON.parse(newServerEvent.JsonContent)
         let OrderDetails = newServerEvent.JsonContent.OrderDetails ? mergeTwoArray(ListNewSplit, newServerEvent.JsonContent.OrderDetails) : ListNewSplit
         newServerEvent.JsonContent.OrderDetails = [...OrderDetails]
         // }
@@ -402,7 +425,6 @@ class DataManager {
         oldServerEvent.Version += 1
         oldServerEvent.JsonContent.OrderDetails = ListOldSplit
         this.calculatateJsonContent(oldServerEvent.JsonContent)
-        oldServerEvent.JsonContent = JSON.stringify(oldServerEvent.JsonContent)
         // oldServerEvent.JsonContent.OrderDetails = ListOldSplit
         // if (ListOldSplit == undefined || ListOldSplit.length == 0)
         //     oldServerEvent.JsonContent = JSON.stringify(this.removeJsonContent(oldServerEvent.JsonContent))
@@ -410,7 +432,6 @@ class DataManager {
         //     oldServerEvent.JsonContent = JSON.stringify(oldServerEvent.JsonContent)
         newServerEvent.Version += 1
         this.calculatateJsonContent(newServerEvent.JsonContent)
-        newServerEvent.JsonContent = JSON.stringify(newServerEvent.JsonContent)
 
         console.log("splitTable oldServerEvent:: ", oldServerEvent)
         console.log("splitTable newServerEvent:: ", newServerEvent)
@@ -438,17 +459,14 @@ class DataManager {
             RowKey: RowKey,
             Timestamp: moment().format("YYYY-MM-DD'T'HH:mm:ssZ"),
             ETag: `W/\"datetime'${momentToStringDateLocal(moment())}'\"`,
-            JsonContent: JSON.stringify(objectJsonContent)
+            JsonContent: JSON.stringify(objectJsonContent),
+            Compress: false,
+            FromServer: false
         }
     }
 
     createJsonContent = (RoomId, Position, ActiveDate, OrderDetails = []) => {
         return {
-            // OfflineId: randomUUID(),
-            // RoomId: RoomId,
-            // Pos: Position,
-            // OrderDetails: OrderDetails,
-            // ActiveDate: ActiveDate
             OfflineId: randomUUID(),
             Status: 2,
             Discount: 0,

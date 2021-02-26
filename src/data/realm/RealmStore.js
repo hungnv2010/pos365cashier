@@ -341,10 +341,10 @@ const ServerEventSchema = {
         Position: 'string',
         Version: 'int',
         JsonContent: "string",
-        Compress: { type: 'bool', default: false },
+        Compress: 'bool',
         PartitionKey: 'string',
         RowKey: 'string',
-        Timestamp: 'string',
+        Timestamp: { type: 'string', default: '' },
         ETag: 'string',
         FromServer: { type: 'bool', default: false }
     }
@@ -480,7 +480,7 @@ const PromotionSchema = {
 const databaseOption = {
     path: 'Pos365Boss.realm',
     schema: [ServerEventSchema, RoomSchema, RoomGroupSchema, ProductSchema, CategoriesSchema, ToppingsSchema, CustomerSchema, PromotionSchema, OrdersOffline, QRCode, PriceBook],
-    schemaVersion: 37
+    schemaVersion: 39
 }
 
 const realm = new Realm(databaseOption);

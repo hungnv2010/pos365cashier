@@ -12,8 +12,7 @@ import store from '../../store/configureStore';
 import { useDispatch, useSelector } from 'react-redux';
 import realmStore from '../../data/realm/RealmStore';
 import MainRetail from './retail/MainRetail';
-import RetailToolBar from '../main/retail/retailToolbar';
-import Customer from '../customer/Customer';
+import { useFocusEffect } from '@react-navigation/native';
 import ViewPrint, { TYPE_PRINT } from '../more/ViewPrint';
 import { Colors } from '../../theme';
 import NetInfo from "@react-native-community/netinfo";
@@ -24,8 +23,9 @@ export default (props) => {
   let scanFromOrder = null
   const viewPrintRef = useRef();
   const dispatch = useDispatch();
-  const [textSearch,setTextSearch] = useState('')
-  const { listPrint, isFNB, printProvisional, printReturnProduct } = useSelector(state => {
+  const [textSearch, setTextSearch] = useState('')
+  const [autoPrintKitchen, setAutoPrintKitchen] = useState(false)
+  const { listPrint, isFNB, printProvisional, printReturnProduct, syncRetail } = useSelector(state => {
     return state.Common
   })
 
@@ -54,21 +54,33 @@ export default (props) => {
     }
   }, [printProvisional])
 
-  // PRINT_PROVISIONAL
+  useFocusEffect(
+    React.useCallback(() => {
+      const getSettingObj = async () => {
+        let settingObject = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
+        settingObject = JSON.parse(settingObject)
+        if (settingObject) {
+          console.log('settingObject', settingObject);
+          setAutoPrintKitchen(settingObject.tu_dong_in_bao_bep)
+        }
+      }
+      getSettingObj()
+    }, [])
+  );
 
   useEffect(() => {
-    const getCurrentBranch = async () => {
+    const getStoreInfo = async () => {
       dialogManager.showLoading()
       let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
       vendorSession = JSON.parse(vendorSession)
       let currentBranch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
       currentBranch = JSON.parse(currentBranch)
-      console.log('getCurrentBranch', currentBranch);
+      console.log('getStoreInfo', currentBranch);
+
       if (vendorSession) {
         if (currentBranch && currentBranch.FieldId) {
           if (currentBranch.FieldId == 3 || currentBranch.FieldId == 11) {
             let state = store.getState()
-            alert("1")
             signalRManager.init({ ...vendorSession, SessionId: state.Common.info.SessionId }, true)
             dispatch({ type: 'IS_FNB', isFNB: true })
           } else {
@@ -77,7 +89,6 @@ export default (props) => {
         } else {
           if (vendorSession.CurrentRetailer && (vendorSession.CurrentRetailer.FieldId == 3 || vendorSession.CurrentRetailer.FieldId == 11)) {
             let state = store.getState()
-            alert("2")
             signalRManager.init({ ...vendorSession, SessionId: state.Common.info.SessionId }, true)
             dispatch({ type: 'IS_FNB', isFNB: true })
           } else {
@@ -86,7 +97,7 @@ export default (props) => {
         }
       }
     }
-    getCurrentBranch()
+    getStoreInfo()
   }, [])
 
   useEffect(() => {
@@ -108,20 +119,9 @@ export default (props) => {
       dispatch({ type: 'ALREADY', already: false })
       // await realmStore.deleteAllForFnb()
       if (isFNB === true) {
-        const getDataNewOrders = async () => {
-          let newOrders = await dataManager.initComfirmOrder()
-          // console.log('getDataNewOrders', newOrders);
-
-          // if (newOrders != null)
-          //   viewPrintRef.current.printKitchenRef(newOrders)
-
-        }
-
-        scanFromOrder = setInterval(() => {
-          getDataNewOrders()
-        }, 15000);
         await realmStore.deleteAllForFnb()
         await dataManager.syncAllDatas()
+
       } else {
         await realmStore.deleteAllForRetail()
         await dataManager.syncAllDatasForRetail()
@@ -130,11 +130,29 @@ export default (props) => {
       dialogManager.hiddenLoading()
     }
     syncDatas()
+  }, [isFNB])
 
+  useEffect(() => {
+    if (autoPrintKitchen && isFNB) {
+      const getDataNewOrders = async () => {
+        let result = await dataManager.initComfirmOrder()
+        console.log('getDataNewOrders', result);
+        if (result != null) {
+          if (result.newOrders && result.newOrders != null)
+            viewPrintRef.current.printKitchenRef(JSON.stringify(result.newOrders))
+          if (result.listRoom && result.listRoom != null)
+            dataManager.updateFromOrder(result.listRoom)
+        }
+      }
+
+      scanFromOrder = setInterval(() => {
+        getDataNewOrders()
+      }, 15000);
+    }
     return () => {
       if (scanFromOrder) clearInterval(scanFromOrder)
     }
-  }, [isFNB])
+  }, [isFNB, autoPrintKitchen])
 
 
   const handleChangeState = (newState) => {
@@ -166,7 +184,7 @@ export default (props) => {
     // dispatch({ type: 'ALREADY', already: true })
     // dialogManager.hiddenLoading()
   }
-  const onClickSearch = (text)=>{
+  const onClickSearch = (text) => {
     setTextSearch(text)
   }
 
@@ -209,7 +227,7 @@ export default (props) => {
                 rightIcon="md-search"
                 outPutTextSearch={onClickSearch}
               />
-              <Order {...props} textSearch={textSearch}/>
+              <Order {...props} textSearch={textSearch} />
             </>
             :
             <MainRetail

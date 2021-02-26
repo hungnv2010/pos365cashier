@@ -39,14 +39,14 @@ const KEY_FUNC = {
     ORDER_OFFLINE: ScreenList.OrderOffline,
     VOUCHERS: ScreenList.Vouchers,
     PRODUCT: ScreenList.Product,
-    SYNCHRONIZE:'SYNCHRONIZE'
+    SYNCHRONIZE: 'SYNCHRONIZE'
 }
 
 const LIST_FUNCITION = [
-    { 
-        func:KEY_FUNC.SYNCHRONIZE,
-        icon:Images.icon_refresh,
-        title:"dong_bo_du_lieu"
+    {
+        func: KEY_FUNC.SYNCHRONIZE,
+        icon: Images.icon_refresh,
+        title: "dong_bo_du_lieu"
     },
     {
         func: KEY_FUNC.HOME,
@@ -65,6 +65,21 @@ const LIST_FUNCITION = [
     //     title: "lich_su_goi_mon"
     // },
     {
+        func: KEY_FUNC.INVOICE,
+        icon: Images.icon_invoice,
+        title: "hoa_don"
+    },
+    {
+        func: KEY_FUNC.CUSTOMER,
+        icon: Images.icon_customer,
+        title: "khach_hang"
+    },
+    {
+        func: KEY_FUNC.OVERVIEW,
+        icon: Images.icon_overview,
+        title: "tong_quan"
+    },
+    {
         func: KEY_FUNC.ROOM_CATALOG,
         icon: Images.icon_room_table,
         title: "danh_muc_phong_ban"
@@ -74,41 +89,28 @@ const LIST_FUNCITION = [
     //     icon: Images.icon_star,
     //     title: "them"
     // },
-    {
-        func: KEY_FUNC.OVERVIEW,
-        icon: Images.icon_overview,
-        title: "tong_quan"
-    },
-    {
-        func: KEY_FUNC.CUSTOMER,
-        icon: Images.icon_customer,
-        title: "khach_hang"
-    },
-    {
-        func: KEY_FUNC.PRODUCT,
-        icon: Images.icon_product,
-        title: "hang_hoa"
-    },
-    {
-        func: KEY_FUNC.CASH_FLOW,
-        icon: Images.icon_income,
-        title: "thu_chi_"
-    },
-    {
-        func: KEY_FUNC.INVOICE,
-        icon: Images.icon_invoice,
-        title: "hoa_don"
-    },
-    {
-        func: KEY_FUNC.ROOM_HISTORY,
-        icon: Images.icon_room_history,
-        title: 'lich_su_huy_tra_do'
-    },
-    {
-        func: KEY_FUNC.VOUCHERS,
-        icon: Images.icon_vouchers,
-        title: 'voucher'
-    },
+   
+    // {
+    //     func: KEY_FUNC.PRODUCT,
+    //     icon: Images.icon_product,
+    //     title: "hang_hoa"
+    // },
+    // {
+    //     func: KEY_FUNC.CASH_FLOW,
+    //     icon: Images.icon_income,
+    //     title: "thu_chi_"
+    // },
+   
+    // {
+    //     func: KEY_FUNC.ROOM_HISTORY,
+    //     icon: Images.icon_room_history,
+    //     title: 'lich_su_huy_tra_do'
+    // },
+    // {
+    //     func: KEY_FUNC.VOUCHERS,
+    //     icon: Images.icon_vouchers,
+    //     title: 'voucher'
+    // },
     {
         func: KEY_FUNC.SETTING_FUNC,
         icon: Images.icon_setting,
@@ -447,11 +449,11 @@ const ContentComponent = (props) => {
         console.log("onClickItem props ", props);
         if (chucnang.func == KEY_FUNC.VERSION) return;
         if (chucnang.func == KEY_FUNC.SYNCHRONIZE) {
-            if (isFNB==true) {
-            clickRightIcon()
-            }else{
-            clickSyncForRetail()
-            }  
+            if (isFNB == true) {
+                clickRightIcon()
+            } else {
+                dispatch({ type: 'SYNCRETAIL', syncRetail: true })
+            }
             props.navigation.closeDrawer();
             return;
         }
@@ -464,19 +466,20 @@ const ContentComponent = (props) => {
     }
     const clickRightIcon = async () => {
         NetInfo.fetch().then(async state => {
-          if (!(state.isConnected == true && state.isInternetReachable == true)) {
-            dialogManager.showPopupOneButton(I18n.t('loi_ket_noi_mang'), I18n.t('thong_bao'), () => {
-              dialogManager.destroy();
-            }, null, null, I18n.t('dong'))
-            return;
-          } else {
-            dialogManager.showLoading()
-            dispatch({ type: 'ALREADY', already: false })
-            await realmStore.deleteAllForFnb()
-            await dataManager.syncAllDatas()
-            dispatch({ type: 'ALREADY', already: true })
-            dialogManager.hiddenLoading()
-          }
+            if (!(state.isConnected == true && state.isInternetReachable == true)) {
+                dialogManager.showPopupOneButton(I18n.t('loi_ket_noi_mang'), I18n.t('thong_bao'), () => {
+                    dialogManager.destroy();
+                }, null, null, I18n.t('dong'))
+                return;
+            } else {
+                dialogManager.showLoading()
+                dispatch({ type: 'ALREADY', already: false })
+                await realmStore.deleteAllForFnb()
+                await dataManager.syncAllDatas()
+                dispatch({ type: 'ALREADY', already: true })
+                dialogManager.hiddenLoading()
+                console.log("FNB");
+            }
         });
         // dialogManager.showLoading()
         // dispatch({ type: 'ALREADY', already: false })
@@ -484,25 +487,7 @@ const ContentComponent = (props) => {
         // await dataManager.syncAllDatas()
         // dispatch({ type: 'ALREADY', already: true })
         // dialogManager.hiddenLoading()
-      }
-      const clickSyncForRetail = async () => {
-        NetInfo.fetch().then(async state => {
-            if (!(state.isConnected == true && state.isInternetReachable == true)) {
-              dialogManager.showPopupOneButton(I18n.t('loi_ket_noi_mang'), I18n.t('thong_bao'), () => {
-                dialogManager.destroy();
-              }, null, null, I18n.t('dong'))
-              return;
-            } else {
-              dialogManager.showLoading()
-              dispatch({ type: 'ALREADY', already: false })
-              await realmStore.deleteAllForRetail()
-              await dataManager.syncAllDatasForRetail()
-              dispatch({ type: 'ALREADY', already: true })
-              dialogManager.hiddenLoading()
-            }
-          });
-      }
-
+    }
 
     const _renderItem = (chucnang = {}, indexchucnnag = 0) => {
         return (
