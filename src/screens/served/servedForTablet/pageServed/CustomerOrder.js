@@ -57,9 +57,9 @@ const CustomerOrder = (props) => {
 
     const [delay, setDelay] = useState(1);
     useInterval(() => {//60s kiem tra va tinh lai hang hoa tính gio
-        if(delay == 1) setDelay(60)
+        if (delay == 1) setDelay(60)
         let reload = dataManager.calculateProductTime(listOrder)
-        if(reload) props.outPutSetNewOrderDetail(listOrder)
+        if (reload) props.outPutSetNewOrderDetail(listOrder)
     }, delay * 1000)
 
     useEffect(() => {
@@ -304,7 +304,7 @@ const CustomerOrder = (props) => {
     const renderForTablet = (item, index) => {
         const isPromotion = !(item.IsPromotion == undefined || (item.IsPromotion == false))
         return (
-            <>
+            <View>
                 {
                     isPromotion && item.FisrtPromotion != undefined ?
                         <View style={{ backgroundColor: "#ffedd6", padding: 7, paddingHorizontal: 10 }}>
@@ -327,11 +327,12 @@ const CustomerOrder = (props) => {
                     <View style={{
                         borderBottomColor: "#ddd", borderBottomWidth: 0.5,
                         flexDirection: "row", flex: 1, alignItems: "center", padding: 5,
-                        backgroundColor: index == props.itemOrder.index ? "#EED6A7" : 'white', borderRadius: 10, marginBottom: 2
+                        backgroundColor: index == props.itemOrder.index ? "#EED6A7" : "white",
+                        borderRadius: 10, marginBottom: 4
                     }}>
 
                         <TouchableOpacity
-                            style={{ marginRight: 5}}
+                            style={{ marginRight: 5 }}
                             onPress={() => { if (!isPromotion) onClickReturn(item, 1) }}>
                             <Icon name={!isPromotion ? "trash-can-outline" : "gift"} size={40} color={!isPromotion ? "black" : Colors.colorLightBlue} />
                         </TouchableOpacity>
@@ -344,7 +345,7 @@ const CustomerOrder = (props) => {
                                         <Text style={{ fontWeight: "bold", marginBottom: 7 }}>{item.Name}</Text>
                                         <View style={{ flexDirection: "row" }}>
                                             <Text style={{}}>{currencyToString(item.Price)} x </Text>
-                                            <View onPress={() => onClickUnit({ ...item })}>
+                                            <View>
                                                 {
                                                     orientaition == Constant.PORTRAIT ?
                                                         <Text style={{ color: Colors.colorchinh, }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text>
@@ -394,15 +395,6 @@ const CustomerOrder = (props) => {
                                                             <View style={{ alignItems: "center", flexDirection: "row", flex: 1 }}>
                                                                 <TouchableOpacity
                                                                     onPress={
-                                                                        // () => {
-                                                                        //     if (item.Quantity == 1) {
-                                                                        //         removeItem(item)
-                                                                        //     } else {
-                                                                        //         item.Quantity--
-                                                                        //         setListOrder([...listOrder])
-                                                                        //         mapDataToList(item, false)
-                                                                        //     }
-                                                                        // }
                                                                         () => onClickReturn(item, 2)
                                                                     }>
                                                                     <Icon name="minus-box" size={40} color={Colors.colorchinh} />
@@ -431,7 +423,7 @@ const CustomerOrder = (props) => {
                                                                 <TouchableOpacity onPress={() => {
                                                                     item.Quantity++
                                                                     setListOrder([...listOrder])
-                                                                    mapDataToList(item)
+                                                                    mapDataToList(item, false)
                                                                 }}>
                                                                     <Icon name="plus-box" size={40} color={Colors.colorchinh} />
                                                                 </TouchableOpacity>
@@ -442,15 +434,15 @@ const CustomerOrder = (props) => {
                                                 {
                                                     item.ProductType == 2 && item.IsTimer ?
 
-                                                     <SimpleLineIcons name="clock" size={37} color={Colors.colorchinh} />
+                                                        <SimpleLineIcons name="clock" size={37} color={Colors.colorchinh} />
 
-                                                    : <TouchableOpacity
-                                                        style={{ borderWidth: 1, borderRadius: 20, alignItems: "center", justifyContent:"center", width: 40, height: 40, borderColor: Colors.colorchinh, }}
-                                                        onPress={() => {
-                                                            props.outputItemOrder(item, index)
-                                                        }}>
-                                                        <Icon name="puzzle" size={23} color={Colors.colorchinh} />
-                                                    </TouchableOpacity>
+                                                        : <TouchableOpacity
+                                                            style={{ borderWidth: 1, borderRadius: 20, alignItems: "center", justifyContent: "center", width: 40, height: 40, borderColor: Colors.colorchinh, }}
+                                                            onPress={() => {
+                                                                props.outputItemOrder(item, index)
+                                                            }}>
+                                                            <Icon name="puzzle" size={23} color={Colors.colorchinh} />
+                                                        </TouchableOpacity>
                                                 }
                                             </>
                                         )
@@ -466,7 +458,7 @@ const CustomerOrder = (props) => {
                         </View>
                     </View>
                 </TouchableOpacity>
-            </>
+            </View>
         )
     }
 
@@ -485,12 +477,13 @@ const CustomerOrder = (props) => {
     const changTable = () => {
         hideMenu()
         if (listOrder && listOrder.length > 0) {
-            hideMenu()
-            props.navigation.navigate("ChangeTable", {
-                FromRoomId: props.route.params.room.Id,
-                FromPos: props.Position,
-                Name: props.route.params.room.Name
-            });
+            setTimeout(() => {
+                props.navigation.navigate(ScreenList.ChangeTable, {
+                    FromRoomId: props.route.params.room.Id,
+                    FromPos: props.Position,
+                    Name: props.route.params.room.Name,
+                });
+            }, 300);
         } else {
             dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
         }
@@ -562,6 +555,7 @@ const CustomerOrder = (props) => {
     const splitTable = () => {
         hideMenu()
         if (listOrder && listOrder.length > 0) {
+            props.jsonContent.RoomName = props.route.params.room.Name
             props.navigation.navigate(ScreenList.SplitTable, props.jsonContent);
         } else {
             dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
@@ -590,7 +584,7 @@ const CustomerOrder = (props) => {
 
                 <TouchableOpacity
                     onPress={() => { setExpand(!expand) }}
-                    style={{ borderTopWidth: .5, borderTopColor: "red", paddingVertical: 3, backgroundColor: "white", marginLeft: 10 }}>
+                    style={{ borderTopWidth: .5, borderTopColor: Colors.colorLightBlue, paddingVertical: 3, backgroundColor: "white", marginLeft: 10 }}>
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                         <Text style={{ fontWeight: "bold" }}>{I18n.t('tong_thanh_tien')}</Text>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>

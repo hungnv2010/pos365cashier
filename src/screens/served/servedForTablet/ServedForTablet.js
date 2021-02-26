@@ -162,6 +162,7 @@ const Served = (props) => {
     const outputSelectedProduct = async (product, replace = false) => {
         let { RoomId, Position } = currentServerEvent.current
         let jsonContentTmp = JSON.stringify(jsonContent) == "{}" ? dataManager.createJsonContent(RoomId, Position, moment()) : jsonContent
+        console.log('outputSelectedProduct', product, jsonContentTmp);
         if (product.Quantity > 0 && !replace) {
             if (jsonContentTmp.OrderDetails.length == 0) {
                 let title = props.route.params.Name ? props.route.params.Name : ""
@@ -576,7 +577,7 @@ const Served = (props) => {
                     <View style={!itemOrder.ProductId ? { flex: 1 } : { width: 0, height: 0 }}>
                         <SelectProduct
                             valueSearch={value}
-                            numColumns={orientaition == Constant.LANDSCAPE ? 4 : 3}
+                            numColumns={orientaition == Constant.LANDSCAPE ? 3 : 3}
                             listProducts={jsonContent.OrderDetails ? [...jsonContent.OrderDetails] : []}
                             outputSelectedProduct={outputSelectedProduct} />
                     </View>
@@ -592,7 +593,7 @@ const Served = (props) => {
                     </View>
                 </View>
                 <View style={{ flex: 4, marginLeft: 2 }}>
-                    <View style={{ flex: 1, backgroundColor: "#fff" }}>
+                    <View style={{ flex: 1,  }}>
 
                         <View style={{ backgroundColor: colors.colorchinh, alignItems: "center", flexDirection: "row", justifyContent: "space-between", borderTopColor: "#EAECEE", borderTopWidth: 1.5, height: 35 }}>
                             <View style={{ flex: 1, justifyContent: "center", }}>
@@ -611,7 +612,7 @@ const Served = (props) => {
                                 <Icon style={{}} name="chevron-down" size={20} color="white" />
                             </TouchableOpacity>
                         </View>
-                        <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 2, borderBottomColor: Colors.colorchinh, borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5 }}>
+                        <View style={{ backgroundColor:"white",flexDirection: "row", justifyContent: "space-between", marginTop: 2, borderBottomColor: Colors.colorchinh, borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5 }}>
                             <TouchableOpacity
                                 style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
                                 onPress={onClickListedPrice}>

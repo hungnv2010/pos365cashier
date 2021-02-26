@@ -26,6 +26,7 @@ import { ApiPath } from '../../../data/services/ApiPath';
 import { Snackbar } from 'react-native-paper';
 import moment from 'moment';
 import dataManager from '../../../data/DataManager';
+import { ScreenList } from '../../../common/ScreenList';
 
 
 const _nodes = new Map();
@@ -172,7 +173,14 @@ export default (props) => {
             return
         }
         dialogManager.showLoading();
-        await dataManager.changeTable(FromRoomId, FromPos, toRoomId.current.Id, toPos)
+        if (props.route.params.fromScreen && props.route.params.fromScreen == ScreenList.SplitTable) {
+            let { listNew, listOld } = props.route.params
+            console.log('akshdkajshdkjad', listNew, listOld);
+            // dataManager.splitTable(FromRoomId, FromPos, toRoomId.current.Id, toPos, listOld, listNew)
+            // props.navigation.goBack()
+        } else {
+            dataManager.changeTable(FromRoomId, FromPos, toRoomId.current.Id, toPos)
+        }
         props.navigation.goBack()
         dialogManager.hiddenLoading()
     }
@@ -185,7 +193,7 @@ export default (props) => {
         toRoomId.current = { Id: Id, Name: Name, ProductId: ProductId }
         console.log('onItemPress', toRoomId.current);
         setShowModal(!showModal)
-     
+
     }
 
     const renderRoom = (item, widthRoom) => {
