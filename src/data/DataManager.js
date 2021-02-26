@@ -51,11 +51,11 @@ class DataManager {
                             listRoom.push({ rowKey, products: [{ ...productItem }], RoomId: newOrder.RoomId, Position: newOrder.Position })
                         }
                     }
-
+                    let listOrdersReturn = listOrders.filter(item => item.Quantity < 0)
                     console.log('listRoomlistRoomlistRoom', listRoom);
 
 
-                    return Promise.resolve({ newOrders: this.getDataPrintCook(listOrders), listRoom: listRoom })
+                    return Promise.resolve({ newOrders: this.getDataPrintCook(listOrders), listOrdersReturn: this.getDataPrintCook(listOrdersReturn), listRoom: listRoom })
                 }
 
                 if (changeTableComfirm.length > 0) {
