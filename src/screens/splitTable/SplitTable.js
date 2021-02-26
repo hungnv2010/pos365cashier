@@ -63,29 +63,45 @@ export default (props) => {
             return;
         }
 
+        let { listOld, listNew } = getOldAndNewListProducts()
+        console.log("onSplitTable listOld ", listOld);
+        console.log("onSplitTable listNew ", listNew);
+        dataManager.splitTable(props.route.params.RoomId, props.route.params.Pos, props.route.params.RoomId, positionSelect.position, listOld, listNew);
+        props.navigation.goBack()
+    }
+
+    const getOldAndNewListProducts = () => {
         let listOld = []
         let listNew = []
         listProduct.forEach(element => {
-            if (element.QuantitySplit > 0) {
-                let object = { ...element }
-                object.Quantity = object.QuantitySplit;
-                if (!element.CheckSplitTable) {
-                    let objectOld = { ...element }
-                    objectOld.Quantity = objectOld.Quantity - objectOld.QuantitySplit;
-                    delete objectOld.QuantitySplit
-                    listOld.push(objectOld)
+            if (element.CheckSplitTable) {
+                if (element.QuantitySplit > 0) {
+                    if (element.QuantitySplit < element.Quantity) {
+                        let { Quantity, QuantitySplit, Processed } = element
+                        let oldQuantity = Quantity - QuantitySplit
+                        let oldProcessed = oldQuantity > Processed ? Processed : oldQuantity
+                        let newProcessed = Processed - oldProcessed
+                        delete element.QuantitySplit
+                        delete element.CheckSplitTable
+                        listNew.push({ ...element, Quantity: QuantitySplit, Processed: newProcessed })
+                        listOld.push({ ...element, Quantity: oldQuantity, Processed: oldProcessed })
+                    } else {
+                        delete element.QuantitySplit
+                        delete element.CheckSplitTable
+                        listNew.push(element)
+                    }
+                } else {
+                    delete element.QuantitySplit
+                    delete element.CheckSplitTable
+                    listOld.push(element)
                 }
-                delete object.QuantitySplit
-                listNew.push(object)
             } else {
                 delete element.QuantitySplit
+                delete element.CheckSplitTable
                 listOld.push(element)
             }
         });
-        console.log("onSplitTable listOld ", listOld);
-        console.log("onSplitTable listNew ", listNew);
-        dataManager.splitTable(props.route.params.RoomId, props.route.params.Pos, positionSelect.position, listOld, listNew);
-        props.navigation.goBack()
+        return { listOld, listNew }
     }
 
     const subQuantity = (item) => {
@@ -95,16 +111,16 @@ export default (props) => {
             }
             item.QuantitySplit--
         }
+        console.log('subQuantity', [...listProduct]);
         setListProduct([...listProduct])
     }
 
     const addQuantity = (item) => {
         if (item.QuantitySplit < item.Quantity) {
-            if (item.QuantitySplit == item.Quantity - 1) {
-                item.CheckSplitTable = true
-            }
+            item.CheckSplitTable = true
             item.QuantitySplit++
         }
+        console.log('addQuantity', [...listProduct]);
         setListProduct([...listProduct])
     }
 
@@ -127,12 +143,17 @@ export default (props) => {
     }
 
     const changeTable = () => {
-        if (checkSplit())
+        if (checkSplit()) {
+            let { listOld, listNew } = getOldAndNewListProducts()
             props.navigation.navigate(ScreenList.ChangeTable, {
                 FromRoomId: props.route.params.RoomId,
                 FromPos: props.route.params.Pos,
-                Name: props.route.params.RoomName
+                Name: props.route.params.RoomName,
+                fromScreen: ScreenList.SplitTable,
+                listNew,
+                listOld
             });
+        }
         else {
             setToastDescription(I18n.t("ban_chua_chon_mon_an_de_tach"));
             setShowToast(true)

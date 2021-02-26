@@ -5,7 +5,8 @@ import I18n from '../../common/language/i18n';
 import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
 import dialogManager from '../../components/dialog/DialogManager';
 import realmStore from '../../data/realm/RealmStore';
-
+import moment from 'moment';
+import { momentToDateUTC } from '../../common/Utils';
 
 export default (props) => {
 
@@ -18,7 +19,9 @@ export default (props) => {
             let newPricebooks = [{ Name: "gia_niem_yet", Id: 0 }]
             let results = await realmStore.queryPricebook()
             results.forEach(item => {
-                newPricebooks.push({ ...JSON.parse(JSON.stringify(item)) })
+                if (moment(item.EndDate).isAfter(moment())) {
+                    newPricebooks.push({ ...JSON.parse(JSON.stringify(item)) })
+                }
             })
             console.log('newPricebooks', newPricebooks);
             setListPricebook(newPricebooks)

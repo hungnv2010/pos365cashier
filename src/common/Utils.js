@@ -93,10 +93,10 @@ export const momentToDate = (momentInput, outputFormat = "YYYY-MM-DD[T]HH:mm:ss.
 
 export const getTimeFromNow = (roomMoment) => {
   let date = new Date()
-  let timeFromNow = date.getTime() - ((roomMoment instanceof moment )? roomMoment.valueOf() : moment(roomMoment).valueOf())
+  let timeFromNow = date.getTime() - ((roomMoment instanceof moment) ? roomMoment.valueOf() : moment(roomMoment).valueOf())
   if (timeFromNow < 0) timeFromNow = 0
-  
-  return displayTimeSeconds(timeFromNow /1000)
+
+  return displayTimeSeconds(timeFromNow / 1000)
 }
 
 export const displayTimeSeconds = (seconds) => {
@@ -105,7 +105,7 @@ export const displayTimeSeconds = (seconds) => {
 
   day = Math.floor(secondsClone / (60 * 60 * 24))
   secondsClone -= day * 24 * 60 * 60
-  hour = Math.floor(secondsClone / ( 60 * 60))
+  hour = Math.floor(secondsClone / (60 * 60))
   secondsClone -= hour * 60 * 60
   minute = Math.ceil(secondsClone / 60)
 
@@ -172,12 +172,13 @@ export const groupBy = (array, key) => {
 export const mergeTwoArray = (newArray, oldArray) => {
   let array = []
   newArray.forEach(elm => {
-    if (elm.SplitForSalesOrder || (elm.ProductType == 2 && elm.IsTimer)) {
+    if ((elm.SplitForSalesOrder || (elm.ProductType == 2 && elm.IsTimer)) && elm.Quantity > 0) {
       array.unshift({ ...elm })
     } else {
-      let pos = oldArray.map(item => item.Id).indexOf(elm.Id);
+      let pos = oldArray.map(item => item.ProductId).indexOf(elm.ProductId);
       if (pos >= 0) {
         oldArray[pos].Quantity += elm.Quantity
+        oldArray = oldArray.filter(item => item.Quantity > 0)
       } else {
         array.unshift({ ...elm })
       }
@@ -185,12 +186,12 @@ export const mergeTwoArray = (newArray, oldArray) => {
   });
   return [...array, ...oldArray]
 }
-export const text_highlight = (text, input,IsActive) => {
+export const text_highlight = (text, input, IsActive) => {
   return (
-    <View style={{flexDirection:'row'}}numberOfLines={2} ellipsizeMode='tail'>{
+    <View style={{ flexDirection: 'row' }} numberOfLines={2} ellipsizeMode='tail'>{
       text.split(" ").map((word, i) => (
         <Text key={i} >
-          <Text style={[input != null && input.length != 0 ? word.toLowerCase().indexOf(input.toLowerCase()) != -1 ? { backgroundColor: 'red' } : { backgroundColor: null } : { backgroundColor: null },{textTransform: "uppercase",color:IsActive ? 'white' : 'black',textAlign: "center", textAlignVertical: "center",}]} >{word} </Text>
+          <Text style={[input != null && input.length != 0 ? word.toLowerCase().indexOf(input.toLowerCase()) != -1 ? { backgroundColor: 'red' } : { backgroundColor: null } : { backgroundColor: null }, { textTransform: "uppercase", color: IsActive ? 'white' : 'black', textAlign: "center", textAlignVertical: "center", }]} >{word} </Text>
         </Text>
       ))
     }

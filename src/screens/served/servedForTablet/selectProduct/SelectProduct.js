@@ -70,11 +70,12 @@ export default (props) => {
   useEffect(() => {
     if (already) {
       const getCategories = async () => {
-        let newCategories = [{ Id: -1, Name: I18n.t('tat_ca') }];
+        let newCategories = [];
         let results = await realmStore.queryCategories()
-        // results = results.sorted('Name')
+        let allProducts = await realmStore.queryProducts()
         results.forEach(item => {
-          newCategories.push(item)
+          let numberProduct = allProducts.filtered(`CategoryId == ${item.Id}`).length
+          newCategories.push({ ...item, numberProduct })
         })
         setCategory(newCategories)
 
@@ -137,7 +138,7 @@ export default (props) => {
     let Quantity = 0
     listProducts.forEach(item => {
       if (item.ProductId == arrItem.ProductId) {
-        Quantity = item.Quantity
+        Quantity += item.Quantity
       }
     })
     return Quantity
@@ -177,29 +178,45 @@ export default (props) => {
 
   const renderCateItem = (item, index) => {
     return (
-      <TouchableOpacity onPress={() => onClickCate(item, index)} key={index} style={[styles.renderCateItem, { backgroundColor: item.Id == listCateId[0] ? Colors.colorchinh : "white" }]}>
-        <Text numberOfLines={2} style={[styles.textRenderCateItem, { color: item.Id == listCateId[0] ? "white" : Colors.colorchinh }]}>{item.Name}</Text>
-      </TouchableOpacity>
+      <>
+        <TouchableOpacity onPress={() => onClickCate(item, index)} key={index} style={[styles.renderCateItem, { flex: 1, backgroundColor: item.Id == listCateId[0] ? Colors.colorLightBlue : "white" }]}>
+          <View style={{ backgroundColor: item.Id != listCateId[0] ? Colors.colorLightBlue : "white", flex: 1, padding: 7, borderRadius: 50, marginHorizontal: 5 }}>
+            <Text style={{ fontWeight: "bold", textAlign: "center", color: item.Id != listCateId[0] ? "white" : Colors.colorLightBlue, fontSize: 12 }}>{item.numberProduct}</Text>
+          </View>
+          <Text numberOfLines={2} style={[styles.textRenderCateItem, { flex: 6, color: item.Id == listCateId[0] ? "white" : Colors.colorLightBlue }]}>{item.Name}</Text>
+        </TouchableOpacity>
+      </>
+
     );
   }
 
+  const onClickAll = () => {
+    setHasProducts(false)
+    resetState()
+    setListCateId([-1])
+  }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, flexDirection: "row", marginVertical: 7 }}>
       {
         isSearching ?
           null
           :
-          <View style={{ height: 65, flexDirection: "row", marginBottom: 14, marginTop: 7 }}>
-            <View style={{ flex: 1, marginHorizontal: 7 }}>
+          <View style={{ width: "24%", }}>
+            <View style={{ flex: 1, marginHorizontal: 7, }}>
+              <TouchableOpacity onPress={() => onClickAll()} style={[styles.renderCateItem, { backgroundColor: "white", backgroundColor: -1 == listCateId[0] ? Colors.colorLightBlue : "white" }]}>
+                <View style={{ backgroundColor: -1 == listCateId[0] ? Colors.colorLightBlue : "white", flex: 1, padding: 7, borderRadius: 50, marginHorizontal: 5 }}>
+                  <Text style={{ fontWeight: "bold", textAlign: "center", color: -1 == listCateId[0] ? "white" : Colors.colorLightBlue, fontSize: 12 }}></Text>
+                </View>
+                <Text numberOfLines={2} style={[styles.textRenderCateItem, { flex: 6, color: -1 == listCateId[0] ? "white" : Colors.colorLightBlue }]}>ALL</Text>
+              </TouchableOpacity>
               <FlatList
                 extraData={listCateId}
-                horizontal={true}
-                showsHorizontalScrollIndicator={false}
+                showsVerticalScrollIndicator={false}
                 data={category}
                 renderItem={({ item, index }) => renderCateItem(item, index)}
                 keyExtractor={(item, index) => '' + index}
-                ItemSeparatorComponent={() => <View style={{ width: 14 }}></View>}
+              // ItemSeparatorComponent={() => <View style={{ width: 14 }}></View>}
               />
             </View>
           </View>
@@ -241,7 +258,7 @@ export default (props) => {
 }
 
 const styles = StyleSheet.create({
-  renderCateItem: { justifyContent: "center", alignItems: "center", paddingHorizontal: 5, width: 136, },
-  textRenderCateItem: { fontWeight: "bold", textTransform: "uppercase", textAlign: "center", },
+  renderCateItem: { flexDirection: "row", paddingVertical: 20, alignItems: "center", marginBottom: 5, borderRadius: 10 },
+  textRenderCateItem: { fontWeight: "bold", textTransform: "uppercase", lineHeight: 20, textAlign: "left" },
   button: { borderWidth: 1, padding: 20, borderRadius: 10 },
 });
