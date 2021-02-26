@@ -75,7 +75,7 @@ export default (props) => {
         let allProducts = await realmStore.queryProducts()
         results.forEach(item => {
           let numberProduct = allProducts.filtered(`CategoryId == ${item.Id}`).length
-          newCategories.push({ ...item, numberProduct })
+          newCategories.push({ ...JSON.parse(JSON.stringify(item)), numberProduct })
         })
         setCategory(newCategories)
 
