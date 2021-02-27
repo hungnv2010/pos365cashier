@@ -28,6 +28,7 @@ class DataManager {
             } else {
                 if (intNewOrder > 0) {
                     let newOrders = await new HTTPService().setPath(ApiPath.WAIT_FOR_COMFIRMATION_ALL, false).GET()
+                    listOrdersReturn = []
                     let listRoom = []
                     let listOrders = []
                     console.log('newOrders', newOrders);
@@ -88,6 +89,10 @@ class DataManager {
             if (serverEventByRowKey.JsonContent.OrderDetails && serverEventByRowKey.JsonContent.OrderDetails.length > 0) {
                 serverEventByRowKey.JsonContent.OrderDetails = mergeTwoArray(item.products, serverEventByRowKey.JsonContent.OrderDetails)
             } else {
+                let title = serverEventByRowKey.JsonContent.RoomName ? serverEventByRowKey.JsonContent.RoomName : ""
+                let body = I18n.t('gio_khach_vao') + moment().format('HH:mm dd/MM')
+                serverEventByRowKey.JsonContent.ActiveDate = moment()
+                dataManager.sentNotification(title, body)
                 serverEventByRowKey.JsonContent.OrderDetails = [...item.products]
             }
             serverEventByRowKey.Version += 1

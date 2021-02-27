@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, Keyboard, TouchableWithoutFeedback, TouchableOpacity, Modal, ImageBackground, FlatList, StyleSheet,Image } from 'react-native';
+import { View, Text, Keyboard, TouchableWithoutFeedback, TouchableOpacity, Modal, ImageBackground, FlatList, StyleSheet, Image } from 'react-native';
 import { Colors, Images, Metrics } from '../../../../theme';
 import Menu from 'react-native-material-menu';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -284,10 +284,10 @@ const CustomerOrder = (props) => {
     const renderForTablet = (item, index) => {
         const isPromotion = !(item.IsPromotion == undefined || (item.IsPromotion == false))
         return (
-            <View style={{paddingHorizontal:5,paddingTop:5}}>
+            <View style={{ paddingHorizontal: 5, paddingTop: 5 }}>
                 {
                     isPromotion && item.FisrtPromotion != undefined ?
-                        <View style={{ backgroundColor: "#ffedd6", padding: 7, paddingHorizontal: 10,marginBottom:5 }}>
+                        <View style={{ backgroundColor: "#ffedd6", padding: 7, paddingHorizontal: 10, marginBottom: 5 }}>
                             <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{I18n.t('khuyen_mai')}</Text>
                         </View>
                         : null
@@ -314,7 +314,7 @@ const CustomerOrder = (props) => {
                         <TouchableOpacity
                             style={{ marginRight: 5 }}
                             onPress={() => { if (!isPromotion) onClickReturn(item, 1) }}>
-                                <Image source={!isPromotion?Images.icon_trash:Images.icon_gift} style={{width:36,height:36}}/>
+                            <Image source={!isPromotion ? Images.icon_trash : Images.icon_gift} style={{ width: 36, height: 36 }} />
                         </TouchableOpacity>
 
                         <View style={{ flexDirection: "column", flex: 1, alignItems: "flex-start" }}>
@@ -324,7 +324,7 @@ const CustomerOrder = (props) => {
                                     <View style={{ flexDirection: "column", flex: 1, }}>
                                         <Text style={{ fontWeight: "bold", marginBottom: 7 }}>{item.Name}</Text>
                                         <View style={{ flexDirection: "row" }}>
-                                            <Text style={{}}>{currencyToString(item.Price)} x </Text>
+                                            <Text style={{}}>{currencyToString(item.Price)} x {(isPromotion) ? item.Quantity : null}</Text>
                                             <View>
                                                 {
                                                     orientaition == Constant.PORTRAIT ?
@@ -544,7 +544,7 @@ const CustomerOrder = (props) => {
 
     return (
         <View style={{ flex: 1 }}>
-            <View style={{ flex: 1, backgroundColor:'white',paddingBottom:5}}>
+            <View style={{ flex: 1, backgroundColor: 'white', paddingBottom: 5 }}>
                 {listOrder.length > 0 ?
                     <FlatList
                         data={listOrder}
@@ -565,7 +565,7 @@ const CustomerOrder = (props) => {
                     onPress={() => { setExpand(!expand) }}
                     style={{ borderTopWidth: .5, borderTopColor: Colors.colorLightBlue, paddingVertical: 5, backgroundColor: "white", }}>
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
-                        <Text style={{ fontWeight: "bold" ,paddingLeft:10}}>{I18n.t('tong_thanh_tien')}</Text>
+                        <Text style={{ fontWeight: "bold", paddingLeft: 10 }}>{I18n.t('tong_thanh_tien')}</Text>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
                             <Text style={{ fontWeight: "bold", fontSize: 16, color: Colors.colorchinh }}>{currencyToString(props.jsonContent.Total - (props.jsonContent.VAT ? props.jsonContent.VAT : 0) + props.jsonContent.Discount)}đ</Text>
                             {expand ?
