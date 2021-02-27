@@ -27,7 +27,6 @@ export default (props) => {
         console.log("item", item);
         if (item.Status == false && countPrint < 5) {
             item.Status = true
-            printer[index] = item 
             setPrinter(printer)
         } else {
             item.Status = false
@@ -35,34 +34,38 @@ export default (props) => {
             printer[index] = item
             setPrinter(printer)
         }
+        
         data = printer.filter(item => item.Status == true)
         console.log("Data",data);
+        setPrint(data)
         setPrinter(printer)
-        props.outPut({printer:printer, listP:priceConfig})
+        // props.outPut({printer:printer, listP:priceConfig})
     }
     const setPrint = (listP) =>{
         switch(listP.length){
             case 1:
-                product.Printer = listP[0]
+                product.Printer = listP[0].Key
                 setPriceConfig({...priceConfig})
                 break
             case 2:
-                product.Printer = listP[0]
-                setPriceConfig({...priceConfig,SecondPrinter:listP[1]})
+                product.Printer = listP[0].Key
+                setPriceConfig({...priceConfig,SecondPrinter:listP[1].Key})
                 break
             case 3:
-                product.Printer = listP[0]
-                setPriceConfig({...priceConfig,SecondPrinter:listP[1],Printer3:listP[2]})
+                product.Printer = listP[0].Key
+                setPriceConfig({...priceConfig,SecondPrinter:listP[1].Key,Printer3:listP[2].Key})
                 break
             case 4:
-                product.Printer = listP[0]
-                setPriceConfig({...priceConfig,SecondPrinter:listP[1],Printer3:listP[2],Printer4:listP[3]})
+                product.Printer = listP[0].Key
+                setPriceConfig({...priceConfig,SecondPrinter:listP[1].Key,Printer3:listP[2].Key,Printer4:listP[3].Key})
                 break
             case 5:
-                product.Printer = listP[0]
-                setPriceConfig({...priceConfig,SecondPrinter:listP[1],Printer3:listP[2],Printer4:listP[3],Printer5:listP[4]})
+                product.Printer = listP[0].Key
+                setPriceConfig({...priceConfig,SecondPrinter:listP[1].Key,Printer3:listP[2].Key,Printer4:listP[3].Key,Printer5:listP[4].Key})
                 break
         }
+        //props.outPut({printer:printer, listP:priceConfig})
+        
     }
     useEffect(() => {
         console.log("Printer", printer);
@@ -72,7 +75,8 @@ export default (props) => {
         console.log("count Print", countPrint);
     }, [countPrint])
     useEffect(()=>{
-        setPriceConfig(props.config)
+        //setPriceConfig(props.config)
+        props.outPut({printer:printer, listP:priceConfig})
     },[priceConfig])
 
     const renderItem = (item, index) => {

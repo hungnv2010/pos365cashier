@@ -307,7 +307,7 @@ const RetailCustomerOrder = (props) => {
                     setShowModal(!showModal)
                 }}>
                     <View style={{
-                        borderColor: "#ddd", borderWidth: 0.5,
+                        borderColor: "gray", borderWidth: 0.5,
                         flexDirection: "row", flex: 1, alignItems: "center", justifyContent: "space-evenly", padding: 5,
                         backgroundColor: 'white', borderRadius: 10, marginBottom: 2
                     }}>

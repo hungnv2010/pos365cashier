@@ -199,8 +199,8 @@ export default (props) => {
                 countPrint.current = countPrint.current + 1
             }
         })
-        let listP = data.listP
-        console.log("abc",listP);
+        console.log("abc",data.listP);
+        setPriceConfig({...data.listP})
         console.log("config",priceConfig);
 
     }
@@ -366,7 +366,7 @@ export default (props) => {
                             </View>
                             <View style={{ padding: 3, backgroundColor: '#f2f2f2', marginTop: 10, }}></View>
                             {product ?
-                                <PrintCook productOl={product} config={priceConfig.current} printer={printer} countPrint={countPrint.current} outPut={outPut}></PrintCook> : null}
+                                <PrintCook productOl={product} config={priceConfig} printer={printer} countPrint={countPrint.current} outPut={outPut}></PrintCook> : null}
                         </View> : null}
                 </View>
                 <View style={{ backgroundColor: '#f2f2f2', padding: 10 }}>

@@ -305,7 +305,7 @@ const CustomerOrder = (props) => {
                     setShowModal(!showModal)
                 }}>
                     <View style={{
-                        borderColor: "#ddd", borderWidth: 0.5,
+                        borderColor: "gray", borderWidth: 0.5,
                         flexDirection: "row", flex: 1, alignItems: "center", padding: 5,
                         backgroundColor: index == props.itemOrder.index ? "#EED6A7" : "white",
                         borderRadius: 10,
