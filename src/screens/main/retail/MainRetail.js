@@ -94,7 +94,7 @@ const MainRetail = (props) => {
                     let isExist = false
                     if (product.SplitForSalesOrder) {
                         product = await getOtherPrice(product)
-                        jsonContent.OrderDetails.push(product)
+                        jsonContent.OrderDetails.unshift(product)
                     } else {
                         jsonContent.OrderDetails.forEach(elm => {
                             if (elm.ProductId == product.ProductId) {
@@ -106,7 +106,7 @@ const MainRetail = (props) => {
                         })
                         if (!isExist) {
                             product = await getOtherPrice(product)
-                            jsonContent.OrderDetails.push(product)
+                            jsonContent.OrderDetails.unshift(product)
                         }
                     }
                     updateServerEvent({ ...jsonContent })

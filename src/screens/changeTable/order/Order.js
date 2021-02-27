@@ -175,9 +175,9 @@ export default (props) => {
         dialogManager.showLoading();
         if (props.route.params.fromScreen && props.route.params.fromScreen == ScreenList.SplitTable) {
             let { listNew, listOld } = props.route.params
-            console.log('akshdkajshdkjad', listNew, listOld);
-            // dataManager.splitTable(FromRoomId, FromPos, toRoomId.current.Id, toPos, listOld, listNew)
-            // props.navigation.goBack()
+            // console.log('akshdkajshdkjad', listNew, listOld);
+            dataManager.splitTable(FromRoomId, FromPos, toRoomId.current.Id, toPos, listOld, listNew)
+            props.navigation.goBack()
         } else {
             dataManager.changeTable(FromRoomId, FromPos, toRoomId.current.Id, toPos)
         }

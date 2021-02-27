@@ -614,6 +614,8 @@ export default {
   khong_co_ket_noi:"Not Connecting",
   khong: "No",
   khong_co_ket_noi_internet_don_hang_cua_quy_khach_duoc_luu_vao_offline:"No internet connection, the order is saved to the order list offline.",
+  khong_tim_thay_san_pham_nao_phu_hop:"No matching product was found",
+
 
   // TODO: H
   hoa_don: "Invoice",
