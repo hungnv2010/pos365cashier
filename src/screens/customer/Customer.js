@@ -59,6 +59,7 @@ export default (props) => {
 
     useEffect(() => {
         const getSearchResult = async () => {
+            dialogManager.showLoading()
             if (debouncedVal != '') {
                 // let valueSearchLatin = change_alias(debouncedVal)
                 // let results = await realmStore.queryCustomer()
@@ -75,6 +76,7 @@ export default (props) => {
                 // setCustomerData(backUpCustomer.current)
                 getCustomer()
             }
+            dialogManager.hiddenLoading()
         }
         getSearchResult()
     }, [debouncedVal])
