@@ -291,7 +291,7 @@ const RetailCustomerOrder = (props) => {
     const renderForTablet = (item, index) => {
         const isPromotion = !(item.IsPromotion == undefined || (item.IsPromotion == false))
         return (
-            <>
+            <View style={{paddingHorizontal:5,paddingTop:5}}>
                 {
                     isPromotion && item.FisrtPromotion != undefined ?
                         <View style={{ backgroundColor: "#ffedd6", padding: 7, paddingHorizontal: 10 }}>
@@ -307,7 +307,7 @@ const RetailCustomerOrder = (props) => {
                     setShowModal(!showModal)
                 }}>
                     <View style={{
-                        borderBottomColor: "#ddd", borderBottomWidth: 0.5,
+                        borderColor: "#ddd", borderWidth: 0.5,
                         flexDirection: "row", flex: 1, alignItems: "center", justifyContent: "space-evenly", padding: 5,
                         backgroundColor: 'white', borderRadius: 10, marginBottom: 2
                     }}>
@@ -399,7 +399,7 @@ const RetailCustomerOrder = (props) => {
 
                     </View>
                 </TouchableOpacity>
-            </>
+            </View>
         )
     }
 
@@ -454,7 +454,7 @@ const RetailCustomerOrder = (props) => {
     return (
         <View style={{ flex: 1 }}>
 
-            <View style={{ flex: 1 }}>
+            <View style={{ flex: 1, backgroundColor:'white' }}>
                 {listOrder.length > 0 ?
                     <FlatList
                         data={listOrder}
