@@ -313,26 +313,29 @@ export default (props) => {
       <View style={{ flex: 5, }}>
         <View style={{ flex: 1, justifyContent: "center", }}>
           {hasProducts ?
-            <FlatList
-              removeClippedSubviews={true}
-              showsVerticalScrollIndicator={false}
-              data={product}
-              renderItem={({ item, index }) =>
-                <ProductsItemForPhone
-                  onChangeText={onChangeText}
-                  item={item}
-                  index={index}
-                  getQuantity={getQuantity}
-                  onClickProduct={onClickProduct}
-                  handleButtonDecrease={handleButtonDecrease}
-                  handleButtonIncrease={handleButtonIncrease}
-                />
-              }
-              keyExtractor={(item, index) => '' + index}
-              extraData={product.Quantity}
-              onEndReached={(info) => { loadMore(info) }}
-              ListFooterComponent={isLoadMore ? <ActivityIndicator color={Colors.colorchinh} /> : null}
-            />
+            product.length > 0 ?
+              <FlatList
+                removeClippedSubviews={true}
+                showsVerticalScrollIndicator={false}
+                data={product}
+                renderItem={({ item, index }) =>
+                  <ProductsItemForPhone
+                    onChangeText={onChangeText}
+                    item={item}
+                    index={index}
+                    getQuantity={getQuantity}
+                    onClickProduct={onClickProduct}
+                    handleButtonDecrease={handleButtonDecrease}
+                    handleButtonIncrease={handleButtonIncrease}
+                  />
+                }
+                keyExtractor={(item, index) => '' + index}
+                extraData={product.Quantity}
+                onEndReached={(info) => { loadMore(info) }}
+                ListFooterComponent={isLoadMore ? <ActivityIndicator color={Colors.colorchinh} /> : null}
+              />
+              :
+              <Text style={{ textAlign: "center" }}>{I18n.t('khong_tim_thay_san_pham_nao_phu_hop')}</Text>
             :
             <ActivityIndicator size="large" style={{}} color={Colors.colorchinh} />}
         </View>
@@ -379,7 +382,7 @@ export default (props) => {
                       setShowModal(false)
                     }}
                   >
-                    <Text style={{fontSize: 13, fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('huy')}</Text>
+                    <Text style={{ fontSize: 13, fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('huy')}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={{ padding: 10, borderRadius: 5, width: Metrics.screenWidth * 0.2, alignItems: "center", backgroundColor: Colors.colorPhu }}
@@ -387,7 +390,7 @@ export default (props) => {
                       props.navigation.goBack();
                     }}
                   >
-                    <Text style={{fontSize: 13, fontWeight: "bold", textTransform: "uppercase", color: "white" }}>{I18n.t('khong')}</Text>
+                    <Text style={{ fontSize: 13, fontWeight: "bold", textTransform: "uppercase", color: "white" }}>{I18n.t('khong')}</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={{ padding: 10, borderRadius: 5, width: Metrics.screenWidth * 0.2, alignItems: "center", backgroundColor: Colors.colorchinh }}
@@ -395,7 +398,7 @@ export default (props) => {
                       onClickDone()
                     }}
                   >
-                    <Text style={{fontSize: 13, fontWeight: "bold", textTransform: "uppercase", color: "white" }}>{I18n.t('dong_y')}</Text>
+                    <Text style={{ fontSize: 13, fontWeight: "bold", textTransform: "uppercase", color: "white" }}>{I18n.t('dong_y')}</Text>
                   </TouchableOpacity>
                 </View>
               </View>

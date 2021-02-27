@@ -291,26 +291,29 @@ export default (props) => {
       <View style={{ flex: 5, }}>
         <View style={{ flex: 1, justifyContent: "center", }}>
           {hasProducts ?
-            <FlatList
-              removeClippedSubviews={true}
-              showsVerticalScrollIndicator={false}
-              data={product}
-              renderItem={({ item, index }) =>
-                <ProductsItemForPhone
-                  onChangeText={onChangeText}
-                  item={item}
-                  index={index}
-                  getQuantity={getQuantity}
-                  onClickProduct={onClickProduct}
-                  handleButtonDecrease={handleButtonDecrease}
-                  handleButtonIncrease={handleButtonIncrease}
-                />
-              }
-              keyExtractor={(item, index) => '' + index}
-              extraData={product.Quantity}
-              onEndReached={(info) => { loadMore(info) }}
-              ListFooterComponent={isLoadMore ? <ActivityIndicator color={Colors.colorchinh} /> : null}
-            />
+            product.length > 0 ?
+              <FlatList
+                removeClippedSubviews={true}
+                showsVerticalScrollIndicator={false}
+                data={product}
+                renderItem={({ item, index }) =>
+                  <ProductsItemForPhone
+                    onChangeText={onChangeText}
+                    item={item}
+                    index={index}
+                    getQuantity={getQuantity}
+                    onClickProduct={onClickProduct}
+                    handleButtonDecrease={handleButtonDecrease}
+                    handleButtonIncrease={handleButtonIncrease}
+                  />
+                }
+                keyExtractor={(item, index) => '' + index}
+                extraData={product.Quantity}
+                onEndReached={(info) => { loadMore(info) }}
+                ListFooterComponent={isLoadMore ? <ActivityIndicator color={Colors.colorchinh} /> : null}
+              />
+              :
+              <Text style={{textAlign:"center"}}>{I18n.t('khong_tim_thay_san_pham_nao_phu_hop')}</Text>
             :
             <ActivityIndicator size="large" style={{}} color={Colors.colorchinh} />}
         </View>

@@ -174,7 +174,7 @@ const Served = (props) => {
                 product = await getOtherPrice(product)
                 {
                     if(product.IsTimer) ProductManager.getProductTimePrice(product)
-                    jsonContentTmp.OrderDetails.push(product)
+                    jsonContentTmp.OrderDetails.unshift(product)
                 }
             } else {
                 let isExist = false
@@ -187,7 +187,7 @@ const Served = (props) => {
                 })
                 if (!isExist) {
                     product = await getOtherPrice(product)
-                    jsonContentTmp.OrderDetails.push(product)
+                    jsonContentTmp.OrderDetails.unshift(product)
                 }
             }
         } else if (product.Quantity > 0 && replace) {
