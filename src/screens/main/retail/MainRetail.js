@@ -353,7 +353,7 @@ const MainRetail = (props) => {
                                             listProducts={jsonContent.OrderDetails ? jsonContent.OrderDetails : []}
                                             outputSelectedProduct={outputSelectedProduct} />
                                     </View>
-                                    <View style={{ flex: 4, marginLeft: 2 }}>
+                                    <View style={{ flex: 4, marginLeft: 2 ,backgroundColor:'#fff'}}>
                                         <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 2, borderBottomColor: Colors.colorchinh, borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5 }}>
                                             <TouchableOpacity
                                                 style={{ flex: 1, flexDirection: "row", alignItems: "center" }}

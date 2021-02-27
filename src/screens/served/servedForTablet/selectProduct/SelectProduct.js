@@ -178,14 +178,14 @@ export default (props) => {
 
   const renderCateItem = (item, index) => {
     return (
-      <>
-        <TouchableOpacity onPress={() => onClickCate(item, index)} key={index} style={[styles.renderCateItem, { flex: 1, backgroundColor: item.Id == listCateId[0] ? Colors.colorLightBlue : "white" }]}>
+      <View style={{}}>
+        <TouchableOpacity onPress={() => onClickCate(item, index)} key={index} style={[styles.renderCateItem, { flex: 1, backgroundColor: item.Id == listCateId[0] ? Colors.colorLightBlue : "white" ,borderWidth:0.5,paddingVertical:20,borderColor:'gray'}]}>
           <View style={{ backgroundColor: item.Id != listCateId[0] ? Colors.colorLightBlue : "white", flex: 1, padding: 7, borderRadius: 50, marginHorizontal: 5 }}>
             <Text style={{ fontWeight: "bold", textAlign: "center", color: item.Id != listCateId[0] ? "white" : Colors.colorLightBlue, fontSize: 12 }}>{item.numberProduct}</Text>
           </View>
           <Text numberOfLines={2} style={[styles.textRenderCateItem, { flex: 6, color: item.Id == listCateId[0] ? "white" : Colors.colorLightBlue }]}>{item.Name}</Text>
         </TouchableOpacity>
-      </>
+      </View>
 
     );
   }
@@ -197,14 +197,14 @@ export default (props) => {
   }
 
   return (
-    <View style={{ flex: 1, flexDirection: "row", marginVertical: 7 }}>
+    <View style={{ flex: 1, flexDirection: "row", }}>
       {
         isSearching ?
           null
           :
-          <View style={{ width: "24%", }}>
-            <View style={{ flex: 1, marginHorizontal: 7, }}>
-              <TouchableOpacity onPress={() => onClickAll()} style={[styles.renderCateItem, { backgroundColor: "white", backgroundColor: -1 == listCateId[0] ? Colors.colorLightBlue : "white" }]}>
+          <View style={{ width: "24%", backgroundColor:'white',paddingVertical:5}}>
+            <View style={{ flex: 1, marginHorizontal: 5,paddingBottom:5}}>
+              <TouchableOpacity onPress={() => onClickAll()} style={[styles.renderCateItem, { backgroundColor: "white", backgroundColor: -1 == listCateId[0] ? Colors.colorLightBlue : "white" ,borderWidth:0.5,paddingVertical:20,borderColor:'gray'}]}>
                 <View style={{ backgroundColor: -1 == listCateId[0] ? Colors.colorLightBlue : "white", flex: 1, padding: 7, borderRadius: 50, marginHorizontal: 5 }}>
                   <Text style={{ fontWeight: "bold", textAlign: "center", color: -1 == listCateId[0] ? "white" : Colors.colorLightBlue, fontSize: 12 }}></Text>
                 </View>
@@ -223,7 +223,7 @@ export default (props) => {
       }
 
       <View style={{ flex: 1, }}>
-        <View style={{ flex: 1, justifyContent: "center", }}>
+        <View style={{ flex: 1, justifyContent: "center",paddingVertical:5 }}>
           {hasProducts ?
             <FlatList
               keyboardShouldPersistTaps="always"

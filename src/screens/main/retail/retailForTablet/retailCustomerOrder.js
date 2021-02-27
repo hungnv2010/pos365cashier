@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, Keyboard, TouchableWithoutFeedback, TouchableOpacity, Modal, ImageBackground, FlatList, StyleSheet } from 'react-native';
+import { View, Text, Keyboard, TouchableWithoutFeedback, TouchableOpacity, Modal, ImageBackground, FlatList, StyleSheet,Image } from 'react-native';
 import { Colors, Images, Metrics } from '../../../../theme';
 import Menu from 'react-native-material-menu';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -307,7 +307,7 @@ const RetailCustomerOrder = (props) => {
                     setShowModal(!showModal)
                 }}>
                     <View style={{
-                        borderColor: "#ddd", borderWidth: 0.5,
+                        borderColor: "gray", borderWidth: 0.5,
                         flexDirection: "row", flex: 1, alignItems: "center", justifyContent: "space-evenly", padding: 5,
                         backgroundColor: 'white', borderRadius: 10, marginBottom: 2
                     }}>
