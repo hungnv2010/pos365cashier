@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, Keyboard, TouchableWithoutFeedback, TouchableOpacity, Modal, ImageBackground, FlatList, StyleSheet } from 'react-native';
+import { View, Text, Keyboard, TouchableWithoutFeedback, TouchableOpacity, Modal, ImageBackground, FlatList, StyleSheet, Image } from 'react-native';
 import { Colors, Images, Metrics } from '../../../../theme';
 import Menu from 'react-native-material-menu';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -291,7 +291,7 @@ const RetailCustomerOrder = (props) => {
     const renderForTablet = (item, index) => {
         const isPromotion = !(item.IsPromotion == undefined || (item.IsPromotion == false))
         return (
-            <View style={{paddingHorizontal:5,paddingTop:5}}>
+            <View style={{ paddingHorizontal: 5, paddingTop: 5 }}>
                 {
                     isPromotion && item.FisrtPromotion != undefined ?
                         <View style={{ backgroundColor: "#ffedd6", padding: 7, paddingHorizontal: 10 }}>
@@ -320,7 +320,7 @@ const RetailCustomerOrder = (props) => {
                         <View style={{ flexDirection: "column", flex: 1, }}>
                             <Text style={{ fontWeight: "bold", marginBottom: 7 }}>{item.Name}</Text>
                             <View style={{ flexDirection: "row" }}>
-                                <Text style={{}}>{currencyToString(item.Price)} x </Text>
+                                <Text style={{}}>{currencyToString(item.Price)} x {(isPromotion) ? item.Quantity : null}</Text>
                                 <View onPress={() => onClickUnit({ ...item })}>
                                     {
                                         orientaition == Constant.PORTRAIT ?
@@ -454,7 +454,7 @@ const RetailCustomerOrder = (props) => {
     return (
         <View style={{ flex: 1 }}>
 
-            <View style={{ flex: 1, backgroundColor:'white' }}>
+            <View style={{ flex: 1, backgroundColor: 'white' }}>
                 {listOrder.length > 0 ?
                     <FlatList
                         data={listOrder}
