@@ -230,7 +230,7 @@ const RetailCustomerOrder = (props) => {
         let index = 0;
         listGroupByQuantity.forEach(element => {
             promotionTmp.forEach(async (item) => {
-                if ((element.IsPromotion == undefined || (element.IsPromotion == false)) && element.ProductId == item.ProductId && checkEndDate(item.EndDate) && (item.IsLargeUnit == element.IsLargeUnit && element.Quantity >= item.QuantityCondition)) {
+                if (item.QuantityCondition > 0 && (element.IsPromotion == undefined || (element.IsPromotion == false)) && element.ProductId == item.ProductId && checkEndDate(item.EndDate) && (item.IsLargeUnit == element.IsLargeUnit && element.Quantity >= item.QuantityCondition)) {
                     let promotion = listProduct.filtered(`Id == ${item.ProductPromotionId}`)
                     promotion = JSON.parse(JSON.stringify(promotion[0]));
                     // let promotion = JSON.parse(item.Promotion)
@@ -314,7 +314,8 @@ const RetailCustomerOrder = (props) => {
                         <TouchableOpacity
                             style={{ marginRight: 5 }}
                             onPress={() => { if (!isPromotion) removeItem(item, index) }}>
-                            <Icon name={!isPromotion ? "trash-can-outline" : "gift"} size={40} color={!isPromotion ? "black" : Colors.colorLightBlue} />
+                            <Image source={!isPromotion ? Images.icon_trash : Images.icon_gift} style={{ width: 36, height: 36 }} />
+                            {/* <Icon name={!isPromotion ? "trash-can-outline" : "gift"} size={40} color={!isPromotion ? "black" : Colors.colorLightBlue} /> */}
                         </TouchableOpacity>
                         <View style={{ flexDirection: "column", flex: 1, }}>
                             <Text style={{ fontWeight: "bold", marginBottom: 7 }}>{item.Name}</Text>
@@ -472,8 +473,8 @@ const RetailCustomerOrder = (props) => {
 
                 <TouchableOpacity
                     onPress={() => { setExpand(!expand) }}
-                    style={{ borderTopWidth: .5, borderTopColor: "red", paddingVertical: 3, backgroundColor: "white", marginLeft: 10 }}>
-                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+                    style={{ borderTopWidth: .5, borderTopColor: "red", paddingVertical: 3, backgroundColor: "white", marginLeft: 0 }}>
+                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginLeft: 10 }}>
                         <Text style={{ fontWeight: "bold" }}>{I18n.t('tong_thanh_tien')}</Text>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
                             <Text style={{ fontWeight: "bold", fontSize: 16, color: Colors.colorchinh }}>{currencyToString(props.jsonContent.Total - props.jsonContent.VAT + props.jsonContent.Discount)}đ</Text>

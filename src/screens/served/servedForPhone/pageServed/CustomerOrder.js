@@ -48,9 +48,9 @@ export default (props) => {
 
     const [delay, setDelay] = useState(1);
     useInterval(() => {//60s kiem tra va tinh lai hang hoa tính gio
-        if(delay == 1) setDelay(60)
+        if (delay == 1) setDelay(60)
         let reload = dataManager.calculateProductTime(listOrder)
-        if(reload) props.outPutSetNewOrderDetail(listOrder)
+        if (reload) props.outPutSetNewOrderDetail(listOrder)
     }, delay * 1000)
 
     useEffect(() => {
@@ -294,7 +294,8 @@ export default (props) => {
                         <TouchableOpacity
                             style={{ paddingVertical: 10, paddingHorizontal: 5 }}
                             onPress={() => { if (!isPromotion) onClickReturn(item) }}>
-                            <Icon name={!isPromotion ? "trash-can-outline" : "gift"} size={40} color={!isPromotion ? "black" : colors.colorLightBlue} />
+                            {/* <Icon name={!isPromotion ? "trash-can-outline" : "gift"} size={40} color={!isPromotion ? "black" : colors.colorLightBlue} /> */}
+                            <Image source={!isPromotion ? Images.icon_trash : Images.icon_gift} style={{ width: 36, height: 36 }} />
                         </TouchableOpacity>
                         <View style={{ flex: 1, }}>
                             <TextTicker
@@ -430,8 +431,8 @@ export default (props) => {
 
                 <TouchableOpacity
                     onPress={() => { setExpand(!expand) }}
-                    style={{ borderTopWidth: .5, borderTopColor: "red", paddingVertical: 3, backgroundColor: "white", marginLeft: 10 }}>
-                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+                    style={{ borderTopWidth: .5, borderTopColor: "red", paddingVertical: 3, backgroundColor: "white", marginLeft: 0 }}>
+                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginLeft: 10}}>
                         <Text style={{ fontWeight: "bold" }}>{I18n.t('tong_thanh_tien')}</Text>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
                             <Text style={{ fontWeight: "bold", fontSize: 16, color: colors.colorchinh }}>{currencyToString(jsonContent.Total - (jsonContent.VAT ? jsonContent.VAT : 0) + jsonContent.Discount)}đ</Text>

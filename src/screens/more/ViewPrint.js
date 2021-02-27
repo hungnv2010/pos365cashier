@@ -68,8 +68,12 @@ export default forwardRef((props, ref) => {
             printProvisional(jsonContent, checkProvisional)
         },
         printKitchenRef(jsonContent, type = TYPE_PRINT.KITCHEN) {
-            console.log('printKitchenRef jsonContent: ', jsonContent);
+            console.log('printKitchenRef jsonContent type : ', jsonContent, type);
             printKitchen(jsonContent, type)
+        },
+        printDataNewOrdersRef(listKitchen, listReturnProduct) {
+            console.log('printDataNewOrdersRef listKitchen, listReturnProduct : ', listKitchen, listReturnProduct);
+            printDataNewOrders(listKitchen, listReturnProduct)
         }
     }));
 
@@ -104,7 +108,14 @@ export default forwardRef((props, ref) => {
         }
     }
 
-    const printProvisional = async (jsonContent, checkProvisional = false) => {
+    const printDataNewOrders = async (listKitchen, listReturnProduct) => {
+        if (listKitchen != null)
+            await printKitchen(listKitchen, TYPE_PRINT.KITCHEN, false)
+        if (listReturnProduct != null)
+            await printKitchen(listReturnProduct, TYPE_PRINT.RETURN_PRODUCT)
+    }
+
+    const printProvisional = async (jsonContent, checkProvisional = false, isPrint = true) => {
         let setting = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
         if (setting && setting != "") {
             setting = JSON.parse(setting);
@@ -131,22 +142,20 @@ export default forwardRef((props, ref) => {
                     }
                 }
                 console.log("listWaiting ==== " + JSON.stringify(printService.listWaiting))
-                setDataHtmlPrint()
+                if (isPrint)
+                    setDataHtmlPrint()
             } else
                 dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
         }
     }
 
-    const printKitchen = async (data, type = TYPE_PRINT.KITCHEN) => {
+    const printKitchen = async (data, type = TYPE_PRINT.KITCHEN, isPrint = true) => {
         console.log("printKitchen data ", data);
         isProvisional.current = false;
         let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
         if (vendorSession && vendorSession != "")
             vendorSession = JSON.parse(vendorSession);
-        console.log("printKitchen vendorSession ", vendorSession);
         data = JSON.parse(data)
-        console.log("printKitchen data2 ", data);
-        console.log("printKitchen printObject ", printObject);
         for (const value in data) {
             if (data.hasOwnProperty(value)) {
                 if (printObject[value] != "") {
@@ -178,7 +187,8 @@ export default forwardRef((props, ref) => {
             }
         }
         console.log("printService.listWaiting ", printService.listWaiting);
-        setDataHtmlPrint()
+        if (isPrint)
+            setDataHtmlPrint()
     }
 
     const checkIP = async () => {
