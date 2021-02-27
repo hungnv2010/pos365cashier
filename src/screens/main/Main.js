@@ -136,19 +136,18 @@ export default (props) => {
     if (autoPrintKitchen && isFNB) {
       const getDataNewOrders = async () => {
         let result = await dataManager.initComfirmOrder()
-        console.log('getDataNewOrders', result);
+        console.log('getDataNewOrders', JSON.stringify(result));
         if (result != null) {
-          if (result.newOrders && result.newOrders != null)
-            viewPrintRef.current.printKitchenRef(JSON.stringify(result.newOrders))
+          viewPrintRef.current.printDataNewOrdersRef(result.newOrders != null ? JSON.stringify(result.newOrders) : null, result.listOrdersReturn != null ? JSON.stringify(result.listOrdersReturn) : null)
           if (result.listRoom && result.listRoom != null)
             dataManager.updateFromOrder(result.listRoom)
         }
       }
-
       scanFromOrder = setInterval(() => {
         getDataNewOrders()
       }, 15000);
     }
+
     return () => {
       if (scanFromOrder) clearInterval(scanFromOrder)
     }

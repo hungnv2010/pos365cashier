@@ -103,6 +103,10 @@ class DataManager {
     }
 
     getDataPrintCook = (newOrders) => {
+
+        if (newOrders.length == 0)
+            return null;
+
         let listResult = []
         let secondPrinter = []
         let print3 = []
@@ -252,6 +256,9 @@ class DataManager {
             let cloneJsoncontent = jsonContent
             cloneJsoncontent.OrderDetails.forEach(product => {
                 product.ProductImages = []
+                if (isNaN(product.Quantity)) {
+                    product.Quantity = 0;
+                }
             });
             serverEvent.JsonContent = JSON.stringify(cloneJsoncontent)
         }
@@ -264,6 +271,9 @@ class DataManager {
             let cloneJsoncontent = serverEvent.JsonContent
             cloneJsoncontent.OrderDetails.forEach(product => {
                 product.ProductImages = []
+                if (isNaN(product.Quantity)) {
+                    product.Quantity = 0;
+                }
             });
             serverEvent.JsonContent = JSON.stringify(cloneJsoncontent)
         }
