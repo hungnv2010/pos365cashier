@@ -532,11 +532,12 @@ export default {
   cap_nhat_phong_ban: "Edit room table",
 
   // TODO: D
+  dau_tien:'first',
   dang_dung: "Serving",
   dang_trong: "Space",
   dong_y: "Accept",
   don_hang: "Order",
-  d: "Ä‘",
+  d: "d‘",
   don_gia: "Price",
   den: "to",
   dang_goi: "Order",
