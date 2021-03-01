@@ -86,7 +86,6 @@ export default (props) => {
 
   const getProducts = useCallback(async () => {
     if (already) {
-      console.log('getProducts');
 
       let results = await realmStore.queryProducts()
       // results = results.sorted('Name')
@@ -95,6 +94,7 @@ export default (props) => {
       }
       let productsRes = results.slice(skip, skip + Constant.LOAD_LIMIT)
       productsRes = JSON.parse(JSON.stringify(productsRes))
+      console.log('getProductsproductsRes',productsRes);
       count.current = productsRes.length
       setProduct([...product, ...productsRes])
       setHasProducts(true)

@@ -7,6 +7,7 @@ import moment from "moment";
 import signalRManager from "../common/SignalR";
 import { momentToDateUTC, momentToStringDateLocal, momentToDate, groupBy, randomUUID, getTimeFromNow, getDifferenceSeconds, dateToDate, mergeTwoArray } from "../common/Utils";
 import { Constant } from "../common/Constant";
+import I18n from '../common/language/i18n';
 import productManager from './objectManager/ProductManager';
 class DataManager {
     constructor() {
@@ -219,8 +220,7 @@ class DataManager {
 
     syncPriceBook = async () => {
         let res = await new HTTPService().setPath(ApiPath.SYNC_PRICE_BOOK, false).GET()
-        if (res.results && res.results.length > 0) {
-            // res.results.unshift({ Name: "gia_niem_yet", Id: 0 })
+        if (res && res.results && res.results.length > 0) {
             await realmStore.insertDatas(SchemaName.PRICE_BOOK, res.results)
         }
     }

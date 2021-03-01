@@ -135,7 +135,7 @@ const InvoiceDetail = (props) => {
             <View style={{ borderTopColor: "#0072bc", borderTopWidth: 1, }}>
                 <View style={{ margin: 5, flexDirection: "row", justifyContent: "space-between" }}>
                     <Text style={{ padding: 0, flex: 1 }}>{I18n.t('tong_tam_tinh')}</Text>
-                    <Text style={{ paddingLeft: 5 }}>{currencyToString(invoiceDetail.TotalPayment - ("Discount" in invoiceDetail ? invoiceDetail.Discount : 0) - ("VAT" in invoiceDetail ? invoiceDetail.VAT : 0))} đ</Text>
+                    <Text style={{ paddingLeft: 5 }}>{currencyToString(invoiceDetail.Total + ("Discount" in invoiceDetail ? invoiceDetail.Discount : 0) - ("VAT" in invoiceDetail ? invoiceDetail.VAT : 0))} đ</Text>
                 </View>
                 {"Discount" in invoiceDetail ?
                     <View style={{ margin: 5, flexDirection: "row", justifyContent: "space-between" }}>
@@ -146,7 +146,7 @@ const InvoiceDetail = (props) => {
                 }
                 {"VAT" in invoiceDetail ?
                     <View style={{ margin: 5, flexDirection: "row", justifyContent: "space-between" }}>
-                        <Text style={{ padding: 0, flex: 1 }}>VAT</Text>
+                        <Text style={{ padding: 0, flex: 1 }}>VAT ({invoiceDetail.VATRates}%)</Text>
                         <Text style={{ paddingLeft: 5 }}>+ {currencyToString(invoiceDetail.VAT)} đ</Text>
                     </View>
                     : null

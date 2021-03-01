@@ -77,7 +77,7 @@ class SignalRManager {
         this.connectionHub.error((error) => {
             NetInfo.fetch().then(state => {
                 if (state.isConnected == true && state.isInternetReachable == true) {
-                    this.getAllData();
+                    // this.getAllData();
                     this.init(this.data, true)
                 }
             });
@@ -88,7 +88,7 @@ class SignalRManager {
         const unsubscribe = NetInfo.addEventListener(state => {
             statusInternet = { currentStatus: state.isConnected, previousStatus: statusInternet.currentStatus }
             if (statusInternet.currentStatus == true && statusInternet.previousStatus == false) {
-                this.getAllData();
+                // this.getAllData();
                 this.init(this.data, true)
             }
         });
@@ -112,19 +112,19 @@ class SignalRManager {
             })
     }
 
-    async getAllData() {
+    // async getAllData() {
 
-        dialogManager.showLoading()
-        await dataManager.syncAllDatas()
-            .then(() => {
-                // store.dispatch({ type: 'ALREADY', already: true })
-            })
-            .catch((e) => {
-                // store.dispatch({ type: 'ALREADY', already: true })
-                console.log('syncAllDatas err', e);
-            })
-        dialogManager.hiddenLoading()
-    }
+    //     dialogManager.showLoading()
+    //     await dataManager.syncAllDatas()
+    //         .then(() => {
+    //             // store.dispatch({ type: 'ALREADY', already: true })
+    //         })
+    //         .catch((e) => {
+    //             // store.dispatch({ type: 'ALREADY', already: true })
+    //             console.log('syncAllDatas err', e);
+    //         })
+    //     dialogManager.hiddenLoading()
+    // }
 
     sendMessageOrder = (message) => {
         console.log('sendMessageOrder message ', message);
