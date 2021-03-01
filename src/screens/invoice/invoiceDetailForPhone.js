@@ -146,7 +146,7 @@ const InvoiceDetail = (props) => {
                 }
                 {"VAT" in invoiceDetail ?
                     <View style={{ margin: 5, flexDirection: "row", justifyContent: "space-between" }}>
-                        <Text style={{ padding: 0, flex: 1 }}>VAT ({invoiceDetail.VATRates}%)</Text>
+                        <Text style={{ padding: 0, flex: 1 }}>VAT</Text>
                         <Text style={{ paddingLeft: 5 }}>+ {currencyToString(invoiceDetail.VAT)} đ</Text>
                     </View>
                     : null
