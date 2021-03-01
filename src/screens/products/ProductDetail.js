@@ -47,14 +47,7 @@ export default (props) => {
         Hint: 'Lorem ipsum'
     },
     ])
-    let printCook = [{ Name: 'may_in_bao_bep_a', Key: 'KitchenA', Status: false },
-    { Name: 'may_in_bao_bep_b', Key: 'KitchenB', Status: false },
-    { Name: 'may_in_bao_bep_c', Key: 'KitchenC', Status: false },
-    { Name: 'may_in_bao_bep_d', Key: 'KitchenD', Status: false },
-    { Name: 'may_in_bao_pha_che_a', Key: 'BartenderA', Status: false },
-    { Name: 'may_in_bao_pha_che_b', Key: 'BartenderB', Status: false },
-    { Name: 'may_in_bao_pha_che_c', Key: 'BartenderC', Status: false },
-    { Name: 'may_in_bao_pha_che_d', Key: 'BartenderD', Status: false },]
+
     const deviceType = useSelector(state => {
         console.log("useSelector state ", state);
         return state.Common.deviceType
@@ -127,16 +120,33 @@ export default (props) => {
     }, [product])
     useEffect(() => {
         countPrint.current = 0
-        printCook.forEach(printer => {
-            if (product.Printer == printer.Key || priceConfig.SecondPrinter && priceConfig.SecondPrinter == printer.Key || priceConfig.Printer3 && priceConfig.Printer3 == printer.Key || priceConfig.Printer4 && priceConfig.Printer4 == printer.Key || priceConfig.Printer5 && priceConfig.Printer5 == printer.Key) {
-                printer.Status = true
-                countPrint.current = countPrint.current + 1
-            } else {
-                printer.Status = false
-            }
-        })
+        let printCook = [{ Name: 'may_in_bao_bep_a', Key: 'KitchenA', Status: false },
+        { Name: 'may_in_bao_bep_b', Key: 'KitchenB', Status: false },
+        { Name: 'may_in_bao_bep_c', Key: 'KitchenC', Status: false },
+        { Name: 'may_in_bao_bep_d', Key: 'KitchenD', Status: false },
+        { Name: 'may_in_bao_pha_che_a', Key: 'BartenderA', Status: false },
+        { Name: 'may_in_bao_pha_che_b', Key: 'BartenderB', Status: false },
+        { Name: 'may_in_bao_pha_che_c', Key: 'BartenderC', Status: false },
+        { Name: 'may_in_bao_pha_che_d', Key: 'BartenderD', Status: false },]
         setPrinter([...printCook])
-    }, [priceConfig])
+        if (priceConfig && priceConfig != null) {
+            printCook.forEach(printer => {
+                if (product.Printer == printer.Key || priceConfig.SecondPrinter && priceConfig.SecondPrinter == printer.Key || priceConfig.Printer3 && priceConfig.Printer3 == printer.Key || priceConfig.Printer4 && priceConfig.Printer4 == printer.Key || priceConfig.Printer5 && priceConfig.Printer5 == printer.Key) {
+                    printer.Status = true
+                    countPrint.current = countPrint.current + 1
+                } else {
+                    printer.Status = false
+                }
+            })
+            setPrinter([...printCook])
+        } else {
+            setPrinter([...printCook])
+        }
+        console.log("product", product.PriceConfig);
+        console.log("printer", printer);
+
+    }, [product])
+
     const getData = (param) => {
         console.log("param", param);
         itemProduct.current = JSON.parse(JSON.stringify(param.product))
@@ -168,11 +178,13 @@ export default (props) => {
     useEffect(() => {
         console.log('product Ol', productOl);
     }, [productOl])
+
     const clickOk = () => {
         let product1 = { ...product, ProductType: defaultType }
         setProduct({ ...product1 })
         setOnShowModal(false)
     }
+
     const addCategory = (data) => {
         console.log(data);
         let param = {
@@ -191,6 +203,7 @@ export default (props) => {
             console.log("error", err);
         })
     }
+
     const outPut = (data) => {
         setPrinter([...data.printer])
         countPrint.current = 0
@@ -199,12 +212,11 @@ export default (props) => {
                 countPrint.current = countPrint.current + 1
             }
         })
-        console.log("abc",data.listP);
-        setPriceConfig({...data.listP})
-        console.log("config",priceConfig);
-
+        console.log("abc", data.listP);
+        setPriceConfig({ ...priceConfig, SecondPrinter: data.listP.SecondPrinter, Printer3: data.listP.Printer3, Printer4: data.listP.Printer4, Printer5: data.listP.Printer5 })
+        console.log("config", priceConfig);
     }
-    
+
     const renderModal = () => {
         return (
             <View>{typeModal.current == 1 ?

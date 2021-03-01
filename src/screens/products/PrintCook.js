@@ -16,7 +16,7 @@ export default (props) => {
     const [product, setProduct] = useState(props.productOl)
     const [countPrint, setCountPrint] = useState(props.countPrint)
     const [printer, setPrinter] = useState(props.printer)
-    const [priceConfig,setPriceConfig] = useState(props.config)
+    const [priceConfig,setPriceConfig] = useState({SecondPrinter:'',Printer3:'',Printer4:'',Printer5:''})
     let data = null
 
     useEffect(() => {
@@ -27,21 +27,20 @@ export default (props) => {
         console.log("item", item);
         if (item.Status == false && countPrint < 5) {
             item.Status = true
+            printer[index] = item
             setPrinter(printer)
         } else {
             item.Status = false
-            item.Pos = null
             printer[index] = item
             setPrinter(printer)
-        }
-        
+        } 
         data = printer.filter(item => item.Status == true)
         console.log("Data",data);
-        setPrint(data)
-        setPrinter(printer)
+        setPrint(printer.filter(item => item.Status == true))
         // props.outPut({printer:printer, listP:priceConfig})
     }
     const setPrint = (listP) =>{
+        console.log("list",listP);
         switch(listP.length){
             case 1:
                 product.Printer = listP[0].Key
@@ -64,8 +63,7 @@ export default (props) => {
                 setPriceConfig({...priceConfig,SecondPrinter:listP[1].Key,Printer3:listP[2].Key,Printer4:listP[3].Key,Printer5:listP[4].Key})
                 break
         }
-        //props.outPut({printer:printer, listP:priceConfig})
-        
+        console.log("price config",priceConfig);     
     }
     useEffect(() => {
         console.log("Printer", printer);

@@ -532,11 +532,12 @@ export default {
   cap_nhat_phong_ban: "Edit room table",
 
   // TODO: D
+  dau_tien:'first',
   dang_dung: "Serving",
   dang_trong: "Space",
   dong_y: "Accept",
   don_hang: "Order",
-  d: "Ä‘",
+  d: "d‘",
   don_gia: "Price",
   den: "to",
   dang_goi: "Order",
@@ -696,6 +697,7 @@ export default {
   phut: "minutes",
   phien_ban_ngay: "Version",
   phuong_thuc_khac: "Other method",
+  phuong_thuc_thanh_toan:"Payment methods",
 
   // TODO: Q
   quy_dau_ky: "Fun beginning",
@@ -801,6 +803,8 @@ export default {
   ten_nhom: "Group Name",
   tinh_thanh: "Province",
   tien_khach_tra: "Payment paid",
+  tong_tam_tinh:"Total provisional",
+  tong_thanh_toan:"Total payment",
 
   // TODO: U
 
