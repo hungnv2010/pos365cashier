@@ -86,7 +86,6 @@ export default (props) => {
 
   const getProducts = useCallback(async () => {
     if (already) {
-      console.log('getProducts');
 
       let results = await realmStore.queryProducts()
       // results = results.sorted('Name')
@@ -95,6 +94,7 @@ export default (props) => {
       }
       let productsRes = results.slice(skip, skip + Constant.LOAD_LIMIT)
       productsRes = JSON.parse(JSON.stringify(productsRes))
+      console.log('getProductsproductsRes',productsRes);
       count.current = productsRes.length
       setProduct([...product, ...productsRes])
       setHasProducts(true)
@@ -179,7 +179,7 @@ export default (props) => {
   const renderCateItem = (item, index) => {
     return (
       <View style={{}}>
-        <TouchableOpacity onPress={() => onClickCate(item, index)} key={index} style={[styles.renderCateItem, { flex: 1, backgroundColor: item.Id == listCateId[0] ? Colors.colorLightBlue : "white" ,borderWidth:0.5,paddingVertical:20,borderColor:'gray'}]}>
+        <TouchableOpacity onPress={() => onClickCate(item, index)} key={index} style={[styles.renderCateItem, { flex: 1, backgroundColor: item.Id == listCateId[0] ? Colors.colorLightBlue : "white", borderWidth: 0.5, paddingVertical: 20, borderColor: 'gray' }]}>
           <View style={{ backgroundColor: item.Id != listCateId[0] ? Colors.colorLightBlue : "white", flex: 1, padding: 7, borderRadius: 50, marginHorizontal: 5 }}>
             <Text style={{ fontWeight: "bold", textAlign: "center", color: item.Id != listCateId[0] ? "white" : Colors.colorLightBlue, fontSize: 12 }}>{item.numberProduct}</Text>
           </View>
@@ -202,9 +202,9 @@ export default (props) => {
         isSearching ?
           null
           :
-          <View style={{ width: "24%", backgroundColor:'white',paddingVertical:5}}>
-            <View style={{ flex: 1, marginHorizontal: 5,paddingBottom:5}}>
-              <TouchableOpacity onPress={() => onClickAll()} style={[styles.renderCateItem, { backgroundColor: "white", backgroundColor: -1 == listCateId[0] ? Colors.colorLightBlue : "white" ,borderWidth:0.5,paddingVertical:20,borderColor:'gray'}]}>
+          <View style={{ width: "24%", backgroundColor: 'white', paddingVertical: 5 }}>
+            <View style={{ flex: 1, marginHorizontal: 5, paddingBottom: 5 }}>
+              <TouchableOpacity onPress={() => onClickAll()} style={[styles.renderCateItem, { backgroundColor: "white", backgroundColor: -1 == listCateId[0] ? Colors.colorLightBlue : "white", borderWidth: 0.5, paddingVertical: 20, borderColor: 'gray' }]}>
                 <View style={{ backgroundColor: -1 == listCateId[0] ? Colors.colorLightBlue : "white", flex: 1, padding: 7, borderRadius: 50, marginHorizontal: 5 }}>
                   <Text style={{ fontWeight: "bold", textAlign: "center", color: -1 == listCateId[0] ? "white" : Colors.colorLightBlue, fontSize: 12 }}></Text>
                 </View>
@@ -223,31 +223,34 @@ export default (props) => {
       }
 
       <View style={{ flex: 1, }}>
-        <View style={{ flex: 1, justifyContent: "center",paddingVertical:5 }}>
+        <View style={{ flex: 1, justifyContent: "center", paddingVertical: 5 }}>
           {hasProducts ?
-            <FlatList
-              keyboardShouldPersistTaps="always"
-              removeClippedSubviews={true}
-              showsVerticalScrollIndicator={false}
-              data={product}
-              key={props.numColumns}
-              numColumns={props.numColumns}
-              renderItem={({ item, index }) => {
-                return (<ProductsItem
-                  numColumns={props.numColumns}
-                  getQuantityProduct={getQuantityProduct(item)}
-                  item={item}
-                  index={index}
-                  onClickProduct={onClickProduct}
-                />)
+            product.length > 0 ?
+              <FlatList
+                keyboardShouldPersistTaps="always"
+                removeClippedSubviews={true}
+                showsVerticalScrollIndicator={false}
+                data={product}
+                key={props.numColumns}
+                numColumns={props.numColumns}
+                renderItem={({ item, index }) => {
+                  return (<ProductsItem
+                    numColumns={props.numColumns}
+                    getQuantityProduct={getQuantityProduct(item)}
+                    item={item}
+                    index={index}
+                    onClickProduct={onClickProduct}
+                  />)
 
-              }}
-              keyExtractor={(item, index) => '' + index}
-              extraData={product.Quantity}
-              onEndReached={(info) => { loadMore(info) }}
-              ListFooterComponent={isLoadMore ? <ActivityIndicator color={Colors.colorchinh} /> : null}
-              ItemSeparatorComponent={() => <View style={{ height: 14 }}></View>}
-            />
+                }}
+                keyExtractor={(item, index) => '' + index}
+                extraData={product.Quantity}
+                onEndReached={(info) => { loadMore(info) }}
+                ListFooterComponent={isLoadMore ? <ActivityIndicator color={Colors.colorchinh} /> : null}
+                ItemSeparatorComponent={() => <View style={{ height: 14 }}></View>}
+              />
+              :
+              <Text style={{ textAlign: "center" }}>{I18n.t('khong_tim_thay_san_pham_nao_phu_hop')}</Text>
             :
             <ActivityIndicator size="large" style={{}} color={Colors.colorchinh} />}
         </View>

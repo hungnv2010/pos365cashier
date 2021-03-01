@@ -43,7 +43,7 @@ const ProductsItem = ({ item, index, getQuantityProduct, numColumns, onClickProd
                 //     style={{ height: 30, width: 30, position: "absolute", top: 10, right: 10 }}
                 //     name="check-circle" size={30} color={Colors.colorchinh} />
                 <View style={{ position: "absolute", top: 10, right: 10, paddingHorizontal: 10, paddingVertical: 7, borderRadius: 50, backgroundColor: Colors.colorLightBlue }}>
-                    <Text style={{ color: "white", fontWeight: "bold" }}>{getQuantityProduct}</Text>
+                    <Text style={{ color: "white", fontWeight: "bold" }}>{Math.round(getQuantityProduct * 1000) / 1000}</Text>
                 </View>
                 :
                 null}
