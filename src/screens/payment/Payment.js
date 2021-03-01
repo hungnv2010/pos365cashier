@@ -546,6 +546,11 @@ export default (props) => {
             setShowToast(true)
             return;
         }
+        if (customer && customer.Id == 0 && jsonContent.ExcessCash < 0) {
+            setToastDescription(I18n.t("vui_long_nhap_dung_so_tien_khach_tra"))
+            setShowToast(true)
+            return;
+        }
         let json = { ...jsonContent }
         let amountReceived = listMethod.reduce(getSumValue, 0);
         let paramMethod = []
