@@ -682,7 +682,7 @@ export default (props) => {
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginLeft: 10 }}>
                         <Text style={{ fontWeight: "bold" }}>{I18n.t('tong_thanh_tien')}</Text>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                            <Text style={{ fontWeight: "bold", fontSize: 16, color: Colors.colorchinh }}>{currencyToString(jsonContent.Total + jsonContent.Discount - jsonContent.VAT)}đ</Text>
+                            <Text style={{ fontWeight: "bold", fontSize: 16, color: Colors.colorchinh }}>{currencyToString(jsonContent.Total + jsonContent.Discount - jsonContent.VAT)} đ</Text>
                             {expand ?
                                 <Icon style={{}} name="chevron-up" size={30} color="black" />
                                 :
@@ -694,18 +694,18 @@ export default (props) => {
                         <View style={{ marginLeft: 0 }}>
                             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                                 <Text>{I18n.t('tong_chiet_khau')}</Text>
-                                <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>- {currencyToString(jsonContent.Discount)}đ</Text>
+                                <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>- {currencyToString(jsonContent.Discount)} đ</Text>
                             </View>
                             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                                 <Text>VAT ({jsonContent.VATRates}%)</Text>
                                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                                    <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(jsonContent.VAT ? jsonContent.VAT : 0)}đ</Text>
+                                    <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(jsonContent.VAT ? jsonContent.VAT : 0)} đ</Text>
                                 </View>
                             </View>
                             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                                 <Text style={{ fontWeight: "bold" }}>{I18n.t('khach_phai_tra')}</Text>
                                 <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                                    <Text style={{ fontWeight: "bold", fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(jsonContent.Total)}đ</Text>
+                                    <Text style={{ fontWeight: "bold", fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(jsonContent.Total)} đ</Text>
                                 </View>
                             </View>
                         </View>
