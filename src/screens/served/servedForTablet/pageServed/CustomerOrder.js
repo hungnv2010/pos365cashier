@@ -340,7 +340,10 @@ const CustomerOrder = (props) => {
 
                                     </View>
                                     <View style={{}}>
-                                        <Icon style={{ alignSelf: "flex-end" }} name="bell-ring" size={20} color={item.Quantity <= item.Processed ? Colors.colorLightBlue : "gray"} />
+                                        {(item.ProductType == 2 && item.IsTimer) ?
+                                            null :
+                                            <Icon style={{ alignSelf: "flex-end" }} name="bell-ring" size={20} color={item.Quantity <= item.Processed ? Colors.colorLightBlue : "gray"} />
+                                        }
                                         <Text
                                             style={{ color: Colors.colorchinh, alignSelf: "flex-end" }}>
                                             {currencyToString(item.Price * item.Quantity)}
@@ -377,8 +380,8 @@ const CustomerOrder = (props) => {
                                                                 <TouchableOpacity
                                                                     onPress={
                                                                         () => onClickReturn(item, 2)
-                                                                    } style={{paddingVertical:3,paddingHorizontal:12,borderWidth:1,borderRadius:5,borderColor:colors.colorchinh}}>
-                                                                    <Text style={{color:colors.colorchinh,fontSize:25,}}>-</Text>
+                                                                    } style={{ paddingVertical: 3, paddingHorizontal: 12, borderWidth: 1, borderRadius: 5, borderColor: colors.colorchinh }}>
+                                                                    <Text style={{ color: colors.colorchinh, fontSize: 25, }}>-</Text>
                                                                 </TouchableOpacity>
                                                                 <View style={{
                                                                     width: 50,
@@ -405,8 +408,8 @@ const CustomerOrder = (props) => {
                                                                     item.Quantity++
                                                                     setListOrder([...listOrder])
                                                                     mapDataToList(item, false)
-                                                                }} style={{paddingVertical:3,paddingHorizontal:12,borderWidth:1,borderRadius:5,borderColor:colors.colorchinh}}>
-                                                                    <Text style={{color:colors.colorchinh,textAlign:'center',fontSize:25,}}>+</Text>
+                                                                }} style={{ paddingVertical: 3, paddingHorizontal: 12, borderWidth: 1, borderRadius: 5, borderColor: colors.colorchinh }}>
+                                                                    <Text style={{ color: colors.colorchinh, textAlign: 'center', fontSize: 25, }}>+</Text>
                                                                 </TouchableOpacity>
                                                             </View>
                                                     }
