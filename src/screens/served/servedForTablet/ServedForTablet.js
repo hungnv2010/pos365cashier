@@ -597,7 +597,7 @@ const Served = (props) => {
                 </View>
             </View>
             <View style={{ flex: 2,borderLeftWidth:0.5,borderLeftColor:'gray' }}>
-                <View style={{ backgroundColor: 'white', alignItems: "center", flexDirection: "row", justifyContent: "space-between", borderBottomColor: "gray", borderBottomWidth: 0.5, height: 40 }}>
+                <View style={{ backgroundColor: 'white', alignItems: "center", flexDirection: "row", justifyContent: "space-between", borderBottomColor: "gray", borderBottomWidth: 0.5, height: 44 }}>
                     <View style={{ flex: 1, justifyContent: "center", }}>
                         <Text style={{ paddingLeft: 20, textTransform: "uppercase",fontSize:16 }}>{props.route && props.route.params && props.route.params.room && props.route.params.room.Name ? props.route.params.room.Name : ""}</Text>
                     </View>
