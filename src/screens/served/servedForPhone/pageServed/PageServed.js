@@ -587,7 +587,7 @@ export default (props) => {
                             style={{ flexDirection: 'column', alignItems: "center", backgroundColor: 'white',paddingTop: 5, borderRadius:5 }}
                             onPress={onClickListedPrice}>
                             <Entypo style={{ paddingHorizontal: 5 }} name="price-ribbon" size={25} />
-                            <Text ellipsizeMode="tail" numberOfLines={1} style={{ fontWeight: "bold", textTransform: "uppercase", padding: 5 }}>{currentPriceBook.Id == 0 ? I18n.t(currentPriceBook.Name) : currentPriceBook.Name}</Text>
+                            <Text ellipsizeMode="tail" numberOfLines={1} style={{   padding: 5 }}>{currentPriceBook.Id == 0 ? I18n.t(currentPriceBook.Name) : currentPriceBook.Name}</Text>
                         </TouchableOpacity>
                     </Surface>
                     <Surface style={{ marginLeft:5, elevation: 4, flex: 1,borderRadius:5 }}>
@@ -595,7 +595,7 @@ export default (props) => {
                             style={{ flexDirection: 'column', alignItems: "center", backgroundColor: 'white', paddingTop: 5,borderRadius:5 }}
                             onPress={onClickRetailCustomer}>
                             <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} />
-                            <Text ellipsizeMode="tail" numberOfLines={1} style={{ textAlign: "right", fontWeight: "bold", textTransform: "uppercase", padding: 5 }}>{currentCustomer.Id == 0 ? I18n.t(currentCustomer.Name) : currentCustomer.Name}</Text>
+                            <Text ellipsizeMode="tail" numberOfLines={1} style={{ textAlign: "right",   padding: 5 }}>{currentCustomer.Id == 0 ? I18n.t(currentCustomer.Name) : currentCustomer.Name}</Text>
 
                         </TouchableOpacity>
                     </Surface>
