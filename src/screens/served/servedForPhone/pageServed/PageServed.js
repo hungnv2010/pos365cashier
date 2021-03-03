@@ -608,7 +608,7 @@ export default (props) => {
                         <Menu
                             style={{ width: 50 }}
                             ref={setMenuRef}
-                            button={<Text style={{ fontWeight: "bold" }} onPress={showMenu}>{position}</Text>}
+                            button={<Text style={{ fontWeight: "bold" }} onPress={showMenu}>{I18n.t('vi_tri')} {position}</Text>}
                         >
                             {
                                 listPosition.map(item => <MenuItem key={item.name} onPress={() => hideMenu(item.name)}>{item.name} {item.status ? <Text style={{ color: Colors.colorchinh }}>*</Text> : null}</MenuItem>)
