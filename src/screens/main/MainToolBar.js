@@ -92,7 +92,7 @@ export default function MainToolBar(props) {
 const styles = StyleSheet.create({
 
     toolbarContainer: {
-        height: 44,
+        height: 50,
         // flex: 1,
         shadowColor: Colors.black,
         shadowOffset: {
