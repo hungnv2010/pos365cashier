@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useEffect, useState, useRef } from 'react';
-import { ActivityIndicator, Image, View, StyleSheet, Picker, Text, TextInput, TouchableWithoutFeedback, TouchableOpacity, Modal } from 'react-native';
+import { ActivityIndicator, Image, View, StyleSheet, Picker, Text, TextInput, TouchableWithoutFeedback, TouchableOpacity, Modal, } from 'react-native';
 import { Colors, Images, Metrics } from '../../../../theme';
 import Menu, { MenuItem, MenuDivider } from 'react-native-material-menu';
 import CustomerOrder from './CustomerOrder';
@@ -9,7 +9,7 @@ import ToolBarPhoneServed from '../../../../components/toolbar/ToolBarPhoneServe
 import I18n from '../../../../common/language/i18n';
 import signalRManager from '../../../../common/SignalR';
 import { Constant } from '../../../../common/Constant';
-import { Snackbar } from 'react-native-paper';
+import { Snackbar, Surface } from 'react-native-paper';
 import realmStore from '../../../../data/realm/RealmStore';
 import { useDispatch } from 'react-redux';
 import colors from '../../../../theme/Colors';
@@ -568,7 +568,7 @@ export default (props) => {
     }
 
     return (
-        <View style={{ flex: 1, backgroundColor: "#fff" }}>
+        <View style={{ flex: 1, }}>
             <ToolBarPhoneServed
                 ref={toolBarPhoneServedRef}
                 {...props}
@@ -580,55 +580,61 @@ export default (props) => {
                 rightIcon="plus"
                 clickProductService={onClickProductService}
                 clickRightIcon={onClickSelectProduct} />
-            <View style={{ backgroundColor: 'white', alignItems: "center", flexDirection: "row", justifyContent: "space-between", paddingVertical: 5, borderBottomWidth: 0.5, borderTopWidth: 0.5, borderTopColor: 'gray', borderBottomColor: colors.colorchinh }}>
+            <View style={{ flex: 1 }}>
+                <View style={{ flexDirection: "row", justifyContent: "space-between", paddingHorizontal: 10, paddingVertical: 5, borderTopWidth: 0.5, borderTopColor: 'gray' }}>
+                    <Surface style={{  marginRight: 5,elevation: 4, flex: 1 ,borderRadius:5}}>
+                        <TouchableOpacity
+                            style={{ flexDirection: 'column', alignItems: "center", backgroundColor: 'white',paddingTop: 5, borderRadius:5 }}
+                            onPress={onClickListedPrice}>
+                            <Entypo style={{ paddingHorizontal: 5 }} name="price-ribbon" size={25} />
+                            <Text ellipsizeMode="tail" numberOfLines={1} style={{ fontWeight: "bold", textTransform: "uppercase", padding: 5 }}>{currentPriceBook.Id == 0 ? I18n.t(currentPriceBook.Name) : currentPriceBook.Name}</Text>
+                        </TouchableOpacity>
+                    </Surface>
+                    <Surface style={{ marginLeft:5, elevation: 4, flex: 1,borderRadius:5 }}>
+                        <TouchableOpacity
+                            style={{ flexDirection: 'column', alignItems: "center", backgroundColor: 'white', paddingTop: 5,borderRadius:5 }}
+                            onPress={onClickRetailCustomer}>
+                            <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} />
+                            <Text ellipsizeMode="tail" numberOfLines={1} style={{ textAlign: "right", fontWeight: "bold", textTransform: "uppercase", padding: 5 }}>{currentCustomer.Id == 0 ? I18n.t(currentCustomer.Name) : currentCustomer.Name}</Text>
 
-                <View style={{ flex: 1, justifyContent: "center" }}>
-                    <Text style={{ paddingLeft: 20, textTransform: "uppercase", color: colors.colorchinh, fontWeight: "bold" }}>{props.route && props.route.params && props.route.params.room && props.route.params.room.Name ? props.route.params.room.Name : ""}</Text>
+                        </TouchableOpacity>
+                    </Surface>
                 </View>
-                <TouchableOpacity onPress={showMenu} style={{ flex: 1, paddingHorizontal: 20, flexDirection: "row", justifyContent: "flex-end", alignItems: "center" }}>
-                    <Menu
-                        style={{ width: 50 }}
-                        ref={setMenuRef}
-                        button={<Text style={{ color: colors.colorchinh, fontWeight: "bold" }} onPress={showMenu}>{position}</Text>}
-                    >
-                        {
-                            listPosition.map(item => <MenuItem key={item.name} onPress={() => hideMenu(item.name)}>{item.name} {item.status ? <Text style={{ color: Colors.colorchinh }}>*</Text> : null}</MenuItem>)
-                        }
+                <View style={{ alignItems: "center", flexDirection: "row", justifyContent: "space-between", paddingVertical: 5, }}>
+                    <View style={{ flex: 1, justifyContent: "center" }}>
+                        <Text style={{ paddingLeft: 20, textTransform: "uppercase", fontWeight: "bold" }}>{props.route && props.route.params && props.route.params.room && props.route.params.room.Name ? props.route.params.room.Name : ""}</Text>
+                    </View>
+                    <TouchableOpacity onPress={showMenu} style={{ flex: 1, paddingHorizontal: 20, flexDirection: "row", justifyContent: "flex-end", alignItems: "center" }}>
+                        <Menu
+                            style={{ width: 50 }}
+                            ref={setMenuRef}
+                            button={<Text style={{ fontWeight: "bold" }} onPress={showMenu}>{position}</Text>}
+                        >
+                            {
+                                listPosition.map(item => <MenuItem key={item.name} onPress={() => hideMenu(item.name)}>{item.name} {item.status ? <Text style={{ color: Colors.colorchinh }}>*</Text> : null}</MenuItem>)
+                            }
 
-                    </Menu>
-                    <Icon style={{}} name="chevron-down" size={20} color={colors.colorchinh} />
-                </TouchableOpacity>
+                        </Menu>
+                        <Icon style={{}} name="chevron-down" size={20} />
+                    </TouchableOpacity>
+                </View>
+                <CustomerOrder
+                    {...props}
+                    Position={position}
+                    jsonContent={jsonContent}
+                    outputListProducts={outputListProducts}
+                    handlerProcessedProduct={(jsonContent) => handlerProcessedProduct(jsonContent)}
+                    outPutSetNewOrderDetail={setNewOrderDetails} />
+                <Snackbar
+                    duration={5000}
+                    visible={showToast}
+                    onDismiss={() =>
+                        setShowToast(false)
+                    }
+                >
+                    {toastDescription}
+                </Snackbar>
             </View>
-            <View style={{ flexDirection: "row", justifyContent: "space-between", borderBottomColor: Colors.colorchinh, borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5 }}>
-                <TouchableOpacity
-                    style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
-                    onPress={onClickListedPrice}>
-                    <Entypo style={{ paddingHorizontal: 5 }} name="price-ribbon" size={25} color={colors.colorchinh} />
-                    <Text ellipsizeMode="tail" numberOfLines={1} style={{ flex: 1, color: Colors.colorchinh, fontWeight: "bold", textTransform: "uppercase", marginRight: 5 }}>{currentPriceBook.Id == 0 ? I18n.t(currentPriceBook.Name) : currentPriceBook.Name}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
-                    onPress={onClickRetailCustomer}>
-                    <Text ellipsizeMode="tail" numberOfLines={1} style={{ textAlign: "right", flex: 1, color: Colors.colorchinh, fontWeight: "bold", textTransform: "uppercase", padding: 5 }}>{currentCustomer.Id == 0 ? I18n.t(currentCustomer.Name) : currentCustomer.Name}</Text>
-                    <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} color={colors.colorchinh} />
-                </TouchableOpacity>
-            </View>
-            <CustomerOrder
-                {...props}
-                Position={position}
-                jsonContent={jsonContent}
-                outputListProducts={outputListProducts}
-                handlerProcessedProduct={(jsonContent) => handlerProcessedProduct(jsonContent)}
-                outPutSetNewOrderDetail={setNewOrderDetails} />
-            <Snackbar
-                duration={5000}
-                visible={showToast}
-                onDismiss={() =>
-                    setShowToast(false)
-                }
-            >
-                {toastDescription}
-            </Snackbar>
         </View >
     );
 }
