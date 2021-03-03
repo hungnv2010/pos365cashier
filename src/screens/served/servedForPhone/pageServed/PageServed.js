@@ -68,7 +68,7 @@ export default (props) => {
             serverEvent = serverEvent.filtered(`RowKey == '${row_key}'`)
             currentServerEvent.current = JSON.stringify(serverEvent) != '{}' ? JSON.parse(JSON.stringify(serverEvent[0]))
                 : await dataManager.createSeverEvent(props.route.params.room.Id, position)
-            console.log('currentServerEvent.current', currentServerEvent.current,await dataManager.createSeverEvent(props.route.params.room.Id, position));
+            console.log('currentServerEvent.current', currentServerEvent.current, await dataManager.createSeverEvent(props.route.params.room.Id, position));
             let jsonContentObject = JSON.parse(currentServerEvent.current.JsonContent)
 
             setJsonContent(jsonContentObject)
@@ -166,7 +166,7 @@ export default (props) => {
                 list = await getOtherPrice(list)
                 list.forEach(item => {
                     if (item.SplitForSalesOrder || (item.ProductType == 2 && item.IsTimer)) {
-                        if(item.IsTimer) ProductManager.getProductTimePrice(item)
+                        if (item.IsTimer) ProductManager.getProductTimePrice(item)
                         listTmp.push(item)
                     } else {
                         let pos = listCooked.current.map(elm => elm.Id).indexOf(item.Id);
@@ -580,23 +580,23 @@ export default (props) => {
                 rightIcon="plus"
                 clickProductService={onClickProductService}
                 clickRightIcon={onClickSelectProduct} />
-            <View style={{ backgroundColor: Colors.colorchinh, alignItems: "center", flexDirection: "row", justifyContent: "space-between", paddingBottom: 5 }}>
+            <View style={{ backgroundColor: 'white', alignItems: "center", flexDirection: "row", justifyContent: "space-between", paddingVertical: 5, borderBottomWidth: 0.5, borderTopWidth: 0.5, borderTopColor: 'gray', borderBottomColor: colors.colorchinh }}>
 
                 <View style={{ flex: 1, justifyContent: "center" }}>
-                    <Text style={{ paddingLeft: 20, textTransform: "uppercase", color: "white", fontWeight: "bold" }}>{props.route && props.route.params && props.route.params.room && props.route.params.room.Name ? props.route.params.room.Name : ""}</Text>
+                    <Text style={{ paddingLeft: 20, textTransform: "uppercase", color: colors.colorchinh, fontWeight: "bold" }}>{props.route && props.route.params && props.route.params.room && props.route.params.room.Name ? props.route.params.room.Name : ""}</Text>
                 </View>
                 <TouchableOpacity onPress={showMenu} style={{ flex: 1, paddingHorizontal: 20, flexDirection: "row", justifyContent: "flex-end", alignItems: "center" }}>
                     <Menu
                         style={{ width: 50 }}
                         ref={setMenuRef}
-                        button={<Text style={{ color: "white", fontWeight: "bold" }} onPress={showMenu}>{position}</Text>}
+                        button={<Text style={{ color: colors.colorchinh, fontWeight: "bold" }} onPress={showMenu}>{position}</Text>}
                     >
                         {
                             listPosition.map(item => <MenuItem key={item.name} onPress={() => hideMenu(item.name)}>{item.name} {item.status ? <Text style={{ color: Colors.colorchinh }}>*</Text> : null}</MenuItem>)
                         }
 
                     </Menu>
-                    <Icon style={{}} name="chevron-down" size={20} color="white" />
+                    <Icon style={{}} name="chevron-down" size={20} color={colors.colorchinh} />
                 </TouchableOpacity>
             </View>
             <View style={{ flexDirection: "row", justifyContent: "space-between", borderBottomColor: Colors.colorchinh, borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5 }}>
@@ -618,8 +618,8 @@ export default (props) => {
                 Position={position}
                 jsonContent={jsonContent}
                 outputListProducts={outputListProducts}
-                handlerProcessedProduct={(jsonContent) => handlerProcessedProduct(jsonContent)} 
-                outPutSetNewOrderDetail={setNewOrderDetails}/>
+                handlerProcessedProduct={(jsonContent) => handlerProcessedProduct(jsonContent)}
+                outPutSetNewOrderDetail={setNewOrderDetails} />
             <Snackbar
                 duration={5000}
                 visible={showToast}
