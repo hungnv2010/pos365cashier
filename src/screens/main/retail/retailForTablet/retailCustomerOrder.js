@@ -18,6 +18,8 @@ import { ApiPath } from '../../../../data/services/ApiPath';
 import { HTTPService } from '../../../../data/services/HttpService';
 import Entypo from 'react-native-vector-icons/Entypo';
 import dialogManager from '../../../../components/dialog/DialogManager';
+import colors from '../../../../theme/Colors';
+import { color } from 'react-native-reanimated';
 
 
 const TYPE_MODAL = {
@@ -362,8 +364,8 @@ const RetailCustomerOrder = (props) => {
 
                                                     syncListProducts([...listOrder])
                                                 }
-                                            }}>
-                                            <Icon name="minus-box" size={40} color={Colors.colorchinh} />
+                                            }} style={{paddingVertical:3,paddingHorizontal:12,borderWidth:1,borderRadius:5,borderColor:colors.colorchinh}}>
+                                           <Text style={{color:colors.colorchinh,fontSize:25,}}>-</Text>
                                         </TouchableOpacity>
                                         <View style={{
                                             width: 60,
@@ -390,8 +392,8 @@ const RetailCustomerOrder = (props) => {
                                             item.Quantity++
 
                                             syncListProducts([...listOrder])
-                                        }}>
-                                            <Icon name="plus-box" size={40} color={Colors.colorchinh} />
+                                        }} style={{paddingVertical:3,paddingHorizontal:12,borderWidth:1,borderRadius:5,borderColor:colors.colorchinh}}>
+                                             <Text style={{color:colors.colorchinh,textAlign:'center',fontSize:25,}}>+</Text>
                                         </TouchableOpacity>
                                     </View>
                                 )
@@ -486,7 +488,7 @@ const RetailCustomerOrder = (props) => {
                         </View>
                     </View>
                     {expand ?
-                        <View style={{ marginLeft: 0 }}>
+                        <View style={{ marginLeft:10 }}>
                             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                                 <Text>{I18n.t('tong_chiet_khau')}</Text>
                                 <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>- {currencyToString(props.jsonContent.Discount)} đ</Text>
@@ -509,7 +511,7 @@ const RetailCustomerOrder = (props) => {
                     }
                 </TouchableOpacity>
             </View>
-            <View style={{ height: 40, flexDirection: "row", backgroundColor: "#0072bc", alignItems: "center" }}>
+            <View style={{ height: 40, flexDirection: "row", backgroundColor: colors.colorchinh, alignItems: "center" }}>
                 <TouchableOpacity
                     onPress={showMenu}>
                     <Menu
@@ -529,8 +531,8 @@ const RetailCustomerOrder = (props) => {
                 </TouchableOpacity>
                 <TouchableOpacity onPress={onCLickCommodity} style={{ flex: .5, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%", flexDirection: 'row' }}>
                     <Icon name="file-document-edit-outline" size={30} color="white" />
-                    <View style={{ backgroundColor: Colors.colorchinh, borderRadius: 40, position: "absolute", right: 0, top: -5 }}>
-                        <Text style={{ fontWeight: "bold", padding: 4, color: "white", fontSize: 14 }}>{numberCommodity}</Text>
+                    <View style={{ backgroundColor: Colors.colorLightBlue, borderRadius: 40, position: "absolute", right: 0, top: -5 }}>
+                        <Text style={{ fontWeight: "bold", padding: 4, color: 'white', fontSize: 14 }}>{numberCommodity}</Text>
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={onClickNewOrder} style={{ flex: .8, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>

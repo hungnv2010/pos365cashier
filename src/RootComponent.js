@@ -122,6 +122,21 @@ export default () => {
         getCurrentIP()
         printListenner()
 
+        const setupLanguage = async () => {
+            let lang = await getFileDuLieuString(Constant.LANGUAGE, true);
+            console.log('lang ===  ', lang);
+            if (lang && lang != "") {
+                I18n.locale = lang;
+                moment.locale(lang);
+            } else { 
+                I18n.locale = "vi";
+                moment.locale('vi');
+                setFileLuuDuLieu(Constant.LANGUAGE, 'vi');
+            }
+        }
+
+        setupLanguage()
+
 
         return () => {
             AppState.removeEventListener('change', handleChangeState);
@@ -137,16 +152,16 @@ export default () => {
                 signalRManager.killSignalR();
                 signalRManager.startSignalR();
             }
-            let currentLocale = I18n.currentLocale()
-            // currentLocale = "vi";
-            console.log("currentLocale ", currentLocale);
-            if (currentLocale.indexOf('vi') > -1) {
-                I18n.locale = "vi";
-                moment.locale('vi');
-            } else {
-                I18n.locale = "en";
-                moment.locale('en');
-            }
+            // let currentLocale = I18n.currentLocale()
+            // // currentLocale = "vi";
+            // console.log("currentLocale ", currentLocale);
+            // if (currentLocale.indexOf('vi') > -1) {
+            //     I18n.locale = "vi";
+            //     moment.locale('vi');
+            // } else {
+            //     I18n.locale = "en";
+            //     moment.locale('en');
+            // }
         }
     }
 

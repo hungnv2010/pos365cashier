@@ -24,46 +24,21 @@ export default (props) => {
         setCountPrint(props.countPrint)
     }, [props.printer])
     const onClick = (item, index) => {
-        console.log("item", item);
+        console.log("item", index);
         if (item.Status == false && countPrint < 5) {
             item.Status = true
             printer[index] = item
             setPrinter(printer)
+            console.log("printer 1", printer);
         } else {
             item.Status = false
             printer[index] = item
             setPrinter(printer)
+            console.log("printer 2",printer);
         } 
         data = printer.filter(item => item.Status == true)
         console.log("Data",data);
-        setPrint(printer.filter(item => item.Status == true))
-        // props.outPut({printer:printer, listP:priceConfig})
-    }
-    const setPrint = (listP) =>{
-        console.log("list",listP);
-        switch(listP.length){
-            case 1:
-                product.Printer = listP[0].Key
-                setPriceConfig({...priceConfig})
-                break
-            case 2:
-                product.Printer = listP[0].Key
-                setPriceConfig({...priceConfig,SecondPrinter:listP[1].Key})
-                break
-            case 3:
-                product.Printer = listP[0].Key
-                setPriceConfig({...priceConfig,SecondPrinter:listP[1].Key,Printer3:listP[2].Key})
-                break
-            case 4:
-                product.Printer = listP[0].Key
-                setPriceConfig({...priceConfig,SecondPrinter:listP[1].Key,Printer3:listP[2].Key,Printer4:listP[3].Key})
-                break
-            case 5:
-                product.Printer = listP[0].Key
-                setPriceConfig({...priceConfig,SecondPrinter:listP[1].Key,Printer3:listP[2].Key,Printer4:listP[3].Key,Printer5:listP[4].Key})
-                break
-        }
-        console.log("price config",priceConfig);     
+        props.outPut({printer:printer, listP:priceConfig})
     }
     useEffect(() => {
         console.log("Printer", printer);

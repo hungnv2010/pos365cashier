@@ -15,7 +15,7 @@ export default (props) => {
         return (
             <View >
                 <Text style={styles.styleContent}>{I18n.t(item.Name)}</Text>
-                <TextInput style={styles.styleTextInput} placeholder={I18n.t(item.Hint)} placeholderTextColor="#808080" onChangeText={(text)=>setValue(text)}></TextInput>
+                <TextInput style={styles.styleTextInput} placeholder={(item.Hint)} placeholderTextColor="#808080" onChangeText={(text)=>setValue(text)}></TextInput>
             </View>
         )
     }

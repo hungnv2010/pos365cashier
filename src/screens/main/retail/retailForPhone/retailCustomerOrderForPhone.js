@@ -19,6 +19,7 @@ import { HTTPService } from '../../../../data/services/HttpService';
 import _, { map } from 'underscore';
 import dialogManager from '../../../../components/dialog/DialogManager';
 import { useDispatch, useSelector } from 'react-redux';
+import colors from '../../../../theme/Colors';
 
 export default (props) => {
 
@@ -691,7 +692,7 @@ export default (props) => {
                         </View>
                     </View>
                     {expand ?
-                        <View style={{ marginLeft: 0 }}>
+                        <View style={{ marginLeft: 10 }}>
                             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                                 <Text>{I18n.t('tong_chiet_khau')}</Text>
                                 <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>- {currencyToString(jsonContent.Discount)} đ</Text>
@@ -714,7 +715,7 @@ export default (props) => {
                     }
                 </TouchableOpacity>
             </View>
-            <View style={{ height: 40, flexDirection: "row", backgroundColor: "#0072bc", alignItems: "center" }}>
+            <View style={{ height: 40, flexDirection: "row", backgroundColor: colors.colorchinh, alignItems: "center" }}>
                 <TouchableOpacity
                     onPress={showMenu}>
                     <Menu
@@ -740,8 +741,8 @@ export default (props) => {
                     props.navigation.navigate(ScreenList.CommodityWaiting, { _onSelect: onCallBack })
                 }} style={{ flex: .5, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%", flexDirection: 'row' }}>
                     <Icon name="file-document-edit-outline" size={30} color="white" />
-                    <View style={{ backgroundColor: Colors.colorchinh, borderRadius: 40, position: "absolute", right: 10, top: -5 }}>
-                        <Text style={{ fontWeight: "bold", padding: 4, color: "white", fontSize: 14 }}>{numberNewOrder}</Text>
+                    <View style={{ backgroundColor: colors.colorLightBlue, borderRadius: 40, position: "absolute", right: 10, top: -5 }}>
+                        <Text style={{ fontWeight: "bold", padding: 4, color: 'white', fontSize: 14 }}>{numberNewOrder}</Text>
                     </View>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={onClickNewOrder} style={{ flex: .8, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>

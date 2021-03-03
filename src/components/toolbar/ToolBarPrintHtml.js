@@ -19,7 +19,7 @@ import colors from '../../theme/Colors';
 
 export default function ToolBarPrintHtml(props) {
 
-    onClickBack = () => {
+    const onClickBack = () => {
         props.navigation.pop();
     };
 
@@ -35,7 +35,7 @@ export default function ToolBarPrintHtml(props) {
         //     colors={['#FFAB40', '#FF5722']}
         //     style={{ height: 44 }}
         // >
-        <View style={{ height: 44, backgroundColor: colors.colorchinh }}>
+        <View style={{ height: 44, backgroundColor: 'white' }}>
             <View style={styles.toolbarContainer}>
                 <View style={{
                     flex: 1,
@@ -48,10 +48,10 @@ export default function ToolBarPrintHtml(props) {
                     <View style={{ flex: 0.6, alignItems: "center" }}>
                         <TouchableOpacity onPress={props.clickRightIcon} style={{ height: "100%", justifyContent: "center", paddingHorizontal: 10 }}>
                             {props.rightIcon && props.clickRightIcon ?
-                                <Icon name={props.rightIcon} size={props.size ? props.size : 30} color="white" />
+                                <Icon name={props.rightIcon} size={props.size ? props.size : 30} color={colors.colorLightBlue} />
                                 :
-                                <TouchableOpacity onPress={onClickBack} style={{ paddingLeft: 19, paddingRight: 19, paddingTop: 16, paddingBottom: 16 }}>
-                                    <Image source={Images.icon_back} style={{ width: 10, height: 16, }} />
+                                <TouchableOpacity onPress={()=>onClickBack()} style={{ paddingLeft: 19, paddingRight: 19, paddingTop: 16, paddingBottom: 16 }}>
+                                    <Image source={Images.icon_back} style={{ width: 48, height: 48, }} />
                                 </TouchableOpacity>
                             }
                         </TouchableOpacity>
@@ -60,7 +60,6 @@ export default function ToolBarPrintHtml(props) {
                         <Subheading
                             numberOfLines={1}
                             style={{
-                                color: 'white'
                             }}
                         >
                             {props.title}
@@ -68,30 +67,30 @@ export default function ToolBarPrintHtml(props) {
                     </View>
                     <View style={{ flex: 1, alignItems: "center" }}>
                         <TouchableOpacity onPress={props.clickDefault} >
-                            <Text style={{ color: 'white', textTransform: "uppercase" }}>{I18n.t('mac_dinh')}</Text>
+                            <Text style={{  textTransform: "uppercase" }}>{I18n.t('mac_dinh')}</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={{ flex: 1.4, alignItems: "center" }}>
                         <TouchableOpacity onPress={props.clickLoadOnline} >
-                            <Text style={{ color: 'white' }}>LOAD ONLINE</Text>
+                            <Text style={{  }}>LOAD ONLINE</Text>
                         </TouchableOpacity>
                     </View>
                     {deviceType == Constant.PHONE ?
                         <View style={{ flex: 1, alignItems: "center" }}>
                             <TouchableOpacity onPress={props.clickShow} >
-                                <Text style={{ color: 'white', textTransform: "uppercase" }}>{I18n.t('hien_thi')}</Text>
+                                <Text style={{  textTransform: "uppercase" }}>{I18n.t('hien_thi')}</Text>
                             </TouchableOpacity>
                         </View>
                         :
                         <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-around" }}>
                             <View style={{ alignItems: "center" }}>
                                 <TouchableOpacity onPress={props.clickPrint} style={{ height: "100%", justifyContent: "center", paddingHorizontal: 10 }} >
-                                    <Text style={{ color: 'white', textTransform: "uppercase" }}>{I18n.t('in')}</Text>
+                                    <Text style={{  textTransform: "uppercase" }}>{I18n.t('in')}</Text>
                                 </TouchableOpacity>
                             </View>
                             <View style={{ alignItems: "center" }}>
                                 <TouchableOpacity onPress={props.clickCheck} style={{ height: "100%", justifyContent: "center", paddingHorizontal: 10 }} >
-                                    <Icon delayPressIn={0} name="check" color="#fff" size={24} />
+                                    <Icon delayPressIn={0} name="check" color={colors.colorLightBlue} size={24} />
                                 </TouchableOpacity>
                             </View>
                         </View>}
@@ -114,6 +113,8 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.24,
         shadowRadius: 0.3,
+        borderBottomWidth:0.5,
+        borderBottomColor:'gray'
     },
 })
 

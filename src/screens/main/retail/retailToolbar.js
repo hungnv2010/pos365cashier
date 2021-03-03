@@ -46,7 +46,7 @@ export default forwardRef((props, ref) => {
                     </TouchableOpacity>
                 </View>
                 <View style={{ flex: 1.5, justifyContent: 'center', alignItems: 'flex-start' }}>
-                    <Subheading numberOfLines={1} style={{ color: 'white', fontSize: 18, fontWeight: "bold" }} >
+                    <Subheading numberOfLines={1} style={{ fontSize: 18, fontWeight: "bold" }} >
                         {I18n.t('don_hang')}
                     </Subheading>
                 </View>
@@ -72,7 +72,7 @@ export default forwardRef((props, ref) => {
                                 else setIsSearch(!isSearch)
                             }} >
                                 <View style={{}}>
-                                    <Ionicons name={!isSearch ? "md-search" : "md-close"} size={30} color="white" style={{}} />
+                                    <Ionicons name={!isSearch ? "md-search" : "md-close"} size={30} color={Colors.colorLightBlue} style={{}} />
                                 </View>
                             </TouchableOpacity>
                             :
@@ -81,13 +81,13 @@ export default forwardRef((props, ref) => {
 
                     <TouchableOpacity style={styles.button} onPress={props.onCLickQR} >
                         <View style={{}}>
-                            <Icon name="qrcode-scan" size={25} color="white" style={{}} />
+                            <Icon name="qrcode-scan" size={25} color={Colors.colorLightBlue} style={{}} />
                         </View>
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.button} onPress={props.onCLickNoteBook} >
                         <View style={{}}>
-                            <Icon name="library-books" size={28} color="white" style={{}} />
+                            <Icon name="library-books" size={28} color={Colors.colorLightBlue} style={{}} />
                         </View>
                     </TouchableOpacity>
                     {/* <TouchableOpacity style={styles.button} onPress={props.onClickSync} >
@@ -102,7 +102,7 @@ export default forwardRef((props, ref) => {
                             :
                             <TouchableOpacity style={styles.button} onPress={props.onClickSelect} >
                                 <View style={{}}>
-                                    <Icon name="plus" size={30} color="white" style={{}} />
+                                    <Icon name="plus" size={30} color={Colors.colorLightBlue} style={{}} />
                                 </View>
                             </TouchableOpacity>
                     }
@@ -119,7 +119,9 @@ const styles = StyleSheet.create({
     toolbarContainer: {
         flexDirection: "row",
         height: 40,
-        backgroundColor: Colors.colorchinh,
+        backgroundColor:'white',
+        borderBottomWidth:0.5,
+        borderBottomColor:'gray'
     },
     button: {
         flex: 1

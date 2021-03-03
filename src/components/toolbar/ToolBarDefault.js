@@ -12,6 +12,7 @@ import IonIcon from 'react-native-vector-icons/Ionicons'
 import Fonts from '../../theme/Fonts';
 import LinearGradient from 'react-native-linear-gradient';
 import PropTypes from 'prop-types';
+import colors from '../../theme/Colors';
 
 
 export default function ToolBarDefault(props) {
@@ -22,14 +23,14 @@ export default function ToolBarDefault(props) {
 
             <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
                 {props.clickLeftIcon ?
-                    <TouchableOpacity onPress={props.clickLeftIcon} style={{paddingLeft:19,paddingRight:19,paddingTop:16,paddingBottom:16}}>
-                        <Image source={Images.icon_back} style={{width:10,height:16,}}/>
+                    <TouchableOpacity onPress={props.clickLeftIcon} style={{ paddingLeft: 19, paddingRight: 19, paddingTop: 16, paddingBottom: 16 }}>
+                        <Image source={Images.icon_back} style={{ width: 48, height: 48, }} />
                     </TouchableOpacity>
                     :
                     <TouchableOpacity onPress={() => {
                         props.navigation.pop()
-                    }} style={{paddingLeft:19,paddingRight:19,paddingTop:16,paddingBottom:16}}>
-                        <Image source={Images.icon_back} style={{width:10,height:16,}}/>
+                    }} style={{ paddingLeft: 19, paddingRight: 19, paddingTop: 16, paddingBottom: 16 }}>
+                        <Image source={Images.icon_back} style={{ width: 48, height: 48, }} />
                     </TouchableOpacity>
                 }
             </View>
@@ -37,7 +38,7 @@ export default function ToolBarDefault(props) {
                 <Subheading
                     numberOfLines={1}
                     style={{
-                        color: 'white', fontWeight: "bold"
+                        fontWeight: "bold"
                     }}
                 >
                     {props.title}
@@ -48,9 +49,9 @@ export default function ToolBarDefault(props) {
                 {props.clickRightIcon && props.rightIcon ?
                     <TouchableOpacity style={{ paddingHorizontal: 10 }} onPress={props.clickRightIcon}>
                         {props.rightIcon == 'md-search' ?
-                            <IonIcon name={props.rightIcon} size={props.size ? props.size : 30} color="white" />
+                            <IonIcon name={props.rightIcon} size={props.size ? props.size : 30} color={colors.colorLightBlue} />
                             :
-                            <Icon name={props.rightIcon} size={props.size ? props.size : 30} color="white" />
+                            <Icon name={props.rightIcon} size={props.size ? props.size : 30} color={colors.colorLightBlue} />
                         }
                     </TouchableOpacity>
                     :
@@ -69,8 +70,10 @@ const styles = StyleSheet.create({
     toolbarContainer: {
         flexDirection: "row",
         height: 40,
-        backgroundColor: Colors.colorchinh,
-        zIndex: 99999999
+        backgroundColor: 'white',
+        zIndex: 99999999,
+        borderBottomWidth: 0.5,
+        borderBottomColor: 'gray'
     },
 })
 

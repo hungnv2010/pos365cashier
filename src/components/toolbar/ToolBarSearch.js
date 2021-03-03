@@ -12,6 +12,7 @@ import Fonts from '../../theme/Fonts';
 import LinearGradient from 'react-native-linear-gradient';
 import PropTypes from 'prop-types';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import colors from '../../theme/Colors';
 
 export default function ToolBarSearch(props) {
 
@@ -58,7 +59,7 @@ export default function ToolBarSearch(props) {
                     <Subheading
                         numberOfLines={1}
                         style={{
-                            color: 'white', fontWeight: "bold"
+                             fontWeight: "bold"
                         }}
                     >
                         {props.title}
@@ -80,11 +81,11 @@ export default function ToolBarSearch(props) {
             <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
                 {showInput == false ?
                     <TouchableOpacity onPress={() => onClickSearch()}>
-                        <Ionicons name={props.rightIcon} size={props.size ? props.size : 30} color="white" />
+                        <Ionicons name={props.rightIcon} size={props.size ? props.size : 30} color={colors.colorLightBlue} />
                     </TouchableOpacity>
                     :
                     <TouchableOpacity onPress={() => setShowInput(false)}>
-                        <Icon name="close" size={props.size ? props.size : 30} color="white" />
+                        <Icon name="close" size={props.size ? props.size : 30} color={colors.colorLightBlue} />
                     </TouchableOpacity>
                 }
             </View>
@@ -100,7 +101,7 @@ const styles = StyleSheet.create({
     toolbarContainer: {
         flexDirection: "row",
         height: 40,
-        backgroundColor: Colors.colorchinh,
+        backgroundColor: 'white',
     },
 })
 

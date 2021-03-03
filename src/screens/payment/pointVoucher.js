@@ -75,9 +75,21 @@ export default (props) => {
     }, [props.customer])
 
     const onChangeTextInput = (text) => {
-        console.log("onChangeTextInput text ", text);
-        text = text.replace(/,/g, "");
-        text = Number(text);
+        console.log("onChangeTextInput text ===== ", text, props.route);
+        let currentPoint = 0;
+        if (deviceType == Constant.PHONE) {
+            currentPoint = props.route.params.customer.Point
+        } else {
+            currentPoint = props && props.customer && props.customer.Point ? props.customer.Point : 0;
+        }
+
+        if (text == "") {
+            text = 0;
+            setPointUse(0)
+        } else {
+            text = text.replace(/,/g, "");
+            text = Number(text);
+        }
         if (text < pointCurrent) {
             if (deviceType == Constant.TABLET)
                 props.onChangePointUse(text)
@@ -85,9 +97,9 @@ export default (props) => {
                 setPointUse(text)
         } else {
             if (deviceType == Constant.TABLET)
-                props.onChangePointUse(props.route.params.customer.Point)
+                props.onChangePointUse(currentPoint)
             else
-                setPointUse(props.route.params.customer.Point)
+                setPointUse(currentPoint)
         }
 
     }
