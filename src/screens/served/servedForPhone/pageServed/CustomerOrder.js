@@ -7,7 +7,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import TextTicker from 'react-native-text-ticker';
 import { currencyToString } from '../../../../common/Utils'
 import I18n from "../../../../common/language/i18n"
-import { Snackbar } from 'react-native-paper';
+import { Snackbar, Surface } from 'react-native-paper';
 import colors from '../../../../theme/Colors';
 import { ScreenList } from '../../../../common/ScreenList';
 import DialogProductDetail from '../../../../components/dialog/DialogProductDetail'
@@ -282,6 +282,7 @@ export default (props) => {
                         </View>
                         : null
                 }
+                
                 <TouchableOpacity key={index} onPress={() => {
                     if (isPromotion) return;
                     if (item.ProductType == 2 && item.IsTimer) {
@@ -294,7 +295,7 @@ export default (props) => {
                     typeModal.current = TYPE_MODAL.DETAIL
                     setShowModal(!showModal)
                 }}>
-                    <View style={styles.mainItem}>
+                    <Surface style={[styles.mainItem,{elevation:4}]}>
                         <TouchableOpacity
                             style={{ paddingVertical: 10, paddingHorizontal: 5 }}
                             onPress={() => { if (!isPromotion) onClickReturn(item) }}>
@@ -344,8 +345,9 @@ export default (props) => {
                             </TouchableOpacity>
                             : null
                     } */}
-                    </View>
+                    </Surface>
                 </TouchableOpacity>
+                
             </>
         )
     }
@@ -585,13 +587,12 @@ export default (props) => {
 
 const styles = StyleSheet.create({
     mainItem: {
-        borderBottomColor: "#ddd", borderBottomWidth: 0.5,
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-evenly",
-        paddingVertical: 5,
-        borderBottomColor: "#ABB2B9",
-        borderBottomWidth: 0.5,
+        marginVertical: 3,
+        backgroundColor: 'white',
+        borderRadius: 10,marginHorizontal:6,padding:5
     },
     wrapTamTinh: {
         borderTopWidth: .5, borderTopColor: "red", paddingVertical: 3, backgroundColor: "white"

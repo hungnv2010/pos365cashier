@@ -254,40 +254,35 @@ class DataManager {
         let cloneJsoncontent = null
         if (typeof jsonContent === "string") {
             cloneJsoncontent = JSON.parse(jsonContent)
-            cloneJsoncontent.OrderDetails.forEach(product => {
-                delete product.ProductImages
-                if (isNaN(product.Quantity)) {
-                    product.Quantity = 0;
-                }
-            });
         }
-        // serverEvent.JsonContent = jsonContent
         else {
             cloneJsoncontent = jsonContent
-            cloneJsoncontent.OrderDetails.forEach(product => {
-                delete product.ProductImages
-                if (isNaN(product.Quantity)) {
-                    product.Quantity = 0;
-                }
-            });
         }
+        cloneJsoncontent.OrderDetails.forEach(product => {
+            delete product.ProductImages
+            if (isNaN(product.Quantity)) {
+                product.Quantity = 0;
+            }
+        });
         serverEvent.JsonContent = JSON.stringify(cloneJsoncontent)
         delete serverEvent.Timestamp
         this.subjectUpdateServerEvent.next(serverEvent)
     }
 
     updateServerEventNow = async (serverEvent, FromServer = false, isFNB = true) => {
-        if (typeof serverEvent.JsonContent === "object") {
-            let cloneJsoncontent = serverEvent.JsonContent
-            cloneJsoncontent.OrderDetails.forEach(product => {
-                // product.ProductImages = []
-                delete product.ProductImages
-                if (isNaN(product.Quantity)) {
-                    product.Quantity = 0;
-                }
-            });
-            serverEvent.JsonContent = JSON.stringify(cloneJsoncontent)
+        let cloneJsoncontent = null
+        if (typeof serverEvent.JsonContent === "string") {
+            cloneJsoncontent = JSON.parse(serverEvent.JsonContent)
+        } else {
+            cloneJsoncontent = serverEvent.JsonContent
         }
+        cloneJsoncontent.OrderDetails.forEach(product => {
+            delete product.ProductImages
+            if (isNaN(product.Quantity)) {
+                product.Quantity = 0;
+            }
+        });
+        serverEvent.JsonContent = JSON.stringify(cloneJsoncontent)
         delete serverEvent.Timestamp
         await realmStore.insertServerEvent(serverEvent, FromServer)
         if (isFNB) {
@@ -439,38 +434,21 @@ class DataManager {
             : await this.createSeverEvent(NewRoomId, NewPosition)
         newServerEvent.JsonContent = newServerEvent.JsonContent ? JSON.parse(newServerEvent.JsonContent) : this.createJsonContent(NewRoomId, NewPosition, moment())
         if (!newServerEvent.JsonContent.OrderDetails) newServerEvent.JsonContent.OrderDetails = []
-        // if (!newServerEvent.JsonContent) {
-        //     newServerEvent.JsonContent =
-        //         this.createJsonContent(RoomId, NewPosition, momentToDateUTC(moment()), ListNewSplit)
-        // } else {
-        // newServerEvent.JsonContent = JSON.parse(newServerEvent.JsonContent)
         let OrderDetails = newServerEvent.JsonContent.OrderDetails ? mergeTwoArray(ListNewSplit, newServerEvent.JsonContent.OrderDetails) : ListNewSplit
         newServerEvent.JsonContent.OrderDetails = [...OrderDetails]
-        // }
 
 
         oldServerEvent.Version += 1
         oldServerEvent.JsonContent.OrderDetails = ListOldSplit
         this.calculatateJsonContent(oldServerEvent.JsonContent)
-        // oldServerEvent.JsonContent.OrderDetails = ListOldSplit
-        // if (ListOldSplit == undefined || ListOldSplit.length == 0)
-        //     oldServerEvent.JsonContent = JSON.stringify(this.removeJsonContent(oldServerEvent.JsonContent))
-        // else
-        //     oldServerEvent.JsonContent = JSON.stringify(oldServerEvent.JsonContent)
+
         newServerEvent.Version += 1
         this.calculatateJsonContent(newServerEvent.JsonContent)
-
         console.log("splitTable oldServerEvent:: ", oldServerEvent)
         console.log("splitTable newServerEvent:: ", newServerEvent)
 
         await this.updateServerEventNow(oldServerEvent, true)
         await this.updateServerEventNow(newServerEvent, true)
-
-        // signalRManager.sendMessageServerEvent(oldServerEvent)
-        // await realmStore.insertServerEvent(oldServerEvent, true)
-
-        // signalRManager.sendMessageServerEvent(newServerEvent)
-        // await realmStore.insertServerEvent(newServerEvent, true)
     }
 
     createSeverEvent = async (RoomId, Position) => {
