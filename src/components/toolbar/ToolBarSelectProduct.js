@@ -105,7 +105,7 @@ export default function ToolBarDefault(props) {
 const styles = StyleSheet.create({
 
     toolbarContainer: {
-        height: 45,
+        height: 44,
         backgroundColor: 'white'
     },
 })
