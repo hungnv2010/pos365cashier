@@ -88,7 +88,7 @@ class DataManager {
                 element.Processed = element.Quantity > 0 ? element.Quantity : 0;
             });
             if (serverEventByRowKey.JsonContent.OrderDetails && serverEventByRowKey.JsonContent.OrderDetails.length > 0) {
-                serverEventByRowKey.JsonContent.OrderDetails = mergeTwoArray(item.products, serverEventByRowKey.JsonContent.OrderDetails)
+                serverEventByRowKey.JsonContent.OrderDetails = mergeTwoArray(item.products, serverEventByRowKey.JsonContent.OrderDetails, true)
             } else {
                 let title = serverEventByRowKey.JsonContent.RoomName ? serverEventByRowKey.JsonContent.RoomName : ""
                 let body = I18n.t('gio_khach_vao') + moment().format('HH:mm dd/MM')

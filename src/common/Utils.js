@@ -169,7 +169,7 @@ export const groupBy = (array, key) => {
   }, {}); // empty object is the initial value for result object
 };
 
-export const mergeTwoArray = (newArray, oldArray) => {
+export const mergeTwoArray = (newArray, oldArray, forOrder = false) => {
   let array = []
   newArray.forEach(elm => {
     if ((elm.SplitForSalesOrder || (elm.ProductType == 2 && elm.IsTimer)) && elm.Quantity > 0) {
@@ -177,7 +177,9 @@ export const mergeTwoArray = (newArray, oldArray) => {
     } else {
       let pos = oldArray.map(item => item.ProductId).indexOf(elm.ProductId);
       if (pos >= 0) {
-        oldArray[pos].Quantity += elm.Quantity
+        let newQuantity = oldArray[pos].Quantity + elm.Quantity
+        if (forOrder) oldArray[pos].Processed = newQuantity
+        oldArray[pos].Quantity = newQuantity
         oldArray = oldArray.filter(item => item.Quantity > 0)
       } else {
         array.unshift({ ...elm })

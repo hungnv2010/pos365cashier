@@ -89,18 +89,18 @@ const LIST_FUNCITION = [
     //     icon: Images.icon_star,
     //     title: "them"
     // },
-   
-    {
-        func: KEY_FUNC.PRODUCT,
-        icon: Images.icon_product,
-        title: "hang_hoa"
-    },
+
+    // {
+    //     func: KEY_FUNC.PRODUCT,
+    //     icon: Images.icon_product,
+    //     title: "hang_hoa"
+    // },
     // {
     //     func: KEY_FUNC.CASH_FLOW,
     //     icon: Images.icon_income,
     //     title: "thu_chi_"
     // },
-   
+
     // {
     //     func: KEY_FUNC.ROOM_HISTORY,
     //     icon: Images.icon_room_history,
@@ -263,7 +263,21 @@ const HeaderComponent = (props) => {
     }
 
     const getRetailerInfoAndNavigate = () => {
-        navigateToHome()
+        let inforParams = {};
+        new HTTPService().setPath(ApiPath.VENDOR_SESSION).GET(inforParams, getHeaders()).then((res) => {
+            console.log("getDataRetailerInfo res ", res);
+            if (res && res.CurrentUser) {
+                setFileLuuDuLieu(Constant.VENDOR_SESSION, JSON.stringify(res))
+                navigateToHome()
+            } else {
+                dialogManager.showPopupOneButton(I18n.t('ban_khong_co_quyen_truy_cap'), I18n.t('thong_bao'));
+            }
+            dialogManager.hiddenLoading();
+        }).catch((e) => {
+            dialogManager.hiddenLoading();
+            console.log("getDataRetailerInfo err ", e);
+        })
+        // navigateToHome()
     }
 
     const onClickLogOut = () => {

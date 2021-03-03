@@ -202,6 +202,7 @@ const Served = (props) => {
         checkRoomProductId([product], props.route.params.room.ProductId)
 
         console.log("outputSelectedProduct jsonContent.OrderDetails ", jsonContentTmp.OrderDetails);
+        checkHasItemOrder(jsonContentTmp.OrderDetails)
         jsonContentTmp.OrderDetails = await addPromotion(jsonContentTmp.OrderDetails);
         updateServerEvent({ ...jsonContentTmp })
     }
@@ -229,7 +230,7 @@ const Served = (props) => {
         jsonContent.OrderDetails = [...list, ...jsonContent.OrderDetails]
 
 
-        checkHasItemOrder(newList)
+        // checkHasItemOrder(newList)
         checkRoomProductId(newList, props.route.params.room.ProductId)
         updateServerEvent({ ...jsonContent })
     }
@@ -237,7 +238,7 @@ const Served = (props) => {
     const setNewOrderDetails = (listProduct) => {
         jsonContent.OrderDetails = [...listProduct]
 
-        checkHasItemOrder(listProduct)
+        // checkHasItemOrder(listProduct)
         checkRoomProductId(listProduct, props.route.params.room.ProductId)
 
         updateServerEvent({ ...jsonContent })

@@ -369,9 +369,9 @@ export default (props) => {
         switch (type) {
             case 1:
                 newList = newList.filter(item => item.Quantity > 0)
-                if (newList.length == 0) {
-                    newList.push({ Id: -1, Quantity: 1 })
-                }
+                // if (newList.length == 0) {
+                //     newList.push({ Id: -1, Quantity: 1 })
+                // }
                 outputListProducts([...newList], false)
                 break;
             case 2:
