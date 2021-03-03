@@ -284,9 +284,13 @@ export default (props) => {
                 }
                 <TouchableOpacity key={index} onPress={() => {
                     if (isPromotion) return;
+                    if (item.ProductType == 2 && item.IsTimer) {
+                        setToastDescription(I18n.t("ban_khong_co_quyen_dieu_chinh_mat_hang_thoi_gian"))
+                        setShowToast(true)
+                        return
+                    }
                     setItemOrder({ ...item })
                     console.log("onClickProduct item ", item);
-
                     typeModal.current = TYPE_MODAL.DETAIL
                     setShowModal(!showModal)
                 }}>

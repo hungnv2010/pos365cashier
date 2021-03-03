@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { ScrollView } from 'react-native';
 import { Switch } from 'react-native';
-import { View, Platform,Text, StyleSheet, TouchableOpacity, Modal, TextInput, NativeModules, Keyboard } from 'react-native';
+import { View, Platform, Text, Image, StyleSheet, TouchableOpacity, Modal, TextInput, NativeModules, Keyboard } from 'react-native';
 import ToolBarDefault from '../../components/toolbar/ToolBarDefault'
 import I18n from '../../common/language/i18n'
 import MainToolBar from '../main/MainToolBar';
@@ -10,7 +10,7 @@ import PrintConnect from '../settings/PrintConnect';
 import { TouchableWithoutFeedback } from 'react-native';
 import { Constant } from '../../common/Constant';
 import { RadioButton } from 'react-native-paper'
-import { Metrics } from '../../theme';
+import { Metrics, Images } from '../../theme';
 import { getFileDuLieuString, setFileLuuDuLieu } from "../../data/fileStore/FileStorage";
 import { useFocusEffect } from '@react-navigation/native';
 import { ApiPath } from "../../data/services/ApiPath";
@@ -22,6 +22,8 @@ import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import colors from '../../theme/Colors';
 //import { in } from 'react-native/Libraries/Animated/src/Easing';
 const { Print } = NativeModules;
+import moment from 'moment';
+import 'moment/min/locales'
 
 export const DefaultSetting = {
     am_bao_thanh_toan: true,
@@ -111,7 +113,7 @@ export const DefaultSetting = {
     TempPrint: '',
     tu_dong_in_bao_bep: false,
     in_sau_khi_thanh_toan: true,
-    in_hai_lien_cho_hoa_don: false,
+    // in_hai_lien_cho_hoa_don: false,
     in_hai_lien_cho_che_bien: false,
     in_tam_tinh: false,
     in_tem_truoc_thanh_toan: false,
@@ -144,6 +146,7 @@ export default (props) => {
     const [settingObject, setSettingObject] = useState(DefaultSetting)
     const [inforStore, setInforStore] = useState({})
     const [marginModal, setMargin] = useState(0)
+    const [language, setLanguage] = useState("vi");
 
     useFocusEffect(useCallback(() => {
         const getSetting = async () => {
@@ -177,7 +180,27 @@ export default (props) => {
         }
 
         getSetting()
+
+        const setupLanguage = async () => {
+            let lang = await getFileDuLieuString(Constant.LANGUAGE, true);
+            console.log('lang ===  ', lang);
+            if (lang && lang != "") {
+                setLanguage(lang)
+            } else {
+                setLanguage('vi');
+            }
+        }
+
+        setupLanguage()
+
     }, []))
+
+    // useFocusEffect(
+    //     React.useCallback(() => {
+
+    //     }, [])
+    // );
+
     useEffect(() => {
         console.log("setting object", settingObject);
     }, [settingObject])
@@ -405,30 +428,32 @@ export default (props) => {
         console.log("savePrinter objectPrint ", objectPrint);
         dispatch({ type: 'PRINT_OBJECT', printerObject: objectPrint })
     }
-    const vendor = useRef({Name:inforStore.Name,Address:inforStore.Address,Phone:inforStore.Phone})
-    
-    const outPut = (data) =>{
+    const vendor = useRef({ Name: inforStore.Name, Address: inforStore.Address, Phone: inforStore.Phone })
+
+    const outPut = (data) => {
         vendor.current = data
     }
-    useEffect(()=>{
-        console.log("vendor",vendor.current);
-    },[vendor.current])
-    const onClickOk = () =>{
-        let param = {Vendor:{
-            Address:vendor.current.Address?vendor.current.Address:inforStore.Address ,
-            Code: inforStore.Code,
-            ExpiryDate:inforStore.ExpiryDate ,
-            FieldId:inforStore.FieldId ,
-            Id: inforStore.Id,
-            LatestClearData: inforStore.LatestClearData,
-            Logo: inforStore.Logo,
-            Name:vendor.current.Name?vendor.current.Name:inforStore.Name,
-            Phone: vendor.current.Phone?vendor.current.Phone:inforStore.Phone,
-            Province: inforStore.Province,
-            Status: inforStore.Status,
-            TelephoneOfShopkeepers: inforStore.TelephoneOfShopkeepers,
-            URL: "https://"+inforStore.Code+".pos365.vn",
-        }}
+    useEffect(() => {
+        console.log("vendor", vendor.current);
+    }, [vendor.current])
+    const onClickOk = () => {
+        let param = {
+            Vendor: {
+                Address: vendor.current.Address ? vendor.current.Address : inforStore.Address,
+                Code: inforStore.Code,
+                ExpiryDate: inforStore.ExpiryDate,
+                FieldId: inforStore.FieldId,
+                Id: inforStore.Id,
+                LatestClearData: inforStore.LatestClearData,
+                Logo: inforStore.Logo,
+                Name: vendor.current.Name ? vendor.current.Name : inforStore.Name,
+                Phone: vendor.current.Phone ? vendor.current.Phone : inforStore.Phone,
+                Province: inforStore.Province,
+                Status: inforStore.Status,
+                TelephoneOfShopkeepers: inforStore.TelephoneOfShopkeepers,
+                URL: "https://" + inforStore.Code + ".pos365.vn",
+            }
+        }
         new HTTPService().setPath(ApiPath.VENDOR).POST(param).then((res) => {
             console.log("mess", res);
 
@@ -440,24 +465,22 @@ export default (props) => {
 
     }
 
+    const onSelectLanguage = (lang) => {
+        // dispatch({ type: 'LANGUAGE', lang: lang })
+        // props.onChangeLang(lang);
+        I18n.locale = lang;
+        moment.locale(lang)
+        setLanguage(lang)
+        setFileLuuDuLieu(Constant.LANGUAGE, lang);
+    }
+
     return (
         <View style={{ flex: 1 }}>
-            {
-                props.route.params._onSelect ?
-                    <ToolBarDefault
-                        {...props}
-                        navigtion={props.navigtion}
-                        clickLeftIcon={() => {
-                            props.navigtion.goBack()
-                        }}
-                        title={I18n.t('setting')} />
-                    :
-                    <MainToolBar
-                        navigation={props.navigation}
-                        title={I18n.t('setting')}
-                        outPutTextSearch={()=>{}}
-                    />
-            }
+            <MainToolBar
+                navigation={props.navigation}
+                title={I18n.t('setting')}
+                outPutTextSearch={() => { }}
+            />
             <ScrollView style={{ marginBottom: 1 }}>
                 <View style={{ flex: 1, flexDirection: 'column' }}>
                     {/* <TouchableOpacity onPress={() => screenSwitch(ScreenList.VNPayPaymentSetting, settingObject)}>
@@ -503,7 +526,7 @@ export default (props) => {
                             : null
                         }
                         <SettingSwitch title={"in_sau_khi_thanh_toan"} output={onSwitchTone} isStatus={settingObject.in_sau_khi_thanh_toan} />
-                        <SettingSwitch title={"in_hai_lien_cho_hoa_don"} output={onSwitchTone} isStatus={settingObject.in_hai_lien_cho_hoa_don} />
+                        {/* <SettingSwitch title={"in_hai_lien_cho_hoa_don"} output={onSwitchTone} isStatus={settingObject.in_hai_lien_cho_hoa_don} /> */}
                         {isFNB ?
                             <SettingSwitch title={"in_hai_lien_cho_che_bien"} output={onSwitchTone} isStatus={settingObject.in_hai_lien_cho_che_bien} />
                             : null}
@@ -525,6 +548,35 @@ export default (props) => {
                         <Text style={styles.textTitle}>{I18n.t("thiet_lap_he_thong")}</Text>
                         <SettingSwitch title={"giu_man_hinh_luon_sang"} output={onSwitchTone} isStatus={settingObject.giu_man_hinh_luon_sang} />
                         <CurrencyUnit onSetModalCurrency={funSetModalCurrentcy} currencyUnit={settingObject.CurrencyUnit} />
+
+                        <View style={{ borderBottomWidth: 0.5, padding: 20, borderBottomColor: "#ddd", flexDirection: "column", }}>
+                            <TouchableOpacity style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                                <Text style={{ marginTop: 0 }}>{I18n.t('ngon_ngu')}: <Text style={{ color: colors.colorLightBlue }}>{language == 'vi' ? I18n.t('tieng_viet') : I18n.t('tieng_anh')}</Text> </Text>
+                            </TouchableOpacity>
+
+                            <View style={{ marginTop: 20, flexDirection: "row", justifyContent: "space-between" }}>
+                                <TouchableOpacity onPress={() => onSelectLanguage('vi')} style={{ flexDirection: "row", alignItems: "center", marginLeft: -10 }}>
+                                    <RadioButton.Android
+                                        style={{}}
+                                        color={colors.colorchinh}
+                                        status={language == 'vi' ? 'checked' : 'unchecked'}
+                                        onPress={() => onSelectLanguage('vi')}
+                                    />
+                                    <Image source={Images.icon_viet_nam} style={{ width: 30, height: 20, marginRight: 10 }} />
+                                    <Text>{I18n.t('tieng_viet')}</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => onSelectLanguage('en')} style={{ flexDirection: "row", alignItems: "center", marginLeft: -10 }}>
+                                    <RadioButton.Android
+                                        style={{}}
+                                        color={colors.colorchinh}
+                                        status={language != 'vi' ? 'checked' : 'unchecked'}
+                                        onPress={() => onSelectLanguage('en')}
+                                    />
+                                    <Image source={Images.icon_english} style={{ width: 30, height: 20, marginRight: 10 }} />
+                                    <Text>{I18n.t('tieng_anh')}</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
                     </View>
                     <View style={styles.viewLine}></View>
                 </View>
@@ -609,7 +661,7 @@ export default (props) => {
                                     bottom: 0
                                 }}></View>
                             </TouchableWithoutFeedback>
-                            <View style={[styles.styleViewModal,{ marginBottom: Platform.OS == 'ios' ? marginModal : 0 }]} >
+                            <View style={[styles.styleViewModal, { marginBottom: Platform.OS == 'ios' ? marginModal : 0 }]} >
                                 <View style={{ width: Metrics.screenWidth * 0.8, }}>
                                     <Text style={styles.titleModal}>{I18n.t('thong_tin_cua_hang')}</Text>
                                     <Text style={{ fontSize: 18, justifyContent: 'center', marginTop: 10, marginLeft: 20 }}>{I18n.t('nhap_chieu_rong_kho_giay')}</Text>
@@ -706,7 +758,7 @@ export default (props) => {
                                 }}></View>
 
                             </TouchableWithoutFeedback>
-                            <View style={[styles.styleViewModal,{ marginBottom: Platform.OS == 'ios' ? marginModal : 0 }]} >
+                            <View style={[styles.styleViewModal, { marginBottom: Platform.OS == 'ios' ? marginModal : 0 }]} >
                                 <View style={{ width: Metrics.screenWidth * 0.8, }}>
                                     <Text style={styles.titleModal}>{titlePrint}</Text>
                                     <Text style={{ fontSize: 18, justifyContent: 'center', marginTop: 10, marginLeft: 20 }}>{I18n.t('nhap_dia_chi_ip_may')}</Text>
@@ -806,7 +858,7 @@ export default (props) => {
                             <View style={[styles.styleViewModal]} >
                                 <View style={{ width: Metrics.screenWidth * 0.7, height: Metrics.screenHeight * 0.7 }}>
                                     <Text style={styles.titleModal}>{I18n.t('thong_tin_cua_hang')}</Text>
-                                    <StoreInformation code={inforStore.Code} name={inforStore.Name} address={inforStore.Address} phoneNumber={inforStore.Phone} outPut={outPut}/>
+                                    <StoreInformation code={inforStore.Code} name={inforStore.Name} address={inforStore.Address} phoneNumber={inforStore.Phone} outPut={outPut} />
                                     <View style={{ justifyContent: "center", flexDirection: "row", paddingTop: 10 }}>
                                         <TouchableOpacity style={styles.styleButtonHuy} onPress={() => setModalStoreInfor(false)} >
                                             <Text style={styles.styleTextBtnHuy}>{I18n.t("huy")}</Text>
@@ -838,18 +890,18 @@ const CurrencyUnit = (props) => {
 }
 const StoreInformation = (props) => {
     const vendor = useRef({})
-    const getdata = (data) =>{
+    const getdata = (data) => {
         if (data.title == I18n.t('ten')) {
             vendor.current.Name = data.value
-        }else if (data.title == I18n.t('dia_chi')) {
+        } else if (data.title == I18n.t('dia_chi')) {
             vendor.current.Address = data.value
-        }else{
+        } else {
             vendor.current.Phone = data.value
         }
     }
-    useEffect(()=>{
+    useEffect(() => {
         props.outPut(vendor.current)
-    },[])
+    }, [])
 
     return (
         <ScrollView style={{ marginTop: 10 }} >
@@ -870,14 +922,14 @@ const StoreInformation = (props) => {
     )
 }
 const ItemStoreInfor = (props) => {
-    const [titleHint,setTitleHint] = useState(props.titleHint)
-    const sendInput = (text) =>{
-        props.output({title:props.title,value:text})
+    const [titleHint, setTitleHint] = useState(props.titleHint)
+    const sendInput = (text) => {
+        props.output({ title: props.title, value: text })
     }
     return (
         <View style={{ flex: 1, marginTop: 15 }}>
             <Text style={styles.textTitleItemHint}>{props.title}</Text>
-            <TextInput style={styles.textInputStyle} value={titleHint} onChangeText={text=>{sendInput(text),setTitleHint(text)}}></TextInput>
+            <TextInput style={styles.textInputStyle} value={titleHint} onChangeText={text => { sendInput(text), setTitleHint(text) }}></TextInput>
         </View>
     )
 }
