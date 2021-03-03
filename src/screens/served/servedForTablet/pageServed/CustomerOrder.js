@@ -22,6 +22,7 @@ import { getFileDuLieuString } from '../../../../data/fileStore/FileStorage';
 import { HTTPService } from '../../../../data/services/HttpService';
 import { ApiPath } from '../../../../data/services/ApiPath';
 import { useDispatch } from 'react-redux';
+import colors from '../../../../theme/Colors';
 
 
 const TYPE_MODAL = {
@@ -352,7 +353,7 @@ const CustomerOrder = (props) => {
                                         :
                                         (isPromotion ? null :
                                             <>
-                                                <View style={{ marginHorizontal: 5, flex: 2, }}>
+                                                <View style={{ marginHorizontal: 5, flex: 2.3, }}>
                                                     {
                                                         item.ProductType == 2 && item.IsTimer ?
 
@@ -376,8 +377,8 @@ const CustomerOrder = (props) => {
                                                                 <TouchableOpacity
                                                                     onPress={
                                                                         () => onClickReturn(item, 2)
-                                                                    }>
-                                                                    <Icon name="minus-box" size={40} color={Colors.colorchinh} />
+                                                                    } style={{paddingVertical:3,paddingHorizontal:12,borderWidth:1,borderRadius:5,borderColor:colors.colorchinh}}>
+                                                                    <Text style={{color:colors.colorchinh,fontSize:25,}}>-</Text>
                                                                 </TouchableOpacity>
                                                                 <View style={{
                                                                     width: 50,
@@ -404,8 +405,8 @@ const CustomerOrder = (props) => {
                                                                     item.Quantity++
                                                                     setListOrder([...listOrder])
                                                                     mapDataToList(item, false)
-                                                                }}>
-                                                                    <Icon name="plus-box" size={40} color={Colors.colorchinh} />
+                                                                }} style={{paddingVertical:3,paddingHorizontal:12,borderWidth:1,borderRadius:5,borderColor:colors.colorchinh}}>
+                                                                    <Text style={{color:colors.colorchinh,textAlign:'center',fontSize:25,}}>+</Text>
                                                                 </TouchableOpacity>
                                                             </View>
                                                     }
@@ -563,7 +564,7 @@ const CustomerOrder = (props) => {
             <View style={{}}>
                 <TouchableOpacity
                     onPress={() => { setExpand(!expand) }}
-                    style={{ borderTopWidth: .5, borderTopColor: Colors.colorLightBlue, paddingVertical: 5, backgroundColor: "white", }}>
+                    style={{ borderTopWidth: .5, borderTopColor: colors.colorchinh, paddingVertical: 5, backgroundColor: "white", }}>
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                         <Text style={{ fontWeight: "bold", paddingLeft: 10 }}>{I18n.t('tong_thanh_tien')}</Text>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
@@ -576,7 +577,7 @@ const CustomerOrder = (props) => {
                         </View>
                     </View>
                     {expand ?
-                        <View style={{ marginLeft: 0 }}>
+                        <View style={{ paddingLeft: 10 }}>
                             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                                 <Text>{I18n.t('tong_chiet_khau')}</Text>
                                 <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>- {currencyToString(props.jsonContent.Discount)} đ</Text>
@@ -599,7 +600,7 @@ const CustomerOrder = (props) => {
                     }
                 </TouchableOpacity>
             </View>
-            <View style={{ height: 40, flexDirection: "row", backgroundColor: "#0072bc", alignItems: "center" }}>
+            <View style={{ height: 40, flexDirection: "row", backgroundColor: colors.colorchinh, alignItems: "center" }}>
                 <TouchableOpacity
                     onPress={showMenu}>
                     <Menu

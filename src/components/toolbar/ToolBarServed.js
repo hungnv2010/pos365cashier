@@ -56,11 +56,11 @@ export default forwardRef((props, ref) => {
 
                 <View style={{ flex: 1, alignItems: "center" }}>
                     <TouchableOpacity onPress={() => { props.navigation.goBack() }} style={{paddingLeft:19,paddingRight:19,paddingTop:16,paddingBottom:16}}>
-                        <Image source={Images.icon_back} style={{ width: 10, height: 16, }} />
+                        <Image source={Images.icon_back} style={{ width: 48, height: 48, }} />
                     </TouchableOpacity>
                 </View>
                 <View style={{ flex: 2, justifyContent: 'center', alignItems: 'flex-start', }}>
-                    <Subheading numberOfLines={1} style={{ color: 'white', fontSize: 18, fontWeight: "bold" }} >
+                    <Subheading numberOfLines={1} style={{ fontSize: 18, fontWeight: "bold" }} >
                         {I18n.t('don_hang')}
                     </Subheading>
                 </View>
@@ -78,35 +78,35 @@ export default forwardRef((props, ref) => {
                         null}
                 </View>
 
-                <View style={{ flex: 2, alignItems: "center", flexDirection: "row", justifyContent: "space-around", }}>
+                <View style={{ flex: 3, alignItems: "center", flexDirection: "row", justifyContent: "space-around", }}>
                     <TouchableOpacity style={styles.button} onPress={() => {
                         if (value != '') onChangeText('')
                         else setIsSearch(!isSearch)
                     }} >
                         <View style={{}}>
-                            <Ionicons name={!isSearch ? "md-search" : "md-close"} size={30} color="white" style={{}} />
+                            <Ionicons name={!isSearch ? "md-search" : "md-close"} size={30}  style={{}} color={Colors.colorLightBlue}/>
                         </View>
                     </TouchableOpacity>
                     {
                         showProductService ?
-                            <TouchableOpacity style={styles.button} onPress={() => { props.outputClickProductService() }} >
+                            <TouchableOpacity style={styles.button} onPress={() => { props.outputClickProductService() }}  >
 
                                 <View style={{}}>
-                                    <Icon name="clock-outline" size={30} color="white" />
+                                    <Icon name="clock-outline" size={30}  color={Colors.colorLightBlue}/>
                                 </View>
 
                             </TouchableOpacity>
                             :
                             null
                     }
-                    <TouchableOpacity style={styles.button} onPress={() => { props.navigation.navigate('QRCode', { _onSelect: onCallBack }) }} >
+                    <TouchableOpacity style={styles.button} onPress={() => { props.navigation.navigate('QRCode', { _onSelect: onCallBack }) }}  >
                         <View style={{}}>
-                            <Icon name="qrcode-scan" size={25} color="white" style={{}} />
+                            <Icon name="qrcode-scan" size={25}  style={{}} color={Colors.colorLightBlue} />
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={() => { props.navigation.navigate('NoteBook', { _onSelect: onCallBack }) }} >
+                    <TouchableOpacity style={styles.button} onPress={() => { props.navigation.navigate('NoteBook', { _onSelect: onCallBack }) }}  >
                         <View style={{}}>
-                            <Icon name="library-books" size={28} color="white" style={{}} />
+                            <Icon name="library-books" size={28}  style={{}} color={Colors.colorLightBlue}/>
                         </View>
                     </TouchableOpacity>
                 </View>
@@ -122,7 +122,8 @@ const styles = StyleSheet.create({
     toolbarContainer: {
         flexDirection: "row",
         height: 40,
-        backgroundColor: Colors.colorchinh,
+        backgroundColor:'white',
+        borderBottomColor:'gray',borderBottomWidth:0.5
     },
     button: {
         flex: 1

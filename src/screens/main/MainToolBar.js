@@ -8,6 +8,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import PropTypes from 'prop-types';
 import { Constant } from '../../common/Constant';
 import { useSelector } from 'react-redux';
+import colors from '../../theme/Colors';
 
 
 export default function MainToolBar(props) {
@@ -44,7 +45,6 @@ export default function MainToolBar(props) {
                     <Subheading
                         numberOfLines={1}
                         style={{
-                            color: 'white',
                             fontWeight: "bold",
                             fontSize: 18
                         }}
@@ -74,7 +74,7 @@ export default function MainToolBar(props) {
                             else setIsSearch(!isSearch)
                         }} >
                             <View style={{}}>
-                                <Ionicons name={!isSearch ? "md-search" : "md-close"} size={30} color="white" style={{}} />
+                                <Ionicons name={!isSearch ? "md-search" : "md-close"} size={30} color={colors.colorLightBlue} style={{}} />
                             </View>
                         </TouchableOpacity>
                         : null
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.24,
         shadowRadius: 0.3,
-        backgroundColor: Colors.colorchinh,
+        backgroundColor: 'white',
         height: 44
     },
 })

@@ -179,7 +179,7 @@ export default (props) => {
   const renderCateItem = (item, index) => {
     return (
       <View style={{}}>
-        <TouchableOpacity onPress={() => onClickCate(item, index)} key={index} style={[styles.renderCateItem, { flex: 1, backgroundColor: item.Id == listCateId[0] ? Colors.colorLightBlue : "white", borderWidth: 0.5, paddingVertical: 20, borderColor: 'gray' }]}>
+        <TouchableOpacity onPress={() => onClickCate(item, index)} key={index} style={[styles.renderCateItem, { flex: 1, backgroundColor: item.Id == listCateId[0] ? Colors.colorLightBlue : "white", borderBottomWidth: 0.5, paddingVertical: 20, borderColor: 'gray' }]}>
           <View style={{ backgroundColor: item.Id != listCateId[0] ? Colors.colorLightBlue : "white", flex: 1, padding: 7, borderRadius: 50, marginHorizontal: 5 }}>
             <Text style={{ fontWeight: "bold", textAlign: "center", color: item.Id != listCateId[0] ? "white" : Colors.colorLightBlue, fontSize: 12 }}>{item.numberProduct}</Text>
           </View>
@@ -204,7 +204,7 @@ export default (props) => {
           :
           <View style={{ width: "24%", backgroundColor: 'white', paddingVertical: 5 }}>
             <View style={{ flex: 1, marginHorizontal: 5, paddingBottom: 5 }}>
-              <TouchableOpacity onPress={() => onClickAll()} style={[styles.renderCateItem, { backgroundColor: "white", backgroundColor: -1 == listCateId[0] ? Colors.colorLightBlue : "white", borderWidth: 0.5, paddingVertical: 20, borderColor: 'gray' }]}>
+              <TouchableOpacity onPress={() => onClickAll()} style={[styles.renderCateItem, { backgroundColor: "white", backgroundColor: -1 == listCateId[0] ? Colors.colorLightBlue : "white", borderBottomWidth: 0.5, paddingVertical: 20, borderColor: 'gray'}]}>
                 <View style={{ backgroundColor: -1 == listCateId[0] ? Colors.colorLightBlue : "white", flex: 1, padding: 7, borderRadius: 50, marginHorizontal: 5 }}>
                   <Text style={{ fontWeight: "bold", textAlign: "center", color: -1 == listCateId[0] ? "white" : Colors.colorLightBlue, fontSize: 12 }}></Text>
                 </View>
@@ -261,7 +261,7 @@ export default (props) => {
 }
 
 const styles = StyleSheet.create({
-  renderCateItem: { flexDirection: "row", paddingVertical: 20, alignItems: "center", marginBottom: 5, borderRadius: 10 },
+  renderCateItem: { flexDirection: "row", paddingVertical: 20, alignItems: "center", marginBottom: 5,borderRadius:5  },
   textRenderCateItem: { fontWeight: "bold", textTransform: "uppercase", lineHeight: 20, textAlign: "left" },
   button: { borderWidth: 1, padding: 20, borderRadius: 10 },
 });

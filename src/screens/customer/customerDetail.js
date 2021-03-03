@@ -426,8 +426,8 @@ export default (props) => {
 
     return (
         <View style={{ flex: 1 }}>
-            <View style={{ backgroundColor: colors.colorchinh, marginLeft: 5, paddingVertical: 10 }}>
-                <Text style={{ textAlign: "center", color: "white", fontSize: 15, textTransform: "uppercase", fontWeight: "bold" }}>{props.customerDetail.Id == 0 ? I18n.t('them_khach_hang') : I18n.t('cap_nhat_khach_hang')}</Text>
+            <View style={{ backgroundColor: 'white', marginLeft: 5, paddingVertical: 10 }}>
+                <Text style={{ textAlign: "center", color: colors.colorchinh, fontSize: 15, textTransform: "uppercase", fontWeight: "bold" }}>{props.customerDetail.Id == 0 ? I18n.t('them_khach_hang') : I18n.t('cap_nhat_khach_hang')}</Text>
             </View>
             <KeyboardAwareScrollView style={{ flexGrow: 1 }}>
                 <Surface style={styles.surface}>

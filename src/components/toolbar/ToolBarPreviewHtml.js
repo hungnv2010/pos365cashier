@@ -31,14 +31,14 @@ export default function ToolBarPreviewHtml(props) {
             >
                 <View style={{ flex: 1, alignItems: "center" }}>
                     <TouchableOpacity onPress={() => props.navigation.pop()} style={{ height: "100%", justifyContent: "center", paddingHorizontal: 10 }}>
-                        <Image source={Images.icon_back} style={{ width: 10, height: 16 }} />
+                        <Image source={Images.icon_back} style={{ width: 48, height: 48 }} />
                     </TouchableOpacity>
                 </View>
                 <View style={{ flex: 4, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
                     <Subheading
                         numberOfLines={1}
                         style={{
-                            color: 'white'
+                            
                         }}
                     >
                         {props.title}
@@ -65,8 +65,9 @@ const styles = StyleSheet.create({
     toolbarContainer: {
         flexDirection: "row",
         height: 40,
-        backgroundColor: Colors.colorchinh,
-        zIndex: 99999999
+        backgroundColor: 'white',
+        zIndex: 99999999,borderBottomColor:'gray',
+        borderBottomWidth:0.5
     },
 })
 

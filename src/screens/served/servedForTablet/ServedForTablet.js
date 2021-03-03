@@ -557,92 +557,89 @@ const Served = (props) => {
     }
 
     return (
-        <View style={{ flex: 1 }}>
-            <ViewPrint
-                ref={viewPrintRef}
-                html={data}
-                callback={(uri) => {
-                    console.log("callback uri ", uri)
-                    Print.printImageFromClient([uri + ""])
-                }}
-            />
-            <ToolBarServed
-                {...props}
-                ref={toolBarTabletServedRef}
-                outputClickProductService={outputClickProductService}
-                navigation={props.navigation}
-                outputListProducts={outputListProducts}
-                outputTextSearch={outputTextSearch} />
-            <View style={{ flex: 1, flexDirection: "row" }}>
-                <View style={{ flex: 6, }}>
-                    <View style={!itemOrder.ProductId ? { flex: 1 } : { width: 0, height: 0 }}>
-                        <SelectProduct
-                            valueSearch={value}
-                            numColumns={orientaition == Constant.LANDSCAPE ? 3 : 3}
-                            listProducts={jsonContent.OrderDetails ? [...jsonContent.OrderDetails] : []}
-                            outputSelectedProduct={outputSelectedProduct} />
-                    </View>
-
-                    <View style={itemOrder.ProductId ? { flex: 1 } : { width: 0, height: 0 }}>
-                        <Topping
-                            {...props}
-                            position={position}
-                            itemOrder={meMoItemOrder}
-                            onClose={() => { setItemOrder({}) }}
-                            outputListTopping={outputListTopping}
-                        />
-                    </View>
-                </View>
-                <View style={{ flex: 4, marginLeft: 2 }}>
-                    <View style={{ flex: 1, }}>
-
-                        <View style={{ backgroundColor: colors.colorchinh, alignItems: "center", flexDirection: "row", justifyContent: "space-between", borderTopColor: "#EAECEE", borderTopWidth: 1.5, height: 35 }}>
-                            <View style={{ flex: 1, justifyContent: "center", }}>
-                                <Text style={{ paddingLeft: 20, textTransform: "uppercase", color: "white", fontWeight: "bold" }}>{props.route && props.route.params && props.route.params.room && props.route.params.room.Name ? props.route.params.room.Name : ""}</Text>
-                            </View>
-                            <TouchableOpacity onPress={showMenu} style={{ flex: 1, paddingHorizontal: 20, flexDirection: "row", justifyContent: "flex-end", alignItems: "center" }}>
-                                <Menu
-                                    style={{ width: 50 }}
-                                    ref={setMenuRef}
-                                    button={<Text style={{ color: "white", fontWeight: "bold" }} onPress={showMenu}>{position}</Text>}
-                                >
-                                    {
-                                        listPosition.map(item => <MenuItem key={item.name} onPress={() => hideMenu(item.name)}>{item.name} {item.status ? <Text style={{ color: Colors.colorchinh }}>*</Text> : null}</MenuItem>)
-                                    }
-                                </Menu>
-                                <Icon style={{}} name="chevron-down" size={20} color="white" />
-                            </TouchableOpacity>
-                        </View>
-                        <View style={{ backgroundColor: "white", flexDirection: "row", justifyContent: "space-between", marginTop: 2, borderBottomColor: Colors.colorchinh, borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5 }}>
-                            <TouchableOpacity
-                                style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
-                                onPress={onClickListedPrice}>
-                                <Entypo style={{ paddingHorizontal: 5 }} name="price-ribbon" size={25} color={colors.colorchinh} />
-                                <Text ellipsizeMode="tail" numberOfLines={1} style={{ flex: 1, color: Colors.colorchinh, fontWeight: "bold", textTransform: "uppercase" }}>{currentPriceBook.Id == 0 ? I18n.t(currentPriceBook.Name) : currentPriceBook.Name}</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
-                                onPress={onClickRetailCustomer}>
-                                <Text ellipsizeMode="tail" numberOfLines={1} style={{ textAlign: "right", flex: 1, color: Colors.colorchinh, fontWeight: "bold", textTransform: "uppercase" }}>{currentCustomer.Id == 0 ? I18n.t(currentCustomer.Name) : currentCustomer.Name}</Text>
-                                <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} color={Colors.colorchinh} />
-                            </TouchableOpacity>
+        <View style={{ flex: 1, flexDirection: 'row' }}>
+            <View style={{ flex: 3 }}>
+                <ViewPrint
+                    ref={viewPrintRef}
+                    html={data}
+                    callback={(uri) => {
+                        console.log("callback uri ", uri)
+                        Print.printImageFromClient([uri + ""])
+                    }}
+                />
+                <ToolBarServed
+                    {...props}
+                    ref={toolBarTabletServedRef}
+                    outputClickProductService={outputClickProductService}
+                    navigation={props.navigation}
+                    outputListProducts={outputListProducts}
+                    outputTextSearch={outputTextSearch} />
+                <View style={{ flex: 1, flexDirection: "row" }}>
+                    <View style={{ flex: 6, }}>
+                        <View style={!itemOrder.ProductId ? { flex: 1 } : { width: 0, height: 0 }}>
+                            <SelectProduct
+                                valueSearch={value}
+                                numColumns={orientaition == Constant.LANDSCAPE ? 3 : 3}
+                                listProducts={jsonContent.OrderDetails ? [...jsonContent.OrderDetails] : []}
+                                outputSelectedProduct={outputSelectedProduct} />
                         </View>
 
-                        <CustomerOrder
-                            {...props}
-                            itemOrder={meMoItemOrder}
-                            jsonContent={jsonContent}
-                            onClickProvisional={(res) => onClickProvisional(res)}
-                            outputItemOrder={outputItemOrder}
-                            outputPosition={outputPosition}
-                            outputSelectedProduct={outputSelectedProduct}
-                            listTopping={listTopping}
-                            Position={position}
-                            handlerProcessedProduct={(jsonContent) => handlerProcessedProduct(jsonContent)}
-                            outPutSetNewOrderDetail={setNewOrderDetails} />
-                    </View >
-
+                        <View style={itemOrder.ProductId ? { flex: 1 } : { width: 0, height: 0 }}>
+                            <Topping
+                                {...props}
+                                position={position}
+                                itemOrder={meMoItemOrder}
+                                onClose={() => { setItemOrder({}) }}
+                                outputListTopping={outputListTopping}
+                            />
+                        </View>
+                    </View>
                 </View>
+            </View>
+            <View style={{ flex: 2,borderLeftWidth:0.5,borderLeftColor:'gray' }}>
+                <View style={{ backgroundColor: 'white', alignItems: "center", flexDirection: "row", justifyContent: "space-between", borderBottomColor: "gray", borderBottomWidth: 0.5, height: 40 }}>
+                    <View style={{ flex: 1, justifyContent: "center", }}>
+                        <Text style={{ paddingLeft: 20, textTransform: "uppercase",fontSize:16 }}>{props.route && props.route.params && props.route.params.room && props.route.params.room.Name ? props.route.params.room.Name : ""}</Text>
+                    </View>
+                    <TouchableOpacity onPress={showMenu} style={{ flex: 1, paddingHorizontal: 20, flexDirection: "row", justifyContent: "flex-end", alignItems: "center" }}>
+                        <Menu
+                            style={{ width: 50 }}
+                            ref={setMenuRef}
+                            button={<Text style={{ fontSize:16 }} onPress={showMenu}>{position}</Text>}
+                        >
+                            {
+                                listPosition.map(item => <MenuItem key={item.name} onPress={() => hideMenu(item.name)}>{item.name} {item.status ? <Text style={{ color: Colors.colorchinh }}>*</Text> : null}</MenuItem>)
+                            }
+                        </Menu>
+                        <Icon style={{}} name="chevron-down" size={20}  />
+                    </TouchableOpacity>
+                </View>
+                <View style={{ backgroundColor: "white", flexDirection: "row", justifyContent: "space-between", marginTop: 2, borderBottomColor: Colors.colorchinh, borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5 }}>
+                    <TouchableOpacity
+                        style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
+                        onPress={onClickListedPrice}>
+                        <Entypo style={{ paddingHorizontal: 5 }} name="price-ribbon" size={25} color={colors.colorchinh} />
+                        <Text ellipsizeMode="tail" numberOfLines={1} style={{ flex: 1, color: Colors.colorchinh, fontWeight: "bold", textTransform: "uppercase" }}>{currentPriceBook.Id == 0 ? I18n.t(currentPriceBook.Name) : currentPriceBook.Name}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
+                        onPress={onClickRetailCustomer}>
+                        <Text ellipsizeMode="tail" numberOfLines={1} style={{ textAlign: "right", flex: 1, color: Colors.colorchinh, fontWeight: "bold", textTransform: "uppercase" }}>{currentCustomer.Id == 0 ? I18n.t(currentCustomer.Name) : currentCustomer.Name}</Text>
+                        <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} color={Colors.colorchinh} />
+                    </TouchableOpacity>
+                </View>
+                <CustomerOrder
+                    {...props}
+                    itemOrder={meMoItemOrder}
+                    jsonContent={jsonContent}
+                    onClickProvisional={(res) => onClickProvisional(res)}
+                    outputItemOrder={outputItemOrder}
+                    outputPosition={outputPosition}
+                    outputSelectedProduct={outputSelectedProduct}
+                    listTopping={listTopping}
+                    Position={position}
+                    handlerProcessedProduct={(jsonContent) => handlerProcessedProduct(jsonContent)}
+                    outPutSetNewOrderDetail={setNewOrderDetails} />
             </View>
         </View>
     );

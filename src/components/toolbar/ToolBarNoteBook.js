@@ -40,7 +40,7 @@ export default function ToolBarNoteBook(props) {
             <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
                 {props.clickLeftIcon ?
                     <TouchableOpacity onPress={props.clickLeftIcon} style={{paddingLeft:19,paddingRight:19,paddingTop:16,paddingBottom:16}}>
-                        <Image source={Images.icon_back} style={{width:10,height:16,}}/>
+                        <Image source={Images.icon_back} style={{width:48,height:48,}}/>
                     </TouchableOpacity>
                     :
                     <TouchableOpacity onPress={() => {
@@ -52,7 +52,7 @@ export default function ToolBarNoteBook(props) {
                             }, 1000);
                         }
                     }}>
-                       <Image source={Images.icon_back} style={{width:10,height:16,paddingLeft:19,paddingRight:19,paddingTop:16,paddingBottom:16}}/>
+                       <Image source={Images.icon_back} style={{width:48,height:48,paddingLeft:19,paddingRight:19,paddingTop:16,paddingBottom:16}}/>
                     </TouchableOpacity>
                 }
             </View>
@@ -61,7 +61,7 @@ export default function ToolBarNoteBook(props) {
                     <Subheading
                         numberOfLines={1}
                         style={{
-                            color: 'white', fontWeight: "bold"
+                             fontWeight: "bold"
                         }}
                     >
                         {props.title}
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     toolbarContainer: {
         flexDirection: "row",
         height: 40,
-        backgroundColor: Colors.colorchinh,
+        backgroundColor: 'white',
     },
 })
 

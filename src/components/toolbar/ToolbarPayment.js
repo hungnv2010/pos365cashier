@@ -10,6 +10,7 @@ import { IconButton, Subheading } from "react-native-paper";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import PropTypes from 'prop-types';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import colors from '../../theme/Colors';
 
 export default forwardRef((props, ref) => {
 
@@ -64,7 +65,7 @@ export default forwardRef((props, ref) => {
                         props.onClickBackSearch()
                     }
                 }} style={{ paddingLeft: 19, paddingRight: 19, paddingTop: 16, paddingBottom: 16 }}>
-                    <Image source={Images.icon_back} style={{ width: 10, height: 16, }} />
+                    <Image source={Images.icon_back} style={{ width: 48, height: 48, }} />
                 </TouchableOpacity>
             </View>
             <View style={{ flex: 5, paddingLeft: 10, alignItems: 'center', flexDirection: 'row' }}>
@@ -72,7 +73,7 @@ export default forwardRef((props, ref) => {
                     <Subheading
                         numberOfLines={1}
                         style={{
-                            color: 'white', fontWeight: "bold"
+                             fontWeight: "bold"
                         }}
                     >
                         {props.title}
@@ -96,11 +97,11 @@ export default forwardRef((props, ref) => {
                     <View style={{ flex: 2, alignItems: "center", justifyContent: "center" }}>
                         {showInput == false ?
                             <TouchableOpacity onPress={() => onClickSearch()}>
-                                <Ionicons name="md-search" size={props.size ? props.size : 30} color="white" />
+                                <Ionicons name="md-search" size={props.size ? props.size : 30} color={colors.colorLightBlue} />
                             </TouchableOpacity>
                             :
                             <TouchableOpacity onPress={() => setShowInput(false)}>
-                                <Icon name="close" size={props.size ? props.size : 30} color="white" />
+                                <Icon name="close" size={props.size ? props.size : 30} color={colors.colorLightBlue} />
                             </TouchableOpacity>
                         }
                     </View>
@@ -108,7 +109,7 @@ export default forwardRef((props, ref) => {
                     <View style={{ flexDirection: "row", flex: 1 }}>
                         <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
                             <TouchableOpacity onPress={props.clickNote}>
-                                <Icon name="library-books" size={props.size ? props.size : 26} color="white" />
+                                <Icon name="library-books" size={props.size ? props.size : 26} color={colors.colorLightBlue} />
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -124,7 +125,9 @@ const styles = StyleSheet.create({
     toolbarContainer: {
         flexDirection: "row",
         height: 40,
-        backgroundColor: Colors.colorchinh,
+        backgroundColor: 'white',
+        borderBottomColor:'gray',
+        borderBottomWidth:0.5
     },
 })
 

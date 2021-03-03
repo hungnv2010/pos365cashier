@@ -8,6 +8,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import PropTypes from 'prop-types';
 import { Constant } from '../../common/Constant';
 import { useSelector } from 'react-redux';
+import colors from '../../theme/Colors';
 
 
 export default function MainToolBar(props) {
@@ -40,7 +41,6 @@ export default function MainToolBar(props) {
                     <Subheading
                         numberOfLines={1}
                         style={{
-                            color: 'white',
                             fontWeight: "bold",
                             fontSize: 18
                         }}
@@ -52,7 +52,7 @@ export default function MainToolBar(props) {
                 <View style={{ flex: 1, alignItems: "center" }}>
                     {props.clickRightIcon && props.rightIcon ?
                         <TouchableOpacity onPress={props.clickRightIcon}>
-                            <Icon name={props.rightIcon} size={props.size ? props.size : 28} color="white" />
+                            <Icon name={props.rightIcon} size={props.size ? props.size : 28} color={colors.colorLightBlue} />
                         </TouchableOpacity>
                         :
                         null
@@ -77,7 +77,7 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.24,
         shadowRadius: 0.3,
-        backgroundColor: Colors.colorchinh,
+        backgroundColor: 'white',
         height: 44
     },
 })
