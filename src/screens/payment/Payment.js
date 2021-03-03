@@ -535,6 +535,7 @@ export default (props) => {
     }
 
     const onClickPay = () => {
+        console.log("onClickPay jsonContent ", jsonContent);
         let newDate = new Date().getTime();
         if (timeClickPrevious + 2000 < newDate) {
             timeClickPrevious = newDate;
@@ -561,8 +562,9 @@ export default (props) => {
             }
             paramMethod.push({ AccountId: element.Id, Value: value != "" ? value : 0 })
         });
-        let MoreAttributes = json.MoreAttributes ? JSON.parse(json.MoreAttributes) : {}
-        console.log("pointUse ", pointUse);
+        console.log("onClickPay json.MoreAttributes ", typeof(json.MoreAttributes),json.MoreAttributes);
+        let MoreAttributes = json.MoreAttributes ? (typeof(json.MoreAttributes) == 'string' ? JSON.parse(json.MoreAttributes) : json.MoreAttributes) : {}
+        console.log("onClickPay pointUse ", pointUse);
 
         MoreAttributes.PointDiscount = pointUse && pointUse > 0 ? pointUse : 0;
         MoreAttributes.PointDiscountValue = 0;

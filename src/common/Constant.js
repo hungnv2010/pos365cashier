@@ -16,6 +16,7 @@ export const Constant = {
     HISTORY_ORDER: "HISTORY_ORDER",
     ID_VNPAY_QR: 978,
     OBJECT_SETTING: 'OBJECT_SETTING',
+    LANGUAGE: "LANGUAGE",
     KEY_PRINTER: {
         CashierKey: 'CashierPrint',
         KitchenAKey: 'KitchenA',

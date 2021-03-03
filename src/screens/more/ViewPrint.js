@@ -109,10 +109,12 @@ export default forwardRef((props, ref) => {
     }
 
     const printDataNewOrders = async (listKitchen, listReturnProduct) => {
+        console.log('printDataNewOrdersRef listKitchen, listReturnProduct' , listKitchen, listReturnProduct)
         if (listKitchen != null)
             await printKitchen(listKitchen, TYPE_PRINT.KITCHEN, false)
         if (listReturnProduct != null)
-            await printKitchen(listReturnProduct, TYPE_PRINT.RETURN_PRODUCT)
+            await printKitchen(listReturnProduct, TYPE_PRINT.RETURN_PRODUCT, false)
+            await setDataHtmlPrint();
     }
 
     const printProvisional = async (jsonContent, checkProvisional = false, isPrint = true) => {
@@ -151,6 +153,10 @@ export default forwardRef((props, ref) => {
 
     const printKitchen = async (data, type = TYPE_PRINT.KITCHEN, isPrint = true) => {
         console.log("printKitchen data ", data);
+        let setting = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
+        if (setting && setting != "") {
+            setting = JSON.parse(setting);
+        }
         isProvisional.current = false;
         let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
         if (vendorSession && vendorSession != "")
@@ -176,6 +182,10 @@ export default forwardRef((props, ref) => {
                                 if (res && res != "") {
                                     res = res.replace("</body>", "<p style='display: none;'>" + new Date() + "</p> </body>");
                                     printService.listWaiting.push({ html: res, ip: printObject[value].ip, size: printObject[value].size })
+                                    if (setting && setting.in_hai_lien_cho_che_bien == true) {
+                                        res = res.replace("</body>", "<p style='display: none;'>" + new Date() + "in_hai_lien_cho_che_bien</p> </body>");
+                                        printService.listWaiting.push({ html: res, ip: printObject[value].ip, size: printObject[value].size })
+                                    }
                                 }
                             }
                         }

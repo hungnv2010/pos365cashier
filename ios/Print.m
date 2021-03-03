@@ -55,6 +55,7 @@ RCT_EXPORT_METHOD(registerPrint:(NSString *)param) {
 
 RCT_EXPORT_METHOD(printImageFromClient:(NSString *)param ip:(NSString *)ip size:(NSString *)size callback:(RCTResponseSenderBlock)callback) {
   NSLog(@"printImageFromClient param %@ ip %@", param, ip);
+  [_printerManager.CurrentPrinter Close];
   PrintImageClient = YES;
   isConnectAndPrint = YES;
   isHtml = NO;
@@ -125,73 +126,141 @@ RCT_EXPORT_METHOD(keepTheScreenOff:(NSString *)param) {
 }
 
 - (void) printClient {
+//  images = [@[] mutableCopy];
+//
+//  float i_width = 1000;
+////  float oldWidth = imagePrintClient.size.width;
+////  float oldHeight = imagePrintClient.size.height;
+////
+////  float scaleFactor = i_width / oldWidth;
+////  float newHeight = oldHeight * scaleFactor;
+////  float newWidth = oldWidth * scaleFactor;
+////  UIGraphicsBeginImageContext(CGSizeMake(newWidth, newHeight));
+////  [imagePrintClient drawInRect:CGRectMake(0, 0, newWidth, newHeight)];
+////  UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
+////  imagePrintClient = newImage;
+////  NSLog(@"printImageFromClient URL 1");
+//  CGImageRef tmpImgRef = imagePrintClient.CGImage;
+//  int numberArrayImage = 1;
+////  if(newHeight > newWidth){
+////    if(fmod(newHeight,newWidth) > 0){
+////      numberArrayImage = newHeight / (newWidth) + 1;
+////    }else{
+////      numberArrayImage = newHeight / (newWidth);
+////    }
+////  }
+//  UIImage *newImage =imagePrintClient;
+//  numberArrayImage = 3;
+//  NSLog(@"printImageFromClient URL 2");
+//  for (int i=0; i<numberArrayImage; i++) {
+//    CGImageRef topImgRef = CGImageCreateWithImageInRect(tmpImgRef, CGRectMake(0, i * newImage.size.height / numberArrayImage, newImage.size.width, newImage.size.height / numberArrayImage));
+//    UIImage *img = [UIImage imageWithCGImage:topImgRef];
+//    [images addObject:img];
+//    CGImageRelease(topImgRef);
+//  }
+//  NSLog(@"printImageFromClient URL 3");
+//  //  for (int i=0, count = [images count]; i < count; i++) {
+//
+//  Cmd *cmd = [_printerManager CreateCmdClass:_printerManager.CurrentPrinterCmdType];
+//  [cmd Clear];
+//  cmd.encodingType =Encoding_UTF8;
+//  NSData *headercmd = [_printerManager GetHeaderCmd:cmd cmdtype:_printerManager.CurrentPrinterCmdType];
+//  [cmd Append:headercmd];
+//  Printer *currentprinter = _printerManager.CurrentPrinter;
+//  BitmapSetting *bitmapSetting  = currentprinter.BitmapSetts;
+//  //                                       bitmapSetting.Alignmode = Align_Right;
+//  bitmapSetting.Alignmode = Align_Center;
+//  int Size = SizeInput > 0 ? SizeInput : 72;
+//  bitmapSetting.limitWidth = Size*8;//ESC
+//  NSData *data;
+//  NSLog(@"printImageFromClient URL 4");
+//  for (int i=0, count = [images count]; i < count; i++) {
+//    data = [cmd GetBitMapCmd:bitmapSetting image:[images objectAtIndex:i]];
+//    [cmd Append:data];
+//    NSLog(@"printImageFromClient URL 5");
+//    [cmd Append:[cmd GetLFCmd]];
+//
+////    if(i==count-1){
+////      [cmd Append:[cmd GetAskPrintOkCmd]];
+////      [cmd Append:[cmd GetCutPaperCmd:CutterMode_half]];//for ESC
+////      [cmd Append:[cmd GetPrintEndCmd]];
+////      [cmd Append:[cmd GetBeepCmd:1 interval:10]];
+////      [cmd Append:[cmd GetPrintEndCmd]];
+////    }
+//    data = nil;
+//  }
+//
+////  [cmd Append:[cmd GetAskPrintOkCmd]];
+//  [cmd Append:[cmd GetCutPaperCmd:CutterMode_half]];//for ESC
+//  [cmd Append:[cmd GetPrintEndCmd]];
+//  [cmd Append:[cmd GetBeepCmd:1 interval:10]];
+//  [cmd Append:[cmd GetPrintEndCmd]];
+//
+////   [cmd Append:[cmd GetLFCRCmd]];
+////  [cmd Append:[cmd GetPrintEndCmd:1]];
+////  [cmd Append:[cmd GetFeedAndCutPaperCmd:true FeedDistance:10]];
+////  [cmd Append:[cmd GetCutPaperCmd:CutterMode_half]];//for ESC
+////  [cmd Append:[cmd GetBeepCmd:1 interval:10]];
+//  if ([_printerManager.CurrentPrinter IsOpen]){
+//    NSData *data=[cmd GetCmd];
+//    [currentprinter Write:data];
+//    NSLog(@"printImageFromClient URL 7");
+//  }
+//  data = nil;
+//  cmd=nil;
+//  //  }
+//  [_printerManager.CurrentPrinter Close];
+ 
   images = [@[] mutableCopy];
-  
-  float i_width = 1000;
-  float oldWidth = imagePrintClient.size.width;
-  float oldHeight = imagePrintClient.size.height;
-  
-  float scaleFactor = i_width / oldWidth;
-  float newHeight = oldHeight * scaleFactor;
-  float newWidth = oldWidth * scaleFactor;
-  UIGraphicsBeginImageContext(CGSizeMake(newWidth, newHeight));
-  [imagePrintClient drawInRect:CGRectMake(0, 0, newWidth, newHeight)];
-  UIImage *newImage = UIGraphicsGetImageFromCurrentImageContext();
-  imagePrintClient = newImage;
-  NSLog(@"printImageFromClient URL 1");
-  CGImageRef tmpImgRef = newImage.CGImage;
-  int numberArrayImage = 1;
-  if(newHeight > newWidth){
-    if(fmod(newHeight,newWidth) > 0){
-      numberArrayImage = newHeight / newWidth + 1;
-    }else{
-      numberArrayImage = newHeight / newWidth;
-    }
-  }
+  CGImageRef tmpImgRef = imagePrintClient.CGImage;
+  int numberArrayImage = 3;
   NSLog(@"printImageFromClient URL 2");
   for (int i=0; i<numberArrayImage; i++) {
-    CGImageRef topImgRef = CGImageCreateWithImageInRect(tmpImgRef, CGRectMake(0, i * newImage.size.height / numberArrayImage, newImage.size.width, newImage.size.height / numberArrayImage));
+    CGImageRef topImgRef = CGImageCreateWithImageInRect(tmpImgRef, CGRectMake(0, i * imagePrintClient.size.height / numberArrayImage, imagePrintClient.size.width, imagePrintClient.size.height / numberArrayImage));
     UIImage *img = [UIImage imageWithCGImage:topImgRef];
     [images addObject:img];
     CGImageRelease(topImgRef);
   }
-  NSLog(@"printImageFromClient URL 3");
-  //  for (int i=0, count = [images count]; i < count; i++) {
-  
+  NSLog(@"printImageFromClient URL 4");
+  NSData *data;
   Cmd *cmd = [_printerManager CreateCmdClass:_printerManager.CurrentPrinterCmdType];
   [cmd Clear];
-  cmd.encodingType =Encoding_UTF8;
-  NSData *headercmd = [_printerManager GetHeaderCmd:cmd cmdtype:_printerManager.CurrentPrinterCmdType];
-  [cmd Append:headercmd];
+  int ilimitwidth = SizeInput > 0 ? SizeInput : 72;;
   Printer *currentprinter = _printerManager.CurrentPrinter;
   BitmapSetting *bitmapSetting  = currentprinter.BitmapSetts;
-  //                                       bitmapSetting.Alignmode = Align_Right;
   bitmapSetting.Alignmode = Align_Center;
-  int Size = SizeInput > 0 ? SizeInput : 72;
-  bitmapSetting.limitWidth = Size*8;//ESC
-  NSData *data;
-  NSLog(@"printImageFromClient URL 4");
+  bitmapSetting.limitWidth = ilimitwidth*8;//ESC
+
   for (int i=0, count = [images count]; i < count; i++) {
     data = [cmd GetBitMapCmd:bitmapSetting image:[images objectAtIndex:i]];
     [cmd Append:data];
     NSLog(@"printImageFromClient URL 5");
     [cmd Append:[cmd GetLFCmd]];
+
+  
+    data = nil;
   }
-  // [cmd Append:[cmd GetLFCRCmd]];
-  //[cmd Append:[cmd GetCutPaperCmd:CutterMode_half]];
-//  [cmd Append:[cmd GetFeedAndCutPaperCmd:true FeedDistance:10]];
-  [cmd Append:[cmd GetCutPaperCmd:CutterMode_half]];//for ESC
-  [cmd Append:[cmd GetBeepCmd:1 interval:10]];
-  //    [cmd Append:[cmd GetOpenDrawerCmd:0 startTime:5 endTime:0]];
+//  if(i==count-1){
+    [cmd Append:[cmd GetAskPrintOkCmd]];
+    [cmd Append:[cmd GetCutPaperCmd:CutterMode_half]];//for ESC
+    [cmd Append:[cmd GetPrintEndCmd]];
+    [cmd Append:[cmd GetBeepCmd:1 interval:10]];
+    [cmd Append:[cmd GetPrintEndCmd]];
+//  }
   if ([_printerManager.CurrentPrinter IsOpen]){
-    NSData *data=[cmd GetCmd];
-    [currentprinter Write:data];
-    NSLog(@"printImageFromClient URL 7");
+    NSData *dataPrint=[cmd GetCmd];
+    [currentprinter Write:dataPrint];
+    NSLog(@"printImageFromClient URL 7 %@", dataPrint);
   }
-  data = nil;
   cmd=nil;
-  //  }
-  [_printerManager.CurrentPrinter Close];
+//  [_printerManager.CurrentPrinter Close];
+
+  double delayInSeconds = 3;
+  dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+  dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+    [_printerManager.CurrentPrinter Close];
+  });
+
 }
 
 #pragma handleNotification
