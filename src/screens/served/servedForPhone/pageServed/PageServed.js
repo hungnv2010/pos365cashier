@@ -581,7 +581,7 @@ export default (props) => {
                 clickProductService={onClickProductService}
                 clickRightIcon={onClickSelectProduct} />
             <View style={{ flex: 1 }}>
-                <View style={{ flexDirection: "row", justifyContent: "space-between", paddingHorizontal: 10, paddingVertical: 5, borderTopWidth: 0.5, borderTopColor: 'gray' }}>
+                <View style={{ flexDirection: "row", justifyContent: "space-between", paddingHorizontal: 10, paddingVertical: 5, }}>
                     <Surface style={{  marginRight: 5,elevation: 4, flex: 1 ,borderRadius:5}}>
                         <TouchableOpacity
                             style={{ flexDirection: 'column', alignItems: "center", backgroundColor: 'white',paddingTop: 5, borderRadius:5 }}
