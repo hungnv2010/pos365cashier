@@ -489,6 +489,7 @@ export default {
 
   voucher: "Mã quà tặng",
   vui_long_nhap_dung_so_tien_khach_tra: "Vui lòng nhập đúng số tiền khách trả.",
+  vi_tri:'Vị trí',
 
   xin_cam_on_va_hen_gap_lai: "Xin cám ơn, hẹn gặp lại quý khách!"
 
