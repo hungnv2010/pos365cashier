@@ -9,6 +9,7 @@ import IonIcon from 'react-native-vector-icons/Ionicons'
 import PropTypes from 'prop-types';
 import { Constant } from '../../common/Constant';
 import { useSelector } from 'react-redux';
+import colors from '../../theme/Colors';
 
 
 export default function CustomerToolBar(props) {
@@ -47,7 +48,7 @@ export default function CustomerToolBar(props) {
                             props.navigation.goBack();
                         }} style={[{padding: 15}, deviceType == Constant.TABLET ? { alignSelf: "flex-start" } : { alignItems: "center" }]}>
 
-                            <Image source={Images.icon_back} style={{ width: 10, height: 16 ,}} />
+                            <Image source={Images.icon_back} style={{ width: 48, height: 48 ,}} />
                         </TouchableOpacity>
                         :
                         <TouchableOpacity onPress={() => {
@@ -75,7 +76,7 @@ export default function CustomerToolBar(props) {
                                 <Subheading
                                     numberOfLines={1}
                                     style={{
-                                        color: 'white', fontWeight: "bold"
+                                         fontWeight: "bold"
                                     }}
                                 >
                                     {props.title}
@@ -92,7 +93,7 @@ export default function CustomerToolBar(props) {
                         if (value != '') onChangeText('')
                         else setIsSearch(!isSearch)
                     }} style={{ marginHorizontal: 15, }}>
-                        <IonIcon name={!isSearch ? "md-search" : "md-close"} size={30} color="white" />
+                        <IonIcon name={!isSearch ? "md-search" : "md-close"} size={30} color={colors.colorLightBlue} />
                     </TouchableOpacity>
 
                 </View>
@@ -114,8 +115,9 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.24,
         shadowRadius: 0.3,
-        backgroundColor: Colors.colorchinh,
-        height: 44
+        backgroundColor: 'white',
+        height: 44,borderBottomColor:'gray',
+        borderBottomWidth:0.5
     },
 })
 

@@ -306,7 +306,7 @@ export default (props) => {
     const [showModalSize, setStateMoalSize] = useState(false)
     const onShowModalSize = () => {
         console.log(defaultType)
-        if (defaultType == 'khong_in') {
+        if (defaultType == 'khong_in' || defaultType == '') {
             setShowModal(false)
             setModalStampPrint(false)
             setStateMoalSize(false)

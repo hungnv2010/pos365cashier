@@ -9,6 +9,7 @@ import { IconButton, Subheading } from "react-native-paper";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import PropTypes from 'prop-types';
+import colors from '../../theme/Colors';
 
 export default function ToolBarDefault(props) {
 
@@ -39,7 +40,7 @@ export default function ToolBarDefault(props) {
                 <View style={{ flex: 1, alignItems: "center" }}>
                     {props.clickLeftIcon && props.leftIcon ?
                         <TouchableOpacity onPress={props.clickLeftIcon} style={{paddingLeft:19,paddingRight:19,paddingTop:16,paddingBottom:16}}>
-                        <Image source={Images.icon_back} style={{width:10,height:16,}}/>
+                        <Image source={Images.icon_back} style={{width:48,height:48,}}/>
                     </TouchableOpacity>
                         :
                         null
@@ -62,7 +63,7 @@ export default function ToolBarDefault(props) {
                                 <Subheading
                                     numberOfLines={1}
                                     style={{
-                                        color: 'white', fontWeight: "bold"
+                                     fontWeight: "bold"
                                     }}
                                 >
                                     {props.title}
@@ -77,7 +78,7 @@ export default function ToolBarDefault(props) {
                         if (value != '') onChangeText('')
                         else setIsSearch(!isSearch)
                     }}>
-                        <Ionicons name={!isSearch ? "md-search" : "md-close"} size={30} color="white" style={{}} />
+                        <Ionicons name={!isSearch ? "md-search" : "md-close"} size={30} color={colors.colorLightBlue} style={{}} />
                     </TouchableOpacity>
                 </View>
 
@@ -92,7 +93,7 @@ export default function ToolBarDefault(props) {
                         }
                     }
                     }>
-                        <Icon name="check" size={30} color="white" style={{}} />
+                        <Icon name="check" size={30} color={colors.colorLightBlue} style={{}} />
                     </TouchableOpacity>
                 </View>
             </View>
@@ -105,7 +106,7 @@ const styles = StyleSheet.create({
 
     toolbarContainer: {
         height: 45,
-        backgroundColor: Colors.colorchinh
+        backgroundColor: 'white'
     },
 })
 

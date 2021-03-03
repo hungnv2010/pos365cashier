@@ -84,7 +84,7 @@ const images = {
     icon_cashier: require("../../assets/icons/icon_cashier.png"),
     icon_overview: require("../../assets/icons/icon_overview.png"),
     icon_room_table: require("../../assets/icons/icon_room_table.png"),
-    icon_back:require("../../assets/icons/right_arrow.png"),
+    icon_back:require("../../assets/icons/icon_home1.png"),
     icon_search:require("../../assets/icons/icon_search.png"),
     icon_remove:require("../../assets/icons/icon_remove.png"),
     icon_refresh:require("../../assets/icons/icon_refresh.png"),

@@ -12,12 +12,12 @@ export default (props)=>{
     const value = useRef({})
     const onClickApply = ()=>{
         console.log("abc",value.current);
-        //props.outputValue(value.current)
+        props.outputValue(value.current)
     }
     const renderItem = (item,index) =>{
         return(
             <View style={{borderColor: nameItem==item.Name?'#1E90FF':'white',borderWidth:1,marginLeft:20,marginRight:20,borderRadius:15,padding:15,backgroundColor:'#f2f2f2'}}>
-                <TouchableOpacity onPress={()=>{setNameItem(item.Name); value.current={key:item.Name}}}>
+                <TouchableOpacity onPress={()=>{setNameItem(item.Name); value.current={key:item}}}>
                 <Text style={{padding:5,textAlign:'center', color:nameItem==item.Name?'#1E90FF':null,fontWeight:nameItem==item.Name?'bold':null}}>{item.Name}</Text>
                 </TouchableOpacity>
             </View>

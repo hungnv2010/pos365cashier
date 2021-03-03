@@ -444,7 +444,7 @@ export default (props) => {
                         </View>
                     </View>
                     {expand ?
-                        <View style={{ marginLeft: 0 }}>
+                        <View style={{ marginLeft: 10 }}>
                             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                                 <Text>{I18n.t('tong_chiet_khau')}</Text>
                                 <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>- {currencyToString(jsonContent.Discount)}đ</Text>
@@ -492,7 +492,7 @@ export default (props) => {
                         </View>
                     </Menu>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={printKitchen} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
+                <TouchableOpacity onPress={printKitchen} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%"}}>
                     <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('bao_che_bien')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={sendOrder} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
@@ -599,7 +599,7 @@ const styles = StyleSheet.create({
         flexDirection: "row", alignItems: "center", justifyContent: "space-around"
     },
     footerMenu: {
-        height: 40, flexDirection: "row", backgroundColor: "#0072bc", alignItems: "center"
+        height: 40, flexDirection: "row", backgroundColor: colors.colorchinh, alignItems: "center"
     },
     headerModal: {
         backgroundColor: Colors.colorchinh, borderTopRightRadius: 4, borderTopLeftRadius: 4,

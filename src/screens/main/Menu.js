@@ -90,11 +90,11 @@ const LIST_FUNCITION = [
     //     title: "them"
     // },
    
-    // {
-    //     func: KEY_FUNC.PRODUCT,
-    //     icon: Images.icon_product,
-    //     title: "hang_hoa"
-    // },
+    {
+        func: KEY_FUNC.PRODUCT,
+        icon: Images.icon_product,
+        title: "hang_hoa"
+    },
     // {
     //     func: KEY_FUNC.CASH_FLOW,
     //     icon: Images.icon_income,
