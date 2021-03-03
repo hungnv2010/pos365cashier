@@ -77,6 +77,7 @@ class DataManager {
     }
 
     updateFromOrder = async (listRoom) => {
+        if (listRoom.length == 0) return
         for (const item of listRoom) {
             let serverEvent = await realmStore.queryServerEvents()
             let serverEventByRowKey = serverEvent.filtered(`RowKey == '${item.rowKey}'`)
@@ -250,18 +251,27 @@ class DataManager {
 
     //calculator and send ServerEvent
     updateServerEvent = (serverEvent, jsonContent) => {
-        if (typeof jsonContent === "string")
-            serverEvent.JsonContent = jsonContent
-        else {
-            let cloneJsoncontent = jsonContent
+        let cloneJsoncontent = null
+        if (typeof jsonContent === "string") {
+            cloneJsoncontent = JSON.parse(jsonContent)
             cloneJsoncontent.OrderDetails.forEach(product => {
-                product.ProductImages = []
+                delete product.ProductImages
                 if (isNaN(product.Quantity)) {
                     product.Quantity = 0;
                 }
             });
-            serverEvent.JsonContent = JSON.stringify(cloneJsoncontent)
         }
+        // serverEvent.JsonContent = jsonContent
+        else {
+            cloneJsoncontent = jsonContent
+            cloneJsoncontent.OrderDetails.forEach(product => {
+                delete product.ProductImages
+                if (isNaN(product.Quantity)) {
+                    product.Quantity = 0;
+                }
+            });
+        }
+        serverEvent.JsonContent = JSON.stringify(cloneJsoncontent)
         delete serverEvent.Timestamp
         this.subjectUpdateServerEvent.next(serverEvent)
     }
@@ -270,7 +280,8 @@ class DataManager {
         if (typeof serverEvent.JsonContent === "object") {
             let cloneJsoncontent = serverEvent.JsonContent
             cloneJsoncontent.OrderDetails.forEach(product => {
-                product.ProductImages = []
+                // product.ProductImages = []
+                delete product.ProductImages
                 if (isNaN(product.Quantity)) {
                     product.Quantity = 0;
                 }
