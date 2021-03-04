@@ -913,11 +913,11 @@ const StoreInformation = (props) => {
             <ItemStoreInfor title={I18n.t('dia_chi')} titleHint={props.address} output={getdata}></ItemStoreInfor>
             <ItemStoreInfor title={I18n.t('so_dien_thoai')} titleHint={props.phoneNumber} output={getdata}></ItemStoreInfor>
             <Footer title={I18n.t('chan_trang')} titleHint={I18n.t('xin_cam_on_va_hen_gap_lai')}></Footer>
-            <Footer title='Banner Ads1' titleHint='https://www.pos365.vn/wp-content'></Footer>
+            {/* <Footer title='Banner Ads1' titleHint='https://www.pos365.vn/wp-content'></Footer>
             <Footer title='Banner Ads2' titleHint='https://www.pos365.vn/wp-content'></Footer>
             <Footer title='Slideshow1' titleHint='https://www.pos365.vn/wp-content'></Footer>
             <Footer title='Slideshow2' titleHint='https://www.pos365.vn/wp-content'></Footer>
-            <Footer title='Slideshow3' titleHint='https://www.pos365.vn/wp-content'></Footer>
+            <Footer title='Slideshow3' titleHint='https://www.pos365.vn/wp-content'></Footer> */}
         </ScrollView>
     )
 }
