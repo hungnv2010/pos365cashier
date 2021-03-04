@@ -325,7 +325,10 @@ export default (props) => {
                                 null}
                         </View>
                         <View style={{ alignItems: "flex-end" }}>
-                            <Icon style={{ paddingHorizontal: 5 }} name="bell-ring" size={20} color={item.Quantity <= item.Processed ? Colors.colorLightBlue : "gray"} />
+                            {(item.ProductType == 2 && item.IsTimer) ?
+                                null :
+                                <Icon style={{ paddingHorizontal: 5 }} name="bell-ring" size={20} color={item.Quantity <= item.Processed ? Colors.colorLightBlue : "gray"} />
+                            }
                             <Text
                                 style={{ color: colors.colorchinh, marginRight: 5 }}>
                                 {currencyToString(item.Price * item.Quantity)}

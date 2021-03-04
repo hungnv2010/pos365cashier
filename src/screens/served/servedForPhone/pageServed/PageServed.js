@@ -70,7 +70,7 @@ export default (props) => {
                 : await dataManager.createSeverEvent(props.route.params.room.Id, position)
             console.log('currentServerEvent.current', currentServerEvent.current, await dataManager.createSeverEvent(props.route.params.room.Id, position));
             let jsonContentObject = JSON.parse(currentServerEvent.current.JsonContent)
-
+            jsonContentObject.OrderDetails = await addPromotion(jsonContentObject.OrderDetails);
             setJsonContent(jsonContentObject)
 
             serverEvent.addListener(listener)
@@ -214,10 +214,8 @@ export default (props) => {
             setPromotions(promotion)
         }
         let listProduct = await realmStore.queryProducts()
-        // console.log("addPromotion listProduct:::: ", listProduct);
         let listNewOrder = list.filter(element => (element.IsPromotion == undefined || (element.IsPromotion == false)))
         let listOldPromotion = list.filter(element => (element.IsPromotion != undefined && (element.IsPromotion == true)))
-        // console.log("listNewOrder listOldPromotion ==:: ", listNewOrder, listOldPromotion);
         var DataGrouper = (function () {
             var has = function (obj, target) {
                 return _.any(obj, function (value) {
@@ -581,7 +579,7 @@ export default (props) => {
                 clickProductService={onClickProductService}
                 clickRightIcon={onClickSelectProduct} />
             <View style={{ flex: 1 }}>
-                <View style={{ flexDirection: "row", justifyContent: "space-between", paddingHorizontal: 10, paddingVertical: 5, }}>
+                <View style={{ flexDirection: "row", justifyContent: "space-between", paddingHorizontal: 10, paddingVertical: 5 }}>
                     <Surface style={{  marginRight: 5,elevation: 4, flex: 1 ,borderRadius:5}}>
                         <TouchableOpacity
                             style={{ flexDirection: 'column', alignItems: "center", backgroundColor: 'white',paddingTop: 5, borderRadius:5 }}
