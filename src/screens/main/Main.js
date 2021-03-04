@@ -222,7 +222,7 @@ export default (props) => {
             <>
               <MainToolBar
                 navigation={props.navigation}
-                title={I18n.t('thu_ngan')}
+                title={I18n.t('man_hinh_thu_ngan')}
                 rightIcon="md-search"
                 outPutTextSearch={onClickSearch}
               />

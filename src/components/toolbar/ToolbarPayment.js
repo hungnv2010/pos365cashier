@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
 
     toolbarContainer: {
         flexDirection: "row",
-        height: 40,
+        height: 44,
         backgroundColor: 'white',
         borderBottomColor:'gray',
         borderBottomWidth:0.5

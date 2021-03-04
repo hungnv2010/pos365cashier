@@ -41,7 +41,7 @@ export default function MainToolBar(props) {
                         style={{ width: 172, height: 40, resizeMode: 'contain' }} /> */}
                     <Image source={Images.icon_menu} style={{ width: 48, height: 48 }} />
                 </TouchableOpacity>
-                <View style={{ flex: 3, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
+                <View style={{ flex: 7, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
                     <Subheading
                         numberOfLines={1}
                         style={{
@@ -92,7 +92,7 @@ export default function MainToolBar(props) {
 const styles = StyleSheet.create({
 
     toolbarContainer: {
-        height: 44,
+        height: 50,
         // flex: 1,
         shadowColor: Colors.black,
         shadowOffset: {

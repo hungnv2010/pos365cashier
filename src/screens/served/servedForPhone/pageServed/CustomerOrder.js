@@ -7,7 +7,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import TextTicker from 'react-native-text-ticker';
 import { currencyToString } from '../../../../common/Utils'
 import I18n from "../../../../common/language/i18n"
-import { Snackbar } from 'react-native-paper';
+import { Snackbar, Surface } from 'react-native-paper';
 import colors from '../../../../theme/Colors';
 import { ScreenList } from '../../../../common/ScreenList';
 import DialogProductDetail from '../../../../components/dialog/DialogProductDetail'
@@ -282,6 +282,7 @@ export default (props) => {
                         </View>
                         : null
                 }
+                
                 <TouchableOpacity key={index} onPress={() => {
                     if (isPromotion) return;
                     if (item.ProductType == 2 && item.IsTimer) {
@@ -294,7 +295,7 @@ export default (props) => {
                     typeModal.current = TYPE_MODAL.DETAIL
                     setShowModal(!showModal)
                 }}>
-                    <View style={styles.mainItem}>
+                    <Surface style={[styles.mainItem,{elevation:4}]}>
                         <TouchableOpacity
                             style={{ paddingVertical: 10, paddingHorizontal: 5 }}
                             onPress={() => { if (!isPromotion) onClickReturn(item) }}>
@@ -324,7 +325,10 @@ export default (props) => {
                                 null}
                         </View>
                         <View style={{ alignItems: "flex-end" }}>
-                            <Icon style={{ paddingHorizontal: 5 }} name="bell-ring" size={20} color={item.Quantity <= item.Processed ? Colors.colorLightBlue : "gray"} />
+                            {(item.ProductType == 2 && item.IsTimer) ?
+                                null :
+                                <Icon style={{ paddingHorizontal: 5 }} name="bell-ring" size={20} color={item.Quantity <= item.Processed ? Colors.colorLightBlue : "gray"} />
+                            }
                             <Text
                                 style={{ color: colors.colorchinh, marginRight: 5 }}>
                                 {currencyToString(item.Price * item.Quantity)}
@@ -341,8 +345,9 @@ export default (props) => {
                             </TouchableOpacity>
                             : null
                     } */}
-                    </View>
+                    </Surface>
                 </TouchableOpacity>
+                
             </>
         )
     }
@@ -436,7 +441,7 @@ export default (props) => {
                 <TouchableOpacity
                     onPress={() => { setExpand(!expand) }}
                     style={{ borderTopWidth: .5, borderTopColor: "red", paddingVertical: 3, backgroundColor: "white", marginLeft: 0 }}>
-                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginLeft: 10}}>
+                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginLeft: 10 }}>
                         <Text style={{ fontWeight: "bold" }}>{I18n.t('tong_thanh_tien')}</Text>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
                             <Text style={{ fontWeight: "bold", fontSize: 16, color: colors.colorchinh }}>{currencyToString(jsonContent.Total - (jsonContent.VAT ? jsonContent.VAT : 0) + jsonContent.Discount)} đ</Text>
@@ -496,7 +501,7 @@ export default (props) => {
                         </View>
                     </Menu>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={printKitchen} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%"}}>
+                <TouchableOpacity onPress={printKitchen} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
                     <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('bao_che_bien')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={sendOrder} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
@@ -582,13 +587,12 @@ export default (props) => {
 
 const styles = StyleSheet.create({
     mainItem: {
-        borderBottomColor: "#ddd", borderBottomWidth: 0.5,
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-evenly",
-        paddingVertical: 5,
-        borderBottomColor: "#ABB2B9",
-        borderBottomWidth: 0.5,
+        marginVertical: 3,
+        backgroundColor: 'white',
+        borderRadius: 10,marginHorizontal:6,padding:5
     },
     wrapTamTinh: {
         borderTopWidth: .5, borderTopColor: "red", paddingVertical: 3, backgroundColor: "white"

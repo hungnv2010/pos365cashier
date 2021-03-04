@@ -952,6 +952,7 @@ export default {
 
   voucher: "Voucher",
   vui_long_nhap_dung_so_tien_khach_tra: "Please enter the correct amount of payment.",
+  vi_tri:'Position',
 
   xin_cam_on_va_hen_gap_lai: "Thank you, see you again!"
 
