@@ -204,8 +204,8 @@ export default (props) => {
                 </View>
                 {deviceType == Constant.TABLET ?
                     <View style={{ flex: 1, borderLeftWidth: 0.5, borderLeftColor: "#ccc" }}>
-                        <View style={{height: 45,backgroundColor: colors.colorchinh, justifyContent: "center", alignItems: "center"}}>
-                            <Text style={{color: "#fff", textTransform: "uppercase"}}>{titleAddEdit}</Text>
+                        <View style={{height: 45,backgroundColor: '#fff', justifyContent: "center", alignItems: "center"}}>
+                            <Text style={{color: colors.colorchinh , textTransform: "uppercase"}}>{titleAddEdit}</Text>
                         </View>
                         <RoomDetail params={dataParams} _onSelect={(data) => onCallBack(data)} />
                     </View>

@@ -33,6 +33,7 @@
   bool hasListeners;
   NSMutableArray *imageArray;
   bool PrintImageClient;
+  bool PrintClose;
   NSMutableArray *images;
   
   bool isHtml;
@@ -55,10 +56,13 @@ RCT_EXPORT_METHOD(registerPrint:(NSString *)param) {
 
 RCT_EXPORT_METHOD(printImageFromClient:(NSString *)param ip:(NSString *)ip size:(NSString *)size callback:(RCTResponseSenderBlock)callback) {
   NSLog(@"printImageFromClient param %@ ip %@", param, ip);
+  PrintClose = YES;
   [_printerManager.CurrentPrinter Close];
   PrintImageClient = YES;
   isConnectAndPrint = YES;
   isHtml = NO;
+  PrintClose = NO;
+  IP = ip;
   if(![size isEqualToString:@""]){
     SizeInput = [size integerValue];
     if(SizeInput > 72) {
@@ -248,6 +252,7 @@ RCT_EXPORT_METHOD(keepTheScreenOff:(NSString *)param) {
     [cmd Append:[cmd GetPrintEndCmd]];
 //  }
   if ([_printerManager.CurrentPrinter IsOpen]){
+    PrintClose = YES;
     NSData *dataPrint=[cmd GetCmd];
     [currentprinter Write:dataPrint];
     NSLog(@"printImageFromClient URL 7 %@", dataPrint);
@@ -279,7 +284,9 @@ RCT_EXPORT_METHOD(keepTheScreenOff:(NSString *)param) {
       }
     }else if([notification.name isEqualToString:(NSString *)PrinterDisconnectedNotification])
     {
-      [self SendSwicthScreen: @"Error"];
+      if (!self->PrintClose) {
+        [self SendSwicthScreen: @"Error"];
+      }
     } else if (([notification.name isEqualToString:(NSString *)BleDeviceDataChanged]))
     {
       NSLog(@"notification BleDeviceDataChanged");

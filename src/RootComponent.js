@@ -107,13 +107,13 @@ export default () => {
         const printListenner = () => {
             const event = eventSwicthScreen.addListener('sendSwicthScreen', (text) => {
                 console.log("eventSwicthScreen ", text);
-                if (text.indexOf("Ok") > -1) {
-                    check = true;
-                    setTimeout(() => {
-                        check = false;
-                    }, 2000);
-                };
-                if ((text.indexOf("Error") > -1) && check == false) {
+                // if (text.indexOf("Ok") > -1) {
+                //     check = true;
+                //     setTimeout(() => {
+                //         check = false;
+                //     }, 4000);
+                // };
+                if ((text.indexOf("Error") > -1)) {
                     setToastDescription(I18n.t('kiem_tra_ket_noi_may_in') + " " + (text.split("::")[0].indexOf('null') ? "" : text.split("::")[0]))
                     setShowToast(true)
                 }
