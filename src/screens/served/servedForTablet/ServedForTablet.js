@@ -596,22 +596,22 @@ const Served = (props) => {
                     </View>
                 </View>
             </View>
-            <View style={{ flex: 2,borderLeftWidth:0.5,borderLeftColor:'gray' }}>
+            <View style={{ flex: 2, borderLeftWidth: 0.5, borderLeftColor: 'gray' }}>
                 <View style={{ backgroundColor: 'white', alignItems: "center", flexDirection: "row", justifyContent: "space-between", borderBottomColor: "gray", borderBottomWidth: 0.5, height: 44 }}>
                     <View style={{ flex: 1, justifyContent: "center", }}>
-                        <Text style={{ paddingLeft: 20, textTransform: "uppercase",fontSize:16,fontWeight:'bold' }}>{props.route && props.route.params && props.route.params.room && props.route.params.room.Name ? props.route.params.room.Name : ""}</Text>
+                        <Text style={{ paddingLeft: 20, textTransform: "uppercase", fontSize: 16, fontWeight: 'bold' }}>{props.route && props.route.params && props.route.params.room && props.route.params.room.Name ? props.route.params.room.Name : ""}</Text>
                     </View>
                     <TouchableOpacity onPress={showMenu} style={{ flex: 1, paddingHorizontal: 20, flexDirection: "row", justifyContent: "flex-end", alignItems: "center" }}>
                         <Menu
                             style={{ width: 50 }}
                             ref={setMenuRef}
-                            button={<Text style={{ fontSize:16,fontWeight:'bold' }} onPress={showMenu}>{I18n.t('vi_tri')} {position}</Text>}
+                            button={<Text style={{ fontSize: 16, fontWeight: 'bold' }} onPress={showMenu}>{I18n.t('vi_tri')} {position}</Text>}
                         >
                             {
                                 listPosition.map(item => <MenuItem key={item.name} onPress={() => hideMenu(item.name)}>{item.name} {item.status ? <Text style={{ color: Colors.colorchinh }}>*</Text> : null}</MenuItem>)
                             }
                         </Menu>
-                        <Icon style={{}} name="chevron-down" size={20}  />
+                        <Icon style={{}} name="chevron-down" size={20} />
                     </TouchableOpacity>
                 </View>
                 <View style={{ backgroundColor: "white", flexDirection: "row", justifyContent: "space-between", marginTop: 2, borderBottomColor: Colors.colorchinh, borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5 }}>
@@ -638,6 +638,7 @@ const Served = (props) => {
                     outputSelectedProduct={outputSelectedProduct}
                     listTopping={listTopping}
                     Position={position}
+                    updateServerEvent={updateServerEvent}
                     handlerProcessedProduct={(jsonContent) => handlerProcessedProduct(jsonContent)}
                     outPutSetNewOrderDetail={setNewOrderDetails} />
             </View>

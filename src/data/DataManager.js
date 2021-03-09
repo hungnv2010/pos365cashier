@@ -22,11 +22,19 @@ class DataManager {
 
     initComfirmOrder = async () => {
         try {
+
             let intNewOrder = await new HTTPService().setPath(ApiPath.WAIT_FOR_COMFIRMATION, false).GET()
             let changeTableComfirm = await new HTTPService().setPath(ApiPath.CHANGE_TABLE_COMFIRM, false).GET()
-            if (intNewOrder == 0 && changeTableComfirm.length == 0) {
+            if (intNewOrder == 0 && (changeTableComfirm == undefined || changeTableComfirm.length == 0)) {
                 return Promise.resolve(null)
             } else {
+
+                if (changeTableComfirm.length > 0) {
+                    changeTableComfirm.forEach(item => {
+                        const { FromRoomId, FromPos, ToRoomId, ToPos } = item
+                        this.changeTable(FromRoomId, FromPos, ToRoomId, ToPos)
+                    })
+                }
                 if (intNewOrder > 0) {
                     let newOrders = await new HTTPService().setPath(ApiPath.WAIT_FOR_COMFIRMATION_ALL, false).GET()
                     listOrdersReturn = []
@@ -61,13 +69,7 @@ class DataManager {
                     return Promise.resolve({ newOrders: this.getDataPrintCook(listOrders), listOrdersReturn: this.getDataPrintCook(listOrdersReturn), listRoom: listRoom })
                 }
 
-                if (changeTableComfirm.length > 0) {
-                    changeTableComfirm.forEach(item => {
-                        const { FromRoomId, FromPos, ToRoomId, ToPos } = item
-                        this.changeTable(FromRoomId, FromPos, ToRoomId, ToPos)
-                    })
-                    return Promise.resolve(null)
-                }
+                return Promise.resolve(null)
             }
 
         } catch (error) {
