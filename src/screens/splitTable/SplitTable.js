@@ -256,8 +256,8 @@ export default (props) => {
                 clickLeftIcon={() => {
                     props.navigation.goBack()
                 }} />
-            <View style={{ padding: 10, paddingHorizontal: 15, backgroundColor: Colors.colorchinh }}>
-                <Text style={{ color: "#fff" }}>{props.route.params.RoomName}[{props.route.params.Pos}]</Text>
+            <View style={{ padding: 10, paddingHorizontal: 15, backgroundColor: "#fff" }}>
+                <Text style={{ color: Colors.colorchinh }}>{props.route.params.RoomName}[{props.route.params.Pos}]</Text>
             </View>
             <ScrollView >
                 {

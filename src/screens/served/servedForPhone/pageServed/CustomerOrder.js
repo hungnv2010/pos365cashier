@@ -326,7 +326,7 @@ export default (props) => {
                         </View>
                         <View style={{ alignItems: "flex-end" }}>
                             {(item.ProductType == 2 && item.IsTimer) ?
-                                null :
+                                <Icon style={{ paddingHorizontal: 5 }} name="clock" size={20} color={Colors.colorLightBlue} /> :
                                 <Icon style={{ paddingHorizontal: 5 }} name="bell-ring" size={20} color={item.Quantity <= item.Processed ? Colors.colorLightBlue : "gray"} />
                             }
                             <Text

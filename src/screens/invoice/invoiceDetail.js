@@ -185,7 +185,7 @@ const InvoiceDetail = (props) => {
     }
 
     return (
-        <View style={{ flex: 1, backgroundColor: 'white' }}>
+        <View style={{ flex: 1, backgroundColor: 'white', borderTopWidth: 0.5, borderTopColor: 'gray' }}>
             {
                 JSON.stringify(invoiceDetail) != "{}" ?
                     <View style={{ paddingHorizontal: 10, flex: 1 }}>

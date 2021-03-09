@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>POS365.VN</string>
+	<string>POS365</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -51,7 +51,7 @@
 	<key>NSCalendarsUsageDescription</key>
 	<string>$(PRODUCT_NAME) would like to use calendars</string>
 	<key>NSCameraUsageDescription</key>
-	<string>$(PRODUCT_NAME) would like to use your camera</string>
+	<string>$(PRODUCT_NAME) wants to use your camera, use camera to scan item code on order</string>
 	<key>NSContactsUsageDescription</key>
 	<string>$(PRODUCT_NAME) would like to use your contacts</string>
 	<key>NSFaceIDUsageDescription</key>
