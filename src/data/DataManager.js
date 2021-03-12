@@ -27,6 +27,12 @@ class DataManager {
             if (intNewOrder == 0 && changeTableComfirm.length == 0) {
                 return Promise.resolve(null)
             } else {
+                if (changeTableComfirm.length > 0) {
+                    changeTableComfirm.forEach(item => {
+                        const { FromRoomId, FromPos, ToRoomId, ToPos } = item
+                        this.changeTable(FromRoomId, FromPos, ToRoomId, ToPos)
+                    })
+                }
                 if (intNewOrder > 0) {
                     let newOrders = await new HTTPService().setPath(ApiPath.WAIT_FOR_COMFIRMATION_ALL, false).GET()
                     listOrdersReturn = []
@@ -60,14 +66,9 @@ class DataManager {
 
                     return Promise.resolve({ newOrders: this.getDataPrintCook(listOrders), listOrdersReturn: this.getDataPrintCook(listOrdersReturn), listRoom: listRoom })
                 }
+                return Promise.resolve(null)
 
-                if (changeTableComfirm.length > 0) {
-                    changeTableComfirm.forEach(item => {
-                        const { FromRoomId, FromPos, ToRoomId, ToPos } = item
-                        this.changeTable(FromRoomId, FromPos, ToRoomId, ToPos)
-                    })
-                    return Promise.resolve(null)
-                }
+          
             }
 
         } catch (error) {

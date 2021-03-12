@@ -132,26 +132,26 @@ export default (props) => {
     syncDatas()
   }, [isFNB])
 
-  useEffect(() => {
-    if (autoPrintKitchen && isFNB) {
-      const getDataNewOrders = async () => {
-        let result = await dataManager.initComfirmOrder()
-        console.log('getDataNewOrders', JSON.stringify(result));
-        if (result != null) {
-          viewPrintRef.current.printDataNewOrdersRef(result.newOrders != null ? JSON.stringify(result.newOrders) : null, result.listOrdersReturn != null ? JSON.stringify(result.listOrdersReturn) : null)
-          if (result.listRoom && result.listRoom != null)
-            dataManager.updateFromOrder(result.listRoom)
-        }
-      }
-      scanFromOrder = setInterval(() => {
-        getDataNewOrders()
-      }, 15000);
-    }
+  // useEffect(() => {
+  //   if (autoPrintKitchen && isFNB) {
+  //     const getDataNewOrders = async () => {
+  //       let result = await dataManager.initComfirmOrder()
+  //       console.log('getDataNewOrders', JSON.stringify(result));
+  //       if (result != null) {
+  //         viewPrintRef.current.printDataNewOrdersRef(result.newOrders != null ? JSON.stringify(result.newOrders) : null, result.listOrdersReturn != null ? JSON.stringify(result.listOrdersReturn) : null)
+  //         if (result.listRoom && result.listRoom != null)
+  //           dataManager.updateFromOrder(result.listRoom)
+  //       }
+  //     }
+  //     scanFromOrder = setInterval(() => {
+  //       getDataNewOrders()
+  //     }, 15000);
+  //   }
 
-    return () => {
-      if (scanFromOrder) clearInterval(scanFromOrder)
-    }
-  }, [isFNB, autoPrintKitchen])
+  //   return () => {
+  //     if (scanFromOrder) clearInterval(scanFromOrder)
+  //   }
+  // }, [isFNB, autoPrintKitchen])
 
 
   const handleChangeState = (newState) => {
