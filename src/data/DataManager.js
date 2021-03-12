@@ -26,7 +26,7 @@ class DataManager {
 
             let intNewOrder = await new HTTPService().setPath(ApiPath.WAIT_FOR_COMFIRMATION, false).GET()
             let changeTableComfirm = await new HTTPService().setPath(ApiPath.CHANGE_TABLE_COMFIRM, false).GET()
-            if (intNewOrder == 0 && (changeTableComfirm == undefined || changeTableComfirm.length == 0)) {
+            if (intNewOrder == 0 && (!changeTableComfirm || changeTableComfirm.length == 0)) {
                 return Promise.resolve(null)
             } else {
                 if (changeTableComfirm.length > 0) {
@@ -590,25 +590,20 @@ class DataManager {
         let QRcode = await realmStore.queryQRCode()
         QRcode = JSON.parse(JSON.stringify(QRcode))
         QRcode = Object.values(QRcode)
-        console.log('QRCode ===>1', QRcode);
         if (!QRcode || QRcode.length == 0) {
-            return null
+            return Promise.resolve(null)
         } else {
             let param = {}
             param.OrderIds = QRcode.map(item => item.Id)
-            new HTTPService().setPath(ApiPath.MULTI_PAYMENT_STATUS, false).POST(param)
-                .then(res => {
-                    if (res) {
-                        console.log('MULTI_PAYMENT_STATUS', res);
-                        return res
-                    } else {
-                        return null
-                    }
-                })
-                .catch(err => {
-                    console.log('getPaymentStatus errr', err);
-                    return null
-                })
+         
+            try {
+                let result = await new HTTPService().setPath(ApiPath.MULTI_PAYMENT_STATUS, false).POST(param)
+                if(result) return Promise.resolve(result)
+                else return Promise.resolve(null)
+            } catch (err) {
+                console.log('getPaymentStatus errr', err);
+                Promise.resolve(null)
+            }
         }
 
     }

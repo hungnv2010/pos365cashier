@@ -521,10 +521,10 @@ export default (props) => {
                         {/* <TouchableOpacity onPress={() => screenSwitch(ScreenList.PrintWebview)}>
                             <Text style={styles.textTitleItem}>Temp print</Text>
                         </TouchableOpacity> */}
-                        {/* {isFNB ?
+                        {isFNB ?
                             <SettingSwitch title={"tu_dong_in_bao_bep"} output={onSwitchTone} isStatus={settingObject.tu_dong_in_bao_bep} />
                             : null
-                        } */}
+                        }
                         <SettingSwitch title={"in_sau_khi_thanh_toan"} output={onSwitchTone} isStatus={settingObject.in_sau_khi_thanh_toan} />
                         {/* <SettingSwitch title={"in_hai_lien_cho_hoa_don"} output={onSwitchTone} isStatus={settingObject.in_hai_lien_cho_hoa_don} /> */}
                         {/* {isFNB ?

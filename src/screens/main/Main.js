@@ -20,7 +20,8 @@ const { Print } = NativeModules;
 
 export default (props) => {
 
-  let scanFromOrder = null
+  const scanFromOrder = useRef(null)
+  const scanPaymentStatus = useRef(null)
   const viewPrintRef = useRef();
   const dispatch = useDispatch();
   const [textSearch, setTextSearch] = useState('')
@@ -104,11 +105,16 @@ export default (props) => {
 
     AppState.addEventListener('change', handleChangeState);
 
-
+    scanPaymentStatus.current = setInterval(() => {
+      getPaymentStatus()
+    }, 15000);
 
     Print.registerPrint("")
 
     return () => {
+      if (scanPaymentStatus.current) {
+        clearInterval(scanPaymentStatus.current)
+      }
       AppState.removeEventListener('change', handleChangeState);
     }
   }, [])
@@ -130,31 +136,36 @@ export default (props) => {
       dialogManager.hiddenLoading()
     }
     syncDatas()
+
+
   }, [isFNB])
 
   useEffect(() => {
     if (autoPrintKitchen && isFNB) {
-      const getDataNewOrders = async () => {
-        let result = await dataManager.initComfirmOrder()
-        if (result != null) {
-          viewPrintRef.current.printDataNewOrdersRef(result.newOrders != null ? JSON.stringify(result.newOrders) : null, result.listOrdersReturn != null ? JSON.stringify(result.listOrdersReturn) : null)
-          if (result.listRoom && result.listRoom != null)
-            dataManager.updateFromOrder(result.listRoom)
-        }
-      }
-      const getPaymentStatus = async () => {
-        let result = await dataManager.getPaymentStatus()
-        console.log('getPaymentStatus', result);
-      }
-      scanFromOrder = setInterval(() => {
+      scanFromOrder.current = setInterval(() => {
         getDataNewOrders()
-        getPaymentStatus()
       }, 15000);
     }
     return () => {
-      if (scanFromOrder) clearInterval(scanFromOrder)
+      console.log('scanFromOrder', scanFromOrder.current);
+      if (scanFromOrder.current) {
+        clearInterval(scanFromOrder.current)
+      }
     }
   }, [isFNB, autoPrintKitchen])
+
+  const getDataNewOrders = async () => {
+    let result = await dataManager.initComfirmOrder()
+    if (result != null) {
+      viewPrintRef.current.printDataNewOrdersRef(result.newOrders != null ? JSON.stringify(result.newOrders) : null, result.listOrdersReturn != null ? JSON.stringify(result.listOrdersReturn) : null)
+      if (result.listRoom && result.listRoom != null)
+        dataManager.updateFromOrder(result.listRoom)
+    }
+  }
+  const getPaymentStatus = async () => {
+    let result = await dataManager.getPaymentStatus()
+    console.log('getPaymentStatus', result);
+  }
 
 
   const handleChangeState = (newState) => {
