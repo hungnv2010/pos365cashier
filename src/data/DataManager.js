@@ -601,6 +601,8 @@ class DataManager {
                     if (res) {
                         console.log('MULTI_PAYMENT_STATUS', res);
                         return res
+                    } else {
+                        return null
                     }
                 })
                 .catch(err => {
