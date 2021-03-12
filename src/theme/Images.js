@@ -96,6 +96,8 @@ const images = {
     icon_arrow_down_white: require("../../assets/icons/icon_arrow_down_white.png"),
     icon_trash: require("../../assets/icons/recycle-bin.png"),
     icon_gift: require("../../assets/icons/icon_gift.png"),
+    bg_vn_pay_qr: require("../../assets/images/bg_vn_pay_qr.png"),
+    vnpay_qr: require("../../assets/images/vnpay_qr.jpg")
     
 }
 

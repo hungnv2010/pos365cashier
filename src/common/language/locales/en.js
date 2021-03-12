@@ -708,6 +708,7 @@ export default {
   quy_khach_vui_long_nhap_ten_cua_hang: "Please enter your store name",
   qua_mang_lan: "Through the LAN",
   quet_barcode_hoac_qrcode: "Scan BarCode or QRCode",
+  quay_lai: "Back",
 
   // TODO: R
 

@@ -111,10 +111,10 @@ export const DefaultSetting = {
     InfoStore: '',
     HtmlPrint: '',
     TempPrint: '',
-    tu_dong_in_bao_bep: false,
+    // tu_dong_in_bao_bep: false,
     in_sau_khi_thanh_toan: true,
     // in_hai_lien_cho_hoa_don: false,
-    in_hai_lien_cho_che_bien: false,
+    // in_hai_lien_cho_che_bien: false,
     in_tam_tinh: false,
     in_tem_truoc_thanh_toan: false,
     bao_che_bien_sau_thanh_toan: false,
@@ -521,15 +521,15 @@ export default (props) => {
                         {/* <TouchableOpacity onPress={() => screenSwitch(ScreenList.PrintWebview)}>
                             <Text style={styles.textTitleItem}>Temp print</Text>
                         </TouchableOpacity> */}
-                        {isFNB ?
+                        {/* {isFNB ?
                             <SettingSwitch title={"tu_dong_in_bao_bep"} output={onSwitchTone} isStatus={settingObject.tu_dong_in_bao_bep} />
                             : null
-                        }
+                        } */}
                         <SettingSwitch title={"in_sau_khi_thanh_toan"} output={onSwitchTone} isStatus={settingObject.in_sau_khi_thanh_toan} />
                         {/* <SettingSwitch title={"in_hai_lien_cho_hoa_don"} output={onSwitchTone} isStatus={settingObject.in_hai_lien_cho_hoa_don} /> */}
-                        {isFNB ?
+                        {/* {isFNB ?
                             <SettingSwitch title={"in_hai_lien_cho_che_bien"} output={onSwitchTone} isStatus={settingObject.in_hai_lien_cho_che_bien} />
-                            : null}
+                            : null} */}
                         <SettingSwitch title={"in_tam_tinh"} output={onSwitchTone} isStatus={settingObject.in_tam_tinh} />
                         {/* <SettingSwitch title={"in_tem_truoc_thanh_toan"} output={onSwitchTone} isStatus={settingObject.in_tem_truoc_thanh_toan} /> */}
                         {/* <SettingSwitch title={"bao_che_bien_sau_thanh_toan"} output={onSwitchTone} isStatus={settingObject.bao_che_bien_sau_thanh_toan} /> */}
