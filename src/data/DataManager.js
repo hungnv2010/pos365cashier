@@ -9,6 +9,7 @@ import { momentToDateUTC, momentToStringDateLocal, momentToDate, groupBy, random
 import { Constant } from "../common/Constant";
 import I18n from '../common/language/i18n';
 import productManager from './objectManager/ProductManager';
+import { object } from "underscore";
 class DataManager {
     constructor() {
         this.subjectUpdateServerEvent = new Subject()
@@ -583,6 +584,27 @@ class DataManager {
             OfflineId: JsonContent.OfflineId, Pos: JsonContent.Pos, RoomName: JsonContent.RoomName, OrderDetails: [],
             Status: 2, NumberOfGuests: 1, SoldById: JsonContent.SoldById
         }
+    }
+
+    getPaymentStatus = async () => {
+        let QRcode = await realmStore.queryQRCode()
+        QRCode = JSON.parse(JSON.stringify(QRcode))
+        QRcode = Object.values(QRcode)
+        if (!QRcode || QRcode.length == 0) {
+            return null
+        } else {
+            let param = {}
+            param.OrderIds = QRcode
+            HTTPService().setPath(ApiPath.MULTI_PAYMENT_STATUS, false).POST(param)
+                .then(res => {
+                    if (res) return res
+                })
+                .catch(err => {
+                    console.log('getPaymentStatus errr', err);
+                    return null
+                })
+        }
+
     }
 
 }
