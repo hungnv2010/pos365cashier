@@ -70,7 +70,7 @@ class DataManager {
                 }
                 return Promise.resolve(null)
 
-          
+
             }
 
         } catch (error) {
@@ -588,16 +588,20 @@ class DataManager {
 
     getPaymentStatus = async () => {
         let QRcode = await realmStore.queryQRCode()
-        QRCode = JSON.parse(JSON.stringify(QRcode))
+        QRcode = JSON.parse(JSON.stringify(QRcode))
         QRcode = Object.values(QRcode)
+        console.log('QRCode ===>1', QRcode);
         if (!QRcode || QRcode.length == 0) {
             return null
         } else {
             let param = {}
-            param.OrderIds = QRcode
-            HTTPService().setPath(ApiPath.MULTI_PAYMENT_STATUS, false).POST(param)
+            param.OrderIds = QRcode.map(item => item.Id)
+            new HTTPService().setPath(ApiPath.MULTI_PAYMENT_STATUS, false).POST(param)
                 .then(res => {
-                    if (res) return res
+                    if (res) {
+                        console.log('MULTI_PAYMENT_STATUS', res);
+                        return res
+                    }
                 })
                 .catch(err => {
                     console.log('getPaymentStatus errr', err);
