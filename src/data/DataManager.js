@@ -22,9 +22,10 @@ class DataManager {
 
     initComfirmOrder = async () => {
         try {
+
             let intNewOrder = await new HTTPService().setPath(ApiPath.WAIT_FOR_COMFIRMATION, false).GET()
             let changeTableComfirm = await new HTTPService().setPath(ApiPath.CHANGE_TABLE_COMFIRM, false).GET()
-            if (intNewOrder == 0 && changeTableComfirm.length == 0) {
+            if (intNewOrder == 0 && (changeTableComfirm == undefined || changeTableComfirm.length == 0)) {
                 return Promise.resolve(null)
             } else {
                 if (changeTableComfirm.length > 0) {

@@ -56,7 +56,7 @@ export class HTTPService {
         return this
     }
 
-    GET(jsonParam, headers = getHeaders(), ) {
+    GET(jsonParam, headers = getHeaders(),) {
         let params = jsonParam ? convertJsonToPrameter(jsonParam) : ''
         this._path = this._path + params
 
@@ -133,16 +133,13 @@ export class HTTPService {
             else {
                 this.error();
             }
-            // return {
-            //     status: response.status
-            // };
             return null;
         }
 
     }
 
     error() {
-        if (this.showMessage == true)
+        if (this.showMessage == true) {
             NetInfo.fetch().then(state => {
                 if (state.isConnected == true) {
                     dialogManager.showPopupOneButton(I18n.t('loi_server'), I18n.t('thong_bao'), () => {
@@ -154,6 +151,10 @@ export class HTTPService {
                     }, null, null, I18n.t('dong'))
                 }
             });
+        } else {
+            console.log('http err');
+        }
+
     }
 
 }
