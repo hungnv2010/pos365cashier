@@ -647,7 +647,7 @@ export default (props) => {
         jsonContentPayment.current = json;
         console.log("onClickPay params ", params);
         dialogManager.showLoading();
-        new HTTPService().setPath(ApiPath.ORDERS, true).POST(params).then(async order => {
+        new HTTPService().setPath(ApiPath.ORDERS, false).POST(params).then(async order => {
             console.log("onClickPay order ", order);
             if (order) {
                 resPayment.current = order;

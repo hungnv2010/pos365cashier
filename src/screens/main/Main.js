@@ -123,13 +123,21 @@ export default (props) => {
     const syncDatas = async () => {
       if (isFNB === null) return
       dispatch({ type: 'ALREADY', already: false })
-      // await realmStore.deleteAllForFnb()
+
+      NetInfo.fetch().then(async state => {
+        if (state.isConnected == true && state.isInternetReachable == true) {
+          if (isFNB === true) {
+            await realmStore.deleteAllForFnb()
+          } else {
+            await realmStore.deleteAllForRetail()
+          }
+        }
+      });
+
       if (isFNB === true) {
-        await realmStore.deleteAllForFnb()
         await dataManager.syncAllDatas()
 
       } else {
-        await realmStore.deleteAllForRetail()
         await dataManager.syncAllDatasForRetail()
       }
       dispatch({ type: 'ALREADY', already: true })
