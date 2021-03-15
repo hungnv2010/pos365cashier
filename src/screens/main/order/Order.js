@@ -14,7 +14,7 @@ import {
 import I18n from '../../../common/language/i18n';
 import realmStore from '../../../data/realm/RealmStore'
 import { useSelector, useDispatch } from 'react-redux';
-import { currencyToString, dateUTCToMoment, getTimeFromNow, text_highlight } from '../../../common/Utils'
+import { currencyToString, dateUTCToMoment, getTimeFromNow, text_highlight, change_alias } from '../../../common/Utils'
 import { Constant } from '../../../common/Constant';
 import { Images, Metrics } from '../../../theme';
 import colors from '../../../theme/Colors';
@@ -225,7 +225,8 @@ export default (props) => {
             let newDatas = []
             if (roomGroup) {
                 roomGroup.forEach(roomGroup => {
-                    let roomsInside = room.filter(item => item.RoomGroupId == roomGroup.Id && (item.Name).toLowerCase().indexOf(debouncedVal.toLowerCase()) != -1)
+                    // let roomsInside = room.filter(item => item.RoomGroupId == roomGroup.Id && (item.Name).toLowerCase().indexOf(debouncedVal.toLowerCase()) != -1)
+                    let roomsInside = room.filter(item => item.RoomGroupId == roomGroup.Id && change_alias(item.Name).toLowerCase().indexOf(debouncedVal.toLowerCase()) != -1)
                     let lengthRoomsInside = roomsInside.length
                     if (roomsInside && lengthRoomsInside > 0) {
                         roomGroup.isGroup = true

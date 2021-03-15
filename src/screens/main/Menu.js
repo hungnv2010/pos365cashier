@@ -39,7 +39,8 @@ const KEY_FUNC = {
     ORDER_OFFLINE: ScreenList.OrderOffline,
     VOUCHERS: ScreenList.Vouchers,
     PRODUCT: ScreenList.Product,
-    SYNCHRONIZE: 'SYNCHRONIZE'
+    SYNCHRONIZE: 'SYNCHRONIZE',
+    ORDER_MANAGEMENT: ScreenList.OrderManagement
 }
 
 const LIST_FUNCITION = [
@@ -83,6 +84,11 @@ const LIST_FUNCITION = [
         func: KEY_FUNC.ROOM_CATALOG,
         icon: Images.icon_room_table,
         title: "danh_muc_phong_ban"
+    },
+    {
+        func: KEY_FUNC.ORDER_MANAGEMENT,
+        icon: Images.icon_vouchers,
+        title: 'quan_ly_don_hang'
     },
     // {
     //     func: KEY_FUNC.MORE,
@@ -472,7 +478,7 @@ const ContentComponent = (props) => {
             return;
         }
         let params = {};
-        if (chucnang.func == ScreenList.Home || chucnang.func == ScreenList.Customer || chucnang.func == ScreenList.Settings || chucnang.func == ScreenList.Invoice || chucnang.func == ScreenList.OverView || chucnang.func == ScreenList.RoomHistory || chucnang.func == ScreenList.Vouchers) {
+        if (chucnang.func == ScreenList.OrderManagement || chucnang.func == ScreenList.Home || chucnang.func == ScreenList.Customer || chucnang.func == ScreenList.Settings || chucnang.func == ScreenList.Invoice || chucnang.func == ScreenList.OverView || chucnang.func == ScreenList.RoomHistory || chucnang.func == ScreenList.Vouchers) {
             setCurrentItemMenu(index)
         }
         props.navigation.navigate(chucnang.func, params)

@@ -173,6 +173,9 @@ export default (props) => {
   const getPaymentStatus = async () => {
     let result = await dataManager.getPaymentStatus()
     console.log('getPaymentStatus', result);
+
+    
+
   }
 
 
