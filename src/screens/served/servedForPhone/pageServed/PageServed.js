@@ -57,6 +57,7 @@ export default (props) => {
                 currentServerEvent.current = JSON.parse(JSON.stringify(serverEvent[0]))
                 let jsonTmp = JSON.parse(serverEvent[0].JsonContent)
                 jsonTmp.OrderDetails = await addPromotion(jsonTmp.OrderDetails);
+                jsonTmp.RoomName = jsonTmp.RoomName ? jsonTmp.RoomName : props.route.params.room.Name
                 console.log("jsonTmp ======= ", jsonTmp);
                 setJsonContent(jsonTmp)
             }
@@ -68,9 +69,10 @@ export default (props) => {
             serverEvent = serverEvent.filtered(`RowKey == '${row_key}'`)
             currentServerEvent.current = JSON.stringify(serverEvent) != '{}' ? JSON.parse(JSON.stringify(serverEvent[0]))
                 : await dataManager.createSeverEvent(props.route.params.room.Id, position)
-            console.log('currentServerEvent.current', currentServerEvent.current, await dataManager.createSeverEvent(props.route.params.room.Id, position));
             let jsonContentObject = JSON.parse(currentServerEvent.current.JsonContent)
             jsonContentObject.OrderDetails = await addPromotion(jsonContentObject.OrderDetails);
+            jsonContentObject.RoomName = jsonContentObject.RoomName ? jsonContentObject.RoomName : props.route.params.room.Name
+            console.log('jsonContentObject', jsonContentObject);
             setJsonContent(jsonContentObject)
 
             serverEvent.addListener(listener)
@@ -100,7 +102,7 @@ export default (props) => {
         }
         else setCurrentCustomer({ Name: "khach_le", Id: 0 })
 
-    }, [jsonContent])
+    }, [jsonContent.Partner])
 
     useEffect(() => {
         console.log('jsonContent.PriceBook', jsonContent.PriceBook);
@@ -178,15 +180,16 @@ export default (props) => {
 
                     }
                 })
+                let title = props.route.params.room.Name ? props.route.params.room.Name : ""
                 jsonContent.OrderDetails = [...listCooked.current, ...listTmp]
                 updateServerEvent({ ...jsonContent })
             }
 
         } else {
-            let title = props.route.params.Name ? props.route.params.Name : ""
+            let title = props.route.params.room.Name ? props.route.params.room.Name : ""
             let body = I18n.t('gio_khach_vao') + moment().format('HH:mm dd/MM')
             let { RoomId, Position } = currentServerEvent.current
-            let jsonContentObj = JSON.stringify(jsonContent) == "{}" ? dataManager.createJsonContent(RoomId, Position, moment()) : jsonContent
+            let jsonContentObj = JSON.stringify(jsonContent) == "{}" ? dataManager.createJsonContent(RoomId, Position, moment(), title) : jsonContent
             jsonContentObj.OrderDetails = [...list]
             jsonContentObj.ActiveDate = moment()
             updateServerEvent(jsonContentObj)

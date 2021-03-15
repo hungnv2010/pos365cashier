@@ -92,6 +92,7 @@ const Served = (props) => {
                 currentServerEvent.current = JSON.parse(JSON.stringify(serverEvent[0]))
                 let jsonTmp = JSON.parse(serverEvent[0].JsonContent)
                 jsonTmp.OrderDetails = await addPromotion(jsonTmp.OrderDetails);
+                jsonTmp.RoomName = jsonTmp.RoomName ? jsonTmp.RoomName : props.route.params.room.Name
                 setJsonContent(jsonTmp)
             }
         }
@@ -104,6 +105,8 @@ const Served = (props) => {
                 : await dataManager.createSeverEvent(props.route.params.room.Id, position)
             console.log('currentServerEvent.current', currentServerEvent.current, JSON.parse(currentServerEvent.current.JsonContent));
             let jsonContentObject = JSON.parse(currentServerEvent.current.JsonContent)
+            jsonContentObject.OrderDetails = await addPromotion(jsonContentObject.OrderDetails);
+            jsonContentObject.RoomName = jsonContentObject.RoomName ? jsonContentObject.RoomName : props.route.params.room.Name
             setJsonContent(jsonContentObject)
             serverEvent.addListener(listener)
         }
@@ -161,7 +164,7 @@ const Served = (props) => {
 
     const outputSelectedProduct = async (product, replace = false) => {
         let { RoomId, Position } = currentServerEvent.current
-        let jsonContentTmp = JSON.stringify(jsonContent) == "{}" ? dataManager.createJsonContent(RoomId, Position, moment()) : jsonContent
+        let jsonContentTmp = JSON.stringify(jsonContent) == "{}" ? dataManager.createJsonContent(RoomId, Position, moment(), props.route.params.room.Name) : jsonContent
         console.log('outputSelectedProduct', product, jsonContentTmp);
         if (product.Quantity > 0 && !replace) {
             if (jsonContentTmp.OrderDetails.length == 0) {

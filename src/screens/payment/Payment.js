@@ -689,7 +689,7 @@ export default (props) => {
 
     const updateServerEvent = (isBack = true) => {
         let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
-        let json = dataManager.createJsonContent(props.route.params.RoomId, props.route.params.Position, moment(), []);
+        let json = dataManager.createJsonContent(props.route.params.RoomId, props.route.params.Position, moment(), [], props.route.params.Name);
         setJsonContent(json)
         serverEvent.JsonContent = json;
         serverEvent.Version += 10
