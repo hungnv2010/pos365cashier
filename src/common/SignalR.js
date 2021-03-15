@@ -8,7 +8,6 @@ import { decodeBase64 } from './Base64'
 import I18n from '../common/language/i18n'
 import dialogManager from '../components/dialog/DialogManager';
 import NetInfo from "@react-native-community/netinfo";
-import dataManager from '../data/DataManager';
 import { useRef } from 'react';
 import { randomUUID } from './Utils';
 
@@ -48,7 +47,7 @@ class SignalRManager {
             .subscribe(serverEvent => this.onReceiveServerEvent(serverEvent))
 
         this.subjectSend = new Subject()
-        this.subjectSend.debounceTime(300)
+        this.subjectSend 
             .subscribe(serverEvent => this.sendMessageServerEventNow(serverEvent))
 
         this.connectionHub = signalr.hubConnection("https://signalr.pos365.vn/signalr", {

@@ -473,7 +473,7 @@ class DataManager {
         }
     }
 
-    createJsonContent = (RoomId, Position, ActiveDate, OrderDetails = []) => {
+    createJsonContent = (RoomId, Position, ActiveDate, OrderDetails = [], RoomName = "") => {
         return {
             OfflineId: randomUUID(),
             Status: 2,
@@ -487,7 +487,7 @@ class DataManager {
             ExcessCashType: 0,
             ExcessCash: 0,
             RoomId: RoomId,
-            RoomName: "",
+            RoomName: RoomName,
             Pos: Position,
             NumberOfGuests: 0,
             SyncStatus: 0,
@@ -525,7 +525,7 @@ class DataManager {
         }
     }
 
-    createJsonContentForRetail = (RoomId) => {
+    createJsonContentForRetail = (RoomId, RoomName = "") => {
         return {
             OfflineId: randomUUID(),
             Status: 2,
@@ -539,7 +539,7 @@ class DataManager {
             ExcessCashType: 0,
             ExcessCash: 0,
             RoomId: RoomId,
-            RoomName: "",
+            RoomName: RoomName,
             Pos: "A",
             NumberOfGuests: 0,
             SyncStatus: 0,

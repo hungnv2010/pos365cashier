@@ -19,7 +19,6 @@ import { Constant } from '../../../common/Constant';
 import { Images, Metrics } from '../../../theme';
 import colors from '../../../theme/Colors';
 import TextTicker from 'react-native-text-ticker';
-import NetInfo from "@react-native-community/netinfo";
 import moment from 'moment';
 import Menu from 'react-native-material-menu';
 import useDebounce from '../../../customHook/useDebounce';
