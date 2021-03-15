@@ -399,6 +399,7 @@ export default (props) => {
             // let discount = product.Percent ? (price * product.Discount / 100) : product.Discount
             let price = product.IsLargeUnit == true ? product.PriceLargeUnit : product.UnitPrice
             let discount = product.Percent ? (price * product.Discount / 100) : product.Discount
+            discount = price - product.Price > 0 ? price - product.Price : discount
             discount = discount > price ? price : discount
             let discountRatio = product.Percent ? product.Discount : product.Discount / price * 100
             listOrder.forEach((elm, index, arr) => {
