@@ -227,7 +227,7 @@ export default (props) => {
             if (roomGroup) {
                 roomGroup.forEach(roomGroup => {
                     // let roomsInside = room.filter(item => item.RoomGroupId == roomGroup.Id && (item.Name).toLowerCase().indexOf(debouncedVal.toLowerCase()) != -1)
-                    let roomsInside = room.filter(item => item.RoomGroupId == roomGroup.Id && change_alias(item.Name).toLowerCase().indexOf(debouncedVal.toLowerCase()) != -1)
+                    let roomsInside = room.filter(item => item.RoomGroupId == roomGroup.Id && change_alias(item.Name).toLowerCase().indexOf(change_alias(debouncedVal).toLowerCase()) != -1)
                     let lengthRoomsInside = roomsInside.length
                     if (roomsInside && lengthRoomsInside > 0) {
                         roomGroup.isGroup = true

@@ -28,7 +28,6 @@ export default (props) => {
     }, [])
 
     const getData = async () => {
-
         let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
         if (vendorSession != "") {
             dialogManager.showLoading()
@@ -38,7 +37,11 @@ export default (props) => {
             queryString += (vendorSession.CurrentBranchId && vendorSession.CurrentBranchId != 0 ? ` AND BranchId == ${vendorSession.CurrentBranchId}` : '');
             queryQRCode = queryQRCode.filtered(queryString)
             console.log("useEffect queryQRCode ", JSON.parse(JSON.stringify(queryQRCode)));
-            setDataPaymentPending(queryQRCode)
+            let queryQRCodeReverse = [];
+            queryQRCode.forEach(element => {
+                queryQRCodeReverse.push(element);
+            });
+            setDataPaymentPending(queryQRCodeReverse.reverse())
             dialogManager.hiddenLoading()
         }
     }
@@ -71,7 +74,7 @@ export default (props) => {
                             </View>
                             <View style={{ marginTop: 0, flexDirection: "row", justifyContent: "space-between", paddingVertical: 7 }}>
                                 <Text style={{}}>{I18n.t("thoi_gian")}</Text>
-                                <Text style={{}}>{dateToString(new Date(jsonContent.PurchaseDate), "YYYY-MM-DD HH:mm")}</Text>
+                                <Text style={{}}>{dateToString(new Date(jsonContent.PurchaseDate), "DD-MM-YYYY HH:mm")}</Text>
                             </View>
                             <View style={{ paddingVertical: 5, flexDirection: "row", justifyContent: "space-between", paddingVertical: 7 }}>
                                 <Text style={{}}>{I18n.t('tong_tien')}</Text>
