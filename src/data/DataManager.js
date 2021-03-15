@@ -595,10 +595,22 @@ class DataManager {
         } else {
             let param = {}
             param.OrderIds = QRcode.map(item => item.Id)
-         
+
             try {
                 let result = await new HTTPService().setPath(ApiPath.MULTI_PAYMENT_STATUS, false).POST(param)
-                if(result) return Promise.resolve(result)
+                if (result) {
+                    console.log("ApiPath.MULTI_PAYMENT_STATUS result ", result);
+                    QRcode.forEach(element => {
+                        result.forEach(item => {
+                            if (item.Status == true && item.OrderId == element.Id) {
+                                element.Status = true;
+                            }
+                        });
+                    });
+                    console.log("getPaymentStatus QRcode ", QRcode);
+                    dataManager.syncQRCode(QRcode);
+                    return Promise.resolve(result)
+                }
                 else return Promise.resolve(null)
             } catch (err) {
                 console.log('getPaymentStatus errr', err);

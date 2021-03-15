@@ -20,6 +20,7 @@ import RoomHistory from '../../screens/roomHistory/RoomHistory';
 import RoomHistoryDetail from '../../screens/roomHistory/RoomHistoryDetailForPhone';
 import Vouchers from '../../screens/voucher/Vouchers';
 import Product from '../../screens/products/ProductList';
+import OrderManagement from '../../screens/orderManagement/OrderManagement'
 const Drawer = createDrawerNavigator();
 export default (propsFunc) => {
 
@@ -37,15 +38,15 @@ export default (propsFunc) => {
           return <DrawerContent {...props} />;
         }}
       >
-    
+
         <Drawer.Screen name={ScreenList.Home} options={{ title: ScreenList.Home }}>
           {props => <Main  {...props} params={propsFunc.route.state ? propsFunc.route.state : ""} />}
         </Drawer.Screen>
-     
+
         <Drawer.Screen name={ScreenList.OverView} options={{ title: ScreenList.OverView }}>
           {props => <OverView {...props} />}
         </Drawer.Screen>
-       
+
         <Drawer.Screen name={ScreenList.Invoice} options={{ title: ScreenList.Invoice }}>
           {props => <Invoice {...props} />}
         </Drawer.Screen>
@@ -55,21 +56,25 @@ export default (propsFunc) => {
         <Drawer.Screen name={ScreenList.Customer} options={{ title: ScreenList.Customer }}>
           {props => <Customer {...props} />}
         </Drawer.Screen>
-        <Drawer.Screen name={ScreenList.Product} options={{title:ScreenList.Product}}>
-          {props =><Product {...props}/>}
+        <Drawer.Screen name={ScreenList.Product} options={{ title: ScreenList.Product }}>
+          {props => <Product {...props} />}
         </Drawer.Screen>
-        <Drawer.Screen name={ScreenList.Settings} options={{title:ScreenList.Settings}}>
-          {props => <Settings {...props}/>}
+        <Drawer.Screen name={ScreenList.Settings} options={{ title: ScreenList.Settings }}>
+          {props => <Settings {...props} />}
         </Drawer.Screen>
-        <Drawer.Screen name={ScreenList.VNPayPaymentSetting} options={{title:ScreenList.Settings}}>
-          {props => <VNPayPaymentSetting{...props}/>}
+        <Drawer.Screen name={ScreenList.VNPayPaymentSetting} options={{ title: ScreenList.Settings }}>
+          {props => <VNPayPaymentSetting{...props} />}
         </Drawer.Screen>
-        <Drawer.Screen name={ScreenList.RoomHistory} options={{title:ScreenList.RoomHistory}}>
-          {props => <RoomHistory{...props}/>}
+        <Drawer.Screen name={ScreenList.RoomHistory} options={{ title: ScreenList.RoomHistory }}>
+          {props => <RoomHistory{...props} />}
         </Drawer.Screen>
-        <Drawer.Screen name = {ScreenList.Vouchers} options = {{title:ScreenList.Vouchers}}>
-          {props => <Vouchers{...props}/>}
+        <Drawer.Screen name={ScreenList.Vouchers} options={{ title: ScreenList.Vouchers }}>
+          {props => <Vouchers{...props} />}
         </Drawer.Screen>
+        <Drawer.Screen name={ScreenList.OrderManagement} options={{ title: ScreenList.OrderManagement }}>
+          {props => <OrderManagement{...props} />}
+        </Drawer.Screen>
+
       </Drawer.Navigator>
     </LinearGradient>
   );

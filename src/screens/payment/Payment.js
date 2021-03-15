@@ -740,7 +740,7 @@ export default (props) => {
             Id: order.Id,
             JsonContent: JSON.stringify(jsonContent),
             Messenger: order.Messenger,
-            Status: 0,
+            Status: false,
             HostName: URL.link,
             BranchId: vendorSession.CurrentBranchId,
             Code: order.Code,
@@ -749,12 +749,22 @@ export default (props) => {
         console.log("handlerQRCode params ", params);
         dataManager.syncQRCode([params]);
 
-        // qrCodeRealm = await realmStore.queryQRCode()
-        // qrCodeRealm.addListener((collection, changes) => {
-        //     if (changes.insertions.length || changes.modifications.length) {
-        //         console.log("handlerQRCode qrCode.addListener collection changes ", collection, changes);
-        //     }
-        // })
+        let qrCodeRealm = await realmStore.queryQRCode()
+        qrCodeRealm.addListener((collection, changes) => {
+            if (changes.insertions.length || changes.modifications.length) {
+                console.log("handlerQRCode qrCode.addListener collection changes ", collection, changes);
+                let QRCodeItem = qrCodeRealm.filtered(`Id == '${order.Id}'`);
+                console.log("QRCodeItem == ", QRCodeItem);
+                QRCodeItem = JSON.parse(JSON.stringify(QRCodeItem))[0];
+                console.log("QRCodeItem ", QRCodeItem);
+                if (QRCodeItem && QRCodeItem.Status == true) {
+                    realmStore.deleteQRCode(order.Id);
+                    updateServerEvent(true)
+                    setShowModal(false);
+                    props.navigation.pop()
+                }
+            }
+        })
     }
 
     const handlerError = (data) => {

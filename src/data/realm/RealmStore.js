@@ -35,11 +35,9 @@ class RealmStore extends RealmBase {
     }
 
     deleteAll = async () => {
-        let realm = await Realm.open(databaseOption)
-        realm.write(() => {
-            realm.deleteAll()
-            Promise.resolve()
-        })
+        let newSchemaName = { ...SchemaName }
+        delete newSchemaName.QR_CODE
+        await this.deleteSchema(newSchemaName)
     }
 
     deleteAllForFnb = async () => {
@@ -300,7 +298,7 @@ const QRCode = {
     primaryKey: "Id",
     properties: {
         Id: { type: 'int', default: 0 },
-        Status: { type: 'int', default: 0 },
+        Status: { type: 'bool', default: false },
         JsonContent: { type: 'string', default: '' },
         HostName: { type: 'string', default: '' },
         Messenger: { type: 'string', default: '' },
@@ -492,7 +490,7 @@ const PromotionSchema = {
 const databaseOption = {
     path: 'Pos365Boss.realm',
     schema: [ServerEventSchema, RoomSchema, RoomGroupSchema, ProductSchema, CategoriesSchema, ToppingsSchema, CustomerSchema, PromotionSchema, OrdersOffline, QRCode, PriceBook],
-    schemaVersion: 40
+    schemaVersion: 41
 }
 
 const realm = new Realm(databaseOption);
