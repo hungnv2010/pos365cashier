@@ -64,7 +64,9 @@ export default () => {
         }
         savePrinter()
 
-        // Subscribe
+    }, [])
+
+    useEffect(() => {
         const unsubscribe = NetInfo.addEventListener(state => {
             if (state.isConnected == true && state.isInternetReachable == true) {
                 setNetInfo(true)
@@ -80,12 +82,19 @@ export default () => {
             numberInternetReachable++;
         });
 
+        return () => {
+            unsubscribe()
+        }
     }, [])
 
     useEffect(() => {
-        // signalRManager.init()
+        Dimensions.addEventListener('change', handleChange)
+        return () => {
+            Dimensions.removeEventListener('change', handleChange)
+        }
+    }, [])
 
-        AppState.addEventListener('change', handleChangeState);
+    useEffect(() => {
 
         setForceUpdate(!forceUpdate);
         dispatch({ type: 'TYPE_DEVICE', deviceType: isTablet() })
@@ -103,46 +112,48 @@ export default () => {
                 }
             }
         }
-        let check = false;
-        const printListenner = () => {
-            const event = eventSwicthScreen.addListener('sendSwicthScreen', (text) => {
-                console.log("eventSwicthScreen ", text);
-                // if (text.indexOf("Ok") > -1) {
-                //     check = true;
-                //     setTimeout(() => {
-                //         check = false;
-                //     }, 4000);
-                // };
-                if ((text.indexOf("Error") > -1)) {
-                    setToastDescription(I18n.t('kiem_tra_ket_noi_may_in') + " " + (text.split("::")[0].indexOf('null') ? "" : text.split("::")[0]))
-                    setShowToast(true)
-                }
-            });
-        }
-        getCurrentIP()
-        printListenner()
 
+        getCurrentIP()
+
+    }, [])
+
+    useEffect(() => {
+        const event = eventSwicthScreen.addListener('sendSwicthScreen', (text) => {
+            console.log("eventSwicthScreen ", text);
+            if ((text.indexOf("Error") > -1)) {
+                setToastDescription(I18n.t('kiem_tra_ket_noi_may_in') + " " + (text.split("::")[0].indexOf('null') ? "" : text.split("::")[0]))
+                setShowToast(true)
+            }
+        });
+
+        return () => {
+            eventSwicthScreen.removeListener(event);
+        }
+    }, [])
+
+    useEffect(() => {
         const setupLanguage = async () => {
             let lang = await getFileDuLieuString(Constant.LANGUAGE, true);
             console.log('lang ===  ', lang);
             if (lang && lang != "") {
                 I18n.locale = lang;
                 moment.locale(lang);
-            } else { 
+            } else {
                 I18n.locale = "vi";
                 moment.locale('vi');
                 setFileLuuDuLieu(Constant.LANGUAGE, 'vi');
             }
         }
-
         setupLanguage()
+    }, [])
 
+    useEffect(() => {
+
+        AppState.addEventListener('change', handleChangeState);
 
         return () => {
             AppState.removeEventListener('change', handleChangeState);
-            eventSwicthScreen.removeListener();
         }
-
 
     }, [])
 
@@ -152,16 +163,6 @@ export default () => {
                 signalRManager.killSignalR();
                 signalRManager.startSignalR();
             }
-            // let currentLocale = I18n.currentLocale()
-            // // currentLocale = "vi";
-            // console.log("currentLocale ", currentLocale);
-            // if (currentLocale.indexOf('vi') > -1) {
-            //     I18n.locale = "vi";
-            //     moment.locale('vi');
-            // } else {
-            //     I18n.locale = "en";
-            //     moment.locale('en');
-            // }
         }
     }
 
@@ -170,12 +171,6 @@ export default () => {
         dispatch({ type: 'ORIENTAITION', orientaition: isPortrait() })
     }
 
-    useEffect(() => {
-        Dimensions.addEventListener('change', handleChange)
-        return () => {
-            Dimensions.removeEventListener('change', handleChange)
-        }
-    })
 
     return (
 

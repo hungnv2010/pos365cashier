@@ -555,12 +555,11 @@ const CustomerOrder = (props) => {
             ExcessCashType: 0,
             Order: {},
         };
-        let tilteNotification = json.RoomName;
+        let tilteNotification = json.RoomName ? json.RoomName : "";
         if (props.route.params.Screen != undefined && props.route.params.Screen == ScreenList.MainRetail) {
             params.DeliveryBy = null;//by retain
             params.ShippingCost = 0;//by retain
             params.LadingCode = "";//by retain
-            tilteNotification = I18n.t('don_hang')
             delete json.Pos;
             delete json.RoomName;
             delete json.RoomId;
@@ -605,7 +604,7 @@ const CustomerOrder = (props) => {
     }
 
     const printAfterPayment = async (Code) => {
-        let jsonContent = { props }
+        let jsonContent = props.jsonContent
         console.log("printAfterPayment jsonContent 1 ", jsonContent, props.route.params);
         if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
             jsonContent.RoomName = props.route.params.Name
