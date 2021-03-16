@@ -67,12 +67,13 @@ export default (props) => {
             serverEvent = await realmStore.queryServerEvents()
             const row_key = `${props.route.params.room.Id}_${position}`
             serverEvent = serverEvent.filtered(`RowKey == '${row_key}'`)
-            currentServerEvent.current = JSON.stringify(serverEvent) != '{}' ? JSON.parse(JSON.stringify(serverEvent[0]))
-                : await dataManager.createSeverEvent(props.route.params.room.Id, position)
+            let tpmServerEvent = JSON.parse(JSON.stringify(serverEvent[0]))
+            let hasServerEvent = JSON.stringify(serverEvent) != "{}" && tpmServerEvent.JsonContent != "{}" && JSON.stringify(tpmServerEvent.JsonContent).OrderDetails && JSON.stringify(tpmServerEvent.JsonContent).OrderDetails.length > 0
+            currentServerEvent.current = hasServerEvent ? tpmServerEvent : await dataManager.createSeverEvent(props.route.params.room.Id, position)
             let jsonContentObject = JSON.parse(currentServerEvent.current.JsonContent)
             jsonContentObject.OrderDetails = await addPromotion(jsonContentObject.OrderDetails);
             jsonContentObject.RoomName = jsonContentObject.RoomName ? jsonContentObject.RoomName : props.route.params.room.Name
-            console.log('jsonContentObject', jsonContentObject);
+            console.log('jsonContentObject = 2', jsonContentObject);
             setJsonContent(jsonContentObject)
 
             serverEvent.addListener(listener)

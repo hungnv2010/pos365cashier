@@ -456,6 +456,7 @@ class DataManager {
 
     createSeverEvent = async (RoomId, Position) => {
         let objectJsonContent = this.createJsonContent(RoomId, Position, moment())
+        console.log('createSeverEvent', objectJsonContent);
         let vendorSession = await this.selectVendorSession()
         let PartitionKey = `${vendorSession.CurrentBranchId}_${vendorSession.CurrentUser.RetailerId}`
         let RowKey = `${RoomId}_${Position}`

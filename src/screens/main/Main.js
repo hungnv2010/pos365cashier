@@ -166,7 +166,7 @@ export default (props) => {
       hasInternet.current = false
     }
     if (netInfo === true) {
-      if (hasInternet.current == false) {
+      if (hasInternet.current === false) {
         hasInternet.current = true
         signalRManager.reconnect()
       }
