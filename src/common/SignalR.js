@@ -8,8 +8,6 @@ import { decodeBase64 } from './Base64'
 import I18n from '../common/language/i18n'
 import dialogManager from '../components/dialog/DialogManager';
 import NetInfo from "@react-native-community/netinfo";
-import { useRef } from 'react';
-import { randomUUID } from './Utils';
 
 var statusInternet = { currentStatus: false, previousStatus: false };
 // let version = 0
@@ -25,12 +23,13 @@ class SignalRManager {
     }
 
     killSignalR() {
+        this.isStartSignalR = false;
         if (this.connectionHub != null) {
             this.connectionHub.stop();
         }
     }
 
-    init(data, forceUpdate = false) {
+    init(data) {
 
         this.data = data;
         this.info = {
@@ -47,7 +46,7 @@ class SignalRManager {
             .subscribe(serverEvent => this.onReceiveServerEvent(serverEvent))
 
         this.subjectSend = new Subject()
-        this.subjectSend 
+        this.subjectSend
             .subscribe(serverEvent => this.sendMessageServerEventNow(serverEvent))
 
         this.connectionHub = signalr.hubConnection("https://signalr.pos365.vn/signalr", {
@@ -64,36 +63,28 @@ class SignalRManager {
         this.proxy = this.connectionHub.createHubProxy("saleHub")
         this.proxy.on("Update", (serverEvent) => { this.subjectReceive.next(serverEvent) })
 
-        if (forceUpdate == true) {
-            this.startSignalR();
-        }
+        this.startSignalR();
 
         this.connectionHub.connectionSlow(() => {
             console.warn('We are currently experiencing difficulties with the connection.')
-            this.init(this.data, true)
+            this.reconnect()
         });
 
         this.connectionHub.error((error) => {
             NetInfo.fetch().then(state => {
                 if (state.isConnected == true && state.isInternetReachable == true) {
-                    // this.getAllData();
-                    this.init(this.data, true)
+               this.reconnect()
                 }
             });
             console.warn("connectionHub error ", error);
         });
 
-        // Subscribe
-        const unsubscribe = NetInfo.addEventListener(state => {
-            statusInternet = { currentStatus: state.isConnected, previousStatus: statusInternet.currentStatus }
-            if (statusInternet.currentStatus == true && statusInternet.previousStatus == false) {
-                // this.getAllData();
-                this.init(this.data, true)
-            }
-        });
 
-        // Unsubscribe
-        // unsubscribe();
+    }
+
+    reconnect() {
+        this.killSignalR()
+        this.startSignalR()
     }
 
     startSignalR() {

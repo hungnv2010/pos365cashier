@@ -16,6 +16,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import ViewPrint, { TYPE_PRINT } from '../more/ViewPrint';
 import { Colors } from '../../theme';
 import NetInfo from "@react-native-community/netinfo";
+import useDidMountEffect from '../../customHook/useDidMountEffect';
 const { Print } = NativeModules;
 
 export default (props) => {
@@ -26,7 +27,7 @@ export default (props) => {
   const dispatch = useDispatch();
   const [textSearch, setTextSearch] = useState('')
   const [autoPrintKitchen, setAutoPrintKitchen] = useState(false)
-  const { listPrint, isFNB, printProvisional, printReturnProduct, syncRetail } = useSelector(state => {
+  const { listPrint, isFNB, printProvisional, printReturnProduct, netInfo } = useSelector(state => {
     return state.Common
   })
 
@@ -82,7 +83,7 @@ export default (props) => {
         if (currentBranch && currentBranch.FieldId) {
           if (currentBranch.FieldId == 3 || currentBranch.FieldId == 11) {
             let state = store.getState()
-            signalRManager.init({ ...vendorSession, SessionId: state.Common.info.SessionId }, true)
+            signalRManager.init({ ...vendorSession, SessionId: state.Common.info.SessionId })
             dispatch({ type: 'IS_FNB', isFNB: true })
           } else {
             dispatch({ type: 'IS_FNB', isFNB: false })
@@ -90,7 +91,7 @@ export default (props) => {
         } else {
           if (vendorSession.CurrentRetailer && (vendorSession.CurrentRetailer.FieldId == 3 || vendorSession.CurrentRetailer.FieldId == 11)) {
             let state = store.getState()
-            signalRManager.init({ ...vendorSession, SessionId: state.Common.info.SessionId }, true)
+            signalRManager.init({ ...vendorSession, SessionId: state.Common.info.SessionId })
             dispatch({ type: 'IS_FNB', isFNB: true })
           } else {
             dispatch({ type: 'IS_FNB', isFNB: false })
@@ -102,9 +103,6 @@ export default (props) => {
   }, [])
 
   useEffect(() => {
-
-    AppState.addEventListener('change', handleChangeState);
-
     scanPaymentStatus.current = setInterval(() => {
       getPaymentStatus()
     }, 15000);
@@ -115,9 +113,10 @@ export default (props) => {
       if (scanPaymentStatus.current) {
         clearInterval(scanPaymentStatus.current)
       }
-      AppState.removeEventListener('change', handleChangeState);
     }
   }, [])
+
+
 
   useEffect(() => {
     const syncDatas = async () => {
@@ -136,7 +135,6 @@ export default (props) => {
 
       if (isFNB === true) {
         await dataManager.syncAllDatas()
-
       } else {
         await dataManager.syncAllDatasForRetail()
       }
@@ -162,6 +160,12 @@ export default (props) => {
     }
   }, [isFNB, autoPrintKitchen])
 
+  useDidMountEffect(() => {
+    if (netInfo) {
+      signalRManager.reconnect()
+    }
+  }, [netInfo])
+
   const getDataNewOrders = async () => {
     let result = await dataManager.initComfirmOrder()
     if (result != null) {
@@ -173,17 +177,8 @@ export default (props) => {
   const getPaymentStatus = async () => {
     let result = await dataManager.getPaymentStatus()
     console.log('getPaymentStatus', result);
-
-    
-
   }
 
-
-  const handleChangeState = (newState) => {
-    if (newState === "active") {
-
-    }
-  }
 
   const onClickSearch = (text) => {
     setTextSearch(text)

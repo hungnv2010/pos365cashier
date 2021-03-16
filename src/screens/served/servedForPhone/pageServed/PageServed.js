@@ -492,6 +492,7 @@ export default (props) => {
                             } else {
                                 jsonContent.OrderDetails.forEach((product) => {
                                     product.DiscountRatio = 0.0
+                                    product.Discount = 0
                                     let basePrice = (product.IsLargeUnit) ? product.PriceLargeUnit : product.UnitPrice
                                     product.Price = basePrice + product.TotalTopping
                                 })

@@ -6,21 +6,18 @@ import {
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import StackNavigation from './navigator/stack/StackNavigation';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Constant } from './common/Constant'
 import { navigationRef } from './navigator/NavigationService';
-import RNExitApp from "react-native-exit-app";
 import I18n from './common/language/i18n'
 import signalRManager, { signalRInfo } from './common/SignalR';
 import { getFileDuLieuString, setFileLuuDuLieu } from './data/fileStore/FileStorage';
 import { Snackbar } from 'react-native-paper';
 import NetInfo from "@react-native-community/netinfo";
 const { Print } = NativeModules;
-let time = 0;
 const eventSwicthScreen = new NativeEventEmitter(Print);
 import moment from 'moment';
 import 'moment/min/locales'
-import { Metrics } from './theme';
 import { DefaultSetting } from './screens/settings/Settings';
 
 var numberInternetReachable = 0;
@@ -30,10 +27,12 @@ export default () => {
     const [forceUpdate, setForceUpdate] = useState(false);
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
-    const [netInfo, setNetInfo] = useState(true);
+    // const [netInfo, setNetInfo] = useState(true);
     const [showStatusInternet, setShowStatusInternet] = useState(false);
     const dispatch = useDispatch();
-
+    const { netInfo } = useSelector(state => {
+        return state.Common
+    });
     const { height, width } = Dimensions.get('window');
     const aspectRatio = height / width;
 
@@ -69,13 +68,15 @@ export default () => {
     useEffect(() => {
         const unsubscribe = NetInfo.addEventListener(state => {
             if (state.isConnected == true && state.isInternetReachable == true) {
-                setNetInfo(true)
+                // setNetInfo(true)
+                dispatch({ type: 'NET_INFO', netInfo: true })
                 setTimeout(() => {
                     setShowStatusInternet(false)
                 }, 1500);
             } else {
                 if (numberInternetReachable > 0) {
-                    setNetInfo(false)
+                    // setNetInfo(false)
+                    dispatch({ type: 'NET_INFO', netInfo: false })
                     setShowStatusInternet(true)
                 }
             }
@@ -160,8 +161,7 @@ export default () => {
     const handleChangeState = (newState) => {
         if (newState === "active") {
             if (signalRInfo != "") {
-                signalRManager.killSignalR();
-                signalRManager.startSignalR();
+                signalRManager.reconnect();
             }
         }
     }
