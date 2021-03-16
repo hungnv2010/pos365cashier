@@ -392,6 +392,7 @@ export default (props) => {
     useEffect(() => {
         if (changeMethodQRPay.current == true) {
             console.log("onClickOkFilter onClickPay ");
+            realmStore.deleteQRCode(resPayment.current.Id);
             onClickPay();
             changeMethodQRPay.current = false;
         }
@@ -572,6 +573,11 @@ export default (props) => {
         }
         if (checkQRInListMethod()) {
             setToastDescription(I18n.t("khong_ho_tro_nhieu_tai_khoan_cho_qr"))
+            setShowToast(true)
+            return;
+        }
+        if (!vendorSession.Settings.QrCodeEnable) {
+            setToastDescription(I18n.t("vui_long_kich_hoat_thanh_toan_qrcode"))
             setShowToast(true)
             return;
         }
