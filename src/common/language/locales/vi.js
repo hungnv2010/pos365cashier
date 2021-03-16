@@ -69,6 +69,7 @@ export default {
   chon_khach_hang: "Chọn khách hàng",
   cap_nhat_phong_ban: "Cập nhật phòng bàn",
   chua_thanh_toan: "Chưa thanh toán",
+  chi_tiet_don_hang: "Chi tiết đơn hàng",
 
   // TODO: D
   dau_tien: "đầu tiên",
@@ -100,9 +101,10 @@ export default {
   don_hang_offline: "Đơn hàng offline",
   da_ket_noi: "Đã kết nối",
   doi_phuong_thuc: "Đổi phương thức",
-  don_hang_cho_thanh_toan_vnpay_qr: "Đơn hàng chờ thành toán VNPAY QR",
+  don_hang_cho_thanh_toan_vnpay_qr: "Đơn hàng chờ thanh toán VNPAY QR",
   danh_sach_don_hang: "Danh sách đơn hàng",
   da_thanh_toan: "Đã thanh toán",
+  doi_phuong_thuc_thanh_toan: "Đổi phương thức thanh toán",
 
   // TODO: E
 
@@ -273,6 +275,7 @@ export default {
   su_dung_diem: "Sử dụng điểm",
   so_tien_quy_doi: "Số tiền quy đổi",
   sua: "Sửa",
+  san_pham: "Sản phẩm",
 
   // TODO: T
   thong_bao_quet_van_tay: "Quý khách vui lòng quét dấu vân tay đã đăng ký trên thiết bị.",
@@ -353,6 +356,7 @@ export default {
   thanh_cong: "thành công",
   tong_tam_tinh:"Tổng tạm tính",
   tong_thanh_toan:"Tổng thanh toán",
+  tao_lai_ma_qr: "Tạo lại mã QR thanh toán",
 
   // TODO: U
 

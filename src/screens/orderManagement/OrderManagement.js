@@ -24,6 +24,10 @@ export default (props) => {
         props.navigation.navigate(ScreenList.PaymentPendingList)
     }
 
+    const onClickNavigation = (screen) => {
+        props.navigation.navigate(screen)
+    }
+
     return (
         <View style={{ flex: 1 }}>
             <MainToolBar
@@ -33,11 +37,21 @@ export default (props) => {
             />
 
             <View style={styles.viewContent}>
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity style={styles.button} onPress={() => onClickNavigation(ScreenList.Invoice)}>
+                    <Image style={styles.iconButton} source={Images.ic_danhsachdonhang} />
                     <Text style={styles.textButton}>{I18n.t('danh_sach_don_hang')}</Text>
                 </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={() => onClickNavigation(ScreenList.OrderOffline)}>
+                    <Image style={styles.iconButton} source={Images.ic_donhangoffline} />
+                    <Text style={styles.textButton}>{I18n.t('don_hang_offline')}</Text>
+                </TouchableOpacity>
                 <TouchableOpacity style={styles.button} onPress={onClickPaymentVNPAYQR}>
+                    <Image style={styles.iconButton} source={Images.ic_donhangthanhtoanvnpayqr} />
                     <Text style={styles.textButton}>{I18n.t('don_hang_cho_thanh_toan_vnpay_qr')}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={() => onClickNavigation(ScreenList.RoomHistory)}>
+                    <Image style={styles.iconButton} source={Images.ic_lichsuhuytrahang} />
+                    <Text style={styles.textButton}>{I18n.t('lich_su_huy_tra_do')}</Text>
                 </TouchableOpacity>
             </View>
             <Snackbar
@@ -55,7 +69,8 @@ export default (props) => {
 
 
 const styles = StyleSheet.create({
+    iconButton: { width: 40, height: 40, marginRight: 10 },
     viewContent: { paddingHorizontal: 10, margin: 10 },
     textButton: { color: colors.colorLightBlue, fontWeight: "bold" },
-    button: { marginTop: 10, width: "100%", height: 50, justifyContent: "center", backgroundColor: "#fff", borderRadius: 5, paddingLeft: 20 },
+    button: { flexDirection: "row", marginTop: 10, width: "100%", height: 60, justifyContent: "flex-start", alignItems: "center", backgroundColor: "#fff", borderRadius: 10, paddingLeft: 10 },
 })

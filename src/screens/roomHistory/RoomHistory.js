@@ -16,6 +16,7 @@ import colors from '../../theme/Colors';
 import { Metrics, Images } from '../../theme';
 import DateTime from '../../components/filter/DateTime';
 import RoomHistoryDetail from '../../screens/roomHistory/RoomHistoryDetails'
+import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
 
 export default (props) => {
     const [roomHistoryData, setRoomHistoryData] = useState([])
@@ -247,10 +248,9 @@ export default (props) => {
     }
     return (
         <View style={{ flex: 1, }}>
-            <MainToolBar
+            <ToolBarDefault
                 navigation={props.navigation}
                 title={I18n.t('lich_su_huy_tra_do')}
-                outPutTextSearch={()=>{}}
             />
             <View style={{ flex: 1, flexDirection: "row" }}>
                 <View style={{ flex: 1 }}>

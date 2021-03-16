@@ -761,7 +761,7 @@ export default (props) => {
                     realmStore.deleteQRCode(order.Id);
                     updateServerEvent(true)
                     setShowModal(false);
-                    props.navigation.pop()
+                    // props.navigation.pop()
                 }
             }
         })

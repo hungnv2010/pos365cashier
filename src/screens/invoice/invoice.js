@@ -19,6 +19,7 @@ import { ScreenList } from '../../common/ScreenList';
 import dialogManager from '../../components/dialog/DialogManager';
 import moment from "moment";
 import { useFocusEffect } from '@react-navigation/native';
+import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
 
 const Invoice = (props) => {
 
@@ -350,10 +351,9 @@ const Invoice = (props) => {
 
     return (
         <View style={{ flex: 1, backgroundColor: "#f2f2f2" }}>
-            <MainToolBar
+            <ToolBarDefault
                 navigation={props.navigation}
                 title={I18n.t('hoa_don')}
-                outPutTextSearch={() => { }}
             />
             <View style={{ flex: 1, flexDirection: "row" }}>
                 <View style={{ flex: 1, borderRightWidth: 1, borderRightColor: "grey" }}>

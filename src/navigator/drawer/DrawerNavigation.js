@@ -47,9 +47,9 @@ export default (propsFunc) => {
           {props => <OverView {...props} />}
         </Drawer.Screen>
 
-        <Drawer.Screen name={ScreenList.Invoice} options={{ title: ScreenList.Invoice }}>
+        {/* <Drawer.Screen name={ScreenList.Invoice} options={{ title: ScreenList.Invoice }}>
           {props => <Invoice {...props} />}
-        </Drawer.Screen>
+        </Drawer.Screen> */}
         <Drawer.Screen name={ScreenList.RoomCatalog} options={{ title: ScreenList.RoomCatalog }}>
           {props => <RoomCatalog {...props} />}
         </Drawer.Screen>
@@ -65,9 +65,9 @@ export default (propsFunc) => {
         <Drawer.Screen name={ScreenList.VNPayPaymentSetting} options={{ title: ScreenList.Settings }}>
           {props => <VNPayPaymentSetting{...props} />}
         </Drawer.Screen>
-        <Drawer.Screen name={ScreenList.RoomHistory} options={{ title: ScreenList.RoomHistory }}>
+        {/* <Drawer.Screen name={ScreenList.RoomHistory} options={{ title: ScreenList.RoomHistory }}>
           {props => <RoomHistory{...props} />}
-        </Drawer.Screen>
+        </Drawer.Screen> */}
         <Drawer.Screen name={ScreenList.Vouchers} options={{ title: ScreenList.Vouchers }}>
           {props => <Vouchers{...props} />}
         </Drawer.Screen>

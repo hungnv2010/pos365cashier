@@ -13,6 +13,7 @@ import dialogManager from '../../../components/dialog/DialogManager';
 import { URL } from '../../../data/services/HttpService';
 import { getFileDuLieuString } from '../../../data/fileStore/FileStorage';
 import { Constant } from '../../../common/Constant';
+import { ScreenList } from '../../../common/ScreenList';
 
 export default (props) => {
 
@@ -28,7 +29,6 @@ export default (props) => {
     }, [])
 
     const getData = async () => {
-
         let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
         if (vendorSession != "") {
             dialogManager.showLoading()
@@ -38,9 +38,18 @@ export default (props) => {
             queryString += (vendorSession.CurrentBranchId && vendorSession.CurrentBranchId != 0 ? ` AND BranchId == ${vendorSession.CurrentBranchId}` : '');
             queryQRCode = queryQRCode.filtered(queryString)
             console.log("useEffect queryQRCode ", JSON.parse(JSON.stringify(queryQRCode)));
-            setDataPaymentPending(queryQRCode)
+            let queryQRCodeReverse = [];
+            queryQRCode.forEach(element => {
+                queryQRCodeReverse.push(element);
+            });
+            setDataPaymentPending(queryQRCodeReverse.reverse())
             dialogManager.hiddenLoading()
         }
+    }
+
+    const onClickItemOrder = (item) => {
+        console.log("onClickItemOrder item ", item);
+        props.navigation.navigate(ScreenList.DetailPaymentPending, item)
     }
 
     return (
@@ -60,7 +69,7 @@ export default (props) => {
                     let jsonContent = JSON.parse(item.JsonContent)
                     console.log("render jsonContent ", jsonContent);
                     return (
-                        <TouchableOpacity key={index.toString()} style={[styles.viewItem, { marginTop: index == 0 ? 0 : 10 }]}>
+                        <TouchableOpacity key={index.toString()} style={[styles.viewItem, { marginTop: index == 0 ? 0 : 10 }]} onPress={() => onClickItemOrder(item)}>
                             <View style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: 7 }}>
                                 <Text style={{ fontWeight: "bold", color: colors.colorLightBlue, textTransform: 'uppercase' }}>{jsonContent.RoomName ? jsonContent.RoomName : "Pos365"}</Text>
                                 <Text style={{ fontWeight: "bold" }}>{item.Code}</Text>
@@ -71,12 +80,15 @@ export default (props) => {
                             </View>
                             <View style={{ marginTop: 0, flexDirection: "row", justifyContent: "space-between", paddingVertical: 7 }}>
                                 <Text style={{}}>{I18n.t("thoi_gian")}</Text>
-                                <Text style={{}}>{dateToString(new Date(jsonContent.PurchaseDate), "YYYY-MM-DD HH:mm")}</Text>
+                                <Text style={{}}>{dateToString(new Date(jsonContent.PurchaseDate), "DD-MM-YYYY HH:mm")}</Text>
                             </View>
                             <View style={{ paddingVertical: 5, flexDirection: "row", justifyContent: "space-between", paddingVertical: 7 }}>
                                 <Text style={{}}>{I18n.t('tong_tien')}</Text>
                                 <Text style={{ fontWeight: "bold", color: colors.colorLightBlue, }}>{currencyToString(jsonContent.Total)} đ</Text>
                             </View>
+                            <TouchableOpacity style={styles.butonCreateQRCode}>
+                                <Text style={{ fontWeight: "bold", color: colors.colorLightBlue }}>{I18n.t('tao_lai_ma_qr')}</Text>
+                            </TouchableOpacity>
                         </TouchableOpacity>
                     );
                 })}
@@ -96,10 +108,14 @@ export default (props) => {
 
 
 const styles = StyleSheet.create({
+    butonCreateQRCode: {
+        width: "100%", flex: 1, backgroundColor: "#CCFFFF",
+        justifyContent: "center", alignItems: "center", paddingHorizontal: 15, paddingVertical: 10, borderRadius: 5
+    },
     viewItem: {
         width: "100%", flex: 1,
         padding: 10, backgroundColor: "#fff",
-        justifyContent: "center", paddingHorizontal: 15, paddingVertical: 5, paddingVertical: 5, borderRadius: 5
+        justifyContent: "center", paddingHorizontal: 15, paddingVertical: 5, borderRadius: 5
     },
     textOrder: { fontWeight: "bold", color: "gray", textTransform: "uppercase" },
     syncData: { flexDirection: "row", padding: 10, justifyContent: "space-between" },
