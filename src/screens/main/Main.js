@@ -27,6 +27,7 @@ export default (props) => {
   const dispatch = useDispatch();
   const [textSearch, setTextSearch] = useState('')
   const [autoPrintKitchen, setAutoPrintKitchen] = useState(false)
+  const hasInternet = useRef()
   const { listPrint, isFNB, printProvisional, printReturnProduct, netInfo } = useSelector(state => {
     return state.Common
   })
@@ -160,11 +161,18 @@ export default (props) => {
     }
   }, [isFNB, autoPrintKitchen])
 
-  // useDidMountEffect(() => {
-  //   if (netInfo) {
-  //     signalRManager.reconnect()
-  //   }
-  // }, [netInfo])
+  useEffect(() => {
+    if (netInfo === false) {
+      hasInternet.current = false
+    }
+    if (netInfo === true) {
+      if (hasInternet.current == false) {
+        hasInternet.current = true
+        signalRManager.reconnect()
+      }
+    }
+    console.log('netInfo', netInfo, 'hasInternet.current', hasInternet.current);
+  }, [netInfo])
 
   const getDataNewOrders = async () => {
     let result = await dataManager.initComfirmOrder()
