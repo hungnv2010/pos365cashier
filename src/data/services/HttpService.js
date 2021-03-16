@@ -132,7 +132,7 @@ export class HTTPService {
     error() {
         if (this.showMessage == true) {
             let state = store.getState();
-            if (state.NetInfo) {
+            if (state.netInfo) {
                 dialogManager.showPopupOneButton(I18n.t('loi_server'), I18n.t('thong_bao'), () => {
                     dialogManager.destroy();
                 }, null, null, I18n.t('dong'))
