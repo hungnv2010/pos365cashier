@@ -160,11 +160,11 @@ export default (props) => {
     }
   }, [isFNB, autoPrintKitchen])
 
-  useDidMountEffect(() => {
-    if (netInfo) {
-      signalRManager.reconnect()
-    }
-  }, [netInfo])
+  // useDidMountEffect(() => {
+  //   if (netInfo) {
+  //     signalRManager.reconnect()
+  //   }
+  // }, [netInfo])
 
   const getDataNewOrders = async () => {
     let result = await dataManager.initComfirmOrder()
