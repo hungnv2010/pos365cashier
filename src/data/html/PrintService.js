@@ -16,7 +16,7 @@ export const TYPE_PRINT = {
     RETURN_PRODUCT: "RETURN_PRODUCT"
 }
 
-const typeHeader = "HOÁ ĐƠN TEST PRINT"
+const typeHeader = "HOÁ ĐƠN THANH TOÁN"
 const code = "HD000000"
 const number = "0000"
 

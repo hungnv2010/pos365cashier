@@ -39,8 +39,9 @@ import SplitTable from '../../screens/splitTable/SplitTable'
 import OrderOffline from '../../screens/orderOffline/OrderOffline'
 import ProductDetail from '../../screens/products/ProductDetail'
 
-import PaymentPendingList from '../../screens/orderManagement/paymentPending/PaymentPendingList'
-
+import PaymentPendingList from '../../screens/orderManagement/paymentPending/PaymentPendingList';
+import DetailPaymentPending from '../../screens/orderManagement/paymentPending/DetailPaymentPending';
+import Invoice from '../../screens/invoice/invoice';
 
 const MainStack = createStackNavigator();
 
@@ -91,6 +92,8 @@ export default (props) => {
                 <MainStack.Screen name={ScreenList.Product}>{props=> <Product {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.ProductDetail}>{props=> <ProductDetail {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.PaymentPendingList}>{props=> <PaymentPendingList {...props}/>}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.DetailPaymentPending}>{props=> <DetailPaymentPending {...props}/>}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.Invoice}>{props=> <Invoice {...props}/>}</MainStack.Screen>
             </MainStack.Navigator>
         </Animated.View>
     );

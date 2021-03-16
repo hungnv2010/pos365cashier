@@ -73,5 +73,6 @@ export const ScreenList = {
   ProductDetail:"ProductDetail",
   OrderManagement: "OrderManagement",
   PaymentPendingList: "PaymentPendingList",
+  DetailPaymentPending: "DetailPaymentPending",
 }
 

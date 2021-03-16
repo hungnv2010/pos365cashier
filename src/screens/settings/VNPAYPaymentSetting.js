@@ -106,7 +106,7 @@ export default (props) => {
             <ScrollView>
                 <SettingSwitch title={'thanh_toan_vnpayqr'} output={onClick} isStatus={qrcodeEnable} />
                 <SettingSwitch title={'in_hoa_don_truoc_khi_thanh_toan_VNPAYQR_thanh_cong'} />
-                <SettingSwitch title={'thanh_toan_vnpaypos_qua_may_pos'} />
+                {/* <SettingSwitch title={'thanh_toan_vnpaypos_qua_may_pos'} /> */}
                 <View>
                     <HideView enable={qrcodeEnable} outPut={getData} merchantCode={defaultMerchantCode} merchantName={defaultMerchantName} />
                 </View>

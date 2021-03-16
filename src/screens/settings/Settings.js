@@ -483,10 +483,10 @@ export default (props) => {
             />
             <ScrollView style={{ marginBottom: 1 }}>
                 <View style={{ flex: 1, flexDirection: 'column' }}>
-                    {/* <TouchableOpacity onPress={() => screenSwitch(ScreenList.VNPayPaymentSetting, settingObject)}>
+                    <TouchableOpacity onPress={() => screenSwitch(ScreenList.VNPayPaymentSetting, settingObject)}>
                         <Text style={styles.textTitleItem}>{I18n.t("thiet_lap_thanh_toan_vnpay")}</Text>
                     </TouchableOpacity>
-                    <View style={styles.viewLine}></View> */}
+                    <View style={styles.viewLine}></View>
 
                     <View>
                         <Text style={styles.textTitle}>{I18n.t("thong_bao")}</Text>
