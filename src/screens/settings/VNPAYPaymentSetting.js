@@ -76,6 +76,10 @@ export default (props) => {
                 console.log('onClickApply res', res);
                 if (res) {
                     console.log("res");
+                    new HTTPService().setPath(ApiPath.VENDOR_SESSION).GET().then(async (res) => {
+                        console.log("getDataRetailerInfo res ", res);
+                        setFileLuuDuLieu(Constant.VENDOR_SESSION, JSON.stringify(res))
+                    })
                 } else {
                     console.log('aaa');
                 }
@@ -100,7 +104,7 @@ export default (props) => {
                     <MainToolBar
                         navigation={props.navigation}
                         title={I18n.t('setting')}
-                        outPutTextSearch={()=>{}}
+                        outPutTextSearch={() => { }}
                     />
             }
             <ScrollView>
@@ -141,7 +145,7 @@ export default (props) => {
                     <View style={styles.styleViewModal} >
                         <View style={{ width: Metrics.screenWidth * 0.8, }}>
                             <Text style={styles.titleModal}>{I18n.t('thong_tin_cua_hang')}</Text>
-                            <Text style={{ fontSize: 16, justifyContent: 'center', marginTop: 5, marginLeft:20 }}>Mời nhập {titileModal} </Text>
+                            <Text style={{ fontSize: 16, justifyContent: 'center', marginTop: 5, marginLeft: 20 }}>Mời nhập {titileModal} </Text>
                             <TextInput style={styles.textInputStyle} onChangeText={text => setInput(text)}></TextInput>
                             <TouchableOpacity style={{ justifyContent: 'flex-end', alignItems: 'flex-end', marginTop: 10, marginBottom: 10 }} onPress={() => setInfoModal(input)}>
                                 <Text style={{ textAlign: 'center', color: '#FF6600', marginRight: 40 }} >{I18n.t("dong_y")}</Text>
