@@ -46,7 +46,7 @@ export default function CustomerToolBar(props) {
                     props.route.params._onSelect ?
                         <TouchableOpacity onPress={() => {
                             props.navigation.goBack();
-                        }} style={[{padding: 15}, deviceType == Constant.TABLET ? { alignSelf: "flex-start" } : { alignItems: "center" }]}>
+                        }} style={[{paddingLeft:19,paddingRight:19,paddingTop:16,paddingBottom:16, justifyContent:'center'}, deviceType == Constant.TABLET ? { alignSelf: "flex-start" } : { alignItems: "center" }]}>
 
                             <Image source={Images.icon_back} style={{ width: 48, height: 48 ,}} />
                         </TouchableOpacity>

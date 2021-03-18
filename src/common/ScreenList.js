@@ -71,5 +71,7 @@ export const ScreenList = {
   Vouchers: "Vouchers",
   Product:"Product",
   ProductDetail:"ProductDetail",
+  ComboForTab:"ComboForTab",
+
 }
 

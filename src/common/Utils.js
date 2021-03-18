@@ -132,6 +132,18 @@ export const dateToString = (date, formatOutput = "DD/MM/YYYY") => {
   }
   return momentdate;
 };
+export const timeToString = (date, formatOutput="HH:mm") =>{
+  let momentdate = "";
+  try {
+    momentdate = moment(date, "YYYY-MM-DD HH:mm:ss").local().format(formatOutput);
+    if (momentdate == "Invalid date") {
+      momentdate = date;
+    }
+  } catch (e) {
+    momentdate = date;
+  }
+  return momentdate;
+}
 
 //convert string, character
 export const change_alias = (alias) => {

@@ -84,12 +84,15 @@ export default (props) => {
     }, [listOrder])
 
     useEffect(() => {
+        dialogManager.showLoading()
         console.log("CustomerOrder props.jsonContent.OrderDetails :: ", props.jsonContent.OrderDetails);
 
         if (props.jsonContent.OrderDetails) {
             let listOrder = props.jsonContent.OrderDetails.filter(item => item.ProductId > 0)
             setListOrder(listOrder)
+            dialogManager.hiddenLoading()
         }
+        
     }, [props.jsonContent])
 
     const sendOrder = async () => {

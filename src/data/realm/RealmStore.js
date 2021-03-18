@@ -91,6 +91,16 @@ class RealmStore extends RealmBase {
             resolve()
         }))
     }
+    deleteProduct = async () =>{
+        console.log("deleteProduct ");
+        let realm = await Realm.open(databaseOption)
+        return new Promise((resolve) => realm.write(() => {
+            let product = realm.objects(SchemaName.PRODUCT)
+            realm.delete(product)
+            resolve()
+        }))
+
+    }
 
     deleteCommodity = async (item) => {
         let realm = await Realm.open(databaseOption)

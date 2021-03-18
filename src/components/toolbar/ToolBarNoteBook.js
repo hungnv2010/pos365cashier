@@ -12,6 +12,7 @@ import Fonts from '../../theme/Fonts';
 import LinearGradient from 'react-native-linear-gradient';
 import PropTypes from 'prop-types';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import colors from '../../theme/Colors';
 
 export default function ToolBarNoteBook(props) {
 
@@ -79,12 +80,12 @@ export default function ToolBarNoteBook(props) {
 
             <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
                 {showInput == false ?
-                    <TouchableOpacity onPress={() => onClickSearch()} style={{padding:15,}}>
-                        <Image source={Images.icon_search} style={{width:18,height:18}}/>
+                    <TouchableOpacity onPress={() => onClickSearch()} style={{}}>
+                        <Ionicons name={props.rightIcon} size={30} color={colors.colorLightBlue}/>
                     </TouchableOpacity>
                     :
-                    <TouchableOpacity onPress={() => setShowInput(false)} style={{padding:17}}>
-                        <Image source={Images.icon_remove} style={{width:14,height:14}}/>
+                    <TouchableOpacity onPress={() => setShowInput(false)} style={{}}>
+                        <Ionicons name={"md-close"} size={30} color={colors.colorLightBlue}/>
                     </TouchableOpacity>
                 }
             </View>
@@ -101,6 +102,8 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         height: 44,
         backgroundColor: 'white',
+        borderBottomColor:'gray',
+        borderBottomWidth:0.5
     },
 })
 

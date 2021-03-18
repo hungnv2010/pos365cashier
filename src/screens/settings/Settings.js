@@ -483,10 +483,10 @@ export default (props) => {
             />
             <ScrollView style={{ marginBottom: 1 }}>
                 <View style={{ flex: 1, flexDirection: 'column' }}>
-                    {/* <TouchableOpacity onPress={() => screenSwitch(ScreenList.VNPayPaymentSetting, settingObject)}>
+                    <TouchableOpacity onPress={() => screenSwitch(ScreenList.VNPayPaymentSetting, settingObject)}>
                         <Text style={styles.textTitleItem}>{I18n.t("thiet_lap_thanh_toan_vnpay")}</Text>
                     </TouchableOpacity>
-                    <View style={styles.viewLine}></View> */}
+                    <View style={styles.viewLine}></View>
 
                     <View>
                         <Text style={styles.textTitle}>{I18n.t("thong_bao")}</Text>
@@ -856,7 +856,7 @@ export default (props) => {
 
                             </TouchableWithoutFeedback>
                             <View style={[styles.styleViewModal]} >
-                                <View style={{ width: Metrics.screenWidth * 0.7, height: Metrics.screenHeight * 0.7 }}>
+                                <View style={{ width: Metrics.screenWidth * 0.7}}>
                                     <Text style={styles.titleModal}>{I18n.t('thong_tin_cua_hang')}</Text>
                                     <StoreInformation code={inforStore.Code} name={inforStore.Name} address={inforStore.Address} phoneNumber={inforStore.Phone} outPut={outPut} />
                                     <View style={{ justifyContent: "center", flexDirection: "row", paddingTop: 10 }}>

@@ -2,20 +2,50 @@ import React, { useEffect, useState, useRef } from 'react';
 import { Image, View, Text, TouchableOpacity, TextInput, StyleSheet, FlatList } from 'react-native';
 import { currencyToString, dateToString } from '../../common/Utils';
 import I18n from "../../common/language/i18n";
-import { Checkbox, RadioButton } from 'react-native-paper';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Colors, Images } from '../../theme';
+
 
 export default (props) => {
-    const [value, setValue] = useState('')
+    const [value, setValue] = useState({})
+    const [key, setKey] = useState()
+    const [input, setInput] = useState()
+    const [list, setList] = useState(props.listItem)
+
     const onClickButton = () => {
         props.outputValue(value)
+        console.log("value", value);
+
+
+    }
+    useEffect(() => {
+        setList[props.listItem]
+        list.forEach(element => {
+            value[element.Key] = element.Value
+        });
+    }, [])
+    useEffect(() => {
+        let obj = value
+        let k = `${key}`
+        obj[k] = input
+        setValue({ ...obj })
+    }, [input])
+    const onChangeTextInput = (text) => {
+        console.log("onChangeTextInput text ===== ", text, props.route);
+        if (text == "") {
+            text = 0;
+        }else if(text!="" && typeof(text) == 'string'){
+            text = text
+        } 
+        else {
+            text = text.replace(/,/g, "");
+            text = Number(text);
+        }
+        return text
     }
     const renderItem = (item, index) => {
         return (
             <View >
                 <Text style={styles.styleContent}>{I18n.t(item.Name)}</Text>
-                <TextInput style={styles.styleTextInput} placeholder={(item.Hint)} placeholderTextColor="#808080" onChangeText={(text)=>setValue(text)}></TextInput>
+                <TextInput style={styles.styleTextInput} value={item.Value ? typeof (item.Value) == 'string' ? item.Value : item.Value == 0 ? 0 + '' : currencyToString(item.Value) : null} placeholder={I18n.t(item.Hint)} placeholderTextColor="#808080" onChangeText={(text) => { setInput(onChangeTextInput(text)),item.Value = onChangeTextInput(text); setKey(item.Key) }}></TextInput>
             </View>
         )
     }
@@ -24,7 +54,7 @@ export default (props) => {
             <Text style={[styles.styleTitle, { marginTop: 10 }]}>{props.title}</Text>
             <View style={styles.styleLine}></View>
             <FlatList
-                data={props.listItem}
+                data={list}
                 renderItem={({ item, index }) => renderItem(item, index)}
                 keyExtractor={(item, index) => index.toString()}
             />
