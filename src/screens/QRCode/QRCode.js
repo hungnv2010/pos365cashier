@@ -90,11 +90,6 @@ export default (props) => {
                 customMarker={
                     <View style={styles.viewCustom}>
                         <View style={styles.viewTopCustom}></View>
-                        {/* <View style={{ flex: 4.4, flexDirection: 'row' }}>
-                            <View style={{ backgroundColor: 'rgba(1,1,1,0.5)', height: "100%", width: "5%" }}></View>
-                            <View style={[{ backgroundColor: 'transparent', height: "100%", width: orientation == Constant.PORTRAIT ? "46.2%" : "90%", }, styles.rectangle]}></View>
-                            <View style={{ backgroundColor: 'rgba(1,1,1,0.5)', height: "100%", width: "5%" }}></View>
-                        </View> */}
                         <View style={{ height: "45%", width: orientation == Constant.PORTRAIT ? Metrics.screenWidth : Metrics.screenHeight, flexDirection: 'row' }}>
                             <View style={{ backgroundColor: 'rgba(1,1,1,0.5)', height: "100%", width: "5%", }}></View>
                             <View style={[{ backgroundColor: 'transparent', height: "100%", width: "90%", }, styles.rectangle]}></View>
@@ -105,6 +100,20 @@ export default (props) => {
                 }
                 flashMode={flash != FLASH_ON ? RNCamera.Constants.FlashMode.torch : RNCamera.Constants.FlashMode.off}
             />
+            {/* <RNCamera
+                style={styles.preview}
+                type={RNCamera.Constants.Type.back}
+                flashMode={RNCamera.Constants.FlashMode.on}
+                androidCameraPermissionOptions={{
+                    title: 'Permission to use camera',
+                    message: 'We need your permission to use your camera',
+                    buttonPositive: 'Ok',
+                    buttonNegative: 'Cancel',
+                }}
+                onBarCodeRead={({data}) => {
+                    alert(JSON.stringify(data))
+                }}
+            /> */}
             <Text style={styles.textQRCode}>{I18n.t('quet_barcode_hoac_qrcode')}</Text>
         </View>
 
@@ -113,6 +122,11 @@ export default (props) => {
 
 const styles = StyleSheet.create({
     container: { flex: 1 },
+    preview: {
+        flex: 1,
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+    },
     rectangle: {
         borderWidth: 1,
         borderColor: "#fff",

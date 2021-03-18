@@ -562,7 +562,7 @@ export default (props) => {
                 check = true;
             }
         });
-        return (check && listMethod.length > 1) ? true : false;
+        return check;
     }
 
     const onClickPay = () => {
@@ -573,12 +573,12 @@ export default (props) => {
         } else {
             return;
         }
-        if (checkQRInListMethod()) {
+        if (checkQRInListMethod() && listMethod.length > 1) {
             setToastDescription(I18n.t("khong_ho_tro_nhieu_tai_khoan_cho_qr"))
             setShowToast(true)
             return;
         }
-        if (!vendorSession.Settings.QrCodeEnable) {
+        if (checkQRInListMethod() && !vendorSession.Settings.QrCodeEnable) {
             setToastDescription(I18n.t("vui_long_kich_hoat_thanh_toan_qrcode"))
             setShowToast(true)
             return;
@@ -653,10 +653,10 @@ export default (props) => {
         }
         params.Order = json;
         jsonContentPayment.current = json;
-        console.log("onClickPay params ", params);
+        console.log("onClickPay params== ", params);
         dialogManager.showLoading();
         new HTTPService().setPath(ApiPath.ORDERS, false).POST(params).then(async order => {
-            console.log("onClickPay order ", order);
+            console.log("onClickPay order== ", order);
             if (order) {
                 resPayment.current = order;
                 dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
@@ -669,7 +669,7 @@ export default (props) => {
                 if (order.ResponseStatus && order.ResponseStatus.Message && order.ResponseStatus.Message != "") {
                     dialogManager.showPopupOneButton(order.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, ""))
                 }
-                if (order.QRCode != "") {
+                if (order.QRCode && order.QRCode != "") {
                     qrCode.current = order.QRCode
                     typeModal.current = TYPE_MODAL.QRCODE
                     setShowModal(true)

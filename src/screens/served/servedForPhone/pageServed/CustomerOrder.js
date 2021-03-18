@@ -106,10 +106,11 @@ export default (props) => {
     }, [listOrder])
 
     useEffect(() => {
-        dialogManager.showLoading()
-        console.log("CustomerOrder props.jsonContent.OrderDetails :: ", props.jsonContent.OrderDetails);
+        
+        console.log("CustomerOrder props.jsonContent.OrderDetails :: ", props);
 
         if (props.jsonContent.OrderDetails) {
+            dialogManager.showLoading()
             let listOrder = props.jsonContent.OrderDetails.filter(item => item.ProductId > 0)
             setListOrder(listOrder)
             dialogManager.hiddenLoading()

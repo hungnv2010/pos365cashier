@@ -101,11 +101,11 @@ const Served = (props) => {
             serverEvent = await realmStore.queryServerEvents()
             const row_key = `${props.route.params.room.Id}_${position}`
             serverEvent = serverEvent.filtered(`RowKey == '${row_key}'`)
-            let tpmServerEvent = JSON.parse(JSON.stringify(serverEvent[0]))
+            let tpmServerEvent = JSON.stringify(serverEvent) != "{}" ? JSON.parse(JSON.stringify(serverEvent[0])) : {}
             let hasServerEvent = JSON.stringify(serverEvent) != "{}"
             currentServerEvent.current = hasServerEvent ? JSON.parse(JSON.stringify(serverEvent[0]))
                 : await dataManager.createSeverEvent(props.route.params.room.Id, position)
-            let jsonContentObject = currentServerEvent.current.JsonContent != "{}" ? JSON.parse(currentServerEvent.current.JsonContent) : dataManager.createJsonContent(props.route.params.room.Id, position, moment())
+            let jsonContentObject = currentServerEvent.current.JsonContent != "{}" ? JSON.parse(currentServerEvent.current.JsonContent) : dataManager.createJsonContent(props.route.params.room.Id, position, moment(), [], props.route.params.room.Name)
             currentServerEvent.current.JsonContent = JSON.stringify(jsonContentObject)
             jsonContentObject.OrderDetails = await addPromotion(jsonContentObject.OrderDetails);
             jsonContentObject.RoomName = jsonContentObject.RoomName ? jsonContentObject.RoomName : props.route.params.room.Name
@@ -166,7 +166,7 @@ const Served = (props) => {
 
     const outputSelectedProduct = async (product, replace = false) => {
         let { RoomId, Position } = currentServerEvent.current
-        let jsonContentTmp = JSON.stringify(jsonContent) == "{}" ? dataManager.createJsonContent(RoomId, Position, moment(), props.route.params.room.Name) : jsonContent
+        let jsonContentTmp = JSON.stringify(jsonContent) == "{}" ? dataManager.createJsonContent(RoomId, Position, moment(), [], props.route.params.room.Name) : jsonContent
         console.log('outputSelectedProduct', product, jsonContentTmp);
         if (product.Quantity > 0 && !replace) {
             if (jsonContentTmp.OrderDetails.length == 0) {

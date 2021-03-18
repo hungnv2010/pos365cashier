@@ -355,7 +355,7 @@ export default (props) => {
                     </View>
                     <View style={styles.rowInfo}>
                         <Text style={styles.textGray}>{I18n.t('tong_thanh_toan')}</Text>
-                        <Text style={styles.textBoldBlue}>{dataJsonContent && dataJsonContent.TotalPayment ? currencyToString(dataJsonContent.TotalPayment) : 0} đ</Text>
+                        <Text style={styles.textBoldBlue}>{0} đ</Text>
                     </View>
                 </View>
                 <View style={[styles.content, { marginTop: 10, padding: 20, flex: 1 }]}>
