@@ -84,11 +84,11 @@ const images = {
     icon_cashier: require("../../assets/icons/icon_cashier.png"),
     icon_overview: require("../../assets/icons/icon_overview.png"),
     icon_room_table: require("../../assets/icons/icon_room_table.png"),
-    icon_back:require("../../assets/icons/icon_home1.png"),
-    icon_search:require("../../assets/icons/icon_search.png"),
-    icon_remove:require("../../assets/icons/icon_remove.png"),
-    icon_refresh:require("../../assets/icons/icon_refresh.png"),
-    icon_room_history:require("../../assets/icons/icon_roomhistory.png"),
+    icon_back: require("../../assets/icons/icon_home1.png"),
+    icon_search: require("../../assets/icons/icon_search.png"),
+    icon_remove: require("../../assets/icons/icon_remove.png"),
+    icon_refresh: require("../../assets/icons/icon_refresh.png"),
+    icon_room_history: require("../../assets/icons/icon_roomhistory.png"),
     icon_income: require("../../assets/icons/icon_income.png"),
     icon_oder_offline: require("../../assets/icons/icon_orderoff.png"),
     icon_using: require("../../assets/icons/icon_using.png"),
@@ -96,7 +96,18 @@ const images = {
     icon_arrow_down_white: require("../../assets/icons/icon_arrow_down_white.png"),
     icon_trash: require("../../assets/icons/recycle-bin.png"),
     icon_gift: require("../../assets/icons/icon_gift.png"),
+    bg_vn_pay_qr: require("../../assets/images/bg_vn_pay_qr.png"),
+    vnpay_qr: require("../../assets/images/vnpay_qr.jpg"),
+
+    qrcode: require("../../assets/icons/qrcode.png"),
+    change_method: require("../../assets/icons/change_method.png"),
     
+    ic_danhsachdonhang: require("../../assets/icons/ic_danhsachdonhang.png"),
+    ic_donhangoffline: require("../../assets/icons/ic_donhangoffline.png"),
+    ic_donhangthanhtoanvnpayqr: require("../../assets/icons/ic_donhangthanhtoanvnpayqr.png"),
+    ic_lichsuhuytrahang: require("../../assets/icons/ic_lichsuhuytrahang.png"),
+    ic_quanlyhanghoa: require("../../assets/icons/ic_quanlyhanghoa.png"),
+
 }
 
 export default images

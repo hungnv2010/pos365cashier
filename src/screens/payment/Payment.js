@@ -91,7 +91,11 @@ export default (props) => {
     const currentServerEvent = useRef();
     const viewPrintRef = useRef();
     const settingObject = useRef();
+    const resPayment = useRef({});
+    const jsonContentPayment = useRef({});
+    const changeMethodQRPay = useRef(false);
     const debounceTimeInput = useRef(new Subject());
+    const qrCodeRealm = useRef()
     let row_key = "";
 
     const { deviceType, isFNB } = useSelector(state => {
@@ -139,6 +143,9 @@ export default (props) => {
             if (settingObject.current)
                 settingObject.current = JSON.parse(settingObject.current)
             console.log("settingObject.current ", settingObject.current);
+
+            let queryQRCode = await realmStore.queryQRCode();
+            console.log("queryQRCode ", JSON.parse(JSON.stringify(queryQRCode)));
         }
 
         // debounceTimeInput.current.debounceTime(300)
@@ -151,6 +158,10 @@ export default (props) => {
         //             dataManager.updateServerEventNow(serverEvent, true, isFNB);
         //         }
         //     })
+
+
+
+
 
         getRoom()
         getVendorSession()
@@ -371,21 +382,41 @@ export default (props) => {
 
     const onClickCancelFilter = () => {
         setShowModal(false)
+        if (changeMethodQRPay.current != false) {
+            setTimeout(() => {
+                typeModal.current = TYPE_MODAL.QRCODE
+                setShowModal(true)
+            }, 200);
+        }
     }
+
+    useEffect(() => {
+        if (changeMethodQRPay.current == true) {
+            console.log("onClickOkFilter onClickPay ");
+            realmStore.deleteQRCode(resPayment.current.Id);
+            qrCodeRealm.current.removeAllListeners()
+            onClickPay();
+            changeMethodQRPay.current = false;
+        }
+    }, [listMethod])
 
     const onClickOkFilter = () => {
         console.log("onClickOkFilter 1 ", listMethod);
         console.log("onClickOkFilter 2 ", itemAccountRef.current);
         console.log("onClickOkFilter 3 ", itemMethod);
         setShowModal(false)
-        let list = [];
-        listMethod.forEach(element => {
-            if (itemAccountRef.current.Id == element.Id && itemAccountRef.current.UUID == element.UUID) {
-                list.push({ ...itemAccountRef.current, ...itemMethod, Value: element.Value })
-            } else
-                list.push(element)
-        });
-        setListMethod([...list])
+        if (changeMethodQRPay.current == true) {
+            setListMethod([itemMethod])
+        } else {
+            let list = [];
+            listMethod.forEach(element => {
+                if (itemAccountRef.current.Id == element.Id && itemAccountRef.current.UUID == element.UUID) {
+                    list.push({ ...itemAccountRef.current, ...itemMethod, Value: element.Value })
+                } else
+                    list.push(element)
+            });
+            setListMethod([...list])
+        }
     }
 
     const onSelectMethod = (item) => {
@@ -547,6 +578,11 @@ export default (props) => {
             setShowToast(true)
             return;
         }
+        if (!vendorSession.Settings.QrCodeEnable) {
+            setToastDescription(I18n.t("vui_long_kich_hoat_thanh_toan_qrcode"))
+            setShowToast(true)
+            return;
+        }
         if (customer && customer.Id == 0 && jsonContent.ExcessCash < 0) {
             setToastDescription(I18n.t("vui_long_nhap_dung_so_tien_khach_tra"))
             setShowToast(true)
@@ -555,6 +591,7 @@ export default (props) => {
         let json = { ...jsonContent }
         let amountReceived = listMethod.reduce(getSumValue, 0);
         let paramMethod = []
+        console.log("onClickPay listMethod ", listMethod);
         listMethod.forEach((element, index) => {
             let value = element.Value
             if (index == 0 && giveMoneyBack && amountReceived > json.Total) {
@@ -562,10 +599,10 @@ export default (props) => {
             }
             paramMethod.push({ AccountId: element.Id, Value: value != "" ? value : 0 })
         });
-        console.log("onClickPay json.MoreAttributes ", typeof(json.MoreAttributes),json.MoreAttributes);
-        let MoreAttributes = json.MoreAttributes ? (typeof(json.MoreAttributes) == 'string' ? JSON.parse(json.MoreAttributes) : json.MoreAttributes) : {}
+        console.log("onClickPay json.MoreAttributes ", typeof (json.MoreAttributes), json.MoreAttributes);
+        let MoreAttributes = json.MoreAttributes ? (typeof (json.MoreAttributes) == 'string' ? JSON.parse(json.MoreAttributes) : json.MoreAttributes) : {}
         console.log("onClickPay pointUse ", pointUse);
-
+        console.log("onClickPay paramMethod ", paramMethod);
         MoreAttributes.PointDiscount = pointUse && pointUse > 0 ? pointUse : 0;
         MoreAttributes.PointDiscountValue = 0;
         MoreAttributes.TemporaryPrints = [];
@@ -615,28 +652,33 @@ export default (props) => {
             delete json.RoomId;
         }
         params.Order = json;
-
+        jsonContentPayment.current = json;
         console.log("onClickPay params ", params);
         dialogManager.showLoading();
-        new HTTPService().setPath(ApiPath.ORDERS, true).POST(params).then(async order => {
+        new HTTPService().setPath(ApiPath.ORDERS, false).POST(params).then(async order => {
             console.log("onClickPay order ", order);
             if (order) {
+                resPayment.current = order;
                 dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
                 dialogManager.hiddenLoading()
 
-                await printAfterPayment(order.Code)
+                // await printAfterPayment(order.Code)
 
-                updateServerEvent()
+                // updateServerEvent();
 
                 if (order.ResponseStatus && order.ResponseStatus.Message && order.ResponseStatus.Message != "") {
                     dialogManager.showPopupOneButton(order.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, ""))
                 }
-                // if (order.QRCode != "") {
-                //     qrCode.current = order.QRCode
-                //     typeModal.current = TYPE_MODAL.QRCODE
-                //     setShowModal(true)
-                //     handlerQRCode(order)
-                // }
+                if (order.QRCode != "") {
+                    qrCode.current = order.QRCode
+                    typeModal.current = TYPE_MODAL.QRCODE
+                    setShowModal(true)
+                    handlerQRCode(order, json)
+                    // updateServerEvent(false)
+                } else {
+                    await printAfterPayment(order.Code)
+                    updateServerEvent(true)
+                }
             } else {
                 onError(json)
             }
@@ -653,22 +695,22 @@ export default (props) => {
         // props.navigation.pop()
     }
 
-    const updateServerEvent = () => {
+    const updateServerEvent = (isBack = true) => {
         let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
-        let json = dataManager.createJsonContent(props.route.params.RoomId, props.route.params.Position, moment(), []);
+        let json = dataManager.createJsonContent(props.route.params.RoomId, props.route.params.Position, moment(), [], props.route.params.Name);
         setJsonContent(json)
         serverEvent.JsonContent = json;
         serverEvent.Version += 10
         console.log("updateServerEvent serverEvent ", serverEvent);
         dataManager.updateServerEventNow(serverEvent, true, isFNB);
-        if (settingObject.current.am_bao_thanh_toan == true)
+        if (settingObject.current.am_bao_thanh_toan == true && isBack)
             playSound()
-
-        setTimeout(() => {
-            if (!isFNB)
-                props.route.params.onCallBack(1, json)
-            props.navigation.pop()
-        }, 500);
+        if (isBack)
+            setTimeout(() => {
+                if (!isFNB)
+                    props.route.params.onCallBack(1, json)
+                props.navigation.pop()
+            }, 500);
     }
 
     const playSound = () => {
@@ -701,12 +743,12 @@ export default (props) => {
         dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
     }
 
-    const handlerQRCode = async (order) => {
+    const handlerQRCode = async (order, jsonContent) => {
         let params = {
             Id: order.Id,
-            JsonContent: JSON.stringify(data.JsonContent),
+            JsonContent: JSON.stringify(jsonContent),
             Messenger: order.Messenger,
-            Status: 0,
+            Status: false,
             HostName: URL.link,
             BranchId: vendorSession.CurrentBranchId,
             Code: order.Code,
@@ -714,12 +756,23 @@ export default (props) => {
         }
         console.log("handlerQRCode params ", params);
         dataManager.syncQRCode([params]);
-        qrCodeRealm = await realmStore.queryQRCode()
-        // qrCodeRealm.addListener((collection, changes) => {
-        //     if (changes.insertions.length || changes.modifications.length) {
-        //         console.log("handlerQRCode qrCode.addListener collection changes ", collection, changes);
-        //     }
-        // })
+
+        qrCodeRealm.current = await realmStore.queryQRCode()
+        qrCodeRealm.current.addListener((collection, changes) => {
+            if (changes.insertions.length || changes.modifications.length) {
+                console.log("handlerQRCode qrCode.addListener collection changes ", collection, changes);
+                let QRCodeItem = qrCodeRealm.current.filtered(`Id == '${order.Id}'`);
+                console.log("QRCodeItem == ", QRCodeItem);
+                QRCodeItem = JSON.parse(JSON.stringify(QRCodeItem))[0];
+                console.log("QRCodeItem ", QRCodeItem);
+                if (QRCodeItem && QRCodeItem.Status == true) {
+                    qrCodeRealm.current.removeAllListeners()
+                    realmStore.deleteQRCode(order.Id);
+                    updateServerEvent(true)
+                    setShowModal(false);
+                }
+            }
+        })
     }
 
     const handlerError = (data) => {
@@ -918,9 +971,49 @@ export default (props) => {
         setSelection({ start: length, end: length })
     }
 
+    const onClickRePrint = () => {
+        // xử lý rồi update
+        // updateServerEvent(false)
+        console.log("onClickRePrint resPayment ", resPayment.current);
+        printAfterPayment(resPayment.current.Code);
+    }
+
+    const onClickChangeMethod = () => {
+        setShowModal(false)
+        setTimeout(() => {
+            changeMethodQRPay.current = true;
+            typeModal.current = TYPE_MODAL.FILTER_ACCOUNT
+            setShowModal(true)
+        }, 200);
+    }
+
+    const onClickCancelOrder = () => {
+        updateServerEvent(false)
+        console.log('onClickCancelOrder resPayment.current', resPayment.current);
+        let id = resPayment.current && resPayment.current.Id ? resPayment.current.Id : ""
+        new HTTPService().setPath(ApiPath.DELETE_ORDER.replace("{orderId}", id)).DELETE()
+            .then(result => {
+                console.log('onClickCancelOrder result', result);
+                if (result) {
+                    qrCodeRealm.current.removeAllListeners()
+                    realmStore.deleteQRCode(resPayment.current.Id);
+                    props.navigation.pop()
+                }
+            }).catch(err => {
+                console.log("onClickCancelOrder err ", err);
+            })
+    }
+
+    const onClickBackOrder = () => {
+        qrCodeRealm.current.removeAllListeners()
+        updateServerEvent(false)
+        setShowModal(false);
+        props.navigation.pop()
+    }
+
     const renderFilter = () => {
         if (typeModal.current == TYPE_MODAL.FILTER_ACCOUNT) {
-            let listAccount = vendorSession.Accounts.filter(item => item.Id != Constant.ID_VNPAY_QR)
+            let listAccount = vendorSession.Accounts; //.filter(item => item.Id != Constant.ID_VNPAY_QR)
             return (
                 <View style={styles.viewFilter}>
                     <Text style={styles.titleFilter}>{I18n.t('loai_hinh_thanh_toan')}</Text>
@@ -934,7 +1027,12 @@ export default (props) => {
                                             onPress={() => onSelectMethod(item)}
                                             color={colors.colorchinh}
                                         />
-                                        <Text style={{}}>{item.Name}</Text>
+                                        {
+                                            item.Id != Constant.ID_VNPAY_QR ?
+                                                <Text style={{}}>{item.Name}</Text>
+                                                : <Image source={Images.vnpay_qr} style={{ width: 109, height: 30 }} />
+                                        }
+                                        {/* // <Text style={{}}>{item.Name}</Text> */}
                                     </TouchableOpacity>
                                 )
                             })
@@ -953,22 +1051,40 @@ export default (props) => {
         }
         if (typeModal.current == TYPE_MODAL.QRCODE)
             return (
-                <View style={[styles.viewFilter, { justifyContent: "center", alignItems: "center" }]}>
-                    <QRCode
-                        size={250}
-                        value={qrCode.current}
-                    />
-                    <View style={[styles.viewBottomFilter, { marginTop: 20 }]}>
-                        <TouchableOpacity style={styles.viewButtonCancel} onPress={onClickCancelFilter}>
-                            <Text style={styles.textButtonCancel}>{I18n.t("huy")}</Text>
+                <View style={[{ backgroundColor: 'transparent' }, { justifyContent: "center", alignItems: "center" }]}>
+                    <Text style={{ padding: 10, color: "#fff", fontSize: 16 }}>{I18n.t('dang_cho_thanh_toan_vui_long_doi')}</Text>
+                    <View style={{ justifyContent: "center", alignItems: "center", width: Metrics.screenWidth * 0.8, height: Metrics.screenWidth * 0.8 }}>
+                        <Image source={Images.bg_vn_pay_qr} style={{ position: "absolute", width: "100%", height: "100%" }} />
+                        <QRCode
+                            size={180}
+                            value={qrCode.current}
+                        />
+                    </View>
+                    <View style={[{ marginTop: 20, justifyContent: "center", flexDirection: "row" }]}>
+                        <TouchableOpacity style={[styles.viewButtonCancel, { height: 50 }]} onPress={onClickCancelOrder}>
+                            <Text style={[styles.textButtonCancel, , { textTransform: "uppercase", color: colors.colorchinh, fontWeight: "bold" }]}>{I18n.t("huy_don_hang")}</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.viewButtonCancel, { backgroundColor: colors.colorchinh, height: 50, marginLeft: 10 }]} onPress={onClickChangeMethod}>
+                            <Text style={[styles.textButtonCancel, , { textTransform: "uppercase", color: "#fff", fontWeight: "bold" }]}>{I18n.t("doi_phuong_thuc")}</Text>
                         </TouchableOpacity>
                     </View>
+                    <View style={[{ marginTop: 10, justifyContent: "center", flexDirection: "row" }]}>
+                        <TouchableOpacity style={[styles.viewButtonCancel, { height: 50 }]} onPress={onClickBackOrder}>
+                            <Text style={[styles.textButtonCancel, , { textTransform: "uppercase", color: colors.colorchinh, fontWeight: "bold" }]}>{I18n.t("quay_lai")}</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.viewButtonCancel, { backgroundColor: "#fff", height: 50, marginLeft: 10 }]} onPress={onClickRePrint}>
+                            <Text style={[styles.textButtonCancel, , { textTransform: "uppercase", color: colors.colorchinh, fontWeight: "bold" }]}>{I18n.t("in_lai")}</Text>
+                        </TouchableOpacity>
+                    </View>
+                    {/* <TouchableOpacity style={{ marginTop: 10, width: "100%", height: 50, backgroundColor: "#fff", borderRadius: 4, borderWidth: 1, borderColor: colors.colorchinh, justifyContent: "center" }} onPress={onClickRePrint}>
+                        <Text style={[styles.textButtonCancel, { textTransform: "uppercase", color: colors.colorchinh, fontWeight: "bold" }]}>{I18n.t("in_lai")}</Text>
+                    </TouchableOpacity> */}
                 </View>
             )
         if (typeModal.current == TYPE_MODAL.DATE) {
             if (showDateTime)
                 return (
-                    <View style={{ alignItems: "center" }}>
+                    <View style={{ alignItems: "center", backgroundColor: "#fff" }}>
                         <DatePicker date={date}
                             onDateChange={onChangeDate}
                             mode={'date'}
@@ -1309,7 +1425,8 @@ export default (props) => {
                 <View style={styles.viewModal}>
                     <TouchableWithoutFeedback
                         onPress={() => {
-                            setShowModal(false)
+                            if (!(qrCode.current && qrCode.current != ""))
+                                setShowModal(false)
                         }}
                     >
                         <View style={styles.view_feedback}></View>
@@ -1351,7 +1468,8 @@ const styles = StyleSheet.create({
     viewModalContent: { justifyContent: 'center', alignItems: 'center', },
     viewContentPopup: {
         padding: 0,
-        backgroundColor: "#fff", borderRadius: 4, marginHorizontal: 20,
+        // backgroundColor: "#fff", 
+        borderRadius: 4, marginHorizontal: 20,
         width: Metrics.screenWidth * 0.8
     },
     inputDateTime: { flexDirection: "row", alignItems: "center", paddingRight: 5, width: "70%", backgroundColor: "#eeeeee", marginLeft: 0, borderWidth: 0.5, borderRadius: 5, },
@@ -1375,15 +1493,15 @@ const styles = StyleSheet.create({
     viewButtomPayment: { borderLeftWidth: 2, borderLeftColor: "#fff", flex: 1, alignItems: "center", backgroundColor: colors.colorchinh, paddingVertical: 15 },
     viewBottom: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
     viewExcessCash: { flexDirection: "row", justifyContent: "flex-end", marginRight: 10 },
-    viewRadioButton: { flexDirection: "row", alignItems: "center" },
+    viewRadioButton: { flexDirection: "row", alignItems: "center", padding: 3 },
     viewFilter: { backgroundColor: "#fff", padding: 15, maxHeight: Metrics.screenHeight * 0.7, borderRadius: 4 },
     titleFilter: { paddingBottom: 10, fontWeight: "bold", textTransform: "uppercase", color: colors.colorLightBlue, textAlign: "left", width: "100%" },
     buttonAddAcount: { flex: 3, padding: 10, paddingTop: 5, color: colors.colorchinh },
     viewBottomFilter: { justifyContent: "center", flexDirection: "row", paddingTop: 10 },
     textButtonCancel: { textAlign: "center", color: "#000" },
     textButtonOk: { textAlign: "center", color: "#fff" },
-    viewButtonOk: { marginLeft: 10, flex: 1, backgroundColor: colors.colorchinh, borderRadius: 4, paddingHorizontal: 20, paddingVertical: 10, justifyContent: "flex-end" },
-    viewButtonCancel: { flex: 1, backgroundColor: "#fff", borderRadius: 4, borderWidth: 1, borderColor: colors.colorchinh, paddingHorizontal: 20, paddingVertical: 10, justifyContent: "flex-end" },
+    viewButtonOk: { marginLeft: 10, flex: 1, backgroundColor: colors.colorchinh, borderRadius: 4, paddingVertical: 10, justifyContent: "flex-end" },
+    viewButtonCancel: { flex: 1, backgroundColor: "#fff", borderRadius: 4, borderWidth: 1, borderColor: colors.colorchinh, alignItems: 'center', justifyContent: "center" },
     viewTextExcessCash: { height: 50, backgroundColor: "#fff", flexDirection: "row", paddingHorizontal: 10, alignItems: "center", justifyContent: "space-between" },
     logoImage: { width: Metrics.screenWidth * 2 / 3, height: Metrics.screenWidth * 2 / 3 },
     rowCustomerDetai: { height: 50, borderTopWidth: 0.5, borderTopColor: "#ccc", justifyContent: "space-between", backgroundColor: "#fff", flexDirection: "row", paddingHorizontal: 10, alignItems: "center" },

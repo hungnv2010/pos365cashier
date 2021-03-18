@@ -16,16 +16,19 @@ import { useFocusEffect } from '@react-navigation/native';
 import ViewPrint, { TYPE_PRINT } from '../more/ViewPrint';
 import { Colors } from '../../theme';
 import NetInfo from "@react-native-community/netinfo";
+import useDidMountEffect from '../../customHook/useDidMountEffect';
 const { Print } = NativeModules;
 
 export default (props) => {
 
-  let scanFromOrder = null
+  const scanFromOrder = useRef(null)
+  const scanPaymentStatus = useRef(null)
   const viewPrintRef = useRef();
   const dispatch = useDispatch();
   const [textSearch, setTextSearch] = useState('')
   const [autoPrintKitchen, setAutoPrintKitchen] = useState(false)
-  const { listPrint, isFNB, printProvisional, printReturnProduct, syncRetail } = useSelector(state => {
+  const hasInternet = useRef()
+  const { listPrint, isFNB, printProvisional, printReturnProduct, netInfo } = useSelector(state => {
     return state.Common
   })
 
@@ -81,7 +84,7 @@ export default (props) => {
         if (currentBranch && currentBranch.FieldId) {
           if (currentBranch.FieldId == 3 || currentBranch.FieldId == 11) {
             let state = store.getState()
-            signalRManager.init({ ...vendorSession, SessionId: state.Common.info.SessionId }, true)
+            signalRManager.init({ ...vendorSession, SessionId: state.Common.info.SessionId })
             dispatch({ type: 'IS_FNB', isFNB: true })
           } else {
             dispatch({ type: 'IS_FNB', isFNB: false })
@@ -89,7 +92,7 @@ export default (props) => {
         } else {
           if (vendorSession.CurrentRetailer && (vendorSession.CurrentRetailer.FieldId == 3 || vendorSession.CurrentRetailer.FieldId == 11)) {
             let state = store.getState()
-            signalRManager.init({ ...vendorSession, SessionId: state.Common.info.SessionId }, true)
+            signalRManager.init({ ...vendorSession, SessionId: state.Common.info.SessionId })
             dispatch({ type: 'IS_FNB', isFNB: true })
           } else {
             dispatch({ type: 'IS_FNB', isFNB: false })
@@ -101,88 +104,90 @@ export default (props) => {
   }, [])
 
   useEffect(() => {
-
-    AppState.addEventListener('change', handleChangeState);
-
-
+    scanPaymentStatus.current = setInterval(() => {
+      getPaymentStatus()
+    }, 15000);
 
     Print.registerPrint("")
 
     return () => {
-      AppState.removeEventListener('change', handleChangeState);
+      if (scanPaymentStatus.current) {
+        clearInterval(scanPaymentStatus.current)
+      }
     }
   }, [])
+
+
 
   useEffect(() => {
     const syncDatas = async () => {
       if (isFNB === null) return
       dispatch({ type: 'ALREADY', already: false })
-      // await realmStore.deleteAllForFnb()
-      if (isFNB === true) {
-        await realmStore.deleteAllForFnb()
-        await dataManager.syncAllDatas()
 
+      NetInfo.fetch().then(async state => {
+        if (state.isConnected == true && state.isInternetReachable == true) {
+          if (isFNB === true) {
+            await realmStore.deleteAllForFnb()
+          } else {
+            await realmStore.deleteAllForRetail()
+          }
+        }
+      });
+
+      if (isFNB === true) {
+        await dataManager.syncAllDatas()
       } else {
-        await realmStore.deleteAllForRetail()
         await dataManager.syncAllDatasForRetail()
       }
       dispatch({ type: 'ALREADY', already: true })
       dialogManager.hiddenLoading()
     }
     syncDatas()
+
+
   }, [isFNB])
 
   useEffect(() => {
     if (autoPrintKitchen && isFNB) {
-      const getDataNewOrders = async () => {
-        let result = await dataManager.initComfirmOrder()
-        console.log('getDataNewOrders', JSON.stringify(result));
-        if (result != null) {
-          viewPrintRef.current.printDataNewOrdersRef(result.newOrders != null ? JSON.stringify(result.newOrders) : null, result.listOrdersReturn != null ? JSON.stringify(result.listOrdersReturn) : null)
-          if (result.listRoom && result.listRoom != null)
-            dataManager.updateFromOrder(result.listRoom)
-        }
-      }
-      scanFromOrder = setInterval(() => {
+      scanFromOrder.current = setInterval(() => {
         getDataNewOrders()
       }, 15000);
     }
-
     return () => {
-      if (scanFromOrder) clearInterval(scanFromOrder)
+      console.log('scanFromOrder', scanFromOrder.current);
+      if (scanFromOrder.current) {
+        clearInterval(scanFromOrder.current)
+      }
     }
   }, [isFNB, autoPrintKitchen])
 
+  useEffect(() => {
+    if (netInfo === false) {
+      hasInternet.current = false
+    }
+    if (netInfo === true) {
+      if (hasInternet.current === false) {
+        hasInternet.current = true
+        signalRManager.reconnect()
+      }
+    }
+    console.log('netInfo', netInfo, 'hasInternet.current', hasInternet.current);
+  }, [netInfo])
 
-  const handleChangeState = (newState) => {
-    if (newState === "active") {
-
+  const getDataNewOrders = async () => {
+    let result = await dataManager.initComfirmOrder()
+    if (result != null) {
+      viewPrintRef.current.printDataNewOrdersRef(result.newOrders != null ? JSON.stringify(result.newOrders) : null, result.listOrdersReturn != null ? JSON.stringify(result.listOrdersReturn) : null)
+      if (result.listRoom && result.listRoom != null)
+        dataManager.updateFromOrder(result.listRoom)
     }
   }
-
-  const clickRightIcon = async () => {
-    NetInfo.fetch().then(async state => {
-      if (!(state.isConnected == true && state.isInternetReachable == true)) {
-        dialogManager.showPopupOneButton(I18n.t('loi_ket_noi_mang'), I18n.t('thong_bao'), () => {
-          dialogManager.destroy();
-        }, null, null, I18n.t('dong'))
-        return;
-      } else {
-        dialogManager.showLoading()
-        dispatch({ type: 'ALREADY', already: false })
-        await realmStore.deleteAllForFnb()
-        await dataManager.syncAllDatas()
-        dispatch({ type: 'ALREADY', already: true })
-        dialogManager.hiddenLoading()
-      }
-    });
-    // dialogManager.showLoading()
-    // dispatch({ type: 'ALREADY', already: false })
-    // await realmStore.deleteAllForFnb()
-    // await dataManager.syncAllDatas()
-    // dispatch({ type: 'ALREADY', already: true })
-    // dialogManager.hiddenLoading()
+  const getPaymentStatus = async () => {
+    let result = await dataManager.getPaymentStatus()
+    console.log('getPaymentStatus', result);
   }
+
+
   const onClickSearch = (text) => {
     setTextSearch(text)
   }

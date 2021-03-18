@@ -101,7 +101,7 @@ const LoginScreen = (props) => {
     const handlerLoginSuccess = async (params, res) => {
         let account = { SessionId: res.SessionId, UserName: params.UserName, Link: shop.trim() };
         setFileLuuDuLieu(Constant.CURRENT_ACCOUNT, JSON.stringify(account));
-        await realmStore.deleteAll()
+        await realmStore.deleteAllForFnb()
         getRetailerInfoAndNavigate();
     }
 

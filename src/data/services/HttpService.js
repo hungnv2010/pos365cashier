@@ -2,20 +2,11 @@
 import I18n from '../../common/language/i18n';
 import dialogManager from '../../components/dialog/DialogManager';
 import store from "../../store/configureStore";
-import { NavigateScreen, ScreenList } from '../../common/ScreenList';
 import { ApiPath } from './ApiPath';
-import { Platform, NativeModules } from 'react-native';
 import { Constant } from '../../common/Constant';
 import { setFileLuuDuLieu } from '../fileStore/FileStorage';
-const { AzureHub } = NativeModules;
-import NavigationService from "../../navigator/NavigationService";
-// import * as StackNavigation from '../../navigator/stack/StackNavigation';
 import { navigate } from '../../navigator/NavigationService';
-// import dataManager from '../DataManager';
-import realmStore from '../realm/RealmStore';
-import NetInfo from "@react-native-community/netinfo";
 
-const URL_DEBUG = "https://kt365cafe.pos365.vn/";
 
 export var URL = { link: "https://oke.pos365.vn/" };
 
@@ -56,7 +47,7 @@ export class HTTPService {
         return this
     }
 
-    GET(jsonParam, headers = getHeaders(), ) {
+    GET(jsonParam, headers = getHeaders(),) {
         let params = jsonParam ? convertJsonToPrameter(jsonParam) : ''
         this._path = this._path + params
 
@@ -133,27 +124,27 @@ export class HTTPService {
             else {
                 this.error();
             }
-            // return {
-            //     status: response.status
-            // };
             return null;
         }
 
     }
 
     error() {
-        if (this.showMessage == true)
-            NetInfo.fetch().then(state => {
-                if (state.isConnected == true) {
-                    dialogManager.showPopupOneButton(I18n.t('loi_server'), I18n.t('thong_bao'), () => {
-                        dialogManager.destroy();
-                    }, null, null, I18n.t('dong'))
-                } else {
-                    dialogManager.showPopupOneButton(I18n.t('loi_ket_noi_mang'), I18n.t('thong_bao'), () => {
-                        dialogManager.destroy();
-                    }, null, null, I18n.t('dong'))
-                }
-            });
+        if (this.showMessage == true) {
+            let state = store.getState();
+            if (state.netInfo) {
+                dialogManager.showPopupOneButton(I18n.t('loi_server'), I18n.t('thong_bao'), () => {
+                    dialogManager.destroy();
+                }, null, null, I18n.t('dong'))
+            } else {
+                dialogManager.showPopupOneButton(I18n.t('loi_ket_noi_mang'), I18n.t('thong_bao'), () => {
+                    dialogManager.destroy();
+                }, null, null, I18n.t('dong'))
+            }
+        } else {
+            console.log('http err');
+        }
+
     }
 
 }

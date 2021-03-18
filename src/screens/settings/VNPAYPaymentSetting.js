@@ -88,6 +88,10 @@ export default (props) => {
                 console.log('onClickApply res', res);
                 if (res) {
                     console.log("res");
+                    new HTTPService().setPath(ApiPath.VENDOR_SESSION).GET().then(async (res) => {
+                        console.log("getDataRetailerInfo res ", res);
+                        setFileLuuDuLieu(Constant.VENDOR_SESSION, JSON.stringify(res))
+                    })
                 } else {
                     console.log('aaa');
                 }

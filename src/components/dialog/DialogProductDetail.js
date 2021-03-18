@@ -28,7 +28,14 @@ export default (props) => {
     const [listQuickNote, setListQuickNote] = useState([])
     const [IsLargeUnit, setIsLargeUnit] = useState(props.item.IsLargeUnit)
     const [percent, selectPercent] = useState(false)
-    const [discount, setDiscount] = useState(props.item.Discount ? props.item.Discount : 0)
+    const [discount, setDiscount] = useState(() => {
+        // props.item.Discount ? props.item.Discount : props.item.DiscountRatio ? props.item.Price * props.item.DiscountRatio / 100 : 0
+        if (props.item.Discount) return props.item.Discount
+        else if (props.item.DiscountRatio) {
+            let basePrice = props.item.IsLargeUnit ? props.item.PriceLargeUnit: props.item.UnitPrice
+            return basePrice * props.item.DiscountRatio / 100 
+        }
+    })
     const [price, setPrice] = useState(props.item.Price)
     const [typeModal, setTypeModal] = useState(TYPE_MODAL.DEFAULT);
     const [date, setDate] = useState(new Date());

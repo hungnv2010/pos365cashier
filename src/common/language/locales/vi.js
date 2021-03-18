@@ -68,6 +68,8 @@ export default {
   chon_vi_tri: "Chọn vị trí",
   chon_khach_hang: "Chọn khách hàng",
   cap_nhat_phong_ban: "Cập nhật phòng bàn",
+  chua_thanh_toan: "Chưa thanh toán",
+  chi_tiet_don_hang: "Chi tiết đơn hàng",
 
   // TODO: D
   dau_tien: "đầu tiên",
@@ -98,6 +100,12 @@ export default {
   danh_sach_gia: "Chọn bảng giá",
   don_hang_offline: "Đơn hàng offline",
   da_ket_noi: "Đã kết nối",
+  doi_phuong_thuc: "Đổi phương thức",
+  don_hang_cho_thanh_toan_vnpay_qr: "Đơn hàng chờ thanh toán VNPAY QR",
+  danh_sach_don_hang: "Danh sách đơn hàng",
+  da_thanh_toan: "Đã thanh toán",
+  doi_phuong_thuc_thanh_toan: "Đổi phương thức thanh toán",
+
   // TODO: E
 
 
@@ -166,6 +174,7 @@ export default {
   hom_nay: "Hôm nay",
   hom_qua: "Hôm qua",
   hang_muc_thu_chi: "Hạng mục thu chi",
+  huy_don_hang: "Huỷ đơn hàng",
 
   // TODO: L
   lich_su_huy_tra_do: "Lịch sử Huỷ / Trả đồ",
@@ -245,6 +254,8 @@ export default {
   quy_khach_vui_long_nhap_ten_cua_hang: "Quý khách vui lòng nhập tên cửa hàng",
   qua_mang_lan: "qua mạng LAN",
   quet_barcode_hoac_qrcode: "Quét BarCode hoặc QRCode",
+  quay_lai: "Quay lại",
+  quan_ly_don_hang: "Quản lý đơn hàng",
 
   // TODO: R
 
@@ -264,6 +275,7 @@ export default {
   su_dung_diem: "Sử dụng điểm",
   so_tien_quy_doi: "Số tiền quy đổi",
   sua: "Sửa",
+  san_pham: "Sản phẩm",
 
   // TODO: T
   thong_bao_quet_van_tay: "Quý khách vui lòng quét dấu vân tay đã đăng ký trên thiết bị.",
@@ -344,6 +356,7 @@ export default {
   thanh_cong: "thành công",
   tong_tam_tinh:"Tổng tạm tính",
   tong_thanh_toan:"Tổng thanh toán",
+  tao_lai_ma_qr: "Tạo lại mã QR thanh toán",
 
   // TODO: U
 
@@ -353,6 +366,7 @@ export default {
   vui_long_chon_linh_vuc_ban_le_ho_tro_shop_thoi_trang_sieu_thi: "Vui lòng chọn lĩnh vực BÁN LẺ hỗ trợ: shop, thời trang, siêu thị...",
   vui_long_nhap_day_du_thong_tin_truoc_khi_luu: "Vui lòng nhập đầy đủ các thông tin bắt buộc trước khi lưu",
   vnd: "VNĐ",
+  vui_long_kich_hoat_thanh_toan_qrcode: "Vui lòng mở thiết lập tính năng kích hoạt thanh toán qua QR Code",
 
   // TODO: X
   xac_nhan: 'Xác nhận',
@@ -400,6 +414,7 @@ export default {
   don_vi_tinh_lon:'Đơn vị tính lớn',
   don_hang_cho_thanh_toan:'Đơn hàng chờ thanh toán',
   dong_bo_du_lieu:'Đồng bộ dữ liệu',
+  dang_cho_thanh_toan_vui_long_doi: "Đang chờ thanh toán, vui lòng đợi",
 
   giu_man_hinh_luon_sang: "Giữ màn hình luôn sáng",
   gia: "Giá bán",
@@ -425,6 +440,7 @@ export default {
   in_hoa_don_truoc_khi_thanh_toan_VNPAYQR_thanh_cong: "In hóa đơn trước khi thanh toán VNPAY-QR thành công? ",
   in_may_in_thu_ngan: "In máy in thu ngân",
   in_may_in_tem: "In máy in tem",
+  in_lai: "In lại",
 
   khong_cho_phep_ban_hang_khi_het_ton_kho: "Không cho phép bán hàng khi hết tồn kho",
   khong_in: "Không in",

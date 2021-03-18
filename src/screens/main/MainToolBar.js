@@ -41,7 +41,7 @@ export default function MainToolBar(props) {
                         style={{ width: 172, height: 40, resizeMode: 'contain' }} /> */}
                     <Image source={Images.icon_menu} style={{ width: 48, height: 48 }} />
                 </TouchableOpacity>
-                <View style={{ flex: 7, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
+                <View style={{ flex: isSearch ? 3 : 8, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
                     <Subheading
                         numberOfLines={1}
                         style={{
@@ -57,7 +57,7 @@ export default function MainToolBar(props) {
                         <View style={{ borderRadius: 3, borderColor: "#fff", borderWidth: 1, backgroundColor: "#f2f2f2", flexDirection: "row", marginRight: 2, height: "80%" }}>
                             <TextInput
                                 autoFocus={true}
-                                style={{ flex: 1, color: "#000" }}
+                                style={{ flex: 1, color: "#000", paddingLeft: 5 }}
                                 onChangeText={(text) => onChangeText(text)}
                                 value={value}
                             />

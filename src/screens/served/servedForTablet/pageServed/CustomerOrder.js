@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import { Constant } from '../../../../common/Constant';
-import { currencyToString } from '../../../../common/Utils';
+import { currencyToString, randomUUID } from '../../../../common/Utils';
 import I18n from "../../../../common/language/i18n";
 import { Snackbar } from 'react-native-paper';
 import { useSelector } from 'react-redux';
@@ -18,11 +18,15 @@ import DialogProductUnit from '../../../../components/dialog/DialogProductUnit'
 import dialogManager from '../../../../components/dialog/DialogManager';
 import dataManager from '../../../../data/DataManager';
 import { ReturnProduct } from '../../ReturnProduct';
-import { getFileDuLieuString } from '../../../../data/fileStore/FileStorage';
+import { getFileDuLieuString, setFileLuuDuLieu } from '../../../../data/fileStore/FileStorage';
 import { HTTPService } from '../../../../data/services/HttpService';
 import { ApiPath } from '../../../../data/services/ApiPath';
 import { useDispatch } from 'react-redux';
 import colors from '../../../../theme/Colors';
+import realmStore from '../../../../data/realm/RealmStore';
+import moment from 'moment';
+var Sound = require('react-native-sound');
+
 
 
 const TYPE_MODAL = {
@@ -33,11 +37,19 @@ const TYPE_MODAL = {
 
 const CustomerOrder = (props) => {
 
+    const CASH = {
+        Id: 0,
+        UUID: randomUUID(),
+        Name: I18n.t('tien_mat'),
+        Value: "",
+    }
+
     const [showModal, setShowModal] = useState(false)
     const [listOrder, setListOrder] = useState(() =>
         (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0)
             ? props.jsonContent.OrderDetails.filter(item => item.ProductId > 0) : []
     )
+    const [listMethod, setListMethod] = useState([CASH])
     const [itemOrder, setItemOrder] = useState({})
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
@@ -47,13 +59,13 @@ const CustomerOrder = (props) => {
     const [expand, setExpand] = useState(false)
     const [waitingList, setWaitingList] = useState([])
     const debouceWaitingList = useDebounce(waitingList)
-    const [isQuickPayment, setIsQuickPayment] = useState(false)
     const [vendorSession, setVendorSession] = useState({});
     const [QuantitySubtract, setQuantitySubtract] = useState(0)
-    const orientaition = useSelector(state => {
-        console.log("orientaition", state);
-        return state.Common.orientaition
+    const [quickPay, setQuickPay] = useState(false)
+    const { isFNB, orientaition } = useSelector(state => {
+        return state.Common
     });
+    const settingObject = useRef()
     const dispatch = useDispatch();
 
     const [delay, setDelay] = useState(1);
@@ -71,6 +83,15 @@ const CustomerOrder = (props) => {
         }
 
         getVendorSession()
+        const getObjectSetting = async () => {
+            settingObject.current = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
+            settingObject.current = JSON.parse(settingObject.current)
+            console.log("settingObject.current ", settingObject.current);
+            if ('quickPay' in settingObject.current) {
+                setQuickPay(settingObject.current.quickPay)
+            }
+        }
+        getObjectSetting()
         var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
         var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
 
@@ -162,6 +183,7 @@ const CustomerOrder = (props) => {
             let price = product.IsLargeUnit == true ? product.PriceLargeUnit : product.UnitPrice
             let discount = product.Percent ? (price * product.Discount / 100) : product.Discount
             discount = discount > price ? price : discount
+            discount = price - product.Price > 0 ? price - product.Price : discount
             let discountRatio = product.Percent ? product.Discount : product.Discount / price * 100
             listOrder.forEach((elm, index, arr) => {
                 if (elm.ProductId == product.ProductId && index == product.index) {
@@ -446,17 +468,6 @@ const CustomerOrder = (props) => {
         )
     }
 
-    const onClickSubmitUnit = () => {
-        let array = listOrder.map((item, index) => {
-            if (item.ProductId == itemOrder.ProductId && index == itemOrder.index) {
-                item.IsLargeUnit = IsLargeUnit
-            }
-            return item;
-        })
-
-        setListOrder([...array])
-        setShowModal(false)
-    }
 
     const changTable = () => {
         hideMenu()
@@ -473,17 +484,192 @@ const CustomerOrder = (props) => {
         }
     }
 
+
+    const onClickQuickPayment = () => {
+        console.log('onClickQuickPayment', props.jsonContent);
+        // let newDate = new Date().getTime();
+        // if (timeClickPrevious + 2000 < newDate) {
+        //     timeClickPrevious = newDate;
+        // } else {
+        //     return;
+        // }
+        // if (checkQRInListMethod()) {
+        //     setToastDescription(I18n.t("khong_ho_tro_nhieu_tai_khoan_cho_qr"))
+        //     setShowToast(true)
+        //     return;
+        // }
+        // if (customer && customer.Id == 0 && jsonContent.ExcessCash < 0) {
+        //     setToastDescription(I18n.t("vui_long_nhap_dung_so_tien_khach_tra"))
+        //     setShowToast(true)
+        //     return;
+        // }
+        let json = props.jsonContent
+        let total = json && json.Total ? json.Total : 0
+        let paramMethod = []
+        listMethod.forEach((element, index) => {
+            let value = element.Value
+            // if (index == 0 && giveMoneyBack && amountReceived > json.Total) {
+            value = total
+            // }
+            paramMethod.push({ AccountId: element.Id, Value: value })
+        });
+        console.log("onClickPay json.MoreAttributes ", typeof (json.MoreAttributes), json.MoreAttributes);
+        let MoreAttributes = json.MoreAttributes ? (typeof (json.MoreAttributes) == 'string' ? JSON.parse(json.MoreAttributes) : json.MoreAttributes) : {}
+        // console.log("onClickPay pointUse ", pointUse);
+
+        // MoreAttributes.PointDiscount = pointUse && pointUse > 0 ? pointUse : 0;
+        // MoreAttributes.PointDiscountValue = 0;
+        // MoreAttributes.TemporaryPrints = [];
+        // MoreAttributes.Vouchers = listVoucher;
+        MoreAttributes.PaymentMethods = paramMethod
+        // if (customer && customer.Id) {
+        //     let debt = customer.Debt ? customer.Debt : 0;
+        //     MoreAttributes.OldDebt = debt
+        //     if (!giveMoneyBack)
+        //         MoreAttributes.NewDebt = debt - (amountReceived - json.Total);
+        //     else
+        //         MoreAttributes.NewDebt = debt
+        //     json.Partner = customer
+        //     json.PartnerId = customer.Id
+        //     json.ExcessCashType = giveMoneyBack ? "0" : "1"
+        // }
+        json['MoreAttributes'] = JSON.stringify(MoreAttributes);
+        json.TotalPayment = total
+        json.VATRates = json.VATRates
+        json.AmountReceived = total
+        json.Status = 2;
+        json.SyncStatus = 0;
+        // if (noteInfo != '') {
+        //     json.Description = noteInfo;
+        // }
+        // if (date && dateTmp.current) {
+        //     json.PurchaseDate = "" + date;
+        // }
+        // if (listMethod.length > 0)
+        json.AccountId = listMethod[0].Id;
+        let params = {
+            QrCodeEnable: vendorSession.Settings.QrCodeEnable,
+            MerchantCode: vendorSession.Settings.MerchantCode,
+            MerchantName: vendorSession.Settings.MerchantName,
+            DontSetTime: true,
+            ExcessCashType: 0,
+            Order: {},
+        };
+        let tilteNotification = json.RoomName ? json.RoomName : "";
+        if (props.route.params.Screen != undefined && props.route.params.Screen == ScreenList.MainRetail) {
+            params.DeliveryBy = null;//by retain
+            params.ShippingCost = 0;//by retain
+            params.LadingCode = "";//by retain
+            delete json.Pos;
+            delete json.RoomName;
+            delete json.RoomId;
+        }
+        params.Order = json;
+
+        console.log("onClickPay params ", params);
+        dialogManager.showLoading();
+        new HTTPService().setPath(ApiPath.ORDERS, true).POST(params).then(async order => {
+            console.log("onClickPay order ", order);
+            if (order) {
+                dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(json.Total))
+                dialogManager.hiddenLoading()
+
+                await printAfterPayment(order.Code)
+
+                updateServerEvent()
+
+                if (order.ResponseStatus && order.ResponseStatus.Message && order.ResponseStatus.Message != "") {
+                    dialogManager.showPopupOneButton(order.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, ""))
+                }
+                // if (order.QRCode != "") {
+                //     qrCode.current = order.QRCode
+                //     typeModal.current = TYPE_MODAL.QRCODE
+                //     setShowModal(true)
+                //     handlerQRCode(order)
+                // }
+            } else {
+                onError(json)
+            }
+        }).catch(err => {
+            console.log("onClickPay err ", err);
+            onError(json)
+        });
+    }
+
+    const onError = (json) => {
+        let row_key = `${props.route.params.room.Id}_${props.Position}`
+        dialogManager.showPopupOneButton(I18n.t("khong_co_ket_noi_internet_don_hang_cua_quy_khach_duoc_luu_vao_offline"))
+        updateServerEvent()
+        handlerError({ JsonContent: json, RowKey: row_key })
+    }
+
+    const printAfterPayment = async (Code) => {
+        let jsonContent = props.jsonContent
+        console.log("printAfterPayment jsonContent 1 ", jsonContent, props.route.params);
+        if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
+            jsonContent.RoomName = props.route.params.Name
+        }
+        jsonContent.PaymentCode = Code;
+        // if (noteInfo != '') {
+        //     jsonContent.Description = noteInfo;
+        // }
+        // if (date && dateTmp.current) {
+        //     jsonContent.PurchaseDate = "" + date;
+        // }
+        console.log("printAfterPayment jsonContent 2 ", jsonContent);
+        dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
+    }
+
+    const updateServerEvent = async () => {
+        let json = dataManager.createJsonContent(props.route.params.room.Id, props.Position, moment(), [], props.route.params.room.Name);
+        props.updateServerEvent(json)
+        if (settingObject.current.am_bao_thanh_toan == true)
+            playSound()
+    }
+
+
+    const playSound = () => {
+        Sound.setCategory('Playback');
+        const callback = (error, sound) => {
+            if (error) {
+                console.log('error ' + error.message + " sound " + JSON.stringify(sound));
+                return;
+            }
+            sound.play(() => {
+                sound.release();
+            });
+        };
+        const sound = new Sound('file.mp3', Sound.MAIN_BUNDLE, error => callback(error, sound));
+    }
+
+    const handlerError = (data) => {
+        console.log("handlerError data ", data);
+        dialogManager.hiddenLoading()
+        let params = {
+            Id: "OFFLINE" + Math.floor(Math.random() * 9999999),
+            Orders: JSON.stringify(data.JsonContent),
+            ExcessCash: data.JsonContent.ExcessCash,
+            DontSetTime: 0,
+            HostName: URL.link,
+            BranchId: vendorSession.CurrentBranchId,
+            SyncCount: 0
+        }
+        console.log("handlerError params ", params);
+        dataManager.syncOrdersOffline([params]);
+    }
+
     const onClickPayment = () => {
-        if (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0) {
-            props.navigation.navigate(ScreenList.Payment, { RoomId: props.route.params.room.Id, Name: props.route.params.room.Name, Position: props.Position });
+        if (quickPay) {
+            onClickQuickPayment()
         } else {
-            dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
+            if (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0) {
+                props.navigation.navigate(ScreenList.Payment, { RoomId: props.route.params.room.Id, Name: props.route.params.room.Name, Position: props.Position });
+            } else {
+                dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
+            }
         }
     }
 
-    const onClickOptionQuickPayment = () => {
-        setIsQuickPayment(!isQuickPayment)
-    }
 
     const printKitchen = () => {
         let jsonContent = props.jsonContent;
@@ -514,6 +700,17 @@ const CustomerOrder = (props) => {
     const notification = (content) => {
         setToastDescription(content);
         setShowToast(true)
+    }
+
+    const changeToQuickPay = async () => {
+        console.log('changeToQuickPay', settingObject.current);
+        if ('quickPay' in settingObject.current) {
+            settingObject.current.quickPay = !settingObject.current.quickPay
+        } else {
+            settingObject.current.quickPay = true
+        }
+        setFileLuuDuLieu(Constant.OBJECT_SETTING, JSON.stringify(settingObject.current))
+        setQuickPay(settingObject.current.quickPay)
     }
 
     const checkProcessedQuantityProduct = (jsonContent) => {
@@ -625,6 +822,15 @@ const CustomerOrder = (props) => {
                                 <Icon style={{ paddingHorizontal: 7 }} name="printer" size={26} color={Colors.colorchinh} />
                                 <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('in_tam_tinh')}</Text>
                             </TouchableOpacity>
+                            <TouchableOpacity onPress={changeToQuickPay} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
+                                {
+                                    quickPay ?
+                                        <Icon style={{ paddingHorizontal: 7 }} name="checkbox-marked" size={28} color={Colors.colorLightBlue} />
+                                        :
+                                        <Icon style={{ paddingHorizontal: 7 }} name="close-box-outline" size={28} color="grey" />
+                                }
+                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('thanh_toan_nhanh')}</Text>
+                            </TouchableOpacity>
                         </View>
                     </Menu>
                 </TouchableOpacity>
@@ -632,7 +838,7 @@ const CustomerOrder = (props) => {
                     <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('bao_che_bien')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => onClickPayment()} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
-                    <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{isQuickPayment ? I18n.t('thanh_toan_nhanh') : I18n.t('thanh_toan')}</Text>
+                    <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{quickPay ? I18n.t('thanh_toan_nhanh') : I18n.t('thanh_toan')}</Text>
                 </TouchableOpacity>
             </View>
             <Modal

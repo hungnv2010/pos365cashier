@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
+import React, { useEffect, useState, useLayoutEffect, useRef, useCallback } from 'react';
 import { Image, View, StyleSheet, Text, TouchableOpacity, TextInput, ScrollView } from "react-native";
 import { Snackbar, Surface } from 'react-native-paper';
 import I18n from '../../common/language/i18n';
@@ -17,11 +17,9 @@ import { FlatList } from 'react-native-gesture-handler';
 import { HTTPService } from '../../data/services/HttpService';
 import { ApiPath } from '../../data/services/ApiPath';
 import dataManager from '../../data/DataManager';
-import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
 import dialogManager from '../../components/dialog/DialogManager';
-import IconFeather from 'react-native-vector-icons/Feather';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import Fontisto from 'react-native-vector-icons/Fontisto';
+import { useFocusEffect } from '@react-navigation/native';
 import TextTicker from 'react-native-text-ticker';
 import useDebounce from '../../customHook/useDebounce';
 import CustomerToolBar from './CustomerToolBar';
@@ -46,11 +44,17 @@ export default (props) => {
     });
     const currentBranch = useRef()
 
-    useEffect(() => {
-        getCustomer()
-        getCurrentBranch()
+    useFocusEffect(
+        useCallback(() => {
+            getCustomer()
+        }, [])
+    )
 
+    useEffect(() => {
+        getCurrentBranch()
     }, [])
+
+    
     const getCurrentBranch = async () => {
         let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
         currentBranch.current = JSON.parse(branch)
@@ -61,19 +65,12 @@ export default (props) => {
         const getSearchResult = async () => {
             dialogManager.showLoading()
             if (debouncedVal != '') {
-                // let valueSearchLatin = change_alias(debouncedVal)
-                // let results = await realmStore.queryCustomer()
-                // let searchResult = results.filtered(`Name CONTAINS "${debouncedVal}" OR Code CONTAINS "${debouncedVal}" OR Phone CONTAINS "${debouncedVal}"`)
-                // searchResult = JSON.parse(JSON.stringify(searchResult))
-                // searchResult = Object.values(searchResult)
-                //filter
                 let paramFilter = `(substringof('${debouncedVal}',Code)  or substringof('${debouncedVal}',Phone) or substringof('${debouncedVal}',Name))`
                 let res = await new HTTPService().setPath(ApiPath.CUSTOMER).GET({ IncludeSummary: true, inlinecount: 'allpages', GroupId: -1, Type: 1, BranchId: currentBranch.current.Id, Birthday: '', filter: paramFilter })
                 console.log("abc", res);
                 setCustomerData(res.results)
 
             } else {
-                // setCustomerData(backUpCustomer.current)
                 getCustomer()
             }
             dialogManager.hiddenLoading()
@@ -200,16 +197,6 @@ export default (props) => {
 
     return (
         <View style={{ flex: 1, }}>
-            {/* {
-                props.route.params._onSelect ?
-                    <ToolBarDefault
-                        {...props}
-                        navigation={props.navigation}
-                        clickLeftIcon={() => {
-                            props.navigation.goBack()
-                        }}
-                        title={props.route.params._onSelect ? I18n.t('chon_khach_hang') : I18n.t('thanh_toan')} />
-                    : */}
             <CustomerToolBar
                 {...props}
                 navigation={props.navigation}
@@ -217,7 +204,6 @@ export default (props) => {
                 outputTextSearch={outputTextSearch}
                 size={30}
             />
-            {/* } */}
             <View style={{ flexDirection: "row", flex: 1 }}>
                 <View style={{ flex: 1, }}>
                     <FlatList

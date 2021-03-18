@@ -6,21 +6,18 @@ import {
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import StackNavigation from './navigator/stack/StackNavigation';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Constant } from './common/Constant'
 import { navigationRef } from './navigator/NavigationService';
-import RNExitApp from "react-native-exit-app";
 import I18n from './common/language/i18n'
 import signalRManager, { signalRInfo } from './common/SignalR';
 import { getFileDuLieuString, setFileLuuDuLieu } from './data/fileStore/FileStorage';
 import { Snackbar } from 'react-native-paper';
 import NetInfo from "@react-native-community/netinfo";
 const { Print } = NativeModules;
-let time = 0;
 const eventSwicthScreen = new NativeEventEmitter(Print);
 import moment from 'moment';
 import 'moment/min/locales'
-import { Metrics } from './theme';
 import { DefaultSetting } from './screens/settings/Settings';
 
 var numberInternetReachable = 0;
@@ -30,10 +27,12 @@ export default () => {
     const [forceUpdate, setForceUpdate] = useState(false);
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
-    const [netInfo, setNetInfo] = useState(true);
+    // const [netInfo, setNetInfo] = useState(true);
     const [showStatusInternet, setShowStatusInternet] = useState(false);
     const dispatch = useDispatch();
-
+    const { netInfo } = useSelector(state => {
+        return state.Common
+    });
     const { height, width } = Dimensions.get('window');
     const aspectRatio = height / width;
 
@@ -64,28 +63,39 @@ export default () => {
         }
         savePrinter()
 
-        // Subscribe
+    }, [])
+
+    useEffect(() => {
         const unsubscribe = NetInfo.addEventListener(state => {
             if (state.isConnected == true && state.isInternetReachable == true) {
-                setNetInfo(true)
+                // setNetInfo(true)
+                dispatch({ type: 'NET_INFO', netInfo: true })
                 setTimeout(() => {
                     setShowStatusInternet(false)
                 }, 1500);
             } else {
                 if (numberInternetReachable > 0) {
-                    setNetInfo(false)
+                    // setNetInfo(false)
+                    dispatch({ type: 'NET_INFO', netInfo: false })
                     setShowStatusInternet(true)
                 }
             }
             numberInternetReachable++;
         });
 
+        return () => {
+            unsubscribe()
+        }
     }, [])
 
     useEffect(() => {
-        // signalRManager.init()
+        Dimensions.addEventListener('change', handleChange)
+        return () => {
+            Dimensions.removeEventListener('change', handleChange)
+        }
+    }, [])
 
-        AppState.addEventListener('change', handleChangeState);
+    useEffect(() => {
 
         setForceUpdate(!forceUpdate);
         dispatch({ type: 'TYPE_DEVICE', deviceType: isTablet() })
@@ -103,65 +113,56 @@ export default () => {
                 }
             }
         }
-        let check = false;
-        const printListenner = () => {
-            const event = eventSwicthScreen.addListener('sendSwicthScreen', (text) => {
-                console.log("eventSwicthScreen ", text);
-                if (text.indexOf("Ok") > -1) {
-                    check = true;
-                    setTimeout(() => {
-                        check = false;
-                    }, 2000);
-                };
-                if ((text.indexOf("Error") > -1) && check == false) {
-                    setToastDescription(I18n.t('kiem_tra_ket_noi_may_in') + " " + (text.split("::")[0].indexOf('null') ? "" : text.split("::")[0]))
-                    setShowToast(true)
-                }
-            });
-        }
-        getCurrentIP()
-        printListenner()
 
+        getCurrentIP()
+
+    }, [])
+
+    useEffect(() => {
+        const event = eventSwicthScreen.addListener('sendSwicthScreen', (text) => {
+            console.log("eventSwicthScreen ", text);
+            if ((text.indexOf("Error") > -1)) {
+                setToastDescription(I18n.t('kiem_tra_ket_noi_may_in') + " " + (text.split("::")[0].indexOf('null') ? "" : text.split("::")[0]))
+                setShowToast(true)
+            }
+        });
+
+        return () => {
+            eventSwicthScreen.removeListener(event);
+        }
+    }, [])
+
+    useEffect(() => {
         const setupLanguage = async () => {
             let lang = await getFileDuLieuString(Constant.LANGUAGE, true);
             console.log('lang ===  ', lang);
             if (lang && lang != "") {
                 I18n.locale = lang;
                 moment.locale(lang);
-            } else { 
+            } else {
                 I18n.locale = "vi";
                 moment.locale('vi');
                 setFileLuuDuLieu(Constant.LANGUAGE, 'vi');
             }
         }
-
         setupLanguage()
+    }, [])
 
+    useEffect(() => {
+
+        AppState.addEventListener('change', handleChangeState);
 
         return () => {
             AppState.removeEventListener('change', handleChangeState);
-            eventSwicthScreen.removeListener();
         }
-
 
     }, [])
 
     const handleChangeState = (newState) => {
         if (newState === "active") {
             if (signalRInfo != "") {
-                signalRManager.killSignalR();
-                signalRManager.startSignalR();
+                signalRManager.reconnect();
             }
-            // let currentLocale = I18n.currentLocale()
-            // // currentLocale = "vi";
-            // console.log("currentLocale ", currentLocale);
-            // if (currentLocale.indexOf('vi') > -1) {
-            //     I18n.locale = "vi";
-            //     moment.locale('vi');
-            // } else {
-            //     I18n.locale = "en";
-            //     moment.locale('en');
-            // }
         }
     }
 
@@ -170,12 +171,6 @@ export default () => {
         dispatch({ type: 'ORIENTAITION', orientaition: isPortrait() })
     }
 
-    useEffect(() => {
-        Dimensions.addEventListener('change', handleChange)
-        return () => {
-            Dimensions.removeEventListener('change', handleChange)
-        }
-    })
 
     return (
 

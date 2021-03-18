@@ -42,5 +42,9 @@ export const ApiPath = {
     ROOM_HISTORY: "api/rooms/history",
     SYNC_PRICE_BOOK: "api/pricebooks",
     PRICE_BOOK: "api/pricebooks",
-    VENDOR:"api/vendors/current",
+    VENDOR: "api/vendors/current",
+    MULTI_PAYMENT_STATUS: "api/orders/multipaymentstatus",
+    VENDOR: "api/vendors/current",
+    DELETE_ORDER: "api/orders/{orderId}/void",
+    // http://cafe365.banhang365.vn/api/orders/95053575/void
 }

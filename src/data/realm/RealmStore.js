@@ -35,16 +35,15 @@ class RealmStore extends RealmBase {
     }
 
     deleteAll = async () => {
-        let realm = await Realm.open(databaseOption)
-        realm.write(() => {
-            realm.deleteAll()
-            Promise.resolve()
-        })
+        let newSchemaName = { ...SchemaName }
+        delete newSchemaName.QR_CODE
+        await this.deleteSchema(newSchemaName)
     }
 
     deleteAllForFnb = async () => {
         let newSchemaName = { ...SchemaName }
         delete newSchemaName.ORDERS_OFFLINE
+        delete newSchemaName.QR_CODE
         await this.deleteSchema(newSchemaName)
     }
 
@@ -52,6 +51,7 @@ class RealmStore extends RealmBase {
         let newSchemaName = { ...SchemaName }
         delete newSchemaName.SERVER_EVENT
         delete newSchemaName.ORDERS_OFFLINE
+        delete newSchemaName.QR_CODE
         await this.deleteSchema(newSchemaName)
         // realm.write(() => {
         //     for (const schema in newSchemaName) {
@@ -108,6 +108,16 @@ class RealmStore extends RealmBase {
             let serverEvent = realm.objectForPrimaryKey(SchemaName.SERVER_EVENT, item.RowKey)
             console.log('deleteCommodity serverEvent', serverEvent);
             realm.delete(serverEvent)
+            resolve()
+        }))
+    }
+
+    deleteQRCode = async (id) => {
+        let realm = await Realm.open(databaseOption)
+        return new Promise((resolve) => realm.write(() => {
+            let qrCode = realm.objectForPrimaryKey(SchemaName.QR_CODE, id)
+            console.log('deleteQRCode qrCode', qrCode);
+            realm.delete(qrCode)
             resolve()
         }))
     }
@@ -297,8 +307,8 @@ const QRCode = {
     name: SchemaName.QR_CODE,
     primaryKey: "Id",
     properties: {
-        Id: 'string',
-        Status: { type: 'int', default: 0 },
+        Id: { type: 'int', default: 0 },
+        Status: { type: 'bool', default: false },
         JsonContent: { type: 'string', default: '' },
         HostName: { type: 'string', default: '' },
         Messenger: { type: 'string', default: '' },
@@ -490,7 +500,7 @@ const PromotionSchema = {
 const databaseOption = {
     path: 'Pos365Boss.realm',
     schema: [ServerEventSchema, RoomSchema, RoomGroupSchema, ProductSchema, CategoriesSchema, ToppingsSchema, CustomerSchema, PromotionSchema, OrdersOffline, QRCode, PriceBook],
-    schemaVersion: 39
+    schemaVersion: 41
 }
 
 const realm = new Realm(databaseOption);

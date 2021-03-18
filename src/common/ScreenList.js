@@ -73,5 +73,8 @@ export const ScreenList = {
   ProductDetail:"ProductDetail",
   ComboForTab:"ComboForTab",
 
+  OrderManagement: "OrderManagement",
+  PaymentPendingList: "PaymentPendingList",
+  DetailPaymentPending: "DetailPaymentPending",
 }
 

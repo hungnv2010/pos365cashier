@@ -9,6 +9,7 @@ import { momentToDateUTC, momentToStringDateLocal, momentToDate, groupBy, random
 import { Constant } from "../common/Constant";
 import I18n from '../common/language/i18n';
 import productManager from './objectManager/ProductManager';
+import { object } from "underscore";
 class DataManager {
     constructor() {
         this.subjectUpdateServerEvent = new Subject()
@@ -22,11 +23,18 @@ class DataManager {
 
     initComfirmOrder = async () => {
         try {
+
             let intNewOrder = await new HTTPService().setPath(ApiPath.WAIT_FOR_COMFIRMATION, false).GET()
             let changeTableComfirm = await new HTTPService().setPath(ApiPath.CHANGE_TABLE_COMFIRM, false).GET()
-            if (intNewOrder == 0 && changeTableComfirm.length == 0) {
+            if (intNewOrder == 0 && (!changeTableComfirm || changeTableComfirm.length == 0)) {
                 return Promise.resolve(null)
             } else {
+                if (changeTableComfirm.length > 0) {
+                    changeTableComfirm.forEach(item => {
+                        const { FromRoomId, FromPos, ToRoomId, ToPos } = item
+                        this.changeTable(FromRoomId, FromPos, ToRoomId, ToPos)
+                    })
+                }
                 if (intNewOrder > 0) {
                     let newOrders = await new HTTPService().setPath(ApiPath.WAIT_FOR_COMFIRMATION_ALL, false).GET()
                     listOrdersReturn = []
@@ -60,14 +68,9 @@ class DataManager {
 
                     return Promise.resolve({ newOrders: this.getDataPrintCook(listOrders), listOrdersReturn: this.getDataPrintCook(listOrdersReturn), listRoom: listRoom })
                 }
+                return Promise.resolve(null)
 
-                if (changeTableComfirm.length > 0) {
-                    changeTableComfirm.forEach(item => {
-                        const { FromRoomId, FromPos, ToRoomId, ToPos } = item
-                        this.changeTable(FromRoomId, FromPos, ToRoomId, ToPos)
-                    })
-                    return Promise.resolve(null)
-                }
+
             }
 
         } catch (error) {
@@ -453,6 +456,7 @@ class DataManager {
 
     createSeverEvent = async (RoomId, Position) => {
         let objectJsonContent = this.createJsonContent(RoomId, Position, moment())
+        console.log('createSeverEvent', objectJsonContent);
         let vendorSession = await this.selectVendorSession()
         let PartitionKey = `${vendorSession.CurrentBranchId}_${vendorSession.CurrentUser.RetailerId}`
         let RowKey = `${RoomId}_${Position}`
@@ -470,7 +474,7 @@ class DataManager {
         }
     }
 
-    createJsonContent = (RoomId, Position, ActiveDate, OrderDetails = []) => {
+    createJsonContent = (RoomId, Position, ActiveDate, OrderDetails = [], RoomName = "") => {
         return {
             OfflineId: randomUUID(),
             Status: 2,
@@ -484,7 +488,7 @@ class DataManager {
             ExcessCashType: 0,
             ExcessCash: 0,
             RoomId: RoomId,
-            RoomName: "",
+            RoomName: RoomName,
             Pos: Position,
             NumberOfGuests: 0,
             SyncStatus: 0,
@@ -522,7 +526,7 @@ class DataManager {
         }
     }
 
-    createJsonContentForRetail = (RoomId) => {
+    createJsonContentForRetail = (RoomId, RoomName = "") => {
         return {
             OfflineId: randomUUID(),
             Status: 2,
@@ -536,7 +540,7 @@ class DataManager {
             ExcessCashType: 0,
             ExcessCash: 0,
             RoomId: RoomId,
-            RoomName: "",
+            RoomName: RoomName,
             Pos: "A",
             NumberOfGuests: 0,
             SyncStatus: 0,
@@ -581,6 +585,40 @@ class DataManager {
             OfflineId: JsonContent.OfflineId, Pos: JsonContent.Pos, RoomName: JsonContent.RoomName, OrderDetails: [],
             Status: 2, NumberOfGuests: 1, SoldById: JsonContent.SoldById
         }
+    }
+
+    getPaymentStatus = async () => {
+        let QRcode = await realmStore.queryQRCode()
+        QRcode = JSON.parse(JSON.stringify(QRcode))
+        QRcode = Object.values(QRcode)
+        if (!QRcode || QRcode.length == 0) {
+            return Promise.resolve(null)
+        } else {
+            let param = {}
+            param.OrderIds = QRcode.map(item => item.Id)
+
+            try {
+                let result = await new HTTPService().setPath(ApiPath.MULTI_PAYMENT_STATUS, false).POST(param)
+                if (result) {
+                    console.log("ApiPath.MULTI_PAYMENT_STATUS result ", result);
+                    QRcode.forEach(element => {
+                        result.forEach(item => {
+                            if (item.Status == true && item.OrderId == element.Id) {
+                                element.Status = true;
+                            }
+                        });
+                    });
+                    console.log("getPaymentStatus QRcode ", QRcode);
+                    dataManager.syncQRCode(QRcode);
+                    return Promise.resolve(result)
+                }
+                else return Promise.resolve(null)
+            } catch (err) {
+                console.log('getPaymentStatus errr', err);
+                Promise.resolve(null)
+            }
+        }
+
     }
 
 }

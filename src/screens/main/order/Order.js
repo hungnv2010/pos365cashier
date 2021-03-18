@@ -14,12 +14,15 @@ import {
 import I18n from '../../../common/language/i18n';
 import realmStore from '../../../data/realm/RealmStore'
 import { useSelector, useDispatch } from 'react-redux';
+<<<<<<< HEAD
 import { change_alias, currencyToString, dateUTCToMoment, getTimeFromNow, text_highlight } from '../../../common/Utils'
+=======
+import { currencyToString, dateUTCToMoment, getTimeFromNow, text_highlight, change_alias } from '../../../common/Utils'
+>>>>>>> d7f9a5942b6c60cdde15ab072fc0af9ec240fe0c
 import { Constant } from '../../../common/Constant';
 import { Images, Metrics } from '../../../theme';
 import colors from '../../../theme/Colors';
 import TextTicker from 'react-native-text-ticker';
-import NetInfo from "@react-native-community/netinfo";
 import moment from 'moment';
 import Menu from 'react-native-material-menu';
 import useDebounce from '../../../customHook/useDebounce';
@@ -226,6 +229,7 @@ export default (props) => {
             let newDatas = []
             if (roomGroup) {
                 roomGroup.forEach(roomGroup => {
+                    // let roomsInside = room.filter(item => item.RoomGroupId == roomGroup.Id && (item.Name).toLowerCase().indexOf(debouncedVal.toLowerCase()) != -1)
                     let roomsInside = room.filter(item => item.RoomGroupId == roomGroup.Id && change_alias(item.Name).toLowerCase().indexOf(change_alias(debouncedVal).toLowerCase()) != -1)
                     let lengthRoomsInside = roomsInside.length
                     if (roomsInside && lengthRoomsInside > 0) {

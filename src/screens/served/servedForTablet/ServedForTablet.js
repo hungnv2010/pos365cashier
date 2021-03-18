@@ -92,6 +92,7 @@ const Served = (props) => {
                 currentServerEvent.current = JSON.parse(JSON.stringify(serverEvent[0]))
                 let jsonTmp = JSON.parse(serverEvent[0].JsonContent)
                 jsonTmp.OrderDetails = await addPromotion(jsonTmp.OrderDetails);
+                jsonTmp.RoomName = jsonTmp.RoomName ? jsonTmp.RoomName : props.route.params.room.Name
                 setJsonContent(jsonTmp)
             }
         }
@@ -100,10 +101,14 @@ const Served = (props) => {
             serverEvent = await realmStore.queryServerEvents()
             const row_key = `${props.route.params.room.Id}_${position}`
             serverEvent = serverEvent.filtered(`RowKey == '${row_key}'`)
-            currentServerEvent.current = JSON.stringify(serverEvent) != '{}' ? JSON.parse(JSON.stringify(serverEvent[0]))
+            let tpmServerEvent = JSON.parse(JSON.stringify(serverEvent[0]))
+            let hasServerEvent = JSON.stringify(serverEvent) != "{}"
+            currentServerEvent.current = hasServerEvent ? JSON.parse(JSON.stringify(serverEvent[0]))
                 : await dataManager.createSeverEvent(props.route.params.room.Id, position)
-            console.log('currentServerEvent.current', currentServerEvent.current, JSON.parse(currentServerEvent.current.JsonContent));
-            let jsonContentObject = JSON.parse(currentServerEvent.current.JsonContent)
+            let jsonContentObject = currentServerEvent.current.JsonContent != "{}" ? JSON.parse(currentServerEvent.current.JsonContent) : dataManager.createJsonContent(props.route.params.room.Id, position, moment())
+            currentServerEvent.current.JsonContent = JSON.stringify(jsonContentObject)
+            jsonContentObject.OrderDetails = await addPromotion(jsonContentObject.OrderDetails);
+            jsonContentObject.RoomName = jsonContentObject.RoomName ? jsonContentObject.RoomName : props.route.params.room.Name
             setJsonContent(jsonContentObject)
             serverEvent.addListener(listener)
         }
@@ -161,7 +166,7 @@ const Served = (props) => {
 
     const outputSelectedProduct = async (product, replace = false) => {
         let { RoomId, Position } = currentServerEvent.current
-        let jsonContentTmp = JSON.stringify(jsonContent) == "{}" ? dataManager.createJsonContent(RoomId, Position, moment()) : jsonContent
+        let jsonContentTmp = JSON.stringify(jsonContent) == "{}" ? dataManager.createJsonContent(RoomId, Position, moment(), props.route.params.room.Name) : jsonContent
         console.log('outputSelectedProduct', product, jsonContentTmp);
         if (product.Quantity > 0 && !replace) {
             if (jsonContentTmp.OrderDetails.length == 0) {
@@ -435,6 +440,7 @@ const Served = (props) => {
                             } else {
                                 jsonContent.OrderDetails.forEach((product) => {
                                     product.DiscountRatio = 0.0
+                                    product.Discount = 0
                                     let basePrice = (product.IsLargeUnit) ? product.PriceLargeUnit : product.UnitPrice
                                     product.Price = basePrice + product.TotalTopping
                                 })
@@ -596,22 +602,22 @@ const Served = (props) => {
                     </View>
                 </View>
             </View>
-            <View style={{ flex: 2,borderLeftWidth:0.5,borderLeftColor:'gray' }}>
+            <View style={{ flex: 2, borderLeftWidth: 0.5, borderLeftColor: 'gray' }}>
                 <View style={{ backgroundColor: 'white', alignItems: "center", flexDirection: "row", justifyContent: "space-between", borderBottomColor: "gray", borderBottomWidth: 0.5, height: 44 }}>
                     <View style={{ flex: 1, justifyContent: "center", }}>
-                        <Text style={{ paddingLeft: 20, textTransform: "uppercase",fontSize:16,fontWeight:'bold' }}>{props.route && props.route.params && props.route.params.room && props.route.params.room.Name ? props.route.params.room.Name : ""}</Text>
+                        <Text style={{ paddingLeft: 20, textTransform: "uppercase", fontSize: 16, fontWeight: 'bold' }}>{props.route && props.route.params && props.route.params.room && props.route.params.room.Name ? props.route.params.room.Name : ""}</Text>
                     </View>
                     <TouchableOpacity onPress={showMenu} style={{ flex: 1, paddingHorizontal: 20, flexDirection: "row", justifyContent: "flex-end", alignItems: "center" }}>
                         <Menu
                             style={{ width: 50 }}
                             ref={setMenuRef}
-                            button={<Text style={{ fontSize:16,fontWeight:'bold' }} onPress={showMenu}>{I18n.t('vi_tri')} {position}</Text>}
+                            button={<Text style={{ fontSize: 16, fontWeight: 'bold' }} onPress={showMenu}>{I18n.t('vi_tri')} {position}</Text>}
                         >
                             {
                                 listPosition.map(item => <MenuItem key={item.name} onPress={() => hideMenu(item.name)}>{item.name} {item.status ? <Text style={{ color: Colors.colorchinh }}>*</Text> : null}</MenuItem>)
                             }
                         </Menu>
-                        <Icon style={{}} name="chevron-down" size={20}  />
+                        <Icon style={{}} name="chevron-down" size={20} />
                     </TouchableOpacity>
                 </View>
                 <View style={{ backgroundColor: "white", flexDirection: "row", justifyContent: "space-between", marginTop: 2, borderBottomColor: Colors.colorchinh, borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5 }}>
@@ -638,6 +644,7 @@ const Served = (props) => {
                     outputSelectedProduct={outputSelectedProduct}
                     listTopping={listTopping}
                     Position={position}
+                    updateServerEvent={updateServerEvent}
                     handlerProcessedProduct={(jsonContent) => handlerProcessedProduct(jsonContent)}
                     outPutSetNewOrderDetail={setNewOrderDetails} />
             </View>
