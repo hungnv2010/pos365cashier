@@ -214,7 +214,7 @@ export default (props) => {
 
         console.log("onClickPay params ", params);
         dialogManager.showLoading();
-        new HTTPService().setPath(ApiPath.ORDERS, true).POST(params).then(async order => {
+        new HTTPService().setPath(ApiPath.ORDERS, false).POST(params).then(async order => {
             console.log("onClickPay order ", order);
             if (order) {
                 dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(json.Total))

@@ -59,13 +59,13 @@ export const ScreenList = {
   Settings: "Settings",
   VNPayPaymentSetting: "VNPayPaymentSetting",
   CommodityWaiting: "CommodityWaiting",
-  Settings:"Settings",
-  VNPayPaymentSetting:"VNPayPaymentSetting",
-  RoomHistoryDetailForPhone:"RoomHistoryDetailForPhone",  
-  RoomHistory:"RoomHistory",  
-  RetailSelectProduct:"RetailSelectProduct",
-  MainRetail:"MainRetail",
-  PriceBook:"PriceBook",
+  Settings: "Settings",
+  VNPayPaymentSetting: "VNPayPaymentSetting",
+  RoomHistoryDetailForPhone: "RoomHistoryDetailForPhone",
+  RoomHistory: "RoomHistory",
+  RetailSelectProduct: "RetailSelectProduct",
+  MainRetail: "MainRetail",
+  PriceBook: "PriceBook",
   SplitTable: "SplitTable",
   OrderOffline: "OrderOffline",
   Vouchers: "Vouchers",
@@ -76,5 +76,15 @@ export const ScreenList = {
   OrderManagement: "OrderManagement",
   PaymentPendingList: "PaymentPendingList",
   DetailPaymentPending: "DetailPaymentPending",
+  ReportEndDay: "ReportEndDay",
+  EmployeeManager: "EmployeeManager",
+  ReportManager: "ReportManager",
+  GroupSuppier: "GroupSuppier",
+  ListSupplier: "ListSupplier",
+  SupplierManager: "SupplierManager",
+  CustomerManager: "CustomerManager",
+  GroupCustomer: "GroupCustomer"
+
+
 }
 

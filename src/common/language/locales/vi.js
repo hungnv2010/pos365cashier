@@ -33,6 +33,7 @@ export default {
   ban_co_muon_luu_thay_doi_khong: "Bạn có muốn lưu thay đổi không?",
 
   // TODO: C
+  chinh_sua: "Chỉnh sửa",
   cai_dat: "Cài đặt",
   chon_chi_nhanh: "Chọn chi nhánh",
   chiet_khau: "Chiết khấu",
@@ -70,6 +71,7 @@ export default {
   cap_nhat_phong_ban: "Cập nhật phòng bàn",
   chua_thanh_toan: "Chưa thanh toán",
   chi_tiet_don_hang: "Chi tiết đơn hàng",
+  cap_nhat_nhom: "Cập nhật nhóm",
 
   // TODO: D
   dau_tien: "đầu tiên",
@@ -161,7 +163,7 @@ export default {
   khong_co_ket_noi: "Không có kết nối",
   khong: "Không",
   khong_co_ket_noi_internet_don_hang_cua_quy_khach_duoc_luu_vao_offline: "Không có kết nối internet, đơn hàng được lưu vào danh sách đơn hàng offline.",
-  khong_tim_thay_san_pham_nao_phu_hop:"Không tìm thấy sản phẩm phù hợp",
+  khong_tim_thay_san_pham_nao_phu_hop: "Không tìm thấy sản phẩm phù hợp",
 
   // TODO: H
   hoa_don: "Hoá đơn",
@@ -232,6 +234,8 @@ export default {
   nhap_tu_khoa_tim_kiem: "Nhập từ khóa tìm kiếm",
   ngay: "Ngày",
   nhap_ma_hoa_don_tim_kiem: "Nhập mã hóa đơn cần tìm",
+  nha_cung_cap: "Nhà cung cấp",
+  quan_ly_nhan_vien: "Quản lý nhân viên",
 
   // TODO: O
 
@@ -245,7 +249,7 @@ export default {
   phut: "phút",
   phien_ban_ngay: "Phiên bản",
   phuong_thuc_khac: "Phương thức khác",
-  phuong_thuc_thanh_toan:"Phương thức thanh toán",
+  phuong_thuc_thanh_toan: "Phương thức thanh toán",
 
   // TODO: Q
   quy_dau_ky: "Quỹ đầu kỳ",
@@ -278,6 +282,7 @@ export default {
   san_pham: "Sản phẩm",
 
   // TODO: T
+  tu_dong_them_doi_tac_vao_nhom: "Tự động thêm đối tác vào nhóm nếu đạt điều kiện về doanh số",
   thong_bao_quet_van_tay: "Quý khách vui lòng quét dấu vân tay đã đăng ký trên thiết bị.",
   thong_bao_tam_khoa_van_tay: "Quý khách đã nhập sai vân tay nhiều lần. Vui lòng thử lại sau 30 giây.",
   thong_bao_khoa_van_tay: "Quý khách đã nhập sai vân tay quá nhiều lần. Vui lòng vào cài đặt vân tay của thiết bị để kích hoạt lại tính năng này.",
@@ -354,8 +359,8 @@ export default {
   tu_dong_tao_ma: "Tự động tạo mã",
   tach_tai_ban: "Tách tại bàn",
   thanh_cong: "thành công",
-  tong_tam_tinh:"Tổng tạm tính",
-  tong_thanh_toan:"Tổng thanh toán",
+  tong_tam_tinh: "Tổng tạm tính",
+  tong_thanh_toan: "Tổng thanh toán",
   tao_lai_ma_qr: "Tạo lại mã QR thanh toán",
 
   // TODO: U
@@ -369,6 +374,7 @@ export default {
   vui_long_kich_hoat_thanh_toan_qrcode: "Vui lòng mở thiết lập tính năng kích hoạt thanh toán qua QR Code",
 
   // TODO: X
+  xoa: "Xóa",
   xac_nhan: 'Xác nhận',
   xac_thuc_van_tay: "Xác thực vân tay",
   xac_thuc_khuan_mat: "Xác thực khuôn mặt",
@@ -386,7 +392,7 @@ export default {
 
   bao_che_bien_sau_khi_thanh_toan: "Báo chế biến sau khi thanh toán",
   ban_co_chac_muon_xoa_voucher_nay: "Bạn có chắc muốn xoá voucher này?",
-  ban_co_chac_chan_muon_xoa_khach_hang:"Bạn có chắc muốn xóa khách hàng này",
+  ban_co_chac_chan_muon_xoa_khach_hang: "Bạn có chắc muốn xóa khách hàng này",
   block_theo_phut: "Block tính theo phút",
   ban_co_chac_chan_muon_xoa_hang_hoa:'Bạn có chắc chắn muốn xoá hàng hoá này?',
 
@@ -408,12 +414,12 @@ export default {
   don_vi_tien_te: "Đơn vị tiền tệ",
   dollar_my: "Dollar Mỹ",
   dia_chi: "Địa chỉ",
-  don_vi_tinh:"Đơn vị tính",
-  dich_vu:'Dịch vụ',
-  don_vi_tinh_lon_va_cac_thong_so_khac:"Đơn vị tính lớn và các thông số khác",
-  don_vi_tinh_lon:'Đơn vị tính lớn',
-  don_hang_cho_thanh_toan:'Đơn hàng chờ thanh toán',
-  dong_bo_du_lieu:'Đồng bộ dữ liệu',
+  don_vi_tinh: "Đơn vị tính",
+  dich_vu: 'Dịch vụ',
+  don_vi_tinh_lon_va_cac_thong_so_khac: "Đơn vị tính lớn và các thông số khác",
+  don_vi_tinh_lon: 'Đơn vị tính lớn',
+  don_hang_cho_thanh_toan: 'Đơn hàng chờ thanh toán',
+  dong_bo_du_lieu: 'Đồng bộ dữ liệu',
   dang_cho_thanh_toan_vui_long_doi: "Đang chờ thanh toán, vui lòng đợi",
 
   giu_man_hinh_luon_sang: "Giữ màn hình luôn sáng",
@@ -513,7 +519,7 @@ export default {
 
   voucher: "Mã quà tặng",
   vui_long_nhap_dung_so_tien_khach_tra: "Vui lòng nhập đúng số tiền khách trả.",
-  vi_tri:'Vị trí',
+  vi_tri: 'Vị trí',
 
   xin_cam_on_va_hen_gap_lai: "Xin cám ơn, hẹn gặp lại quý khách!"
 
