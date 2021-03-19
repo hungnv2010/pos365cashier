@@ -43,6 +43,7 @@ import ComboForTab from '../../screens/products/comboForTab/ComboForTab'
 import PaymentPendingList from '../../screens/orderManagement/paymentPending/PaymentPendingList';
 import DetailPaymentPending from '../../screens/orderManagement/paymentPending/DetailPaymentPending';
 import Invoice from '../../screens/invoice/invoice';
+import ComboForPhone from '../../screens/products/comboForPhone/ComboForPhone';
 
 const MainStack = createStackNavigator();
 
@@ -95,6 +96,8 @@ export default (props) => {
                 <MainStack.Screen name={ScreenList.PaymentPendingList}>{props=> <PaymentPendingList {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.DetailPaymentPending}>{props=> <DetailPaymentPending {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.Invoice}>{props=> <Invoice {...props}/>}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.ComboForTab}>{props => <ComboForTab {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.ComboForPhone}>{props => <ComboForPhone {...props} />}</MainStack.Screen>
             </MainStack.Navigator>
         </Animated.View>
     );
