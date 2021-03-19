@@ -103,6 +103,7 @@ const images = {
     change_method: require("../../assets/icons/change_method.png"),
     
     ic_danhsachdonhang: require("../../assets/icons/ic_danhsachdonhang.png"),
+    ic_nhomkhachhang: require("../../assets/icons/ic_nhomkhachhang.png"),
     ic_donhangoffline: require("../../assets/icons/ic_donhangoffline.png"),
     ic_donhangthanhtoanvnpayqr: require("../../assets/icons/ic_donhangthanhtoanvnpayqr.png"),
     ic_lichsuhuytrahang: require("../../assets/icons/ic_lichsuhuytrahang.png"),

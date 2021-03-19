@@ -1,30 +1,32 @@
 import React, { useEffect, useState, useLayoutEffect, useRef, useCallback } from 'react';
 import { Image, View, StyleSheet, Text, TouchableOpacity, TextInput, ScrollView, Modal, TouchableWithoutFeedback } from "react-native";
 import { Snackbar, Surface, Checkbox } from 'react-native-paper';
-import I18n from '../../common/language/i18n';
-import { Images, Metrics } from '../../theme';
-import { currencyToString, momentToStringDateLocal, dateToString } from '../../common/Utils';
-import colors from '../../theme/Colors';
-import { Constant } from '../../common/Constant';
+import I18n from '../../../common/language/i18n';
+import { Images, Metrics } from '../../../theme';
+import { currencyToString, momentToStringDateLocal, dateToString } from '../../../common/Utils';
+import colors from '../../../theme/Colors';
+import { Constant } from '../../../common/Constant';
 import moment from 'moment';
-import { HTTPService } from '../../data/services/HttpService';
-import { ApiPath } from '../../data/services/ApiPath';
+// import DateRangePicker from 'react-native-daterange-picker';
+// import DateTimePicker from '@react-native-community/datetimepicker';
+import { HTTPService } from '../../../data/services/HttpService';
+import { ApiPath } from '../../../data/services/ApiPath';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
-import dialogManager from '../../components/dialog/DialogManager';
-import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
-import { useSelector } from 'react-redux';
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import dialogManager from '../../../components/dialog/DialogManager';
 import DatePicker from 'react-native-date-picker';
 
 export default (props) => {
 
-    const [customerDetail, setCustomerDetail] = useState({ ...props.route.params.item })
+    const [customerDetail, setCustomerDetail] = useState({})
     const [listGroup, setListGroup] = useState([])
+    const [date, setDate] = useState(new Date());
     const [showToast, setShowToast] = useState(false);
+
     const [showModal, setShowModal] = useState(false)
     const typeModal = useRef(null)
     const toastDescription = useRef('')
     const dateTmp = useRef()
-
 
     useEffect(() => {
         const getListGroup = async () => {
@@ -46,21 +48,19 @@ export default (props) => {
     }, [])
 
     useEffect(() => {
-        console.log('customeretail props', props, listGroup);
-        let customerDetail = props.route.params.item
-        if (customerDetail.Id == 0) {
+        console.log('customeretail props', props.customerDetail);
+        if (props.customerDetail.Id == 0) {
             resetCustomer()
             return
         }
-        setCustomerDetail({ ...props.route.params.item })
-    }, [props.route.params.item])
+        setCustomerDetail({ ...props.customerDetail })
+    }, [props.customerDetail])
 
     useEffect(() => {
         getListGroupByCustomer()
     }, [customerDetail])
 
     const getListGroupByCustomer = () => {
-        console.log();
         listGroup.forEach(item => {
             item.status = false // reset listGroup
             customerDetail.PartnerGroupMembers.forEach(elm => {
@@ -92,7 +92,6 @@ export default (props) => {
     }
 
     const renderGender = (item) => {
-        console.log('renderGender', item);
         return (
             <View style={{ padding: 15 }}>
                 <Text style={{ paddingBottom: 10 }}>{I18n.t('gioi_tinh')}</Text>
@@ -129,7 +128,8 @@ export default (props) => {
                 setCustomerDetail({ ...customerDetail, Phone: text })
                 break;
             case 3:
-                setCustomerDetail({ ...customerDetail, DOB: text })
+                text = moment(text).format('DD-MM-YYYY')
+                console.log(text);
                 break;
             case 4:
                 setCustomerDetail({ ...customerDetail, Email: text })
@@ -172,7 +172,7 @@ export default (props) => {
         setShowModal(false)
     }
 
-    const onChange = (event, selectedDate) => {
+    const onChange = (selectedDate) => {
         dateTmp.current = selectedDate;
     }
 
@@ -190,14 +190,7 @@ export default (props) => {
                     onDateChange={onChange}
                     mode={'date'}
                     display="default"
-                    customStyles={{
-                        datePicker: {
-                            backgroundColor: '#d1d3d8',
-                            justifyContent: 'center'
-                        }
-                    }}
                     locale="vi-VN" />
-
                 <View style={[styles.viewBottomFilter, { padding: 7, paddingTop: 0 }]}>
                     <TouchableOpacity style={styles.viewButtonCancel} onPress={onCancel}>
                         <Text style={styles.textButtonCancel}>{I18n.t("huy")}</Text>
@@ -211,28 +204,30 @@ export default (props) => {
             typeModal.current == 2 ?
                 <View style={{
                     backgroundColor: "#fff", borderRadius: 4,
+                    justifyContent: 'center', alignItems: 'center',
                     height: Metrics.screenHeight * 0.6
                 }}>
-                    <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", paddingVertical: 15, color: colors.colorLightBlue, textTransform: "uppercase" }}>{I18n.t('chon_tinh_thanh')}</Text>
-                    <ScrollView>
-                        {
-                            Constant.LIST_PROVICE.map((item, index) => {
-                                return (
-                                    <TouchableOpacity
-                                        onPress={() => onClickChooseProvice(item)}
-                                        key={index} style={{ paddingVertical: 15, }}>
-                                        <Text style={{ textAlign: "center" }}>{item.name}</Text>
-                                    </TouchableOpacity>
-                                )
-                            })
-                        }
-                    </ScrollView>
-
+                    <View style={{ paddingVertical: 10, flex: 1 }}>
+                        <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", paddingVertical: 15, color: colors.colorLightBlue }}>{I18n.t('chon_tinh_thanh')}</Text>
+                        <ScrollView>
+                            {
+                                Constant.LIST_PROVICE.map((item, index) => {
+                                    return (
+                                        <TouchableOpacity
+                                            onPress={() => onClickChooseProvice(item)}
+                                            key={index} style={{ paddingVertical: 15, }}>
+                                            <Text style={{ textAlign: "center" }}>{item.name}</Text>
+                                        </TouchableOpacity>
+                                    )
+                                })
+                            }
+                        </ScrollView>
+                    </View>
                 </View>
                 :
                 <View style={{
                     backgroundColor: "#fff", borderRadius: 4,
-                    height: Metrics.screenHeight * 0.6
+                    maxHeight: Metrics.screenHeight * 0.6
                 }}>
                     <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", paddingVertical: 15, color: colors.colorLightBlue, textTransform: "uppercase" }}>{I18n.t('chon_nhom')}</Text>
                     <ScrollView
@@ -286,7 +281,7 @@ export default (props) => {
     }
 
     const onClickCancelGroupName = () => {
-        // getListGroupByCustomer()
+        getListGroupByCustomer()
         setShowModal(false)
     }
 
@@ -312,7 +307,8 @@ export default (props) => {
         return value.toString()
     }
 
-    const onClickDone = () => {
+    const onClickApply = () => {
+        let dateRegex = /^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$/;
         if (customerDetail.Name == '') {
             toastDescription.current = I18n.t("vui_long_nhap_day_du_thong_tin_truoc_khi_luu")
             setShowToast(true)
@@ -342,25 +338,25 @@ export default (props) => {
                 Description: customerDetail.Description,
             }
         }
-        if (props.route.params.item.Id == 0) {
+        if (props.customerDetail.Id == 0) {
             console.log('add');
             dialogManager.showLoading()
             new HTTPService().setPath(ApiPath.CUSTOMER).POST(params)
                 .then(res => {
-                    console.log('onClickDone res', res);
+                    console.log('onClickApply res', res);
                     if (res && res.ResponseStatus && res.ResponseStatus.Message) {
                         dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
                             dialogManager.destroy();
                         }, null, null, I18n.t('dong'))
                     } else {
-                        props.route.params.onCallBack('them')
-                        props.navigation.pop()
+                        props.handleSuccess('them')
+                        resetCustomer()
                     }
                     dialogManager.hiddenLoading()
                 })
                 .catch(err => {
                     dialogManager.hiddenLoading()
-                    console.log('onClickDone err', err);
+                    console.log('onClickApply err', err);
                 })
         } else {
             console.log('update');
@@ -368,20 +364,20 @@ export default (props) => {
             dialogManager.showLoading()
             new HTTPService().setPath(ApiPath.CUSTOMER).POST(params)
                 .then(res => {
-                    console.log('onClickDone res', res);
+                    console.log('onClickApply res', res);
                     if (res && res.ResponseStatus && res.ResponseStatus.Message) {
                         dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
                             dialogManager.destroy();
                         }, null, null, I18n.t('dong'))
                     } else {
-                        props.route.params.onCallBack('sua')
-                        props.navigation.pop()
+                        props.handleSuccess('sua')
+                        // resetCustomer()
                     }
                     dialogManager.hiddenLoading()
                 })
                 .catch(err => {
                     dialogManager.hiddenLoading()
-                    console.log('onClickDone err', err);
+                    console.log('onClickApply err', err);
                 })
         }
     }
@@ -391,14 +387,18 @@ export default (props) => {
         dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_xoa_khach_hang'), I18n.t("thong_bao"), res => {
             if (res == 1) {
                 new HTTPService().setPath(`${ApiPath.CUSTOMER}/${customerDetail.Id}`).DELETE()
-                    .then(result => {
-                        console.log('onClickDelete', result)
-                        if (result) props.route.params.onCallBack('xoa')
-                        props.navigation.pop()
+                    .then(res => {
+                        console.log('onClickDelete', res)
+                        if (res) props.handleSuccess('xoa')
                     })
                     .catch(err => console.log('onClickDelete err', err))
             }
         })
+
+    }
+
+    const onClickPrint = () => {
+
     }
 
     const getIcon = (Gender, Image) => {
@@ -420,22 +420,15 @@ export default (props) => {
         }
     }
 
-    const onClickPrint = () => {
-
-    }
-
     return (
         <View style={{ flex: 1 }}>
-            {/* <View style={{ backgroundColor: colors.colorchinh, marginLeft: 15, paddingVertical: 10 }}>
-                <Text style={{ textAlign: "center", color: "white", fontSize: 15, textTransform: "uppercase" }}>{props.route.params.item && props.route.params.item.Id == -1 ? 'Add customer' : 'Update Customer'}</Text>
-            </View> */}
-            <ToolBarDefault
-                {...props}
-                title={props.route.params.item.Id == 0 ? I18n.t('them_khach_hang') : I18n.t('cap_nhat_khach_hang')} />
-            <ScrollView style={{ flex: 1, padding: 10 }}>
+            <View style={{ backgroundColor: 'white', marginLeft: 5, paddingVertical: 10 }}>
+                <Text style={{ textAlign: "center", color: colors.colorchinh, fontSize: 15, textTransform: "uppercase", fontWeight: "bold" }}>{props.customerDetail.Id == 0 ? I18n.t('them_khach_hang') : I18n.t('cap_nhat_khach_hang')}</Text>
+            </View>
+            <KeyboardAwareScrollView style={{ flexGrow: 1 }}>
                 <Surface style={styles.surface}>
                     <View style={{ height: Metrics.screenHeight / 6, flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 15 }}>
-                        <View style={{ flex: 1, marginRight: 20 }}>
+                        <View style={{ flex: 1, marginRight: 20, borderRadius: 20 }}>
                             <Image source={getIcon(customerDetail.Gender, customerDetail.Image)} style={{ height: 100, width: 100, alignSelf: "center" }} />
                         </View>
                         <View style={{ flex: 2, }}>
@@ -454,20 +447,20 @@ export default (props) => {
                 </Surface>
                 <Surface style={styles.surface}>
                     <View style={{ padding: 15 }}>
-                        <Text style={{ paddingBottom: 10 }}>{I18n.t('ten')} <Text style={{ color: "red" }}>*</Text></Text>
+                        <Text style={{ paddingBottom: 10 }}>{I18n.t('ten')}<Text style={{ color: "red" }}>*</Text></Text>
                         <TextInput
                             placeholder={I18n.t('ten')}
                             placeholderTextColor="#808080"
                             value={customerDetail.Name}
-                            style={{ borderWidth: 0.5, padding: 10, borderRadius: 5 }}
+                            style={{ borderWidth: 0.5, color: "#000", padding: 10, borderRadius: 5 }}
                             onChangeText={(text) => { onChangeText(text, 1) }}
                         />
                     </View>
                     <View style={{ padding: 15 }}>
-                        <Text style={{ paddingBottom: 10 }}>{I18n.t('so_dien_thoai')}</Text>
+                        <Text style={{ paddingBottom: 10 }}>{I18n.t('dien_thoai')}</Text>
                         <TextInput
                             returnKeyType='done'
-                            placeholder={I18n.t('so_dien_thoai')}
+                            placeholder={I18n.t('dien_thoai')}
                             placeholderTextColor="#808080"
                             keyboardType="numeric"
                             value={customerDetail.Phone}
@@ -483,10 +476,20 @@ export default (props) => {
                                 setShowModal(true)
                             }} style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
                                 <Text style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1, color: dateToString(customerDetail.DOB) ? null : "#CECCCB" }}>{dateToString(customerDetail.DOB) ? dateToString(customerDetail.DOB) : 'dd/mm/yyyy'}</Text>
-
+                                {/* <TextInput
+                                    editable={false}
+                                    value={dateToString(customerDetail.DOB)}
+                                    onTouchStart={() => {
+                                        typeModal.current = 1
+                                        setShowModal(true)
+                                    }}
+                                    placeholder='dd/mm/yyyy'
+                                    // value={dateToString(customerDetail.DOB)}
+                                    style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1 }}
+                                // onChangeText={(text) => { onChangeText(text, 3) }}
+                                /> */}
                                 <Image source={Images.icon_arrow_down} style={{ width: 20, height: 20, position: "absolute", right: 15 }} />
                             </TouchableOpacity>
-
                         </View>
                     </View>
                     {
@@ -503,7 +506,7 @@ export default (props) => {
                         />
                     </View>
                     {
-                        props.route.params.item.Id == 0 ?
+                        props.customerDetail.Id == 0 ?
                             null
                             :
                             <View style={{ padding: 15 }}>
@@ -513,7 +516,17 @@ export default (props) => {
                                     setShowModal(true)
                                 }} style={{ flexDirection: "row", alignItems: "center" }}>
                                     <Text style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1, color: getGroupName(customerDetail.PartnerGroupMembers) ? null : "#CECCCB" }}>{getGroupName(customerDetail.PartnerGroupMembers) ? getGroupName(customerDetail.PartnerGroupMembers) : I18n.t('ten_nhom')}</Text>
-
+                                    {/* <TextInput
+                                placeholder={I18n.t('ten_nhom')}
+                                value={getGroupName(customerDetail.PartnerGroupMembers)}
+                                editable={false}
+                                onTouchStart={() => {
+                                    typeModal.current = 3
+                                    setShowModal(true)
+                                }
+                                }
+                                style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1 }}
+                            /> */}
                                     <Image source={Images.icon_arrow_down} style={{ width: 20, height: 20, position: "absolute", right: 15 }} />
                                 </TouchableOpacity>
                             </View>
@@ -539,7 +552,17 @@ export default (props) => {
                                 setShowModal(true)
                             }} style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
                                 <Text style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1, color: customerDetail.Province ? null : "#CECCCB" }}>{customerDetail.Province ? customerDetail.Province : I18n.t('tinh_thanh')}</Text>
-
+                                {/* <TextInput
+                                    placeholder={I18n.t('tinh_thanh')} 
+                                    value={customerDetail.Province}
+                                    editable={false}
+                                    style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1 }}
+                                    // onChangeText={(text) => { onChangeText(text, 7) }}
+                                    onTouchStart={() => {
+                                        typeModal.current = 2
+                                        setShowModal(true)
+                                    }}
+                                /> */}
                                 <Image source={Images.icon_arrow_down} style={{ width: 20, height: 20, position: "absolute", right: 15 }} />
                             </TouchableOpacity>
 
@@ -588,10 +611,10 @@ export default (props) => {
                         />
                     </View>
                 </Surface>
-            </ScrollView>
+            </KeyboardAwareScrollView>
             <View style={{ flexDirection: "row", margin: 10, }}>
                 {
-                    props.route.params.item.Id == 0 ?
+                    props.customerDetail.Id == 0 ?
                         null
                         :
                         <>
@@ -603,7 +626,7 @@ export default (props) => {
                             </TouchableOpacity>
                         </>
                 }
-                <TouchableOpacity onPress={onClickDone} style={{ flex: 8, flexDirection: "row", marginLeft: 10, marginTop: 0, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 15 }}>
+                <TouchableOpacity onPress={onClickApply} style={{ flex: 8, flexDirection: "row", marginLeft: 10, marginTop: 0, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 15 }}>
                     <Text style={{ color: "#fff", fontWeight: "bold" }}>{I18n.t('ap_dung')}</Text>
                 </TouchableOpacity>
             </View>
@@ -635,7 +658,7 @@ export default (props) => {
                         }}></View>
 
                     </TouchableWithoutFeedback>
-                    <View style={{ width: Metrics.screenWidth * 0.8, }}>
+                    <View style={{ width: Metrics.screenWidth * 0.6, }}>
                         {renderModalContent()}
                     </View>
                 </View>
@@ -664,4 +687,5 @@ const styles = StyleSheet.create({
     textButtonCancel: { textAlign: "center", color: "#000" },
     viewButtonOk: { marginLeft: 10, flex: 1, backgroundColor: colors.colorchinh, borderRadius: 4, paddingHorizontal: 20, paddingVertical: 10, justifyContent: "flex-end" },
     textButtonOk: { textAlign: "center", color: "#fff" },
+
 })

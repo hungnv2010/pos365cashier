@@ -46,5 +46,6 @@ export const ApiPath = {
     MULTI_PAYMENT_STATUS: "api/orders/multipaymentstatus",
     VENDOR: "api/vendors/current",
     DELETE_ORDER: "api/orders/{orderId}/void",
+    ENDOFDAY: "mobile/endOfDay",
     // http://cafe365.banhang365.vn/api/orders/95053575/void
 }

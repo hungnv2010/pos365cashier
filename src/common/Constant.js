@@ -29,6 +29,30 @@ export const Constant = {
         BartenderDKey: 'BartenderD',
         StampPrintKey: 'StamPrintKey',
     },
+    TIME_FOR_REPORT: [
+        {
+            type: 4,
+            name: "hom_nay",
+            key: "today"
+        },
+        {
+            type: 3,
+            name: "hom_qua",
+            key: "yesterday"
+        },
+        {
+            type: 1,
+            name: "bay_ngay",
+            key: "7days"
+        },
+
+        {
+            type: 2,
+            name: "tuy_chon",
+            key: "custom"
+        }
+    ]
+    ,
     TIME_SELECT: [
         {
             type: 4,
