@@ -54,8 +54,8 @@ export default (props) => {
 
     const renderItem = (item, index) => {
         return (
-            <View style={{ flex: 1, marginBottom: 10 }} key={index.toString()}>
-                <TouchableOpacity style={[item.Status == true ? styles.styleButtonOn : styles.styleButton, { marginLeft: 15 }]} onPress={() => onClick(item, index)}>
+            <View style={{ flex: 1, marginBottom: 10 ,justifyContent:'center',marginLeft:10}} key={index.toString()}>
+                <TouchableOpacity style={[item.Status == true ? styles.styleButtonOn : styles.styleButton, {}]} onPress={() => onClick(item, index)}>
                     <Text style={[item.Status == true ? styles.titleButtonOn : styles.titleButtonOff, {}]}>{I18n.t(item.Name)}</Text>
                 </TouchableOpacity>
             </View>
@@ -64,9 +64,9 @@ export default (props) => {
     }
     return (
         <View style={{ marginBottom: 10 }}>
-            <View style={{ justifyContent: 'space-between', flexDirection: 'row', padding: 5, marginTop: 10, marginBottom: 10 }}>
+            <View style={{ justifyContent: 'space-between', flexDirection: 'row', padding: 5,}}>
                 <Text style={styles.titleBold}>{I18n.t('bao_che_bien')}</Text>
-                <Text style={{ color: 'silver', marginRight: 10 }}>{I18n.t('so_may_in_toi_da')} {countPrint}/ 5</Text>
+                <Text style={{ color: 'silver',}}>{I18n.t('so_may_in_toi_da')} {countPrint}/ 5</Text>
             </View>
             <View style={{ flexDirection: 'row' }}>
                 <FlatList
@@ -81,10 +81,10 @@ export default (props) => {
 }
 const styles = StyleSheet.create({
     styleButton: {
-        flex: 1, marginRight: 10, justifyContent: 'center', alignItems: 'center', borderRadius: 16, borderWidth: 0.5, padding: 15, backgroundColor: '#f2f2f2'
+        flex: 1, marginRight: 10, justifyContent: 'center', alignItems: 'center', borderRadius: 16, borderWidth: 0.5, padding: 10, backgroundColor: '#f2f2f2'
     },
     styleButtonOn: {
-        flex: 1, marginRight: 10, justifyContent: 'center', alignItems: 'center', borderRadius: 16, borderWidth: 0.5, padding: 15, backgroundColor: 'white', borderColor: '#36a3f7'
+        flex: 1, marginRight: 10, justifyContent: 'center', alignItems: 'center', borderRadius: 16, borderWidth: 0.5, padding: 10, backgroundColor: 'white', borderColor: '#36a3f7'
     },
     titleButtonOff: {
         fontWeight: 'bold',

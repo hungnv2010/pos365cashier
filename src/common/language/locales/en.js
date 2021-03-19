@@ -840,6 +840,7 @@ export default {
   ban_co_chac_muon_xoa_voucher_nay: "Do you want to delete voucher?",
   ban_co_chac_chan_muon_xoa_khach_hang: "Do you want to delete customer?",
   block_theo_phut: "Block per minute",
+  ban_co_chac_chan_muon_xoa_hang_hoa:'Are you sure you want to delete this product?',
 
   cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang: "Allows to change the name of good when selling",
   cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang: "Allows employees change prices when selling",
@@ -872,10 +873,12 @@ export default {
   gia_ban_duoc_tinh_theo_phan_tram_gia_tri_don_hang: "Price is calculated by % of order",
   gia_ban_dvt_lon: 'Price large unit',
   gia_tri_quy_doi: 'Exchange value',
+  gia_tri_thay_doi:'Value change',
 
   hien_thanh_dieu_huong: "Show navigation bar",
   hien_thi_hang_hoa: 'Display product',
   hien_thi_san_pham_tren_man_hinh_thu_ngan: "Display product on the list of the cashier screen",
+  hoac:'or',
 
   in_sau_khi_thanh_toan: "Print after payment",
   in_hai_lien_cho_hoa_don: "Print 2 copies for invoice",
@@ -892,6 +895,9 @@ export default {
   khong_cho_phep_ban_hang_khi_het_ton_kho: "Sales are not allowed when out of stock?",
   khong_in: "Don't print",
   khong_hien_thi: "Not displayed",
+  khung_gio:'Time slot',
+  kieu_thay_doi_gia:'Price change type',
+  khung_gio_dac_biet:'Special time slot',
 
   link_dang_nhap: "Link login",
   ly_do: "Reason",
@@ -932,6 +938,7 @@ export default {
   so_block_gio_dau_tien: 'First hour block number',
   so_luong_hang_hoa_duoc_tinh_theo_thoi_gian: "The quantity is calculated by time of use",
   so_may_in_toi_da: 'Maximum printers',
+  san_pham:'Product',
 
   thiet_lap_thanh_toan_vnpay: "Payments setting VNPAY",
   thong_tin_cua_hang: "Store informations",
@@ -952,6 +959,7 @@ export default {
   tinh_theo_phan_tram: 'Account by %',
   thanh_phan_combo: "Combo Components",
   tien_thieu: 'Missing money',
+  ty_le_thay_doi:'Ratio change',
 
   voucher: "Voucher",
   vui_long_nhap_dung_so_tien_khach_tra: "Please enter the correct amount of payment.",

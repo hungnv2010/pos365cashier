@@ -95,6 +95,7 @@ export default (props) => {
     const jsonContentPayment = useRef({});
     const changeMethodQRPay = useRef(false);
     const debounceTimeInput = useRef(new Subject());
+    const qrCodeRealm = useRef()
     let row_key = "";
 
     const { deviceType, isFNB } = useSelector(state => {
@@ -393,6 +394,7 @@ export default (props) => {
         if (changeMethodQRPay.current == true) {
             console.log("onClickOkFilter onClickPay ");
             realmStore.deleteQRCode(resPayment.current.Id);
+            qrCodeRealm.current.removeAllListeners()
             onClickPay();
             changeMethodQRPay.current = false;
         }
@@ -755,19 +757,19 @@ export default (props) => {
         console.log("handlerQRCode params ", params);
         dataManager.syncQRCode([params]);
 
-        let qrCodeRealm = await realmStore.queryQRCode()
-        qrCodeRealm.addListener((collection, changes) => {
+        qrCodeRealm.current = await realmStore.queryQRCode()
+        qrCodeRealm.current.addListener((collection, changes) => {
             if (changes.insertions.length || changes.modifications.length) {
                 console.log("handlerQRCode qrCode.addListener collection changes ", collection, changes);
-                let QRCodeItem = qrCodeRealm.filtered(`Id == '${order.Id}'`);
+                let QRCodeItem = qrCodeRealm.current.filtered(`Id == '${order.Id}'`);
                 console.log("QRCodeItem == ", QRCodeItem);
                 QRCodeItem = JSON.parse(JSON.stringify(QRCodeItem))[0];
                 console.log("QRCodeItem ", QRCodeItem);
                 if (QRCodeItem && QRCodeItem.Status == true) {
+                    qrCodeRealm.current.removeAllListeners()
                     realmStore.deleteQRCode(order.Id);
                     updateServerEvent(true)
                     setShowModal(false);
-                    // props.navigation.pop()
                 }
             }
         })
@@ -993,6 +995,7 @@ export default (props) => {
             .then(result => {
                 console.log('onClickCancelOrder result', result);
                 if (result) {
+                    qrCodeRealm.current.removeAllListeners()
                     realmStore.deleteQRCode(resPayment.current.Id);
                     props.navigation.pop()
                 }
@@ -1002,6 +1005,7 @@ export default (props) => {
     }
 
     const onClickBackOrder = () => {
+        qrCodeRealm.current.removeAllListeners()
         updateServerEvent(false)
         setShowModal(false);
         props.navigation.pop()

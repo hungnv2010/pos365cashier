@@ -21,12 +21,15 @@ export default (props) => {
     const [defaultMerchantCode, setMerchantCode] = useState()
     const [defaultMerchantName, setMerchantName] = useState()
     const [settingObject, setSettingObject] = useState()
+    const [printInvoice, setPrintInvoice] = useState(false)
+    const [paymentPosMachine, setPaymentPosMachine] = useState(false)
 
     useFocusEffect(useCallback(() => {
         const getQrCodeEnable = async () => {
             let setting = await new HTTPService().setPath(ApiPath.VENDOR_SESSION).GET()
             let objectSetting = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
             setSettingObject(JSON.parse(objectSetting))
+            setPrintInvoice(JSON.parse(objectSetting).PrintInvoiceBeforePaymentVNPayQR ? JSON.parse(objectSetting).PrintInvoiceBeforePaymentVNPayQR : false)
             console.log("QR", setting.Settings.QrCodeEnable);
             setQRCodeEnable(setting.Settings.QrCodeEnable)
             setMerchantCode(setting.Settings.MerchantCode)
@@ -50,6 +53,15 @@ export default (props) => {
     const onClick = (data) => {
         setQRCodeEnable(data.stt)
         updateSetting('QrCodeEnable', data.stt)
+    }
+    const onClickPrintInvoice = (data) => {
+        setPrintInvoice(data.stt)
+        updateSetting('PrintInvoiceBeforePaymentVNPayQR', data.stt)
+        setSettingObject({ ...settingObject, PrintInvoiceBeforePaymentVNPayQR: data.stt })
+        setFileLuuDuLieu(Constant.OBJECT_SETTING, JSON.stringify({ ...settingObject, PrintInvoiceBeforePaymentVNPayQR: data.stt }))
+    }
+    const onClickPaymentPosMachine = (data) => {
+        setPaymentPosMachine(data.status)
     }
     const setInfoModal = (value) => {
         if (titileModal == 'Merchant Code') {
@@ -109,8 +121,8 @@ export default (props) => {
             }
             <ScrollView>
                 <SettingSwitch title={'thanh_toan_vnpayqr'} output={onClick} isStatus={qrcodeEnable} />
-                <SettingSwitch title={'in_hoa_don_truoc_khi_thanh_toan_VNPAYQR_thanh_cong'} />
-                {/* <SettingSwitch title={'thanh_toan_vnpaypos_qua_may_pos'} /> */}
+                <SettingSwitch title={'in_hoa_don_truoc_khi_thanh_toan_VNPAYQR_thanh_cong'} output={onClickPrintInvoice} isStatus={printInvoice} />
+                {/* <SettingSwitch title={'thanh_toan_vnpaypos_qua_may_pos'} outPut = {onClickPaymentPosMachine} isStatus={paymentPosMachine}/> */}
                 <View>
                     <HideView enable={qrcodeEnable} outPut={getData} merchantCode={defaultMerchantCode} merchantName={defaultMerchantName} />
                 </View>

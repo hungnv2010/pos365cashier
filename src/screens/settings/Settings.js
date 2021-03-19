@@ -856,7 +856,7 @@ export default (props) => {
 
                             </TouchableWithoutFeedback>
                             <View style={[styles.styleViewModal]} >
-                                <View style={{ width: Metrics.screenWidth * 0.7, height: Metrics.screenHeight * 0.7 }}>
+                                <View style={{ width: Metrics.screenWidth * 0.7}}>
                                     <Text style={styles.titleModal}>{I18n.t('thong_tin_cua_hang')}</Text>
                                     <StoreInformation code={inforStore.Code} name={inforStore.Name} address={inforStore.Address} phoneNumber={inforStore.Phone} outPut={outPut} />
                                     <View style={{ justifyContent: "center", flexDirection: "row", paddingTop: 10 }}>

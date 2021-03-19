@@ -14,7 +14,11 @@ import {
 import I18n from '../../../common/language/i18n';
 import realmStore from '../../../data/realm/RealmStore'
 import { useSelector, useDispatch } from 'react-redux';
+<<<<<<< HEAD
+import { change_alias, currencyToString, dateUTCToMoment, getTimeFromNow, text_highlight } from '../../../common/Utils'
+=======
 import { currencyToString, dateUTCToMoment, getTimeFromNow, text_highlight, change_alias } from '../../../common/Utils'
+>>>>>>> d7f9a5942b6c60cdde15ab072fc0af9ec240fe0c
 import { Constant } from '../../../common/Constant';
 import { Images, Metrics } from '../../../theme';
 import colors from '../../../theme/Colors';

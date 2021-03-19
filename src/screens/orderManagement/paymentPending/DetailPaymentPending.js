@@ -106,6 +106,7 @@ export default (props) => {
             .then(result => {
                 console.log('onClickCancelOrder result', result);
                 if (result) {
+                    qrCodeRealm.current.removeAllListeners()
                     realmStore.deleteQRCode(dataPaymentPending.Id);
                     props.navigation.pop()
                 }
