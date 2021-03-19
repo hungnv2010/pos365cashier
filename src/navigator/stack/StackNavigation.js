@@ -108,10 +108,8 @@ export default (props) => {
                 <MainStack.Screen name={ScreenList.PaymentPendingList}>{props=> <PaymentPendingList {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.DetailPaymentPending}>{props=> <DetailPaymentPending {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.Invoice}>{props=> <Invoice {...props}/>}</MainStack.Screen>
-<<<<<<< HEAD
                 <MainStack.Screen name={ScreenList.ComboForTab}>{props => <ComboForTab {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.ComboForPhone}>{props => <ComboForPhone {...props} />}</MainStack.Screen>
-=======
                 <MainStack.Screen name={ScreenList.ReportEndDay}>{props=> <ReportEndDay {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.EmployeeManager}>{props=> <EmployeeManager {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.ReportManager}>{props=> <ReportManager {...props}/>}</MainStack.Screen>
@@ -119,7 +117,6 @@ export default (props) => {
                 <MainStack.Screen name={ScreenList.GroupSuppier}>{props=> <GroupSupplier {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.SupplierManager}>{props=> <SupplierManager {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.ListSupplier}>{props=> <ListSupplier {...props}/>}</MainStack.Screen>
->>>>>>> 35b4fd65c89e9b2a819eeda0c727b2445caaa058
             </MainStack.Navigator>
         </Animated.View>
     );
