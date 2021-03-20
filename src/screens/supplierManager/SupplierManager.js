@@ -36,11 +36,11 @@ export default (props) => {
             <View style={styles.viewContent}>
 
                 <TouchableOpacity style={styles.button} onPress={() => onClickNavigation(ScreenList.GroupSuppier)}>
-                    <Image style={styles.iconButton} source={Images.ic_lichsuhuytrahang} />
+                    <Image style={styles.iconButton} source={Images.ic_nhomnhacungcap} />
                     <Text style={styles.textButton}>{I18n.t('nhom_nha_cung_cap')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.button} onPress={() => onClickNavigation(ScreenList.ListSupplier)}>
-                    <Image style={styles.iconButton} source={Images.ic_donhangthanhtoanvnpayqr} />
+                    <Image style={styles.iconButton} source={Images.ic_danhsachkhachhang} />
                     <Text style={styles.textButton}>{I18n.t('danh_sach_nha_cung_cap')}</Text>
                 </TouchableOpacity>
             </View>

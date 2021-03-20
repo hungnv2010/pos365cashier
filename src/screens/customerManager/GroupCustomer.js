@@ -11,6 +11,7 @@ import { ApiPath } from '../../data/services/ApiPath';
 import colors from '../../theme/Colors';
 import { Images } from '../../theme';
 import DetailCustomerGroup from './DetailCustomerGroup';
+import { ScreenList } from '../../common/ScreenList';
 
 
 export default (props) => {
@@ -34,13 +35,23 @@ export default (props) => {
     const getListGroup = async () => {
         let params = { type: 1 }
         try {
-            let res = await new HTTPService().setPath(ApiPath.GROUP_CUSTOMER).GET(params)
-            console.log('getListGroup res', res);
-            if (res) {
-                // res.forEach(element => {
-                //     element.status = false
-                // });
-                setListGroup([...res])
+            let allList = await new HTTPService().setPath(ApiPath.GROUP_CUSTOMER).GET(params)
+            let customer = await new HTTPService().setPath(ApiPath.SYNC_PARTNERS).GET()
+            console.log('getListGroup res', allList);
+            if (allList) {
+                if (customer && customer.Data && customer.Data.length > 0) {
+                    allList.forEach(element => {
+                        element.totalMember = 0
+                        customer.Data.forEach(cus => {
+                            cus.PartnerGroupMembers.forEach(item => {
+                                if (item.GroupId == element.Id) {
+                                    element.totalMember += 1
+                                }
+                            })
+                        });
+                    });
+                }
+                setListGroup([...allList])
             }
         } catch (error) {
             console.log('error', error);
@@ -48,11 +59,22 @@ export default (props) => {
     }
 
     const onClickItem = (item) => {
-        setDetailGroup(item)
+        // setDetailGroup(item)
+        if (deviceType == Constant.TABLET) {
+            setDetailGroup(item)
+        } else {
+            props.navigation.navigate(ScreenList.DetailGroupCustomerForPhone, { detailGroup: item, _onSelect: onClickDone })
+        }
     }
 
+
+
     const onClickAdd = () => {
-        setDetailGroup({ Id: 0 })
+        if (deviceType == Constant.TABLET) {
+            setDetailGroup({ Id: 0 })
+        } else {
+            props.navigation.navigate(ScreenList.DetailGroupCustomerForPhone, { detailGroup: { Id: 0 }, _onSelect: onClickDone })
+        }
     }
 
     const onClickDone = (status) => {
@@ -70,19 +92,9 @@ export default (props) => {
                         <Text
                             numberOfLines={1}
                             style={{ fontSize: 15, fontWeight: "bold", color: colors.colorLightBlue }}>{item.Name}</Text>
-                        <Text style={{ paddingVertical: 5 }}>{item.Code}</Text>
-                        {/* <Text style={{}}>{I18n.t('diem_thuong')}: {currencyToString(item.Point)}</Text> */}
+                        <Text style={{ paddingVertical: 10, color:"grey" }}>{item.totalMember} {I18n.t('thanh_vien')}</Text>
                     </View>
-                    {/* <View style={{ flex: 1 }}>
-                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-start", marginBottom: 10 }}>
-                            <Icon name="phone" size={24} color={colors.colorchinh} style={{ marginRight: 10 }} />
-                            <Text>{item.Phone ? item.Phone : I18n.t('chua_cap_nhat')}</Text>
-                        </View>
-                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-start" }}>
-                            <Icon name="home" size={24} color={colors.colorchinh} style={{ marginRight: 10 }} />
-                            <TextTicker>{item.Address ? item.Address : I18n.t('chua_cap_nhat')}</TextTicker>
-                        </View>
-                    </View> */}
+                 
                 </View>
             </TouchableOpacity>
         )

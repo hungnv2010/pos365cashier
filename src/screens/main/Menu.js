@@ -79,7 +79,7 @@ const LIST_FUNCITION = [
     },
     {
         func: KEY_FUNC.REPORT_MANAGER,
-        icon: Images.icon_version,
+        icon: Images.ic_baocao,
         title: "bao_cao"
     },
     {
@@ -89,7 +89,7 @@ const LIST_FUNCITION = [
     },
     {
         func: KEY_FUNC.EMPLOYEE_MANAGER,
-        icon: Images.icon_version,
+        icon: Images.ic_quanlynhanvien,
         title: "quan_ly_nhan_vien"
     },
     {

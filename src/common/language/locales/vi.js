@@ -5,6 +5,7 @@ export default {
   ap_dung: "Áp dụng",
 
   // TODO: B
+  ban_co_chac_chan_muon_xoa_nhom_khach_hang: "Bạn có chắc muốn xóa nhóm khách hàng ?",
   bo_loc: "Bộ lọc",
   bao_cao_cuoi_ngay: "Báo cáo cuối ngày",
   bao_cao: "Báo cáo",
@@ -74,6 +75,7 @@ export default {
   cap_nhat_nhom: "Cập nhật nhóm",
 
   // TODO: D
+  danh_sach_khach_hang: "Danh sách khách hàng",
   dau_tien: "đầu tiên",
   dang_dung: "Đang dùng",
   dang_trong: "Đang trống",
@@ -107,6 +109,7 @@ export default {
   danh_sach_don_hang: "Danh sách đơn hàng",
   da_thanh_toan: "Đã thanh toán",
   doi_phuong_thuc_thanh_toan: "Đổi phương thức thanh toán",
+  danh_sach_nha_cung_cap: "Danh sách nhà cung cấp",
 
   // TODO: E
 
@@ -211,6 +214,8 @@ export default {
   mot_gio_dau_tien: "1 giờ đầu tiên",
 
   // TODO: N
+  nhom_nha_cung_cap: "Nhóm nhà cung cấp",
+  nhom_khach_hang: "Nhóm khách hàng",
   no: "Nợ",
   ngon_ngu: 'Ngôn ngữ',
   ngay_giao_dich: "Ngày giao dịch",
@@ -282,6 +287,8 @@ export default {
   san_pham: "Sản phẩm",
 
   // TODO: T
+  thanh_vien: "Thành viên",
+  thanh_vien_trong_nhom: "Thành viên trong nhóm",
   tu_dong_them_doi_tac_vao_nhom: "Tự động thêm đối tác vào nhóm nếu đạt điều kiện về doanh số",
   thong_bao_quet_van_tay: "Quý khách vui lòng quét dấu vân tay đã đăng ký trên thiết bị.",
   thong_bao_tam_khoa_van_tay: "Quý khách đã nhập sai vân tay nhiều lần. Vui lòng thử lại sau 30 giây.",
@@ -394,7 +401,7 @@ export default {
   ban_co_chac_muon_xoa_voucher_nay: "Bạn có chắc muốn xoá voucher này?",
   ban_co_chac_chan_muon_xoa_khach_hang: "Bạn có chắc muốn xóa khách hàng này",
   block_theo_phut: "Block tính theo phút",
-  ban_co_chac_chan_muon_xoa_hang_hoa:'Bạn có chắc chắn muốn xoá hàng hoá này?',
+  ban_co_chac_chan_muon_xoa_hang_hoa: 'Bạn có chắc chắn muốn xoá hàng hoá này?',
 
   chon_cong_nghe_in: "Chọn công nghệ in",
   cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang: "Cho phép thay đổi tên hàng hóa khi bán hàng?",
@@ -428,12 +435,12 @@ export default {
   gia_bon_block_dau: "Giá 4 block đầu tiên",
   gia_ban_dvt_lon: 'Giá bán đơn vị tính lớn',
   gia_tri_quy_doi: 'Giá trị quy đổi',
-  gia_tri_thay_doi:'Giá trị thay đổi',
+  gia_tri_thay_doi: 'Giá trị thay đổi',
 
   hien_thanh_dieu_huong: "Hiện thanh điều hướng",
   hien_thi_hang_hoa: 'Hiển thị hàng hoá',
   hien_thi_san_pham_tren_man_hinh_thu_ngan: 'Hiển thị sản phẩm trên danh sách của màn hình thu ngân',
-  hoac:'hoặc',
+  hoac: 'hoặc',
 
   in_sau_khi_thanh_toan: "In sau khi thanh toán",
   in_hai_lien_cho_hoa_don: "In 2 liên cho hóa đơn",
@@ -451,9 +458,9 @@ export default {
   khong_cho_phep_ban_hang_khi_het_ton_kho: "Không cho phép bán hàng khi hết tồn kho",
   khong_in: "Không in",
   khong_hien_thi: "Không hiển thị",
-  khung_gio:"Khung giờ",
-  kieu_thay_doi_gia:'Kiểu thay đổi giá',
-  khung_gio_dac_biet:'Khung giờ đặc biệt',
+  khung_gio: "Khung giờ",
+  kieu_thay_doi_gia: 'Kiểu thay đổi giá',
+  khung_gio_dac_biet: 'Khung giờ đặc biệt',
 
   link_dang_nhap: "Link đăng nhập",
   ly_do: "Lý do",
@@ -515,7 +522,7 @@ export default {
   tao_nhom: 'Tạo nhóm',
   thanh_phan_combo: "Thành phần combo",
   tien_thieu: 'Tiền thiếu',
-  ty_le_thay_doi:'Tỷ lệ thay đổi',
+  ty_le_thay_doi: 'Tỷ lệ thay đổi',
 
   voucher: "Mã quà tặng",
   vui_long_nhap_dung_so_tien_khach_tra: "Vui lòng nhập đúng số tiền khách trả.",

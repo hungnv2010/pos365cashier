@@ -711,6 +711,8 @@ export default {
   qua_mang_lan: "Through the LAN",
   quet_barcode_hoac_qrcode: "Scan BarCode or QRCode",
   quay_lai: "Back",
+  quan_ly_don_hang: "Order management",
+
 
   // TODO: R
 

@@ -181,7 +181,7 @@ export default (props) => {
             await realmStore.deletePartner()
             await dataManager.syncPartner()
             getCustomer()
-            dialogManager.showPopupOneButton(`${I18n.t(type)} ${I18n.t('thanh_cong')}`, I18n.t('thong_bao'))
+            dialogManager.showPopupOneButton(`${I18n.t(type)} ${I18n.t('khach_hang')} ${I18n.t('thanh_cong')}`, I18n.t('thong_bao'))
             dialogManager.hiddenLoading()
         } catch (error) {
             console.log('handleSuccess err', error);
