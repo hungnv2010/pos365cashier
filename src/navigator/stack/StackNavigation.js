@@ -43,6 +43,7 @@ import ComboForTab from '../../screens/products/comboForTab/ComboForTab'
 import PaymentPendingList from '../../screens/orderManagement/paymentPending/PaymentPendingList';
 import DetailPaymentPending from '../../screens/orderManagement/paymentPending/DetailPaymentPending';
 import Invoice from '../../screens/invoice/invoice';
+import ComboForPhone from '../../screens/products/comboForPhone/ComboForPhone';
 import ReportEndDay from '../../screens/reportManager/ReportEndDay';
 import Supplier from '../../screens/supplierManager/SupplierManager';
 import EmployeeManager from '../../screens/employeeManager/EmployeeManager';
@@ -109,6 +110,8 @@ export default (props) => {
                 <MainStack.Screen name={ScreenList.PaymentPendingList}>{props=> <PaymentPendingList {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.DetailPaymentPending}>{props=> <DetailPaymentPending {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.Invoice}>{props=> <Invoice {...props}/>}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.ComboForTab}>{props => <ComboForTab {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.ComboForPhone}>{props => <ComboForPhone {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.ReportEndDay}>{props=> <ReportEndDay {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.EmployeeManager}>{props=> <EmployeeManager {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.ReportManager}>{props=> <ReportManager {...props}/>}</MainStack.Screen>

@@ -69,11 +69,10 @@ export const ScreenList = {
   SplitTable: "SplitTable",
   OrderOffline: "OrderOffline",
   Vouchers: "Vouchers",
-
-  Product: "Product",
-  ProductDetail: "ProductDetail",
-  ComboForTab: "ComboForTab",
-
+  Product:"Product",
+  ProductDetail:"ProductDetail",
+  ComboForTab:"ComboForTab",
+  ComboForPhone:"ComboForPhone",
   OrderManagement: "OrderManagement",
   PaymentPendingList: "PaymentPendingList",
   DetailPaymentPending: "DetailPaymentPending",

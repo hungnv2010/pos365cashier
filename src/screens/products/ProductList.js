@@ -27,6 +27,7 @@ export default (props) => {
     const itemProduct = useRef()
     const typeBtn = useRef()
     const [itProduct, setItProduct] = useState({})
+    const [compositeItemProducts,setCompositeItemProducts] = useState([])
     useEffect(() => {
         getData()
 
@@ -57,7 +58,7 @@ export default (props) => {
         itemProduct.current = el
         if (deviceType == Constant.PHONE) {
             console.log("navigation", deviceType);
-            props.navigation.navigate(ScreenList.ProductDetail, { product: itemProduct.current, category: category, onCallBack: handleSuccess,})
+            props.navigation.navigate(ScreenList.ProductDetail, { product: itemProduct.current, category: category, onCallBack: handleSuccess, })
         } else {
             setItProduct({ ...itemProduct.current })
         }
@@ -91,9 +92,13 @@ export default (props) => {
     }, [itProduct])
     const outPut = (data) => {
         if (data.comboTab == true) {
-            console.log("data.list",data.list);
-            props.navigation.navigate(ScreenList.ComboForTab, { list: data.list })
+            console.log("data.list", data.list);
+            props.navigation.navigate('ComboForTab', { list: data.list,_onSelect: onCallBack})
         }
+    }
+    const onCallBack =(data)=>{
+        console.log("callback data",data);
+        setCompositeItemProducts(data)
     }
     const renderProduct = (item, index) => {
         return (
@@ -177,7 +182,7 @@ export default (props) => {
 
                 {deviceType == Constant.TABLET ? itProduct != null ?
                     <View style={{ flex: 1 }}>
-                        <ProductDetail iproduct={itProduct} iCategory={category} outPut={outPut} handleSuccess={handleSuccess}  />
+                        <ProductDetail iproduct={itProduct} iCategory={category} outPut={outPut} handleSuccess={handleSuccess} compositeItemProducts = {compositeItemProducts}/>
                     </View>
                     : <View style={{ flex: 1 }}></View>
                     :
