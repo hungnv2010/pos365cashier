@@ -52,6 +52,7 @@ import GroupSupplier from '../../screens/supplierManager/GroupSupplier';
 import ListSupplier from '../../screens/supplierManager/ListSupplier';
 import CustomerManage from '../../screens/customerManager/CustomerManage';
 import GroupCustomer from '../../screens/customerManager/GroupCustomer';
+import DetailGroupCustomerForPhone from '../../screens/customerManager/DetailGroupCustomerForPhone';
 
 const MainStack = createStackNavigator();
 
@@ -88,6 +89,7 @@ export default (props) => {
                 <MainStack.Screen name={ScreenList.CustomerDetailForPhone}>{props => <CustomerDetailForPhone {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.CustomerManager}>{props => <CustomerManage {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.GroupCustomer}>{props => <GroupCustomer {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.DetailGroupCustomerForPhone}>{props => <DetailGroupCustomerForPhone {...props} />}</MainStack.Screen>
 
                 <MainStack.Screen name={ScreenList.InvoiceDetailForPhone}>{props => <InvoiceDetailForPhone {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.PointVoucher}>{props => <PointVoucher {...props} />}</MainStack.Screen>

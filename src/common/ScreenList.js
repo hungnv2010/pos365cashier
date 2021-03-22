@@ -83,7 +83,8 @@ export const ScreenList = {
   ListSupplier: "ListSupplier",
   SupplierManager: "SupplierManager",
   CustomerManager: "CustomerManager",
-  GroupCustomer: "GroupCustomer"
+  GroupCustomer: "GroupCustomer",
+  DetailGroupCustomerForPhone:"DetailGroupCustomerForPhone"
 
 
 }

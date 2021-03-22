@@ -5,7 +5,7 @@ import Menu from 'react-native-material-menu';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { Constant } from '../../../../common/Constant';
-import { currencyToString } from '../../../../common/Utils';
+import { currencyToString, randomUUID } from '../../../../common/Utils';
 import I18n from "../../../../common/language/i18n";
 import { Snackbar } from 'react-native-paper';
 import { useSelector, useDispatch } from 'react-redux';
@@ -20,6 +20,8 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import dialogManager from '../../../../components/dialog/DialogManager';
 import colors from '../../../../theme/Colors';
 import { color } from 'react-native-reanimated';
+import { getFileDuLieuString } from '../../../../data/fileStore/FileStorage';
+var Sound = require('react-native-sound');
 
 
 const TYPE_MODAL = {
@@ -29,7 +31,15 @@ const TYPE_MODAL = {
 
 const RetailCustomerOrder = (props) => {
 
+    const CASH = {
+        Id: 0,
+        UUID: randomUUID(),
+        Name: I18n.t('tien_mat'),
+        Value: "",
+    }
+
     const dispatch = useDispatch();
+    const [listMethod, setListMethod] = useState([CASH])
     const [showModal, setShowModal] = useState(false)
     const [listOrder, setListOrder] = useState(() =>
         (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0)
@@ -364,8 +374,8 @@ const RetailCustomerOrder = (props) => {
 
                                                     syncListProducts([...listOrder])
                                                 }
-                                            }} style={{paddingVertical:3,paddingHorizontal:12,borderWidth:1,borderRadius:5,borderColor:colors.colorchinh}}>
-                                           <Text style={{color:colors.colorchinh,fontSize:25,}}>-</Text>
+                                            }} style={{ paddingVertical: 3, paddingHorizontal: 12, borderWidth: 1, borderRadius: 5, borderColor: colors.colorchinh }}>
+                                            <Text style={{ color: colors.colorchinh, fontSize: 25, }}>-</Text>
                                         </TouchableOpacity>
                                         <View style={{
                                             width: 60,
@@ -392,8 +402,8 @@ const RetailCustomerOrder = (props) => {
                                             item.Quantity++
 
                                             syncListProducts([...listOrder])
-                                        }} style={{paddingVertical:3,paddingHorizontal:12,borderWidth:1,borderRadius:5,borderColor:colors.colorchinh}}>
-                                             <Text style={{color:colors.colorchinh,textAlign:'center',fontSize:25,}}>+</Text>
+                                        }} style={{ paddingVertical: 3, paddingHorizontal: 12, borderWidth: 1, borderRadius: 5, borderColor: colors.colorchinh }}>
+                                            <Text style={{ color: colors.colorchinh, textAlign: 'center', fontSize: 25, }}>+</Text>
                                         </TouchableOpacity>
                                     </View>
                                 )
@@ -418,18 +428,138 @@ const RetailCustomerOrder = (props) => {
     // }
 
     const onClickPayment = () => {
-        // if (isQuickPayment) {
-
-        // } else {
-        if (listOrder && listOrder.length > 0) {
-            props.navigation.navigate(ScreenList.Payment, { onCallBack: onCallBackPayment, Screen: ScreenList.MainRetail, RoomId: props.jsonContent.RoomId, Name: props.jsonContent.RoomName ? props.jsonContent.RoomName : I18n.t('don_hang'), Position: props.jsonContent.Pos });
+        if (isQuickPayment) {
+            onClickQuickPayment()
         } else {
-            dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
+            if (listOrder && listOrder.length > 0) {
+                props.navigation.navigate(ScreenList.Payment, { onCallBack: onCallBackPayment, Screen: ScreenList.MainRetail, RoomId: props.jsonContent.RoomId, Name: props.jsonContent.RoomName ? props.jsonContent.RoomName : I18n.t('don_hang'), Position: props.jsonContent.Pos });
+            } else {
+                dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
+            }
         }
+    }
+
+    const onClickQuickPayment = async () => {
+        console.log('onClickQuickPayment', props.jsonContent);
+        let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
+        vendorSession = JSON.parse(vendorSession)
+        let json = props.jsonContent
+        let total = json && json.Total ? json.Total : 0
+        let paramMethod = []
+        listMethod.forEach((element, index) => {
+            let value = element.Value
+            value = total
+            paramMethod.push({ AccountId: element.Id, Value: value })
+        });
+        console.log("onClickPay json.MoreAttributes ", typeof (json.MoreAttributes), json.MoreAttributes);
+        let MoreAttributes = json.MoreAttributes ? (typeof (json.MoreAttributes) == 'string' ? JSON.parse(json.MoreAttributes) : json.MoreAttributes) : {}
+        MoreAttributes.PaymentMethods = paramMethod
+        json['MoreAttributes'] = JSON.stringify(MoreAttributes);
+        json.TotalPayment = total
+        json.VATRates = json.VATRates
+        json.AmountReceived = total
+        json.Status = 2;
+        json.SyncStatus = 0;
+        json.AccountId = listMethod[0].Id;
+        let params = {
+            QrCodeEnable: vendorSession.Settings.QrCodeEnable,
+            MerchantCode: vendorSession.Settings.MerchantCode,
+            MerchantName: vendorSession.Settings.MerchantName,
+            DontSetTime: true,
+            ExcessCashType: 0,
+            Order: {},
+        };
+        let tilteNotification = json.RoomName ? json.RoomName : I18n.t('don_hang');
+        // if (props.route.params.Screen != undefined && props.route.params.Screen == ScreenList.MainRetail) {
+        params.DeliveryBy = null;//by retain
+        params.ShippingCost = 0;//by retain
+        params.LadingCode = "";//by retain
+        delete json.Pos;
+        delete json.RoomName;
+        delete json.RoomId;
         // }
+        params.Order = json;
+
+        console.log("onClickPay params ", params);
+        dialogManager.showLoading();
+        new HTTPService().setPath(ApiPath.ORDERS, false).POST(params).then(async order => {
+            console.log("onClickPay order ", order);
+            if (order) {
+                dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(json.Total))
+                dialogManager.hiddenLoading()
+
+                await printAfterPayment(order.Code)
+
+                updateServerEventForPayment()
+
+                if (order.ResponseStatus && order.ResponseStatus.Message && order.ResponseStatus.Message != "") {
+                    dialogManager.showPopupOneButton(order.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, ""))
+                }
+            } else {
+                onError(json)
+            }
+        }).catch(err => {
+            console.log("onClickPay err ", err);
+            onError(json)
+        });
     }
 
 
+    const onError = (json) => {
+        dialogManager.showPopupOneButton(I18n.t("khong_co_ket_noi_internet_don_hang_cua_quy_khach_duoc_luu_vao_offline"))
+        updateServerEventForPayment()
+        handlerError({ JsonContent: json, })
+    }
+
+    const handlerError = (data) => {
+        console.log("handlerError data ", data);
+        dialogManager.hiddenLoading()
+        let params = {
+            Id: "OFFLINE" + Math.floor(Math.random() * 9999999),
+            Orders: JSON.stringify(data.JsonContent),
+            ExcessCash: data.JsonContent.ExcessCash,
+            DontSetTime: 0,
+            HostName: URL.link,
+            BranchId: vendorSession.CurrentBranchId,
+            SyncCount: 0
+        }
+        console.log("handlerError params ", params);
+        dataManager.syncOrdersOffline([params]);
+    }
+
+    const printAfterPayment = async (Code) => {
+        let jsonContentObj = props.jsonContent
+        console.log("printAfterPayment jsonContent 1 ", jsonContentObj,);
+        jsonContentObj.PaymentCode = Code;
+        console.log("printAfterPayment jsonContent 2 ", jsonContentObj);
+        dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContentObj, provisional: false } })
+    }
+
+    const updateServerEventForPayment = async () => {
+        let settingObject = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
+        settingObject = JSON.parse(settingObject)
+        // let json = dataManager.createJsonContent(props.route.params.room.Id, props.Position, moment(), [], props.route.params.room.Name);
+        let json = props.jsonContent
+        json.OrderDetails = []
+        props.updateServerEvent(json)
+        if (settingObject.am_bao_thanh_toan == true)
+            playSound()
+    }
+
+
+    const playSound = () => {
+        Sound.setCategory('Playback');
+        const callback = (error, sound) => {
+            if (error) {
+                console.log('error ' + error.message + " sound " + JSON.stringify(sound));
+                return;
+            }
+            sound.play(() => {
+                sound.release();
+            });
+        };
+        const sound = new Sound('file.mp3', Sound.MAIN_BUNDLE, error => callback(error, sound));
+    }
 
     const onCLickCommodity = () => {
 
@@ -488,7 +618,7 @@ const RetailCustomerOrder = (props) => {
                         </View>
                     </View>
                     {expand ?
-                        <View style={{ marginLeft:10 }}>
+                        <View style={{ marginLeft: 10 }}>
                             <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
                                 <Text>{I18n.t('tong_chiet_khau')}</Text>
                                 <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>- {currencyToString(props.jsonContent.Discount)} đ</Text>
@@ -524,6 +654,10 @@ const RetailCustomerOrder = (props) => {
                             <TouchableOpacity onPress={onClickPrint} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
                                 <MaterialIcons style={{ paddingHorizontal: 7 }} name="notifications" size={26} color={Colors.colorchinh} />
                                 <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('in_tam_tinh')}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => onClickOptionQuickPayment()} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
+                                <Icon style={{ paddingHorizontal: 10 }} name={isQuickPayment ? "checkbox-marked" : "close-box-outline"} size={26} color={isQuickPayment ? Colors.colorLightBlue : "grey"} />
+                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('thanh_toan_nhanh')}</Text>
                             </TouchableOpacity>
 
                         </View>

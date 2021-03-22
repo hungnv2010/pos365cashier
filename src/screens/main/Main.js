@@ -27,8 +27,7 @@ export default (props) => {
   const dispatch = useDispatch();
   const [textSearch, setTextSearch] = useState('')
   const [autoPrintKitchen, setAutoPrintKitchen] = useState(false)
-  const hasInternet = useRef()
-  const { listPrint, isFNB, printProvisional, printReturnProduct, netInfo } = useSelector(state => {
+  const { listPrint, isFNB, printProvisional, printReturnProduct } = useSelector(state => {
     return state.Common
   })
 
@@ -122,8 +121,8 @@ export default (props) => {
   useEffect(() => {
     const syncDatas = async () => {
       if (isFNB === null) return
+      
       dispatch({ type: 'ALREADY', already: false })
-
       NetInfo.fetch().then(async state => {
         if (state.isConnected == true && state.isInternetReachable == true) {
           if (isFNB === true) {
@@ -161,18 +160,7 @@ export default (props) => {
     }
   }, [isFNB, autoPrintKitchen])
 
-  useEffect(() => {
-    if (netInfo === false) {
-      hasInternet.current = false
-    }
-    if (netInfo === true) {
-      if (hasInternet.current === false) {
-        hasInternet.current = true
-        signalRManager.reconnect()
-      }
-    }
-    console.log('netInfo', netInfo, 'hasInternet.current', hasInternet.current);
-  }, [netInfo])
+  
 
   const getDataNewOrders = async () => {
     let result = await dataManager.initComfirmOrder()
