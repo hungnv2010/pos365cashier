@@ -20,6 +20,8 @@ import Ionicons from 'react-native-vector-icons/AntDesign';
 import { ScreenList } from '../../common/ScreenList';
 import DialogConfirm from '../../components/dialog/DialogConfirm'
 import dialogManager from '../../components/dialog/DialogManager';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import dataManager from '../../data/DataManager';
 
 export default (props) => {
     const [product, setProduct] = useState({})
@@ -42,7 +44,8 @@ export default (props) => {
     const [listItemFomular, setListItemFormular] = useState([])
     const [countFormular, setCountFormular] = useState(0)
     const [type, setType] = useState('')
-    const [compositeItemProducts,setCompositeItemProducts] = useState([])
+    const [compositeItemProducts, setCompositeItemProducts] = useState([])
+    const scrollRef = useRef();
     const addCate = useRef([{
         Name: 'ten_nhom',
         Hint: 'nhap_ten_nhom_hang_hoa',
@@ -109,7 +112,6 @@ export default (props) => {
     useEffect(() => {
         if (deviceType == Constant.PHONE) {
             getData(props.route.params)
-            console.log("Image", typeof (product.ProductImages));
             setDefaultType(product.ProductType)
         }
     }, [])
@@ -117,18 +119,30 @@ export default (props) => {
         if (deviceType == Constant.TABLET) {
             setProduct(props.iproduct)
             setCategory(props.iCategory)
-            setCompositeItemProducts(props.compositeItemProducts)
-            console.log("CompositeItemProducts",props.compositeItemProducts);
+            console.log("CompositeItemProducts", props.compositeItemProducts);
             setNameCategory()
             if (props.iproduct.Id) {
                 setType('sua')
             } else {
                 setType('them')
             }
+            scrollRef.current?.scrollTo({
+                y: 0,
+                animated: true,
+            });
         }
+    }, [props.iproduct])
 
-    }, [props.iproduct,props.compositeItemProducts])
-    
+    useEffect(() => {
+        if (deviceType == Constant.TABLET) {
+            setProduct({ ...product, Code: props.scanQr })
+        }
+    }, [props.scanQr])
+    useEffect(() => {
+        if (deviceType == Constant.TABLET) {
+            setCompositeItemProducts(props.compositeItemProducts)
+        }
+    }, [props.compositeItemProducts])
 
     useEffect(() => {
         setPriceConfig({})
@@ -141,7 +155,6 @@ export default (props) => {
             currentRetailerId.current = JSON.parse(current).CurrentRetailer.Id
         }
         getCurrentAccount()
-
     }, [product])
     useEffect(() => {
         setStatusPrinter()
@@ -171,8 +184,6 @@ export default (props) => {
         } else {
             setPrinter([...printCook])
         }
-        console.log("product", product.PriceConfig);
-        console.log("printer", printer);
 
     }
 
@@ -181,14 +192,13 @@ export default (props) => {
         setProduct({ ...JSON.parse(JSON.stringify(param.product)) })
         console.log("data product", param.type);
         setType(params.type)
-        setCategory(JSON.parse(JSON.stringify(param.category)))
+        setCategory([...JSON.parse(JSON.stringify(param.category))])
         console.log("category", category);
         if (itemProduct.current.Id) {
             setType('sua')
         } else {
             setType('them')
         }
-
     }
 
     const getProduct = () => {
@@ -261,12 +271,11 @@ export default (props) => {
     }, [productOl])
 
     const clickOk = () => {
-        let product1 = { ...product, ProductType: defaultType }
-        setProduct({ ...product1 })
+        setProduct({ ...product, ProductType: defaultType })
         setOnShowModal(false)
     }
 
-    const addCategory = (data) => {
+    const addCategory = async(data) => {
         console.log(data);
         let param = {
             Category: {
@@ -275,14 +284,37 @@ export default (props) => {
                 ShowOnBranchId: 21883
             }
         }
+        setOnShowModal(false)
+        
         new HTTPService().setPath(ApiPath.CATEGORIES_PRODUCT).POST(param).then(res => {
-            if (res != null) {
-                console.log("res add", res);
-                setOnShowModal(false)
+            if (res && res.ResponseStatus && res.ResponseStatus.Message) {
+                dialogManager.showLoading()
+                dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
+                    dialogManager.destroy();
+                    dialogManager.hiddenLoading()
+                }, null, null, I18n.t('dong'))
+            } else {
+                if (deviceType == Constant.PHONE) {
+                   handleSuccess('them')
+                } else
+                    props.handleSuccess('them')
             }
-        }).catch(err => {
-            console.log("error", err);
         })
+        await dataManager.syncCategories()
+    }
+    const handleSuccess = async (type1) => {
+        console.log("type", type1);
+        dialogManager.showLoading()
+        try {
+            await realmStore.deletePartner()
+            await dataManager.syncProduct()
+            getData()
+            dialogManager.showPopupOneButton(`${I18n.t(type1)} ${I18n.t('thanh_cong')}`, I18n.t('thong_bao'))
+            dialogManager.hiddenLoading()
+        } catch (error) {
+            console.log('handleSuccess err', error);
+            dialogManager.hiddenLoading()
+        }
     }
 
     const outPut = (data) => {
@@ -361,9 +393,14 @@ export default (props) => {
     const chooseProduct = () => {
         if (deviceType == Constant.TABLET) {
             props.outPut({ comboTab: true, list: listItemFomular })
-        }else if(deviceType == Constant.PHONE){
-            props.navigation.navigate('ComboForPhone', { })
+        } else if (deviceType == Constant.PHONE) {
+            props.navigation.navigate('ComboForPhone', { list: listItemFomular, _onSelect: onCallBackData })
         }
+    }
+    const onCallBackData = (data) => {
+        console.log("data composite", data);
+        setCompositeItemProducts(data)
+        setListItemFormular(data)
     }
 
     const onChangeTextInput = (text) => {
@@ -375,6 +412,17 @@ export default (props) => {
             text = Number(text);
         }
         return text
+    }
+
+    const onClickQrcodeScan = () => {
+        if (deviceType == Constant.PHONE) {
+            props.navigation.navigate('QRCode', { _onSelect: onCallBackQr })
+        } else if (deviceType == Constant.TABLET) {
+            props.outPut({ scanQrCode: true })
+        }
+    }
+    const onCallBackQr = (data) => {
+        product.Code = data
     }
 
     const renderFormular = (item, index) => {
@@ -431,7 +479,7 @@ export default (props) => {
                         onPress={() => setDefaultType(3)}>
                         <Text style={[styles.titleButtonOff, { color: defaultType == 3 ? '#36a3f7' : null }]}>Combo</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={{ padding: 15, marginRight: 20, marginLeft: 20, marginTop: 10, marginBottom: 10, borderRadius: 15, alignItems: 'center', backgroundColor: '#36a3f7' }} onPress={() => clickOk()}>
+                    <TouchableOpacity style={{ padding: 15, marginRight: 20, marginLeft: 20, marginTop: 20, marginBottom: 10, borderRadius: 15, alignItems: 'center', backgroundColor: '#36a3f7' }} onPress={() => clickOk()}>
                         <Text style={[styles.titleButtonOff, { color: 'white' }]}>{I18n.t('xong')}</Text>
                     </TouchableOpacity>
                 </View>
@@ -459,7 +507,7 @@ export default (props) => {
                     clickLeftIcon={() => { props.navigation.goBack() }}
                 /> : <View style={{ padding: 3, backgroundColor: '#f2f2f2' }}></View>
             }
-            <ScrollView>
+            <ScrollView ref={scrollRef} >
                 <View style={{ justifyContent: 'center', alignItems: 'center', padding: 20 }}>
                     {product ? product.ProductImages && JSON.parse(product.ProductImages).length > 0 ?
                         <Image style={{ height: 70, width: 70, borderRadius: 16 }} source={{ uri: JSON.parse(product.ProductImages)[0].ImageURL }} />
@@ -483,7 +531,12 @@ export default (props) => {
                 </View>
                 <View>
                     <Text style={styles.title}>{I18n.t('ma_hang_ma_sku_ma_vach')}</Text>
-                    <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#36a3f7' }]} value={product ? product.Code : null} onChangeText={(text) => setProduct({ ...product, Code: text })}></TextInput>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#36a3f7', flex: 8 }]} value={product ? product.Code : null} onChangeText={(text) => setProduct({ ...product, Code: text })}></TextInput>
+                        <TouchableOpacity style={{ justifyContent: 'flex-end', flex: 1 }} onPress={() => onClickQrcodeScan()}>
+                            <Icon name="qrcode-scan" size={25} color={colors.colorLightBlue} />
+                        </TouchableOpacity>
+                    </View>
                 </View>
                 <View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -568,29 +621,29 @@ export default (props) => {
                                 <View style={{ flexDirection: 'row' }}>
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.title}>{I18n.t('gia_von')}</Text>
-                                        <TextInput style={[styles.textInput, { color: '#36a3f7', fontWeight: 'bold',textAlign:'center' }]} keyboardType={'numeric'} value={productOl && productOl.Cost ? currencyToString(productOl.Cost) : 0+''} onChangeText={(text) => setProductOl({ ...productOl, Cost: onChangeTextInput(text) })}></TextInput>
+                                        <TextInput style={[styles.textInput, { color: '#36a3f7', fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numeric'} value={productOl && productOl.Cost ? currencyToString(productOl.Cost) : 0 + ''} onChangeText={(text) => setProductOl({ ...productOl, Cost: onChangeTextInput(text) })}></TextInput>
                                     </View>
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.title} >{I18n.t('gia')}</Text>
-                                        <TextInput style={[styles.textInput, { color: '#36a3f7', fontWeight: 'bold' ,textAlign:'center'}]} keyboardType={'numeric'} value={product && product.Price ? currencyToString(product.Price) : 0+''} onChangeText={(text) => setProduct({ ...product, Price: onChangeTextInput(text) })}></TextInput>
+                                        <TextInput style={[styles.textInput, { color: '#36a3f7', fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numeric'} value={product && product.Price ? currencyToString(product.Price) : 0 + ''} onChangeText={(text) => setProduct({ ...product, Price: onChangeTextInput(text) })}></TextInput>
                                     </View>
                                 </View>
-                                {product ? product.ProductType == 2 && product.IsTimer == true ?
+                                {product ? product.ProductType == 2 || product.IsTimer == true ?
                                     <TouchableOpacity style={[styles.textInput, { fontWeight: 'bold', backgroundColor: '#B0E2FF', marginTop: 10, justifyContent: 'center', alignItems: 'center' }]} onPress={() => { typeModal.current = 5, setOnShowModal(true) }}>
                                         <Text style={[styles.titleButton]}>{I18n.t("thiet_lap_khung_gio_dac_biet")}</Text>
                                     </TouchableOpacity>
-                                    : product.IsTimer == false ? null :
+                                    : product.ProductType == 1 ?
                                         <View>
                                             <Text style={styles.title}>{I18n.t('ton_kho')}</Text>
                                             <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#36a3f7', textAlign: 'center' }]} value={productOl.OnHand ? productOl.OnHand + '' : null} onChangeText={(text) => setProductOl({ ...productOl, OnHand: parseInt(text) })}></TextInput>
-                                        </View> : null
+                                        </View> : null : null
                                 }
 
                                 <View>
                                     <Text style={styles.title}>{I18n.t('don_vi_tinh')}</Text>
                                     <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#36a3f7' }]} value={product ? product.Unit : null} onChangeText={(text) => setProduct({ ...product, Unit: text })}></TextInput>
                                 </View>
-                                {product && product.ProductType != 2 && product.IsTimer == false ?
+                                {product && product.ProductType != 2 || product.IsTimer == false ?
                                     <TouchableOpacity style={[styles.textInput, { fontWeight: 'bold', backgroundColor: '#B0E2FF', marginTop: 10, justifyContent: 'center', alignItems: 'center' }]} onPress={() => { typeModal.current = 4; setOnShowModal(true) }}>
                                         <Text style={[styles.titleButton]}>{I18n.t("don_vi_tinh_lon_va_cac_thong_so_khac")}</Text>
                                     </TouchableOpacity> : null
@@ -604,7 +657,7 @@ export default (props) => {
                 <View style={{ backgroundColor: '#f2f2f2', padding: 10 }}>
                     <View style={{ flexDirection: 'column' }}>
                         <View style={{ flexDirection: 'row' }}>
-                            <TouchableOpacity style={{ flex: 1, backgroundColor: '#00AE72', padding: 15, justifyContent: 'center', margin: 7, alignItems: 'center', borderRadius: 15, height: 50 }}>
+                            <TouchableOpacity style={{ flex: 1, backgroundColor: '#00AE72', padding: 15, justifyContent: 'center', margin: 7, alignItems: 'center', borderRadius: 15, height: 50 }} onPress={() => onClickSave()}>
                                 <Text style={{ color: 'white', fontWeight: 'bold' }}>{I18n.t('luu_va_sao_chep')}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={{ flex: 1, backgroundColor: '#00BFFF', padding: 15, justifyContent: 'center', margin: 7, alignItems: 'center', borderRadius: 15, height: 50 }} onPress={() => onClickSave()}>
