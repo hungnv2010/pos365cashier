@@ -29,7 +29,7 @@ export default (props) => {
     const [category, setCategory] = useState([])
     const [displayProduct, setDisplayProduct] = useState(true)
     const [showModal, setOnShowModal] = useState(false)
-    const [defaultType, setDefaultType] = useState()
+    const [defaultType, setDefaultType] = useState(1)
     const itemProduct = useRef({})
     const typeModal = useRef()
     const [priceConfig, setPriceConfig] = useState({})
@@ -275,7 +275,7 @@ export default (props) => {
         setOnShowModal(false)
     }
 
-    const addCategory = async(data) => {
+    const addCategory = async (data) => {
         console.log(data);
         let param = {
             Category: {
@@ -285,7 +285,7 @@ export default (props) => {
             }
         }
         setOnShowModal(false)
-        
+
         new HTTPService().setPath(ApiPath.CATEGORIES_PRODUCT).POST(param).then(res => {
             if (res && res.ResponseStatus && res.ResponseStatus.Message) {
                 dialogManager.showLoading()
@@ -295,7 +295,7 @@ export default (props) => {
                 }, null, null, I18n.t('dong'))
             } else {
                 if (deviceType == Constant.PHONE) {
-                   handleSuccess('them')
+                    handleSuccess('them')
                 } else
                     props.handleSuccess('them')
             }
@@ -465,20 +465,24 @@ export default (props) => {
     const renderModal = () => {
         return (
             <View>{typeModal.current == 1 ?
-                <View style={{ maxHeight: Metrics.screenHeight * 0.7, backgroundColor: 'white', borderRadius: 5, flexDirection: 'column' }}>
+                <View style={{  backgroundColor: 'white', borderRadius: 5, flexDirection: 'column' }}>
                     <Text style={[styles.titleButtonOff, { padding: 15 }]}>{I18n.t('chon_loai_hang_hoa')}</Text>
-                    <View style={{ flexDirection: 'row', padding: 10 }}>
-                        <TouchableOpacity style={[styles.styleButton, { marginLeft: 10, borderColor: defaultType == 1 ? '#36a3f7' : null, borderWidth: 1, backgroundColor: defaultType == 1 ? 'white' : '#f2f2f2' }]} onPress={() => setDefaultType(1)}>
-                            <Text style={[styles.titleButtonOff, { color: defaultType == 1 ? '#36a3f7' : null }]}>{I18n.t('hang_hoa')}</Text>
+                    <View>
+                        <View style={{ flexDirection: 'row', padding: 10 }}>
+                            <TouchableOpacity style={[styles.styleButton, { marginLeft: 10, borderColor: defaultType == 1 ? '#36a3f7' : null, borderWidth: 1, backgroundColor: defaultType == 1 ? 'white' : '#f2f2f2' }]} onPress={() => {setDefaultType(1), console.log("click",defaultType);}}>
+                                <Text style={[styles.titleButtonOff, { color: defaultType == 1 ? '#36a3f7' : null }]}>{I18n.t('hang_hoa')}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={[styles.styleButton, { borderColor: defaultType == 2 ? '#36a3f7' : null, borderWidth: 1, backgroundColor: defaultType == 2 ? 'white' : '#f2f2f2' }]} onPress={() => {setDefaultType(2), console.log("click",defaultType);}}>
+                                <Text style={[styles.titleButtonOff, { color: defaultType == 2 ? '#36a3f7' : null }]}>{I18n.t('dich_vu')}</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={{flexDirection:'row',padding:10}}>
+                        <TouchableOpacity style={{flex:1, marginRight: 10, marginLeft: 10, justifyContent: 'center', borderWidth: 1, alignItems: 'center', borderRadius: 16, padding: 15, backgroundColor: '#f2f2f2', borderColor: defaultType == 3 ? '#36a3f7' : null, backgroundColor: defaultType == 3 ? 'white' : '#f2f2f2' }}
+                            onPress={() => {setDefaultType(3), console.log("click",defaultType);}}>
+                            <Text style={[styles.titleButtonOff, { color: defaultType == 3 ? '#36a3f7' : null }]}>Combo</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={[styles.styleButton, { borderColor: defaultType == 2 ? '#36a3f7' : null, borderWidth: 1, backgroundColor: defaultType == 2 ? 'white' : '#f2f2f2' }]} onPress={() => setDefaultType(2)}>
-                            <Text style={[styles.titleButtonOff, { color: defaultType == 2 ? '#36a3f7' : null }]}>{I18n.t('dich_vu')}</Text>
-                        </TouchableOpacity>
+                        </View>
                     </View>
-                    <TouchableOpacity style={{ marginRight: 20, marginLeft: 20, justifyContent: 'center', borderWidth: 1, alignItems: 'center', borderRadius: 16, padding: 15, backgroundColor: '#f2f2f2', borderColor: defaultType == 3 ? '#36a3f7' : null, backgroundColor: defaultType == 3 ? 'white' : '#f2f2f2' }}
-                        onPress={() => setDefaultType(3)}>
-                        <Text style={[styles.titleButtonOff, { color: defaultType == 3 ? '#36a3f7' : null }]}>Combo</Text>
-                    </TouchableOpacity>
                     <TouchableOpacity style={{ padding: 15, marginRight: 20, marginLeft: 20, marginTop: 20, marginBottom: 10, borderRadius: 15, alignItems: 'center', backgroundColor: '#36a3f7' }} onPress={() => clickOk()}>
                         <Text style={[styles.titleButtonOff, { color: 'white' }]}>{I18n.t('xong')}</Text>
                     </TouchableOpacity>
@@ -594,7 +598,7 @@ export default (props) => {
                                                 </TouchableOpacity>
                                             </View>
 
-                                            {listItemFomular != '' ?
+                                            {listItemFomular.length>0 ?
                                                 <View style={{ flex: 1 }}>
                                                     <Text style={styles.titleHint} >{countFormular} {I18n.t('san_pham')}</Text>
                                                     <FlatList
