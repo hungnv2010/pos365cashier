@@ -82,7 +82,7 @@ const MainRetail = (props) => {
 
     const createNewServerEvent = async () => {
         let newServerEvent = await dataManager.createSeverEvent(Date.now(), "A")
-        newServerEvent.JsonContent = JSON.stringify(dataManager.createJsonContentForRetail(newServerEvent.RoomId))
+        // newServerEvent.JsonContent = JSON.stringify(dataManager.createJsonContentForRetail(newServerEvent.RoomId))
         console.log('newServerEvent', newServerEvent);
         return realmStore.insertServerEventForRetail(newServerEvent)
     }
@@ -300,7 +300,7 @@ const MainRetail = (props) => {
         if (currentCommodity.current) {
             let serverEvent = currentCommodity.current
             dataManager.calculatateJsonContent(jsonContentObj)
-            currentCommodity.current.JsonContent = JSON.stringify(jsonContentObj)
+            serverEvent.JsonContent = JSON.stringify(jsonContentObj)
             realmStore.insertServerEventForRetail(serverEvent)
             setJsonContent({ ...jsonContentObj })
 

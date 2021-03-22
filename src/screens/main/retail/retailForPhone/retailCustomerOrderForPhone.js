@@ -22,6 +22,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import colors from '../../../../theme/Colors';
 import { getFileDuLieuString } from '../../../../data/fileStore/FileStorage';
 import { Constant } from '../../../../common/Constant';
+import moment from 'moment';
 var Sound = require('react-native-sound');
 
 
@@ -612,15 +613,15 @@ export default (props) => {
     }
 
     const onClickPayment = () => {
-        if (isQuickPayment) {
-            onClickQuickPayment()
-        } else {
-            console.log('onClickPayment jsonContent ', jsonContent);
-            if (listProducts && listProducts.length > 0) {
-                props.navigation.navigate(ScreenList.Payment, { onCallBack: onCallBackPayment, Screen: ScreenList.MainRetail, RoomId: jsonContent.RoomId, Name: jsonContent.RoomName ? jsonContent.RoomName : I18n.t('don_hang'), Position: jsonContent.Pos });
+        if (listProducts && listProducts.length > 0) {
+            if (isQuickPayment) {
+                onClickQuickPayment()
             } else {
-                dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
+                props.navigation.navigate(ScreenList.Payment, { onCallBack: onCallBackPayment, Screen: ScreenList.MainRetail, RoomId: jsonContent.RoomId, Name: jsonContent.RoomName ? jsonContent.RoomName : I18n.t('don_hang'), Position: jsonContent.Pos });
             }
+        } else {
+            console.log('ban_hay_chon_mon_an_truoc');
+            dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
         }
     }
 
@@ -628,7 +629,7 @@ export default (props) => {
         console.log('onClickQuickPayment', jsonContent);
         let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
         vendorSession = JSON.parse(vendorSession)
-        let json = jsonContent
+        let json = JSON.parse(JSON.stringify(jsonContent))
         let total = json && json.Total ? json.Total : 0
         let paramMethod = []
         listMethod.forEach((element, index) => {
@@ -670,16 +671,17 @@ export default (props) => {
         new HTTPService().setPath(ApiPath.ORDERS, false).POST(params).then(async order => {
             console.log("onClickPay order ", order);
             if (order) {
-                dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(json.Total))
                 dialogManager.hiddenLoading()
-
-                await printAfterPayment(order.Code)
-
-                updateServerEventForPayment()
 
                 if (order.ResponseStatus && order.ResponseStatus.Message && order.ResponseStatus.Message != "") {
                     dialogManager.showPopupOneButton(order.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, ""))
+                    return
                 }
+                await printAfterPayment(order.Code)
+
+                updateServerEventForPayment()
+                dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(json.Total))
+
             } else {
                 onError(json)
             }
@@ -713,7 +715,7 @@ export default (props) => {
     }
 
     const printAfterPayment = async (Code) => {
-        let jsonContentObj = jsonContent
+        let jsonContentObj = JSON.parse(JSON.stringify(jsonContent))
         console.log("printAfterPayment jsonContent 1 ", jsonContent,);
         jsonContentObj.PaymentCode = Code;
         console.log("printAfterPayment jsonContent 2 ", jsonContent);
@@ -723,9 +725,8 @@ export default (props) => {
     const updateServerEventForPayment = async () => {
         let settingObject = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
         settingObject = JSON.parse(settingObject)
-        // let json = dataManager.createJsonContent(props.route.params.room.Id, props.Position, moment(), [], props.route.params.room.Name);
-        jsonContent.OrderDetails = []
-        updateServerEvent({ ...jsonContent })
+        let json = dataManager.createJsonContent(jsonContent.RoomId, jsonContent.Pos, moment());
+        updateServerEvent(json)
         if (settingObject.am_bao_thanh_toan == true)
             playSound()
     }

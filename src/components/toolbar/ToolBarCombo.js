@@ -102,8 +102,8 @@ export default forwardRef((props, ref) => {
                             <Icon name="qrcode-scan" size={25} style={{}} color={Colors.colorLightBlue} />
                         </View>
                     </TouchableOpacity>
-                    {deviceType == Constant.PHONE ?
-                        <TouchableOpacity style={styles.button} onPress={() => { props.navigation.navigate('QRCode', { _onSelect: onCallBack }) }}  >
+                    {deviceType == Constant.PHONE && props.clickRightIcon ?
+                        <TouchableOpacity style={styles.button} onPress={props.clickRightIcon }  >
                             <View style={{}}>
                                 <Icon name="plus" size={25} style={{}} color={Colors.colorLightBlue} />
                             </View>

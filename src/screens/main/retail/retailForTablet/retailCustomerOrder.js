@@ -21,6 +21,7 @@ import dialogManager from '../../../../components/dialog/DialogManager';
 import colors from '../../../../theme/Colors';
 import { color } from 'react-native-reanimated';
 import { getFileDuLieuString } from '../../../../data/fileStore/FileStorage';
+import moment from 'moment';
 var Sound = require('react-native-sound');
 
 
@@ -428,14 +429,16 @@ const RetailCustomerOrder = (props) => {
     // }
 
     const onClickPayment = () => {
-        if (isQuickPayment) {
-            onClickQuickPayment()
-        } else {
-            if (listOrder && listOrder.length > 0) {
-                props.navigation.navigate(ScreenList.Payment, { onCallBack: onCallBackPayment, Screen: ScreenList.MainRetail, RoomId: props.jsonContent.RoomId, Name: props.jsonContent.RoomName ? props.jsonContent.RoomName : I18n.t('don_hang'), Position: props.jsonContent.Pos });
+
+        if (listOrder && listOrder.length > 0) {
+            if (isQuickPayment) {
+                onClickQuickPayment()
             } else {
-                dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
+                props.navigation.navigate(ScreenList.Payment, { onCallBack: onCallBackPayment, Screen: ScreenList.MainRetail, RoomId: props.jsonContent.RoomId, Name: props.jsonContent.RoomName ? props.jsonContent.RoomName : I18n.t('don_hang'), Position: props.jsonContent.Pos });
             }
+        } else {
+            console.log('ban_hay_chon_mon_an_truoc');
+            dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
         }
     }
 
@@ -443,7 +446,7 @@ const RetailCustomerOrder = (props) => {
         console.log('onClickQuickPayment', props.jsonContent);
         let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
         vendorSession = JSON.parse(vendorSession)
-        let json = props.jsonContent
+        let json = JSON.parse(JSON.stringify(props.jsonContent))
         let total = json && json.Total ? json.Total : 0
         let paramMethod = []
         listMethod.forEach((element, index) => {
@@ -485,16 +488,14 @@ const RetailCustomerOrder = (props) => {
         new HTTPService().setPath(ApiPath.ORDERS, false).POST(params).then(async order => {
             console.log("onClickPay order ", order);
             if (order) {
-                dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(json.Total))
                 dialogManager.hiddenLoading()
-
-                await printAfterPayment(order.Code)
-
-                updateServerEventForPayment()
-
                 if (order.ResponseStatus && order.ResponseStatus.Message && order.ResponseStatus.Message != "") {
                     dialogManager.showPopupOneButton(order.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, ""))
+                    return
                 }
+                await printAfterPayment(order.Code)
+                updateServerEventForPayment()
+                dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(json.Total))
             } else {
                 onError(json)
             }
@@ -528,7 +529,7 @@ const RetailCustomerOrder = (props) => {
     }
 
     const printAfterPayment = async (Code) => {
-        let jsonContentObj = props.jsonContent
+        let jsonContentObj = JSON.parse(JSON.stringify(props.jsonContent))
         console.log("printAfterPayment jsonContent 1 ", jsonContentObj,);
         jsonContentObj.PaymentCode = Code;
         console.log("printAfterPayment jsonContent 2 ", jsonContentObj);
@@ -538,9 +539,7 @@ const RetailCustomerOrder = (props) => {
     const updateServerEventForPayment = async () => {
         let settingObject = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
         settingObject = JSON.parse(settingObject)
-        // let json = dataManager.createJsonContent(props.route.params.room.Id, props.Position, moment(), [], props.route.params.room.Name);
-        let json = props.jsonContent
-        json.OrderDetails = []
+        let json = dataManager.createJsonContent(props.jsonContent.RoomId, props.jsonContent.Pos, moment())
         props.updateServerEvent(json)
         if (settingObject.am_bao_thanh_toan == true)
             playSound()
