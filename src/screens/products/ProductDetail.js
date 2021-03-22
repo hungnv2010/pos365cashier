@@ -141,6 +141,7 @@ export default (props) => {
     useEffect(() => {
         if (deviceType == Constant.TABLET) {
             setCompositeItemProducts(props.compositeItemProducts)
+            setListItemFormular(props.compositeItemProducts)
         }
     }, [props.compositeItemProducts])
 
