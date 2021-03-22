@@ -668,6 +668,7 @@ export default (props) => {
 
                 if (order.ResponseStatus && order.ResponseStatus.Message && order.ResponseStatus.Message != "") {
                     dialogManager.showPopupOneButton(order.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, ""))
+                    return;
                 }
                 if (order.QRCode && order.QRCode != "") {
                     qrCode.current = order.QRCode
