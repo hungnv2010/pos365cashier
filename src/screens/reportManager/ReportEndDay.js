@@ -13,6 +13,7 @@ import { ApiPath } from '../../data/services/ApiPath';
 import { dateToStringFormatUTC } from '../../common/Utils';
 import useDidMountEffect from '../../customHook/useDidMountEffect';
 import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
+import dialogManager from '../../components/dialog/DialogManager';
 
 
 export default (props) => {
@@ -29,6 +30,7 @@ export default (props) => {
 
 
     useEffect(() => {
+        dialogManager.showLoading()
         setUri(mainUri)
     }, [])
 
@@ -88,7 +90,7 @@ export default (props) => {
 
     return (
         <View style={{ flex: 1 }}>
-           <ToolBarDefault
+            <ToolBarDefault
                 navigation={props.navigation}
                 title={I18n.t('bao_cao')}
             />
@@ -114,8 +116,10 @@ export default (props) => {
             <WebView
                 source={{ uri: uri, headers: { 'COOKIE': "ss-id=" + store.getState().Common.info.SessionId } }}
                 onError={syntheticEvent => {
+                    dialogManager.hiddenLoading()
                 }}
                 onLoadEnd={syntheticEvent => {
+                    dialogManager.hiddenLoading()
                 }}
             />
             <Modal

@@ -670,6 +670,7 @@ export default (props) => {
                     dialogManager.showPopupOneButton(order.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, ""))
                     return;
                 }
+
                 if (order.QRCode && order.QRCode != "") {
                     qrCode.current = order.QRCode
                     typeModal.current = TYPE_MODAL.QRCODE
@@ -701,7 +702,7 @@ export default (props) => {
         let json = dataManager.createJsonContent(props.route.params.RoomId, props.route.params.Position, moment(), [], props.route.params.Name);
         setJsonContent(json)
         serverEvent.JsonContent = json;
-        serverEvent.Version += 10
+        if (isFNB) serverEvent.Version += 10
         console.log("updateServerEvent serverEvent ", serverEvent);
         dataManager.updateServerEventNow(serverEvent, true, isFNB);
         if (settingObject.current.am_bao_thanh_toan == true && isBack)

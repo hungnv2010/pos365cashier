@@ -6,6 +6,7 @@ import { ApiPath } from './ApiPath';
 import { Constant } from '../../common/Constant';
 import { setFileLuuDuLieu } from '../fileStore/FileStorage';
 import { navigate } from '../../navigator/NavigationService';
+import NetInfo from "@react-native-community/netinfo";
 
 
 export var URL = { link: "https://oke.pos365.vn/" };
@@ -131,16 +132,18 @@ export class HTTPService {
 
     error() {
         if (this.showMessage == true) {
-            let state = store.getState();
-            if (state.netInfo) {
-                dialogManager.showPopupOneButton(I18n.t('loi_server'), I18n.t('thong_bao'), () => {
-                    dialogManager.destroy();
-                }, null, null, I18n.t('dong'))
-            } else {
-                dialogManager.showPopupOneButton(I18n.t('loi_ket_noi_mang'), I18n.t('thong_bao'), () => {
-                    dialogManager.destroy();
-                }, null, null, I18n.t('dong'))
-            }
+            NetInfo.fetch().then(state => {
+                if (state.isConnected == true && state.isInternetReachable == true) {
+                    dialogManager.showPopupOneButton(I18n.t('loi_server'), I18n.t('thong_bao'), () => {
+                        dialogManager.destroy();
+                    }, null, null, I18n.t('dong'))
+                } else {
+                    dialogManager.showPopupOneButton(I18n.t('loi_ket_noi_mang'), I18n.t('thong_bao'), () => {
+                        dialogManager.destroy();
+                    }, null, null, I18n.t('dong'))
+                }
+            });
+
         } else {
             console.log('http err');
         }
