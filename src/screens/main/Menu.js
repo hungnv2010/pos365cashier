@@ -26,7 +26,7 @@ const IP_DEFAULT = "192.168.99.";
 
 const KEY_FUNC = {
     HOME: ScreenList.Home,
-    CUSTOMER: ScreenList.Customer,
+    CUSTOMER_MANAGER: ScreenList.CustomerManager,
     SETTING_FUNC: ScreenList.Settings,
     VERSION: "VERSION",
     MORE: ScreenList.More,
@@ -40,7 +40,10 @@ const KEY_FUNC = {
     VOUCHERS: ScreenList.Vouchers,
     PRODUCT: ScreenList.Product,
     SYNCHRONIZE: 'SYNCHRONIZE',
-    ORDER_MANAGEMENT: ScreenList.OrderManagement
+    ORDER_MANAGEMENT: ScreenList.OrderManagement,
+    REPORT_MANAGER: ScreenList.ReportManager,
+    SUPPLIER_MANAGER: ScreenList.SupplierManager,
+    EMPLOYEE_MANAGER: ScreenList.EmployeeManager,
 }
 
 const LIST_FUNCITION = [
@@ -54,22 +57,6 @@ const LIST_FUNCITION = [
         icon: Images.icon_cashier,
         title: "man_hinh_thu_ngan"
     },
-
-    // {
-    //     func: KEY_FUNC.ORDER_OFFLINE,
-    //     icon: Images.icon_oder_offline,
-    //     title: "don_hang_offline"
-    // },
-    // {
-    //     func: KEY_FUNC.HISTORY,
-    //     icon: Images.icon_customer,
-    //     title: "lich_su_goi_mon"
-    // },
-    // {
-    //     func: KEY_FUNC.INVOICE,
-    //     icon: Images.icon_invoice,
-    //     title: "hoa_don"
-    // },
     {
         func: KEY_FUNC.OVERVIEW,
         icon: Images.icon_overview,
@@ -86,37 +73,25 @@ const LIST_FUNCITION = [
         title: "danh_muc_phong_ban"
     },
     {
-        func: KEY_FUNC.CUSTOMER,
+        func: KEY_FUNC.CUSTOMER_MANAGER,
         icon: Images.icon_customer,
         title: "khach_hang"
     },
-    // {
-    //     func: KEY_FUNC.MORE,
-    //     icon: Images.icon_star,
-    //     title: "them"
-    // },
-
-    // {
-    //     func: KEY_FUNC.PRODUCT,
-    //     icon: Images.icon_product,
-    //     title: "hang_hoa"
-    // },
-    // {
-    //     func: KEY_FUNC.CASH_FLOW,
-    //     icon: Images.icon_income,
-    //     title: "thu_chi_"
-    // },
-
-    // {
-    //     func: KEY_FUNC.ROOM_HISTORY,
-    //     icon: Images.icon_room_history,
-    //     title: 'lich_su_huy_tra_do'
-    // },
-    // {
-    //     func: KEY_FUNC.VOUCHERS,
-    //     icon: Images.icon_vouchers,
-    //     title: 'voucher'
-    // },
+    {
+        func: KEY_FUNC.REPORT_MANAGER,
+        icon: Images.ic_baocao,
+        title: "bao_cao"
+    },
+    {
+        func: KEY_FUNC.SUPPLIER_MANAGER,
+        icon: Images.icon_version,
+        title: "nha_cung_cap"
+    },
+    {
+        func: KEY_FUNC.EMPLOYEE_MANAGER,
+        icon: Images.ic_quanlynhanvien,
+        title: "quan_ly_nhan_vien"
+    },
     {
         func: KEY_FUNC.SETTING_FUNC,
         icon: Images.icon_setting,

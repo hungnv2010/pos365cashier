@@ -13,7 +13,6 @@ import More from '../../screens/more/More'
 import RoomCatalog from '../../screens/room/RoomCatalog'
 import { ScreenList } from '../../common/ScreenList';
 import Invoice from '../../screens/invoice/invoice';
-import Customer from '../../screens/customer/Customer';
 import Settings from '../../screens/settings/Settings';
 import VNPayPaymentSetting from '../../screens/settings/VNPAYPaymentSetting'
 import RoomHistory from '../../screens/roomHistory/RoomHistory';
@@ -21,6 +20,10 @@ import RoomHistoryDetail from '../../screens/roomHistory/RoomHistoryDetailForPho
 import Vouchers from '../../screens/voucher/Vouchers';
 import Product from '../../screens/products/ProductList';
 import OrderManagement from '../../screens/orderManagement/OrderManagement'
+import Supplier from '../../screens/supplierManager/SupplierManager';
+import EmployeeManager from '../../screens/employeeManager/EmployeeManager';
+import ReportManager from '../../screens/reportManager/ReportManager';
+import CustomerManage from '../../screens/customerManager/CustomerManage';
 const Drawer = createDrawerNavigator();
 export default (propsFunc) => {
 
@@ -47,14 +50,11 @@ export default (propsFunc) => {
           {props => <OverView {...props} />}
         </Drawer.Screen>
 
-        {/* <Drawer.Screen name={ScreenList.Invoice} options={{ title: ScreenList.Invoice }}>
-          {props => <Invoice {...props} />}
-        </Drawer.Screen> */}
         <Drawer.Screen name={ScreenList.RoomCatalog} options={{ title: ScreenList.RoomCatalog }}>
           {props => <RoomCatalog {...props} />}
         </Drawer.Screen>
-        <Drawer.Screen name={ScreenList.Customer} options={{ title: ScreenList.Customer }}>
-          {props => <Customer {...props} />}
+        <Drawer.Screen name={ScreenList.CustomerManager} options={{ title: ScreenList.CustomerManager }}>
+          {props => <CustomerManage {...props} />}
         </Drawer.Screen>
         <Drawer.Screen name={ScreenList.Product} options={{ title: ScreenList.Product }}>
           {props => <Product {...props} />}
@@ -62,12 +62,19 @@ export default (propsFunc) => {
         <Drawer.Screen name={ScreenList.Settings} options={{ title: ScreenList.Settings }}>
           {props => <Settings {...props} />}
         </Drawer.Screen>
+        <Drawer.Screen name={ScreenList.ReportManager} options={{ title: ScreenList.ReportManager }}>
+          {props => <ReportManager {...props} />}
+        </Drawer.Screen>
+        <Drawer.Screen name={ScreenList.SupplierManager} options={{ title: ScreenList.SupplierManager }}>
+          {props => <Supplier {...props} />}
+        </Drawer.Screen>
+        <Drawer.Screen name={ScreenList.EmployeeManager} options={{ title: ScreenList.EmployeeManager }}>
+          {props => <EmployeeManager {...props} />}
+        </Drawer.Screen>
         <Drawer.Screen name={ScreenList.VNPayPaymentSetting} options={{ title: ScreenList.Settings }}>
           {props => <VNPayPaymentSetting{...props} />}
         </Drawer.Screen>
-        {/* <Drawer.Screen name={ScreenList.RoomHistory} options={{ title: ScreenList.RoomHistory }}>
-          {props => <RoomHistory{...props} />}
-        </Drawer.Screen> */}
+   
         <Drawer.Screen name={ScreenList.Vouchers} options={{ title: ScreenList.Vouchers }}>
           {props => <Vouchers{...props} />}
         </Drawer.Screen>

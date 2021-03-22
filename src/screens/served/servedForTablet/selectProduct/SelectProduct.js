@@ -78,9 +78,11 @@ export default (props) => {
           newCategories.push({ ...JSON.parse(JSON.stringify(item)), numberProduct })
         })
         setCategory(newCategories)
+        
 
       }
       getCategories()
+      
     }
   }, [already])
 
@@ -137,7 +139,7 @@ export default (props) => {
   const getQuantityProduct = (arrItem) => {
     let Quantity = 0
     listProducts.forEach(item => {
-      if (item.ProductId == arrItem.ProductId) {
+      if (item.ProductId == arrItem.ProductId || item.ItemId ==  arrItem.ProductId) {
         Quantity += item.Quantity
       }
     })

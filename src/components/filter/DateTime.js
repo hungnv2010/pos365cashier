@@ -60,7 +60,7 @@ export default (props) => {
                         {props.header ?
                             props.header
                             :
-                            <View style={{ backgroundColor: "#FF4500" ,borderTopStartRadius:5,borderTopEndRadius:5}}>
+                            <View style={{ backgroundColor: "#FF4500", borderTopStartRadius: 5, borderTopEndRadius: 5 }}>
                                 <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", paddingVertical: 10, color: "#FFFFFF" }}>{I18n.t('chon_khoang_thoi_gian')}</Text>
                             </View>
                         }
@@ -79,15 +79,26 @@ export default (props) => {
                                 props.timeAll ?
                                     <CustomTime onClick={onClickSelectTime} onButtonCancel={onCancel}></CustomTime>
                                     :
-                                    Constant.TIME_SELECT.map((item, index) => {
-                                        return (
-                                            <TouchableOpacity
-                                                onPress={() => onClickSelectTime(item)}
-                                                key={index} style={{ paddingVertical: 15, }}>
-                                                <Text style={{ textAlign: "center" }}>{I18n.t(item.name)}</Text>
-                                            </TouchableOpacity>
-                                        )
-                                    })
+                                    props.timeForReport ?
+                                        Constant.TIME_FOR_REPORT.map((item, index) => {
+                                            return (
+                                                <TouchableOpacity
+                                                    onPress={() => onClickSelectTime(item)}
+                                                    key={index} style={{ paddingVertical: 15, }}>
+                                                    <Text style={{ textAlign: "center" }}>{I18n.t(item.name)}</Text>
+                                                </TouchableOpacity>
+                                            )
+                                        })
+                                        :
+                                        Constant.TIME_SELECT.map((item, index) => {
+                                            return (
+                                                <TouchableOpacity
+                                                    onPress={() => onClickSelectTime(item)}
+                                                    key={index} style={{ paddingVertical: 15, }}>
+                                                    <Text style={{ textAlign: "center" }}>{I18n.t(item.name)}</Text>
+                                                </TouchableOpacity>
+                                            )
+                                        })
 
                         }
                     </View>
@@ -131,13 +142,13 @@ const CustomTime = (props) => {
     const onClickOk = () => {
         props.onClick(itemFilter)
     }
-    const onClickCancel = () =>{
+    const onClickCancel = () => {
         props.onButtonCancel()
     }
 
     return (
         <View>
-            { Constant.TIME_SELECT_ALL_TIME.map((item, index) => {
+            {Constant.TIME_SELECT_ALL_TIME.map((item, index) => {
                 return (
                     <TouchableOpacity style={{ flexDirection: "row", alignItems: "center", marginLeft: 20 }} onPress={() => onClickRadioButton(item)}>
                         <RadioButton.Android
@@ -153,7 +164,7 @@ const CustomTime = (props) => {
             })
             }
             <View style={{ justifyContent: "center", flexDirection: "row", paddingTop: 10 }}>
-                <TouchableOpacity style={styles.styleButtonHuy} onPress={()=>onClickCancel()} >
+                <TouchableOpacity style={styles.styleButtonHuy} onPress={() => onClickCancel()} >
                     <Text style={styles.styleTextBtnHuy}>{I18n.t("huy")}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.styleButtonOK} onPress={() => onClickOk()}>

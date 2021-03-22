@@ -24,8 +24,8 @@ import PointVoucher from '../../screens/payment/pointVoucher'
 import SearchVoucher from '../../screens/payment/SearchVoucher'
 import InvoiceDetailForPhone from '../../screens/invoice/invoiceDetailForPhone';
 import { ScreenList } from '../../common/ScreenList';
-import Customer from '../../screens/customer/Customer';
-import CustomerDetailForPhone from '../../screens/customer/CustomerDetailForPhone';
+import Customer from '../../screens/customerManager/customer/Customer';
+import CustomerDetailForPhone from '../../screens/customerManager/customer/CustomerDetailForPhone';
 import Settings from '../../screens/settings/Settings';
 import VNPayPaymentSetting from '../../screens/settings/VNPAYPaymentSetting';
 import CommodityWaiting from '../../screens/main/retail/commodityWaiting'
@@ -43,6 +43,16 @@ import ComboForTab from '../../screens/products/comboForTab/ComboForTab'
 import PaymentPendingList from '../../screens/orderManagement/paymentPending/PaymentPendingList';
 import DetailPaymentPending from '../../screens/orderManagement/paymentPending/DetailPaymentPending';
 import Invoice from '../../screens/invoice/invoice';
+import ComboForPhone from '../../screens/products/comboForPhone/ComboForPhone';
+import ReportEndDay from '../../screens/reportManager/ReportEndDay';
+import Supplier from '../../screens/supplierManager/SupplierManager';
+import EmployeeManager from '../../screens/employeeManager/EmployeeManager';
+import SupplierManager from '../../screens/supplierManager/SupplierManager';
+import GroupSupplier from '../../screens/supplierManager/GroupSupplier';
+import ListSupplier from '../../screens/supplierManager/ListSupplier';
+import CustomerManage from '../../screens/customerManager/CustomerManage';
+import GroupCustomer from '../../screens/customerManager/GroupCustomer';
+import DetailGroupCustomerForPhone from '../../screens/customerManager/DetailGroupCustomerForPhone';
 
 const MainStack = createStackNavigator();
 
@@ -74,8 +84,13 @@ export default (props) => {
                 <MainStack.Screen name={ScreenList.CashFlow}>{props => <CashFlow {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.InvoiceDetail}>{props => <InvoiceDetail {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.Payment}>{props => <Payment {...props} />}</MainStack.Screen>
+
                 <MainStack.Screen name={ScreenList.Customer}>{props => <Customer {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.CustomerDetailForPhone}>{props => <CustomerDetailForPhone {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.CustomerManager}>{props => <CustomerManage {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.GroupCustomer}>{props => <GroupCustomer {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.DetailGroupCustomerForPhone}>{props => <DetailGroupCustomerForPhone {...props} />}</MainStack.Screen>
+
                 <MainStack.Screen name={ScreenList.InvoiceDetailForPhone}>{props => <InvoiceDetailForPhone {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.PointVoucher}>{props => <PointVoucher {...props} />}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.SearchVoucher}>{props => <SearchVoucher {...props} />}</MainStack.Screen>
@@ -95,6 +110,15 @@ export default (props) => {
                 <MainStack.Screen name={ScreenList.PaymentPendingList}>{props=> <PaymentPendingList {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.DetailPaymentPending}>{props=> <DetailPaymentPending {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.Invoice}>{props=> <Invoice {...props}/>}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.ComboForTab}>{props => <ComboForTab {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.ComboForPhone}>{props => <ComboForPhone {...props} />}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.ReportEndDay}>{props=> <ReportEndDay {...props}/>}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.EmployeeManager}>{props=> <EmployeeManager {...props}/>}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.ReportManager}>{props=> <ReportManager {...props}/>}</MainStack.Screen>
+
+                <MainStack.Screen name={ScreenList.GroupSuppier}>{props=> <GroupSupplier {...props}/>}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.SupplierManager}>{props=> <SupplierManager {...props}/>}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.ListSupplier}>{props=> <ListSupplier {...props}/>}</MainStack.Screen>
             </MainStack.Navigator>
         </Animated.View>
     );

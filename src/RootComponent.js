@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useFocusEffect, useCallback } from 'react';
+import React, { useState, useEffect, useFocusEffect, useCallback, useRef } from 'react';
 import {
     StyleSheet,
     NativeModules,
@@ -27,15 +27,13 @@ export default () => {
     const [forceUpdate, setForceUpdate] = useState(false);
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
-    // const [netInfo, setNetInfo] = useState(true);
+    const [appState, setAppstate] = useState(AppState.currentState);
+    const [netInfo, setNetInfo] = useState(null)
     const [showStatusInternet, setShowStatusInternet] = useState(false);
     const dispatch = useDispatch();
-    const { netInfo } = useSelector(state => {
-        return state.Common
-    });
     const { height, width } = Dimensions.get('window');
     const aspectRatio = height / width;
-
+    const hasInternet = useRef()
     const isPortrait = () => {
         const dim = Dimensions.get("screen");
         return dim.height >= dim.width ? Constant.PORTRAIT : Constant.LANDSCAPE;
@@ -68,15 +66,15 @@ export default () => {
     useEffect(() => {
         const unsubscribe = NetInfo.addEventListener(state => {
             if (state.isConnected == true && state.isInternetReachable == true) {
-                // setNetInfo(true)
-                dispatch({ type: 'NET_INFO', netInfo: true })
+                setNetInfo(true)
+                // dispatch({ type: 'NET_INFO', netInfo: true })
                 setTimeout(() => {
                     setShowStatusInternet(false)
                 }, 1500);
             } else {
                 if (numberInternetReachable > 0) {
-                    // setNetInfo(false)
-                    dispatch({ type: 'NET_INFO', netInfo: false })
+                    setNetInfo(false)
+                    // dispatch({ type: 'NET_INFO', netInfo: false })
                     setShowStatusInternet(true)
                 }
             }
@@ -87,6 +85,19 @@ export default () => {
             unsubscribe()
         }
     }, [])
+
+    useEffect(() => {
+        if (netInfo === false) {
+            hasInternet.current = false
+        }
+        if (netInfo === true) {
+            if (hasInternet.current === false) {
+                hasInternet.current = true
+                signalRManager.reconnect()
+            }
+        }
+        console.log('netInfo', netInfo, 'hasInternet.current', hasInternet.current);
+    }, [netInfo])
 
     useEffect(() => {
         Dimensions.addEventListener('change', handleChange)
@@ -159,11 +170,13 @@ export default () => {
     }, [])
 
     const handleChangeState = (newState) => {
-        if (newState === "active") {
+        console.log('handleChangeState', newState);
+        if (appState.match(/inactive|background/) && newState === 'active') {
             if (signalRInfo != "") {
-                signalRManager.reconnect();
+                signalRManager.reconnect()
             }
         }
+        setAppstate(newState)
     }
 
     const handleChange = () => {

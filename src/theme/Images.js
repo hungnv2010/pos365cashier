@@ -101,12 +101,17 @@ const images = {
 
     qrcode: require("../../assets/icons/qrcode.png"),
     change_method: require("../../assets/icons/change_method.png"),
-    
+
     ic_danhsachdonhang: require("../../assets/icons/ic_danhsachdonhang.png"),
+    ic_nhomkhachhang: require("../../assets/icons/ic_nhomkhachhang.png"),
     ic_donhangoffline: require("../../assets/icons/ic_donhangoffline.png"),
     ic_donhangthanhtoanvnpayqr: require("../../assets/icons/ic_donhangthanhtoanvnpayqr.png"),
     ic_lichsuhuytrahang: require("../../assets/icons/ic_lichsuhuytrahang.png"),
     ic_quanlyhanghoa: require("../../assets/icons/ic_quanlyhanghoa.png"),
+    ic_danhsachkhachhang: require("../../assets/icons/ic_danhsachkhachhang.png"),
+    ic_quanlynhanvien: require("../../assets/icons/ic_quanlynhanvien.png"),
+    ic_baocao: require("../../assets/icons/ic_baocao.png"),
+    ic_nhomnhacungcap: require("../../assets/icons/ic_nhomnhacungcap.png"),
 
 }
 

@@ -532,7 +532,7 @@ export default {
   cap_nhat_phong_ban: "Edit room table",
 
   // TODO: D
-  dau_tien:'first',
+  dau_tien: 'first',
   dang_dung: "Serving",
   dang_trong: "Space",
   dong_y: "Accept",
@@ -686,6 +686,8 @@ export default {
   ngay_sua: "Modified date",
   nguoi_sua: "Modified person",
   nhap_ma_hoa_don_tim_kiem: "Enter your search invoice code",
+  nha_cung_cap: "Supplier",
+  quan_ly_nhan_vien: "Employee manager",
 
   // TODO: O
 
@@ -709,6 +711,8 @@ export default {
   qua_mang_lan: "Through the LAN",
   quet_barcode_hoac_qrcode: "Scan BarCode or QRCode",
   quay_lai: "Back",
+  quan_ly_don_hang: "Order management",
+
 
   // TODO: R
 
@@ -961,7 +965,7 @@ export default {
 
   voucher: "Voucher",
   vui_long_nhap_dung_so_tien_khach_tra: "Please enter the correct amount of payment.",
-  vi_tri:'Position',
+  vi_tri: 'Position',
 
   xin_cam_on_va_hen_gap_lai: "Thank you, see you again!"
 

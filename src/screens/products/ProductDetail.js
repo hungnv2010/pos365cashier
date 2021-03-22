@@ -42,6 +42,7 @@ export default (props) => {
     const [listItemFomular, setListItemFormular] = useState([])
     const [countFormular, setCountFormular] = useState(0)
     const [type, setType] = useState('')
+    const [compositeItemProducts,setCompositeItemProducts] = useState([])
     const addCate = useRef([{
         Name: 'ten_nhom',
         Hint: 'nhap_ten_nhom_hang_hoa',
@@ -73,7 +74,7 @@ export default (props) => {
             BonusPointForAssistant3: product.BonusPointForAssistant3 ? product.BonusPointForAssistant3 : 0,
             Code: product.Code,
             Coefficient: product.Coefficient ? product.Coefficient : 1,
-            CompositeItemProducts: productOl.CompositeItemProducts ? productOl.CompositeItemProducts : [],
+            CompositeItemProducts: compositeItemProducts ? compositeItemProducts : [],
             ConversionValue: product.ConversionValue ? product.ConversionValue : 1,
             CreatedBy: productOl.CreatedBy,
             CreatedDate: productOl.CreatedDate,
@@ -116,6 +117,8 @@ export default (props) => {
         if (deviceType == Constant.TABLET) {
             setProduct(props.iproduct)
             setCategory(props.iCategory)
+            setCompositeItemProducts(props.compositeItemProducts)
+            console.log("CompositeItemProducts",props.compositeItemProducts);
             setNameCategory()
             if (props.iproduct.Id) {
                 setType('sua')
@@ -124,7 +127,8 @@ export default (props) => {
             }
         }
 
-    }, [props.iproduct])
+    }, [props.iproduct,props.compositeItemProducts])
+    
 
     useEffect(() => {
         setPriceConfig({})
@@ -198,7 +202,6 @@ export default (props) => {
                     console.log("add dvt", addDVT.current);
                     compareCost.current = productOl.Cost
                     compareOnHand.current = productOl.OnHand
-                    console.log("res product", formular);
                 }
             }).catch((e) => {
                 console.log("error", e);
@@ -358,6 +361,8 @@ export default (props) => {
     const chooseProduct = () => {
         if (deviceType == Constant.TABLET) {
             props.outPut({ comboTab: true, list: listItemFomular })
+        }else if(deviceType == Constant.PHONE){
+            props.navigation.navigate('ComboForPhone', { })
         }
     }
 
@@ -563,11 +568,11 @@ export default (props) => {
                                 <View style={{ flexDirection: 'row' }}>
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.title}>{I18n.t('gia_von')}</Text>
-                                        <TextInput style={[styles.textInput, { color: '#36a3f7', fontWeight: 'bold' }]} keyboardType={'numeric'} value={productOl && productOl.Cost ? currencyToString(productOl.Cost) : 0} onChangeText={(text) => setProductOl({ ...productOl, Cost: onChangeTextInput(text) })}></TextInput>
+                                        <TextInput style={[styles.textInput, { color: '#36a3f7', fontWeight: 'bold',textAlign:'center' }]} keyboardType={'numeric'} value={productOl && productOl.Cost ? currencyToString(productOl.Cost) : 0+''} onChangeText={(text) => setProductOl({ ...productOl, Cost: onChangeTextInput(text) })}></TextInput>
                                     </View>
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.title} >{I18n.t('gia')}</Text>
-                                        <TextInput style={[styles.textInput, { color: '#36a3f7', fontWeight: 'bold' }]} keyboardType={'numeric'} value={product && product.Price ? currencyToString(product.Price) : 0} onChangeText={(text) => setProduct({ ...product, Price: onChangeTextInput(text) })}></TextInput>
+                                        <TextInput style={[styles.textInput, { color: '#36a3f7', fontWeight: 'bold' ,textAlign:'center'}]} keyboardType={'numeric'} value={product && product.Price ? currencyToString(product.Price) : 0+''} onChangeText={(text) => setProduct({ ...product, Price: onChangeTextInput(text) })}></TextInput>
                                     </View>
                                 </View>
                                 {product ? product.ProductType == 2 && product.IsTimer == true ?

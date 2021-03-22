@@ -1,27 +1,25 @@
 import React, { useEffect, useState, useLayoutEffect, useRef, useCallback } from 'react';
 import { Image, View, StyleSheet, Text, TouchableOpacity, TextInput, ScrollView } from "react-native";
 import { Snackbar, Surface } from 'react-native-paper';
-import I18n from '../../common/language/i18n';
-import realmStore, { SchemaName } from '../../data/realm/RealmStore';
-import { Images } from '../../theme';
-import { ScreenList } from '../../common/ScreenList';
-import { currencyToString, change_alias } from '../../common/Utils';
-import colors from '../../theme/Colors';
+import I18n from '../../../common/language/i18n';
+import realmStore, { SchemaName } from '../../../data/realm/RealmStore';
+import { ScreenList } from '../../../common/ScreenList';
+import { currencyToString, change_alias } from '../../../common/Utils';
+import colors from '../../../theme/Colors';
 import { useSelector } from 'react-redux';
-import { Constant } from '../../common/Constant';
-import { getFileDuLieuString } from '../../data/fileStore/FileStorage';
-import images from '../../theme/Images';
+import { Constant } from '../../../common/Constant';
+import { getFileDuLieuString } from '../../../data/fileStore/FileStorage';
 import { FAB } from 'react-native-paper';
 import CustomerDetail from './customerDetail';
 import { FlatList } from 'react-native-gesture-handler';
-import { HTTPService } from '../../data/services/HttpService';
-import { ApiPath } from '../../data/services/ApiPath';
-import dataManager from '../../data/DataManager';
-import dialogManager from '../../components/dialog/DialogManager';
+import { HTTPService } from '../../../data/services/HttpService';
+import { ApiPath } from '../../../data/services/ApiPath';
+import dataManager from '../../../data/DataManager';
+import dialogManager from '../../../components/dialog/DialogManager';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useFocusEffect } from '@react-navigation/native';
 import TextTicker from 'react-native-text-ticker';
-import useDebounce from '../../customHook/useDebounce';
+import useDebounce from '../../../customHook/useDebounce';
 import CustomerToolBar from './CustomerToolBar';
 
 let GUEST = {
@@ -51,10 +49,11 @@ export default (props) => {
     )
 
     useEffect(() => {
+        console.log('customer props ', props);
         getCurrentBranch()
     }, [])
 
-    
+
     const getCurrentBranch = async () => {
         let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
         currentBranch.current = JSON.parse(branch)
@@ -182,7 +181,7 @@ export default (props) => {
             await realmStore.deletePartner()
             await dataManager.syncPartner()
             getCustomer()
-            dialogManager.showPopupOneButton(`${I18n.t(type)} ${I18n.t('thanh_cong')}`, I18n.t('thong_bao'))
+            dialogManager.showPopupOneButton(`${I18n.t(type)} ${I18n.t('khach_hang')} ${I18n.t('thanh_cong')}`, I18n.t('thong_bao'))
             dialogManager.hiddenLoading()
         } catch (error) {
             console.log('handleSuccess err', error);

@@ -134,65 +134,23 @@ export default (props) => {
 
     const onClickQuickPayment = () => {
         console.log('onClickQuickPayment', props.jsonContent);
-        // let newDate = new Date().getTime();
-        // if (timeClickPrevious + 2000 < newDate) {
-        //     timeClickPrevious = newDate;
-        // } else {
-        //     return;
-        // }
-        // if (checkQRInListMethod()) {
-        //     setToastDescription(I18n.t("khong_ho_tro_nhieu_tai_khoan_cho_qr"))
-        //     setShowToast(true)
-        //     return;
-        // }
-        // if (customer && customer.Id == 0 && jsonContent.ExcessCash < 0) {
-        //     setToastDescription(I18n.t("vui_long_nhap_dung_so_tien_khach_tra"))
-        //     setShowToast(true)
-        //     return;
-        // }
         let json = props.jsonContent
         let total = json && json.Total ? json.Total : 0
         let paramMethod = []
         listMethod.forEach((element, index) => {
             let value = element.Value
-            // if (index == 0 && giveMoneyBack && amountReceived > json.Total) {
             value = total
-            // }
             paramMethod.push({ AccountId: element.Id, Value: value })
         });
         console.log("onClickPay json.MoreAttributes ", typeof (json.MoreAttributes), json.MoreAttributes);
         let MoreAttributes = json.MoreAttributes ? (typeof (json.MoreAttributes) == 'string' ? JSON.parse(json.MoreAttributes) : json.MoreAttributes) : {}
-        // console.log("onClickPay pointUse ", pointUse);
-
-        // MoreAttributes.PointDiscount = pointUse && pointUse > 0 ? pointUse : 0;
-        // MoreAttributes.PointDiscountValue = 0;
-        // MoreAttributes.TemporaryPrints = [];
-        // MoreAttributes.Vouchers = listVoucher;
         MoreAttributes.PaymentMethods = paramMethod
-        // if (customer && customer.Id) {
-        //     let debt = customer.Debt ? customer.Debt : 0;
-        //     MoreAttributes.OldDebt = debt
-        //     if (!giveMoneyBack)
-        //         MoreAttributes.NewDebt = debt - (amountReceived - json.Total);
-        //     else
-        //         MoreAttributes.NewDebt = debt
-        //     json.Partner = customer
-        //     json.PartnerId = customer.Id
-        //     json.ExcessCashType = giveMoneyBack ? "0" : "1"
-        // }
         json['MoreAttributes'] = JSON.stringify(MoreAttributes);
         json.TotalPayment = total
         json.VATRates = json.VATRates
         json.AmountReceived = total
         json.Status = 2;
         json.SyncStatus = 0;
-        // if (noteInfo != '') {
-        //     json.Description = noteInfo;
-        // }
-        // if (date && dateTmp.current) {
-        //     json.PurchaseDate = "" + date;
-        // }
-        // if (listMethod.length > 0)
         json.AccountId = listMethod[0].Id;
         let params = {
             QrCodeEnable: vendorSession.Settings.QrCodeEnable,
@@ -215,7 +173,7 @@ export default (props) => {
 
         console.log("onClickPay params ", params);
         dialogManager.showLoading();
-        new HTTPService().setPath(ApiPath.ORDERS, true).POST(params).then(async order => {
+        new HTTPService().setPath(ApiPath.ORDERS, false).POST(params).then(async order => {
             console.log("onClickPay order ", order);
             if (order) {
                 dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(json.Total))
@@ -228,12 +186,6 @@ export default (props) => {
                 if (order.ResponseStatus && order.ResponseStatus.Message && order.ResponseStatus.Message != "") {
                     dialogManager.showPopupOneButton(order.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, ""))
                 }
-                // if (order.QRCode != "") {
-                //     qrCode.current = order.QRCode
-                //     typeModal.current = TYPE_MODAL.QRCODE
-                //     setShowModal(true)
-                //     handlerQRCode(order)
-                // }
             } else {
                 onError(json)
             }
@@ -257,12 +209,6 @@ export default (props) => {
             jsonContent.RoomName = props.route.params.Name
         }
         jsonContent.PaymentCode = Code;
-        // if (noteInfo != '') {
-        //     jsonContent.Description = noteInfo;
-        // }
-        // if (date && dateTmp.current) {
-        //     jsonContent.PurchaseDate = "" + date;
-        // }
         console.log("printAfterPayment jsonContent 2 ", jsonContent);
         dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
     }
