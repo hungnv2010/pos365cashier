@@ -29,10 +29,12 @@ export default (props) => {
     useEffect(() => {
         console.log("list product", listProduct);
         let sum = 0;
-        listProduct.forEach(el =>{
-            sum = sum + el.Quantity
-        })
-        setSumQuantity(sum)
+        if (listProduct.length > 0) {
+            listProduct.forEach(el => {
+                sum = sum + el.Quantity
+            })
+            setSumQuantity(sum)
+        }
     }, [listProduct])
 
     const outputTextSearch = (text) => {
@@ -42,59 +44,67 @@ export default (props) => {
     const outputSelectedProduct = (product) => {
         console.log("click product", product);
         let isExist = false
-        listProduct.forEach(item=>{
-            if(item.ItemId == product.Id){
-                isExist = true
-                item.Quantity = item.Quantity+1
-                setListProduct([...listProduct])
-                return
-            }})
-            if(isExist == false){
-                let itemCombo = {
-                    Cost: product.Cost,
-                    ItemId: product.Id,
-                    Product: { Code: product.Code, Cost: product.Cost, Name: product.Name, Unit: product.Unit },
-                    Quantity: 1,
-                    QuantityLargeUnit: 0
+        if (listProduct.length > 0) {
+            listProduct.forEach(item => {
+                if (item.ItemId == product.Id) {
+                    isExist = true
+                    item.Quantity = item.Quantity + 1
+                    setListProduct([...listProduct])
+                    return
                 }
-                setListProduct([...listProduct,itemCombo])
-            
+            })
+        }
+        if (isExist == false) {
+            let itemCombo = {
+                Cost: product.Cost,
+                ItemId: product.Id,
+                Product: { Code: product.Code, Cost: product.Cost, Name: product.Name, Unit: product.Unit },
+                Quantity: 1,
+                QuantityLargeUnit: 0
             }
-       
+            if(listProduct.length >0){
+            setListProduct([...listProduct, itemCombo])
+            }else{
+                let listp = []
+                listp.push(itemCombo)
+                setListProduct(listp)
+            }
         }
 
-    const delItem = (index) =>{
-        listProduct.splice(index,1)
+    }
+
+    const delItem = (index) => {
+        listProduct.splice(index, 1)
         setListProduct([...listProduct])
     }
-    
-    const onClickOk = () =>{
+
+    const onClickOk = () => {
         props.route.params._onSelect(listProduct, 2);
         props.navigation.goBack()
     }
-    
+
     const renderItemCombo = (item, index) => {
         return (
-            <View style={{ backgroundColor: '#FFF', flexDirection: 'column' ,marginBottom:7}}>
+            <View style={{ backgroundColor: '#FFF', flexDirection: 'column', marginBottom: 7 }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5, paddingHorizontal: 10 }}>
                     <View>
                         <Text style={{ fontWeight: 'bold', textTransform: 'uppercase' }}>{item.Product.Name}</Text>
                         <Text style={{ color: '#4a4a4a', marginTop: 5 }}>{item.Product.Code}</Text>
                     </View>
-                    <TouchableOpacity onPress = {()=>delItem(index)}>
-                    <Image source={Images.icon_trash} style={{ width: 28, height: 28, justifyContent: 'center' }} />
+                    <TouchableOpacity onPress={() => delItem(index)}>
+                        <Image source={Images.icon_trash} style={{ width: 28, height: 28, justifyContent: 'center' }} />
                     </TouchableOpacity>
                 </View>
-                <View style={{ paddingHorizontal: 10, paddingVertical: 5, flexDirection: 'row',marginBottom:5 }}>
-                    <View style={{ flex: 1,marginRight:5 }}>
+                <View style={{ paddingHorizontal: 10, paddingVertical: 5, flexDirection: 'row', marginBottom: 5 }}>
+                    <View style={{ flex: 1, marginRight: 5 }}>
                         <Text>{I18n.t('don_vi_tinh')}</Text>
-                        <TouchableOpacity style={{borderRadius:5,backgroundColor:'#f2f2f2',padding:10,marginTop:5}}>
-                            <Text style={{textAlign:'center'}}>{item.Product.Unit}</Text>
+                        <TouchableOpacity style={{ borderRadius: 5, backgroundColor: '#f2f2f2', padding: 10, marginTop: 5 }}>
+                            <Text style={{ textAlign: 'center' }}>{item.Product.Unit}</Text>
                         </TouchableOpacity>
                     </View>
-                    <View style={{ flex: 1, marginLeft:5 }}>
+                    <View style={{ flex: 1, marginLeft: 5 }}>
                         <Text style={{ textAlign: 'left' }}>{I18n.t('so_luong')}</Text>
-                        <TextInput style={{textAlign:'center',borderRadius:5, backgroundColor:'#f2f2f2',padding:10,marginTop:5}} keyboardType={'numeric'} value={item.Quantity?item.Quantity+'':0+''} onChangeText={(text) =>{item.Quantity = parseInt(text),setListProduct([...listProduct])}}></TextInput>
+                        <TextInput style={{ textAlign: 'center', borderRadius: 5, backgroundColor: '#f2f2f2', padding: 10, marginTop: 5 }} keyboardType={'numeric'} value={item.Quantity ? item.Quantity + '' : 0 + ''} onChangeText={(text) => { item.Quantity = parseInt(text), setListProduct([...listProduct]) }}></TextInput>
                     </View>
 
                 </View>
@@ -104,14 +114,14 @@ export default (props) => {
     return (
         <View style={{ flexDirection: 'row', flex: 1 }}>
             <View style={{ flex: 3, }}>
-            <ToolBarCombo
+                <ToolBarCombo
                     {...props}
                     //outputClickProductService={outputClickProductService}
                     navigation={props.navigation}
-                    outputTextSearch={outputTextSearch} 
-                    />
+                    outputTextSearch={outputTextSearch}
+                />
                 <View style={{ flex: 1, }}>
-                    <SelectProduct listProducts={listProduct} valueSearch={value}
+                    <SelectProduct listProducts={listProduct.length>0?listProduct:[]} valueSearch={value}
                         numColumns={orientaition == Constant.LANDSCAPE ? 3 : 3}
                         outputSelectedProduct={outputSelectedProduct}
                     />
@@ -123,10 +133,15 @@ export default (props) => {
                     <Text style={{ color: '#4a4a4a', fontWeight: 'bold', textTransform: 'uppercase' }}>{listProduct.length} {I18n.t('san_pham')}</Text>
                     <Text style={{ color: '#4a4a4a' }}>{I18n.t('so_luong')} : {sumQuantity}</Text>
                 </View>
-                <FlatList data={listProduct}
-                    renderItem={({ item, index }) => renderItemCombo(item, index)}
-                    keyExtractor={(item, index) => index.toString()} />
-                <TouchableOpacity style={{ backgroundColor: '#36a3f7', paddingHorizontal: 10, }} onPress={()=>onClickOk()}>
+                {listProduct.length > 0 ?
+                    <FlatList data={listProduct}
+                        renderItem={({ item, index }) => renderItemCombo(item, index)}
+                        keyExtractor={(item, index) => index.toString()} />
+                    : <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <Image source={Images.logo_365_long_color} style={{ justifyContent: 'center', alignItems: 'center' }} />
+                    </View>
+                }
+                <TouchableOpacity style={{ backgroundColor: '#36a3f7', paddingHorizontal: 10, }} onPress={() => onClickOk()}>
                     <Text style={{ textAlign: 'center', color: '#fff', paddingVertical: 10, fontWeight: 'bold' }}>{I18n.t('xong')}</Text>
                 </TouchableOpacity>
 

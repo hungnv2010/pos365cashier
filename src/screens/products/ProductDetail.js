@@ -394,6 +394,7 @@ export default (props) => {
         if (deviceType == Constant.TABLET) {
             props.outPut({ comboTab: true, list: listItemFomular })
         } else if (deviceType == Constant.PHONE) {
+            console.log("listcombo",listItemFomular);
             props.navigation.navigate('ComboForPhone', { list: listItemFomular, _onSelect: onCallBackData })
         }
     }

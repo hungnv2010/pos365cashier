@@ -17,14 +17,19 @@ import colors from '../../../theme/Colors';
 export default (props) => {
     const [listFomular, setListFormular] = useState([])
     const [sumQuantity, setSumQuantity] = useState(0)
+    const deviceType = useSelector(state => {
+        console.log("useSelector state ", state);
+        return state.Common.deviceType
+    });
 
     useEffect(() => {
-        getData(props.route.params)
-
+        if (deviceType == Constant.PHONE) {
+            getData(props.route.params)
+        }
     }, [])
     const getData = (param) => {
-        setListFormular([...JSON.parse(JSON.stringify(param.list))])
-        console.log("list formular", JSON.parse(JSON.stringify(param.list)));
+        let list = JSON.parse(JSON.stringify(param.list))
+        setListFormular(list)
     }
 
     const outputTextSearch = () => {
@@ -32,7 +37,7 @@ export default (props) => {
     }
     const clickSelectProduct = () => {
         console.log("click");
-        props.navigation.navigate('SelectProduct', { _onSelect: onCallBack, listProducts: listFomular })
+        props.navigation.navigate('SelectProduct', { _onSelect: onCallBack, listProducts: listFomular.length > 0 ? listFomular : [] })
     }
 
     const onCallBack = (data) => {
@@ -59,13 +64,15 @@ export default (props) => {
     useEffect(() => {
         console.log("list formular", listFomular);
         let sum = 0;
-        listFomular.forEach(el => {
-            sum = sum + el.Quantity
-        })
-        setSumQuantity(sum)
+        if (listFomular.length > 0) {
+            listFomular.forEach(el => {
+                sum = sum + el.Quantity
+            })
+            setSumQuantity(sum)
+        }
     }, [listFomular])
-    const onClickOk = () =>{
-        props.route.params._onSelect(listFomular,1);
+    const onClickOk = () => {
+        props.route.params._onSelect(listFomular, 1);
         props.navigation.goBack()
     }
 
@@ -74,8 +81,8 @@ export default (props) => {
             <View style={{ backgroundColor: '#FFF', flexDirection: 'column', marginBottom: 7 }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5, paddingHorizontal: 10 }}>
                     <View>
-                        <Text style={{ fontWeight: 'bold', textTransform: 'uppercase' }}>{item.Product.Name}</Text>
-                        <Text style={{ color: '#4a4a4a', marginTop: 5 }}>{item.Product.Code}</Text>
+                        <Text style={{ fontWeight: 'bold', textTransform: 'uppercase' }}>{item.Product ? item.Product.Name : ''}</Text>
+                        <Text style={{ color: '#4a4a4a', marginTop: 5 }}>{item.Product ? item.Product.Code : ''}</Text>
                     </View>
                     <TouchableOpacity onPress={() => delItem(index)}>
                         <Image source={Images.icon_trash} style={{ width: 28, height: 28, justifyContent: 'center' }} />
@@ -85,7 +92,7 @@ export default (props) => {
                     <View style={{ flex: 1, marginRight: 5 }}>
                         <Text>{I18n.t('don_vi_tinh')}</Text>
                         <TouchableOpacity style={{ borderRadius: 5, backgroundColor: '#f2f2f2', padding: 10, marginTop: 5 }}>
-                            <Text style={{ textAlign: 'center' }}>{item.Product.Unit}</Text>
+                            <Text style={{ textAlign: 'center' }}>{item.Product ? item.Product.Unit : ''}</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={{ flex: 1, marginLeft: 5 }}>
@@ -98,7 +105,7 @@ export default (props) => {
         )
     }
     return (
-        <View style={{flex:1}}>
+        <View style={{ flex: 1 }}>
             <ToolBarCombo
                 {...props}
                 //outputClickProductService={outputClickProductService}
@@ -106,18 +113,26 @@ export default (props) => {
                 outputTextSearch={outputTextSearch}
                 clickRightIcon={clickSelectProduct}
             />
-            <View style={{ marginTop: 5, flexDirection: 'column',flex:1 }}>
-                <View style={{ height: 44, justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10 }}>
-                    <Text style={{ color: '#4a4a4a', fontWeight: 'bold', textTransform: 'uppercase' }}>{listFomular.length} {I18n.t('san_pham')}</Text>
-                    <Text style={{ color: '#4a4a4a' }}>{I18n.t('so_luong')} : {sumQuantity}</Text>
-                </View>
-                <View style={{}}>
-                <FlatList data={listFomular}
-                    renderItem={({ item, index }) => renderItem(item, index)}
-                    keyExtractor={(item, index) => index.toString()} />
+            {
+                listFomular.length > 0 ?
+                    <View style={{ marginTop: 5, flexDirection: 'column', flex: 1 }}>
+                        <View style={{ height: 44, justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10 }}>
+                            <Text style={{ color: '#4a4a4a', fontWeight: 'bold', textTransform: 'uppercase' }}>{listFomular.length} {I18n.t('san_pham')}</Text>
+                            <Text style={{ color: '#4a4a4a' }}>{I18n.t('so_luong')} : {sumQuantity}</Text>
+                        </View>
+                        <View style={{}}>
+                            <FlatList data={listFomular}
+                                renderItem={({ item, index }) => renderItem(item, index)}
+                                keyExtractor={(item, index) => index.toString()} />
+
+                        </View>
+                    </View> :
+                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <Image source={Images.logo_365_long_color} style={{ justifyContent: 'center', alignItems: 'center' }} />
                     </View>
-            </View>
-            <View style={{ alignItems: 'stretch', justifyContent: 'flex-end',marginTop:40}}>
+
+            }
+            <View style={{ alignItems: 'stretch', justifyContent: 'flex-end', marginTop: 40 }}>
                 <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 10, justifyContent: 'flex-end' }} onPress={() => onClickOk()}>
                     <Text style={{ textAlign: 'center', color: '#fff', paddingVertical: 10, fontWeight: 'bold' }}>{I18n.t('xong')}</Text>
                 </TouchableOpacity>
