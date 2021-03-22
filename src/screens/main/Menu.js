@@ -88,6 +88,11 @@ const LIST_FUNCITION = [
         title: "nha_cung_cap"
     },
     {
+        func: KEY_FUNC.PRODUCT,
+        icon: Images.icon_product,
+        title: "hang_hoa"
+    },
+    {
         func: KEY_FUNC.EMPLOYEE_MANAGER,
         icon: Images.ic_quanlynhanvien,
         title: "quan_ly_nhan_vien"

@@ -20,17 +20,14 @@ import dialogManager from '../../components/dialog/DialogManager';
 export default (props) => {
     const isReLoad = useRef(false);
     const [listProduct, setListProduct] = useState([])
-    const [category, setCategory] = useState([{
-        Id: -1,
-        Name: 'Tất cả'
-    }])
+    const [category, setCategory] = useState([])
     const itemProduct = useRef()
     const typeBtn = useRef()
     const [itProduct, setItProduct] = useState({})
-    const [compositeItemProducts,setCompositeItemProducts] = useState([])
+    const [compositeItemProducts, setCompositeItemProducts] = useState([])
+    const [qrScan, setQrScan] = useState()
     useEffect(() => {
         getData()
-
     }, [])
 
     const [idCategory, setIdCategory] = useState(-1)
@@ -40,12 +37,18 @@ export default (props) => {
     });
     const getData = async () => {
         productTmp = await realmStore.queryProducts()
-        console.log("product", productTmp.ProductImages);
-        setListProduct(productTmp)
+        console.log("product", productTmp);
+        setListProduct([...productTmp])
         categoryTmp = await realmStore.queryCategories()
-        console.log("catygory", categoryTmp);
-        setCategory([...category, ...categoryTmp])
+        setCategory([{
+            Id: -1,
+            Name: 'Tất cả'
+        },...categoryTmp])
     }
+    useEffect(() => {
+        console.log("product item", listProduct);
+        console.log("catygorytmp", category);
+    }, [listProduct,category])
     const filterByCategory = (item) => {
         if (item.Id > 0) {
             setListProduct(productTmp.filter(el => el.CategoryId === item.Id));
@@ -57,7 +60,6 @@ export default (props) => {
     const onClickItem = (el) => {
         itemProduct.current = el
         if (deviceType == Constant.PHONE) {
-            console.log("navigation", deviceType);
             props.navigation.navigate(ScreenList.ProductDetail, { product: itemProduct.current, category: category, onCallBack: handleSuccess, })
         } else {
             setItProduct({ ...itemProduct.current })
@@ -87,17 +89,20 @@ export default (props) => {
             </View>
         )
     }
-    useEffect(() => {
-        console.log("product item", itProduct);
-    }, [itProduct])
+    
     const outPut = (data) => {
         if (data.comboTab == true) {
             console.log("data.list", data.list);
-            props.navigation.navigate('ComboForTab', { list: data.list,_onSelect: onCallBack})
+            props.navigation.navigate('ComboForTab', { list: data.list, _onSelect: onCallBack })
+        }else if(data.scanQrCode == true){
+            props.navigation.navigate('QRCode', { _onSelect: onCallBackQr })
         }
     }
-    const onCallBack =(data)=>{
-        console.log("callback data",data);
+    const onCallBackQr = (data) =>{
+        setQrScan(data)
+    }
+    const onCallBack = (data) => {
+        console.log("callback data", data);
         setCompositeItemProducts(data)
     }
     const renderProduct = (item, index) => {
@@ -123,8 +128,8 @@ export default (props) => {
                             <Text style={{ borderRadius: 5, color: '#36a3f7' }}>{item.Code}</Text>
                         </View>
                         <View style={{ borderRadius: 5, }}>
-                            {/* <Text style={{ color: item.OnHand > 0 ? '#36a3f7' : colors.colorchinh, }}>{item.ProductType != 2 ? 'Tồn kho:' + currencyToString(item.OnHand) : '---'}</Text> */}
-                            <Text style={{ color: colors.colorchinh }}>{item.ProductType ? item.ProductType == 1 ? I18n.t('hang_hoa') : item.ProductType == 2 ? I18n.t('dich_vu') : item.ProductType == 3 ? 'Combo' : '' : ''}</Text>
+                        <Text style={{ color: item.OnHand > 0 ? colors.colorLightBlue : colors.colorchinh ,padding:2}}>{item.ProductType != 2 ? 'Tồn kho: ' + currencyToString(item.OnHand) : '---'}</Text>
+                            {/* <Text style={{ color: colors.colorchinh }}>{item.ProductType ? item.ProductType == 1 ? I18n.t('hang_hoa') : item.ProductType == 2 ? I18n.t('dich_vu') : item.ProductType == 3 ? 'Combo' : '' : ''}</Text> */}
                         </View>
                     </View>
                 </View>
@@ -182,7 +187,7 @@ export default (props) => {
 
                 {deviceType == Constant.TABLET ? itProduct != null ?
                     <View style={{ flex: 1 }}>
-                        <ProductDetail iproduct={itProduct} iCategory={category} outPut={outPut} handleSuccess={handleSuccess} compositeItemProducts = {compositeItemProducts}/>
+                        <ProductDetail iproduct={itProduct} iCategory={category} outPut={outPut} handleSuccess={handleSuccess} compositeItemProducts={compositeItemProducts} scanQr={qrScan} />
                     </View>
                     : <View style={{ flex: 1 }}></View>
                     :

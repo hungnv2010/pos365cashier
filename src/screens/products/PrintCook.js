@@ -66,7 +66,7 @@ export default (props) => {
         <View style={{ marginBottom: 10 }}>
             <View style={{ justifyContent: 'space-between', flexDirection: 'row', padding: 5,}}>
                 <Text style={styles.titleBold}>{I18n.t('bao_che_bien')}</Text>
-                <Text style={{ color: 'silver',}}>{I18n.t('so_may_in_toi_da')} {countPrint}/ 5</Text>
+                <Text style={{ color: 'silver',marginRight:10}}>{I18n.t('so_may_in_toi_da')} {countPrint}/ 5</Text>
             </View>
             <View style={{ flexDirection: 'row' }}>
                 <FlatList
