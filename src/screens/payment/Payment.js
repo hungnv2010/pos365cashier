@@ -670,6 +670,7 @@ export default (props) => {
                     dialogManager.showPopupOneButton(order.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, ""))
                 }
                 if (order.QRCode != "") {
+                    console.log('order.QRCode != ');
                     qrCode.current = order.QRCode
                     typeModal.current = TYPE_MODAL.QRCODE
                     setShowModal(true)
