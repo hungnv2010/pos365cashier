@@ -329,6 +329,7 @@ export default (props) => {
         settingObject.Printer[positionPrint] = data
         savePrint({...settingObject}) 
         setShowModal(false)
+        savePrintRedux(settingObject.Printer)
     }
     const savePrint = (object) => {
         setSettingObject(object)
@@ -616,7 +617,7 @@ export default (props) => {
                                     bottom: 0
                                 }}></View>
                             </TouchableWithoutFeedback>
-                            <View style={styles.styleViewModal} >
+                            <View style={[styles.styleViewModal,{ marginBottom: Platform.OS == 'ios' ? marginModal : 0 }]} >
                                 <View style={{ width: Metrics.screenWidth * 0.8, }}>
                                     {/* <Text style={styles.titleModal}>{I18n.t('chon_cong_nghe_in')}</Text>
                                     {
@@ -866,7 +867,7 @@ export default (props) => {
                                 }}></View>
 
                             </TouchableWithoutFeedback>
-                            <View style={[styles.styleViewModal]} >
+                            <View style={[styles.styleViewModal,{ marginBottom: Platform.OS == 'ios' ? marginModal : 0 }]} >
                                 <View style={{ width: Metrics.screenWidth * 0.7}}>
                                     <Text style={styles.titleModal}>{I18n.t('thong_tin_cua_hang')}</Text>
                                     <StoreInformation code={inforStore.Code} name={inforStore.Name} address={inforStore.Address} phoneNumber={inforStore.Phone} outPut={outPut} />
