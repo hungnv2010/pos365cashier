@@ -24,6 +24,7 @@ import colors from '../../theme/Colors';
 const { Print } = NativeModules;
 import moment from 'moment';
 import 'moment/min/locales'
+import DialogSettingPrinter from '../../components/dialog/DialogSettingPrinter'
 
 export const DefaultSetting = {
     am_bao_thanh_toan: true,
@@ -320,7 +321,14 @@ export default (props) => {
         setTitlePrint(data.title)
         setPositionPrint(data.index)
         setDefautlType(settingObject.Printer[data.index].type)
+        console.log("printer setting",settingObject.Printer[data.index]);
+        setPrintertmp(settingObject.Printer[data.index])
 
+    }
+    const outputSetPrinter = (data) =>{
+        settingObject.Printer[positionPrint] = data
+        savePrint({...settingObject}) 
+        setShowModal(false)
     }
     const savePrint = (object) => {
         setSettingObject(object)
@@ -378,32 +386,34 @@ export default (props) => {
         setItemCurrency({ ...item, currentId: item.key })
         setCurrentcy(item.value)
     }
-    const changePrintTypeKitchenA = () => {
-        setStateMoalSize(false)
-        if (defaultType == 'in_qua_mang_lan') {
-            setStateModalLAN(!stateModalLAN)
-        } else {
-            settingObject.Printer[positionPrint] = { ...settingObject.Printer[positionPrint], type: defaultType, size: defaultSize, ip: '' }
-            savePrint({ ...settingObject })
-            savePrintRedux(settingObject.Printer)
-        }
-    }
-    const setIpLANPrint = () => {
-        setStateValueIp('192.168.99.')
-        settingObject.Printer[positionPrint] = { ...settingObject.Printer[positionPrint], type: defaultType, size: defaultSize, ip: defaultIpLAN }
-        savePrint({ ...settingObject })
-        savePrintRedux(settingObject.Printer)
-        setStateModalLAN(!stateModalLAN)
-    }
-    const [stateValueIp, setStateValueIp] = useState('192.168.99.')
-    const changeValueIp = (a) => {
-        setStateValueIp(a)
-        setDefaultIpLAN(a)
-    }
+    // const changePrintTypeKitchenA = () => {
+    //     setStateMoalSize(false)
+    //     if (defaultType == 'in_qua_mang_lan') {
+    //         setStateModalLAN(!stateModalLAN)
+    //     } else {
+    //         settingObject.Printer[positionPrint] = { ...settingObject.Printer[positionPrint], type: defaultType, size: defaultSize, ip: '' }
+    //         savePrint({ ...settingObject })
+    //         savePrintRedux(settingObject.Printer)
+    //     }
+    // }
+    // const setIpLANPrint = () => {
+    //     setStateValueIp('192.168.99.')
+    //     settingObject.Printer[positionPrint] = { ...settingObject.Printer[positionPrint], type: defaultType, size: defaultSize, ip: defaultIpLAN }
+    //     savePrint({ ...settingObject })
+    //     savePrintRedux(settingObject.Printer)
+    //     setStateModalLAN(!stateModalLAN)
+    // }
+    // const [stateValueIp, setStateValueIp] = useState('192.168.99.')
+    // const changeValueIp = (a) => {
+    //     setStateValueIp(a)
+    //     setDefaultIpLAN(a)
+    // }
     const [modalStampPrint, setModalStampPrint] = useState(false)
+    const [printerTmp, setPrintertmp] = useState({})
     const onShowModalStampPrint = (data) => {
         setPositionPrint(data.index)
         setDefautlType(settingObject.Printer[data.index].type)
+        
         setModalStampPrint(data.stt)
         setTitlePrint(data.title)
     }
@@ -608,7 +618,7 @@ export default (props) => {
                             </TouchableWithoutFeedback>
                             <View style={styles.styleViewModal} >
                                 <View style={{ width: Metrics.screenWidth * 0.8, }}>
-                                    <Text style={styles.titleModal}>{I18n.t('chon_cong_nghe_in')}</Text>
+                                    {/* <Text style={styles.titleModal}>{I18n.t('chon_cong_nghe_in')}</Text>
                                     {
                                         Constant.CATYGORY_PRINT && [PrintType].concat(Constant.CATYGORY_PRINT).map((item, index) => {
                                             return (
@@ -623,20 +633,21 @@ export default (props) => {
                                                 </TouchableOpacity>
                                             )
                                         })
-                                    }
-                                    <View style={{ justifyContent: "center", flexDirection: "row", paddingTop: 10 }}>
+                                    } */}
+                                    <DialogSettingPrinter title={printerTmp.title} printer={printerTmp} outputPrinter={outputSetPrinter}/>
+                                    {/* <View style={{ justifyContent: "center", flexDirection: "row", paddingTop: 10 }}>
                                         <TouchableOpacity style={styles.styleButtonHuy} onPress={() => setShowModal(false)} >
                                             <Text style={styles.styleTextBtnHuy}>{I18n.t("huy")}</Text>
                                         </TouchableOpacity>
                                         <TouchableOpacity style={styles.styleButtonOK} onPress={onShowModalSize}>
                                             <Text style={styles.styleTextBtnOk}>{I18n.t("dong_y")}</Text>
                                         </TouchableOpacity>
-                                    </View>
+                                    </View> */}
                                 </View>
                             </View>
                         </View>
                     </Modal>
-                    <Modal animationType='fade'
+                    {/* <Modal animationType='fade'
                         transparent={true}
                         visible={showModalSize}
                         supportedOrientations={['portrait', 'landscape']}
@@ -674,7 +685,7 @@ export default (props) => {
                                 </View>
                             </View>
                         </View>
-                    </Modal>
+                    </Modal> */}
                     <Modal animationType='none'
                         transparent={true}
                         visible={stateCurrentcy}
@@ -731,7 +742,7 @@ export default (props) => {
                             </View>
                         </View>
                     </Modal>
-                    <Modal animationType='fade'
+                    {/* <Modal animationType='fade'
                         transparent={true}
                         visible={stateModalLAN}
                         supportedOrientations={['portrait', 'landscape']}
@@ -771,7 +782,7 @@ export default (props) => {
                                 </View>
                             </View>
                         </View>
-                    </Modal>
+                    </Modal> */}
                     <Modal animationType='none'
                         transparent={true}
                         visible={modalStampPrint}

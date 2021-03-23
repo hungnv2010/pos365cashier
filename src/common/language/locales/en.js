@@ -858,6 +858,7 @@ export default {
   chon_nhom_hang_hoa: 'Choose categoty',
   chua_co: 'Empty',
   chon_hang_hoa: 'Choose product',
+  chieu_rong_kho_giay:'Print width paper size',
 
   don_vi_tien_te: "Currency unit",
   dollar_my: "Dollar",
