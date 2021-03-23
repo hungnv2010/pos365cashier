@@ -417,6 +417,7 @@ export default {
   chon_nhom_hang_hoa: 'Chọn nhóm hàng hoá',
   chua_co: 'Chưa có',
   chon_hang_hoa: 'Chọn hàng hoá',
+  chieu_rong_kho_giay:'Chiều rộng khổ giấy',
 
   don_vi_tien_te: "Đơn vị tiền tệ",
   dollar_my: "Dollar Mỹ",
