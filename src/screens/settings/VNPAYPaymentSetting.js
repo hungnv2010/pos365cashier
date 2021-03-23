@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import SettingSwitch from '../settings/SettingSwitch';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput,Keyboard } from 'react-native';
 import { ScrollView } from 'react-native';
 import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
 import MainToolBar from '../main/MainToolBar';
@@ -23,6 +23,7 @@ export default (props) => {
     const [settingObject, setSettingObject] = useState()
     const [printInvoice, setPrintInvoice] = useState(false)
     const [paymentPosMachine, setPaymentPosMachine] = useState(false)
+    const [marginModal, setMargin] = useState(0)
 
     useFocusEffect(useCallback(() => {
         const getQrCodeEnable = async () => {
@@ -77,6 +78,25 @@ export default (props) => {
             updateSetting('SmartPOS_MCC', value)
         }
         setStateModal(false)
+    }
+    useFocusEffect(useCallback(() => {
+
+        var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
+        var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        }
+
+
+    }, []))
+    const _keyboardDidShow = () => {
+        setMargin(Metrics.screenWidth / 2)
+    }
+
+    const _keyboardDidHide = () => {
+        setMargin(0)
     }
     const updateSetting = (key, value) => {
         let params = {
@@ -154,7 +174,7 @@ export default (props) => {
                         }}></View>
 
                     </TouchableWithoutFeedback>
-                    <View style={styles.styleViewModal} >
+                    <View style={[styles.styleViewModal,,{ marginBottom: Platform.OS == 'ios' ? marginModal : 0 }]} >
                         <View style={{ width: Metrics.screenWidth * 0.8, }}>
                             <Text style={styles.titleModal}>{I18n.t('thong_tin_cua_hang')}</Text>
                             <Text style={{ fontSize: 16, justifyContent: 'center', marginTop: 5, marginLeft: 20 }}>Mời nhập {titileModal} </Text>

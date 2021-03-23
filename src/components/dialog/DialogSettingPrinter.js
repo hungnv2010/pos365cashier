@@ -46,13 +46,13 @@ export default (props) =>{
                     <TextInput style={[styles.styleTextInput,{marginLeft:10}]} placeholder={ '192.168.100.'} value={printer.ip != '' ? printer.ip : '192.168.100.'} keyboardType={'numeric'} editable={printer.type=='in_qua_mang_lan'?true:false} onChangeText={(text)=>setPrinter({...printer,ip:text})}></TextInput>
                 </View>
             </View>
-            <TouchableOpacity style={{backgroundColor:colors.colorLightBlue,marginBottom:10,marginHorizontal:20,paddingHorizontal:10,paddingVertical:15,borderRadius:10}} onPress={()=>onClickConfirm()}>
+            <TouchableOpacity style={{backgroundColor:colors.colorLightBlue,marginBottom:10,marginHorizontal:20,paddingHorizontal:10,paddingVertical:12,borderRadius:10}} onPress={()=>onClickConfirm()}>
                 <Text style={{textAlign:'center',color:'#fff',fontWeight:'bold'}}>{I18n.t('ap_dung')}</Text>
             </TouchableOpacity>
         </View>
     )
 }
 const styles = StyleSheet.create({
-    styleButton:{flex:1,paddingVertical:20,backgroundColor:'#f2f2f2',borderRadius:20},
+    styleButton:{flex:1,paddingVertical:10,backgroundColor:'#f2f2f2',borderRadius:20},
     styleTextInput:{borderRadius:10,borderWidth:1,borderColor:'#bbbbbb',paddingHorizontal:10,paddingVertical:10,marginTop:10}
 })

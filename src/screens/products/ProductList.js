@@ -21,8 +21,6 @@ export default (props) => {
     const isReLoad = useRef(false);
     const [listProduct, setListProduct] = useState([])
     const [category, setCategory] = useState([])
-    const itemProduct = useRef()
-    const typeBtn = useRef()
     const [itProduct, setItProduct] = useState({})
     const [compositeItemProducts, setCompositeItemProducts] = useState([])
     const [qrScan, setQrScan] = useState()
@@ -57,11 +55,11 @@ export default (props) => {
         setIdCategory(item.Id)
     }
     const onClickItem = (el) => {
-        itemProduct.current = el
+       
         if (deviceType == Constant.PHONE) {
-            props.navigation.navigate(ScreenList.ProductDetail, { product: itemProduct.current, category: category, onCallBack: handleSuccess, })
+            props.navigation.navigate(ScreenList.ProductDetail, { product: el, category: category, onCallBack: handleSuccess, })
         } else {
-            setItProduct({ ...itemProduct.current })
+            setItProduct(el)
         }
     }
     const handleSuccess = async (type1) => {
