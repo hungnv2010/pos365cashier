@@ -41,6 +41,7 @@ export default (props) => {
 
     useEffect(() => {
         if (detailGroup.Id === 0) setShowModal(true)
+        listMember.length = 0 // reset list member
         const getListMember = async () => {
             let customer = await new HTTPService().setPath(ApiPath.SYNC_PARTNERS).GET()
             if (customer && customer.Data && customer.Data.length > 0) {
@@ -61,30 +62,30 @@ export default (props) => {
     const renderListMember = (item, index) => {
         return (
             <View key={index.toString()}
-            style={{ flexDirection: "row", alignItems: "center",padding: 10, backgroundColor:"white" , marginBottom: 5, borderRadius: 10}}>
-            <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center", }}>
-                <View style={{ width: 60, height: 60, justifyContent: "center", alignItems: "center", backgroundColor: index % 2 == 0 ? colors.colorPhu : colors.colorLightBlue, borderRadius: 30, marginRight: 10 }}>
-                    <Text style={{ color: "#fff", fontSize: 24, textTransform: "uppercase" }}>{item.Name[0]}</Text>
-                </View>
-                <View style={{ flex: 1.3 }}>
-                    <Text
-                        numberOfLines={1}
-                        style={{ fontSize: 15, fontWeight: "bold", }}>{item.Name}</Text>
-                    <Text style={{ paddingVertical: 5 }}>{item.Code}</Text>
-                    <Text style={{}}>{I18n.t('diem_thuong')}: {currencyToString(item.Point)}</Text>
-                </View>
-                <View style={{ flex: 1 }}>
-                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-start", marginBottom: 10 }}>
-                        <Icon name="phone" size={24} color={colors.colorchinh} style={{ marginRight: 10 }} />
-                        <Text>{item.Phone ? item.Phone : I18n.t('chua_cap_nhat')}</Text>
+                style={{ flexDirection: "row", alignItems: "center", padding: 10, backgroundColor: "white", marginBottom: 5, borderRadius: 10 }}>
+                <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center", }}>
+                    <View style={{ width: 60, height: 60, justifyContent: "center", alignItems: "center", backgroundColor: index % 2 == 0 ? colors.colorPhu : colors.colorLightBlue, borderRadius: 30, marginRight: 10 }}>
+                        <Text style={{ color: "#fff", fontSize: 24, textTransform: "uppercase" }}>{item.Name[0]}</Text>
                     </View>
-                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-start" }}>
-                        <Icon name="home" size={24} color={colors.colorchinh} style={{ marginRight: 10 }} />
-                        <TextTicker>{item.Address ? item.Address : I18n.t('chua_cap_nhat')}</TextTicker>
+                    <View style={{ flex: 1.3 }}>
+                        <Text
+                            numberOfLines={1}
+                            style={{ fontSize: 15, fontWeight: "bold", }}>{item.Name}</Text>
+                        <Text style={{ paddingVertical: 5 }}>{item.Code}</Text>
+                        <Text style={{}}>{I18n.t('diem_thuong')}: {currencyToString(item.Point)}</Text>
+                    </View>
+                    <View style={{ flex: 1 }}>
+                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-start", marginBottom: 10 }}>
+                            <Icon name="phone" size={24} color={colors.colorchinh} style={{ marginRight: 10 }} />
+                            <Text>{item.Phone ? item.Phone : I18n.t('chua_cap_nhat')}</Text>
+                        </View>
+                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-start" }}>
+                            <Icon name="home" size={24} color={colors.colorchinh} style={{ marginRight: 10 }} />
+                            <TextTicker>{item.Address ? item.Address : I18n.t('chua_cap_nhat')}</TextTicker>
+                        </View>
                     </View>
                 </View>
             </View>
-        </View>
         )
     }
 
