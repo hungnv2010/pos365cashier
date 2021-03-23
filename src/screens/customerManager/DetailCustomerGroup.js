@@ -13,6 +13,8 @@ import { Constant } from '../../common/Constant';
 import { ApiPath } from '../../data/services/ApiPath';
 import { HTTPService } from '../../data/services/HttpService';
 import dialogManager from '../../components/dialog/DialogManager';
+import TextTicker from 'react-native-text-ticker';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
 
@@ -28,25 +30,61 @@ export default (props) => {
         console.log('detailGroup props', props.detailGroup);
         setDetailGroup(props.detailGroup)
         backupDetailGroup.current = props.detailGroup
-        const getListMember = () => {
-            setListMember([])
-        }
         const getVendorSession = async () => {
             let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true)
             vendorSession = JSON.parse(vendorSession)
             if (vendorSession && vendorSession.CurrentUser && vendorSession.CurrentUser.Id) ModifiedBy.current = vendorSession.CurrentUser.Id
         }
-        getListMember()
         getVendorSession()
     }, [props.detailGroup])
 
     useEffect(() => {
         if (detailGroup.Id === 0) setShowModal(true)
+        listMember.length = 0 //reset list member
+        const getListMember = async () => {
+            let customer = await new HTTPService().setPath(ApiPath.SYNC_PARTNERS).GET()
+            if (customer && customer.Data && customer.Data.length > 0) {
+                customer.Data.forEach(element => {
+                    element.PartnerGroupMembers.forEach(item => {
+                        if (item.GroupId == detailGroup.Id) {
+                            listMember.push(element)
+                        }
+                    })
+                });
+            }
+            console.log('listMember', listMember);
+            setListMember([...listMember])
+        }
+        getListMember()
     }, [detailGroup])
 
     const renderListMember = (item, index) => {
         return (
-            <Text>{index}</Text>
+            <View key={index.toString()}
+                style={{ flexDirection: "row", alignItems: "center", padding: 10, backgroundColor: "white", marginBottom: 5, borderRadius: 10 }}>
+                <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center", }}>
+                    <View style={{ width: 60, height: 60, justifyContent: "center", alignItems: "center", backgroundColor: index % 2 == 0 ? colors.colorPhu : colors.colorLightBlue, borderRadius: 30, marginRight: 10 }}>
+                        <Text style={{ color: "#fff", fontSize: 24, textTransform: "uppercase" }}>{item.Name[0]}</Text>
+                    </View>
+                    <View style={{ flex: 1.3 }}>
+                        <Text
+                            numberOfLines={1}
+                            style={{ fontSize: 15, fontWeight: "bold", }}>{item.Name}</Text>
+                        <Text style={{ paddingVertical: 5 }}>{item.Code}</Text>
+                        <Text style={{}}>{I18n.t('diem_thuong')}: {currencyToString(item.Point)}</Text>
+                    </View>
+                    <View style={{ flex: 1 }}>
+                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-start", marginBottom: 10 }}>
+                            <Icon name="phone" size={24} color={colors.colorchinh} style={{ marginRight: 10 }} />
+                            <Text>{item.Phone ? item.Phone : I18n.t('chua_cap_nhat')}</Text>
+                        </View>
+                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-start" }}>
+                            <Icon name="home" size={24} color={colors.colorchinh} style={{ marginRight: 10 }} />
+                            <TextTicker>{item.Address ? item.Address : I18n.t('chua_cap_nhat')}</TextTicker>
+                        </View>
+                    </View>
+                </View>
+            </View>
         )
     }
 
@@ -219,7 +257,7 @@ export default (props) => {
             <View style={{ flex: 3, }}>
                 <View style={{ flexDirection: "row", padding: 10, justifyContent: "space-between" }}>
                     <Text style={{ fontWeight: "bold", color: "#c3c3c3" }}>{I18n.t('thanh_vien_trong_nhom')}</Text>
-                    <Text style={{ fontWeight: "bold", color: "#c3c3c3" }}>01</Text>
+                    <Text style={{ fontWeight: "bold", color: "#c3c3c3" }}>{listMember.length}</Text>
                 </View>
                 <FlatList
                     data={listMember}

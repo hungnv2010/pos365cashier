@@ -121,7 +121,7 @@ export default (props) => {
   useEffect(() => {
     const syncDatas = async () => {
       if (isFNB === null) return
-      
+
       dispatch({ type: 'ALREADY', already: false })
       NetInfo.fetch().then(async state => {
         if (state.isConnected == true && state.isInternetReachable == true) {
@@ -160,10 +160,11 @@ export default (props) => {
     }
   }, [isFNB, autoPrintKitchen])
 
-  
+
 
   const getDataNewOrders = async () => {
     let result = await dataManager.initComfirmOrder()
+    console.log('getDataNewOrders', result);
     if (result != null) {
       viewPrintRef.current.printDataNewOrdersRef(result.newOrders != null ? JSON.stringify(result.newOrders) : null, result.listOrdersReturn != null ? JSON.stringify(result.listOrdersReturn) : null)
       if (result.listRoom && result.listRoom != null)

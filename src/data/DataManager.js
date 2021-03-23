@@ -49,7 +49,6 @@ class DataManager {
                         let productItem = products.filtered(`Id == '${newOrder.ProductId}'`)
                         productItem = JSON.parse(JSON.stringify(productItem))[0];
                         productItem = { ...productItem, ...newOrder, Price: newOrder.IsLargeUnit ? productItem.PriceLargeUnit : productItem.UnitPrice }
-                        console.log('productItem', productItem);
                         listOrders.push({ ...productItem })
                         for (const item of listRoom) {
                             if (item.rowKey == rowKey) {
@@ -58,7 +57,7 @@ class DataManager {
                             }
                         }
                         if (!exist) {
-                            listRoom.push({ rowKey, products: [{ ...productItem }], RoomId: newOrder.RoomId, Position: newOrder.Position })
+                            listRoom.push({ rowKey, products: [{ ...productItem }], RoomId: newOrder.RoomId, Position: newOrder.Position, RoomName: newOrder.RoomName })
                         }
                     }
                     let listOrdersReturn = listOrders.filter(item => item.Quantity < 0)
@@ -80,31 +79,45 @@ class DataManager {
     }
 
     updateFromOrder = async (listRoom) => {
+        console.log('updateFromOrder', listRoom);
         if (listRoom.length == 0) return
-        for (const item of listRoom) {
-            let serverEvent = await realmStore.queryServerEvents()
-            let serverEventByRowKey = serverEvent.filtered(`RowKey == '${item.rowKey}'`)
-            serverEventByRowKey = JSON.stringify(serverEventByRowKey) != '{}' ? JSON.parse(JSON.stringify(serverEventByRowKey))[0]
-                : await this.createSeverEvent(item.RoomId, item.Position)
-            console.log('serverEventByRowKey', serverEventByRowKey);
-            serverEventByRowKey.JsonContent = JSON.parse(serverEventByRowKey.JsonContent)
-            item.products.forEach(element => {
-                element.Processed = element.Quantity > 0 ? element.Quantity : 0;
-            });
-            if (serverEventByRowKey.JsonContent.OrderDetails && serverEventByRowKey.JsonContent.OrderDetails.length > 0) {
-                serverEventByRowKey.JsonContent.OrderDetails = mergeTwoArray(item.products, serverEventByRowKey.JsonContent.OrderDetails, true)
-            } else {
-                let title = serverEventByRowKey.JsonContent.RoomName ? serverEventByRowKey.JsonContent.RoomName : ""
-                let body = I18n.t('gio_khach_vao') + moment().format('HH:mm dd/MM')
-                serverEventByRowKey.JsonContent.ActiveDate = moment()
-                dataManager.sentNotification(title, body)
-                serverEventByRowKey.JsonContent.OrderDetails = [...item.products]
-            }
-            serverEventByRowKey.Version += 1
-            this.calculatateJsonContent(serverEventByRowKey.JsonContent)
-            serverEventByRowKey.JsonContent = JSON.stringify(serverEventByRowKey.JsonContent)
-            this.updateServerEvent(serverEventByRowKey, serverEventByRowKey.JsonContent)
+        for (let index = 0; index < listRoom.length; index++) {
+            let listOrder = listRoom[index]
+            this.updateServerFromOrder(listOrder, index).then(
+                () => {
+                    dataManager.sentNotification(listOrder.RoomName, I18n.t('gio_khach_vao') + moment().format('HH:mm dd/MM'))
+                }
+            ).catch((e) => {
+                console.log('updateFromOrder err', e);
+            })
         }
+    }
+
+    updateServerFromOrder = async (listOrders, index) => {
+        let serverEvent = await realmStore.queryServerEvents()
+        let serverEventByRowKey = serverEvent.filtered(`RowKey == '${listOrders.rowKey}'`)
+        serverEventByRowKey = JSON.stringify(serverEventByRowKey) != '{}' ? JSON.parse(JSON.stringify(serverEventByRowKey))[0]
+            : await this.createSeverEvent(listOrders.RoomId, listOrders.Position)
+        console.log('serverEventByRowKey', serverEventByRowKey, JSON.parse(serverEventByRowKey.JsonContent));
+        listOrders.products.forEach(element => {
+            element.Processed = element.Quantity > 0 ? element.Quantity : 0;
+        });
+        if (serverEventByRowKey.JsonContent != "{}" && JSON.parse(serverEventByRowKey.JsonContent).OrderDetails.length > 0) {
+            serverEventByRowKey.JsonContent = JSON.parse(serverEventByRowKey.JsonContent)
+            serverEventByRowKey.JsonContent.OrderDetails = mergeTwoArray(listOrders.products, serverEventByRowKey.JsonContent.OrderDetails, true)
+        } else {
+            serverEventByRowKey.JsonContent = this.createJsonContent(listOrders.RoomId, listOrders.Position, moment(), listOrders.products, listOrders.RoomName)
+        }
+        serverEventByRowKey.Version += 1
+        this.calculatateJsonContent(serverEventByRowKey.JsonContent)
+        serverEventByRowKey.JsonContent.OrderDetails.forEach(item => {
+            delete item.ProductImages
+        })
+        serverEventByRowKey.JsonContent = JSON.stringify(serverEventByRowKey.JsonContent)
+        delete serverEventByRowKey.Timestamp
+        console.log('updateServerFromOrder', serverEventByRowKey, JSON.parse(serverEventByRowKey.JsonContent));
+        await realmStore.insertServerEvent(serverEventByRowKey)
+        signalRManager.sendMessageServerEvent(serverEventByRowKey)
     }
 
     getDataPrintCook = (newOrders) => {
@@ -376,7 +389,7 @@ class DataManager {
             Title: Title,
             Body: Body,
         }
-        new HTTPService().setPath(ApiPath.SENT).POST(params).then(sent => {
+        new HTTPService().setPath(ApiPath.SENT, false).POST(params).then(sent => {
             console.log("sentNotification sent ", sent);
             if (sent) {
 
