@@ -69,7 +69,7 @@ export default (props) => {
         console.log("type", type1);
         dialogManager.showLoading()
         try {
-            await realmStore.deletePartner()
+            await realmStore.deleteProduct()
             await dataManager.syncProduct()
             getData()
             dialogManager.showPopupOneButton(`${I18n.t(type1)} ${I18n.t('thanh_cong')}`, I18n.t('thong_bao'))
