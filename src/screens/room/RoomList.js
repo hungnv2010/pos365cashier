@@ -31,7 +31,6 @@ export default (props) => {
     const dispatch = useDispatch()
 
     const deviceType = useSelector(state => {
-        console.log("useSelector state ", state);
         return state.Common.deviceType
     });
 

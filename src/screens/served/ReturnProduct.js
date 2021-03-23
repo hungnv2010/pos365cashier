@@ -22,7 +22,6 @@ export const ReturnProduct = (props) => {
     const [Description, setDescription] = useState("");
 
     const { deviceType } = useSelector(state => {
-        console.log("useSelector state ", state);
         return state.Common
     });
 

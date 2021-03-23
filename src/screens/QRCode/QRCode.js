@@ -27,7 +27,6 @@ export default (props) => {
     }, [])
 
     const orientation = useSelector(state => {
-        console.log("useSelector state ", state);
         return state.Common.orientaition
     });
 

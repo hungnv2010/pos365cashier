@@ -25,7 +25,6 @@ export default (props) => {
     const [dataItem, setDataItem] = useState("")
     const [listHistoryOrder, setListOrder] = useState([])
     const { deviceType } = useSelector(state => {
-        console.log("useSelector state ", state);
         return state.Common
     });
 

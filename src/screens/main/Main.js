@@ -27,7 +27,7 @@ export default (props) => {
   const dispatch = useDispatch();
   const [textSearch, setTextSearch] = useState('')
   const [autoPrintKitchen, setAutoPrintKitchen] = useState(false)
-  const { listPrint, isFNB, printProvisional, printReturnProduct } = useSelector(state => {
+  const { listPrint, isFNB, printProvisional, printReturnProduct, appState } = useSelector(state => {
     return state.Common
   })
 
@@ -147,7 +147,7 @@ export default (props) => {
   }, [isFNB])
 
   useEffect(() => {
-    if (autoPrintKitchen && isFNB) {
+    if (autoPrintKitchen && isFNB && appState == 'active') {
       scanFromOrder.current = setInterval(() => {
         getDataNewOrders()
       }, 15000);
@@ -158,7 +158,7 @@ export default (props) => {
         clearInterval(scanFromOrder.current)
       }
     }
-  }, [isFNB, autoPrintKitchen])
+  }, [isFNB, autoPrintKitchen, appState])
 
 
 

@@ -27,13 +27,18 @@ export default () => {
     const [forceUpdate, setForceUpdate] = useState(false);
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
-    const [appState, setAppstate] = useState(AppState.currentState);
+    // const [appState, setAppstate] = useState(AppState.currentState);
     const [netInfo, setNetInfo] = useState(null)
     const [showStatusInternet, setShowStatusInternet] = useState(false);
     const dispatch = useDispatch();
     const { height, width } = Dimensions.get('window');
     const aspectRatio = height / width;
     const hasInternet = useRef()
+
+    const appState = useSelector(state => {
+        console.log('state.Common.appState', state.Common.appState);
+        return state.Common.appState
+    });
     const isPortrait = () => {
         const dim = Dimensions.get("screen");
         return dim.height >= dim.width ? Constant.PORTRAIT : Constant.LANDSCAPE;
@@ -176,7 +181,8 @@ export default () => {
                 signalRManager.reconnect()
             }
         }
-        setAppstate(newState)
+        // setAppstate(newState)
+        dispatch({ type: 'APP_STATE', appState: newState })
     }
 
     const handleChange = () => {

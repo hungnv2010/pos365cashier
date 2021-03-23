@@ -32,7 +32,6 @@ export default (props) => {
     const timeFormat = useRef("")
     const typeDateTime = useRef(null)
     const deviceType = useSelector(state => {
-        console.log("useSelector state ", state);
         return state.Common.deviceType
     });
 

@@ -17,7 +17,6 @@ const InvoiceDetail = (props) => {
     const [dataDetail, setDataDetail] = useState([])
     const moreAttributes = useRef(null)
     const deviceType = useSelector(state => {
-        console.log("useSelector state ", state);
         return state.Common.deviceType
     });
     const listAccount = useRef([])

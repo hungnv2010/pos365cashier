@@ -37,7 +37,6 @@ export default (props) => {
     const debouncedVal = useDebounce(textSearch)
     const backUpCustomer = useRef([])
     const { deviceType } = useSelector(state => {
-        console.log("useSelector state ", state);
         return state.Common
     });
     const currentBranch = useRef()

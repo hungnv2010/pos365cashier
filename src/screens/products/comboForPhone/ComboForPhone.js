@@ -18,7 +18,6 @@ export default (props) => {
     const [listFomular, setListFormular] = useState([])
     const [sumQuantity, setSumQuantity] = useState(0)
     const deviceType = useSelector(state => {
-        console.log("useSelector state ", state);
         return state.Common.deviceType
     });
 

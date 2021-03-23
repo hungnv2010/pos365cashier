@@ -32,7 +32,6 @@ export default (props) => {
 
     const [idCategory, setIdCategory] = useState(-1)
     const deviceType = useSelector(state => {
-        console.log("useSelector state ", state);
         return state.Common.deviceType
     });
     const getData = async () => {

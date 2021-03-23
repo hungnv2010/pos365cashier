@@ -37,12 +37,10 @@ export default (props) => {
     });
 
     const { deviceType } = useSelector(state => {
-        console.log("useSelector state ======== ", state);
         return state.Common
     });
 
     const numberColumn = useSelector(state => {
-        console.log("useSelector state ", state);
         let numberColumn = (state.Common.orientaition == Constant.LANDSCAPE) ? 8 : 4
         if (state.Common.deviceType == Constant.TABLET) numberColumn++
         return numberColumn

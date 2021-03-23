@@ -39,7 +39,6 @@ export default forwardRef((props, ref) => {
     let isClick = useRef();
 
     const deviceType = useSelector(state => {
-        console.log("useSelector state ", state);
         return state.Common.deviceType
     });
 

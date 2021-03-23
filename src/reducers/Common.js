@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-community/async-storage"
 // import { persistReducer } from 'redux-persist';
-
+import { AppState } from 'react-native'
 
 const initState = {
 	info: {
@@ -18,7 +18,7 @@ const initState = {
 	deviceType: "",
 	orientaition: "",
 	already: false,
-	netInfo: null,
+	appState: AppState.currentState,
 	historyOrder: [],
 	printerObject: {},
 
@@ -85,10 +85,10 @@ const commonReducer = (state = initState, action = {}) => {
 				...state,
 				orientaition: action.orientaition
 			}
-		case "NET_INFO":
+		case "APP_STATE":
 			return {
 				...state,
-				netInfo: action.netInfo
+				appState: action.appState
 			}
 		case "ALREADY":
 			return {
