@@ -108,7 +108,7 @@ export default (props) => {
     const renderProduct = (item, index) => {
         return (
             <TouchableOpacity key={index.toString()} onPress={() => onClickItem(item)} style={{ backgroundColor: '#F5F5F5' }}>
-                <View style={{ backgroundColor: 'white', padding: 10, margin: 5, borderRadius: 16, borderColor: 'silver', borderWidth: 0.5, }}>
+                <View style={{ backgroundColor: itProduct && itProduct.Id == item.Id?'#FFE5B4':'#FFF', padding: 10, margin: 5, borderRadius: 16, borderColor: 'silver', borderWidth: 0.5, }}>
                     <View style={{ flexDirection: 'row' }}>
                         {item.ProductImages != "" && JSON.parse(item.ProductImages).length > 0 ?
                             <Image style={{ height: 48, width: 48, borderRadius: 16 }} source={{ uri: JSON.parse(item.ProductImages)[0].ImageURL }} />
