@@ -33,7 +33,7 @@ export default () => {
     const { height, width } = Dimensions.get('window');
     const aspectRatio = height / width;
     const hasInternet = useRef()
-    const appState = useRef(AppState.currentState)
+    const stateApp = useRef(AppState.currentState)
 
 
     const isPortrait = () => {
@@ -94,7 +94,7 @@ export default () => {
         }
         if (netInfo === true) {
             if (hasInternet.current === false) {
-                if (signalRInfo != ""&& isError) {
+                if (signalRInfo != "" && isError) {
                     signalRManager.reconnect()
                 }
                 hasInternet.current = true
@@ -174,12 +174,13 @@ export default () => {
     }, [])
 
     const handleChangeState = (newState) => {
-        if (appState.current.match(/inactive|background/) && newState === 'active') {
+        dispatch({ type: "APP_STATE", appState: newState })
+        if (stateApp.current.match(/inactive|background/) && newState === 'active') {
             if (signalRInfo != "" && isError) {
                 signalRManager.reconnect()
             }
         }
-        appState.current = newState
+        stateApp.current = newState
     }
 
     const handleChange = () => {

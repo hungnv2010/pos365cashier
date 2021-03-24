@@ -18,6 +18,7 @@ const initState = {
 	deviceType: "",
 	orientaition: "",
 	already: false,
+	appState: AppState.currentState,
 	historyOrder: [],
 	printerObject: {},
 
@@ -84,7 +85,11 @@ const commonReducer = (state = initState, action = {}) => {
 				...state,
 				orientaition: action.orientaition
 			}
-	
+		case "APP_STATE":
+			return {
+				...state,
+				appState: action.appState
+			}
 		case "ALREADY":
 			return {
 				...state,

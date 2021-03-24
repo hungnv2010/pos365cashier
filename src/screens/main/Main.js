@@ -103,17 +103,9 @@ export default (props) => {
   }, [])
 
   useEffect(() => {
-    scanPaymentStatus.current = setInterval(() => {
-      getPaymentStatus()
-    }, 15000);
 
     Print.registerPrint("")
 
-    return () => {
-      if (scanPaymentStatus.current) {
-        clearInterval(scanPaymentStatus.current)
-      }
-    }
   }, [])
 
 
@@ -160,7 +152,18 @@ export default (props) => {
     }
   }, [isFNB, autoPrintKitchen, appState])
 
-
+  useEffect(() => {
+    if (appState == 'active') {
+      scanPaymentStatus.current = setInterval(() => {
+        getPaymentStatus()
+      }, 15000);
+    }
+    return () => {
+      if (scanPaymentStatus.current) {
+        clearInterval(scanPaymentStatus.current)
+      }
+    }
+  }, [appState])
 
   const getDataNewOrders = async () => {
     let result = await dataManager.initComfirmOrder()
