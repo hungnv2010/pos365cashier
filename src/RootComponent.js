@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Constant } from './common/Constant'
 import { navigationRef } from './navigator/NavigationService';
 import I18n from './common/language/i18n'
-import signalRManager, { signalRInfo } from './common/SignalR';
+import signalRManager, { signalRInfo, isError } from './common/SignalR';
 import { getFileDuLieuString, setFileLuuDuLieu } from './data/fileStore/FileStorage';
 import { Snackbar } from 'react-native-paper';
 import NetInfo from "@react-native-community/netinfo";
@@ -27,18 +27,15 @@ export default () => {
     const [forceUpdate, setForceUpdate] = useState(false);
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
-    // const [appState, setAppstate] = useState(AppState.currentState);
     const [netInfo, setNetInfo] = useState(null)
     const [showStatusInternet, setShowStatusInternet] = useState(false);
     const dispatch = useDispatch();
     const { height, width } = Dimensions.get('window');
     const aspectRatio = height / width;
     const hasInternet = useRef()
+    const appState = useRef(AppState.currentState)
 
-    const appState = useSelector(state => {
-        console.log('state.Common.appState', state.Common.appState);
-        return state.Common.appState
-    });
+
     const isPortrait = () => {
         const dim = Dimensions.get("screen");
         return dim.height >= dim.width ? Constant.PORTRAIT : Constant.LANDSCAPE;
@@ -97,8 +94,10 @@ export default () => {
         }
         if (netInfo === true) {
             if (hasInternet.current === false) {
+                if (signalRInfo != ""&& isError) {
+                    signalRManager.reconnect()
+                }
                 hasInternet.current = true
-                signalRManager.reconnect()
             }
         }
         console.log('netInfo', netInfo, 'hasInternet.current', hasInternet.current);
@@ -175,14 +174,12 @@ export default () => {
     }, [])
 
     const handleChangeState = (newState) => {
-        console.log('handleChangeState', newState);
-        if (appState.match(/inactive|background/) && newState === 'active') {
-            if (signalRInfo != "") {
+        if (appState.current.match(/inactive|background/) && newState === 'active') {
+            if (signalRInfo != "" && isError) {
                 signalRManager.reconnect()
             }
         }
-        // setAppstate(newState)
-        dispatch({ type: 'APP_STATE', appState: newState })
+        appState.current = newState
     }
 
     const handleChange = () => {

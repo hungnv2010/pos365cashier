@@ -8,11 +8,13 @@ import { decodeBase64 } from './Base64'
 import I18n from '../common/language/i18n'
 import dialogManager from '../components/dialog/DialogManager';
 import NetInfo from "@react-native-community/netinfo";
+import dataManager from '../data/DataManager';
 
 var statusInternet = { currentStatus: false, previousStatus: false };
 // let version = 0
 export var kiler = false;
 export var signalRInfo = "";
+export let isError = false;
 
 class SignalRManager {
 
@@ -67,15 +69,12 @@ class SignalRManager {
 
         this.connectionHub.connectionSlow(() => {
             console.warn('We are currently experiencing difficulties with the connection.')
-            this.reconnect()
+            // this.reconnect()
+            // isError = true
         });
 
         this.connectionHub.error((error) => {
-            NetInfo.fetch().then(state => {
-                if (state.isConnected == true && state.isInternetReachable == true) {
-               this.reconnect()
-                }
-            });
+            isError = true
             console.warn("connectionHub error ", error);
         });
 
@@ -83,8 +82,10 @@ class SignalRManager {
     }
 
     reconnect() {
+        console.log('reconnect');
         this.killSignalR()
         this.startSignalR()
+        this.getAllData()
     }
 
     startSignalR() {
@@ -92,6 +93,7 @@ class SignalRManager {
             .done(() => {
                 // alert('Now connected, connection ID=' + this.connectionHub.id);
                 this.isStartSignalR = true;
+                console.log('this.isStartSignalR', this.isStartSignalR);
                 if (dialogManager)
                     dialogManager.hiddenLoading();
             })
@@ -102,19 +104,19 @@ class SignalRManager {
             })
     }
 
-    // async getAllData() {
+    async getAllData() {
 
-    //     dialogManager.showLoading()
-    //     await dataManager.syncAllDatas()
-    //         .then(() => {
-    //             // store.dispatch({ type: 'ALREADY', already: true })
-    //         })
-    //         .catch((e) => {
-    //             // store.dispatch({ type: 'ALREADY', already: true })
-    //             console.log('syncAllDatas err', e);
-    //         })
-    //     dialogManager.hiddenLoading()
-    // }
+        dialogManager.showLoading()
+        store.dispatch({ type: 'ALREADY', already: false })
+        NetInfo.fetch().then(async state => {
+            if (state.isConnected == true && state.isInternetReachable == true) {
+                await realmStore.deleteAllForFnb()
+            }
+        });
+        await dataManager.syncAllDatas()
+        store.dispatch({ type: 'ALREADY', already: true })
+        dialogManager.hiddenLoading()
+    }
 
     sendMessageOrder = (message) => {
         console.log('sendMessageOrder message ', message);

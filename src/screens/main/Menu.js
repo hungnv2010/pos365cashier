@@ -114,6 +114,7 @@ export default (props) => {
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
 
+
     const handlerToast = (text) => {
         setToastDescription(text)
         setShowToast(true)
@@ -145,6 +146,9 @@ const HeaderComponent = (props) => {
     const [vendorSession, setVendorSession] = useState({});
     const [showModal, setShowModal] = useState(false);
     const dispatch = useDispatch();
+    const { isFNB } = useSelector(state => {
+        return state.Common
+    });
 
     useEffect(() => {
         const getVendorSession = async () => {
@@ -221,6 +225,9 @@ const HeaderComponent = (props) => {
             if (res) {
                 setFileLuuDuLieu(Constant.CURRENT_BRANCH, JSON.stringify(selectBranch));
                 setBranch(selectBranch)
+                if (isFNB === false) {
+                    realmStore.deleteSchema([SchemaName.SERVER_EVENT])
+                }
                 dispatch({ type: 'IS_FNB', isFNB: null })
                 // dispatch({ type: 'ALREADY', already: false })
                 signalRManager.killSignalR();
