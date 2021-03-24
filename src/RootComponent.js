@@ -89,6 +89,7 @@ export default () => {
     }, [])
 
     useEffect(() => {
+        console.log('isError', isError);
         if (netInfo === false) {
             hasInternet.current = false
         }
@@ -174,7 +175,8 @@ export default () => {
     }, [])
 
     const handleChangeState = (newState) => {
-        dispatch({ type: "APP_STATE", appState: newState })
+        console.log('handleChangeState', newState, isError);
+        dispatch({ type: 'APP_STATE', appState: newState })
         if (stateApp.current.match(/inactive|background/) && newState === 'active') {
             if (signalRInfo != "" && isError) {
                 signalRManager.reconnect()

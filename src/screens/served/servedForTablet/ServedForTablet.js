@@ -164,8 +164,7 @@ const Served = (props) => {
     }
 
     const outputSelectedProduct = async (product, replace = false) => {
-        let { RoomId, Position } = currentServerEvent.current
-        let jsonContentTmp = JSON.stringify(jsonContent) == "{}" ? dataManager.createJsonContent(RoomId, Position, moment(), [], props.route.params.room.Name) : jsonContent
+        let jsonContentTmp = JSON.parse(JSON.stringify(jsonContent))
         console.log('outputSelectedProduct', product, jsonContentTmp);
         if (product.Quantity > 0 && !replace) {
             if (jsonContentTmp.OrderDetails.length == 0) {
