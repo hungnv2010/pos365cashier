@@ -26,6 +26,7 @@ import dataManager from '../../data/DataManager';
 import QRCode from 'react-native-qrcode-svg';
 import ViewPrint, { TYPE_PRINT } from '../more/ViewPrint';
 import DatePicker from 'react-native-date-picker';
+import NetInfo from "@react-native-community/netinfo";
 import moment from 'moment';
 import { Subject } from 'rxjs';
 var Sound = require('react-native-sound');
@@ -73,13 +74,11 @@ export default (props) => {
     const [noteInfo, setNoteInfo] = useState("");
     const [showDateTime, setShowDateTime] = useState(false);
     const [marginModal, setMargin] = useState(0)
-    const [dataHtml, setDataHtml] = useState("");
     const [detailCustomer, setDetailCustomer] = useState("");
     const [selection, setSelection] = useState({
         start: 0,
         end: 0
     })
-
     const [inputDiscount, setInputDiscount] = useState("");
     const [inputVAT, setInputVAT] = useState("");
     const provisional = useRef();
@@ -143,9 +142,6 @@ export default (props) => {
             if (settingObject.current)
                 settingObject.current = JSON.parse(settingObject.current)
             console.log("settingObject.current ", settingObject.current);
-
-            let queryQRCode = await realmStore.queryQRCode();
-            console.log("queryQRCode ", JSON.parse(JSON.stringify(queryQRCode)));
         }
 
         // debounceTimeInput.current.debounceTime(300)
@@ -158,10 +154,6 @@ export default (props) => {
         //             dataManager.updateServerEventNow(serverEvent, true, isFNB);
         //         }
         //     })
-
-
-
-
 
         getRoom()
         getVendorSession()
@@ -497,17 +489,6 @@ export default (props) => {
     }
 
     const onSelectExcess = (type) => {
-        // if (type) {
-        //     let total = listMethod.reduce(getSumValue, 0);
-        //     console.log("onSelectExcess total jsonContent.Total ", total, jsonContent.Total);
-        //     let json = jsonContent;
-        //     json.ExcessCash = total - json.Total;
-        //     console.log("onSelectExcess json ", json)
-        //     setJsonContent({ ...json })
-        // } else {
-        //     jsonContent.ExcessCash = 0;
-        //     setJsonContent(jsonContent)
-        // }
         setGiveMoneyBack(type)
     }
 
@@ -529,11 +510,6 @@ export default (props) => {
     }
 
     const selectPercent = (value) => {
-        // if(value){
-        //     setInputDiscount(value)
-        // } else {
-
-        // }
         setPercent(value)
     }
 
@@ -565,13 +541,21 @@ export default (props) => {
         return check;
     }
 
-    const onClickPay = () => {
+    const onClickPay = async () => {
         console.log("onClickPay jsonContent ", jsonContent);
         let newDate = new Date().getTime();
         if (timeClickPrevious + 2000 < newDate) {
             timeClickPrevious = newDate;
         } else {
             return;
+        }
+        let net = await NetInfo.fetch();
+        if (net.isConnected == false || net.isInternetReachable == false) {
+            if (checkQRInListMethod()) {
+                setToastDescription(I18n.t("chuc_nang_qr_code_chi_su_dung_khi_co_internet"))
+                setShowToast(true)
+                return;
+            }
         }
         if (checkQRInListMethod() && listMethod.length > 1) {
             setToastDescription(I18n.t("khong_ho_tro_nhieu_tai_khoan_cho_qr"))
@@ -654,6 +638,7 @@ export default (props) => {
         params.Order = json;
         jsonContentPayment.current = json;
         console.log("onClickPay params== ", params);
+
         dialogManager.showLoading();
         new HTTPService().setPath(ApiPath.ORDERS, false).POST(params).then(async order => {
             console.log("onClickPay order== ", order);
@@ -661,22 +646,15 @@ export default (props) => {
                 resPayment.current = order;
                 dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
                 dialogManager.hiddenLoading()
-
-                // await printAfterPayment(order.Code)
-
-                // updateServerEvent();
-
                 if (order.ResponseStatus && order.ResponseStatus.Message && order.ResponseStatus.Message != "") {
                     dialogManager.showPopupOneButton(order.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, ""))
                     return;
                 }
-
                 if (order.QRCode && order.QRCode != "") {
                     qrCode.current = order.QRCode
                     typeModal.current = TYPE_MODAL.QRCODE
                     setShowModal(true)
                     handlerQRCode(order, json)
-                    // updateServerEvent(false)
                 } else {
                     await printAfterPayment(order.Code)
                     updateServerEvent(true)
@@ -1078,9 +1056,6 @@ export default (props) => {
                             <Text style={[styles.textButtonCancel, , { textTransform: "uppercase", color: colors.colorchinh, fontWeight: "bold" }]}>{I18n.t("in_lai")}</Text>
                         </TouchableOpacity>
                     </View>
-                    {/* <TouchableOpacity style={{ marginTop: 10, width: "100%", height: 50, backgroundColor: "#fff", borderRadius: 4, borderWidth: 1, borderColor: colors.colorchinh, justifyContent: "center" }} onPress={onClickRePrint}>
-                        <Text style={[styles.textButtonCancel, { textTransform: "uppercase", color: colors.colorchinh, fontWeight: "bold" }]}>{I18n.t("in_lai")}</Text>
-                    </TouchableOpacity> */}
                 </View>
             )
         if (typeModal.current == TYPE_MODAL.DATE) {
@@ -1167,19 +1142,22 @@ export default (props) => {
                             <Fontisto name="calculator" size={20} color={colors.colorchinh} />
                         </TouchableOpacity>
                     </View>
-                    <TextInput
-                        returnKeyType='done'
-                        keyboardType="number-pad"
-                        // selection={selection}
-                        placeholder="0"
-                        placeholderTextColor="#808080"
-                        onFocus={() => setSelectionInput(currencyToString(item.Value, true))}
-                        // onSelectionChange={() => setSelectionInput(currencyToString(item.Value, true))}
-                        value={item.Value == "" ? "" : "" + currencyToString(item.Value, true)}
-                        onTouchStart={() => onTouchInput({ ...item, ...METHOD.pay })}
-                        editable={deviceType == Constant.TABLET ? false : true}
-                        onChangeText={(text) => onChangeTextPaymentPaid(text, item, index)}
-                        style={[styles.inputListMethod, { borderColor: (sendMethod.Id == item.Id && item.UUID == sendMethod.UUID) ? colors.colorchinh : "gray" }]} />
+                    {
+                        item.Id == Constant.ID_VNPAY_QR ?
+                            <Text style={[styles.inputListMethod, { opacity: 0.2 }]}>{item.Value == "" ? "" : "" + currencyToString(item.Value, true)}</Text>
+                            :
+                            <TextInput
+                                returnKeyType='done'
+                                keyboardType="number-pad"
+                                placeholder="0"
+                                placeholderTextColor="#808080"
+                                onFocus={() => setSelectionInput(currencyToString(item.Value, true))}
+                                value={item.Value == "" ? "" : "" + currencyToString(item.Value, true)}
+                                onTouchStart={() => onTouchInput({ ...item, ...METHOD.pay })}
+                                editable={deviceType == Constant.TABLET ? false : true}
+                                onChangeText={(text) => onChangeTextPaymentPaid(text, item, index)}
+                                style={[styles.inputListMethod, { borderColor: (sendMethod.Id == item.Id && item.UUID == sendMethod.UUID) ? colors.colorchinh : "gray" }]} />
+                    }
                 </View>
             )
         })
@@ -1214,10 +1192,6 @@ export default (props) => {
 
     return (
         <View style={styles.conatiner}>
-            <ViewPrint
-                ref={viewPrintRef}
-                html={dataHtml}
-            />
             <ToolBarPayment
                 ref={toolBarPaymentRef}
                 {...props}
@@ -1288,10 +1262,7 @@ export default (props) => {
                                         <Text style={{ color: !percent ? "#fff" : '#000' }}>VNĐ</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={() => {
-
                                         jsonContent.DiscountRatio = jsonContent.Discount / totalPrice * 100
-                                        console.log("jsonContent.DiscountRatio ", jsonContent.DiscountRatio);
-
                                         selectPercent(true)
                                     }} style={[styles.viewSelectVAT, { backgroundColor: !percent ? "#fff" : colors.colorchinh }]}>
                                         <Text style={{ color: percent ? "#fff" : '#000' }}>%</Text>
@@ -1302,10 +1273,8 @@ export default (props) => {
                                     returnKeyType='done'
                                     keyboardType="number-pad"
                                     onFocus={() => onFocusDiscount()}
-                                    // onFocus={() => setSelectionInput(currencyToString((!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio), true))}
                                     placeholder="0"
                                     placeholderTextColor="#808080"
-                                    // onSelectionChange={() => setSelectionInput(currencyToString((!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio), true))}
                                     value={inputDiscount == "" ? "" : currencyToString(inputDiscount, true)}
                                     onTouchStart={() => onTouchInput(METHOD.discount)}
                                     editable={deviceType == Constant.TABLET ? false : true}
@@ -1342,12 +1311,8 @@ export default (props) => {
                                     onBlur={onBlurInput}
                                     returnKeyType='done'
                                     keyboardType="number-pad"
-                                    // selection={selection}
                                     placeholder="0"
                                     placeholderTextColor="#808080"
-                                    // onFocus={() => setSelectionInput(currencyToString(jsonContent.VATRates, true))}
-                                    // onSelectionChange={() => setSelectionInput(currencyToString(jsonContent.VATRates, true))}
-                                    // value={"" + currencyToString(jsonContent.VATRates, true)}
                                     value={inputVAT == "" ? "" : currencyToString(inputVAT)}
                                     onFocus={() => onFocusVAT()}
                                     onTouchStart={() => onTouchInput(METHOD.vat)}
