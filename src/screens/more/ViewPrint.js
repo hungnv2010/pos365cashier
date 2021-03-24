@@ -152,7 +152,7 @@ export default forwardRef((props, ref) => {
     }
 
     const printKitchen = async (data, type = TYPE_PRINT.KITCHEN, isPrint = true) => {
-        console.log("printKitchen data ", data);
+        console.log("printKitchen printObject ", printObject);
         let setting = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
         if (setting && setting != "") {
             setting = JSON.parse(setting);
