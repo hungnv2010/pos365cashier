@@ -71,6 +71,7 @@ export default (props) => {
   );
 
   useEffect(() => {
+    console.log('mainScreen props', props);
     const getStoreInfo = async () => {
       dialogManager.showLoading()
       let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
@@ -120,7 +121,9 @@ export default (props) => {
           if (isFNB === true) {
             await realmStore.deleteAllForFnb()
           } else {
-            await realmStore.deleteAllForRetail()
+            let fromLogin = !props.params
+            console.log('fromLogin',fromLogin);
+            await realmStore.deleteAllForRetail(fromLogin)
           }
         }
       });

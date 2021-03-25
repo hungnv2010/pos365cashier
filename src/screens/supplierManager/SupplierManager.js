@@ -21,8 +21,8 @@ export default (props) => {
 
     }, [])
 
-    const onClickNavigation = (screen) => {
-        props.navigation.navigate(screen)
+    const onClickNavigation = (screen, params={}) => {
+        props.navigation.navigate(screen,params)
     }
 
     return (

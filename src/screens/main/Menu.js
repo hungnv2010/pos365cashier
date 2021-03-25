@@ -225,9 +225,9 @@ const HeaderComponent = (props) => {
             if (res) {
                 setFileLuuDuLieu(Constant.CURRENT_BRANCH, JSON.stringify(selectBranch));
                 setBranch(selectBranch)
-                if (isFNB === false) {
-                    realmStore.deleteSchema([SchemaName.SERVER_EVENT])
-                }
+                // if (isFNB === false) {
+                //     realmStore.deleteSchema([SchemaName.SERVER_EVENT])
+                // }
                 dispatch({ type: 'IS_FNB', isFNB: null })
                 // dispatch({ type: 'ALREADY', already: false })
                 signalRManager.killSignalR();
@@ -249,7 +249,13 @@ const HeaderComponent = (props) => {
             CommonActions.reset({
                 index: 0,
                 routes: [
-                    { name: 'Home' },
+                    {
+                        name: 'Home',
+                        params: { isFromLogin: false}
+                    },
+                    {
+                        name: "Home"
+                    }
                 ]
             })
         )
