@@ -161,6 +161,11 @@ export const change_alias = (alias) => {
   str = str.trim();
   return str;
 }
+export const change_quantity = (value) =>{
+  var str = value
+  str = str.replace(/,|./g,".")
+  return str
+}
 
 export const randomUUID = () => {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {

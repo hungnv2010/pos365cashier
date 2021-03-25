@@ -875,6 +875,7 @@ export default {
   don_vi_tinh_lon: 'Large unit',
   don_hang_cho_thanh_toan: "Commodity waiting for payment",
   dong_bo_du_lieu: 'Synchronize data',
+  dang_xuat_tai_khoan_tren_cac_thiet_bi_dang_dung:'Sign out for all device',
 
   giu_man_hinh_luon_sang: "Keep the screen on",
   gia: "Price",
@@ -888,6 +889,7 @@ export default {
   hien_thi_hang_hoa: 'Display product',
   hien_thi_san_pham_tren_man_hinh_thu_ngan: "Display product on the list of the cashier screen",
   hoac:'or',
+  hoat_dong:'Action',
 
   in_sau_khi_thanh_toan: "Print after payment",
   in_hai_lien_cho_hoa_don: "Print 2 copies for invoice",
@@ -907,6 +909,7 @@ export default {
   khung_gio:'Time slot',
   kieu_thay_doi_gia:'Price change type',
   khung_gio_dac_biet:'Special time slot',
+  khoa:'Locked',
 
   link_dang_nhap: "Link login",
   ly_do: "Reason",
@@ -929,6 +932,8 @@ export default {
   ma_hang_ma_sku_ma_vach: 'Product code',
   ma_dvt_lon: 'Large unit code',
   may_tinh: 'Calculator',
+  ma_nhan_vien:'Employee code',
+  mo_khoa:'Unlock',
 
   nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: "Receive messages / notifications from waiter, manager?",
   nhap_so_luong_the: "Enter the number of cards",
@@ -938,6 +943,8 @@ export default {
   ngay_huy_tra: 'Cancellation date',
   ngay_het_han: 'Expiry Date',
   nhap_ten_nhom_hang_hoa: 'Enter category name',
+
+  quan_ly:'Manager',
 
   so_the_cung: "Card number",
   su_dung_hai_man_hinh: "Using two screen",
@@ -969,6 +976,9 @@ export default {
   thanh_phan_combo: "Combo Components",
   tien_thieu: 'Missing money',
   ty_le_thay_doi:'Ratio change',
+  ten_nhan_vien:'Employee name',
+  tim_kiem_nhan_vien:'Enter search employee',
+  thiet_lap_quyen:'Set permissions',
 
   voucher: "Voucher",
   vui_long_nhap_dung_so_tien_khach_tra: "Please enter the correct amount of payment.",

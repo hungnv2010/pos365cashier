@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useRef } from 'react'
 import SettingSwitch from '../settings/SettingSwitch';
 import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput,Keyboard } from 'react-native';
 import { ScrollView } from 'react-native';
@@ -12,6 +12,7 @@ import { TouchableWithoutFeedback } from 'react-native';
 import { Metrics } from '../../theme';
 import { getFileDuLieuString, setFileLuuDuLieu } from '../../data/fileStore/FileStorage';
 import { Constant } from '../../common/Constant';
+import colors from '../../theme/Colors';
 export default (props) => {
     const [qrcodeEnable, setQRCodeEnable] = useState(false)
     const [stateModal, setStateModal] = useState(false)
@@ -24,6 +25,7 @@ export default (props) => {
     const [printInvoice, setPrintInvoice] = useState(false)
     const [paymentPosMachine, setPaymentPosMachine] = useState(false)
     const [marginModal, setMargin] = useState(0)
+    const isPost = useRef(false)
 
     useFocusEffect(useCallback(() => {
         const getQrCodeEnable = async () => {
@@ -54,10 +56,10 @@ export default (props) => {
     const onClick = (data) => {
         setQRCodeEnable(data.stt)
         updateSetting('QrCodeEnable', data.stt)
+        
     }
     const onClickPrintInvoice = (data) => {
         setPrintInvoice(data.stt)
-        updateSetting('PrintInvoiceBeforePaymentVNPayQR', data.stt)
         setSettingObject({ ...settingObject, PrintInvoiceBeforePaymentVNPayQR: data.stt })
         setFileLuuDuLieu(Constant.OBJECT_SETTING, JSON.stringify({ ...settingObject, PrintInvoiceBeforePaymentVNPayQR: data.stt }))
     }
@@ -103,17 +105,13 @@ export default (props) => {
             Key: key,
             Value: value
         }
+        
         new HTTPService().setPath(ApiPath.UPDATE_SETTING).POST(params)
             .then(res => {
                 console.log('onClickApply res', res);
                 if (res) {
                     console.log("res");
-                    new HTTPService().setPath(ApiPath.VENDOR_SESSION).GET().then(async (res) => {
-                        console.log("getDataRetailerInfo res ", res);
-                        setFileLuuDuLieu(Constant.VENDOR_SESSION, JSON.stringify(res))
-                    })
-                } else {
-                    console.log('aaa');
+                    setFileLuuDuLieu(Constant.OBJECT_SETTING, JSON.stringify({ ...settingObject, key: value }))
                 }
             })
             .catch(err => {
@@ -178,9 +176,9 @@ export default (props) => {
                         <View style={{ width: Metrics.screenWidth * 0.8, }}>
                             <Text style={styles.titleModal}>{I18n.t('thong_tin_cua_hang')}</Text>
                             <Text style={{ fontSize: 16, justifyContent: 'center', marginTop: 5, marginLeft: 20 }}>Mời nhập {titileModal} </Text>
-                            <TextInput style={styles.textInputStyle} onChangeText={text => setInput(text)}></TextInput>
-                            <TouchableOpacity style={{ justifyContent: 'flex-end', alignItems: 'flex-end', marginTop: 10, marginBottom: 10 }} onPress={() => setInfoModal(input)}>
-                                <Text style={{ textAlign: 'center', color: '#FF6600', marginRight: 40 }} >{I18n.t("dong_y")}</Text>
+                            <TextInput style={styles.textInputStyle} autoFocus onChangeText={text => setInput(text)}></TextInput>
+                            <TouchableOpacity style={{ justifyContent: 'flex-end', alignItems: 'flex-end', marginTop: 10, marginBottom: 10,borderRadius:10  }} onPress={() => setInfoModal(input)}>
+                                <Text style={{ textAlign: 'center', color: '#FFF', marginRight: 40,backgroundColor:colors.colorchinh,paddingVertical:10,paddingHorizontal:20}} >{I18n.t("dong_y")}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -230,10 +228,10 @@ const styles = StyleSheet.create(
 
         },
         styleViewModal: {
-            alignItems: 'center', justifyContent: 'center', backgroundColor: "#fff", borderWidth: 1, borderRadius: 5,
+            alignItems: 'center', justifyContent: 'center', backgroundColor: "#fff", borderWidth: 0.5, borderRadius: 5,
         },
         textInputStyle: {
-            height: 45, borderBottomWidth: 1, marginTop: 20, padding: 10, marginLeft: 20, marginRight: 20, borderRadius: 5, fontSize: 16
+            height: 45, borderBottomWidth: 0.5, marginTop: 20, padding: 10, marginLeft: 20, marginRight: 20, borderRadius: 5, fontSize: 16,color:'#000'
         },
         titleModal: {
             fontSize: 16, fontWeight: "bold", textAlign: "center", paddingVertical: 10, color: '#FF6600'

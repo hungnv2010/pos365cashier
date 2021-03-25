@@ -436,6 +436,7 @@ export default {
   don_hang_cho_thanh_toan: 'Đơn hàng chờ thanh toán',
   dong_bo_du_lieu: 'Đồng bộ dữ liệu',
   dang_cho_thanh_toan_vui_long_doi: "Đang chờ thanh toán, vui lòng đợi",
+  dang_xuat_tai_khoan_tren_cac_thiet_bi_dang_dung:'Đăng xuất tài khoản trên các thiết bị đang dùng',
 
   giu_man_hinh_luon_sang: "Giữ màn hình luôn sáng",
   gia: "Giá bán",
@@ -449,6 +450,7 @@ export default {
   hien_thi_hang_hoa: 'Hiển thị hàng hoá',
   hien_thi_san_pham_tren_man_hinh_thu_ngan: 'Hiển thị sản phẩm trên danh sách của màn hình thu ngân',
   hoac: 'hoặc',
+  hoat_dong:'Hoạt động',
 
   in_sau_khi_thanh_toan: "In sau khi thanh toán",
   in_hai_lien_cho_hoa_don: "In 2 liên cho hóa đơn",
@@ -469,6 +471,7 @@ export default {
   khung_gio: "Khung giờ",
   kieu_thay_doi_gia: 'Kiểu thay đổi giá',
   khung_gio_dac_biet: 'Khung giờ đặc biệt',
+  khoa:'Khoá',
 
   link_dang_nhap: "Link đăng nhập",
   ly_do: "Lý do",
@@ -491,6 +494,8 @@ export default {
   ma_hang_ma_sku_ma_vach: "Mã hàng/ SKU/ Mã vạch",
   ma_dvt_lon: 'Mã đơn vị tính lớn',
   may_tinh: "Máy tính",
+  ma_nhan_vien:'Mã nhân viên',
+  mo_khoa:'Mở khóa NV',
 
   nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: "Nhận tin nhắn/ thông báo từ phục vụ, quản lý?",
   nhap_so_luong_the: "Nhập số lượng thẻ",
@@ -500,6 +505,8 @@ export default {
   ngay_huy_tra: "Ngày hủy/trả",
   ngay_het_han: "Ngày hết hạn",
   nhap_ten_nhom_hang_hoa: 'Nhập tên nhóm hàng hoá',
+
+  quan_ly:'Quản lý',
 
   setting: 'Thiết lập',
   so_the_cung: "Số thẻ cứng",
@@ -531,6 +538,9 @@ export default {
   thanh_phan_combo: "Thành phần combo",
   tien_thieu: 'Tiền thiếu',
   ty_le_thay_doi: 'Tỷ lệ thay đổi',
+  ten_nhan_vien:'Tên nhân viên',
+  tim_kiem_nhan_vien:'Tìm kiếm nhân viên',
+  thiet_lap_quyen:'Thiết lập quyền',
 
   voucher: "Mã quà tặng",
   vui_long_nhap_dung_so_tien_khach_tra: "Vui lòng nhập đúng số tiền khách trả.",
