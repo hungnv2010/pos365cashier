@@ -47,9 +47,9 @@ class RealmStore extends RealmBase {
         await this.deleteSchema(newSchemaName)
     }
 
-    deleteAllForRetail = async () => {
+    deleteAllForRetail = async (islogin = true) => {
         let newSchemaName = { ...SchemaName }
-        delete newSchemaName.SERVER_EVENT
+        if (islogin) delete newSchemaName.SERVER_EVENT
         delete newSchemaName.ORDERS_OFFLINE
         delete newSchemaName.QR_CODE
         await this.deleteSchema(newSchemaName)
@@ -91,7 +91,7 @@ class RealmStore extends RealmBase {
             resolve()
         }))
     }
-    deleteProduct = async () =>{
+    deleteProduct = async () => {
         console.log("deleteProduct ");
         let realm = await Realm.open(databaseOption)
         return new Promise((resolve) => realm.write(() => {

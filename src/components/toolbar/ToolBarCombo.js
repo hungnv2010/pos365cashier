@@ -17,7 +17,6 @@ export default forwardRef((props, ref) => {
     const [isSearch, setIsSearch] = useState(false);
     const [showProductService, setShowProductService] = useState(false);
     const deviceType = useSelector(state => {
-        console.log("useSelector state ", state);
         return state.Common.deviceType
     });
 

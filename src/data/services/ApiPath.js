@@ -47,5 +47,6 @@ export const ApiPath = {
     VENDOR: "api/vendors/current",
     DELETE_ORDER: "api/orders/{orderId}/void",
     ENDOFDAY: "mobile/endOfDay",
+    GROUP_SUPPLIER: "api/groups/treeview",
     // http://cafe365.banhang365.vn/api/orders/95053575/void
 }

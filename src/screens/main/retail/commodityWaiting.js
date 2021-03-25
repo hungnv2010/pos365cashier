@@ -19,7 +19,6 @@ export default (props) => {
     const [listCommodity, setListCommodity] = useState([]);
     const numberCommodity = useRef(0)
     const numberColumn = useSelector(state => {
-        console.log("useSelector state ", state);
         let numberColumn = (state.Common.orientaition == Constant.LANDSCAPE) ? 6 : 4
         if (state.Common.deviceType == Constant.TABLET) numberColumn++
         return numberColumn

@@ -21,7 +21,6 @@ export default (props) => {
     const [dataOnline, setDataOnline] = useState("");
 
     const deviceType = useSelector(state => {
-        console.log("useSelector state ", state);
         return state.Common.deviceType
     });
 

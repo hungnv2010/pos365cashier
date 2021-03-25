@@ -23,7 +23,6 @@ export default (props) => {
     const [grandTotal, setGrandTotal] = useState(0)
 
     const { deviceType } = useSelector(state => {
-        console.log("useSelector state ", state);
         return state.Common
     });
 

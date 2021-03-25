@@ -27,7 +27,7 @@ export default (props) => {
   const dispatch = useDispatch();
   const [textSearch, setTextSearch] = useState('')
   const [autoPrintKitchen, setAutoPrintKitchen] = useState(false)
-  const { listPrint, isFNB, printProvisional, printReturnProduct } = useSelector(state => {
+  const { listPrint, isFNB, printProvisional, printReturnProduct, appState } = useSelector(state => {
     return state.Common
   })
 
@@ -71,6 +71,7 @@ export default (props) => {
   );
 
   useEffect(() => {
+    console.log('mainScreen props', props);
     const getStoreInfo = async () => {
       dialogManager.showLoading()
       let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
@@ -103,17 +104,9 @@ export default (props) => {
   }, [])
 
   useEffect(() => {
-    scanPaymentStatus.current = setInterval(() => {
-      getPaymentStatus()
-    }, 15000);
 
     Print.registerPrint("")
 
-    return () => {
-      if (scanPaymentStatus.current) {
-        clearInterval(scanPaymentStatus.current)
-      }
-    }
   }, [])
 
 
@@ -128,7 +121,9 @@ export default (props) => {
           if (isFNB === true) {
             await realmStore.deleteAllForFnb()
           } else {
-            await realmStore.deleteAllForRetail()
+            let fromLogin = !props.params
+            console.log('fromLogin',fromLogin);
+            await realmStore.deleteAllForRetail(fromLogin)
           }
         }
       });
@@ -147,7 +142,7 @@ export default (props) => {
   }, [isFNB])
 
   useEffect(() => {
-    if (autoPrintKitchen && isFNB) {
+    if (autoPrintKitchen && isFNB && appState == 'active') {
       scanFromOrder.current = setInterval(() => {
         getDataNewOrders()
       }, 15000);
@@ -158,9 +153,20 @@ export default (props) => {
         clearInterval(scanFromOrder.current)
       }
     }
-  }, [isFNB, autoPrintKitchen])
+  }, [isFNB, autoPrintKitchen, appState])
 
-
+  useEffect(() => {
+    if (appState == 'active') {
+      scanPaymentStatus.current = setInterval(() => {
+        getPaymentStatus()
+      }, 15000);
+    }
+    return () => {
+      if (scanPaymentStatus.current) {
+        clearInterval(scanPaymentStatus.current)
+      }
+    }
+  }, [appState])
 
   const getDataNewOrders = async () => {
     let result = await dataManager.initComfirmOrder()

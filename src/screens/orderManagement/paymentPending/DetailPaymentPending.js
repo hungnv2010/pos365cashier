@@ -60,6 +60,23 @@ export default (props) => {
         console.log("getData props.route.params ", props.route.params);
         setDataPaymentPending(props.route.params.data)
         setDataJsonContent(JSON.parse(props.route.params.data.JsonContent));
+        let JsonContentTmp = JSON.parse(props.route.params.data.JsonContent)
+        let OrderDetails = []
+        let products = await realmStore.queryProducts()
+        JsonContentTmp.OrderDetails.forEach(element => {
+            let productWithId = products.filtered(`Id ==${element.Id}`)
+            console.log("getData productWithId ", productWithId);
+            productWithId = JSON.parse(JSON.stringify(productWithId))[0] ? JSON.parse(JSON.stringify(productWithId))[0] : {}
+            let ProductImages = productWithId.ProductImages ? productWithId.ProductImages : ""
+            console.log("getData ProductImages ", ProductImages);
+            console.log("getData element ", element);
+            element['ProductImages'] = ProductImages;
+            OrderDetails.push(element)
+        });
+        console.log("getData OrderDetails ", JSON.stringify(OrderDetails));
+        JsonContentTmp.OrderDetails = OrderDetails;
+        console.log("getData JsonContentTmp ", JSON.stringify(JsonContentTmp));
+        setDataJsonContent(JsonContentTmp);
         if (props.route.params.CreateQR && props.route.params.CreateQR == true) {
             onCreateQr(props.route.params.data.Id);
         }
@@ -303,6 +320,18 @@ export default (props) => {
             )
     }
 
+    const renderImage = (ProductImages) => {
+        if (ProductImages != undefined) {
+            let ProductImagesTmp = JSON.parse(ProductImages && typeof (ProductImages) == 'string' ? ProductImages : "[]")
+            if (ProductImagesTmp.length > 0) {
+                return { uri: ProductImagesTmp[0].ImageURL };
+            } else {
+                return Images.default_food_image;
+            }
+        }
+        return Images.default_food_image;
+    }
+
     return (
         <View style={{ flex: 1 }}>
             <ToolBarDefault
@@ -346,6 +375,10 @@ export default (props) => {
                         <Text style={styles.textBoldGreen}>{dataJsonContent && dataJsonContent.Discount ? currencyToString(dataJsonContent.Discount) : 0} đ</Text>
                     </View>
                     <View style={styles.rowInfo}>
+                        <Text style={styles.textGray}>VAT</Text>
+                        <Text style={styles.textBoldRed}>{dataJsonContent && dataJsonContent.VATRates ? dataJsonContent.VATRates : 0}%</Text>
+                    </View>
+                    <View style={styles.rowInfo}>
                         <Text style={styles.textGray}>{I18n.t('phuong_thuc_thanh_toan')}</Text>
                         <Text style={{}}>VNPAY-QR</Text>
                     </View>
@@ -366,10 +399,13 @@ export default (props) => {
                                 dataJsonContent.OrderDetails.map((item, index) => {
                                     return (
                                         <TouchableOpacity key={index.toString()} style={[styles.viewItem]} onPress={() => onClickItemOrder(item)}>
-                                            <Image style={styles.imageProduct} source={item.ProductImages && JSON.parse(JSON.stringify(item.ProductImages)).length > 0 ? { uri: JSON.parse(item.ProductImages)[0].ImageURL } : Images.default_food_image} />
+                                            <Image style={styles.imageProduct}
+                                                source={renderImage(item.ProductImages)}
+                                            // source={JSON.parse(item.ProductImages).length > 0 ? { uri: JSON.parse(item.ProductImages)[0].ImageURL } : Images.default_food_image}
+                                            />
                                             <View style={styles.viewNameProduct}>
                                                 <Text style={{ textTransform: 'uppercase' }}>{item.Name}</Text>
-                                                <Text style={{ marginTop: 10, color: "gray" }}>{currencyToString(item.Price)} x {item.Quantity}</Text>
+                                                <Text style={{ marginTop: 10, color: "gray" }}>{currencyToString(item.Price)} x {item.Quantity}{item.IsLargeUnit ? item.LargeUnit ? `/${item.LargeUnit}` : '' : item.Unit ? `/${item.Unit}` : ''}</Text>
                                             </View>
                                             <View style={styles.viewTotalProduct}>
                                                 <Text style={{ color: "gray" }}></Text>
@@ -424,6 +460,7 @@ const styles = StyleSheet.create({
     content: { backgroundColor: "#fff", paddingVertical: 5 },
     textOrange: { fontWeight: "bold", color: "orange" },
     textBoldBlack: { fontWeight: "bold" },
+    textBoldRed: { fontWeight: "bold", color: "red" },
     textBoldGreen: { fontWeight: "bold", color: "green" },
     textBoldBlue: { fontWeight: "bold", color: "#36a3f7" },
     textGray: { color: "gray" },

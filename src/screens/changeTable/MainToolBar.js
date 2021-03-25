@@ -14,7 +14,6 @@ import colors from '../../theme/Colors';
 export default function MainToolBar(props) {
 
     const { deviceType } = useSelector(state => {
-        console.log("useSelector state ", state);
         return state.Common
     });
 

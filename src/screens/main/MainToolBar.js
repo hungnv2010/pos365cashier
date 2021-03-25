@@ -16,7 +16,6 @@ export default function MainToolBar(props) {
     const [isSearch, setIsSearch] = useState(false);
 
     const { deviceType } = useSelector(state => {
-        console.log("useSelector state ", state);
         return state.Common
     });
     useEffect(() => {

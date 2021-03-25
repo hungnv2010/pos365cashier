@@ -18,7 +18,6 @@ export default function CustomerToolBar(props) {
     const inputRef = useRef(null)
 
     const { deviceType } = useSelector(state => {
-        console.log("useSelector state ", state);
         return state.Common
     });
 

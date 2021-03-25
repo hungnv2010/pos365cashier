@@ -73,6 +73,7 @@ export default {
   chua_thanh_toan: "Chưa thanh toán",
   chi_tiet_don_hang: "Chi tiết đơn hàng",
   cap_nhat_nhom: "Cập nhật nhóm",
+  chuc_nang_qr_code_chi_su_dung_khi_co_internet: "Chức năng thanh toán QR CODE chỉ được thực hiện khi có kết nối internet",
 
   // TODO: D
   danh_sach_khach_hang: "Danh sách khách hàng",

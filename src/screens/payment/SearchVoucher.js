@@ -16,7 +16,6 @@ export default (props) => {
     const [listVoucher, setListVoucher] = useState([])
 
     const { deviceType } = useSelector(state => {
-        console.log("useSelector state ", state);
         return state.Common
     });
 

@@ -45,7 +45,6 @@ export default (props) => {
     const [branch, setBranch] = useState({});
 
     const deviceType = useSelector(state => {
-        console.log("useSelector state ", state);
         return state.Common.deviceType
     });
 

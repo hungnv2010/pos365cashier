@@ -33,24 +33,25 @@ export default (props) => {
     }, [listGroup])
 
     const getListGroup = async () => {
-        let params = { type: 1 }
+        let params = { type: 2 }
         try {
-            let allList = await new HTTPService().setPath(ApiPath.GROUP_CUSTOMER).GET(params)
+            let allList = await new HTTPService().setPath(ApiPath.GROUP_SUPPLIER).GET(params)
             let customer = await new HTTPService().setPath(ApiPath.SYNC_PARTNERS).GET()
             console.log('getListGroup res', allList);
-            if (allList) {
-                if (customer && customer.Data && customer.Data.length > 0) {
-                    allList.forEach(element => {
-                        element.totalMember = 0
-                        customer.Data.forEach(cus => {
-                            cus.PartnerGroupMembers.forEach(item => {
-                                if (item.GroupId == element.Id) {
-                                    element.totalMember += 1
-                                }
-                            })
-                        });
-                    });
-                }
+            if (allList.length > 0) {
+                allList = allList.filter(item => !item.selected)
+                // if (customer && customer.Data && customer.Data.length > 0) {
+                //     allList.forEach(element => {
+                //         element.totalMember = 0
+                //         customer.Data.forEach(cus => {
+                //             cus.PartnerGroupMembers.forEach(item => {
+                //                 if (item.GroupId == element.Id) {
+                //                     element.totalMember += 1
+                //                 }
+                //             })
+                //         });
+                //     });
+                // }
                 setListGroup([...allList])
             }
         } catch (error) {
@@ -92,9 +93,9 @@ export default (props) => {
                         <Text
                             numberOfLines={1}
                             style={{ fontSize: 15, fontWeight: "bold", color: colors.colorLightBlue }}>{item.Name}</Text>
-                        <Text style={{ paddingVertical: 10, color:"grey" }}>{item.totalMember} {I18n.t('thanh_vien')}</Text>
+                        <Text style={{ paddingVertical: 10, color: "grey" }}>{item.totalMember} {I18n.t('thanh_vien')}</Text>
                     </View>
-                 
+
                 </View>
             </TouchableOpacity>
         )

@@ -79,18 +79,14 @@ class DataManager {
     }
 
     updateFromOrder = async (listRoom) => {
-        console.log('updateFromOrder', listRoom);
         if (listRoom.length == 0) return
+        let tittle = []
         for (let index = 0; index < listRoom.length; index++) {
             let listOrder = listRoom[index]
-            this.updateServerFromOrder(listOrder, index).then(
-                () => {
-                    dataManager.sentNotification(listOrder.RoomName, I18n.t('gio_khach_vao') + moment().format('HH:mm dd/MM'))
-                }
-            ).catch((e) => {
-                console.log('updateFromOrder err', e);
-            })
+            tittle.push(listOrder.RoomName)
+            await this.updateServerFromOrder(listOrder, index)
         }
+        dataManager.sentNotification(tittle.join(", "), I18n.t('gio_khach_vao') + moment().format('HH:mm dd/MM'))
     }
 
     updateServerFromOrder = async (listOrders, index) => {

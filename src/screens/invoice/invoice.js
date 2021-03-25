@@ -39,7 +39,6 @@ const Invoice = (props) => {
     const currentCount = useRef(0)
     const onEndReachedCalledDuringMomentum = useRef(false)
     const deviceType = useSelector(state => {
-        console.log("useSelector state ", state);
         return state.Common.deviceType
     });
     const filterRef = useRef({
