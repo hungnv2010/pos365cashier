@@ -112,6 +112,9 @@ const images = {
     ic_quanlynhanvien: require("../../assets/icons/ic_quanlynhanvien.png"),
     ic_baocao: require("../../assets/icons/ic_baocao.png"),
     ic_nhomnhacungcap: require("../../assets/icons/ic_nhomnhacungcap.png"),
+    icon_employee : require('../../assets/icons/icon_employee.png'),
+    icon_lock: require('../../assets/icons/icon_lock.png'),
+    icon_edit: require('../../assets/icons/icon_edit.png'),
 
 }
 
