@@ -843,6 +843,7 @@ export default {
   ban_co_chac_chan_muon_xoa_khach_hang: "Do you want to delete customer?",
   block_theo_phut: "Block per minute",
   ban_co_chac_chan_muon_xoa_hang_hoa:'Are you sure you want to delete this product?',
+  ban_chac_chan_muon_dang_xuat_khoi_cac_thiet_bi:'Are you want log out account at all devices ?',
 
   cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang: "Allows to change the name of good when selling",
   cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang: "Allows employees change prices when selling",
@@ -973,6 +974,7 @@ export default {
   ten_nhan_vien:'Employee name',
   tim_kiem_nhan_vien:'Enter search employee',
   thiet_lap_quyen:'Set permissions',
+  them_nhan_vien:'Add new employee',
 
   voucher: "Voucher",
   vui_long_nhap_dung_so_tien_khach_tra: "Please enter the correct amount of payment.",

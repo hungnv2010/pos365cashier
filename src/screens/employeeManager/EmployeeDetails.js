@@ -41,12 +41,18 @@ export default (props) => {
     }, [props.userData])
     const onClickEditUser = () =>{
         if(deviceType == Constant.PHONE){
-            props.navigation.navigate(ScreenList.EmployeeEdit, { user:user })
+            props.navigation.navigate(ScreenList.EmployeeEdit, { user:user, onCallBackEdit:getData })
+        }else if(deviceType == Constant.TABLET){
+            props.onClickEdit(user)
         }
+    }
+    const getData = (data) =>{
+        setUser(data)
+        props.route.params.onCallBack()
     }
 
     const onCLickLock = () =>{
-        dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_' + user.IsActive == true?'khoa':'mo khoa'), I18n.t("thong_bao"), res => {
+        dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_' + user.IsActive == true?'khoa':'mo_khoa'), I18n.t("thong_bao"), res => {
             if (res == 1) {
                 let param = {User:{...user,IsActive:!user.IsActive}}
                 new HTTPService().setPath(ApiPath.USERS).POST(param)
@@ -59,6 +65,8 @@ export default (props) => {
                         } else {
                             if (deviceType == Constant.PHONE) {
                                 setUser({...user,IsActive:!user.IsActive})
+                                props.route.params.onCallBack('xoa')
+                                props.navigation.pop()
                             } else
                                 props.handleSuccess('xoa')
                         }
@@ -70,7 +78,7 @@ export default (props) => {
 
     const clickLogoutDevice = () =>{
         setCheck(true)
-        dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_dang_xuat_tai_khoan'), I18n.t("thong_bao"), res => {
+        dialogManager.showPopupTwoButton(I18n.t('ban_chac_chan_muon_dang_xuat_khoi_cac_thiet_bi'), I18n.t("thong_bao"), res => {
             if (res == 1) {
                 new HTTPService().setPath(ApiPath.USERS + `/${user.Id}/kick`).POST()
                     .then(res => {
@@ -129,25 +137,25 @@ export default (props) => {
                 </View>
                 <View style={{ paddingHorizontal: 13, flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
                     <Text style={styles.styleTitle}>{I18n.t('ten_dang_nhap')}</Text>
-                    <Text style={{}}>{user.UserName}</Text>
+                    <Text style={{fontSize:16}}>{user.UserName}</Text>
                 </View>
                 <View style={{ paddingHorizontal: 13, flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
                     <Text style={styles.styleTitle}>{I18n.t('ngay_sinh')}</Text>
-                    <Text style={{}}>{user.DOB ? dateToDate(user.DOB) : ''}</Text>
+                    <Text style={{fontSize:16}}>{user.DOB ? dateToDate(user.DOB) : ''}</Text>
                 </View>
             </View>
             <View style={{ marginTop: 10, paddingVertical: 10, backgroundColor: '#fff' }}>
                 <View style={{ paddingHorizontal: 13, flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
                     <Text style={styles.styleTitle}>{I18n.t('so_dien_thoai')}</Text>
-                    <Text style={{}}>{user.Phone}</Text>
+                    <Text style={{fontSize:16}}>{user.Phone}</Text>
                 </View>
                 <View style={{ paddingHorizontal: 13, flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
                     <Text style={styles.styleTitle}>Email</Text>
-                    <Text style={{}}>{user.Email}</Text>
+                    <Text style={{fontSize:16}}>{user.Email}</Text>
                 </View>
                 <View style={{ paddingHorizontal: 13, flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
                     <Text style={styles.styleTitle}>{I18n.t('dia_chi')}</Text>
-                    <Text style={{}}>{user.Address}</Text>
+                    <Text style={{fontSize:16}}>{user.Address}</Text>
                 </View>
             </View>
             <View style={{ marginTop: 10, backgroundColor: '#fff' }}>
@@ -157,7 +165,7 @@ export default (props) => {
                 </View>
                 <View style={{ paddingHorizontal: 13, flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
                     <Text style={styles.styleTitle}>{I18n.t('vi_tri')}</Text>
-                    <Text style={{}}>{user.IsAdmin == false? I18n.t('nhan_vien'): I18n.t('quan_li')}</Text>
+                    <Text style={{fontSize:16}}>{user.IsAdmin == false? I18n.t('nhan_vien'): I18n.t('quan_ly')}</Text>
                 </View>
                 <TouchableOpacity style={{ marginHorizontal: 13, justifyContent: 'center', paddingVertical: 15, alignItems: 'center', borderColor: '#36a3f7', borderRadius: 10, borderWidth: 1, marginVertical: 15 }}>
                     <Text style={styles.styleBold}>{I18n.t('thiet_lap_quyen')}</Text>
@@ -166,7 +174,7 @@ export default (props) => {
                     <TouchableOpacity onPress={() => clickLogoutDevice()}>
                         <Icons name={check == false ? 'checkbox-blank-outline' : 'checkbox-marked-outline'} size={24} color={colors.colorLightBlue} />
                     </TouchableOpacity>
-                    <Text style={{ marginLeft: 10 }}>{I18n.t('dang_xuat_tai_khoan_tren_cac_thiet_bi_dang_dung')}</Text>
+                    <Text style={{ marginLeft: 10, fontSize:16 }}>{I18n.t('dang_xuat_tai_khoan_tren_cac_thiet_bi_dang_dung')}</Text>
                 </View>
             </View>
 

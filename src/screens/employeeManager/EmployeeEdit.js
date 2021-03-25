@@ -26,7 +26,7 @@ export default (props) => {
     const [date, setDate] = useState(new Date());
     const [title, setTitle] = useState()
     const dateTmp = useRef(new Date())
-    const [password,setPassword] = useState('')
+    const [password, setPassword] = useState('')
     const deviceType = useSelector(state => {
         console.log("useSelector state ", state);
         return state.Common.deviceType
@@ -38,12 +38,17 @@ export default (props) => {
             }
             getData(props.route.params)
         }
-        if(user !={}){
+        if (user.Id) {
             setTitle('sua')
-        }else{
+        } else {
             setTitle('them')
         }
     }, [])
+    useEffect(() => {
+        if (deviceType == Constant.TABLET) {
+            setUser(props.userData)
+        }
+    }, [props.userData])
     const onChangeDate = (selectedDate) => {
         const currentDate = dateTmp.current;
         let date = selectedDate.getDate();
@@ -56,7 +61,7 @@ export default (props) => {
         dateTmp.current = currentDate;
     };
     const onClickOk = () => {
-        let param = { User: { ...user,PlainPassword:password } }
+        let param = { User: { ...user, PlainPassword: password } }
         new HTTPService().setPath(ApiPath.USERS).POST(param).then(res => {
             if (res && res.ResponseStatus && res.ResponseStatus.Message) {
                 dialogManager.showLoading()
@@ -67,22 +72,16 @@ export default (props) => {
                 }, null, null, I18n.t('dong'))
             } else {
                 if (deviceType == Constant.PHONE) {
-                    handleSuccess(title)
+                    if (title == 'sua') {
+                        props.route.params.onCallBackEdit(user)
+                    } else {
+                        props.route.params.onCallBack(title)
+                    }
+                    props.navigation.pop()
                 } else
                     props.handleSuccess(title)
             }
         })
-    }
-    const handleSuccess = async (type1) => {
-        console.log("type", type1);
-        dialogManager.showLoading()
-        try {
-            dialogManager.showPopupOneButton(`${I18n.t(type1)} ${I18n.t('thanh_cong')}`, I18n.t('thong_bao'))
-            dialogManager.hiddenLoading()
-        } catch (error) {
-            console.log('handleSuccess err', error);
-            dialogManager.hiddenLoading()
-        }
     }
 
     const renderModal = () => {
@@ -90,7 +89,7 @@ export default (props) => {
             <View>
                 {
                     typeModal == 1 ?
-                        <View style={{borderWidth:0.5,borderRadius:10}}>
+                        <View style={{ borderWidth: 0.5, borderRadius: 10 }}>
                             <Text style={{ textAlign: 'center', paddingVertical: 10 }}>{I18n.t('chon_nhom')}</Text>
                             <View style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 10 }}>
                                 <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center' }} onPress={() => { setUser({ ...user, IsAdmin: false }), setShowModal(false) }} >
@@ -129,7 +128,7 @@ export default (props) => {
                 deviceType == Constant.PHONE ?
                     <ToolBarDefault
                         {...props}
-                        title={user.Name}
+                        title={title == 'them' ? I18n.t('them_nhan_vien') : user.Name}
                     /> : null
             }
             <ScrollView>
@@ -163,7 +162,7 @@ export default (props) => {
                     <Text>{I18n.t('vi_tri')}</Text>
                     <TouchableOpacity onPress={() => { setShowModal(true), setTypeModal(1) }}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, backgroundColor: '#f2f2f2', alignItems: 'center', borderRadius: 10, marginVertical: 10 }}>
-                            <Text style={{ textAlign: 'center', fontWeight: 'bold', color: '#36a3f7' }}>{user.IsAdmin == false ? I18n.t('nhan_vien') : I18n.t('quan_ly')}</Text>
+                            <Text style={{ textAlign: 'center', fontWeight: 'bold', color: '#36a3f7' }}>{user.IsAdmin == true ? I18n.t('quan_ly') : I18n.t('nhan_vien')}</Text>
                             <Icons name={'menu-right'} color={'#36a3f7'} size={40} />
                         </View>
                     </TouchableOpacity>

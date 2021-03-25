@@ -403,6 +403,7 @@ export default {
   ban_co_chac_chan_muon_xoa_khach_hang: "Bạn có chắc muốn xóa khách hàng này",
   block_theo_phut: "Block tính theo phút",
   ban_co_chac_chan_muon_xoa_hang_hoa: 'Bạn có chắc chắn muốn xoá hàng hoá này?',
+  ban_chac_chan_muon_dang_xuat_khoi_cac_thiet_bi:'Bạn chắc chắn muốn đăng xuất khỏi các thiết bị ?',
 
   chon_cong_nghe_in: "Chọn công nghệ in",
   cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang: "Cho phép thay đổi tên hàng hóa khi bán hàng?",
@@ -535,6 +536,7 @@ export default {
   ten_nhan_vien:'Tên nhân viên',
   tim_kiem_nhan_vien:'Tìm kiếm nhân viên',
   thiet_lap_quyen:'Thiết lập quyền',
+  them_nhan_vien:'Thêm nhân viên',
 
   voucher: "Mã quà tặng",
   vui_long_nhap_dung_so_tien_khach_tra: "Vui lòng nhập đúng số tiền khách trả.",
