@@ -62,6 +62,7 @@ export default (props) => {
     }, [customerDetail])
 
     const getListGroupByCustomer = () => {
+        console.log('getListGroupByCustomer', listGroup, customerDetail);
         listGroup.forEach(item => {
             item.status = false // reset listGroup
             customerDetail.PartnerGroupMembers.forEach(elm => {
@@ -274,7 +275,7 @@ export default (props) => {
         let PartnerGroupMembers = []
         listGroup.forEach(item => {
             if (item.status) {
-                PartnerGroupMembers.push({ GroupId: item.Id })
+                PartnerGroupMembers.push({ GroupId: item.id })
             }
         })
         setCustomerDetail({ ...customerDetail, PartnerGroupMembers })
@@ -305,7 +306,7 @@ export default (props) => {
                 }
             })
         }
-        return value.toString()
+        return value.join(', ')
     }
 
     const onClickApply = () => {

@@ -106,21 +106,21 @@ export default (props) => {
             case 1:
                 setDetailGroup({ ...detailGroup, text: text })
                 break;
-            case 2:
-                text = text.replace(/,/g, "");
-                if (isNaN(text)) return
-                setDetailGroup({ ...detailGroup, DiscountRatio: text })
-                break;
-            case 3:
-                text = text.replace(/,/g, "");
-                if (isNaN(text)) return
-                setDetailGroup({ ...detailGroup, FromRevenue: text })
-                break;
-            case 4:
-                text = text.replace(/,/g, "");
-                if (isNaN(text)) return
-                setDetailGroup({ ...detailGroup, ToRevenue: text })
-                break;
+            // case 2:
+            //     text = text.replace(/,/g, "");
+            //     if (isNaN(text)) return
+            //     setDetailGroup({ ...detailGroup, DiscountRatio: text })
+            //     break;
+            // case 3:
+            //     text = text.replace(/,/g, "");
+            //     if (isNaN(text)) return
+            //     setDetailGroup({ ...detailGroup, FromRevenue: text })
+            //     break;
+            // case 4:
+            //     text = text.replace(/,/g, "");
+            //     if (isNaN(text)) return
+            //     setDetailGroup({ ...detailGroup, ToRevenue: text })
+            //     break;
             default:
                 break;
         }
@@ -141,7 +141,9 @@ export default (props) => {
     const onClickDone = async () => {
         let PartnerGroup = { ...detailGroup }
         PartnerGroup.Discount = null
-        PartnerGroup.Type = 1
+        PartnerGroup.Type = 2
+        PartnerGroup.Name = PartnerGroup.text
+        delete PartnerGroup.text
         if (detailGroup.Id !== 0) {
             PartnerGroup.ModifiedBy = ModifiedBy.current
             PartnerGroup.ModifiedDate = moment()

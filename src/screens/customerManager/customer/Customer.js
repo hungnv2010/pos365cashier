@@ -41,11 +41,11 @@ export default (props) => {
     });
     const currentBranch = useRef()
 
-    useFocusEffect(
-        useCallback(() => {
-            getCustomer()
-        }, [])
-    )
+    // useFocusEffect(
+    //     useCallback(() => {
+    //         getCustomer()
+    //     }, [])
+    // )
 
     useEffect(() => {
         console.log('customer props ', props);

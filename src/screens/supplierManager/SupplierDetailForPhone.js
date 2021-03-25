@@ -1,17 +1,17 @@
 import React, { useEffect, useState, useLayoutEffect, useRef, useCallback } from 'react';
 import { Image, View, StyleSheet, Text, TouchableOpacity, TextInput, ScrollView, Modal, TouchableWithoutFeedback } from "react-native";
 import { Snackbar, Surface, Checkbox } from 'react-native-paper';
-import I18n from '../../../common/language/i18n';
-import { Images, Metrics } from '../../../theme';
-import { currencyToString, momentToStringDateLocal, dateToString } from '../../../common/Utils';
-import colors from '../../../theme/Colors';
-import { Constant } from '../../../common/Constant';
+import I18n from '../../common/language/i18n';
+import { Images, Metrics } from '../../theme';
+import { currencyToString, momentToStringDateLocal, dateToString } from '../../common/Utils';
+import colors from '../../theme/Colors';
+import { Constant } from '../../common/Constant';
 import moment from 'moment';
-import { HTTPService } from '../../../data/services/HttpService';
-import { ApiPath } from '../../../data/services/ApiPath';
+import { HTTPService } from '../../data/services/HttpService';
+import { ApiPath } from '../../data/services/ApiPath';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
-import dialogManager from '../../../components/dialog/DialogManager';
-import ToolBarDefault from '../../../components/toolbar/ToolBarDefault';
+import dialogManager from '../../components/dialog/DialogManager';
+import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
 import { useSelector } from 'react-redux';
 import DatePicker from 'react-native-date-picker';
 
@@ -29,13 +29,14 @@ export default (props) => {
 
     useEffect(() => {
         const getListGroup = async () => {
-            let params = { type: 1 }
+            let params = { type: 2 }
             try {
-                let res = await new HTTPService().setPath(ApiPath.GROUP_CUSTOMER).GET(params)
+                let res = await new HTTPService().setPath(ApiPath.GROUP_SUPPLIER).GET(params)
                 console.log('getListGroup res', res);
                 if (res) {
-                    res.forEach(element => {
+                    res.forEach((element, index, arr) => {
                         element.status = false
+                        if (element.selected) arr.splice(index, 1)
                     });
                     setListGroup([...res])
                 }
@@ -58,11 +59,11 @@ export default (props) => {
 
     useEffect(() => {
         const getListGroupByCustomer = () => {
-            console.log();
+            console.log('getListGroupByCustomer', listGroup, customerDetail);
             listGroup.forEach(item => {
                 item.status = false // reset listGroup
                 customerDetail.PartnerGroupMembers.forEach(elm => {
-                    if (item.Id == elm.GroupId) {
+                    if (item.id == elm.GroupId) {
                         item.status = true
                     }
                 })
@@ -83,7 +84,7 @@ export default (props) => {
             Phone: "",
             DOB: "",
             Gender: 1,
-            Email: "",
+            TaxCode: "",
             PartnerGroupMembers: [],
             Address: "",
             Province: "",
@@ -134,7 +135,7 @@ export default (props) => {
                 setCustomerDetail({ ...customerDetail, DOB: text })
                 break;
             case 4:
-                setCustomerDetail({ ...customerDetail, Email: text })
+                setCustomerDetail({ ...customerDetail, TaxCode: text })
                 break;
             case 5:
                 setCustomerDetail({ ...customerDetail })
@@ -259,7 +260,7 @@ export default (props) => {
                                                 setListGroupForShow([...listGroupForShow])
                                             }}
                                         />
-                                        <Text style={{ textAlign: "center" }}>{item.Name}</Text>
+                                        <Text style={{ textAlign: "center" }}>{item.text}</Text>
                                     </TouchableOpacity>
                                 )
                             })
@@ -305,13 +306,13 @@ export default (props) => {
 
         if (data && data.length > 0) {
             data.forEach(item => {
-                let itemGroupName = listGroup.filter((elm, idx) => item.GroupId == elm.Id)
+                let itemGroupName = listGroup.filter((elm, idx) => item.GroupId == elm.id)
                 if (itemGroupName.length > 0) {
-                    value.push(itemGroupName[0].Name)
+                    value.push(itemGroupName[0].text)
                 }
             })
         }
-        return value.toString()
+        return value.join(', ')
     }
 
     const onClickDone = () => {
@@ -336,7 +337,7 @@ export default (props) => {
                 Phone: customerDetail.Phone,
                 DOB: customerDetail.DOB,
                 Gender: customerDetail.Gender,
-                Email: customerDetail.Email,
+                TaxCode: customerDetail.TaxCode,
                 PartnerGroupMembers: PartnerGroupMembers,
                 Address: customerDetail.Address,
                 Province: customerDetail.Province,
@@ -390,7 +391,7 @@ export default (props) => {
 
 
     const onClickDelete = () => {
-        dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_xoa_khach_hang'), I18n.t("thong_bao"), res => {
+        dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_xoa_nha_cung_cap'), I18n.t("thong_bao"), res => {
             if (res == 1) {
                 new HTTPService().setPath(`${ApiPath.CUSTOMER}/${customerDetail.Id}`).DELETE()
                     .then(result => {
@@ -433,7 +434,7 @@ export default (props) => {
             </View> */}
             <ToolBarDefault
                 {...props}
-                title={props.route.params.item.Id == 0 ? I18n.t('them_khach_hang') : I18n.t('cap_nhat_khach_hang')} />
+                title={props.route.params.item.Id == 0 ? I18n.t('them_nha_cung_cap') : I18n.t('cap_nhat_nha_cung_cap')} />
             <ScrollView style={{ flex: 1, padding: 10 }}>
                 <Surface style={styles.surface}>
                     <View style={{ height: Metrics.screenHeight / 6, flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 15 }}>
@@ -441,7 +442,7 @@ export default (props) => {
                             <Image source={getIcon(customerDetail.Gender, customerDetail.Image)} style={{ height: 100, width: 100, alignSelf: "center" }} />
                         </View>
                         <View style={{ flex: 2, }}>
-                            <Text style={{ fontWeight: "bold" }}>{I18n.t('ma_khach_hang')}</Text>
+                            <Text style={{ fontWeight: "bold" }}>{I18n.t('ma_nha_cung_cap')}</Text>
                             <View style={{ paddingVertical: 20 }}>
                                 <TextInput
                                     placeholder={I18n.t('tu_dong_tao_ma')}
@@ -478,7 +479,7 @@ export default (props) => {
                         />
                     </View>
                     <View style={{ padding: 15 }}>
-                        <Text style={{ paddingBottom: 10 }}>{I18n.t('ngay_sinh')}</Text>
+                        <Text style={{ paddingBottom: 10 }}>{I18n.t('ngay_thanh_lap')}</Text>
                         <View style={{ flexDirection: "row", flex: 1 }}>
                             <TouchableOpacity onPress={() => {
                                 typeModal.current = 1
@@ -495,11 +496,11 @@ export default (props) => {
                         renderGender(customerDetail.Gender)
                     }
                     <View style={{ padding: 15 }}>
-                        <Text style={{ paddingBottom: 10 }}>Email</Text>
+                <Text style={{ paddingBottom: 10 }}>{I18n.t('ma_so_thue')}</Text>
                         <TextInput
-                            keyboardType="email-address"
-                            placeholder="Email"
-                            value={customerDetail.Email}
+                            keyboardType="numeric"
+                            placeholder={I18n.t('ma_so_thue')}
+                            value={customerDetail.TaxCode}
                             style={{ borderWidth: 0.5, color: "#000", padding: 10, borderRadius: 5 }}
                             onChangeText={(text) => { onChangeText(text, 4) }}
                         />
@@ -514,7 +515,7 @@ export default (props) => {
                                     typeModal.current = 3
                                     setShowModal(true)
                                 }} style={{ flexDirection: "row", alignItems: "center" }}>
-                                    <Text style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1, color: getGroupName(customerDetail.PartnerGroupMembers) ? null : "#CECCCB"  }}>{!!getGroupName(customerDetail.PartnerGroupMembers) ? getGroupName(customerDetail.PartnerGroupMembers) : I18n.t('ten_nhom')}</Text>
+                                    <Text style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1, color: getGroupName(customerDetail.PartnerGroupMembers) ? null : "#CECCCB" }}>{getGroupName(customerDetail.PartnerGroupMembers) ? getGroupName(customerDetail.PartnerGroupMembers) : I18n.t('ten_nhom')}</Text>
 
                                     <Image source={Images.icon_arrow_down} style={{ width: 20, height: 20, position: "absolute", right: 15 }} />
                                 </TouchableOpacity>
@@ -562,7 +563,7 @@ export default (props) => {
                             onChangeText={(text) => { onChangeText(text, 8) }}
                         />
                     </View>
-                    <View style={{ padding: 15 }}>
+                    {/* <View style={{ padding: 15 }}>
                         <Text style={{ paddingBottom: 10 }}>{I18n.t('diem_thuong')}</Text>
                         <TextInput
                             returnKeyType='done'
@@ -573,7 +574,7 @@ export default (props) => {
                             style={{ borderWidth: 0.5, color: "#000", padding: 10, borderRadius: 5 }}
                             onChangeText={(text) => { onChangeText(text, 9) }}
                         />
-                    </View>
+                    </View> */}
 
                 </Surface>
                 <Surface style={styles.surface}>
