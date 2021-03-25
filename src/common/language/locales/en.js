@@ -495,6 +495,7 @@ export default {
   ban_co_muon_luu_thay_doi_khong: "Do you want to save your changes?",
 
   // TODO: C
+  cap_nhat_nha_cung_cap: "Update supplier",
   cai_dat: "Setting",
   chon_chi_nhanh: "Select branch",
   chiet_khau: "Discount",
@@ -647,6 +648,8 @@ export default {
   loc_theo_trang_thai: 'Filter by state',
 
   // TODO: M
+  ma_so_thue: "Tax code",
+  ma_nha_cung_cap: "Supplier code",
   mang_luoi: 'Network',
   man_hinh_chinh: 'Main screen',
   mat_hang_ban_chay: "Popular products",
@@ -663,6 +666,7 @@ export default {
   mot_gio_dau_tien: "1 hour first",
 
   // TODO: N
+  ngay_thanh_lap: "Founding",
   no: "Debt",
   ngon_ngu: 'Language',
   ngay_giao_dich: "Day trading",
@@ -734,6 +738,7 @@ export default {
   sua: "Update",
 
   // TODO: T
+  them_nha_cung_cap:"Create new supplier",
   thong_bao_quet_van_tay: "Please scan the fingerprints registered on the device.",
   thong_bao_tam_khoa_van_tay: "You have entered an incorrect fingerprint many times. Please try again in 30 seconds.",
   thong_bao_khoa_van_tay: "You have entered the wrong fingerprint too many times. Please go to your device's fingerprint settings to re-enable the feature.",
@@ -841,6 +846,7 @@ export default {
   bao_che_bien_sau_khi_thanh_toan: "Report processing after payment",
   ban_co_chac_muon_xoa_voucher_nay: "Do you want to delete voucher?",
   ban_co_chac_chan_muon_xoa_khach_hang: "Do you want to delete customer?",
+  ban_co_chac_chan_muon_xoa_nha_cung_cap: "Do you want to delete supplier?",
   block_theo_phut: "Block per minute",
   ban_co_chac_chan_muon_xoa_hang_hoa:'Are you sure you want to delete this product?',
 

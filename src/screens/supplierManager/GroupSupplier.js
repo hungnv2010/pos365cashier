@@ -12,6 +12,8 @@ import colors from '../../theme/Colors';
 import { Images } from '../../theme';
 import { ScreenList } from '../../common/ScreenList';
 import DetailCustomerGroup from '../customerManager/DetailCustomerGroup';
+import { getFileDuLieuString } from '../../data/fileStore/FileStorage';
+import DetailSupplierGroup from './DetailSupplierGroup';
 
 
 export default (props) => {
@@ -32,26 +34,39 @@ export default (props) => {
         }
     }, [listGroup])
 
+    const getBranchId = async () => {
+        let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
+        if (branch) {
+            return (JSON.parse(branch)).Id
+        }
+    }
+
     const getListGroup = async () => {
+        let branchId = await getBranchId()
         let params = { type: 2 }
+        let paramsForPartner = {
+            GroupId: -1,
+            Type: 2,
+            BranchId: branchId
+        }
         try {
             let allList = await new HTTPService().setPath(ApiPath.GROUP_SUPPLIER).GET(params)
-            let customer = await new HTTPService().setPath(ApiPath.SYNC_PARTNERS).GET()
-            console.log('getListGroup res', allList);
+            let allPartner = await new HTTPService().setPath(ApiPath.CUSTOMER).GET(paramsForPartner)
+            console.log('getListGroup res', allList, allPartner);
             if (allList.length > 0) {
                 allList = allList.filter(item => !item.selected)
-                // if (customer && customer.Data && customer.Data.length > 0) {
-                //     allList.forEach(element => {
-                //         element.totalMember = 0
-                //         customer.Data.forEach(cus => {
-                //             cus.PartnerGroupMembers.forEach(item => {
-                //                 if (item.GroupId == element.Id) {
-                //                     element.totalMember += 1
-                //                 }
-                //             })
-                //         });
-                //     });
-                // }
+                if (allPartner && allPartner.results && allPartner.results.length > 0) {
+                    allList.forEach(element => {
+                        element.totalMember = 0
+                        allPartner.results.forEach(cus => {
+                            cus.PartnerGroupMembers.forEach(item => {
+                                if (item.GroupId == element.id) {
+                                    element.totalMember += 1
+                                }
+                            })
+                        });
+                    });
+                }
                 setListGroup([...allList])
             }
         } catch (error) {
@@ -92,8 +107,8 @@ export default (props) => {
                     <View style={{ flex: 1.3 }}>
                         <Text
                             numberOfLines={1}
-                            style={{ fontSize: 15, fontWeight: "bold", color: colors.colorLightBlue }}>{item.Name}</Text>
-                        <Text style={{ paddingVertical: 10, color: "grey" }}>{item.totalMember} {I18n.t('thanh_vien')}</Text>
+                            style={{ fontSize: 15, fontWeight: "bold", color: colors.colorLightBlue }}>{item.text}</Text>
+                        <Text style={{ paddingVertical: 10, color: "grey" }}>{item.totalMember} {I18n.t('nha_cung_cap')}</Text>
                     </View>
 
                 </View>
@@ -125,7 +140,7 @@ export default (props) => {
                 {
                     deviceType == Constant.TABLET ?
                         <View style={{ flex: 1 }}>
-                            <DetailCustomerGroup
+                            <DetailSupplierGroup
                                 onClickDone={onClickDone}
                                 detailGroup={detailGroup} />
                         </View>

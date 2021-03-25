@@ -95,7 +95,7 @@ export default (props) => {
             listCustomer.unshift(GUEST)
             backUpCustomer.current = listCustomer
             setCustomerData(listCustomer)
-            await realmStore.insertDatas(SchemaName.CUSTOMER, res.Data)
+            // await realmStore.insertDatas(SchemaName.CUSTOMER, res.Data)
 
         } else {
             try {
