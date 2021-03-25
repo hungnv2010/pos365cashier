@@ -21,6 +21,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import TextTicker from 'react-native-text-ticker';
 import useDebounce from '../../customHook/useDebounce';
 import CustomerToolBar from '../customerManager/customer/CustomerToolBar';
+import SupplierDetail from './SupplierDetail';
 
 let GUEST = {
     Id: 0,
@@ -85,17 +86,29 @@ export default (props) => {
         }
     }
 
+    const getBranchId = async () => {
+        let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
+        if (branch) {
+            return (JSON.parse(branch)).Id
+        }
+    }
+
     const getCustomer = async () => {
         dialogManager.showLoading()
-        let res = await new HTTPService().setPath(ApiPath.SYNC_PARTNERS).GET()
+        let branchId = await getBranchId()
+        let params = {
+            GroupId: -1,
+            Type: 2,
+            BranchId: branchId
+        }
+        let res = await new HTTPService().setPath(ApiPath.CUSTOMER).GET(params)
         console.log("getCustomer res ", res);
-        if (res && res.Data && res.Data.length > 0) {
+        if (res && res.results && res.results.length > 0) {
             dialogManager.hiddenLoading()
-            let listCustomer = res.Data.reverse()
-            listCustomer.unshift(GUEST)
-            backUpCustomer.current = listCustomer
-            setCustomerData(listCustomer)
-            await realmStore.insertDatas(SchemaName.CUSTOMER, res.Data)
+            let listSupplier = res.results
+            backUpCustomer.current = listSupplier
+            setCustomerData(listSupplier)
+            // await realmStore.insertDatas(SchemaName.CUSTOMER, res.Data)
 
         } else {
             try {
@@ -180,7 +193,7 @@ export default (props) => {
             await realmStore.deletePartner()
             await dataManager.syncPartner()
             getCustomer()
-            dialogManager.showPopupOneButton(`${I18n.t(type)} ${I18n.t('khach_hang')} ${I18n.t('thanh_cong')}`, I18n.t('thong_bao'))
+            dialogManager.showPopupOneButton(`${I18n.t(type)} ${I18n.t('nha_cung_cap')} ${I18n.t('thanh_cong')}`, I18n.t('thong_bao'))
             dialogManager.hiddenLoading()
         } catch (error) {
             console.log('handleSuccess err', error);
@@ -198,7 +211,7 @@ export default (props) => {
             <CustomerToolBar
                 {...props}
                 navigation={props.navigation}
-                title={I18n.t('khach_hang')}
+                title={I18n.t('nha_cung_cap')}
                 outputTextSearch={outputTextSearch}
                 size={30}
             />
@@ -220,7 +233,7 @@ export default (props) => {
                 {
                     deviceType == Constant.TABLET ?
                         <View style={{ flex: 1 }}>
-                            <CustomerDetail
+                            <SupplierDetail
                                 customerDetail={customerItem}
                                 handleSuccess={handleSuccess} />
                         </View>

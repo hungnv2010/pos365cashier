@@ -34,6 +34,7 @@ export default {
   ban_co_muon_luu_thay_doi_khong: "Bạn có muốn lưu thay đổi không?",
 
   // TODO: C
+  cap_nhat_nha_cung_cap: "Cập nhật nhà cung cấp",
   chinh_sua: "Chỉnh sửa",
   cai_dat: "Cài đặt",
   chon_chi_nhanh: "Chọn chi nhánh",
@@ -199,6 +200,8 @@ export default {
   loc_theo_trang_thai: "Lọc theo trạng thái",
 
   // TODO: M
+  ma_so_thue: "Mã số thuế",
+  ma_nha_cung_cap: "Mã nhà cung cấp",
   mang_luoi: 'Mạng lưới',
   man_hinh_chinh: 'Màn hình chính',
   mat_hang_ban_chay: "Mặt hàng bán chạy",
@@ -215,6 +218,7 @@ export default {
   mot_gio_dau_tien: "1 giờ đầu tiên",
 
   // TODO: N
+  ngay_thanh_lap: "Ngày thành lập",
   nhom_nha_cung_cap: "Nhóm nhà cung cấp",
   nhom_khach_hang: "Nhóm khách hàng",
   no: "Nợ",
@@ -321,6 +325,7 @@ export default {
   them: "Thêm mới",
   ten_hang: "Tên",
   TT: "TT",
+  them_nha_cung_cap:"Create new supplier",
   trieu: "triệu",
   tong_so_hoa_don: "Tổng số hóa đơn",
   tat_ca_san_pham: "Tất cả sản phẩm",
@@ -401,6 +406,7 @@ export default {
   bao_che_bien_sau_khi_thanh_toan: "Báo chế biến sau khi thanh toán",
   ban_co_chac_muon_xoa_voucher_nay: "Bạn có chắc muốn xoá voucher này?",
   ban_co_chac_chan_muon_xoa_khach_hang: "Bạn có chắc muốn xóa khách hàng này",
+  ban_co_chac_chan_muon_xoa_nha_cung_cap: "Bạn có chắc muốn xóa nhà cung cấp này",
   block_theo_phut: "Block tính theo phút",
   ban_co_chac_chan_muon_xoa_hang_hoa: 'Bạn có chắc chắn muốn xoá hàng hoá này?',
   ban_chac_chan_muon_dang_xuat_khoi_cac_thiet_bi:'Bạn chắc chắn muốn đăng xuất khỏi các thiết bị ?',
@@ -419,7 +425,7 @@ export default {
   chon_nhom_hang_hoa: 'Chọn nhóm hàng hoá',
   chua_co: 'Chưa có',
   chon_hang_hoa: 'Chọn hàng hoá',
-  chieu_rong_kho_giay:'Chiều rộng khổ giấy',
+  chieu_rong_kho_giay: 'Chiều rộng khổ giấy',
 
   don_vi_tien_te: "Đơn vị tiền tệ",
   dollar_my: "Dollar Mỹ",
