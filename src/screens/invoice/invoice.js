@@ -32,7 +32,8 @@ const Invoice = (props) => {
     const [showModal, setShowModal] = useState(false)
     const [loadMore, setLoadMore] = useState(false)
     const [textSearch, setTextSearch] = useState("")
-    const currentBranch = useRef({})
+    // const currentBranch = useRef({})
+    const [currentBranch, setCurrentBranch] = useState(null)
     const listAccount = useRef([])
     const typeModal = useRef(null)
     const count = useRef(0)
@@ -49,28 +50,80 @@ const Invoice = (props) => {
     const debounceTextSearch = useDebounce(textSearch)
 
 
-    useFocusEffect(
-        useCallback(() => {
-            onRefresh()
-        }, [])
-    )
+    // useFocusEffect(
+    //     useCallback(() => {
+    //         onRefresh()
+    //     }, [])
+    // )
 
     useEffect(() => {
         const getBranch = async () => {
             let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
             if (branch) {
-                currentBranch.current = JSON.parse(branch)
+                setCurrentBranch(JSON.parse(branch))
             }
         }
-        const getAccount = async () => {
-            let results = await new HTTPService().setPath(ApiPath.ACCOUNT).GET()
-            listAccount.current = [{ Id: 0, Name: I18n.t("tien_mat") }, ...results]
+        // const getAccount = async () => {
+        //     let results = await new HTTPService().setPath(ApiPath.ACCOUNT).GET()
+        //     listAccount.current = [{ Id: 0, Name: I18n.t("tien_mat") }, ...results]
 
-        }
+        // }
         // getAccount()
         getBranch()
-        getInvoice(true)
     }, [])
+
+    useEffect(() => {
+        if (!currentBranch) return
+        const genParams = () => {
+            const { startDate, endDate } = filterRef.current.time;
+            let params = { skip: filterRef.current.skip, top: Constant.LOAD_LIMIT };
+            let arrItemPath = [];
+            if (currentBranch.Id) {
+                arrItemPath.push("BranchId eq " + currentBranch.Id)
+            }
+            if (filterRef.current.time.key != "custom") {
+                if (filterRef.current.time.key != Constant.TIME_SELECT_ALL_TIME[4].key) {
+                    arrItemPath.push(`PurchaseDate eq '${filterRef.current.time.key}'`)
+                }
+                if (filterRef.current.status.key != '') {
+                    arrItemPath.push(`Status eq ${filterRef.current.status.key}`)
+                }
+            } else if (startDate) {
+                let startDateFilter = momentToStringDateLocal(startDate.set({ 'hour': 0, 'minute': 0, 'second': 0 }))
+                let endDateFilter = momentToStringDateLocal((endDate ? endDate : startDate).set({ 'hour': 23, 'minute': 59, 'second': 59 }))
+                arrItemPath.push("PurchaseDate+ge+'datetime''" + startDateFilter.toString().trim() + "'''");
+                arrItemPath.push("PurchaseDate+lt+'datetime''" + endDateFilter.toString().trim() + "'''");
+                params['filter'] = `(${arrItemPath.join(" and ")})`;
+            }
+            params['filter'] = `(${arrItemPath.join(' and ')})`
+            console.log('params', params);
+            return params;
+        }
+        const getInvoice = (reset = false) => {
+            let params = genParams();
+            params = { ...params, includes: ['Room', 'Partner'], IncludeSummary: true };
+            dialogManager.showLoading()
+            new HTTPService().setPath(ApiPath.INVOICE).GET(params).then((res) => {
+                console.log("getInvoicesData res ", res);
+                let results = res.results.filter(item => item.Id > 0);
+                console.log('res.__count', res.__count);
+                count.current = res.__count;
+                currentCount.current = results.length
+                if (reset) {
+                    setInvoiceData([...results])
+                } else {
+                    setInvoiceData([...invoiceData, ...results])
+                }
+                setLoadMore(false)
+                dialogManager.hiddenLoading()
+            }).catch((e) => {
+                console.log("getInvoicesData err  ======= ", e);
+                dialogManager.hiddenLoading()
+            })
+        }
+
+        getInvoice(true)
+    }, [currentBranch])
 
     useEffect(() => {
         setCurrentItem({})
@@ -83,7 +136,7 @@ const Invoice = (props) => {
                 let params = {
                     Includes: ['Partner', 'Room'],
                     IncludeSummary: true,
-                    filter: `(substringof('${textSearch}', Code) and BranchId eq ${currentBranch.current.Id})`
+                    filter: `(substringof('${textSearch}', Code) and BranchId eq ${currentBranch.Id})`
                 };
                 dialogManager.showLoading()
                 new HTTPService().setPath(ApiPath.INVOICE).GET(params).then((res) => {
@@ -131,9 +184,8 @@ const Invoice = (props) => {
         const { startDate, endDate } = filterRef.current.time;
         let params = { skip: filterRef.current.skip, top: Constant.LOAD_LIMIT };
         let arrItemPath = [];
-
-        if (currentBranch.current.Id) {
-            arrItemPath.push("BranchId eq " + currentBranch.current.Id)
+        if (currentBranch &&currentBranch.Id) {
+            arrItemPath.push("BranchId eq " + currentBranch.Id)
         }
         if (filterRef.current.time.key != "custom") {
             if (filterRef.current.time.key != Constant.TIME_SELECT_ALL_TIME[4].key) {
