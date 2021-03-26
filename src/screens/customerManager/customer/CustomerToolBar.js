@@ -40,25 +40,10 @@ export default function CustomerToolBar(props) {
                 justifyContent: "center"
             }}
             >
-                {/* {
-                    props.route.params._onSelect ?
-                        <TouchableOpacity onPress={() => {
-                            props.navigation.goBack();
-                        }} style={[{padding: 15, justifyContent: "center"}, deviceType == Constant.TABLET ? { alignSelf: "flex-start" } : { alignItems: "center" }]}>
 
-                            <Image source={Images.icon_back} style={{ width: 48, height: 48 ,}} />
-                        </TouchableOpacity>
-                        :
-                        <TouchableOpacity onPress={() => {
-                            props.navigation.openDrawer();
-                        }} style={[{}, deviceType == Constant.TABLET ? { alignSelf: "flex-start" } : { alignItems: "center" }]}>
-
-                            <Image source={Images.icon_menu} style={{ width: 48, height: 48 }} />
-                        </TouchableOpacity>
-                } */}
                 <TouchableOpacity onPress={() => {
                     props.navigation.goBack();
-                }} style={[{ padding: 15, justifyContent: "center" }, deviceType == Constant.TABLET ? { alignSelf: "flex-start" } : { alignItems: "center" }]}>
+                }} style={{ padding: 15,}}>
 
                     <Image source={Images.icon_back} style={{ width: 48, height: 48, }} />
                 </TouchableOpacity>

@@ -69,10 +69,10 @@ export const ScreenList = {
   SplitTable: "SplitTable",
   OrderOffline: "OrderOffline",
   Vouchers: "Vouchers",
-  Product:"Product",
-  ProductDetail:"ProductDetail",
-  ComboForTab:"ComboForTab",
-  ComboForPhone:"ComboForPhone",
+  Product: "Product",
+  ProductDetail: "ProductDetail",
+  ComboForTab: "ComboForTab",
+  ComboForPhone: "ComboForPhone",
   OrderManagement: "OrderManagement",
   PaymentPendingList: "PaymentPendingList",
   DetailPaymentPending: "DetailPaymentPending",
@@ -84,10 +84,10 @@ export const ScreenList = {
   SupplierManager: "SupplierManager",
   CustomerManager: "CustomerManager",
   GroupCustomer: "GroupCustomer",
-  DetailGroupCustomerForPhone:"DetailGroupCustomerForPhone",
-  EmployeeDetails:'EmployeeDetails',
+  DetailGroupCustomerForPhone: "DetailGroupCustomerForPhone",
+  EmployeeDetails: 'EmployeeDetails',
   EmployeeEdit: 'EmployeeEdit',
-
+  SupplierDetailForPhone: "SupplierDetailForPhone",
 
 }
 

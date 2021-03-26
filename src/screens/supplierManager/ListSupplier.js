@@ -42,11 +42,11 @@ export default (props) => {
     });
     const currentBranch = useRef()
 
-    useFocusEffect(
-        useCallback(() => {
-            getCustomer()
-        }, [])
-    )
+    // useFocusEffect(
+    //     useCallback(() => {
+    //         getCustomer()
+    //     }, [])
+    // )
 
     useEffect(() => {
         console.log('customer props ', props);
@@ -148,7 +148,7 @@ export default (props) => {
                             setCustomerItem(res)
                         } else {
                             console.log('onClickCustomerItem for PHONE');
-                            props.navigation.navigate(ScreenList.CustomerDetailForPhone, { item: res, onCallBack: handleSuccess })
+                            props.navigation.navigate(ScreenList.SupplierDetailForPhone, { item: res, onCallBack: handleSuccess })
                         }
                     }
                 })
@@ -218,6 +218,7 @@ export default (props) => {
             <View style={{ flexDirection: "row", flex: 1 }}>
                 <View style={{ flex: 1, }}>
                     <FlatList
+                        showsVerticalScrollIndicator={false}
                         data={customerData}
                         renderItem={({ item, index }) => renderListItem(item, index)}
                         keyExtractor={(item, index) => index.toString()}

@@ -305,7 +305,7 @@ export default (props) => {
                 }
             })
         }
-        return value.toString()
+        return value.join(', ')
     }
 
     const onClickApply = () => {
