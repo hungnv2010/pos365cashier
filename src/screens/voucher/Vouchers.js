@@ -189,7 +189,7 @@ export default (props) => {
                                                 <Text style={ispercent == true ? styles.contenBtnDongY : styles.contenBtnHuy}>%</Text>
                                             </TouchableOpacity>
                                         </View>
-                                        <TextInput returnKeyType='done' style={[styles.styleTextInput, { flex: 1.5, }]} value={valueVoucher.current} onChangeText={(text) => { valueVoucher.current = text }} keyboardType='numeric' placeholder='0'></TextInput>
+                                        <TextInput returnKeyType='done' style={[styles.styleTextInput, { flex: 1.5, }]} value={valueVoucher.current} onChangeText={(text) => { valueVoucher.current = text }} keyboardType="numbers-and-punctuation" placeholder='0'></TextInput>
 
                                     </View>
                                 </View>
@@ -208,7 +208,7 @@ export default (props) => {
                                         <TouchableOpacity style={{ flex: 1.3, borderWidth: 0.5, borderColor: '#FF4500', alignItems: 'center', borderRadius: 3, justifyContent: 'center' }} onPress={() => setQuantity(quantity >= 1 ? quantity - 1 : 0)}>
                                             <Text style={{ color: '#FF4500' }}>-</Text>
                                         </TouchableOpacity>
-                                        <TextInput returnKeyType='done' style={[styles.styleTextInput, { flex: 6, }]} keyboardType='numeric' placeholder='0' value={quantity != 0 ? quantity.toString() : null} onChangeText={text => setQuantity(parseInt(text))}></TextInput>
+                                        <TextInput returnKeyType='done' style={[styles.styleTextInput, { flex: 6, }]} keyboardType='numbers-and-punctuation' placeholder='0' value={quantity != 0 ? quantity.toString() : null} onChangeText={text => setQuantity(parseInt(text))}></TextInput>
                                         <TouchableOpacity style={{ flex: 1.3, marginLeft: 10, borderWidth: 0.5, borderColor: '#FF4500', borderRadius: 3, alignItems: 'center', justifyContent: 'center' }} onPress={() => { setQuantity(quantity + 1) }}>
                                             <Text style={{ color: '#FF4500' }}>+</Text>
                                         </TouchableOpacity>

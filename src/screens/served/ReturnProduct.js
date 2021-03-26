@@ -65,7 +65,7 @@ export const ReturnProduct = (props) => {
                             }}
                             style={styles.textQuantityModal}
                             value={"" + QuantityChange}
-                            keyboardType="numeric" />
+                            keyboardType="numbers-and-punctuation" />
                         <TouchableOpacity onPress={() => {
                             if (Number(QuantityChange) < Quantity)
                                 setQuantityChange(Number(QuantityChange) + 1)
@@ -83,7 +83,7 @@ export const ReturnProduct = (props) => {
                             editable={false} selectTextOnFocus={false}
                             style={[styles.textQuantityModalOnly, { marginHorizontal: 0 }]}
                             value={"" + ((Quantity - QuantityChange) > 0 ? (Quantity - QuantityChange) : 0)}
-                            keyboardType="numeric" />
+                            keyboardType="numbers-and-punctuation" />
 
                     </View>
                 </View>

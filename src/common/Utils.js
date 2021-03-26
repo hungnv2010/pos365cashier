@@ -163,7 +163,8 @@ export const change_alias = (alias) => {
 }
 export const change_quantity = (value) =>{
   var str = value
-  str = str.replace(/,|./g,".")
+  str = str.replace(/,|./g,".");
+  str = str.trim();
   return str
 }
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Image, View, StyleSheet, Text, TouchableOpacity, TextInput } from 'react-native';
-import { currencyToString } from '../../../../common/Utils';
+import { change_quantity, currencyToString } from '../../../../common/Utils';
 import { Colors, Images, Metrics } from '../../../../theme';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -44,13 +44,14 @@ const ProductsItemForPhone = ({ item, index, onClickProduct, handleButtonDecreas
                     </TouchableOpacity>
                     <TextInput
                         returnKeyType='done'
-                        keyboardType="numeric"
+                        keyboardType="numbers-and-punctuation"
                         textAlign="center"
-                        value={"" + Math.round(value * 1000) / 1000}
+                        //value={"" + Math.round(value * 1000) / 1000}
+                        value={value+''}
                         onChangeText={(numb) => {
                             if (isNaN(numb) || +numb.length > 4) return
-                            if (item.SplitForSalesOrder || (item.ProductType == 2 && item.IsTimer)) {
-                                numb = Math.round(+numb)
+                            if (item.SplitForSalesOrder || (item.ProductType == 2 && item.IsTimer && item.IsTimer == true)) {
+                                numb = Math.round(+numb * 1000) /1000
                             }
                             setValue(numb)
                             onChangeText(numb, item)

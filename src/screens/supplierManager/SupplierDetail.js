@@ -464,7 +464,7 @@ export default (props) => {
                             returnKeyType='done'
                             placeholder={I18n.t('dien_thoai')}
                             placeholderTextColor="#808080"
-                            keyboardType="numeric"
+                            keyboardType="numbers-and-punctuation"
                             value={customerDetail.Phone}
                             style={{ borderWidth: 0.5, color: "#000", padding: 10, borderRadius: 5 }}
                             onChangeText={(text) => { onChangeText(text, 2) }}
@@ -500,7 +500,7 @@ export default (props) => {
                     <View style={{ padding: 15 }}>
                         <Text style={{ paddingBottom: 10 }}>{I18n.t('ma_so_thue')}</Text>
                         <TextInput
-                            keyboardType="numeric"
+                            keyboardType="numbers-and-punctuation"
                             placeholder={I18n.t('ma_so_thue')}
                             value={customerDetail.TaxCode}
                             style={{ borderWidth: 0.5, color: "#000", padding: 10, borderRadius: 5 }}
@@ -579,7 +579,7 @@ export default (props) => {
                             returnKeyType='done'
                             placeholder={I18n.t('du_no')}
                             placeholderTextColor="#808080"
-                            keyboardType="numeric"
+                            keyboardType="numbers-and-punctuation"
                             value={currencyToString(customerDetail.TotalDebt)}
                             style={{ borderWidth: 0.5, color: "#000", padding: 10, borderRadius: 5 }}
                             onChangeText={(text) => { onChangeText(text, 8) }}

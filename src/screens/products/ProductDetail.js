@@ -86,7 +86,7 @@ export default (props) => {
             IsPercentageOfTotalOrder: product.IsPercentageOfTotalOrder,
             IsPriceForBlock: product.IsPriceForBlock,
             IsSerialNumberTracking: product.IsSerialNumberTracking,
-            IsTimer: product.ProductType == 2 ? true : false,
+            //IsTimer: product.ProductType == 2 ? true : false,
             LargeUnit: product.LargeUnit,
             LargeUnitCode: productOl.LargeUnitCode ? productOl.LargeUnitCode : "",
             ModifiedBy: currentUserId.current,
@@ -353,6 +353,9 @@ export default (props) => {
     const onClickSave = () => {
         if (product.CategoryId && product.CategoryId > 0) {
             params.Product = { ...params.Product, CategoryId: product.CategoryId }
+            if(product.ProductType == 2){
+                param.Product = { ...params.Product, IsTimer: true}
+            }
         }
         saveProduct()
     }
@@ -626,11 +629,11 @@ export default (props) => {
                                 <View style={{ flexDirection: 'row' }}>
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.title}>{I18n.t('gia_von')}</Text>
-                                        <TextInput style={[styles.textInput, { color: '#36a3f7', fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numeric'} value={productOl && productOl.Cost ? currencyToString(productOl.Cost) : 0 + ''} onChangeText={(text) => setProductOl({ ...productOl, Cost: onChangeTextInput(text) })}></TextInput>
+                                        <TextInput style={[styles.textInput, { color: '#36a3f7', fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={productOl && productOl.Cost ? currencyToString(productOl.Cost) : 0 + ''} onChangeText={(text) => setProductOl({ ...productOl, Cost: onChangeTextInput(text) })}></TextInput>
                                     </View>
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.title} >{I18n.t('gia')}</Text>
-                                        <TextInput style={[styles.textInput, { color: '#36a3f7', fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numeric'} value={product && product.Price ? currencyToString(product.Price) : 0 + ''} onChangeText={(text) => setProduct({ ...product, Price: onChangeTextInput(text) })}></TextInput>
+                                        <TextInput style={[styles.textInput, { color: '#36a3f7', fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={product && product.Price ? currencyToString(product.Price) : 0 + ''} onChangeText={(text) => setProduct({ ...product, Price: onChangeTextInput(text) })}></TextInput>
                                     </View>
                                 </View>
                                 {product ? product.ProductType == 2 || product.IsTimer == true ?

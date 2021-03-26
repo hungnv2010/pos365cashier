@@ -463,7 +463,7 @@ export default (props) => {
                             returnKeyType='done'
                             placeholder={I18n.t('dien_thoai')}
                             placeholderTextColor="#808080"
-                            keyboardType="numeric"
+                            keyboardType="numbers-and-punctuation"
                             value={customerDetail.Phone}
                             style={{ borderWidth: 0.5, color: "#000", padding: 10, borderRadius: 5 }}
                             onChangeText={(text) => { onChangeText(text, 2) }}
@@ -578,7 +578,7 @@ export default (props) => {
                             returnKeyType='done'
                             placeholder={I18n.t('du_no')}
                             placeholderTextColor="#808080"
-                            keyboardType="numeric"
+                            keyboardType="numbers-and-punctuation"
                             value={currencyToString(customerDetail.TotalDebt)}
                             style={{ borderWidth: 0.5, color: "#000", padding: 10, borderRadius: 5 }}
                             onChangeText={(text) => { onChangeText(text, 8) }}
@@ -590,7 +590,7 @@ export default (props) => {
                             returnKeyType='done'
                             placeholder={I18n.t('diem_thuong')}
                             placeholderTextColor="#808080"
-                            keyboardType="numeric"
+                            keyboardType="numbers-and-punctuation"
                             value={currencyToString(customerDetail.Point)}
                             style={{ borderWidth: 0.5, color: "#000", padding: 10, borderRadius: 5 }}
                             onChangeText={(text) => { onChangeText(text, 9) }}

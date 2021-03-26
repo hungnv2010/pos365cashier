@@ -144,7 +144,9 @@ export default (props) => {
                     <TextInput style={styles.styleTextIput} value={user.Name} onChangeText={text => setUser({ ...user, Name: text })}></TextInput>
                     <Text>{I18n.t('ngay_sinh')}</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Text style={[styles.styleTextIput, { flex: 9 }]} >{user.DOB ? dateToDate(user.DOB) : ''}</Text>
+                        <View style={{flex:9,borderRadius:10, backgroundColor: '#f2f2f2',marginTop:10}}>
+                        <Text style={[styles.styleTextIput,{paddingVertical:0}]} >{user.DOB ? dateToDate(user.DOB) : ''}</Text>
+                        </View>
                         <TouchableOpacity style={{ flex: 1, marginLeft: 10 }} onPress={() => { setTypeModal(2), setShowModal(true) }}>
                             <Icons name={'calendar-month'} size={24} color={'#36a3f7'} />
                         </TouchableOpacity>

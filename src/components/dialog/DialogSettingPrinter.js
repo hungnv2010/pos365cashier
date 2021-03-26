@@ -40,11 +40,11 @@ export default (props) =>{
             <View style={{paddingHorizontal:20,flexDirection:'row',paddingVertical:20}}>
                 <View style={{flex:1}}>
                     <Text style={{}}>{I18n.t('chieu_rong_kho_giay')}</Text>
-                    <TextInput style={[styles.styleTextInput,{marginRight:10}]} placeholderTextColor={'#4a4a4a'} placeholder={'58..80 mm'} keyboardType={'numeric'}  onChangeText={(text)=> setPrinter({...printer,size:parseInt(text)>80?'80':parseInt(text)<58?'58':text})} editable={printer.type != ''? true:false}></TextInput>
+                    <TextInput style={[styles.styleTextInput,{marginRight:10}]} placeholderTextColor={'#4a4a4a'} placeholder={'58..80 mm'} keyboardType={'numbers-and-punctuation'}  onChangeText={(text)=> setPrinter({...printer,size:parseInt(text)>80?'80':parseInt(text)<58?'58':text})} editable={printer.type != ''? true:false}></TextInput>
                 </View>
                 <View style={{flex:1}}>
                     <Text style={{marginLeft:10}}>{I18n.t('dia_chi_ip')}</Text>
-                    <TextInput style={[styles.styleTextInput,{marginLeft:10}]} placeholderTextColor={'#4a4a4a'}  placeholder={ '192.168.100.'} value={printer.ip != '' ? printer.ip : '192.168.100.'} keyboardType={'numeric'} editable={printer.type=='in_qua_mang_lan'?true:false} onChangeText={(text)=>setPrinter({...printer,ip:text})}></TextInput>
+                    <TextInput style={[styles.styleTextInput,{marginLeft:10}]} placeholderTextColor={'#4a4a4a'}  placeholder={ '192.168.100.'} value={printer.ip != '' ? printer.ip : '192.168.100.'} keyboardType={'numbers-and-punctuation'} editable={printer.type=='in_qua_mang_lan'?true:false} onChangeText={(text)=>setPrinter({...printer,ip:text})}></TextInput>
                 </View>
             </View>:null}
             <TouchableOpacity style={{backgroundColor:colors.colorLightBlue,marginBottom:10,marginHorizontal:20,paddingHorizontal:10,paddingVertical:12,borderRadius:10,marginVertical:10}} onPress={()=>onClickConfirm()}>

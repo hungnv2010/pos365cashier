@@ -105,6 +105,7 @@ export default (props) => {
             Key: key,
             Value: value
         }
+        console.log("clickkkkkkkkkk");
         
         new HTTPService().setPath(ApiPath.UPDATE_SETTING).POST(params)
             .then(res => {

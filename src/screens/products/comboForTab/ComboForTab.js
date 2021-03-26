@@ -104,7 +104,7 @@ export default (props) => {
                     </View>
                     <View style={{ flex: 1, marginLeft: 5 }}>
                         <Text style={{ textAlign: 'left' }}>{I18n.t('so_luong')}</Text>
-                        <TextInput style={{ textAlign: 'center', borderRadius: 5, backgroundColor: '#f2f2f2', padding: 10, marginTop: 5 }} keyboardType={'numeric'} value={item.Quantity ? item.Quantity + '' : 0 + ''} onChangeText={(text) => { item.Quantity = parseInt(text), setListProduct([...listProduct]) }}></TextInput>
+                        <TextInput style={{ textAlign: 'center', borderRadius: 5, backgroundColor: '#f2f2f2', padding: 10, marginTop: 5 }} keyboardType={'numbers-and-punctuation'} value={item.Quantity ? item.Quantity + '' : 0 + ''} onChangeText={(text) => { item.Quantity = parseInt(text), setListProduct([...listProduct]) }}></TextInput>
                     </View>
 
                 </View>

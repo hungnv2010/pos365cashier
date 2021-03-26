@@ -293,7 +293,7 @@ export default (props) => {
                                     </View>
                                     <TextInput
                                         returnKeyType='done'
-                                        keyboardType="numeric"
+                                        keyboardType="numbers-and-punctuation"
                                         value={currencyToString(discount)}
                                         onChangeText={text => {
                                             text = text.replace(/,/g, "");
