@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Image, View, Text, TouchableOpacity, TextInput, StyleSheet, FlatList } from 'react-native';
+import { Image, View, Text, TouchableOpacity, TextInput, StyleSheet, FlatList, Keyboard } from 'react-native';
 import { currencyToString, dateToString } from '../../common/Utils';
 import I18n from "../../common/language/i18n";
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
@@ -15,6 +15,7 @@ export default (props) =>{
         console.log("printer",printer);
     },[printer])
     const onClickConfirm = () =>{
+        Keyboard.dismiss()
         props.outputPrinter(printer)
     }
     return(

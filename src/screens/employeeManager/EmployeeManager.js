@@ -139,6 +139,7 @@ export default (props) => {
                         <FlatList data={listUsers}
                             renderItem={({ item, index }) => renderUsers(item, index)}
                             keyExtractor={(item, index) => index.toString()}
+                            showsVerticalScrollIndicator={false}
                         />
                     </View>
                     <FAB

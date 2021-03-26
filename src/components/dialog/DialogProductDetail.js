@@ -237,6 +237,7 @@ export default (props) => {
                                         style={{ color: "#000", padding: 7, flex: 1, fontSize: 14, borderWidth: 0.5, borderRadius: 4 }}
                                         value={currencyToString(price)}
                                         editable={allowChangePriceProduct}
+                                        //keyboardType="numbers-and-punctuation"
                                         onChangeText={text => {
                                             text = text.replace(/,/g, "");
                                             if (isNaN(text)) return
@@ -321,7 +322,7 @@ export default (props) => {
                                         </TouchableOpacity>
                                         <TextInput
                                             style={{ padding: 6, color: "#000", textAlign: "center", margin: 10, flex: 1, borderRadius: 4, borderWidth: 0.5, backgroundColor: "#D5D8DC", color: "#000" }}
-                                            value={"" + itemOrder.Quantity}
+                                            value={"" + itemOrder.Quantity} keyboardType="numbers-and-punctuation"
                                             onChangeText={text => {
                                                 if (isNaN(text) || text.length > 4) return
                                                 if (itemOrder.SplitForSalesOrder || (itemOrder.ProductType == 2 && itemOrder.IsTimer)) {

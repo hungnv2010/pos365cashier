@@ -321,13 +321,13 @@ export default (props) => {
         setTitlePrint(data.title)
         setPositionPrint(data.index)
         setDefautlType(settingObject.Printer[data.index].type)
-        console.log("printer setting",settingObject.Printer[data.index]);
+        console.log("printer setting", settingObject.Printer[data.index]);
         setPrintertmp(settingObject.Printer[data.index])
 
     }
-    const outputSetPrinter = (data) =>{
+    const outputSetPrinter = (data) => {
         settingObject.Printer[positionPrint] = data
-        savePrint({...settingObject}) 
+        savePrint({ ...settingObject })
         setShowModal(false)
         savePrintRedux(settingObject.Printer)
     }
@@ -414,7 +414,7 @@ export default (props) => {
     const onShowModalStampPrint = (data) => {
         setPositionPrint(data.index)
         setDefautlType(settingObject.Printer[data.index].type)
-        
+
         setModalStampPrint(data.stt)
         setTitlePrint(data.title)
     }
@@ -617,7 +617,7 @@ export default (props) => {
                                     bottom: 0
                                 }}></View>
                             </TouchableWithoutFeedback>
-                            <View style={[styles.styleViewModal,{ marginBottom: Platform.OS == 'ios' ? marginModal : 0 }]} >
+                            <View style={[styles.styleViewModal, { marginBottom: Platform.OS == 'ios' ? marginModal : 0 }]} >
                                 <View style={{ width: Metrics.screenWidth * 0.8, }}>
                                     {/* <Text style={styles.titleModal}>{I18n.t('chon_cong_nghe_in')}</Text>
                                     {
@@ -635,7 +635,7 @@ export default (props) => {
                                             )
                                         })
                                     } */}
-                                    <DialogSettingPrinter title={printerTmp.title} printer={printerTmp} outputPrinter={outputSetPrinter}/>
+                                    <DialogSettingPrinter title={printerTmp.title} printer={printerTmp} outputPrinter={outputSetPrinter} />
                                     {/* <View style={{ justifyContent: "center", flexDirection: "row", paddingTop: 10 }}>
                                         <TouchableOpacity style={styles.styleButtonHuy} onPress={() => setShowModal(false)} >
                                             <Text style={styles.styleTextBtnHuy}>{I18n.t("huy")}</Text>
@@ -867,8 +867,8 @@ export default (props) => {
                                 }}></View>
 
                             </TouchableWithoutFeedback>
-                            <View style={[styles.styleViewModal,{ marginBottom: Platform.OS == 'ios' ? marginModal : 0 }]} >
-                                <View style={{ width: Metrics.screenWidth * 0.7}}>
+                            <View style={[styles.styleViewModal, { marginBottom: Platform.OS == 'ios' ? marginModal : 0 }]} >
+                                <View style={{ width: Metrics.screenWidth * 0.7 }}>
                                     <Text style={styles.titleModal}>{I18n.t('thong_tin_cua_hang')}</Text>
                                     <StoreInformation code={inforStore.Code} name={inforStore.Name} address={inforStore.Address} phoneNumber={inforStore.Phone} outPut={outPut} />
                                     <View style={{ justifyContent: "center", flexDirection: "row", paddingTop: 10 }}>
@@ -941,7 +941,7 @@ const ItemStoreInfor = (props) => {
     return (
         <View style={{ flex: 1, marginTop: 15 }}>
             <Text style={styles.textTitleItemHint}>{props.title}</Text>
-            <TextInput style={styles.textInputStyle} value={titleHint} onChangeText={text => { sendInput(text), setTitleHint(text) }}></TextInput>
+            <TextInput style={styles.textInputStyle} value={titleHint} placeholderTextColor={'#4a4a4a'} onChangeText={text => { sendInput(text), setTitleHint(text) }}></TextInput>
         </View>
     )
 }
@@ -961,7 +961,7 @@ const styles = StyleSheet.create({
         flex: 6, fontSize: 16, marginLeft: 20, marginTop: 30
     },
     textTitleItemHint: {
-        flex: 1, fontSize: 16, color: 'silver', marginLeft: 20
+        flex: 1, fontSize: 16, color: '#4a4a4a', marginLeft: 20,
     },
     switchButton: {
         flex: 2,
