@@ -93,6 +93,7 @@ class SignalRManager {
             .done(() => {
                 // alert('Now connected, connection ID=' + this.connectionHub.id);
                 this.isStartSignalR = true;
+                isError = false
                 console.log('this.isStartSignalR', this.isStartSignalR);
                 if (dialogManager)
                     dialogManager.hiddenLoading();
