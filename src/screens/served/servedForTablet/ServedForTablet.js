@@ -93,6 +93,7 @@ const Served = (props) => {
                 let jsonTmp = JSON.parse(serverEvent[0].JsonContent)
                 jsonTmp.OrderDetails = await addPromotion(jsonTmp.OrderDetails);
                 jsonTmp.RoomName = jsonTmp.RoomName ? jsonTmp.RoomName : props.route.params.room.Name
+                console.log('jsonTmpjsonTmp', jsonTmp);
                 setJsonContent(jsonTmp)
             }
         }
@@ -122,7 +123,7 @@ const Served = (props) => {
 
     useEffect(() => {
         console.log('jsonContent.Partner', jsonContent.Partner);
-        if (jsonContent.Partner && jsonContent.Partner.Id) {
+        if (jsonContent.Partner && jsonContent.Partner.Id != 0) {
             if (jsonContent.Partner.Id == currentCustomer.Id) return
             setCurrentCustomer(jsonContent.Partner)
         }
@@ -130,16 +131,36 @@ const Served = (props) => {
 
     }, [jsonContent.Partner])
 
+    // useEffect(() => {
+    //     console.log('jsonContent.PriceBook', jsonContent.PriceBook);
+    //     if (jsonContent.PriceBook && jsonContent.PriceBook.Id) {
+    //         if (jsonContent.PriceBook.Id == currentPriceBook.Id) return
+    //         setCurrentPriceBook(jsonContent.PriceBook)
+    //     }
+    //     else setCurrentPriceBook({ Name: "gia_niem_yet", Id: 0 })
+    // }, [jsonContent.PriceBook])
+
+
     useEffect(() => {
-        console.log('jsonContent.PriceBook', jsonContent.PriceBook);
-        if (jsonContent.PriceBook && jsonContent.PriceBook.Id) {
-            if (jsonContent.PriceBook.Id == currentPriceBook.Id) return
-            setCurrentPriceBook(jsonContent.PriceBook)
+        if (jsonContent.PriceBookId && jsonContent.PriceBookId != 0) {
+            const getPriceBook = async () => {
+                let priceBook = null
+                let listPriceBook = await realmStore.queryPricebook()
+                listPriceBook.forEach(item => {
+                    if (item.Id == jsonContent.PriceBookId) priceBook = item
+                })
+                return priceBook
+            }
+            const savePriceBook = async () => {
+                let pricebook = await getPriceBook()
+                if (pricebook) setCurrentPriceBook(pricebook)
+            }
+            savePriceBook()
+        } else {
+            setCurrentPriceBook({ Name: "gia_niem_yet", Id: 0 })
         }
-        else setCurrentPriceBook({ Name: "gia_niem_yet", Id: 0 })
-    }, [jsonContent.PriceBook])
 
-
+    }, [jsonContent.PriceBookId])
 
     const getOtherPrice = async (product) => {
         if (currentPriceBook.Id) {
@@ -494,6 +515,7 @@ const Served = (props) => {
                             jsonContent.Partner = null
                             jsonContent.PartnerId = null
                             jsonContent.DiscountRatio = 0
+                            jsonContent.DiscountValue = 0
                             updateServerEvent({ ...jsonContent })
                         }
 
