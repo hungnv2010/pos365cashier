@@ -23,6 +23,7 @@ export default (props) => {
     const [category, setCategory] = useState([])
     const [itProduct, setItProduct] = useState({})
     const [compositeItemProducts, setCompositeItemProducts] = useState([])
+    const itemProduct = useRef()
     const [qrScan, setQrScan] = useState()
     useEffect(() => {
         getData()
@@ -55,17 +56,18 @@ export default (props) => {
         setIdCategory(item.Id)
     }
     const onClickItem = (el) => {
-       
+       itemProduct.current = el
         if (deviceType == Constant.PHONE) {
-            props.navigation.navigate(ScreenList.ProductDetail, { product: el, category: category, onCallBack: handleSuccess, })
+            props.navigation.navigate(ScreenList.ProductDetail, { product: itemProduct.current, category: category, onCallBack: handleSuccess, })
         } else {
-            setItProduct(el)
+            setItProduct(itemProduct.current)
         }
     }
     const handleSuccess = async (type1) => {
         console.log("type", type1);
         dialogManager.showLoading()
         try {
+            setItProduct({})
             await realmStore.deleteProduct()
             await dataManager.syncProduct()
             getData()
@@ -156,7 +158,7 @@ export default (props) => {
             <View style={{ flex: 1, flexDirection: 'row' }}>
                 <View style={{ backgroundColor: '#F5F5F5', flexDirection: 'column', flex: 1 }}>
                     <View style={{ backgroundColor: "#FFDEAD", marginTop: 5, borderRadius: 18, marginLeft: 5, marginRight: 5 }}>
-
+                    {category.length >0?
                         <FlatList
                             data={category}
                             renderItem={({ item, index }) => renderCategory(item, index)}
@@ -164,13 +166,14 @@ export default (props) => {
                             style={{ marginRight: 10, marginLeft: 10 }}
                             keyExtractor={(item, index) => index.toString()}
                             showsHorizontalScrollIndicator={false}
-                        />
+                        />:null}
                     </View>
+                    {listProduct.length > 0 ?
                     <FlatList
                         data={listProduct}
                         renderItem={({ item, index }) => renderProduct(item, index)}
                         keyExtractor={(item, index) => index.toString()}
-                    />
+                    />:null}
                     <FAB
                         style={styles.fab}
                         icon='plus'
@@ -184,7 +187,7 @@ export default (props) => {
 
                 {deviceType == Constant.TABLET ? itProduct != null ?
                     <View style={{ flex: 1 }}>
-                        <ProductDetail iproduct={itProduct} iCategory={category} outPut={outPut} handleSuccess={handleSuccess} compositeItemProducts={compositeItemProducts} scanQr={qrScan} />
+                        <ProductDetail iproduct={itProduct} iCategory={category} outPutCombo={outPut} handleSuccessTab={handleSuccess} compositeItemProducts={compositeItemProducts} scanQr={qrScan} />
                     </View>
                     : <View style={{ flex: 1 }}></View>
                     :

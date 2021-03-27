@@ -38,7 +38,7 @@ export default (props) => {
         } 
         data = printer.filter(item => item.Status == true)
         console.log("Data",data);
-        props.outPut({printer:printer, listP:priceConfig})
+        props.outPutPrint({printer:printer, listP:priceConfig})
     }
     useEffect(() => {
         console.log("Printer", printer);
@@ -49,7 +49,7 @@ export default (props) => {
     }, [countPrint])
     useEffect(()=>{
         //setPriceConfig(props.config)
-        props.outPut({printer:printer, listP:priceConfig})
+        props.outPutPrint({printer:printer, listP:priceConfig})
     },[priceConfig])
 
     const renderItem = (item, index) => {

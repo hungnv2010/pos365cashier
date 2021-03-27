@@ -45,6 +45,8 @@ export default (props) => {
     const [countFormular, setCountFormular] = useState(0)
     const [type, setType] = useState('')
     const [compositeItemProducts, setCompositeItemProducts] = useState([])
+    const [qrCode, setQrCode] = useState()
+    const [printerPr, setPrinterPr] = useState('')
     const scrollRef = useRef();
     const addCate = useRef([{
         Name: 'ten_nhom',
@@ -97,7 +99,7 @@ export default (props) => {
             Price: product.Price,
             PriceConfig: priceConfig ? JSON.stringify(priceConfig) : JSON.stringify({ Type: "percent", Type2: "percent", DontPrintLabel: false, OpenTopping: false }),
             PriceLargeUnit: product.PriceLargeUnit,
-            Printer: product.Printer,
+            Printer: deviceType == Constant.PHONE ? product.Printer ? product.Printer : 'KitchenA' : printerPr ? printerPr : 'KitchenA',
             ProductAttributes: productOl.ProductAttributes ? productOl.ProductAttributes : [],
             ProductImages: product.ProductImages,
             ProductType: product.ProductType ? product.ProductType : 1,
@@ -117,6 +119,7 @@ export default (props) => {
     useEffect(() => {
         if (deviceType == Constant.TABLET) {
             setProduct(props.iproduct)
+            setPrinterPr('')
             setCategory(props.iCategory)
             console.log("CompositeItemProducts", props.compositeItemProducts);
             setNameCategory()
@@ -134,7 +137,11 @@ export default (props) => {
 
     useEffect(() => {
         if (deviceType == Constant.TABLET) {
-            setProduct({ ...product, Code: props.scanQr })
+            setQrCode(props.scanQr)
+            console.log('qrcode', qrCode);
+            if (qrCode != null) {
+                setProduct({ ...product, Code: qrCode })
+            }
         }
     }, [props.scanQr])
     useEffect(() => {
@@ -173,7 +180,7 @@ export default (props) => {
         setPrinter([...printCook])
         if (priceConfig && priceConfig != null) {
             printCook.forEach(printer => {
-                if (product.Printer == printer.Key || priceConfig.SecondPrinter && priceConfig.SecondPrinter == printer.Key || priceConfig.Printer3 && priceConfig.Printer3 == printer.Key || priceConfig.Printer4 && priceConfig.Printer4 == printer.Key || priceConfig.Printer5 && priceConfig.Printer5 == printer.Key) {
+                if (printerPr == printer.Key || product.Printer == printer.Key || priceConfig.SecondPrinter && priceConfig.SecondPrinter == printer.Key || priceConfig.Printer3 && priceConfig.Printer3 == printer.Key || priceConfig.Printer4 && priceConfig.Printer4 == printer.Key || priceConfig.Printer5 && priceConfig.Printer5 == printer.Key) {
                     printer.Status = true
                     countPrint.current = countPrint.current + 1
                 } else {
@@ -287,17 +294,19 @@ export default (props) => {
         setOnShowModal(false)
 
         new HTTPService().setPath(ApiPath.CATEGORIES_PRODUCT).POST(param).then(res => {
-            if (res && res.ResponseStatus && res.ResponseStatus.Message) {
-                dialogManager.showLoading()
-                dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
-                    dialogManager.destroy();
-                    dialogManager.hiddenLoading()
-                }, null, null, I18n.t('dong'))
-            } else {
-                if (deviceType == Constant.PHONE) {
-                    handleSuccess('them')
-                } else
-                    props.handleSuccess('them')
+            if (res) {
+                if (res.ResponseStatus && res.ResponseStatus.Message) {
+                    dialogManager.showLoading()
+                    dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
+                        dialogManager.destroy();
+                        dialogManager.hiddenLoading()
+                    }, null, null, I18n.t('dong'))
+                } else {
+                    if (deviceType == Constant.PHONE) {
+                        handleSuccess('them')
+                    } else
+                        props.handleSuccessTab('them')
+                }
             }
         })
         await dataManager.syncCategories()
@@ -317,7 +326,7 @@ export default (props) => {
         }
     }
 
-    const outPut = (data) => {
+    const outPutPrinter = (data) => {
         setPrinter([...data.printer])
         countPrint.current = 0
         printer.forEach(item => {
@@ -325,36 +334,63 @@ export default (props) => {
                 countPrint.current = countPrint.current + 1
             }
         })
-        let listprinter = printer.filter(item => item.Status == true)
-        switch (listprinter.length) {
-            case 1:
-                product.Printer = listprinter[0].Key
-                setPriceConfig({ ...priceConfig, SecondPrinter: '', Printer3: '', Printer4: '', Printer5: '' })
-                break
-            case 2:
-                product.Printer = listprinter[0].Key
-                setPriceConfig({ ...priceConfig, SecondPrinter: listprinter[1].Key, Printer3: '', Printer4: '', Printer5: '' })
-                break
-            case 3:
-                product.Printer = listprinter[0].Key
-                setPriceConfig({ ...priceConfig, SecondPrinter: listprinter[1].Key, Printer3: listprinter[2].Key, Printer4: '', Printer5: '' })
-                break
-            case 4:
-                product.Printer = listprinter[0].Key
-                setPriceConfig({ ...priceConfig, SecondPrinter: listprinter[1].Key, Printer3: listprinter[2].Key, Printer4: listprinter[3].Key, Printer5: '' })
-                break
-            case 5:
-                product.Printer = listprinter[0].Key
-                setPriceConfig({ ...priceConfig, SecondPrinter: listprinter[1].Key, Printer3: listprinter[2].Key, Printer4: listprinter[3].Key, Printer5: listprinter[4].Key })
-                break
+        if (deviceType == Constant.PHONE) {
+            let listprinter = printer.filter(item => item.Status == true)
+            switch (listprinter.length) {
+                case 1:
+                    product.Printer = listprinter[0].Key
+                    setPriceConfig({ ...priceConfig, SecondPrinter: '', Printer3: '', Printer4: '', Printer5: '' })
+                    break
+                case 2:
+                    product.Printer = listprinter[0].Key
+                    setPriceConfig({ ...priceConfig, SecondPrinter: listprinter[1].Key, Printer3: '', Printer4: '', Printer5: '' })
+                    break
+                case 3:
+                    product.Printer = listprinter[0].Key
+                    setPriceConfig({ ...priceConfig, SecondPrinter: listprinter[1].Key, Printer3: listprinter[2].Key, Printer4: '', Printer5: '' })
+                    break
+                case 4:
+                    product.Printer = listprinter[0].Key
+                    setPriceConfig({ ...priceConfig, SecondPrinter: listprinter[1].Key, Printer3: listprinter[2].Key, Printer4: listprinter[3].Key, Printer5: '' })
+                    break
+                case 5:
+                    product.Printer = listprinter[0].Key
+                    setPriceConfig({ ...priceConfig, SecondPrinter: listprinter[1].Key, Printer3: listprinter[2].Key, Printer4: listprinter[3].Key, Printer5: listprinter[4].Key })
+                    break
+            }
+            console.log("price config", product.Printer);
+        } else {
+            let listprinter = printer.filter(item => item.Status == true)
+            switch (listprinter.length) {
+                case 1:
+                    setPrinterPr(listprinter[0].Key)
+                    setPriceConfig({ ...priceConfig, SecondPrinter: '', Printer3: '', Printer4: '', Printer5: '' })
+                    break
+                case 2:
+                    setPrinterPr(listprinter[0].Key)
+                    setPriceConfig({ ...priceConfig, SecondPrinter: listprinter[1].Key, Printer3: '', Printer4: '', Printer5: '' })
+                    break
+                case 3:
+                    setPrinterPr(listprinter[0].Key)
+                    setPriceConfig({ ...priceConfig, SecondPrinter: listprinter[1].Key, Printer3: listprinter[2].Key, Printer4: '', Printer5: '' })
+                    break
+                case 4:
+                    setPrinterPr(listprinter[0].Key)
+                    setPriceConfig({ ...priceConfig, SecondPrinter: listprinter[1].Key, Printer3: listprinter[2].Key, Printer4: listprinter[3].Key, Printer5: '' })
+                    break
+                case 5:
+                    setPrinterPr(listprinter[0].Key)
+                    setPriceConfig({ ...priceConfig, SecondPrinter: listprinter[1].Key, Printer3: listprinter[2].Key, Printer4: listprinter[3].Key, Printer5: listprinter[4].Key })
+                    break
+            }
+            console.log("price config", printerPr);
         }
-        console.log("price config", priceConfig);
     }
     const onClickSave = () => {
         if (product.CategoryId && product.CategoryId > 0) {
             params.Product = { ...params.Product, CategoryId: product.CategoryId }
-            if(product.ProductType == 2){
-                param.Product = { ...params.Product, IsTimer: true}
+            if (product.ProductType == 2) {
+                param.Product = { ...params.Product, IsTimer: true }
             }
         }
         saveProduct()
@@ -362,16 +398,18 @@ export default (props) => {
     const saveProduct = async () => {
         new HTTPService().setPath(ApiPath.PRODUCT).POST(params).then(res => {
             console.log('onClickDelete', res)
-            if (res && res.ResponseStatus && res.ResponseStatus.Message) {
-                dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
-                    dialogManager.destroy();
-                }, null, null, I18n.t('dong'))
-            } else {
-                if (deviceType == Constant.PHONE) {
-                    props.route.params.onCallBack(type)
-                    props.navigation.pop()
-                } else
-                    props.handleSuccess(type)
+            if (res) {
+                if (res.ResponseStatus && res.ResponseStatus.Message) {
+                    dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
+                        dialogManager.destroy();
+                    }, null, null, I18n.t('dong'))
+                } else {
+                    if (deviceType == Constant.PHONE) {
+                        props.route.params.onCallBack(type)
+                        props.navigation.pop()
+                    } else
+                        props.handleSuccessTab(type)
+                }
             }
         })
     }
@@ -384,7 +422,8 @@ export default (props) => {
     }
     const pickCategory = (data) => {
         console.log("value", data.key.CategoryName);
-        product.CategoryId = data.key.Id
+        setProduct({ ...product, CategoryId: data.key.Id })
+        //product.CategoryId = data.key.Id
         setNameCategory(data.key.Name)
         setOnShowModal(false)
     }
@@ -395,9 +434,9 @@ export default (props) => {
     }
     const chooseProduct = () => {
         if (deviceType == Constant.TABLET) {
-            props.outPut({ comboTab: true, list: listItemFomular })
+            props.outPutCombo({ comboTab: true, list: listItemFomular })
         } else if (deviceType == Constant.PHONE) {
-            console.log("listcombo",listItemFomular);
+            console.log("listcombo", listItemFomular);
             props.navigation.navigate('ComboForPhone', { list: listItemFomular, _onSelect: onCallBackData })
         }
     }
@@ -422,7 +461,7 @@ export default (props) => {
         if (deviceType == Constant.PHONE) {
             props.navigation.navigate('QRCode', { _onSelect: onCallBackQr })
         } else if (deviceType == Constant.TABLET) {
-            props.outPut({ scanQrCode: true })
+            props.outPutCombo({ scanQrCode: true })
         }
     }
     const onCallBackQr = (data) => {
@@ -448,16 +487,18 @@ export default (props) => {
                 new HTTPService().setPath(ApiPath.PRODUCT + `/${product.Id}`).DELETE()
                     .then(res => {
                         console.log('onClickDelete', res)
-                        if (res && res.ResponseStatus && res.ResponseStatus.Message) {
-                            dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
-                                dialogManager.destroy();
-                            }, null, null, I18n.t('dong'))
-                        } else {
-                            if (deviceType == Constant.PHONE) {
-                                props.route.params.onCallBack('xoa')
-                                props.navigation.pop()
-                            } else
-                                props.handleSuccess('xoa')
+                        if (res) {
+                            if (res.ResponseStatus && res.ResponseStatus.Message) {
+                                dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
+                                    dialogManager.destroy();
+                                }, null, null, I18n.t('dong'))
+                            } else {
+                                if (deviceType == Constant.PHONE) {
+                                    props.route.params.onCallBack('xoa')
+                                    props.navigation.pop()
+                                } else
+                                    props.handleSuccessTab('xoa')
+                            }
                         }
                     })
                     .catch(err => console.log('onClickDelete err', err))
@@ -469,22 +510,22 @@ export default (props) => {
     const renderModal = () => {
         return (
             <View>{typeModal.current == 1 ?
-                <View style={{  backgroundColor: 'white', borderRadius: 5, flexDirection: 'column' }}>
+                <View style={{ backgroundColor: 'white', borderRadius: 5, flexDirection: 'column' }}>
                     <Text style={[styles.titleButtonOff, { padding: 15 }]}>{I18n.t('chon_loai_hang_hoa')}</Text>
                     <View>
                         <View style={{ flexDirection: 'row', padding: 10 }}>
-                            <TouchableOpacity style={[styles.styleButton, { marginLeft: 10, borderColor: defaultType == 1 ? '#36a3f7' : null, borderWidth: 1, backgroundColor: defaultType == 1 ? 'white' : '#f2f2f2' }]} onPress={() => {setDefaultType(1), console.log("click",defaultType);}}>
+                            <TouchableOpacity style={[styles.styleButton, { marginLeft: 10, borderColor: defaultType == 1 ? '#36a3f7' : null, borderWidth: 1, backgroundColor: defaultType == 1 ? 'white' : '#f2f2f2' }]} onPress={() => { setDefaultType(1), console.log("click", defaultType); }}>
                                 <Text style={[styles.titleButtonOff, { color: defaultType == 1 ? '#36a3f7' : null }]}>{I18n.t('hang_hoa')}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={[styles.styleButton, { borderColor: defaultType == 2 ? '#36a3f7' : null, borderWidth: 1, backgroundColor: defaultType == 2 ? 'white' : '#f2f2f2' }]} onPress={() => {setDefaultType(2), console.log("click",defaultType);}}>
+                            <TouchableOpacity style={[styles.styleButton, { borderColor: defaultType == 2 ? '#36a3f7' : null, borderWidth: 1, backgroundColor: defaultType == 2 ? 'white' : '#f2f2f2' }]} onPress={() => { setDefaultType(2), console.log("click", defaultType); }}>
                                 <Text style={[styles.titleButtonOff, { color: defaultType == 2 ? '#36a3f7' : null }]}>{I18n.t('dich_vu')}</Text>
                             </TouchableOpacity>
                         </View>
-                        <View style={{flexDirection:'row',padding:10}}>
-                        <TouchableOpacity style={{flex:1, marginRight: 10, marginLeft: 10, justifyContent: 'center', borderWidth: 1, alignItems: 'center', borderRadius: 16, padding: 15, backgroundColor: '#f2f2f2', borderColor: defaultType == 3 ? '#36a3f7' : null, backgroundColor: defaultType == 3 ? 'white' : '#f2f2f2' }}
-                            onPress={() => {setDefaultType(3), console.log("click",defaultType);}}>
-                            <Text style={[styles.titleButtonOff, { color: defaultType == 3 ? '#36a3f7' : null }]}>Combo</Text>
-                        </TouchableOpacity>
+                        <View style={{ flexDirection: 'row', padding: 10 }}>
+                            <TouchableOpacity style={{ flex: 1, marginRight: 10, marginLeft: 10, justifyContent: 'center', borderWidth: 1, alignItems: 'center', borderRadius: 16, padding: 15, backgroundColor: '#f2f2f2', borderColor: defaultType == 3 ? '#36a3f7' : null, backgroundColor: defaultType == 3 ? 'white' : '#f2f2f2' }}
+                                onPress={() => { setDefaultType(3), console.log("click", defaultType); }}>
+                                <Text style={[styles.titleButtonOff, { color: defaultType == 3 ? '#36a3f7' : null }]}>Combo</Text>
+                            </TouchableOpacity>
                         </View>
                     </View>
                     <TouchableOpacity style={{ padding: 15, marginRight: 20, marginLeft: 20, marginTop: 20, marginBottom: 10, borderRadius: 15, alignItems: 'center', backgroundColor: '#36a3f7' }} onPress={() => clickOk()}>
@@ -540,7 +581,7 @@ export default (props) => {
                 <View>
                     <Text style={styles.title}>{I18n.t('ma_hang_ma_sku_ma_vach')}</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#36a3f7', flex: 8 }]} value={product ? product.Code : null} onChangeText={(text) => setProduct({ ...product, Code: text })}></TextInput>
+                        <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#36a3f7', flex: 8 }]} value={product && product.Code ? product.Code : null} onChangeText={(text) => setProduct({ ...product, Code: text })}></TextInput>
                         <TouchableOpacity style={{ justifyContent: 'flex-end', flex: 1 }} onPress={() => onClickQrcodeScan()}>
                             <Icon name="qrcode-scan" size={25} color={colors.colorLightBlue} />
                         </TouchableOpacity>
@@ -602,7 +643,7 @@ export default (props) => {
                                                 </TouchableOpacity>
                                             </View>
 
-                                            {listItemFomular.length>0 ?
+                                            {listItemFomular.length > 0 ?
                                                 <View style={{ flex: 1 }}>
                                                     <Text style={styles.titleHint} >{countFormular} {I18n.t('san_pham')}</Text>
                                                     <FlatList
@@ -659,7 +700,7 @@ export default (props) => {
                             </View>
                             <View style={{ padding: 3, backgroundColor: '#f2f2f2', marginTop: 10, }}></View>
                             {product ?
-                                <PrintCook productOl={product} config={priceConfig} printer={printer} countPrint={countPrint.current} outPut={outPut}></PrintCook> : null}
+                                <PrintCook productOl={product} config={priceConfig} printer={printer} countPrint={countPrint.current} outPutPrint={outPutPrinter}></PrintCook> : null}
                         </View> : null}
                 </View>
                 <View style={{ backgroundColor: '#f2f2f2', padding: 10 }}>
