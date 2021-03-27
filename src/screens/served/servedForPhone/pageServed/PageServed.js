@@ -95,7 +95,7 @@ export default (props) => {
 
     useEffect(() => {
         console.log('jsonContent.Partner', jsonContent.Partner);
-        if (jsonContent.Partner && jsonContent.Partner.Id) {
+        if (jsonContent.Partner && jsonContent.Partner.Id != 0) {
             if (jsonContent.Partner.Id == currentCustomer.Id) return
             setCurrentCustomer(jsonContent.Partner)
         }
@@ -103,14 +103,35 @@ export default (props) => {
 
     }, [jsonContent.Partner])
 
+    // useEffect(() => {
+    //     console.log('jsonContent.PriceBook', jsonContent.PriceBook);
+    //     if (jsonContent.PriceBook && jsonContent.PriceBook.Id) {
+    //         if (jsonContent.PriceBook.Id == currentPriceBook.Id) return
+    //         setCurrentPriceBook(jsonContent.PriceBook)
+    //     }
+    //     else setCurrentPriceBook({ Name: "gia_niem_yet", Id: 0 })
+    // }, [jsonContent.PriceBook])
+
     useEffect(() => {
-        console.log('jsonContent.PriceBook', jsonContent.PriceBook);
-        if (jsonContent.PriceBook && jsonContent.PriceBook.Id) {
-            if (jsonContent.PriceBook.Id == currentPriceBook.Id) return
-            setCurrentPriceBook(jsonContent.PriceBook)
+        if (jsonContent.PriceBookId && jsonContent.PriceBookId != 0) {
+            const getPriceBook = async () => {
+                let priceBook = null
+                let listPriceBook = await realmStore.queryPricebook()
+                listPriceBook.forEach(item => {
+                    if (item.Id == jsonContent.PriceBookId) priceBook = item
+                })
+                return priceBook
+            }
+            const savePriceBook = async () => {
+                let pricebook = await getPriceBook()
+                if (pricebook) setCurrentPriceBook(pricebook)
+            }
+            savePriceBook()
+        } else {
+            setCurrentPriceBook({ Name: "gia_niem_yet", Id: 0 })
         }
-        else setCurrentPriceBook({ Name: "gia_niem_yet", Id: 0 })
-    }, [jsonContent.PriceBook])
+
+    }, [jsonContent.PriceBookId])
 
 
     const getOtherPrice = async (list) => {
@@ -468,17 +489,7 @@ export default (props) => {
                             if (res && res.PriceList && res.PriceList.length > 0) {
                                 jsonContent.OrderDetails.forEach((product) => {
                                     res.PriceList.forEach((priceBook) => {
-                                        if (priceBook.ProductId == product.ProductId) {
-                                            // product.DiscountRatio = 0.0
-                                            // if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
-                                            // if (!priceBook.Price) priceBook.Price = product.UnitPrice
-                                            // let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price
-                                            // product.Price = newBasePrice + product.TotalTopping
-                                            // let basePrice = product.IsLargeUnit ? product.PriceLargeUnit : product.UnitPrice
-                                            // let hasDiscount = product.Discount != 0 || product.DiscountRatio != 0
-                                            // if (product.Price - product.TotalTopping != basePrice && hasDiscount) {
-
-                                            // }
+                                        if (priceBook.ProductId == product.ProductId) {                                    
                                             product.DiscountRatio = 0.0
                                             product.Discount = 0
                                             if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
@@ -543,9 +554,11 @@ export default (props) => {
                                 })
 
                         } else {
+                            console.log('no data');
                             jsonContent.Partner = null
                             jsonContent.PartnerId = null
                             jsonContent.DiscountRatio = 0
+                            jsonContent.DiscountValue = 0
                             updateServerEvent({ ...jsonContent })
                         }
 
