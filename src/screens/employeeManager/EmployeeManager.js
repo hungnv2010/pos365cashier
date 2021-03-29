@@ -76,8 +76,17 @@ export default (props) => {
         }
 
     }
-    const handleSuccess = () => {
-        getListUsers()
+    const handleSuccess = (type) => {
+        dialogManager.showLoading()
+        try {
+            getListUsers()
+            dialogManager.showPopupOneButton(`${I18n.t(type)} ${I18n.t('nhan_vien')} ${I18n.t('thanh_cong')}`, I18n.t('thong_bao'))
+            dialogManager.hiddenLoading()
+        } catch (error) {
+            console.log('handleSuccess err', error);
+            dialogManager.hiddenLoading()
+        }
+        
     }
     const onClickBtnFAB = () => {
         if (deviceType == Constant.PHONE) {
@@ -156,7 +165,7 @@ export default (props) => {
                         <View style={{ flex: 1 }}>
                             { isEdit == true ?
                                 <EmployeeDetails userData={user} handleSuccess={handleSuccess} onClickEdit={onClickEdit} /> : 
-                                <EmployeeEdit userData={user} handleSuccess={handleSuccess} />
+                                <EmployeeEdit userData={user} handleSuccessEdit={handleSuccess} />
                                 }
                         </View> :
                         null

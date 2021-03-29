@@ -35,18 +35,24 @@ export default (props) => {
         if (deviceType == Constant.PHONE) {
             const getData = (param) => {
                 setUser({ ...JSON.parse(JSON.stringify(param.user)) })
+                if (JSON.parse(JSON.stringify(param.user)).Id) {
+                    setTitle('sua')
+                } else {
+                    setTitle('them')
+                }
             }
             getData(props.route.params)
         }
-        if (user.Id) {
-            setTitle('sua')
-        } else {
-            setTitle('them')
-        }
+        
     }, [])
     useEffect(() => {
         if (deviceType == Constant.TABLET) {
             setUser(props.userData)
+            if (props.userData.Id) {
+                setTitle('sua')
+            } else {
+                setTitle('them')
+            }
         }
     }, [props.userData])
     const onChangeDate = (selectedDate) => {
@@ -61,6 +67,7 @@ export default (props) => {
         dateTmp.current = currentDate;
     };
     const onClickOk = () => {
+        console.log("title",title);
         let param = { User: { ...user, PlainPassword: password } }
         new HTTPService().setPath(ApiPath.USERS).POST(param).then(res => {
             if (res && res.ResponseStatus && res.ResponseStatus.Message) {
@@ -68,18 +75,17 @@ export default (props) => {
                 dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
                     dialogManager.destroy();
                     dialogManager.hiddenLoading()
-                    props.navigation.goBack()
                 }, null, null, I18n.t('dong'))
             } else {
                 if (deviceType == Constant.PHONE) {
                     if (title == 'sua') {
                         props.route.params.onCallBackEdit(user)
-                    } else {
+                    } else if(title == 'them') {
                         props.route.params.onCallBack(title)
                     }
                     props.navigation.pop()
                 } else
-                    props.handleSuccess(title)
+                    props.handleSuccessEdit(title)
             }
         })
     }
@@ -147,7 +153,7 @@ export default (props) => {
                         <View style={{flex:9,borderRadius:10, backgroundColor: '#f2f2f2',marginTop:10}}>
                         <Text style={[styles.styleTextIput,{paddingVertical:0}]} >{user.DOB ? dateToDate(user.DOB) : ''}</Text>
                         </View>
-                        <TouchableOpacity style={{ flex: 1, marginLeft: 10 }} onPress={() => { setTypeModal(2), setShowModal(true) }}>
+                        <TouchableOpacity style={{ flex: 1, alignItems:'center',justifyContent:'center' }} onPress={() => { setTypeModal(2), setShowModal(true) }}>
                             <Icons name={'calendar-month'} size={24} color={'#36a3f7'} />
                         </TouchableOpacity>
                     </View>

@@ -119,7 +119,7 @@ export default (props) => {
     useEffect(() => {
         if (deviceType == Constant.TABLET) {
             setProduct(props.iproduct)
-            setPrinterPr('')
+            setPrinterPr(props.iproduct.Printer ? props.iproduct.Printer : '')
             setCategory(props.iCategory)
             console.log("CompositeItemProducts", props.compositeItemProducts);
             setNameCategory()
@@ -180,12 +180,22 @@ export default (props) => {
         setPrinter([...printCook])
         if (priceConfig && priceConfig != null) {
             printCook.forEach(printer => {
-                if (printerPr == printer.Key || product.Printer == printer.Key || priceConfig.SecondPrinter && priceConfig.SecondPrinter == printer.Key || priceConfig.Printer3 && priceConfig.Printer3 == printer.Key || priceConfig.Printer4 && priceConfig.Printer4 == printer.Key || priceConfig.Printer5 && priceConfig.Printer5 == printer.Key) {
-                    printer.Status = true
-                    countPrint.current = countPrint.current + 1
+                if (deviceType == Constant.PHONE) {
+                    if (product.Printer == printer.Key || priceConfig.SecondPrinter && priceConfig.SecondPrinter == printer.Key || priceConfig.Printer3 && priceConfig.Printer3 == printer.Key || priceConfig.Printer4 && priceConfig.Printer4 == printer.Key || priceConfig.Printer5 && priceConfig.Printer5 == printer.Key) {
+                        printer.Status = true
+                        countPrint.current = countPrint.current + 1
+                    } else {
+                        printer.Status = false
+                    }
                 } else {
-                    printer.Status = false
+                    if (printerPr == printer.Key || priceConfig.SecondPrinter && priceConfig.SecondPrinter == printer.Key || priceConfig.Printer3 && priceConfig.Printer3 == printer.Key || priceConfig.Printer4 && priceConfig.Printer4 == printer.Key || priceConfig.Printer5 && priceConfig.Printer5 == printer.Key) {
+                        printer.Status = true
+                        countPrint.current = countPrint.current + 1
+                    } else {
+                        printer.Status = false
+                    }
                 }
+
             })
             setPrinter([...printCook])
         } else {
@@ -360,6 +370,7 @@ export default (props) => {
             }
             console.log("price config", product.Printer);
         } else {
+            setPrinterPr('')
             let listprinter = printer.filter(item => item.Status == true)
             switch (listprinter.length) {
                 case 1:

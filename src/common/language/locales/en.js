@@ -850,6 +850,8 @@ export default {
   block_theo_phut: "Block per minute",
   ban_co_chac_chan_muon_xoa_hang_hoa:'Are you sure you want to delete this product?',
   ban_chac_chan_muon_dang_xuat_khoi_cac_thiet_bi:'Are you want log out account at all devices ?',
+  ban_co_chac_chan_muon_khoa_nhan_vien:'Are you sure you want to lock out the staff ?',
+  ban_co_chac_chan_muon_mo_khoa_nhan_vien:'Are you sure you want to unlock the employee ?',
 
   cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang: "Allows to change the name of good when selling",
   cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang: "Allows employees change prices when selling",

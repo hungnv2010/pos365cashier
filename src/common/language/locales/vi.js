@@ -410,6 +410,8 @@ export default {
   block_theo_phut: "Block tính theo phút",
   ban_co_chac_chan_muon_xoa_hang_hoa: 'Bạn có chắc chắn muốn xoá hàng hoá này?',
   ban_chac_chan_muon_dang_xuat_khoi_cac_thiet_bi:'Bạn chắc chắn muốn đăng xuất khỏi các thiết bị ?',
+  ban_co_chac_chan_muon_khoa_nhan_vien:'Bạn có chắc muốn khoá nhân viên ?',
+  ban_co_chac_chan_muon_mo_khoa_nhan_vien:'Bạn có chắc chắn muốn mở khoá nhân viên ?',
 
   chon_cong_nghe_in: "Chọn công nghệ in",
   cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang: "Cho phép thay đổi tên hàng hóa khi bán hàng?",
@@ -496,7 +498,7 @@ export default {
   ma_dvt_lon: 'Mã đơn vị tính lớn',
   may_tinh: "Máy tính",
   ma_nhan_vien:'Mã nhân viên',
-  mo_khoa:'Mở khóa NV',
+  mo_khoa:'Mở khóa nhân viên',
 
   nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: "Nhận tin nhắn/ thông báo từ phục vụ, quản lý?",
   nhap_so_luong_the: "Nhập số lượng thẻ",
