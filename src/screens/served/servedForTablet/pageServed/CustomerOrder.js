@@ -659,13 +659,13 @@ const CustomerOrder = (props) => {
     }
 
     const onClickPayment = () => {
-        if (quickPay) {
-            onClickQuickPayment()
+        if (!props.jsonContent.OrderDetails || props.jsonContent.OrderDetails.length == 0) {
+            dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
         } else {
-            if (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0) {
-                props.navigation.navigate(ScreenList.Payment, { RoomId: props.route.params.room.Id, Name: props.route.params.room.Name, Position: props.Position });
+            if (quickPay) {
+                onClickQuickPayment()
             } else {
-                dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
+                props.navigation.navigate(ScreenList.Payment, { RoomId: props.route.params.room.Id, Name: props.route.params.room.Name, Position: props.Position });
             }
         }
     }

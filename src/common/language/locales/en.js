@@ -533,6 +533,8 @@ export default {
   cap_nhat_phong_ban: "Edit room table",
 
   // TODO: D
+  danh_sach_don_hang:"List of orders",
+  don_hang_cho_thanh_toan_vnpay_qr:"Orders pending payment VNPAY QR ",
   dau_tien: 'first',
   dang_dung: "Serving",
   dang_trong: "Space",

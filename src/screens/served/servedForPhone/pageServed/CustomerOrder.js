@@ -119,15 +119,24 @@ export default (props) => {
     }, [props.jsonContent])
 
     const sendOrder = async () => {
-        if (quickPay) {
-            onClickQuickPayment()
+        // if (quickPay) {
+        //     onClickQuickPayment()
+        // } else {
+        //     console.log("sendOrder room ", props.route.params.room);
+        //     console.log("sendOrder props ", props);
+        //     if (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0) {
+        //         props.navigation.navigate(ScreenList.Payment, { RoomId: props.route.params.room.Id, Name: props.route.params.room.Name, Position: props.Position });
+        //     } else {
+        //         dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
+        //     }
+        // }
+        if (!props.jsonContent.OrderDetails || props.jsonContent.OrderDetails.length == 0) {
+            dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
         } else {
-            console.log("sendOrder room ", props.route.params.room);
-            console.log("sendOrder props ", props);
-            if (props.jsonContent.OrderDetails && props.jsonContent.OrderDetails.length > 0) {
-                props.navigation.navigate(ScreenList.Payment, { RoomId: props.route.params.room.Id, Name: props.route.params.room.Name, Position: props.Position });
+            if (quickPay) {
+                onClickQuickPayment()
             } else {
-                dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
+                props.navigation.navigate(ScreenList.Payment, { RoomId: props.route.params.room.Id, Name: props.route.params.room.Name, Position: props.Position });
             }
         }
     }

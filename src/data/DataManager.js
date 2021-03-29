@@ -485,7 +485,7 @@ class DataManager {
             ETag: `W/\"datetime'${momentToStringDateLocal(moment())}'\"`,
             JsonContent: JSON.stringify(objectJsonContent),
             Compress: false,
-            FromServer: false
+            // FromServer: false
         }
     }
 
