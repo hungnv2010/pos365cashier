@@ -329,9 +329,10 @@ export default (props) => {
         })
         let params = {
             CompareDebt: 0,
-            ComparePoint: 0,
+            // ComparePoint: 0,
             Debt: customerDetail.TotalDebt,
             Partner: {
+                Type: 2,
                 Code: customerDetail.Code,
                 Name: customerDetail.Name,
                 Phone: customerDetail.Phone,
@@ -341,7 +342,7 @@ export default (props) => {
                 PartnerGroupMembers: PartnerGroupMembers,
                 Address: customerDetail.Address,
                 Province: customerDetail.Province,
-                Point: 0,
+                // Point: 0,
                 Description: customerDetail.Description,
             }
         }

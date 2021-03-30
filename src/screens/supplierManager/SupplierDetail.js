@@ -337,7 +337,7 @@ export default (props) => {
                 PartnerGroupMembers: PartnerGroupMembers,
                 Address: customerDetail.Address,
                 Province: customerDetail.Province,
-                Point: 0,
+                // Point: 0,
                 Description: customerDetail.Description,
             }
         }

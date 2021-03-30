@@ -85,7 +85,7 @@ export default (props) => {
         if (deviceType == Constant.TABLET) {
             setCustomerItem(GUEST)
         } else {
-            props.navigation.navigate(ScreenList.CustomerDetailForPhone, { item: GUEST, onCallBack: handleSuccess })
+            props.navigation.navigate(ScreenList.SupplierDetailForPhone, { item: GUEST, onCallBack: handleSuccess })
         }
     }
 

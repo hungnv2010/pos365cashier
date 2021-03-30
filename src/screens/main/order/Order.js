@@ -83,6 +83,7 @@ export default (props) => {
             roomGroups = roomGroups.sorted('Id')
             //roomGroups.push(RoomAll)
             serverEvents = await realmStore.queryServerEvents()
+            console.log('1serverEvents1', JSON.parse(JSON.stringify(serverEvents)));
             console.log("init: ", JSON.parse(JSON.stringify(rooms, roomGroups, serverEvents)));
 
             let newDatas = insertServerEvent(getDatas(rooms, roomGroups), serverEvents)

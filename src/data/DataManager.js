@@ -117,7 +117,6 @@ class DataManager {
     }
 
     getDataPrintCook = (newOrders) => {
-
         if (newOrders.length == 0)
             return null;
 
@@ -127,21 +126,25 @@ class DataManager {
         let print4 = []
         let print5 = []
         newOrders.forEach((elm, idx) => {
-            if (!elm.Printer || elm.Printer == '') {
-                elm.Printer = Constant.PRINT_KITCHEN_DEFAULT
+            let priceConfig = elm.PriceConfig ? JSON.parse(elm.PriceConfig) : null
+            if (priceConfig) {
+                if (!priceConfig.Printer || priceConfig.Printer == '') {
+                    elm.Printer = Constant.PRINT_KITCHEN_DEFAULT
+                }
+                if (priceConfig.SecondPrinter && priceConfig.SecondPrinter != '') {
+                    secondPrinter.push({ ...elm, Printer: priceConfig.SecondPrinter })
+                }
+                if (priceConfig.Printer3 && priceConfig.Printer3 != '') {
+                    print3.push({ ...elm, Printer: priceConfig.Printer3 })
+                }
+                if (priceConfig.Printer4 && priceConfig.Printer4 != '') {
+                    print4.push({ ...elm, Printer: priceConfig.Printer4 })
+                }
+                if (priceConfig.Printer5 && priceConfig.Printer5 != '') {
+                    print5.push({ ...elm, Printer: priceConfig.Printer5 })
+                }
             }
-            if (elm.SecondPrinter && elm.SecondPrinter != '') {
-                secondPrinter.push({ ...elm, Printer: elm.SecondPrinter })
-            }
-            if (elm.Printer3 && elm.Printer3 != '') {
-                print3.push({ ...elm, Printer: elm.Printer3 })
-            }
-            if (elm.Printer4 && elm.Printer4 != '') {
-                print4.push({ ...elm, Printer: elm.Printer4 })
-            }
-            if (elm.Printer5 && elm.Printer5 != '') {
-                print5.push({ ...elm, Printer: elm.Printer5 })
-            }
+
         })
         listResult = [...newOrders, ...secondPrinter, ...print3, ...print4, ...print5]
         let listResultGroupBy = groupBy(listResult, "Printer")
@@ -320,9 +323,9 @@ class DataManager {
     }
 
     calculatateJsonContent = (JsonContent) => {
-        JsonContent.OrderDetails.forEach(item=>{
-            if(item.IsPromotion) item.Price = 0
-        })
+        // JsonContent.OrderDetails.forEach(item=>{
+        //     if(item.IsPromotion) item.Price = 0
+        // })
         let totalProducts = this.totalProducts(JsonContent.OrderDetails)
         let discount = 0
         if (JsonContent.DiscountValue) {
@@ -485,7 +488,7 @@ class DataManager {
             ETag: `W/\"datetime'${momentToStringDateLocal(moment())}'\"`,
             JsonContent: JSON.stringify(objectJsonContent),
             Compress: false,
-            FromServer: false
+            // FromServer: false
         }
     }
 

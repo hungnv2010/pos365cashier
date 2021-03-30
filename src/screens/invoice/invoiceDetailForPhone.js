@@ -193,10 +193,10 @@ const InvoiceDetail = (props) => {
             <ToolBarDefault {...props} title={invoiceDetail.Code ? invoiceDetail.Code : ""} />
             <View style={{ paddingHorizontal: 10, flex: 1 }}>
                 <View style={{ borderBottomColor: "#0072bc", borderBottomWidth: 1, }}>
-                    <View style={{ margin: 5, flexDirection: "row", justifyContent: "space-between" }}>
+                    {/* <View style={{ margin: 5, flexDirection: "row", justifyContent: "space-between" }}>
                         <Text style={{ padding: 0, flex: 1, fontWeight: 'bold', }}>{I18n.t("ngay_tao")}</Text>
                         <Text style={{ paddingLeft: 5, }}>{invoiceDetail.CreatedDate ? moment.utc(momentToDateUTC(invoiceDetail.CreatedDate)).local().format("HH:mm DD/MM/YYYY") : ""}</Text>
-                    </View>
+                    </View> */}
                     {invoiceDetail.PurchaseDate ?
                         <View style={{ margin: 5, flexDirection: "row", justifyContent: "space-between" }}>
                             <Text style={{ padding: 0, flex: 1, fontWeight: 'bold', }}>{I18n.t("ngay_ban")}</Text>

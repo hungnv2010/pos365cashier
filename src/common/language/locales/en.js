@@ -531,8 +531,12 @@ export default {
   chon_vi_tri: "Select position",
   chon_khach_hang: "Select customer",
   cap_nhat_phong_ban: "Edit room table",
+  chinh_sua:"Edit",
 
   // TODO: D
+  danh_sach_nha_cung_cap:"List supplier",
+  danh_sach_don_hang:"List of orders",
+  don_hang_cho_thanh_toan_vnpay_qr:"Orders pending payment VNPAY QR ",
   dau_tien: 'first',
   dang_dung: "Serving",
   dang_trong: "Space",
@@ -666,6 +670,7 @@ export default {
   mot_gio_dau_tien: "1 hour first",
 
   // TODO: N
+  nhom_nha_cung_cap: "Group supplier",
   ngay_thanh_lap: "Founding",
   no: "Debt",
   ngon_ngu: 'Language',
