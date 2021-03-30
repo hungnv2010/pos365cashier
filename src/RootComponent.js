@@ -96,7 +96,7 @@ export default () => {
         if (netInfo === true) {
             if (hasInternet.current === false) {
                 if (signalRInfo != "" && isError) {
-                    signalRManager.reconnect()
+                    signalRManager.reconnect(false)
                 }
                 hasInternet.current = true
             }
