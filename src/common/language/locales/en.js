@@ -531,6 +531,7 @@ export default {
   chon_vi_tri: "Select position",
   chon_khach_hang: "Select customer",
   cap_nhat_phong_ban: "Edit room table",
+  chinh_sua:"Edit",
 
   // TODO: D
   danh_sach_nha_cung_cap:"List supplier",
