@@ -70,7 +70,7 @@ class SignalRManager {
         this.connectionHub.connectionSlow(() => {
             console.warn('We are currently experiencing difficulties with the connection.')
             // this.reconnect()
-            // isError = true
+            isError = true
         });
 
         this.connectionHub.error((error) => {

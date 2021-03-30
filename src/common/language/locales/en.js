@@ -533,6 +533,7 @@ export default {
   cap_nhat_phong_ban: "Edit room table",
 
   // TODO: D
+  danh_sach_nha_cung_cap:"List supplier",
   danh_sach_don_hang:"List of orders",
   don_hang_cho_thanh_toan_vnpay_qr:"Orders pending payment VNPAY QR ",
   dau_tien: 'first',
@@ -668,6 +669,7 @@ export default {
   mot_gio_dau_tien: "1 hour first",
 
   // TODO: N
+  nhom_nha_cung_cap: "Group supplier",
   ngay_thanh_lap: "Founding",
   no: "Debt",
   ngon_ngu: 'Language',

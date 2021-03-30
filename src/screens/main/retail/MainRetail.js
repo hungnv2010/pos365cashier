@@ -97,7 +97,7 @@ const MainRetail = (props) => {
                         jsonContent.OrderDetails.unshift(product)
                     } else {
                         jsonContent.OrderDetails.forEach(elm => {
-                            if (elm.ProductId == product.ProductId) {
+                            if (!elm.IsPromotion && elm.ProductId == product.ProductId) {
                                 isExist = true
                                 elm.Quantity += product.Quantity
                                 elm.Quantity = Math.round(elm.Quantity * 1000) / 1000
