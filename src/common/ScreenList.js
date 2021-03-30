@@ -88,6 +88,8 @@ export const ScreenList = {
   EmployeeDetails: 'EmployeeDetails',
   EmployeeEdit: 'EmployeeEdit',
   SupplierDetailForPhone: "SupplierDetailForPhone",
+  ProductManager:'ProductManager',
+  ListExtraTopping:'ListExtraTopping',
 
 }
 

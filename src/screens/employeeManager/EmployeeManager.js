@@ -103,7 +103,7 @@ export default (props) => {
 
     const renderUsers = (item, index) => {
         return (
-            <View style={{ backgroundColor: '#fff', marginVertical: 5, borderRadius: 10, paddingVertical: 10 }}>
+            <View style={{ backgroundColor: user && user.Id == item.Id?'#FFE5B4':'#FFF', marginVertical: 5, borderRadius: 10, paddingVertical: 10 }}>
                 <TouchableOpacity onPress={() => onClickItem(item)}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, paddingVertical: 5 }}>
                         <Text style={style.styleBold}>{item.UserName}</Text>

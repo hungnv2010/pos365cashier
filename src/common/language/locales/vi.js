@@ -428,6 +428,7 @@ export default {
   chua_co: 'Chưa có',
   chon_hang_hoa: 'Chọn hàng hoá',
   chieu_rong_kho_giay: 'Chiều rộng khổ giấy',
+  chon_nhom_nha_cung_cap:'Chọn nhóm nhà cung cấp',
 
   don_vi_tien_te: "Đơn vị tiền tệ",
   dollar_my: "Dollar Mỹ",
@@ -440,6 +441,8 @@ export default {
   dong_bo_du_lieu: 'Đồng bộ dữ liệu',
   dang_cho_thanh_toan_vui_long_doi: "Đang chờ thanh toán, vui lòng đợi",
   dang_xuat_tai_khoan_tren_cac_thiet_bi_dang_dung:'Đăng xuất tài khoản trên các thiết bị đang dùng',
+  danh_sach_extra_topping:'Danh sách Extra topping',
+  danh_sach_hang_hoa:'Danh sách hàng hoá',
 
   giu_man_hinh_luon_sang: "Giữ màn hình luôn sáng",
   gia: "Giá bán",
@@ -480,6 +483,7 @@ export default {
   ly_do: "Lý do",
   luu: 'Lưu',
   luu_va_sao_chep: "Lưu & Sao chép",
+  loc:'Lọc',
 
   may_in_thu_ngan: "Máy in thu ngân",
   may_in_bao_bep_a: "Máy in báo bếp A",
@@ -510,6 +514,7 @@ export default {
   nhap_ten_nhom_hang_hoa: 'Nhập tên nhóm hàng hoá',
 
   quan_ly:'Quản lý',
+  quan_ly_hang_hoa:'Quản lý hàng hoá',
 
   setting: 'Thiết lập',
   so_the_cung: "Số thẻ cứng",
@@ -545,6 +550,8 @@ export default {
   tim_kiem_nhan_vien:'Tìm kiếm nhân viên',
   thiet_lap_quyen:'Thiết lập quyền',
   them_nhan_vien:'Thêm nhân viên',
+  ten_nha_cung_cap:'Tên nhà cung cấp',
+  thiet_lap_extra_topping:'Thiết lập Extra topping',
 
   voucher: "Mã quà tặng",
   vui_long_nhap_dung_so_tien_khach_tra: "Vui lòng nhập đúng số tiền khách trả.",

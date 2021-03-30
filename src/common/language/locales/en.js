@@ -852,6 +852,8 @@ export default {
   ban_chac_chan_muon_dang_xuat_khoi_cac_thiet_bi:'Are you want log out account at all devices ?',
   ban_co_chac_chan_muon_khoa_nhan_vien:'Are you sure you want to lock out the staff ?',
   ban_co_chac_chan_muon_mo_khoa_nhan_vien:'Are you sure you want to unlock the employee ?',
+  danh_sach_extra_topping:'List extra/topping',
+  danh_sach_hang_hoa:'Product list',
 
   cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang: "Allows to change the name of good when selling",
   cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang: "Allows employees change prices when selling",
@@ -868,6 +870,7 @@ export default {
   chua_co: 'Empty',
   chon_hang_hoa: 'Choose product',
   chieu_rong_kho_giay:'Print width paper size',
+  chon_nhom_nha_cung_cap:'Sellect group supplier',
 
   don_vi_tien_te: "Currency unit",
   dollar_my: "Dollar",
@@ -918,6 +921,7 @@ export default {
   ly_do: "Reason",
   luu: 'Save',
   luu_va_sao_chep: "Save & Coppy ",
+  loc:'Filter',
 
   may_in_thu_ngan: "Printer cashier",
   may_in_bao_bep_a: "Printer kitchen A",
@@ -948,6 +952,7 @@ export default {
   nhap_ten_nhom_hang_hoa: 'Enter category name',
 
   quan_ly:'Manager',
+  quan_ly_hang_hoa:'Product management',
 
   so_the_cung: "Card number",
   su_dung_hai_man_hinh: "Using two screen",
@@ -983,6 +988,8 @@ export default {
   tim_kiem_nhan_vien:'Enter search employee',
   thiet_lap_quyen:'Set permissions',
   them_nhan_vien:'Add new employee',
+  ten_nha_cung_cap:'Supplier name',
+  thiet_lap_extra_topping:'Extra/topping configuration',
 
   voucher: "Voucher",
   vui_long_nhap_dung_so_tien_khach_tra: "Please enter the correct amount of payment.",

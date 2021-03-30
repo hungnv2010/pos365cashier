@@ -38,7 +38,7 @@ const KEY_FUNC = {
     ROOM_HISTORY: ScreenList.RoomHistory,
     ORDER_OFFLINE: ScreenList.OrderOffline,
     VOUCHERS: ScreenList.Vouchers,
-    PRODUCT: ScreenList.Product,
+    PRODUCT: ScreenList.ProductManager,
     SYNCHRONIZE: 'SYNCHRONIZE',
     ORDER_MANAGEMENT: ScreenList.OrderManagement,
     REPORT_MANAGER: ScreenList.ReportManager,
@@ -84,7 +84,7 @@ const LIST_FUNCITION = [
     },
     {
         func: KEY_FUNC.SUPPLIER_MANAGER,
-        icon: Images.icon_version,
+        icon: Images.icon_supplier,
         title: "nha_cung_cap"
     },
     {
@@ -92,11 +92,11 @@ const LIST_FUNCITION = [
         icon: Images.icon_product,
         title: "hang_hoa"
     },
-    {
-        func: KEY_FUNC.EMPLOYEE_MANAGER,
-        icon: Images.ic_quanlynhanvien,
-        title: "quan_ly_nhan_vien"
-    },
+    // {
+    //     func: KEY_FUNC.EMPLOYEE_MANAGER,
+    //     icon: Images.ic_quanlynhanvien,
+    //     title: "quan_ly_nhan_vien"
+    // },
     {
         func: KEY_FUNC.SETTING_FUNC,
         icon: Images.icon_setting,

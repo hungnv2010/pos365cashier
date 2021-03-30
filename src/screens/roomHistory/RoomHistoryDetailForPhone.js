@@ -33,7 +33,7 @@ const RoomHistoryDetail = (props) => {
         <View style={{ flex: 1, backgroundColor: '#DDDDDD' }}>
             <ToolBarDefault {...props} title={I18n.t("chi_tiet_huy_tra_hang")} />
             <View style={{  flexDirection: 'column', backgroundColor: '#FFFFFF' }}>
-                <View style={{ alignItems: 'center', marginTop: 10 }}>
+                <View style={{ alignItems: 'center', marginTop: 10 ,paddingVertical:20}}>
                     <Image source={Images.icon_history} style={{ width: 70, height: 70 }}></Image>
                 </View>
                 <View style={{ justifyContent: 'space-between', flexDirection: 'row', marginRight: 10, marginLeft: 10, marginTop: 10 }}>
@@ -50,7 +50,7 @@ const RoomHistoryDetail = (props) => {
                 </View>
                 <View style={{ justifyContent: 'space-between', flexDirection: 'row', marginRight: 10, marginLeft: 10, marginTop: 10, marginBottom:10 }}>
                     <Text style={[styles.title,{ justifyContent:'center', alignItems:'center', marginRight:40}]}>{I18n.t("ly_do")}</Text>
-                    <Text style={{ fontSize: 12, color: '#FF0000', fontStyle: 'italic'}}>{roomHistoryDetail.Description}</Text>
+                    <Text style={{ fontSize: 14, color: '#FF0000', fontStyle: 'italic'}}>{roomHistoryDetail.Description}</Text>
                 </View>
             </View>
             
@@ -69,11 +69,11 @@ const RoomHistoryDetail = (props) => {
                 </View>
                 <View style={{ justifyContent: 'space-between', flexDirection: 'row', marginRight: 10, marginLeft: 10, marginTop: 10 }}>
                     <Text style={styles.title}>{I18n.t("gia")}</Text>
-                    <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#0099FF' }}>{currencyToString(roomHistoryDetail.Price)}</Text>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#0099FF' }}>{currencyToString(roomHistoryDetail.Price)}</Text>
                 </View>
                 <View style={{ justifyContent: 'space-between', flexDirection: 'row', marginRight: 10, marginLeft: 10, marginTop: 10 }}>
                     <Text style={styles.title}>{I18n.t("thanh_tien")}</Text>
-                    <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#0099FF'}}>{currencyToString(roomHistoryDetail.Total)}</Text>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#0099FF'}}>{currencyToString(roomHistoryDetail.Total)}</Text>
                 </View>
             </View>
             
@@ -83,11 +83,11 @@ const RoomHistoryDetail = (props) => {
 }
 const styles = StyleSheet.create({
     title: {
-        fontSize: 12,
+        fontSize: 14,
         color: '#363636'
     },
     infor: {
-        fontSize: 12
+        fontSize: 14
     }
 })
 export default RoomHistoryDetail

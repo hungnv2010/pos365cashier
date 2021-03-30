@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useLayoutEffect, useRef, useCallback } from 'react';
-import { Image, View, StyleSheet, Text, TouchableOpacity, TextInput, ScrollView } from "react-native";
+import { Image, View, StyleSheet, Text, TouchableOpacity, TextInput, ScrollView, Modal, TouchableWithoutFeedback } from "react-native";
 import { Snackbar, Surface } from 'react-native-paper';
 import I18n from '../../common/language/i18n';
 import realmStore, { SchemaName } from '../../data/realm/RealmStore';
@@ -7,6 +7,7 @@ import { ScreenList } from '../../common/ScreenList';
 import { currencyToString, change_alias } from '../../common/Utils';
 import colors from '../../theme/Colors';
 import { useSelector } from 'react-redux';
+import { Metrics, Images } from '../../theme';
 import { Constant } from '../../common/Constant';
 import { getFileDuLieuString } from '../../data/fileStore/FileStorage';
 import { FAB } from 'react-native-paper';
@@ -22,6 +23,7 @@ import TextTicker from 'react-native-text-ticker';
 import useDebounce from '../../customHook/useDebounce';
 import CustomerToolBar from '../customerManager/customer/CustomerToolBar';
 import SupplierDetail from './SupplierDetail';
+import DialogFilterSupplier from '../../components/dialog/DialogFilterSupplier'
 
 let GUEST = {
     Id: 0,
@@ -36,6 +38,7 @@ export default (props) => {
     const [customerItem, setCustomerItem] = useState(GUEST)
     const [textSearch, setTextSearch] = useState('')
     const debouncedVal = useDebounce(textSearch)
+    const [showModal, setOnShowModal] = useState(false)
     const backUpCustomer = useRef([])
     const { deviceType } = useSelector(state => {
         return state.Common
@@ -65,7 +68,7 @@ export default (props) => {
             dialogManager.showLoading()
             if (debouncedVal != '') {
                 let paramFilter = `(substringof('${debouncedVal}',Code)  or substringof('${debouncedVal}',Phone) or substringof('${debouncedVal}',Name))`
-                let res = await new HTTPService().setPath(ApiPath.CUSTOMER).GET({ IncludeSummary: true, inlinecount: 'allpages', GroupId: -1, Type: 1, BranchId: currentBranch.current.Id, Birthday: '', filter: paramFilter })
+                let res = await new HTTPService().setPath(ApiPath.CUSTOMER).GET({ IncludeSummary: true, inlinecount: 'allpages', GroupId: -1, Type: 2, BranchId: currentBranch.current.Id, Birthday: '', filter: paramFilter })
                 console.log("abc", res);
                 setCustomerData(res.results)
 
@@ -170,7 +173,7 @@ export default (props) => {
                             numberOfLines={1}
                             style={{ fontSize: 15, fontWeight: "bold", }}>{item.Name}</Text>
                         <Text style={{ paddingVertical: 5 }}>{item.Code}</Text>
-                        <Text style={{}}>{I18n.t('diem_thuong')}: {currencyToString(item.Point)}</Text>
+                        <Text style={{}}>{I18n.t('du_no')}: {currencyToString(item.Debt)}</Text>
                     </View>
                     <View style={{ flex: 1 }}>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "flex-start", marginBottom: 10 }}>
@@ -205,6 +208,33 @@ export default (props) => {
         console.log('outputTextSearch', value);
         setTextSearch(value)
     }
+    const onClickFilter = () => {
+        setOnShowModal(true)
+    }
+    const outputFilter = (data) => {
+        console.log("data", data);
+        let paramFilter
+        if (data.Phone || data.Name) {
+            if (data.provice) {
+                `((substringof('${data.Phone}',Code) or substringof('${data.Phone ? data.Phone : data.Name}',Phone) or substringof('${data.Name ? data.Name : data.Phone}',Name)) and (Debt ge ${data.DebtFrom ? data.DebtFrom : NaN} and Debt le ${data.DebtTo ? data.DebtTo : NaN}) and Province eq '${data.provice}')`
+            } else {
+                paramFilter = `((substringof('${data.Phone}',Code) or substringof('${data.Phone ? data.Phone : data.Name}',Phone) or substringof('${data.Name ? data.Name : data.Phone}',Name)) and (Debt ge ${data.DebtFrom ? data.DebtFrom : NaN} and Debt le ${data.DebtTo ? data.DebtTo : NaN}))`
+            }
+        } else {
+            if (data.provice) {
+                paramFilter = `((Debt ge ${data.DebtFrom ? data.DebtFrom : NaN} and Debt le ${data.DebtTo ? data.DebtTo : NaN}) and Province eq '${data.provice}')`
+            } else {
+                paramFilter = `(Debt ge ${data.DebtFrom ? data.DebtFrom : NaN} and Debt le ${data.DebtTo ? data.DebtTo : NaN})`
+            }
+        }
+        new HTTPService().setPath(ApiPath.CUSTOMER).GET({ IncludeSummary: true, inlinecount: 'allpages', GroupId: data.GroupId ? data.GroupId : -1, Type: 2, BranchId: currentBranch.current.Id, Birthday: '', filter: paramFilter }).then((res) => {
+            if (res != null) {
+                console.log('res', res.results);
+                setCustomerData(res.results)
+            }
+        })
+        setOnShowModal(false)
+    }
 
     return (
         <View style={{ flex: 1, }}>
@@ -213,6 +243,8 @@ export default (props) => {
                 navigation={props.navigation}
                 title={I18n.t('nha_cung_cap')}
                 outputTextSearch={outputTextSearch}
+                iconfilter={'filter'}
+                clickFilter={onClickFilter}
                 size={30}
             />
             <View style={{ flexDirection: "row", flex: 1 }}>
@@ -242,6 +274,39 @@ export default (props) => {
                         null
                 }
             </View>
+            <Modal
+                animationType="fade"
+                supportedOrientations={['portrait', 'landscape']}
+                transparent={true}
+                visible={showModal}
+                onRequestClose={() => {
+                }}>
+                <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+                    <TouchableWithoutFeedback
+                        onPress={() => {
+                            setOnShowModal(false)
+                        }}
+                        style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0
+                        }}>
+                        <View style={{
+                            backgroundColor: 'rgba(0,0,0,0.5)', position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0
+                        }}></View>
+
+                    </TouchableWithoutFeedback>
+                    <View style={{ width: Metrics.screenWidth * 0.8 }}>
+                        <DialogFilterSupplier outputFilter={outputFilter} />
+                    </View>
+                </View>
+            </Modal>
 
         </View>
     )

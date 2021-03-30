@@ -9,6 +9,7 @@ import IonIcon from 'react-native-vector-icons/Ionicons'
 import PropTypes from 'prop-types';
 import { Constant } from '../../../common/Constant';
 import { useSelector } from 'react-redux';
+import colors from '../../../theme/Colors';
 
 
 export default function CustomerToolBar(props) {
@@ -30,6 +31,9 @@ export default function CustomerToolBar(props) {
     useEffect(() => {
         if (isSearch) inputRef.current.focus()
     }, [isSearch])
+    const onClickFilter = () =>{
+        props.clickFilter()
+    }
 
     return (
         <View style={styles.toolbarContainer}>
@@ -43,7 +47,7 @@ export default function CustomerToolBar(props) {
 
                 <TouchableOpacity onPress={() => {
                     props.navigation.goBack();
-                }} style={{ padding: 15,}}>
+                }} style={{ padding: 15, }}>
 
                     <Image source={Images.icon_back} style={{ width: 48, height: 48, }} />
                 </TouchableOpacity>
@@ -75,7 +79,7 @@ export default function CustomerToolBar(props) {
                     }
                 </View>
 
-                <View style={{ alignItems: "center" }}>
+                <View style={{ alignItems: "center",flexDirection:'row' }}>
 
 
                     <TouchableOpacity onPress={() => {
@@ -83,7 +87,14 @@ export default function CustomerToolBar(props) {
                         else setIsSearch(!isSearch)
                     }} style={{ marginHorizontal: 15, }}>
                         <IonIcon name={!isSearch ? "md-search" : "md-close"} size={30} color={Colors.colorLightBlue} />
+
                     </TouchableOpacity>
+                    {
+                        props.iconfilter ?
+                            <TouchableOpacity onPress={()=>onClickFilter()}>
+                                <Icon name={props.iconfilter} size={30} color={Colors.colorLightBlue} />
+                            </TouchableOpacity> : null
+                    }
 
                 </View>
             </View>

@@ -41,12 +41,12 @@ export default (props) => {
         setCategory([{
             Id: -1,
             Name: 'Tất cả'
-        },...categoryTmp])
+        }, ...categoryTmp])
     }
     useEffect(() => {
         console.log("product item", listProduct);
         console.log("catygorytmp", category);
-    }, [listProduct,category])
+    }, [listProduct, category])
     const filterByCategory = (item) => {
         if (item.Id > 0) {
             setListProduct(productTmp.filter(el => el.CategoryId === item.Id));
@@ -56,20 +56,24 @@ export default (props) => {
         setIdCategory(item.Id)
     }
     const onClickItem = (el) => {
-       itemProduct.current = el
+        itemProduct.current = el
         if (deviceType == Constant.PHONE) {
             props.navigation.navigate(ScreenList.ProductDetail, { product: itemProduct.current, category: category, onCallBack: handleSuccess, })
         } else {
             setItProduct(itemProduct.current)
         }
     }
-    const handleSuccess = async (type1) => {
+    const handleSuccess = async (type1, value) => {
         console.log("type", type1);
         dialogManager.showLoading()
         try {
             setItProduct({})
-            await realmStore.deleteProduct()
-            await dataManager.syncProduct()
+            if (value == 2) {
+                await realmStore.deleteProduct()
+                await dataManager.syncProduct()
+            } else if (value == 1) {
+                await dataManager.syncCategories()
+            }
             getData()
             dialogManager.showPopupOneButton(`${I18n.t(type1)} ${I18n.t('thanh_cong')}`, I18n.t('thong_bao'))
             dialogManager.hiddenLoading()
@@ -88,16 +92,16 @@ export default (props) => {
             </View>
         )
     }
-    
+
     const outPut = (data) => {
         if (data.comboTab == true) {
             console.log("data.list", data.list);
             props.navigation.navigate('ComboForTab', { list: data.list, _onSelect: onCallBack })
-        }else if(data.scanQrCode == true){
+        } else if (data.scanQrCode == true) {
             props.navigation.navigate('QRCode', { _onSelect: onCallBackQr })
         }
     }
-    const onCallBackQr = (data) =>{
+    const onCallBackQr = (data) => {
         setQrScan(data)
     }
     const onCallBack = (data) => {
@@ -107,7 +111,7 @@ export default (props) => {
     const renderProduct = (item, index) => {
         return (
             <TouchableOpacity key={index.toString()} onPress={() => onClickItem(item)} style={{ backgroundColor: '#F5F5F5' }}>
-                <View style={{ backgroundColor: itProduct && itProduct.Id == item.Id?'#FFE5B4':'#FFF', padding: 10, margin: 5, borderRadius: 16, borderColor: 'silver', borderWidth: 0.5, }}>
+                <View style={{ backgroundColor: itProduct && itProduct.Id == item.Id ? '#FFE5B4' : '#FFF', padding: 10, margin: 5, borderRadius: 16, borderColor: 'silver', borderWidth: 0.5, }}>
                     <View style={{ flexDirection: 'row' }}>
                         {item.ProductImages != "" && JSON.parse(item.ProductImages).length > 0 ?
                             <Image style={{ height: 48, width: 48, borderRadius: 16 }} source={{ uri: JSON.parse(item.ProductImages)[0].ImageURL }} />
@@ -127,7 +131,7 @@ export default (props) => {
                             <Text style={{ borderRadius: 5, color: '#36a3f7' }}>{item.Code}</Text>
                         </View>
                         <View style={{ borderRadius: 5, }}>
-                        <Text style={{ color: item.OnHand > 0 ? colors.colorLightBlue : colors.colorchinh ,padding:2}}>{item.ProductType != 2 ? 'Tồn kho: ' + currencyToString(item.OnHand) : '---'}</Text>
+                            <Text style={{ color: item.OnHand > 0 ? colors.colorLightBlue : colors.colorchinh, padding: 2 }}>{item.ProductType != 2 ? 'Tồn kho: ' + currencyToString(item.OnHand) : '---'}</Text>
                             {/* <Text style={{ color: colors.colorchinh }}>{item.ProductType ? item.ProductType == 1 ? I18n.t('hang_hoa') : item.ProductType == 2 ? I18n.t('dich_vu') : item.ProductType == 3 ? 'Combo' : '' : ''}</Text> */}
                         </View>
                     </View>
@@ -158,22 +162,22 @@ export default (props) => {
             <View style={{ flex: 1, flexDirection: 'row' }}>
                 <View style={{ backgroundColor: '#F5F5F5', flexDirection: 'column', flex: 1 }}>
                     <View style={{ backgroundColor: "#FFDEAD", marginTop: 5, borderRadius: 18, marginLeft: 5, marginRight: 5 }}>
-                    {category.length >0?
-                        <FlatList
-                            data={category}
-                            renderItem={({ item, index }) => renderCategory(item, index)}
-                            horizontal={true}
-                            style={{ marginRight: 10, marginLeft: 10 }}
-                            keyExtractor={(item, index) => index.toString()}
-                            showsHorizontalScrollIndicator={false}
-                        />:null}
+                        {category.length > 0 ?
+                            <FlatList
+                                data={category}
+                                renderItem={({ item, index }) => renderCategory(item, index)}
+                                horizontal={true}
+                                style={{ marginRight: 10, marginLeft: 10 }}
+                                keyExtractor={(item, index) => index.toString()}
+                                showsHorizontalScrollIndicator={false}
+                            /> : null}
                     </View>
                     {listProduct.length > 0 ?
-                    <FlatList
-                        data={listProduct}
-                        renderItem={({ item, index }) => renderProduct(item, index)}
-                        keyExtractor={(item, index) => index.toString()}
-                    />:null}
+                        <FlatList
+                            data={listProduct}
+                            renderItem={({ item, index }) => renderProduct(item, index)}
+                            keyExtractor={(item, index) => index.toString()}
+                        /> : null}
                     <FAB
                         style={styles.fab}
                         icon='plus'

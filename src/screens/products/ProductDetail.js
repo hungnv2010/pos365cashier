@@ -217,6 +217,13 @@ export default (props) => {
             setType('them')
         }
     }
+    const getCategory = async() =>{
+        categoryTmp = await realmStore.queryCategories()
+        setCategory([{
+            Id: -1,
+            Name: 'Tất cả'
+        },...categoryTmp])
+    }
 
     const getProduct = () => {
         if (product != null && product.Code != null) {
@@ -315,7 +322,7 @@ export default (props) => {
                     if (deviceType == Constant.PHONE) {
                         handleSuccess('them')
                     } else
-                        props.handleSuccessTab('them')
+                        props.handleSuccessTab('them',1)
                 }
             }
         })
@@ -325,9 +332,9 @@ export default (props) => {
         console.log("type", type1);
         dialogManager.showLoading()
         try {
-            await realmStore.deletePartner()
-            await dataManager.syncProduct()
-            getData()
+            await realmStore.deleteCategory()
+            await dataManager.syncCategories()
+            getCategory()
             dialogManager.showPopupOneButton(`${I18n.t(type1)} ${I18n.t('thanh_cong')}`, I18n.t('thong_bao'))
             dialogManager.hiddenLoading()
         } catch (error) {
@@ -419,7 +426,7 @@ export default (props) => {
                         props.route.params.onCallBack(type)
                         props.navigation.pop()
                     } else
-                        props.handleSuccessTab(type)
+                        props.handleSuccessTab(type,2)
                 }
             }
         })
@@ -508,7 +515,7 @@ export default (props) => {
                                     props.route.params.onCallBack('xoa')
                                     props.navigation.pop()
                                 } else
-                                    props.handleSuccessTab('xoa')
+                                    props.handleSuccessTab('xoa',2)
                             }
                         }
                     })
