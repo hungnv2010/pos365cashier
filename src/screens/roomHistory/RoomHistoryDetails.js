@@ -50,7 +50,7 @@ const RoomHistoryDetails = (props) => {
                     </View>
                     <View style={{ justifyContent: 'space-between', flexDirection: 'row', margin: 10 }}>
                         <Text style={[styles.title,{ justifyContent:'center', alignItems:'center', marginRight:40}]}>{I18n.t("ly_do")}</Text>
-                        <Text style={{ fontSize: 12, color: '#FF0000', fontStyle: 'italic'}}>{roomHistoryDetail ? roomHistoryDetail.Description : ''}</Text>
+                        <Text style={{ fontSize: 14, color: '#FF0000', fontStyle: 'italic'}}>{roomHistoryDetail ? roomHistoryDetail.Description : ''}</Text>
                     </View>
                     <View style={{backgroundColor:'#1C1C1C', padding:0.25, marginTop:10}}></View>
                 </View>
@@ -69,11 +69,11 @@ const RoomHistoryDetails = (props) => {
                     </View>
                     <View style={{ justifyContent: 'space-between', flexDirection: 'row', marginRight: 10, marginLeft: 10, marginTop: 10 }}>
                         <Text style={styles.title}>{I18n.t("gia")}</Text>
-                        <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#0099FF' }}>{roomHistoryDetail ? currencyToString(roomHistoryDetail.Price) : ""}</Text>
+                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#0099FF' }}>{roomHistoryDetail ? currencyToString(roomHistoryDetail.Price) : ""}</Text>
                     </View>
                     <View style={{ justifyContent: 'space-between', flexDirection: 'row', marginRight: 10, marginLeft: 10, marginTop: 10 }}>
                         <Text style={styles.title}>{I18n.t("thanh_tien")}</Text>
-                        <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#0099FF', marginBottom: 10 }}>{roomHistoryDetail ? currencyToString(roomHistoryDetail.Total) : ""}</Text>
+                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#0099FF', marginBottom: 10 }}>{roomHistoryDetail ? currencyToString(roomHistoryDetail.Total) : ""}</Text>
                     </View>
                 </View>
             </View>
@@ -84,11 +84,11 @@ const RoomHistoryDetails = (props) => {
 }
 const styles = StyleSheet.create({
     title: {
-        fontSize: 12,
+        fontSize: 14,
         color: '#363636', flex:1
     },
     infor: {
-        fontSize: 12,
+        fontSize: 14,
         flex:4
     }
 })

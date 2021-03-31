@@ -8,7 +8,7 @@ import { ScreenList } from '../../common/ScreenList';
 import dialogManager from '../../components/dialog/DialogManager';
 import { useSelector } from 'react-redux';
 import MainToolBar from '../main/MainToolBar';
-import { currencyToString, dateToString, momentToStringDateLocal, dateToStringFormatUTC } from '../../common/Utils';
+import { currencyToString, dateToString, momentToStringDateLocal, dateToStringFormatUTC, change_alias } from '../../common/Utils';
 import { getFileDuLieuString, setFileLuuDuLieu } from "../../data/fileStore/FileStorage";
 import { Constant } from '../../common/Constant';
 import useDebounce from '../../customHook/useDebounce';
@@ -81,13 +81,13 @@ export default (props) => {
         }
         getProductBySearch()
     }, [debounceTextSearch])
-    const filterRoomHistory = (a) => {
+    const filterRoomHistory = (input) => {
         viewData.splice(0, viewData.length)
         setRoomHistoryData([])
         currentProduct.current = 0
         dialogManager.showLoading()
         for (let i = 0; i < data.length; i++) {
-            if (data[i].Product.Name.indexOf(a) != -1) {
+            if (change_alias(data[i].Product.Name).indexOf(change_alias(input)) != -1) {
                 viewData.push(data[i])
             }
         }
@@ -176,22 +176,22 @@ export default (props) => {
     }, [roomHistoryData])
     const renderListItem = (item, index) => {
         return (
-            <TouchableOpacity key={index.toString()} onPress={() => onCLickRoomHistoryItem(item)} style={{ marginBottom: 5, borderWidth:0.5, marginLeft:5,marginRight:5, borderRadius:15, borderColor:'#9C9C9C' }}>
-                <View style={{ flexDirection: "row", alignItems: 'center', alignContent: 'center', padding: 7,borderRadius:15, backgroundColor: roomHistoryItem ? item.Id == roomHistoryItem.Id ? "#F6DFCE" : 'white' : 'white' }}>
-                    <Image style={{ width: 50, height: 50, borderRadius: 50 }} source={Images.icon_return_good}></Image>
+            <TouchableOpacity key={index.toString()} onPress={() => onCLickRoomHistoryItem(item)} style={{ marginBottom: 5, borderWidth: 0.5, marginLeft: 5, marginRight: 5, borderRadius: 15, borderColor: '#9C9C9C' }}>
+                <View style={{ flexDirection: "row", alignItems: 'center', alignContent: 'center', padding: 7, borderRadius: 15, backgroundColor: roomHistoryItem ? item.Id == roomHistoryItem.Id ? "#F6DFCE" : 'white' : 'white' }}>
+                    <Image source={Images.icon_return_good} style={{ width: 48, height: 48 }} />
                     <View style={{ flex: 1, flexDirection: "row", justifyContent: 'space-between', alignItems: 'center', marginBottom: 5 }}>
                         <View style={{ flex: 1 }}>
-                            <Text style={{ fontSize: 14, fontWeight: 'bold', marginLeft: 10, color: '#363636' }}>{item.Product.Name}</Text>
-                            <Text style={{ fontSize: 12, marginLeft: 10, marginTop: 3, color: '#4F4F4F' }}>{item.Room.Name}[{item.Pos}]</Text>
-                            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', marginTop: 3, marginLeft: 10, marginBottom: 5 }}>
-                                <Text style={{ fontSize: 12, color: '#4F4F4F' }}>{I18n.t('so_luong')}</Text>
-                                <Text style={{ fontSize: 12, color: '#4F4F4F' }}>{currencyToString(item.Quantity)} {item.Product.Unit}</Text>
+                            <Text style={{ fontSize: 16, fontWeight: 'bold', marginLeft: 10, color: '#363636', paddingVertical: 5 }}>{item.Product.Name}</Text>
+                            <Text style={{ fontSize: 14, marginLeft: 10, marginTop: 3, color: '#4F4F4F', paddingVertical: 5 }}>{item.Room.Name}[{item.Pos}]</Text>
+                            <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center', paddingVertical: 5, marginLeft: 10, }}>
+                                <Text style={{ fontSize: 14, color: '#4F4F4F' }}>{I18n.t('so_luong')}: </Text>
+                                <Text style={{ fontSize: 14, color: '#4F4F4F' }}>{currencyToString(item.Quantity)} {item.Product.Unit}</Text>
                             </View>
                         </View>
-                        <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end', marginRight: 10, marginBottom: 5 }}>
-                            <Text style={{ fontSize: 12, color: '#FF0000', fontStyle: 'italic', marginTop: 3 }}>{item.Description}</Text>
-                            <Text style={{ fontSize: 12, color: '#4F4F4F', marginTop: 3 }}>{dateToStringFormatUTC(item.CreatedDate)}</Text>
-                            <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#0099FF', marginTop: 3 }}>{currencyToString(item.Price)}</Text>
+                        <View style={{ flex: 1, justifyContent: 'flex-end', alignItems: 'flex-end', marginRight: 10, paddingVertical: 5 }}>
+                            <Text style={{ fontSize: 14, color: '#FF0000', fontStyle: 'italic', paddingVertical: 5 }}>{item.Description}</Text>
+                            <Text style={{ fontSize: 14, color: '#4F4F4F', paddingVertical: 5 }}>{dateToStringFormatUTC(item.CreatedDate)}</Text>
+                            <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#0099FF', paddingVertical: 5 }}>{currencyToString(item.Price)}</Text>
                         </View>
                     </View>
                 </View>
@@ -259,29 +259,29 @@ export default (props) => {
                             style={{ flexDirection: "row", alignItems: "center" }}
                             onPress={() => onClickFilter()}>
                             <Image source={Images.icon_calendar} style={{ width: 48, height: 48 }} />
-                            <Text style={{ marginHorizontal: 10 }}>{filter.time.name.includes('-') ? filter.time.name : I18n.t(filter.time.name)}</Text>
+                            <Text style={{ marginHorizontal: 10, fontSize: 14 }}>{filter.time.name.includes('-') ? filter.time.name : I18n.t(filter.time.name)}</Text>
                             <Image source={Images.icon_arrow_down} style={{ width: 14, height: 14, marginLeft: 5 }} />
                         </TouchableOpacity>
-                        <Text style={{ fontSize: 12,textAlign:'center',marginTop:15,marginRight:10 }}>{roomHistoryData.length} / {count.current}</Text>
+                        <Text style={{ fontSize: 14, textAlign: 'center', marginTop: 15, marginRight: 10, fontWeight: 'bold' }}>{roomHistoryData.length} / {count.current}</Text>
                     </View>
-                    <View style={{ flex: 1, borderRightWidth: 1, borderRightColor: 'silver', backgroundColor: '#E8E8E8' }}>
+                    <View style={{ flex: 1, borderRightWidth: 0.5, borderRightColor: 'silver', backgroundColor: '#E8E8E8' }}>
                         <TextInput style={{ borderWidth: 1, marginTop: 10, backgroundColor: '#FFFFFF', borderColor: '#828282', borderRadius: 10, marginBottom: 10, marginLeft: 10, marginRight: 10, padding: 10, color: "#000" }} inlineImageLeft='search_icon' placeholderTextColor="#808080" placeholder={I18n.t('nhap_tu_khoa_tim_kiem')} onChangeText={text => setInputSearch(text)}></TextInput>
                         {
-                        roomHistoryData.length > 0?
-                            <FlatList
-                                data={roomHistoryData}
-                                onEndReachedThreshold={0.1}
-                                onEndReached={viewData.length == 0 ? onLoadMore : filterMore}
-                                renderItem={({ item, index }) => renderListItem(item, index)}
-                                keyExtractor={(item, index) => index.toString()}
-                                ref={refs => roomHistoryRef.current = refs}
-                                ListFooterComponent={loadMore ? <ActivityIndicator color={colors.colorchinh} /> : null}
-                                onMomentumScrollBegin={() => { onEndReachedCalledDuringMomentum.current = false }}
-                                ref={flatlistRef}
-                            />
-                            :<View style={{backgroundColor:'white', flex:1, alignItems:'center', justifyContent:'center'}}> 
-                            <Text style={{ fontSize: 12, textAlign:'center' }}>{I18n.t('chua_co_lich_su_huy_tra')}</Text>
-                            </View>
+                            roomHistoryData.length > 0 ?
+                                <FlatList
+                                    data={roomHistoryData}
+                                    onEndReachedThreshold={0.1}
+                                    onEndReached={viewData.length == 0 ? onLoadMore : filterMore}
+                                    renderItem={({ item, index }) => renderListItem(item, index)}
+                                    keyExtractor={(item, index) => index.toString()}
+                                    ref={refs => roomHistoryRef.current = refs}
+                                    ListFooterComponent={loadMore ? <ActivityIndicator color={colors.colorchinh} /> : null}
+                                    onMomentumScrollBegin={() => { onEndReachedCalledDuringMomentum.current = false }}
+                                    ref={flatlistRef}
+                                />
+                                : <View style={{ backgroundColor: 'white', flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                                    <Text style={{ fontSize: 12, textAlign: 'center' }}>{I18n.t('chua_co_lich_su_huy_tra')}</Text>
+                                </View>
                         }
                     </View>
                 </View>

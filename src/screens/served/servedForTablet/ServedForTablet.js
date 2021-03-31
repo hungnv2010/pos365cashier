@@ -206,6 +206,7 @@ const Served = (props) => {
                     if (!elm.IsPromotion && elm.ProductId == product.ProductId) {
                         isExist = true
                         elm.Quantity += product.Quantity
+                        elm.Quantity = Math.round(elm.Quantity * 1000) / 1000
                         return;
                     }
                 })

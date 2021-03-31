@@ -347,7 +347,7 @@ const CustomerOrder = (props) => {
                                     <View style={{ flexDirection: "column", flex: 1, }}>
                                         <Text style={{ fontWeight: "bold", marginBottom: 7 }}>{item.Name}</Text>
                                         <View style={{ flexDirection: "row" }}>
-                                            <Text style={{}}>{currencyToString(item.Price)} x {(isPromotion) ? item.Quantity : null}</Text>
+                                            <Text style={{}}>{currencyToString(item.Price)} x <Text style={{ color: Colors.colorchinh }}>{(isPromotion && orientaition != Constant.PORTRAIT) ? item.Quantity : null}</Text></Text>
                                             <View>
                                                 {
                                                     orientaition == Constant.PORTRAIT ?

@@ -220,7 +220,6 @@ class DataManager {
     }
 
     getDataPrintCook = (newOrders) => {
-        console.log("getDataPrintCook newOrders ", newOrders);
         if (newOrders.length == 0)
             return null;
 

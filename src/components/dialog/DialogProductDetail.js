@@ -113,6 +113,7 @@ export default (props) => {
     }
 
     const onClickTopping = () => {
+        onClickOk()
         props.onClickTopping()
         props.setShowModal(false)
     }
