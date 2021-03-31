@@ -37,8 +37,8 @@ export default function ToolBarSearch(props) {
 
             <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
                 {props.clickLeftIcon ?
-                    <TouchableOpacity onPress={props.clickLeftIcon}>
-                        <Icon name={props.leftIcon} size={props.size ? props.size : 30} color="white" />
+                    <TouchableOpacity onPress={props.clickLeftIcon} style={{ paddingLeft: 19, paddingRight: 19, paddingTop: 16, paddingBottom: 16 }}>
+                        <Image source={Images.icon_back} style={{ width: 48, height: 48, }} />
                     </TouchableOpacity>
                     :
                     <TouchableOpacity onPress={() => {
@@ -50,7 +50,7 @@ export default function ToolBarSearch(props) {
                             }, 1000);
                         }
                     }}>
-                        <Icon name={props.leftIcon} size={props.size ? props.size : 30} color="white" />
+                        <Image source={Images.icon_back} style={{ width: 48, height: 48, paddingLeft: 19, paddingRight: 19, paddingTop: 16, paddingBottom: 16 }} />
                     </TouchableOpacity>
                 }
             </View>
@@ -59,7 +59,7 @@ export default function ToolBarSearch(props) {
                     <Subheading
                         numberOfLines={1}
                         style={{
-                             fontWeight: "bold"
+                            fontWeight: "bold"
                         }}
                     >
                         {props.title}

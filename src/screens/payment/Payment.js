@@ -986,9 +986,18 @@ export default (props) => {
 
     const onClickBackOrder = () => {
         qrCodeRealm.current.removeAllListeners()
-        updateServerEvent(false)
         setShowModal(false);
-        props.navigation.pop()
+        updateServerEvent(true)
+        // props.navigation.pop()
+    }
+
+    const callback = (dataURL) => {
+        console.log("Data getRef QrCode  ============ ", dataURL);
+        let image =  `<img id='barcode'
+            src="data:image/png;base64,${dataURL}"
+            width="100"
+            height="100" />`
+            
     }
 
     const renderFilter = () => {
@@ -1038,6 +1047,9 @@ export default (props) => {
                         <QRCode
                             size={180}
                             value={qrCode.current}
+                            getRef={(c) => {
+                                c.toDataURL(callback)
+                            }}
                         />
                     </View>
                     <View style={[{ marginTop: 20, justifyContent: "center", flexDirection: "row" }]}>

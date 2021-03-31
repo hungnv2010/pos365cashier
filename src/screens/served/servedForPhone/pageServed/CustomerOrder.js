@@ -414,7 +414,6 @@ export default (props) => {
     };
 
     const renderProduct = (item, index) => {
-
         const isPromotion = !(item.IsPromotion == undefined || (item.IsPromotion == false))
         return (
             <>
@@ -453,7 +452,7 @@ export default (props) => {
                                 {item.Name}
                             </TextTicker>
                             <View style={{ flexDirection: "row" }}>
-                                <Text style={{}}>{currencyToString(item.Price)} x </Text>
+                                <Text style={{}}>{item.Price} x </Text>
                                 <View>
                                     <Text style={{ color: Colors.colorchinh }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text>
                                 </View>

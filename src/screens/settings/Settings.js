@@ -492,7 +492,7 @@ export default (props) => {
                 title={I18n.t('setting')}
                 outPutTextSearch={() => { }}
             />
-            <ScrollView style={{ marginBottom: 1 }}>
+            <ScrollView style={{ marginBottom: 1 }} keyboardShouldPersistTaps="handled">
                 <View style={{ flex: 1, flexDirection: 'column' }}>
                     <TouchableOpacity onPress={() => screenSwitch(ScreenList.VNPayPaymentSetting, settingObject)}>
                         <Text style={styles.textTitleItem}>{I18n.t("thiet_lap_thanh_toan_vnpay")}</Text>

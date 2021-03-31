@@ -91,7 +91,7 @@ const Served = (props) => {
             if ((changes.insertions.length || changes.modifications.length) && serverEvent[0].FromServer) {
                 currentServerEvent.current = JSON.parse(JSON.stringify(serverEvent[0]))
                 let jsonTmp = JSON.parse(serverEvent[0].JsonContent)
-                jsonTmp.OrderDetails = await addPromotion(jsonTmp.OrderDetails);
+                jsonTmp.OrderDetails = await dataManager.addPromotion(jsonTmp.OrderDetails);
                 jsonTmp.RoomName = jsonTmp.RoomName ? jsonTmp.RoomName : props.route.params.room.Name
                 console.log('jsonTmpjsonTmp', jsonTmp);
                 setJsonContent(jsonTmp)
@@ -107,7 +107,7 @@ const Served = (props) => {
                 : await dataManager.createSeverEvent(props.route.params.room.Id, position)
             let jsonContentObject = currentServerEvent.current.JsonContent != "{}" && JSON.parse(currentServerEvent.current.JsonContent).OrderDetails.length > 0 ? JSON.parse(currentServerEvent.current.JsonContent) : dataManager.createJsonContent(props.route.params.room.Id, position, moment(), [], props.route.params.room.Name)
             currentServerEvent.current.JsonContent = JSON.stringify(jsonContentObject)
-            jsonContentObject.OrderDetails = await addPromotion(jsonContentObject.OrderDetails);
+            jsonContentObject.OrderDetails = await dataManager.addPromotion(jsonContentObject.OrderDetails);
             jsonContentObject.RoomName = jsonContentObject.RoomName ? jsonContentObject.RoomName : props.route.params.room.Name
             setJsonContent(jsonContentObject)
             serverEvent.addListener(listener)
@@ -203,7 +203,7 @@ const Served = (props) => {
             } else {
                 let isExist = false
                 jsonContentTmp.OrderDetails.forEach(elm => {
-                    if (elm.ProductId == product.ProductId) {
+                    if (!elm.IsPromotion && elm.ProductId == product.ProductId) {
                         isExist = true
                         elm.Quantity += product.Quantity
                         return;
@@ -227,7 +227,7 @@ const Served = (props) => {
 
         console.log("outputSelectedProduct jsonContent.OrderDetails ", jsonContentTmp.OrderDetails);
         checkHasItemOrder(jsonContentTmp.OrderDetails)
-        jsonContentTmp.OrderDetails = await addPromotion(jsonContentTmp.OrderDetails);
+        jsonContentTmp.OrderDetails = await dataManager.addPromotion(jsonContentTmp.OrderDetails, promotions);
         updateServerEvent({ ...jsonContentTmp })
     }
 
@@ -268,115 +268,103 @@ const Served = (props) => {
         updateServerEvent({ ...jsonContent })
     }
 
-    const addPromotion = async (list = []) => {
-        console.log("addPromotion list ", list);
-        console.log("addPromotion promotions ", promotions);
-        let promotionTmp = promotions
-        if (promotions.length == 0) {
-            let promotion = await realmStore.querryPromotion();
-            console.log("realmStore promotion === ", promotion);
-            promotionTmp = promotion
-            setPromotions(promotion)
-        }
-        let listProduct = await realmStore.queryProducts()
-        console.log("addPromotion listProduct:::: ", listProduct);
-        let listNewOrder = list.filter(element => (element.IsPromotion == undefined || (element.IsPromotion == false)))
-        let listOldPromotion = list.filter(element => (element.IsPromotion != undefined && (element.IsPromotion == true)))
-        console.log("listNewOrder listOldPromotion ==:: ", listNewOrder, listOldPromotion);
+    // const addPromotion = async (list = []) => {
+    //     console.log("addPromotion list ", list);
+    //     console.log("addPromotion promotions ", promotions);
+    //     let promotionTmp = promotions
+    //     if (promotions.length == 0) {
+    //         let promotion = await realmStore.querryPromotion();
+    //         // console.log("realmStore promotion === ", promotion);
+    //         promotionTmp = promotion
+    //         setPromotions(promotion)
+    //     }
+    //     let listProduct = await realmStore.queryProducts()
+    //     let listNewOrder = list.filter(element => (element.IsPromotion == undefined || (element.IsPromotion == false)))
+    //     let listOldPromotion = list.filter(element => (element.IsPromotion != undefined && (element.IsPromotion == true)))
+    //     var DataGrouper = (function () {
+    //         var has = function (obj, target) {
+    //             return _.any(obj, function (value) {
+    //                 return _.isEqual(value, target);
+    //             });
+    //         };
 
-        var DataGrouper = (function () {
-            var has = function (obj, target) {
-                return _.any(obj, function (value) {
-                    return _.isEqual(value, target);
-                });
-            };
+    //         var keys = function (data, names) {
+    //             return _.reduce(data, function (memo, item) {
+    //                 var key = _.pick(item, names);
+    //                 if (!has(memo, key)) {
+    //                     memo.push(key);
+    //                 }
+    //                 return memo;
+    //             }, []);
+    //         };
 
-            var keys = function (data, names) {
-                return _.reduce(data, function (memo, item) {
-                    var key = _.pick(item, names);
-                    if (!has(memo, key)) {
-                        memo.push(key);
-                    }
-                    return memo;
-                }, []);
-            };
+    //         var group = function (data, names) {
+    //             var stems = keys(data, names);
+    //             return _.map(stems, function (stem) {
+    //                 return {
+    //                     key: stem,
+    //                     vals: _.map(_.where(data, stem), function (item) {
+    //                         return _.omit(item, names);
+    //                     })
+    //                 };
+    //             });
+    //         };
 
-            var group = function (data, names) {
-                var stems = keys(data, names);
-                return _.map(stems, function (stem) {
-                    return {
-                        key: stem,
-                        vals: _.map(_.where(data, stem), function (item) {
-                            return _.omit(item, names);
-                        })
-                    };
-                });
-            };
+    //         group.register = function (name, converter) {
+    //             return group[name] = function (data, names) {
+    //                 return _.map(group(data, names), converter);
+    //             };
+    //         };
 
-            group.register = function (name, converter) {
-                return group[name] = function (data, names) {
-                    return _.map(group(data, names), converter);
-                };
-            };
+    //         return group;
+    //     }());
 
-            return group;
-        }());
-
-        DataGrouper.register("sum", function (item) {
-            console.log("register item ", item);
-
-            return _.extend({ ...item.vals[0] }, item.key, {
-                Quantity: _.reduce(item.vals, function (memo, node) {
-                    return memo + Number(node.Quantity);
-                }, 0)
-            });
-        });
-
-        let listGroupByQuantity = DataGrouper.sum(listNewOrder, ["Id", "IsLargeUnit"])
-
-        console.log("listGroupByQuantity === ", listGroupByQuantity);
-        console.log("promotionTmp ===== ", promotionTmp);
-        let listPromotion = [];
-        let index = 0;
-        listGroupByQuantity.forEach(element => {
-            promotionTmp.forEach(async (item) => {
-                if (item.QuantityCondition > 0 && (element.IsPromotion == undefined || (element.IsPromotion == false)) && element.ProductId == item.ProductId && checkEndDate(item.EndDate) && (item.IsLargeUnit == element.IsLargeUnit && element.Quantity >= item.QuantityCondition)) {
-                    let promotion = listProduct.filtered(`Id == ${item.ProductPromotionId}`)
-                    promotion = JSON.parse(JSON.stringify(promotion[0]));
-                    // let promotion = JSON.parse(item.Promotion)
-                    console.log("addPromotion item:::: ", promotion);
-                    if (index == 0) {
-                        promotion.FisrtPromotion = true;
-                    }
-
-                    let quantity = Math.floor(element.Quantity / item.QuantityCondition)
-                    promotion.Quantity = quantity
-
-                    if (listOldPromotion.length > 0) {
-                        let oldPromotion = listOldPromotion.filter(el => promotion.Id == el.Id)
-                        if (oldPromotion.length == 1) {
-                            promotion = oldPromotion[0];
-                            promotion.Quantity = quantity;
-                        }
-                    }
-
-                    promotion.Price = item.PricePromotion;
-                    promotion.IsLargeUnit = item.ProductPromotionIsLargeUnit;
-                    promotion.IsPromotion = true;
-                    promotion.ProductId = promotion.Id
-                    promotion.Description = element.Quantity + " " + element.Name + ` ${I18n.t('khuyen_mai_')} ` + Math.floor(element.Quantity / item.QuantityCondition);
-
-                    console.log("addPromotion promotion ", promotion, index);
-                    listPromotion.push(promotion)
-                    index++;
-                }
-            });
-        });
-        console.log("addPromotion listPromotion:: ", listPromotion);
-        listNewOrder = listNewOrder.concat(listPromotion);
-        console.log("addPromotion listNewOrder::::: ", listNewOrder);
-        return listNewOrder;
-    }
+    //     DataGrouper.register("sum", function (item) {
+    //         console.log("register item ", item);
+    //         return _.extend({ ...item.vals[0] }, item.key, {
+    //             Quantity: _.reduce(item.vals, function (memo, node) {
+    //                 return memo + Number(node.Quantity);
+    //             }, 0)
+    //         });
+    //     });
+    //     let listGroupByQuantity = DataGrouper.sum(listNewOrder, ["ProductId", "IsLargeUnit"])
+    //     let listPromotion = [];
+    //     let index = 0;
+    //     listGroupByQuantity.forEach(element => {
+    //         promotionTmp.forEach(async (item) => {
+    //             if (item.QuantityCondition > 0 && (element.IsPromotion == undefined || (element.IsPromotion == false)) && element.ProductId == item.ProductId && checkEndDate(item.EndDate) && (item.IsLargeUnit == element.IsLargeUnit && element.Quantity >= item.QuantityCondition)) {
+    //                 let promotion = listProduct.filtered(`Id == ${item.ProductPromotionId}`)
+    //                 promotion = promotion[0] != undefined ? JSON.parse(JSON.stringify(promotion[0])) : {};
+    //                 if (JSON.stringify(promotion) == '{}') {
+    //                     promotion = JSON.parse(item.Promotion);
+    //                 }
+    //                 let quantity = Math.floor(element.Quantity / item.QuantityCondition) * item.QuantityPromotion
+    //                 promotion.Quantity = quantity
+    //                 if (listOldPromotion.length > 0) {
+    //                     let oldPromotion = listOldPromotion.filter(el => promotion.Id == el.Id)
+    //                     if (oldPromotion.length == 1) {
+    //                         promotion = oldPromotion[0];
+    //                         promotion.FisrtPromotion = false
+    //                         promotion.Quantity = quantity;
+    //                     }
+    //                 }
+    //                 if (index == 0)
+    //                     promotion.FisrtPromotion = true
+    //                 promotion.Price = item.PricePromotion;
+    //                 promotion.IsLargeUnit = item.ProductPromotionIsLargeUnit;
+    //                 promotion.IsPromotion = true;
+    //                 promotion.ProductId = promotion.Id
+    //                 promotion.Description = element.Quantity + " " + element.Name + ` ${I18n.t('khuyen_mai_')} ` + Math.floor(element.Quantity / item.QuantityCondition) * item.QuantityPromotion;
+    //                 listPromotion.push(promotion)
+    //                 index++;
+    //             }
+    //         });
+    //     });
+    //     console.log("addPromotion listPromotion:: ", listPromotion);
+    //     listNewOrder = listNewOrder.concat(listPromotion);
+    //     console.log("addPromotion listNewOrder::::: ", listNewOrder);
+    //     return listNewOrder;
+    // }
 
     const checkEndDate = (date) => {
         let endDate = new Date(date)

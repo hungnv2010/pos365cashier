@@ -309,7 +309,12 @@ const Invoice = (props) => {
     }
 
     const getMoreAttributes = (item) => {
-        let MoreAttributes = item.MoreAttributes ? JSON.parse(item.MoreAttributes) : null;
+        let MoreAttributes = {}; // item.MoreAttributes ? JSON.parse(item.MoreAttributes) : null;
+        try {
+            item.MoreAttributes ? JSON.parse(item.MoreAttributes) : null;
+        } catch (error) {
+            console.log(" getMoreAttributes error ", error);
+        }
         let HasTemporaryPrints = MoreAttributes && MoreAttributes.TemporaryPrints && MoreAttributes.TemporaryPrints.length > 0 ? true : false;
         return HasTemporaryPrints ? MoreAttributes : false
     }

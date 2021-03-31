@@ -81,11 +81,35 @@ class SignalRManager {
 
     }
 
-    reconnect() {
+    reconnect(syncDown = true) {
         console.log('reconnect');
         this.killSignalR()
         this.startSignalR()
-        this.getAllData()
+        if (syncDown)
+            this.getAllData()
+        else
+            this.syncFromLocal()
+    }
+
+    async syncFromLocal() {
+        console.log('syncFromLocal');
+        dialogManager.showLoading()
+        let allServerEvent = await realmStore.queryServerEvents()
+        allServerEvent = JSON.parse(JSON.stringify(allServerEvent))
+        for (const sv in allServerEvent) {
+            let serverEvent = allServerEvent[sv]
+            let jsonContentObj = JSON.parse(serverEvent.JsonContent)
+            jsonContentObj.OrderDetails.forEach(product => {
+                delete product.ProductImages
+                if (isNaN(product.Quantity)) {
+                    product.Quantity = 0;
+                }
+            });
+            serverEvent.JsonContent = JSON.stringify(jsonContentObj)
+            delete serverEvent.Timestamp
+            this.sendMessage(serverEvent)
+        }
+        dialogManager.hiddenLoading()
     }
 
     startSignalR() {

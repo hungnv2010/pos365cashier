@@ -80,7 +80,7 @@ export default (props) => {
                     return (
                         <TouchableOpacity key={index.toString()} style={[styles.viewItem, { marginTop: index == 0 ? 0 : 10 }]} onPress={() => onClickItemOrder(item, 1)}>
                             <View style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: 7 }}>
-                                <Text style={{ fontWeight: "bold", color: colors.colorLightBlue, textTransform: 'uppercase' }}>{jsonContent.RoomName ? jsonContent.RoomName : "Pos365"}</Text>
+                                <Text style={{ fontWeight: "bold", color: colors.colorLightBlue, textTransform: 'uppercase' }}>{jsonContent.RoomName ? jsonContent.RoomName : I18n.t('don_hang')}</Text>
                                 <Text style={{ fontWeight: "bold" }}>{item.Code}</Text>
                             </View>
                             <View style={{ borderBottomColor: "#ddd", borderBottomWidth: .5, paddingVertical: 7, flexDirection: "row", justifyContent: "space-between" }}>

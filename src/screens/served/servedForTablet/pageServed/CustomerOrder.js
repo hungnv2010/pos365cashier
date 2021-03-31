@@ -309,7 +309,7 @@ const CustomerOrder = (props) => {
         return (
             <View style={{ paddingHorizontal: 5, paddingTop: 5 }}>
                 {
-                    isPromotion && item.FisrtPromotion != undefined ?
+                    isPromotion && item.FisrtPromotion != undefined && item.FisrtPromotion == true ?
                         <View style={{ backgroundColor: "#ffedd6", padding: 7, paddingHorizontal: 10, marginBottom: 5 }}>
                             <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{I18n.t('khuyen_mai')}</Text>
                         </View>

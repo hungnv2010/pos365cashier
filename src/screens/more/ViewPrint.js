@@ -91,14 +91,19 @@ export default forwardRef((props, ref) => {
                 Print.printImageFromClient(uri, currentHtml.current.ip, currentHtml.current.size, (b) => {
                     console.log("printImageFromClient b ", b);
                 })
-
-                setDataHtmlPrint()
+                setTimeout(() => {
+                    setDataHtmlPrint()
+                }, 1000);
+                // setDataHtmlPrint()
             },
             error => console.error('Oops, snapshot failed', error)
         );
     }
 
     const setDataHtmlPrint = () => {
+
+        console.log("setDataHtmlPrint printService.listWaiting.length ", printService.listWaiting.length);
+
         if (printService.listWaiting.length > 0) {
             currentHtml.current = printService.listWaiting.pop()
             setDataHtml(currentHtml.current.html)
@@ -109,12 +114,12 @@ export default forwardRef((props, ref) => {
     }
 
     const printDataNewOrders = async (listKitchen, listReturnProduct) => {
-        console.log('printDataNewOrdersRef listKitchen, listReturnProduct' , listKitchen, listReturnProduct)
+        console.log('printDataNewOrdersRef listKitchen, listReturnProduct', listKitchen, listReturnProduct)
         if (listKitchen != null)
             await printKitchen(listKitchen, TYPE_PRINT.KITCHEN, false)
         if (listReturnProduct != null)
             await printKitchen(listReturnProduct, TYPE_PRINT.RETURN_PRODUCT, false)
-            await setDataHtmlPrint();
+        await setDataHtmlPrint();
     }
 
     const printProvisional = async (jsonContent, checkProvisional = false, isPrint = true) => {
@@ -162,11 +167,11 @@ export default forwardRef((props, ref) => {
         if (vendorSession && vendorSession != "")
             vendorSession = JSON.parse(vendorSession);
         data = JSON.parse(data)
+        let i = 1;
         for (const value in data) {
             if (data.hasOwnProperty(value)) {
                 if (printObject[value] != "") {
                     const item = data[value];
-                    let i = 1;
                     for (const key in item) {
                         if (item.hasOwnProperty(key)) {
                             const element = item[key];
@@ -180,10 +185,10 @@ export default forwardRef((props, ref) => {
                             if (checkPrint || type != TYPE_PRINT.KITCHEN) {
                                 let res = printService.GenHtmlKitchen(htmlKitchen, element, i, vendorSession, type)
                                 if (res && res != "") {
-                                    res = res.replace("</body>", "<p style='display: none;'>" + new Date() + "</p> </body>");
+                                    res = res.replace("</body>", "<p style='display: none;'>" + i + "</p> </body>");
                                     printService.listWaiting.push({ html: res, ip: printObject[value].ip, size: printObject[value].size })
                                     if (setting && setting.in_hai_lien_cho_che_bien == true) {
-                                        res = res.replace("</body>", "<p style='display: none;'>" + new Date() + "in_hai_lien_cho_che_bien</p> </body>");
+                                        res = res.replace("</body>", "<p style='display: none;'>" + Math.floor((Math.random() * 1000000000) + 1) + i + "in_hai_lien_cho_che_bien</p> </body>");
                                         printService.listWaiting.push({ html: res, ip: printObject[value].ip, size: printObject[value].size })
                                     }
                                 }

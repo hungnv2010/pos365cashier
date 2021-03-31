@@ -73,9 +73,19 @@ const LIST_FUNCITION = [
         title: "danh_muc_phong_ban"
     },
     {
+        func: KEY_FUNC.PRODUCT,
+        icon: Images.icon_product,
+        title: "hang_hoa"
+    },
+    {
         func: KEY_FUNC.CUSTOMER_MANAGER,
         icon: Images.icon_customer,
         title: "khach_hang"
+    },
+    {
+        func: KEY_FUNC.EMPLOYEE_MANAGER,
+        icon: Images.ic_quanlynhanvien,
+        title: "quan_ly_nhan_vien"
     },
     {
         func: KEY_FUNC.REPORT_MANAGER,
@@ -86,16 +96,6 @@ const LIST_FUNCITION = [
         func: KEY_FUNC.SUPPLIER_MANAGER,
         icon: Images.icon_version,
         title: "nha_cung_cap"
-    },
-    {
-        func: KEY_FUNC.PRODUCT,
-        icon: Images.icon_product,
-        title: "hang_hoa"
-    },
-    {
-        func: KEY_FUNC.EMPLOYEE_MANAGER,
-        icon: Images.ic_quanlynhanvien,
-        title: "quan_ly_nhan_vien"
     },
     {
         func: KEY_FUNC.SETTING_FUNC,

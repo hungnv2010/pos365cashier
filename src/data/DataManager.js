@@ -9,7 +9,8 @@ import { momentToDateUTC, momentToStringDateLocal, momentToDate, groupBy, random
 import { Constant } from "../common/Constant";
 import I18n from '../common/language/i18n';
 import productManager from './objectManager/ProductManager';
-import { object } from "underscore";
+// import { object } from "underscore";
+import _, { map, object } from 'underscore';
 class DataManager {
     constructor() {
         this.subjectUpdateServerEvent = new Subject()
@@ -19,6 +20,108 @@ class DataManager {
                 signalRManager.sendMessageServerEvent(serverEvent)
                 // this.updateServerEventNow(serverEvent, true)
             })
+    }
+
+    checkEndDate(date) {
+        let endDate = new Date(date)
+        let currentDate = new Date();
+        console.log("currentDate endDate ", currentDate, endDate);
+        if (endDate.getTime() > currentDate.getTime()) {
+            return true;
+        }
+        return false;
+    }
+
+    async addPromotion(list = []) {
+        console.log("addPromotion list ", list);
+        let promotion = await realmStore.querryPromotion();
+        promotionTmp = promotion
+        let listProduct = await realmStore.queryProducts()
+        let listNewOrder = list.filter(element => (element.IsPromotion == undefined || (element.IsPromotion == false)))
+        let listOldPromotion = list.filter(element => (element.IsPromotion != undefined && (element.IsPromotion == true)))
+        var DataGrouper = (function () {
+            var has = function (obj, target) {
+                return _.any(obj, function (value) {
+                    return _.isEqual(value, target);
+                });
+            };
+
+            var keys = function (data, names) {
+                return _.reduce(data, function (memo, item) {
+                    var key = _.pick(item, names);
+                    if (!has(memo, key)) {
+                        memo.push(key);
+                    }
+                    return memo;
+                }, []);
+            };
+
+            var group = function (data, names) {
+                var stems = keys(data, names);
+                return _.map(stems, function (stem) {
+                    return {
+                        key: stem,
+                        vals: _.map(_.where(data, stem), function (item) {
+                            return _.omit(item, names);
+                        })
+                    };
+                });
+            };
+
+            group.register = function (name, converter) {
+                return group[name] = function (data, names) {
+                    return _.map(group(data, names), converter);
+                };
+            };
+
+            return group;
+        }());
+
+        DataGrouper.register("sum", function (item) {
+            console.log("register item ", item);
+            return _.extend({ ...item.vals[0] }, item.key, {
+                Quantity: _.reduce(item.vals, function (memo, node) {
+                    return memo + Number(node.Quantity);
+                }, 0)
+            });
+        });
+        let listGroupByQuantity = DataGrouper.sum(listNewOrder, ["ProductId", "IsLargeUnit"])
+        let listPromotion = [];
+        let index = 0;
+        listGroupByQuantity.forEach(element => {
+            promotionTmp.forEach(async (item) => {
+                if (item.QuantityCondition > 0 && (element.IsPromotion == undefined || (element.IsPromotion == false)) && element.ProductId == item.ProductId && this.checkEndDate(item.EndDate) && (item.IsLargeUnit == element.IsLargeUnit && element.Quantity >= item.QuantityCondition)) {
+                    let promotion = listProduct.filtered(`Id == ${item.ProductPromotionId}`)
+                    promotion = promotion[0] != undefined ? JSON.parse(JSON.stringify(promotion[0])) : {};
+                    if (JSON.stringify(promotion) == '{}') {
+                        promotion = JSON.parse(item.Promotion);
+                    }
+                    let quantity = Math.floor(element.Quantity / item.QuantityCondition) * item.QuantityPromotion
+                    promotion.Quantity = quantity
+                    if (listOldPromotion.length > 0) {
+                        let oldPromotion = listOldPromotion.filter(el => promotion.Id == el.Id)
+                        if (oldPromotion.length == 1) {
+                            promotion = oldPromotion[0];
+                            promotion.FisrtPromotion = false
+                            promotion.Quantity = quantity;
+                        }
+                    }
+                    if (index == 0)
+                        promotion.FisrtPromotion = true
+                    promotion.Price = item.PricePromotion;
+                    promotion.IsLargeUnit = item.ProductPromotionIsLargeUnit;
+                    promotion.IsPromotion = true;
+                    promotion.ProductId = promotion.Id
+                    promotion.Description = element.Quantity + " " + element.Name + ` ${I18n.t('khuyen_mai_')} ` + Math.floor(element.Quantity / item.QuantityCondition) * item.QuantityPromotion;
+                    listPromotion.push(promotion)
+                    index++;
+                }
+            });
+        });
+        console.log("addPromotion listPromotion:: ", listPromotion);
+        listNewOrder = listNewOrder.concat(listPromotion);
+        console.log("addPromotion listNewOrder::::: ", listNewOrder);
+        return listNewOrder;
     }
 
     initComfirmOrder = async () => {
@@ -117,7 +220,7 @@ class DataManager {
     }
 
     getDataPrintCook = (newOrders) => {
-
+        console.log("getDataPrintCook newOrders ", newOrders);
         if (newOrders.length == 0)
             return null;
 
@@ -126,28 +229,57 @@ class DataManager {
         let print3 = []
         let print4 = []
         let print5 = []
+
         newOrders.forEach((elm, idx) => {
-            if (!elm.Printer || elm.Printer == '') {
-                elm.Printer = Constant.PRINT_KITCHEN_DEFAULT
+            let priceConfig = elm.PriceConfig ? JSON.parse(elm.PriceConfig) : null
+            if (priceConfig) {
+                if (!priceConfig.Printer || priceConfig.Printer == '') {
+                    elm.Printer = Constant.PRINT_KITCHEN_DEFAULT
+                }
+                if (priceConfig.SecondPrinter && priceConfig.SecondPrinter != '') {
+                    secondPrinter.push({ ...elm, Printer: priceConfig.SecondPrinter })
+                }
+                if (priceConfig.Printer3 && priceConfig.Printer3 != '') {
+                    print3.push({ ...elm, Printer: priceConfig.Printer3 })
+                }
+                if (priceConfig.Printer4 && priceConfig.Printer4 != '') {
+                    print4.push({ ...elm, Printer: priceConfig.Printer4 })
+                }
+                if (priceConfig.Printer5 && priceConfig.Printer5 != '') {
+                    print5.push({ ...elm, Printer: priceConfig.Printer5 })
+                }
             }
-            if (elm.SecondPrinter && elm.SecondPrinter != '') {
-                secondPrinter.push({ ...elm, Printer: elm.SecondPrinter })
-            }
-            if (elm.Printer3 && elm.Printer3 != '') {
-                print3.push({ ...elm, Printer: elm.Printer3 })
-            }
-            if (elm.Printer4 && elm.Printer4 != '') {
-                print4.push({ ...elm, Printer: elm.Printer4 })
-            }
-            if (elm.Printer5 && elm.Printer5 != '') {
-                print5.push({ ...elm, Printer: elm.Printer5 })
-            }
+
         })
+
+        // newOrders.forEach((elm, idx) => {
+        //     if (!elm.Printer || elm.Printer == '') {
+        //         elm.Printer = Constant.PRINT_KITCHEN_DEFAULT
+        //     }
+        //     if (elm.SecondPrinter && elm.SecondPrinter != '') {
+        //         secondPrinter.push({ ...elm, Printer: elm.SecondPrinter })
+        //     }
+        //     if (elm.Printer3 && elm.Printer3 != '') {
+        //         print3.push({ ...elm, Printer: elm.Printer3 })
+        //     }
+        //     if (elm.Printer4 && elm.Printer4 != '') {
+        //         print4.push({ ...elm, Printer: elm.Printer4 })
+        //     }
+        //     if (elm.Printer5 && elm.Printer5 != '') {
+        //         print5.push({ ...elm, Printer: elm.Printer5 })
+        //     }
+        // })
+        console.log("getDataPrintCook secondPrinter ", secondPrinter);
+        console.log("getDataPrintCook print3 ", print3);
+        console.log("getDataPrintCook print4 ", print4);
+        console.log("getDataPrintCook print5 ", print5);
         listResult = [...newOrders, ...secondPrinter, ...print3, ...print4, ...print5]
         let listResultGroupBy = groupBy(listResult, "Printer")
         for (const property in listResultGroupBy) {
             listResultGroupBy[property] = groupBy(listResultGroupBy[property], "RoomName")
         }
+        console.log("getDataPrintCook listResultGroupBy ", listResultGroupBy);
+        
         return listResultGroupBy;
     }
 
@@ -320,9 +452,9 @@ class DataManager {
     }
 
     calculatateJsonContent = (JsonContent) => {
-        JsonContent.OrderDetails.forEach(item=>{
-            if(item.IsPromotion) item.Price = 0
-        })
+        // JsonContent.OrderDetails.forEach(item=>{
+        //     if(item.IsPromotion) item.Price = 0
+        // })
         let totalProducts = this.totalProducts(JsonContent.OrderDetails)
         let discount = 0
         if (JsonContent.DiscountValue) {

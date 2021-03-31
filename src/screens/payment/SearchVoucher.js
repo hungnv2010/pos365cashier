@@ -10,6 +10,7 @@ import { HTTPService } from '../../data/services/HttpService';
 import { ApiPath } from '../../data/services/ApiPath';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import dataManager from '../../data/DataManager';
 
 export default (props) => {
 
@@ -31,15 +32,17 @@ export default (props) => {
                 console.log("getDataVoucher props ", props);
                 let list = [];
                 res.results.forEach(el => {
-                    el["check"] = false;
-                    listVoucherSelect.listVoucher.map(item => {
-                        console.log("checkList ", item.Id, el.Id);
-                        if (el.Id == item.Id) {
-                            el["check"] = true;
-                            return;
-                        }
-                    })
-                    list.push(el);
+                    if (el.Quantity > 0 && dataManager.checkEndDate(el.ExpiryDate)) {
+                        el["check"] = false;
+                        listVoucherSelect.listVoucher.map(item => {
+                            console.log("checkList ", item.Id, el.Id);
+                            if (el.Id == item.Id) {
+                                el["check"] = true;
+                                return;
+                            }
+                        })
+                        list.push(el);
+                    }
                 })
                 setListVoucher(list);
             }

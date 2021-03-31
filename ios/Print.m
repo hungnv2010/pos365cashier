@@ -8,9 +8,9 @@
 
 #import <Foundation/Foundation.h>
 #import "Print.h"
-#import "PrinterManager.h"
 #import <WebKit/WebKit.h>
 #import "TSCCmd.h"
+#import "PrinterManager.h"
 
 @interface Print ()
 {
@@ -256,15 +256,13 @@ RCT_EXPORT_METHOD(keepTheScreenOff:(NSString *)param) {
     NSData *dataPrint=[cmd GetCmd];
     [currentprinter Write:dataPrint];
     NSLog(@"printImageFromClient URL 7 %@", dataPrint);
+    
+    [[currentprinter PrinterPi] setCallbackwhenSendSuccess:^(NSInteger ipackNo, NSInteger ipackcnt, NSString *message) {
+//      cmd=nil;
+      [_printerManager.CurrentPrinter Close];
+    }];
   }
   cmd=nil;
-//  [_printerManager.CurrentPrinter Close];
-
-  double delayInSeconds = 3;
-  dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-  dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-    [_printerManager.CurrentPrinter Close];
-  });
 
 }
 

@@ -81,7 +81,14 @@ const InvoiceDetail = (props) => {
     }
 
     const getPaymentMethod = (MoreAttributes) => {
+        let MoreAttributesTmp = {} // invoiceDetail.MoreAttributes ? JSON.parse(invoiceDetail.MoreAttributes) : null;
+        try {
+            MoreAttributesTmp = MoreAttributes ? JSON.parse(MoreAttributes) : null;
+        } catch (error) {
+            console.log(" getMoreAttributes error ", error);
+        }
         let listPaymentMethod = []
+        MoreAttributes = MoreAttributesTmp
         if (MoreAttributes.PaymentMethods && MoreAttributes.PaymentMethods.length > 0) {
             if (listAccount.current && listAccount.current.length > 0) {
                 listAccount.current.forEach(item => {
@@ -123,7 +130,12 @@ const InvoiceDetail = (props) => {
     }
 
     const getMoreAttributes = () => {
-        let MoreAttributes = invoiceDetail.MoreAttributes ? JSON.parse(invoiceDetail.MoreAttributes) : null;
+        let MoreAttributes = {} // invoiceDetail.MoreAttributes ? JSON.parse(invoiceDetail.MoreAttributes) : null;
+        try {
+            MoreAttributes = invoiceDetail.MoreAttributes ? JSON.parse(invoiceDetail.MoreAttributes) : null;
+        } catch (error) {
+            console.log(" getMoreAttributes error ", error);
+        }
         let HasTemporaryPrints = MoreAttributes && MoreAttributes.TemporaryPrints && MoreAttributes.TemporaryPrints.length > 0;
         if (HasTemporaryPrints) return MoreAttributes;
         else return null;
@@ -155,7 +167,7 @@ const InvoiceDetail = (props) => {
                         <Text style={{ padding: 0, flex: 1 }}>{I18n.t('phuong_thuc_thanh_toan')}</Text>
                         {/* <Text style={{ paddingLeft: 5 }}>+ {currencyToString(invoiceDetail.VAT)}</Text> */}
                         <View style={{ alignItems: "flex-end" }}>
-                            {getPaymentMethod(JSON.parse(invoiceDetail.MoreAttributes)).map((item, index) => {
+                            {getPaymentMethod(invoiceDetail.MoreAttributes).map((item, index) => {
                                 return (
                                     <Text key={index} style={{ fontStyle: "italic", color: "gray" }}>{item}</Text>
                                 )
