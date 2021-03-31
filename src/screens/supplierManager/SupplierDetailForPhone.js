@@ -175,7 +175,7 @@ export default (props) => {
         setShowModal(false)
     }
 
-    const onChange = (event, selectedDate) => {
+    const onChange = (selectedDate) => {
         dateTmp.current = selectedDate;
     }
 

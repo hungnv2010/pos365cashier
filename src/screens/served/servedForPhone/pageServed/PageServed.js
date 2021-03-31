@@ -69,6 +69,8 @@ export default (props) => {
             serverEvent = serverEvent.filtered(`RowKey == '${row_key}'`)
             let tpmServerEvent = JSON.stringify(serverEvent) != "{}" ? JSON.parse(JSON.stringify(serverEvent[0])) : {};
             currentServerEvent.current = JSON.stringify(serverEvent) != "{}" ? tpmServerEvent : await dataManager.createSeverEvent(props.route.params.room.Id, position)
+            console.log('currentServerEvent.current', currentServerEvent.current,JSON.parse(currentServerEvent.current.JsonContent));
+
             let jsonContentObject = currentServerEvent.current.JsonContent != "{}" && JSON.parse(currentServerEvent.current.JsonContent).OrderDetails.length > 0 ? JSON.parse(currentServerEvent.current.JsonContent) : dataManager.createJsonContent(props.route.params.room.Id, position, moment())
             currentServerEvent.current.JsonContent = JSON.stringify(jsonContentObject)
             jsonContentObject.OrderDetails = await dataManager.addPromotion(jsonContentObject.OrderDetails);
