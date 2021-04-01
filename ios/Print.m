@@ -259,11 +259,23 @@ RCT_EXPORT_METHOD(keepTheScreenOff:(NSString *)param) {
     
     [[currentprinter PrinterPi] setCallbackwhenSendSuccess:^(NSInteger ipackNo, NSInteger ipackcnt, NSString *message) {
 //      cmd=nil;
-      [_printerManager.CurrentPrinter Close];
+//      [_printerManager.CurrentPrinter Close];
+      double delayInSeconds = 2;
+      dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+      dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+        [_printerManager.CurrentPrinter Close];
+      });
     }];
+//    [[currentprinter PrinterPi] setCallbackPrintFinsh:^(BOOL isSucc, NSString *message) {
+//      [_printerManager.CurrentPrinter Close];
+//    }];
   }
   cmd=nil;
-
+//  double delayInSeconds = 3;
+//  dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+//  dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+//    [_printerManager.CurrentPrinter Close];
+//  });
 }
 
 #pragma handleNotification
