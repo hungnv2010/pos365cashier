@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import SettingSwitch from '../settings/SettingSwitch';
-import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput,Keyboard } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput, Keyboard } from 'react-native';
 import { ScrollView } from 'react-native';
 import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
 import MainToolBar from '../main/MainToolBar';
@@ -56,7 +56,7 @@ export default (props) => {
     const onClick = (data) => {
         setQRCodeEnable(data.stt)
         updateSetting('QrCodeEnable', data.stt)
-        
+
     }
     const onClickPrintInvoice = (data) => {
         setPrintInvoice(data.stt)
@@ -106,13 +106,17 @@ export default (props) => {
             Value: value
         }
         console.log("clickkkkkkkkkk");
-        
+
         new HTTPService().setPath(ApiPath.UPDATE_SETTING).POST(params)
             .then(res => {
                 console.log('onClickApply res', res);
                 if (res) {
                     console.log("res");
                     setFileLuuDuLieu(Constant.OBJECT_SETTING, JSON.stringify({ ...settingObject, key: value }))
+                    new HTTPService().setPath(ApiPath.VENDOR_SESSION).GET().then(async (res) => {
+                        console.log("getDataRetailerInfo res ", res);
+                        setFileLuuDuLieu(Constant.VENDOR_SESSION, JSON.stringify(res))
+                    })
                 }
             })
             .catch(err => {
@@ -173,13 +177,13 @@ export default (props) => {
                         }}></View>
 
                     </TouchableWithoutFeedback>
-                    <View style={[styles.styleViewModal,,{ marginBottom: Platform.OS == 'ios' ? marginModal : 0 }]} >
+                    <View style={[styles.styleViewModal, , { marginBottom: Platform.OS == 'ios' ? marginModal : 0 }]} >
                         <View style={{ width: Metrics.screenWidth * 0.8, }}>
                             <Text style={styles.titleModal}>{I18n.t('thong_tin_cua_hang')}</Text>
                             <Text style={{ fontSize: 16, justifyContent: 'center', marginTop: 5, marginLeft: 20 }}>Mời nhập {titileModal} </Text>
                             <TextInput style={styles.textInputStyle} autoFocus onChangeText={text => setInput(text)}></TextInput>
-                            <TouchableOpacity style={{ justifyContent: 'flex-end', alignItems: 'flex-end', marginTop: 10, marginBottom: 10,borderRadius:10  }} onPress={() => setInfoModal(input)}>
-                                <Text style={{ textAlign: 'center', color: '#FFF', marginRight: 40,backgroundColor:colors.colorchinh,paddingVertical:10,paddingHorizontal:20}} >{I18n.t("dong_y")}</Text>
+                            <TouchableOpacity style={{ justifyContent: 'flex-end', alignItems: 'flex-end', marginTop: 10, marginBottom: 10, borderRadius: 10 }} onPress={() => setInfoModal(input)}>
+                                <Text style={{ textAlign: 'center', color: '#FFF', marginRight: 40, backgroundColor: colors.colorchinh, paddingVertical: 10, paddingHorizontal: 20 }} >{I18n.t("dong_y")}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -232,7 +236,7 @@ const styles = StyleSheet.create(
             alignItems: 'center', justifyContent: 'center', backgroundColor: "#fff", borderWidth: 0.5, borderRadius: 5,
         },
         textInputStyle: {
-            height: 45, borderBottomWidth: 0.5, marginTop: 20, padding: 10, marginLeft: 20, marginRight: 20, borderRadius: 5, fontSize: 16,color:'#000'
+            height: 45, borderBottomWidth: 0.5, marginTop: 20, padding: 10, marginLeft: 20, marginRight: 20, borderRadius: 5, fontSize: 16, color: '#000'
         },
         titleModal: {
             fontSize: 16, fontWeight: "bold", textAlign: "center", paddingVertical: 10, color: '#FF6600'

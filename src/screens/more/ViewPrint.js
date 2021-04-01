@@ -64,8 +64,8 @@ export default forwardRef((props, ref) => {
             console.log('clickCaptureRef');
             clickCapture()
         },
-        printProvisionalRef(jsonContent, checkProvisional = false) {
-            printProvisional(jsonContent, checkProvisional)
+        printProvisionalRef(jsonContent, checkProvisional = false, imgBase64 = "") {
+            printProvisional(jsonContent, checkProvisional, imgBase64)
         },
         printKitchenRef(jsonContent, type = TYPE_PRINT.KITCHEN) {
             console.log('printKitchenRef jsonContent type : ', jsonContent, type);
@@ -122,7 +122,7 @@ export default forwardRef((props, ref) => {
         await setDataHtmlPrint();
     }
 
-    const printProvisional = async (jsonContent, checkProvisional = false, isPrint = true) => {
+    const printProvisional = async (jsonContent, checkProvisional = false, imageQrBase64 = '') => {
         let setting = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
         if (setting && setting != "") {
             setting = JSON.parse(setting);
@@ -138,7 +138,7 @@ export default forwardRef((props, ref) => {
         console.log("printProvisional jsonContent numberLoop ", jsonContent);
         if (ipObject.ip != "") {
             if (jsonContent.OrderDetails && jsonContent.OrderDetails.length > 0) {
-                let res = await printService.GenHtml(HtmlDefault, jsonContent)
+                let res = await printService.GenHtml(HtmlDefault, jsonContent, imageQrBase64, checkProvisional)
                 if (res && res != "") {
                     isProvisional.current = true;
                     let newRes = res.replace("</body>", "<p style='display: none;'>" + (new Date().getTime().toString()) + "</p> </body>");
@@ -149,8 +149,7 @@ export default forwardRef((props, ref) => {
                     }
                 }
                 console.log("listWaiting ==== " + JSON.stringify(printService.listWaiting))
-                if (isPrint)
-                    setDataHtmlPrint()
+                setDataHtmlPrint()
             } else
                 dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
         }

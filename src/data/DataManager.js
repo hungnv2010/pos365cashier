@@ -231,10 +231,11 @@ class DataManager {
 
         newOrders.forEach((elm, idx) => {
             let priceConfig = elm.PriceConfig ? JSON.parse(elm.PriceConfig) : null
+            if (!elm.Printer || elm.Printer == '') {
+                elm.Printer = Constant.PRINT_KITCHEN_DEFAULT
+            }
             if (priceConfig) {
-                if (!priceConfig.Printer || priceConfig.Printer == '') {
-                    elm.Printer = Constant.PRINT_KITCHEN_DEFAULT
-                }
+
                 if (priceConfig.SecondPrinter && priceConfig.SecondPrinter != '') {
                     secondPrinter.push({ ...elm, Printer: priceConfig.SecondPrinter })
                 }
@@ -278,7 +279,7 @@ class DataManager {
             listResultGroupBy[property] = groupBy(listResultGroupBy[property], "RoomName")
         }
         console.log("getDataPrintCook listResultGroupBy ", listResultGroupBy);
-        
+
         return listResultGroupBy;
     }
 
