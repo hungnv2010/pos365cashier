@@ -158,7 +158,7 @@ class SignalRManager {
         dialogManager.hiddenLoading()
     }
 
-    startSignalR(callback) {
+    startSignalR(callback = () => { }) {
         this.connectionHub.start()
             .done(() => {
                 // alert('Now connected, connection ID=' + this.connectionHub.id);
