@@ -184,7 +184,7 @@ const Invoice = (props) => {
         const { startDate, endDate } = filterRef.current.time;
         let params = { skip: filterRef.current.skip, top: Constant.LOAD_LIMIT };
         let arrItemPath = [];
-        if (currentBranch &&currentBranch.Id) {
+        if (currentBranch && currentBranch.Id) {
             arrItemPath.push("BranchId eq " + currentBranch.Id)
         }
         if (filterRef.current.time.key != "custom") {
@@ -311,7 +311,7 @@ const Invoice = (props) => {
     const getMoreAttributes = (item) => {
         let MoreAttributes = {}; // item.MoreAttributes ? JSON.parse(item.MoreAttributes) : null;
         try {
-            item.MoreAttributes ? JSON.parse(item.MoreAttributes) : null;
+            MoreAttributes = item.MoreAttributes ? JSON.parse(item.MoreAttributes) : null;
         } catch (error) {
             console.log(" getMoreAttributes error ", error);
         }
@@ -338,7 +338,7 @@ const Invoice = (props) => {
     const renderItemList = (item, index) => {
         return (
             <TouchableOpacity
-                onPress={() => onClickInvoiceItem(item)}
+                onPress={() => onClickInvoiceItem(item)} 
                 key={item.Id}>
                 <View style={{ flex: 1, alignItems: "center", padding: 15, marginBottom: 5, backgroundColor: item.Id == currentItem.Id ? "#F6DFCE" : 'white', borderRadius: 10 }}>
                     <View style={{ flexDirection: "row", }}>

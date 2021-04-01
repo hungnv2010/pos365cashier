@@ -19,6 +19,7 @@ const eventSwicthScreen = new NativeEventEmitter(Print);
 import moment from 'moment';
 import 'moment/min/locales'
 import { DefaultSetting } from './screens/settings/Settings';
+import dataManager from './data/DataManager';
 
 var numberInternetReachable = 0;
 
@@ -96,7 +97,7 @@ export default () => {
         if (netInfo === true) {
             if (hasInternet.current === false) {
                 if (signalRInfo != "" && isError) {
-                    signalRManager.reconnect(false)
+                    signalRManager.reconnect()
                 }
                 hasInternet.current = true
             }
@@ -177,10 +178,13 @@ export default () => {
     const handleChangeState = (newState) => {
         console.log('handleChangeState', newState, isError);
         dispatch({ type: 'APP_STATE', appState: newState })
-        if (stateApp.current.match(/inactive|background/) && newState === 'active') {
+        if (stateApp.current === 'background' && newState === 'active') {
             if (signalRInfo != "" && isError) {
-                signalRManager.reconnect()
+            signalRManager.reconnect()
             }
+            // signalRManager.sendMessage(Constant.SERVER_EVENT)
+            // dataManager.updateServerEvent(Constant.SERVER_EVENT, Constant.SERVER_EVENT.JsonContent)
+            // console.log('signalRManager.sendMessage(Constant.SERVER_EVENT)', Constant.SERVER_EVENT); 
         }
         stateApp.current = newState
     }
