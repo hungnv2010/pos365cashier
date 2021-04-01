@@ -235,7 +235,6 @@ class DataManager {
                 elm.Printer = Constant.PRINT_KITCHEN_DEFAULT
             }
             if (priceConfig) {
-
                 if (priceConfig.SecondPrinter && priceConfig.SecondPrinter != '') {
                     secondPrinter.push({ ...elm, Printer: priceConfig.SecondPrinter })
                 }
@@ -303,6 +302,12 @@ class DataManager {
 
     syncProduct = async () => {
         let res = await new HTTPService().setPath(ApiPath.SYNC_PRODUCTS, false).GET()
+
+        if (res && res.Data && res.Data.length > 0)
+            await realmStore.insertProducts(res.Data)
+    }
+    syncAllProduct = async () => {
+        let res = await new HTTPService().setPath(ApiPath.PRODUCT, false).GET()
 
         if (res && res.Data && res.Data.length > 0)
             await realmStore.insertProducts(res.Data)

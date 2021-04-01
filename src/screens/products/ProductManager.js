@@ -7,8 +7,7 @@ import { useSelector } from 'react-redux';
 import MainToolBar from '../main/MainToolBar';
 import colors from '../../theme/Colors';
 import { ScreenList } from '../../common/ScreenList';
-import { HTTPService } from '../../data/services/HttpService';
-import { ApiPath } from '../../data/services/ApiPath';
+
 
 export default (props) => {
 
@@ -17,14 +16,7 @@ export default (props) => {
     const { isFNB } = useSelector(state => {
         return state.Common
     })
-    const [listExtra, setListExtra] = useState([])
-
-    useEffect(() => {
-
-    }, [])
-    const getExtraTopping = async() =>{
-    }
-
+    
     const onClickNavigation = (screen, params={}) => {
         props.navigation.navigate(screen,params)
     }

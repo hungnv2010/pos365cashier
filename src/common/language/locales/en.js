@@ -599,6 +599,7 @@ export default {
   in: "Print",
 
   // TODO: K
+  khong_the_ket_noi_den_may_chu_don_hang_cua_quy_khach_duoc_luu_vao_offline:"Cannot connect to server, the order is saved to the order list offline",
   khach_le: "Guest",
   kiem_ke: "Inventory",
   khach_hang: "Customer",
@@ -859,6 +860,7 @@ export default {
   ban_co_chac_chan_muon_mo_khoa_nhan_vien:'Are you sure you want to unlock the employee ?',
   danh_sach_extra_topping:'List extra/topping',
   danh_sach_hang_hoa:'Product list',
+  block_dau_tien:'first block',
 
   cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang: "Allows to change the name of good when selling",
   cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang: "Allows employees change prices when selling",
@@ -895,6 +897,9 @@ export default {
   gia_ban_dvt_lon: 'Price large unit',
   gia_tri_quy_doi: 'Exchange value',
   gia_tri_thay_doi:'Value change',
+  gia_ban:'Sale price',
+  gia_ban_don_vi_tinh_lon:'Large unit selling price',
+  gia_tri_quy_doi:'Exchange value',
 
   hien_thanh_dieu_huong: "Show navigation bar",
   hien_thi_hang_hoa: 'Display product',
@@ -946,6 +951,8 @@ export default {
   may_tinh: 'Calculator',
   ma_nhan_vien:'Employee code',
   mo_khoa:'Unlock',
+  ma_don_vi_tinh_lon:'Large unit code',
+  mo_ta_tach_hang:'Adding this item to your order will not add up the quantity, but will split it into multiple lines.',
 
   nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: "Receive messages / notifications from waiter, manager?",
   nhap_so_luong_the: "Enter the number of cards",
@@ -955,6 +962,7 @@ export default {
   ngay_huy_tra: 'Cancellation date',
   ngay_het_han: 'Expiry Date',
   nhap_ten_nhom_hang_hoa: 'Enter category name',
+  nhap_don_vi_tinh_lon:'Import large unit',
 
   quan_ly:'Manager',
   quan_ly_hang_hoa:'Product management',
@@ -968,6 +976,7 @@ export default {
   so_luong_hang_hoa_duoc_tinh_theo_thoi_gian: "The quantity is calculated by time of use",
   so_may_in_toi_da: 'Maximum printers',
   san_pham:'Product',
+  so_luong_tru_kho_khi_ban:'Quantity in warehouse decrease when selling',
 
   thiet_lap_thanh_toan_vnpay: "Payments setting VNPAY",
   thong_tin_cua_hang: "Store informations",
@@ -995,6 +1004,8 @@ export default {
   them_nhan_vien:'Add new employee',
   ten_nha_cung_cap:'Supplier name',
   thiet_lap_extra_topping:'Extra/topping configuration',
+  ten_extra_topping:'Extra/topping name',
+  tach_thanh_nhieu_dong_khi_ban_hang:'Split into multiple lines when selling',
 
   voucher: "Voucher",
   vui_long_nhap_dung_so_tien_khach_tra: "Please enter the correct amount of payment.",

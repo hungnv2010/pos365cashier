@@ -90,6 +90,8 @@ export const ScreenList = {
   SupplierDetailForPhone: "SupplierDetailForPhone",
   ProductManager:'ProductManager',
   ListExtraTopping:'ListExtraTopping',
+  ExtraDetails: 'ExtraDetails',
+  QrcodeAdd: 'QrcodeAdd',
 
 }
 

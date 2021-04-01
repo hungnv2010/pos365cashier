@@ -16,6 +16,8 @@ import { currencyToString, dateToString, momentToStringDateLocal, dateToStringFo
 import ToolBarNoteBook from '../../components/toolbar/ToolBarNoteBook';
 import ProductDetail from '../../screens/products/ProductDetail'
 import dialogManager from '../../components/dialog/DialogManager';
+import CustomerToolBar from '../../screens/customerManager/customer/CustomerToolBar';
+import useDebounce from '../../customHook/useDebounce';
 
 export default (props) => {
     const isReLoad = useRef(false);
@@ -24,24 +26,32 @@ export default (props) => {
     const [itProduct, setItProduct] = useState({})
     const [compositeItemProducts, setCompositeItemProducts] = useState([])
     const itemProduct = useRef()
+    const [textSearch,setTextSearch] = useState('')
+    const debouncedVal = useDebounce(textSearch)
     const [qrScan, setQrScan] = useState()
+    const productTmp = useRef([])
     useEffect(() => {
+        dialogManager.showLoading()
         getData()
+        dialogManager.hiddenLoading()     
     }, [])
 
     const [idCategory, setIdCategory] = useState(-1)
     const deviceType = useSelector(state => {
         return state.Common.deviceType
     });
+    // let productTmp = []
+    let categoryTmp = []
     const getData = async () => {
-        productTmp = await realmStore.queryProducts()
+        productTmp.current = await realmStore.queryProducts()
         console.log("product", productTmp);
-        setListProduct([...productTmp])
+        setListProduct([...productTmp.current])
         categoryTmp = await realmStore.queryCategories()
         setCategory([{
             Id: -1,
             Name: 'Tất cả'
         }, ...categoryTmp])
+           
     }
     useEffect(() => {
         console.log("product item", listProduct);
@@ -49,10 +59,10 @@ export default (props) => {
     }, [listProduct, category])
     const filterByCategory = (item) => {
         if (item.Id > 0) {
-            setListProduct(productTmp.filter(el => el.CategoryId === item.Id));
+            setListProduct(productTmp.current.filter(el => el.CategoryId === item.Id));
             setIdCategory(-1)
         } else
-            setListProduct(productTmp)
+            setListProduct(productTmp.current)
         setIdCategory(item.Id)
     }
     const onClickItem = (el) => {
@@ -139,25 +149,35 @@ export default (props) => {
             </TouchableOpacity>
         )
     }
+    useEffect(()=>{
+        outputIsSelectProduct(debouncedVal)
+    },[debouncedVal])
     const outputIsSelectProduct = (input) => {
+        dialogManager.showLoading()
         console.log("input", input);
         if (input != '') {
-            setListProduct(productTmp.filter(item => change_alias(item.Name).indexOf(change_alias(input)) > -1))
+            setListProduct(productTmp.current.filter(item => change_alias(item.Name).indexOf(change_alias(input)) > -1))
+            dialogManager.hiddenLoading()
         } else {
-            setListProduct(productTmp)
+            setListProduct(productTmp.current)
+            dialogManager.hiddenLoading()
         }
         setIdCategory(-1)
+        
     }
-
+    const outputTextSearch = (value) => {
+        console.log('outputTextSearch', value);
+        setTextSearch(value)
+    }
 
     return (
         <View style={{ flex: 1, flexDirection: 'column', }}>
-            <ToolBarNoteBook
+            <CustomerToolBar
                 {...props}
+                navigation={props.navigation}
                 title={I18n.t('hang_hoa')}
-                clickLeftIcon={() => { props.navigation.goBack() }}
-                rightIcon="md-search"
-                clickRightIcon={(textSearch) => outputIsSelectProduct(textSearch)}
+                outputTextSearch={outputTextSearch}
+                size={30}
             />
             <View style={{ flex: 1, flexDirection: 'row' }}>
                 <View style={{ backgroundColor: '#F5F5F5', flexDirection: 'column', flex: 1 }}>
