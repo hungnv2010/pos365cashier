@@ -18,7 +18,7 @@ import VNPayPaymentSetting from '../../screens/settings/VNPAYPaymentSetting'
 import RoomHistory from '../../screens/roomHistory/RoomHistory';
 import RoomHistoryDetail from '../../screens/roomHistory/RoomHistoryDetailForPhone';
 import Vouchers from '../../screens/voucher/Vouchers';
-import Product from '../../screens/products/ProductList';
+import ProductManager from '../../screens/products/ProductManager';
 import OrderManagement from '../../screens/orderManagement/OrderManagement'
 import Supplier from '../../screens/supplierManager/SupplierManager';
 import EmployeeManager from '../../screens/employeeManager/EmployeeManager';
@@ -56,8 +56,8 @@ export default (propsFunc) => {
         <Drawer.Screen name={ScreenList.CustomerManager} options={{ title: ScreenList.CustomerManager }}>
           {props => <CustomerManage {...props} />}
         </Drawer.Screen>
-        <Drawer.Screen name={ScreenList.Product} options={{ title: ScreenList.Product }}>
-          {props => <Product {...props} />}
+        <Drawer.Screen name={ScreenList.ProductManager} options={{ title: ScreenList.ProductManager }}>
+          {props => <ProductManager {...props} />}
         </Drawer.Screen>
         <Drawer.Screen name={ScreenList.Settings} options={{ title: ScreenList.Settings }}>
           {props => <Settings {...props} />}
