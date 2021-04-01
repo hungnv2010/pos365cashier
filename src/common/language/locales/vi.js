@@ -413,6 +413,7 @@ export default {
   ban_chac_chan_muon_dang_xuat_khoi_cac_thiet_bi:'Bạn chắc chắn muốn đăng xuất khỏi các thiết bị ?',
   ban_co_chac_chan_muon_khoa_nhan_vien:'Bạn có chắc muốn khoá nhân viên ?',
   ban_co_chac_chan_muon_mo_khoa_nhan_vien:'Bạn có chắc chắn muốn mở khoá nhân viên ?',
+  block_dau_tien:'block đầu tiên',
 
   chon_cong_nghe_in: "Chọn công nghệ in",
   cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang: "Cho phép thay đổi tên hàng hóa khi bán hàng?",
@@ -452,6 +453,9 @@ export default {
   gia_ban_dvt_lon: 'Giá bán đơn vị tính lớn',
   gia_tri_quy_doi: 'Giá trị quy đổi',
   gia_tri_thay_doi: 'Giá trị thay đổi',
+  gia_ban:'Giá bán',
+  gia_ban_don_vi_tinh_lon:'Giá bán đơn vị tính lớn',
+  gia_tri_quy_doi:'Giá trị quy đổi',
 
   hien_thanh_dieu_huong: "Hiện thanh điều hướng",
   hien_thi_hang_hoa: 'Hiển thị hàng hoá',
@@ -504,6 +508,8 @@ export default {
   may_tinh: "Máy tính",
   ma_nhan_vien:'Mã nhân viên',
   mo_khoa:'Mở khóa nhân viên',
+  ma_don_vi_tinh_lon:'Mã đơn vị tính lớn',
+  mo_ta_tach_hang:'Khi thêm mặt hàng này vào đơn hàng sẽ không cộng dồn số lượng mà sẽ tách thành nhiều dòng',
 
   nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: "Nhận tin nhắn/ thông báo từ phục vụ, quản lý?",
   nhap_so_luong_the: "Nhập số lượng thẻ",
@@ -513,6 +519,7 @@ export default {
   ngay_huy_tra: "Ngày hủy/trả",
   ngay_het_han: "Ngày hết hạn",
   nhap_ten_nhom_hang_hoa: 'Nhập tên nhóm hàng hoá',
+  nhap_don_vi_tinh_lon:'Nhập đơn vị tính lớn',
 
   quan_ly:'Quản lý',
   quan_ly_hang_hoa:'Quản lý hàng hoá',
@@ -526,6 +533,7 @@ export default {
   so_block_gio_dau_tien: "Số block giờ đầu tiên",
   so_may_in_toi_da: "Số máy in tối đa",
   san_pham: "Sản phẩm ",
+  so_luong_tru_kho_khi_ban:'Số lượng trừ kho khi bán',
 
   thiet_lap_thanh_toan_vnpay: "Thiết lập thanh toán VNPAY",
   thong_tin_cua_hang: "Thông tin cửa hàng",
@@ -553,6 +561,8 @@ export default {
   them_nhan_vien:'Thêm nhân viên',
   ten_nha_cung_cap:'Tên nhà cung cấp',
   thiet_lap_extra_topping:'Thiết lập Extra topping',
+  ten_extra_topping:'Tên Extra topping',
+  tach_thanh_nhieu_dong_khi_ban_hang:'Tách thành nhiều dòng khi bán hàng',
 
   voucher: "Mã quà tặng",
   vui_long_nhap_dung_so_tien_khach_tra: "Vui lòng nhập đúng số tiền khách trả.",

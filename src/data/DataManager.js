@@ -306,6 +306,12 @@ class DataManager {
         if (res && res.Data && res.Data.length > 0)
             await realmStore.insertProducts(res.Data)
     }
+    syncAllProduct = async () => {
+        let res = await new HTTPService().setPath(ApiPath.PRODUCT, false).GET()
+
+        if (res && res.Data && res.Data.length > 0)
+            await realmStore.insertProducts(res.Data)
+    }
 
     syncPromotion = async () => {
         let params = { Includes: ['Product', 'Promotion'] }

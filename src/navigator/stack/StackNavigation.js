@@ -59,6 +59,8 @@ import SupplierDetailForPhone from '../../screens/supplierManager/SupplierDetail
 import ProductManager from '../../screens/products/ProductManager';
 import Product from '../../screens/products/ProductList'
 import ListExtraTopping from '../../screens/products/extratoppig/ListExtraTopping'
+import ExtraDetails from '../../screens/products/extratoppig/ExtraDetails'
+import QrcodeAdd from '../../screens/products/QrcodeAdd';
 
 const MainStack = createStackNavigator();
 
@@ -130,6 +132,8 @@ export default (props) => {
                 <MainStack.Screen name={ScreenList.ProductManager}>{props=><ProductManager {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.EmployeeEdit}>{props=><EmployeeEdit {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.ListExtraTopping}>{props=><ListExtraTopping {...props}/>}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.ExtraDetails}>{props=><ExtraDetails {...props}/>}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.QrcodeAdd}>{props=><QrcodeAdd {...props}/>}</MainStack.Screen>
             </MainStack.Navigator>
         </Animated.View>
     );
