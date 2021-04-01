@@ -98,22 +98,27 @@ class SignalRManager {
         let svFromLocal = await realmStore.queryServerEvents()
         svFromLocal = JSON.parse(JSON.stringify(svFromLocal))
         svFromLocal = Object.values(svFromLocal)
-        svFromSv.forEach(item => {
-            svFromLocal.forEach(elm => {
-                if (item.RowKey == elm.RowKey) {
-                    if (item.Version > elm.Version) {
-                        listDifferentFromSv.push(item)
+        if (svFromSv.length > 0 && svFromLocal.length > 0) {
+            svFromSv.forEach(item => {
+                svFromLocal.forEach(elm => {
+                    if (item.RowKey == elm.RowKey) {
+                        if (item.Version > elm.Version) {
+                            listDifferentFromSv.push(item)
+                        }
+                        if (item.Version < elm.Version) {
+                            listDifferentFromLocal.push(elm)
+                        }
                     }
-                    if (item.Version < elm.Version) {
-                        listDifferentFromLocal.push(elm)
-                    }
-                }
+                })
             })
-        })
+        }
+
         if (listDifferentFromSv.length > 0) realmStore.insertServerEvents(listDifferentFromSv).subscribe(res => { })
         if (listDifferentFromLocal.length > 0) {
-            for (let index = 0; index < listDifferentFromLocal.length; index++) {
-                this.sendMessageServerEvent(listDifferentFromLocal[index])
+            if (this.isStartSignalR) {
+                for (let index = 0; index < listDifferentFromLocal.length; index++) {
+                    this.sendMessageServerEvent(listDifferentFromLocal[index])
+                }
             }
         }
         dialogManager.hiddenLoading()
@@ -232,6 +237,7 @@ class SignalRManager {
                 })
                 .fail(() => {
                     console.warn('sendMessage fail')
+                    // dialogManager.showPopupOneButton(I18n.t("khong_the_ket_noi_den_may_chu_don_hang_cua_quy_khach_duoc_luu_vao_offline"))
                 });
         } else {
             console.log("settimeout");

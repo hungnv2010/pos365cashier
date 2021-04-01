@@ -599,6 +599,7 @@ export default {
   in: "Print",
 
   // TODO: K
+  khong_the_ket_noi_den_may_chu_don_hang_cua_quy_khach_duoc_luu_vao_offline:"Cannot connect to server, the order is saved to the order list offline",
   khach_le: "Guest",
   kiem_ke: "Inventory",
   khach_hang: "Customer",

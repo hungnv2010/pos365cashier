@@ -92,11 +92,11 @@ const LIST_FUNCITION = [
         icon: Images.ic_baocao,
         title: "bao_cao"
     },
-    {
-        func: KEY_FUNC.SUPPLIER_MANAGER,
-        icon: Images.icon_supplier,
-        title: "nha_cung_cap"
-    },
+    // {
+    //     func: KEY_FUNC.SUPPLIER_MANAGER,
+    //     icon: Images.icon_supplier,
+    //     title: "nha_cung_cap"
+    // },
     {
         func: KEY_FUNC.PRODUCT,
         icon: Images.icon_product,
