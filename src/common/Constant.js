@@ -346,11 +346,11 @@ export const Constant = {
         },
         {
             key: 41,
-            name: "Nghệ An"
+            name: "Ninh Bình"
         },
         {
             key: 42,
-            name: "Nghệ An"
+            name: "Ninh Thuận"
         },
         {
             key: 43,
@@ -430,7 +430,7 @@ export const Constant = {
         },
         {
             key: 62,
-            name: "Yên Bái"
+            name: "Vĩnh Phúc"
         },
         {
             key: 63,
@@ -485,5 +485,6 @@ export const Constant = {
         OrderDetails: []
     }
     ,
-    PRINT_KITCHEN_DEFAULT: 'KitchenA'
+    PRINT_KITCHEN_DEFAULT: 'KitchenA',
+   
 };

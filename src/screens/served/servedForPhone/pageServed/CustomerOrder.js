@@ -224,7 +224,7 @@ export default (props) => {
 
     const updateServerEvent = async () => {
         let json = dataManager.createJsonContent(props.route.params.room.Id, props.Position, moment(), [], props.route.params.room.Name);
-        props.updateServerEvent(json)
+        props.updateServerEvent(json, 10)
         if (settingObject.current.am_bao_thanh_toan == true)
             playSound()
     }

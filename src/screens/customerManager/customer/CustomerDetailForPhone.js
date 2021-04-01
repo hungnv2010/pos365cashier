@@ -72,7 +72,7 @@ export default (props) => {
         getListGroupByCustomer()
     }, [customerDetail, listGroup])
 
-  
+
 
 
     const resetCustomer = () => {
@@ -174,7 +174,7 @@ export default (props) => {
         setShowModal(false)
     }
 
-    const onChange = (event, selectedDate) => {
+    const onChange = (selectedDate) => {
         dateTmp.current = selectedDate;
     }
 
@@ -514,7 +514,7 @@ export default (props) => {
                                     typeModal.current = 3
                                     setShowModal(true)
                                 }} style={{ flexDirection: "row", alignItems: "center" }}>
-                                    <Text style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1, color: getGroupName(customerDetail.PartnerGroupMembers) ? null : "#CECCCB"  }}>{!!getGroupName(customerDetail.PartnerGroupMembers) ? getGroupName(customerDetail.PartnerGroupMembers) : I18n.t('ten_nhom')}</Text>
+                                    <Text style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1, color: getGroupName(customerDetail.PartnerGroupMembers) ? null : "#CECCCB" }}>{!!getGroupName(customerDetail.PartnerGroupMembers) ? getGroupName(customerDetail.PartnerGroupMembers) : I18n.t('ten_nhom')}</Text>
 
                                     <Image source={Images.icon_arrow_down} style={{ width: 20, height: 20, position: "absolute", right: 15 }} />
                                 </TouchableOpacity>

@@ -148,6 +148,7 @@ export default {
 
   // TODO: K
   khach_le: "Khách lẻ",
+  khong_the_ket_noi_den_may_chu_don_hang_cua_quy_khach_duoc_luu_vao_offline:"Không thể kết nối đến máy chủ, đơn hàng của quý khách được lưu vào offline",
   kiem_ke: "Kiểm kê",
   khach_hang: "Khách hàng",
   khac: "Khác",
