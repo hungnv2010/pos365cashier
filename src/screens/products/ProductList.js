@@ -33,7 +33,7 @@ export default (props) => {
     useEffect(() => {
         dialogManager.showLoading()
         getData()
-        dialogManager.hiddenLoading()     
+         
     }, [])
 
     const [idCategory, setIdCategory] = useState(-1)
@@ -51,6 +51,7 @@ export default (props) => {
             Id: -1,
             Name: 'Tất cả'
         }, ...categoryTmp])
+        // dialogManager.hiddenLoading()    
            
     }
     useEffect(() => {

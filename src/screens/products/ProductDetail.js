@@ -101,7 +101,7 @@ export default (props) => {
             PriceLargeUnit: product.PriceLargeUnit,
             Printer: deviceType == Constant.PHONE ? product.Printer ? product.Printer : 'KitchenA' : printerPr ? printerPr : 'KitchenA',
             ProductAttributes: productOl.ProductAttributes ? productOl.ProductAttributes : [],
-            ProductImages: product.ProductImages?product.ProductImages:[],
+            ProductImages: product.ProductImages ? product.ProductImages : [],
             ProductType: product.ProductType ? product.ProductType : 1,
             RetailerId: currentRetailerId.current,
             SplitForSalesOrder: product.SplitForSalesOrder,
@@ -425,7 +425,7 @@ export default (props) => {
                     }, null, null, I18n.t('dong'))
                 } else {
                     if (deviceType == Constant.PHONE) {
-                        props.route.params.onCallBack(type,2)
+                        props.route.params.onCallBack(type, 2)
                         props.navigation.pop()
                     } else
                         props.handleSuccessTab(type, 2)
@@ -480,12 +480,14 @@ export default (props) => {
 
     const onClickQrcodeScan = () => {
         if (deviceType == Constant.PHONE) {
-            props.navigation.navigate('QrcodeAdd', { _onSelect: onCallBackQr })
+            props.navigation.navigate('QrcodeAdd', { _onSelectQR: onCallBackQr })
         } else if (deviceType == Constant.TABLET) {
             props.outPutCombo({ scanQrCode: true })
         }
     }
     const onCallBackQr = (data) => {
+        console.log("onCallBackQr data ", data);
+        setProduct({ ...product, Code: data })
         product.Code = data
     }
 
@@ -515,7 +517,7 @@ export default (props) => {
                                 }, null, null, I18n.t('dong'))
                             } else {
                                 if (deviceType == Constant.PHONE) {
-                                    props.route.params.onCallBack('xoa',2)
+                                    props.route.params.onCallBack('xoa', 2)
                                     props.navigation.pop()
                                 } else
                                     props.handleSuccessTab('xoa', 2)
@@ -569,7 +571,7 @@ export default (props) => {
     return (
 
         <View style={{ flex: 1, flexDirection: 'column', backgroundColor: 'white' }}>
-            { deviceType == Constant.PHONE ?
+            {deviceType == Constant.PHONE ?
                 <ToolBarDefault
                     {...props}
                     leftIcon="keyboard-backspace"
@@ -620,15 +622,15 @@ export default (props) => {
                 </View>
                 <View style={{ padding: 3, backgroundColor: '#f2f2f2', marginTop: 10 }}></View>
                 <View>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 5, alignItems: 'center' }}>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 5, alignItems: 'center' }}>
                         <Text style={styles.titleBold}>{I18n.t('tach_thanh_nhieu_dong_khi_ban_hang')}</Text>
-                        <Switch style={{ transform: [{ scaleX: .6 }, { scaleY: .6 }] }} value={product.SplitForSalesOrder?product.SplitForSalesOrder:false} onValueChange={() => setProduct({ ...product, SplitForSalesOrder: !product.SplitForSalesOrder })} trackColor={{ false: "silver", true: colors.colorchinh }} thumbColor={{ true: colors.colorchinh, false: 'silver' }}></Switch>
+                        <Switch style={{ transform: [{ scaleX: .6 }, { scaleY: .6 }] }} value={product.SplitForSalesOrder ? product.SplitForSalesOrder : false} onValueChange={() => setProduct({ ...product, SplitForSalesOrder: !product.SplitForSalesOrder })} trackColor={{ false: "silver", true: colors.colorchinh }} thumbColor={{ true: colors.colorchinh, false: 'silver' }}></Switch>
                     </View>
                     <Text style={styles.titleHint}>{I18n.t('mo_ta_tach_hang')}</Text>
                     <View style={{ padding: 3, backgroundColor: '#f2f2f2' }}></View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 5, alignItems: 'center' }}>
                         <Text style={styles.titleBold}>{I18n.t('hien_thi_hang_hoa')}</Text>
-                        <Switch style={{ transform: [{ scaleX: .6 }, { scaleY: .6 }] }} value={product.Hidden?!product.Hidden:true} onValueChange={() => setProduct({ ...product, Hidden: !product.Hidden })} trackColor={{ false: "silver", true: colors.colorchinh }} thumbColor={{ true: colors.colorchinh, false: 'silver' }}></Switch>
+                        <Switch style={{ transform: [{ scaleX: .6 }, { scaleY: .6 }] }} value={product.Hidden ? !product.Hidden : true} onValueChange={() => setProduct({ ...product, Hidden: !product.Hidden })} trackColor={{ false: "silver", true: colors.colorchinh }} thumbColor={{ true: colors.colorchinh, false: 'silver' }}></Switch>
                     </View>
                     <Text style={styles.titleHint}>{I18n.t('hien_thi_san_pham_tren_man_hinh_thu_ngan')}</Text>
                     <View style={{ flexDirection: 'column' }}>
@@ -652,11 +654,11 @@ export default (props) => {
                                                 <Switch style={{ transform: [{ scaleX: .6 }, { scaleY: .6 }] }} value={product.IsPriceForBlock} onValueChange={() => setProduct({ ...product, IsPriceForBlock: !product.IsPriceForBlock })} trackColor={{ false: "silver", true: colors.colorchinh }}></Switch>
                                             </View>
                                             <Text style={product.IsPriceForBlock == false ? styles.titleHint : { marginLeft: 15 }}>{I18n.t("block_theo_phut")}</Text>
-                                            <TextInput style={{ color: product.IsPriceForBlock == true ? '#36a3f7' : '#B5B5B5', marginHorizontal:15, fontWeight: 'bold', padding: 10,  }} editable={product.IsPriceForBlock == true ? true : false} value={product.BlockOfTimeToUseService ? currencyToString(product.BlockOfTimeToUseService) : null} onChangeText={(text) => {  setProduct({ ...product, BlockOfTimeToUseService:onChangeTextInput(text) }) }}></TextInput>
+                                            <TextInput style={{ color: product.IsPriceForBlock == true ? '#36a3f7' : '#B5B5B5', marginHorizontal: 15, fontWeight: 'bold', padding: 10, }} editable={product.IsPriceForBlock == true ? true : false} value={product.BlockOfTimeToUseService ? currencyToString(product.BlockOfTimeToUseService) : null} onChangeText={(text) => { setProduct({ ...product, BlockOfTimeToUseService: onChangeTextInput(text) }) }}></TextInput>
                                             <Text style={product.IsPriceForBlock == false ? styles.titleHint : { marginLeft: 15 }}>{I18n.t('so_block_gio_dau_tien')}</Text>
-                                            <TextInput style={{ color: product.IsPriceForBlock == true ? '#36a3f7' : '#B5B5B5', marginHorizontal:15, fontWeight: 'bold', padding: 10,  }} editable={product.IsPriceForBlock == true ? true : false} value={priceConfig && priceConfig.Block ? priceConfig.Block + '' : null} onChangeText={(text) => { setPriceConfig({ ...priceConfig, Block: onChangeTextInput(text) }) }}></TextInput>
+                                            <TextInput style={{ color: product.IsPriceForBlock == true ? '#36a3f7' : '#B5B5B5', marginHorizontal: 15, fontWeight: 'bold', padding: 10, }} editable={product.IsPriceForBlock == true ? true : false} value={priceConfig && priceConfig.Block ? priceConfig.Block + '' : null} onChangeText={(text) => { setPriceConfig({ ...priceConfig, Block: onChangeTextInput(text) }) }}></TextInput>
                                             <Text style={product.IsPriceForBlock == false ? styles.titleHint : { marginLeft: 15 }}>{I18n.t('gia')} {priceConfig && priceConfig.Block ? priceConfig.Block : 0} {I18n.t('block_dau_tien')}</Text>
-                                            <TextInput style={{ color: product.IsPriceForBlock == true ? '#36a3f7' : '#B5B5B5', marginHorizontal:15, fontWeight: 'bold', padding: 10,  }} editable={product.IsPriceForBlock == true ? true : false} value={priceConfig && priceConfig.Value ? currencyToString(priceConfig.Value) : null} onChangeText={(text) => { setPriceConfig({ ...priceConfig, Value: onChangeTextInput(text) }) }}></TextInput>
+                                            <TextInput style={{ color: product.IsPriceForBlock == true ? '#36a3f7' : '#B5B5B5', marginHorizontal: 15, fontWeight: 'bold', padding: 10, }} editable={product.IsPriceForBlock == true ? true : false} value={priceConfig && priceConfig.Value ? currencyToString(priceConfig.Value) : null} onChangeText={(text) => { setPriceConfig({ ...priceConfig, Value: onChangeTextInput(text) }) }}></TextInput>
                                         </View> : null}
                                 </View>
                                 : product ? product.ProductType == 3 ?
