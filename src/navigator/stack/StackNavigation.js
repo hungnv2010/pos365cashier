@@ -61,6 +61,7 @@ import Product from '../../screens/products/ProductList'
 import ListExtraTopping from '../../screens/products/extratoppig/ListExtraTopping'
 import ExtraDetails from '../../screens/products/extratoppig/ExtraDetails'
 import QrcodeAdd from '../../screens/products/QrcodeAdd';
+import TakePhoto from '../../screens/products/TakePhoto';
 
 const MainStack = createStackNavigator();
 
@@ -134,6 +135,7 @@ export default (props) => {
                 <MainStack.Screen name={ScreenList.ListExtraTopping}>{props=><ListExtraTopping {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.ExtraDetails}>{props=><ExtraDetails {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.QrcodeAdd}>{props=><QrcodeAdd {...props}/>}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.TakePhoto}>{props=><TakePhoto {...props}/>}</MainStack.Screen>
             </MainStack.Navigator>
         </Animated.View>
     );
