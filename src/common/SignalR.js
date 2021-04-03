@@ -86,8 +86,7 @@ class SignalRManager {
     reconnect() {
         console.log('reconnect');
         this.killSignalR()
-        this.startSignalR()
-        this.syncData()
+        this.startSignalR(this.syncData)
     }
 
     async syncData() {
@@ -159,12 +158,13 @@ class SignalRManager {
         dialogManager.hiddenLoading()
     }
 
-    startSignalR() {
+    startSignalR(callback = () => { }) {
         this.connectionHub.start()
             .done(() => {
                 // alert('Now connected, connection ID=' + this.connectionHub.id);
                 this.isStartSignalR = true;
                 isError = false
+                callback()
                 console.log('this.isStartSignalR', this.isStartSignalR);
                 if (dialogManager)
                     dialogManager.hiddenLoading();

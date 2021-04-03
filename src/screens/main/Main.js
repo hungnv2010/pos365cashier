@@ -51,7 +51,7 @@ export default (props) => {
   useEffect(() => {
     if (printProvisional != "") {
       console.log("useEffect ===== printProvisional ", printProvisional);
-      viewPrintRef.current.printProvisionalRef(printProvisional.jsonContent, printProvisional.provisional)
+      viewPrintRef.current.printProvisionalRef(printProvisional.jsonContent, printProvisional.provisional, printProvisional.imgQr && printProvisional.imgQr != '' ? printProvisional.imgQr : "")
       dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: "" })
     }
   }, [printProvisional])
@@ -122,7 +122,7 @@ export default (props) => {
             await realmStore.deleteAllForFnb()
           } else {
             let fromLogin = !props.params
-            console.log('fromLogin',fromLogin);
+            console.log('fromLogin', fromLogin);
             await realmStore.deleteAllForRetail(fromLogin)
           }
         }

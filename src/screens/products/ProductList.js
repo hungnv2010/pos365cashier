@@ -33,7 +33,6 @@ export default (props) => {
     useEffect(() => {
         dialogManager.showLoading()
         getData()
-
     }, [])
 
     const [idCategory, setIdCategory] = useState(-1)
