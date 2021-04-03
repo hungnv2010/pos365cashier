@@ -101,11 +101,7 @@ export default (props) => {
             PriceLargeUnit: product.PriceLargeUnit,
             Printer: deviceType == Constant.PHONE ? product.Printer ? product.Printer : 'KitchenA' : printerPr ? printerPr : 'KitchenA',
             ProductAttributes: productOl.ProductAttributes ? productOl.ProductAttributes : [],
-<<<<<<< HEAD
             ProductImages: productOl.ProductImages ,
-=======
-            ProductImages: product.ProductImages ? product.ProductImages : [],
->>>>>>> 87e7921b08a7b3cc3fe618a4a5e5ebc5fc07f421
             ProductType: product.ProductType ? product.ProductType : 1,
             RetailerId: currentRetailerId.current,
             SplitForSalesOrder: product.SplitForSalesOrder? product.SplitForSalesOrder : false,
