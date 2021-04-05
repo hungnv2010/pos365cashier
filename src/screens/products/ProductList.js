@@ -42,7 +42,6 @@ export default (props) => {
     // let productTmp = []
     let categoryTmp = []
     const getData = async () => {
-
         productTmp.current = await realmStore.queryProducts()
         console.log("product", productTmp);
         setListProduct(productTmp.current)
@@ -109,7 +108,7 @@ export default (props) => {
     const outPut = (data) => {
         if (data.comboTab == true) {
             console.log("data.list", data.list);
-            props.navigation.navigate('ComboForTab', { list: data.list, _onSelect: onCallBack })
+            props.navigation.navigate('ComboForTab', { list: data.list, product: data.product, _onSelect: onCallBack })
         } else if (data.scanQrCode == true) {
             props.navigation.navigate('QRCode', { _onSelect: onCallBackQr })
         }

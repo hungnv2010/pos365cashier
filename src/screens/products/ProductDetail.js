@@ -78,7 +78,7 @@ export default (props) => {
             BonusPointForAssistant3: product.BonusPointForAssistant3 ? product.BonusPointForAssistant3 : 0,
             Code: product.Code,
             Coefficient: product.Coefficient ? product.Coefficient : 1,
-            CompositeItemProducts: compositeItemProducts ,
+            CompositeItemProducts: compositeItemProducts,
             ConversionValue: product.ConversionValue ? product.ConversionValue : 1,
             CreatedBy: currentUserId.current,
             CreatedDate: productOl.CreatedDate,
@@ -88,7 +88,7 @@ export default (props) => {
             IsPercentageOfTotalOrder: product.IsPercentageOfTotalOrder,
             IsPriceForBlock: product.IsPriceForBlock,
             IsSerialNumberTracking: product.IsSerialNumberTracking,
-            IsTimer: product.IsTimer,
+            IsTimer: product.IsTimer ? product.IsTimer : undefined,
             LargeUnit: product.LargeUnit,
             LargeUnitCode: productOl.LargeUnitCode ? productOl.LargeUnitCode : "",
             ModifiedBy: currentUserId.current,
@@ -101,10 +101,10 @@ export default (props) => {
             PriceLargeUnit: product.PriceLargeUnit,
             Printer: deviceType == Constant.PHONE ? product.Printer ? product.Printer : 'KitchenA' : printerPr ? printerPr : 'KitchenA',
             ProductAttributes: productOl.ProductAttributes ? productOl.ProductAttributes : [],
-            ProductImages: productOl.ProductImages ,
+            ProductImages: productOl.ProductImages,
             ProductType: product.ProductType ? product.ProductType : 1,
             RetailerId: currentRetailerId.current,
-            SplitForSalesOrder: product.SplitForSalesOrder? product.SplitForSalesOrder : false,
+            SplitForSalesOrder: product.SplitForSalesOrder ? product.SplitForSalesOrder : false,
             Unit: product.Unit,
             //ShowOnBranchId: undefined,
             CategoryId: product.CategoryId ? product.CategoryId : undefined
@@ -115,9 +115,11 @@ export default (props) => {
         if (deviceType == Constant.PHONE) {
             getData(props.route.params)
             setDefaultType(product.ProductType)
-            getCategory()
+
         }
+        getCategory()
     }, [])
+
     useEffect(() => {
         if (deviceType == Constant.TABLET) {
             setProduct(props.iproduct)
@@ -224,6 +226,7 @@ export default (props) => {
     }
     const getCategory = async () => {
         setCategory([])
+        await dataManager.syncCategories()
         categoryTmp = await realmStore.queryCategories()
         setCategory([{
             Id: -1,
@@ -233,7 +236,7 @@ export default (props) => {
 
     const getProduct = () => {
         if (product != null && product.Code != null) {
-            console.log("product",product);
+            console.log("product", product);
             let paramFilter = `(substringof('${product.Code}',Code) or substringof('${product.Code}',Name) or substringof('${product.Code}',Code2) or substringof('${product.Code}',Code3) or substringof('${product.Code}',Code4) or substringof('${product.Code}',Code5))`
             new HTTPService().setPath(ApiPath.PRODUCT).GET({ IncludeSummary: true, Inlinecount: 'allpages', CategoryId: -1, PartnerId: 0, top: 20, filter: paramFilter }).then((res) => {
                 if (res != null) {
@@ -334,6 +337,7 @@ export default (props) => {
                         handleSuccess('them')
                     } else
                         props.handleSuccessTab('them', 1)
+                    getCategory()
                 }
             }
         })
@@ -418,9 +422,9 @@ export default (props) => {
     const onClickSave = (type) => {
         // if (product.CategoryId && product.CategoryId > 0) {
         //     params.Product = { ...params.Product, CategoryId: product.CategoryId }
-            // if (product.ProductType == 2) {
-            //     param.Product = { ...params.Product, IsTimer: true }
-            // }
+        // if (product.ProductType == 2) {
+        //     param.Product = { ...params.Product, IsTimer: true }
+        // }
         //}
         if (type == 1) {
             saveAndCoppy()
@@ -470,9 +474,7 @@ export default (props) => {
     }
     const setLargeUnit = (data) => {
         console.log("data", data);
-        product.LargeUnit = data.LargeUnit
-        product.PriceLargeUnit = data.PriceLargeUnit
-        product.ConversionValue = data.ConversionValue
+        setProduct({ ...product, LargeUnit: data.LargeUnit, PriceLargeUnit: data.PriceLargeUnit, ConversionValue: data.ConversionValue })
         setOnShowModal(false)
     }
     const pickCategory = (data) => {
@@ -489,10 +491,10 @@ export default (props) => {
     }
     const chooseProduct = () => {
         if (deviceType == Constant.TABLET) {
-            props.outPutCombo({ comboTab: true, list: listItemFomular })
+            props.outPutCombo({ comboTab: true, list: listItemFomular, product: product })
         } else if (deviceType == Constant.PHONE) {
             console.log("listcombo", listItemFomular);
-            props.navigation.navigate('ComboForPhone', { list: listItemFomular, _onSelect: onCallBackData })
+            props.navigation.navigate('ComboForPhone', { list: listItemFomular, product: product, _onSelect: onCallBackData })
         }
     }
     const onCallBackData = (data) => {
@@ -523,18 +525,18 @@ export default (props) => {
     const onCallBackQr = (data) => {
         setProduct({ ...product, Code: data })
     }
-    const onClickTakePhoto = () =>{
-        props.navigation.navigate('TakePhoto', { })
+    const onClickTakePhoto = () => {
+        props.navigation.navigate('TakePhoto', {})
     }
 
     const renderFormular = (item, index) => {
         return (
-            <View style={{ flexDirection: 'row', padding: 10,flex:1 }}>
+            <View style={{ flexDirection: 'row', padding: 10, flex: 1 }}>
                 <View style={{ backgroundColor: colors.colorchinh, paddingVertical: 5, paddingHorizontal: 10, borderRadius: 10 }}>
                     <Text style={{ color: '#fff' }}>{item.Product ? item.Product.Name : null}</Text>
                 </View>
-                <View style={{ marginTop: -5, right: 10, backgroundColor: colors.colorLightBlue, padding: 5, borderRadius: 200, marginBottom: 10,height:25,width:25 }}>
-                    <Text style={{ color: '#fff',textAlign:'center' }} >{item.Quantity}</Text>
+                <View style={{ marginTop: -5, right: 10, backgroundColor: colors.colorLightBlue, padding: 5, borderRadius: 200, marginBottom: 10, height: 25, width: 25 }}>
+                    <Text style={{ color: '#fff', textAlign: 'center' }} >{item.Quantity}</Text>
                 </View>
             </View>
         )
@@ -617,13 +619,13 @@ export default (props) => {
             <ScrollView ref={scrollRef} >
                 <View style={{ justifyContent: 'center', alignItems: 'center', padding: 20 }} >
                     <TouchableOpacity>
-                    {product ? product.ProductImages && JSON.parse(product.ProductImages).length > 0 ?
-                        <Image style={{ height: 70, width: 70, borderRadius: 16 }} source={{ uri: JSON.parse(product.ProductImages)[0].ImageURL }} />
-                        : <View style={{ width: 70, height: 70, justifyContent: 'center', alignItems: 'center', borderRadius: 16, backgroundColor: colors.colorchinh }}>
-                            <Text style={{ textAlign: 'center', color: 'white' }}>{product.Name ? product.Name.indexOf(' ') == -1 ? product.Name.slice(0, 2).toUpperCase() : (product.Name.slice(0, 1) + product.Name.slice(product.Name.indexOf(' ') + 1, product.Name.indexOf(' ') + 2)).toUpperCase() : null}</Text>
-                        </View> :
-                        <Image style={{ height: 70, width: 70, borderRadius: 16 }} source={Images.icon_product} />
-                    }
+                        {product ? product.ProductImages && JSON.parse(product.ProductImages).length > 0 ?
+                            <Image style={{ height: 70, width: 70, borderRadius: 16 }} source={{ uri: JSON.parse(product.ProductImages)[0].ImageURL }} />
+                            : <View style={{ width: 70, height: 70, justifyContent: 'center', alignItems: 'center', borderRadius: 16, backgroundColor: colors.colorchinh }}>
+                                <Text style={{ textAlign: 'center', color: 'white' }}>{product.Name ? product.Name.indexOf(' ') == -1 ? product.Name.slice(0, 2).toUpperCase() : (product.Name.slice(0, 1) + product.Name.slice(product.Name.indexOf(' ') + 1, product.Name.indexOf(' ') + 2)).toUpperCase() : null}</Text>
+                            </View> :
+                            <Image style={{ height: 70, width: 70, borderRadius: 16 }} source={Images.icon_product} />
+                        }
                     </TouchableOpacity>
                 </View>
                 <View style={{ padding: 3, backgroundColor: '#f2f2f2' }}></View>

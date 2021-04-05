@@ -15,6 +15,7 @@ import { AES } from 'crypto-js';
 import colors from '../../../theme/Colors';
 
 export default (props) => {
+    const [product, setProduct] = useState({})
     const [listFomular, setListFormular] = useState([])
     const [sumQuantity, setSumQuantity] = useState(0)
     const deviceType = useSelector(state => {
@@ -29,6 +30,8 @@ export default (props) => {
     const getData = (param) => {
         let list = JSON.parse(JSON.stringify(param.list))
         setListFormular(list)
+        let productTmp = JSON.parse(JSON.stringify(param.product))
+        setProduct(productTmp)
     }
 
     const outputTextSearch = () => {
@@ -87,17 +90,23 @@ export default (props) => {
                         <Image source={Images.icon_trash} style={{ width: 28, height: 28, justifyContent: 'center' }} />
                     </TouchableOpacity>
                 </View>
-                <View style={{ paddingHorizontal: 10, paddingVertical: 5, flexDirection: 'row', marginBottom: 5 }}>
-                    <View style={{ flex: 1, marginRight: 5 }}>
+                <View style={{ paddingHorizontal: 5, paddingVertical: 5, flexDirection: 'row', marginBottom: 5, alignItems: 'center', justifyContent: 'center' }}>
+                    <View style={{ flex: 1 }}>
                         <Text>{I18n.t('don_vi_tinh')}</Text>
                         <TouchableOpacity style={{ borderRadius: 5, backgroundColor: '#f2f2f2', padding: 10, marginTop: 5 }}>
                             <Text style={{ textAlign: 'center' }}>{item.Product ? item.Product.Unit : ''}</Text>
                         </TouchableOpacity>
                     </View>
-                    <View style={{ flex: 1, marginLeft: 5 }}>
+                    <View style={{ flex: 1.2, marginLeft: 5 }}>
                         <Text style={{ textAlign: 'left' }}>{I18n.t('so_luong')}</Text>
                         <TextInput style={{ textAlign: 'center', borderRadius: 5, backgroundColor: '#f2f2f2', padding: 10, marginTop: 5 }} keyboardType={'numbers-and-punctuation'} value={item.Quantity ? item.Quantity + '' : 0 + ''} onChangeText={(text) => { item.Quantity = parseInt(text), setListFormular([...listFomular]) }}></TextInput>
                     </View>
+                    {product.LargeUnit ?
+                        <View style={{ flex: 1.7, marginLeft: 5 }}>
+                            <Text style={{ textAlign: 'left' }}>{I18n.t('so_luong_don_vi_tinh_lon')}</Text>
+                            <TextInput style={{ textAlign: 'center', borderRadius: 5, backgroundColor: '#f2f2f2', padding: 10, marginTop: 5 }} keyboardType={'numbers-and-punctuation'} value={item.QuantityLargeUnit ? item.QuantityLargeUnit + '' : 0 + ''} onChangeText={(text) => { item.QuantityLargeUnit = parseInt(text), setListFormular([...listFomular]) }}></TextInput>
+                        </View> : null
+                    }
 
                 </View>
             </View>
