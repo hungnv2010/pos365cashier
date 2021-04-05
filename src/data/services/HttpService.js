@@ -7,7 +7,7 @@ import { Constant } from '../../common/Constant';
 import { setFileLuuDuLieu } from '../fileStore/FileStorage';
 import { navigate } from '../../navigator/NavigationService';
 import NetInfo from "@react-native-community/netinfo";
-
+import axios from 'axios';
 
 export var URL = { link: "https://oke.pos365.vn/" };
 

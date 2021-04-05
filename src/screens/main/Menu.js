@@ -135,7 +135,7 @@ export default (props) => {
             <HeaderComponent {...props} showToast={(text) => handlerToast(text)} />
             <ContentComponent {...props} />
             <Snackbar
-                duration={5000}
+                duration={1500}
                 visible={showToast}
                 onDismiss={() =>
                     setShowToast(false)

@@ -41,7 +41,7 @@ export default (props) => {
                 </TouchableOpacity>
             </View>
             <Snackbar
-                duration={5000}
+                duration={1500}
                 visible={showToast}
                 onDismiss={() =>
                     setShowToast(false)
