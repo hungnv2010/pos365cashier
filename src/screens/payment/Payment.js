@@ -1459,7 +1459,7 @@ export default (props) => {
                 </View>
             </Modal>
             <Snackbar
-                duration={5000}
+                duration={1500}
                 visible={showToast}
                 onDismiss={() =>
                     setShowToast(false)

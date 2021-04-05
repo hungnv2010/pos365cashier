@@ -646,7 +646,7 @@ export default (props) => {
                     outPutSetNewOrderDetail={setNewOrderDetails}
                     updateServerEvent={updateServerEvent} />
                 <Snackbar
-                    duration={5000}
+                    duration={1500}
                     visible={showToast}
                     onDismiss={() =>
                         setShowToast(false)

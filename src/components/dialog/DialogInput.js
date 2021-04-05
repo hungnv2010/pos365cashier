@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
         borderRadius: 16, marginLeft: 10, marginRight: 10, marginBottom: 20, marginTop: 10
     },
     styleTextInput: {
-        borderRadius: 16, padding: 15, borderWidth: 1, marginRight: 10, marginLeft: 10, fontSize: 14, color: "#000"
+        borderRadius: 16, padding: 15, borderWidth: 1, marginRight: 10, marginLeft: 10, fontSize: 14, color: "#4a4a4a"
     },
     styleLine: {
         height: 1, marginLeft: 10, marginRight: 10, backgroundColor: '#DCDCDC'

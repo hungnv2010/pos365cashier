@@ -977,6 +977,7 @@ export default {
   so_may_in_toi_da: 'Maximum printers',
   san_pham:'Product',
   so_luong_tru_kho_khi_ban:'Quantity in warehouse decrease when selling',
+  so_luong_don_vi_tinh_lon:'Quantity of large unit',
 
   thiet_lap_thanh_toan_vnpay: "Payments setting VNPAY",
   thong_tin_cua_hang: "Store informations",
@@ -1006,6 +1007,7 @@ export default {
   thiet_lap_extra_topping:'Extra/topping configuration',
   ten_extra_topping:'Extra/topping name',
   tach_thanh_nhieu_dong_khi_ban_hang:'Split into multiple lines when selling',
+  tao_nhom_hang_hoa: 'Create new group product',
 
   voucher: "Voucher",
   vui_long_nhap_dung_so_tien_khach_tra: "Please enter the correct amount of payment.",

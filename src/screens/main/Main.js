@@ -135,17 +135,17 @@ export default (props) => {
       if (isFNB === null) return
 
       dispatch({ type: 'ALREADY', already: false })
-      NetInfo.fetch().then(async state => {
-        if (state.isConnected == true && state.isInternetReachable == true) {
-          if (isFNB === true) {
-            await realmStore.deleteAllForFnb()
-          } else {
-            let fromLogin = !props.params
-            console.log('fromLogin', fromLogin);
-            await realmStore.deleteAllForRetail(fromLogin)
-          }
-        }
-      });
+      // NetInfo.fetch().then(async state => {
+      //   if (state.isConnected == true && state.isInternetReachable == true) {
+      //     if (isFNB === true) {
+      //       await realmStore.deleteAllForFnb()
+      //     } else {
+      //       let fromLogin = !props.params
+      //       console.log('fromLogin', fromLogin);
+      //       await realmStore.deleteAllForRetail(fromLogin)
+      //     }
+      //   }
+      // });
 
       if (isFNB === true) {
         await dataManager.syncAllDatas()

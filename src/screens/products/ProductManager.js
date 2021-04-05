@@ -30,7 +30,6 @@ export default (props) => {
             />
 
             <View style={styles.viewContent}>
-
                 <TouchableOpacity style={styles.button} onPress={() => onClickNavigation(ScreenList.Product)}>
                     <Image style={styles.iconButton} source={Images.ic_danhsachhanghoa} />
                     <Text style={styles.textButton}>{I18n.t('danh_sach_hang_hoa')}</Text>
@@ -41,7 +40,7 @@ export default (props) => {
                 </TouchableOpacity>
             </View>
             <Snackbar
-                duration={5000}
+                duration={1500}
                 visible={showToast}
                 onDismiss={() =>
                     setShowToast(false)

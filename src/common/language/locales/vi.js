@@ -534,6 +534,7 @@ export default {
   so_may_in_toi_da: "Số máy in tối đa",
   san_pham: "Sản phẩm ",
   so_luong_tru_kho_khi_ban:'Số lượng trừ kho khi bán',
+  so_luong_don_vi_tinh_lon:'Số lượng đơn vị tính lớn',
 
   thiet_lap_thanh_toan_vnpay: "Thiết lập thanh toán VNPAY",
   thong_tin_cua_hang: "Thông tin cửa hàng",
@@ -563,6 +564,7 @@ export default {
   thiet_lap_extra_topping:'Thiết lập Extra topping',
   ten_extra_topping:'Tên Extra topping',
   tach_thanh_nhieu_dong_khi_ban_hang:'Tách thành nhiều dòng khi bán hàng',
+  tao_nhom_hang_hoa:'Tạo nhóm hàng hoá',
 
   voucher: "Mã quà tặng",
   vui_long_nhap_dung_so_tien_khach_tra: "Vui lòng nhập đúng số tiền khách trả.",

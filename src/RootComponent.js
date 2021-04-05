@@ -178,9 +178,9 @@ export default () => {
     const handleChangeState = (newState) => {
         console.log('handleChangeState', newState, isError);
         dispatch({ type: 'APP_STATE', appState: newState })
-        if (stateApp.current === 'background' && newState === 'active') {
+        if ((stateApp.current === 'background' || stateApp.current === 'inactive') && newState === 'active') {
             if (signalRInfo != "" && isError) {
-            signalRManager.reconnect()
+                signalRManager.reconnect()
             }
             // signalRManager.sendMessage(Constant.SERVER_EVENT)
             // dataManager.updateServerEvent(Constant.SERVER_EVENT, Constant.SERVER_EVENT.JsonContent)
@@ -208,7 +208,7 @@ export default () => {
 
             <StackNavigation />
             <Snackbar
-                duration={5000}
+                duration={1500}
                 visible={showToast}
                 onDismiss={() =>
                     setShowToast(false)
