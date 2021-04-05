@@ -211,6 +211,22 @@ export default (props) => {
         handlerError({ JsonContent: json, RowKey: row_key })
     }
 
+    const handlerError = (data) => {
+        console.log("handlerError data ", data);
+        dialogManager.hiddenLoading()
+        let params = {
+            Id: "OFFLINE" + Math.floor(Math.random() * 9999999),
+            Orders: JSON.stringify(data.JsonContent),
+            ExcessCash: data.JsonContent.ExcessCash,
+            DontSetTime: 0,
+            HostName: URL.link,
+            BranchId: vendorSession.CurrentBranchId,
+            SyncCount: 0
+        }
+        console.log("handlerError params ", params);
+        dataManager.syncOrdersOffline([params]);
+    }
+
     const printAfterPayment = async (Code) => {
         let jsonContent = props.jsonContent
         console.log("printAfterPayment jsonContent 1 ", jsonContent, props.route.params);

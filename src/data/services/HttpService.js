@@ -54,10 +54,11 @@ export class HTTPService {
 
         console.log('GET:', this._path, JSON.stringify(headers));
 
-        return fetch(this._path, {
-            method: 'GET',
+        return axios({
+            method: 'get',
+            url: this._path,
             headers: headers,
-            credentials: "omit",
+            withCredentials: true,
         }).then(this.extractData).catch((e) => {
             this.error();
             console.log("GET err ", e);
@@ -68,40 +69,46 @@ export class HTTPService {
     POST(jsonParam, headers = getHeaders()) {
         headers['Content-Type'] = 'application/json'
         console.log('POST:', this._path, headers, jsonParam);
-        return fetch(this._path, {
-            method: 'POST',
-            credentials: "omit",
+
+        return axios({
+            method: 'post',
+            url: this._path,
             headers: headers,
-            body: JSON.stringify(jsonParam),
+            withCredentials: true,
+            data: JSON.stringify(jsonParam),
+            // timeout: 2000,
+            // timeoutErrorMessage:"thời gian dành cho bạn đã hết"
         }).then(this.extractData).catch((e) => {
             this.error();
-            console.log("POST err ", e);
+            console.log("GET err ", e);
         })
     }
 
     PUT(jsonParam, headers = getHeaders()) {
         headers['Content-Type'] = 'application/json'
-        return fetch(this._path, {
-            method: 'PUT',
-            credentials: "omit",
+        return axios({
+            method: 'put',
+            url: this._path,
             headers: headers,
-            body: JSON.stringify(jsonParam),
-        }).then(this.extractData);
+            withCredentials: true,
+            data: JSON.stringify(jsonParam)
+        }).then(this.extractData)
     }
 
     DELETE(jsonParam, headers = getHeaders()) {
         let params = convertJsonToPrameter(jsonParam)
-        return fetch(this._path + params, {
-            method: 'DELETE',
-            credentials: "omit",
+        return axios({
+            method: 'delete',
+            url: this._path + params,
             headers: headers,
-        }).then(this.extractData);
+            withCredentials: true,
+        }).then(this.extractData)
     }
 
     extractData(response) {
         console.log("extractData Responses === ", response)
         if (response.status == 200) {
-            return response.json();
+            return response.data;
         }
         else {
             if (response.status == 401) {
@@ -120,7 +127,7 @@ export class HTTPService {
             } else if (response.status == 204) {
                 return { status: 204 };
             } else if (response.status == 400) {
-                return response.json();
+                return response.data;
             }
             else {
                 this.error();
