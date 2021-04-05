@@ -556,15 +556,6 @@ const Served = (props) => {
         }
     }
 
-    const onClickProvisional = (res) => {
-        if (res && res != "") {
-            let html = data.replace("width: 76mm", "")
-            setData(res)
-        }
-        setTimeout(() => {
-            viewPrintRef.current.clickCaptureRef();
-        }, 500);
-    }
     const viewPrintRef = useRef();
 
     const handlerProcessedProduct = (jsonContent) => {
@@ -648,7 +639,6 @@ const Served = (props) => {
                     {...props}
                     itemOrder={meMoItemOrder}
                     jsonContent={jsonContent}
-                    onClickProvisional={(res) => onClickProvisional(res)}
                     outputItemOrder={outputItemOrder}
                     outputPosition={outputPosition}
                     outputSelectedProduct={outputSelectedProduct}

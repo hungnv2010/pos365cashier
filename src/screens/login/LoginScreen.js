@@ -17,7 +17,9 @@ import { getFileDuLieuString, setFileLuuDuLieu } from "../../data/fileStore/File
 import dialogManager from '../../components/dialog/DialogManager';
 import { CommonActions } from '@react-navigation/native';
 import realmStore from '../../data/realm/RealmStore';
+import Permissions, { requestMultiple, PERMISSIONS } from 'react-native-permissions';
 const { Print } = NativeModules;
+
 
 let error = "";
 
@@ -49,6 +51,7 @@ const LoginScreen = (props) => {
             } else {
                 let rememberAccount = await getFileDuLieuString(Constant.REMEMBER_ACCOUNT, true);
                 console.log('rememberAccount', rememberAccount);
+                dialogManager.hiddenLoading()
                 if (rememberAccount && rememberAccount != "") {
                     rememberAccount = JSON.parse(rememberAccount);
                     setHasLogin(false)
@@ -56,8 +59,58 @@ const LoginScreen = (props) => {
                     setUserName(rememberAccount.UserName)
                 } else {
                     setHasLogin(false)
+                    // setTimeout(() => {
+
+                    // }, 500);
+                    // Permissions.check(PERMISSIONS.IOS.)
+                    // let systemVersion = 
+                    // DeviceInfo.getSystemVersion().then(systemVersion => {
+                    //     console.log("systemVersion ", systemVersion);
+                    //     console.log("systemVersion = ", compare(systemVersion, "14"));
+                    //     // if()
+                    // });
+
+
+                    // Print.requestLocalNetwork("192.168.1.1")
+
+                    // setTimeout(() => {
+                    //     Permissions.check('localNetwork').then((r) => {
+                    //         console.log("Permissions.check('localNetwork') r ", r);
+
+                    //         if (r === 'granted') {
+                    //             // Do something
+                    //         } else {
+                    //             Permissions.request('localNetwork').then((response) => {
+                    //                 // if (response === 'authorized') {
+                    //                 //     // Do something
+                    //                 // }
+                    //                 // if (response === 'denied') {
+                    //                 //     // Notify user about Local Network permission denied, advice user to turn on permission
+                    //                 // }
+                    //             });
+                    //         }
+                    //     });
+                    // }, 10000);
+
+
+                    // Permissions.getPermissionStatus('localNetwork').then((r) => {
+                    //     if (r === 'authorized') {
+                    //         // Do something
+                    //     } else if (r === 'undetermined') {
+                    //         Permissions.requestPermission('localNetwork').then((response) => {
+                    //             if (response === 'authorized') {
+                    //                 // Do something
+                    //             }
+                    //             if (response === 'denied') {
+                    //                 // Notify user about Local Network permission denied, advice user to turn on permission
+                    //             }
+                    //         });
+                    //     } else {
+                    //         // Notify user about Local Network permission denied, advice user to turn on permission
+                    //     }
+                    // });
+
                 }
-                dialogManager.hiddenLoading()
 
             }
         }
@@ -66,6 +119,23 @@ const LoginScreen = (props) => {
 
     const onClickLogin = () => {
         // if (!logIn) return
+        // Permissions.check('localNetwork').then((r) => {
+        //     alert("Permissions.check('localNetwork') r " + JSON.stringify(r));
+
+        //     if (r === 'granted') {
+        //         // Do something
+        //     } else {
+        //         Permissions.request('localNetwork').then((response) => {
+        //             // if (response === 'authorized') {
+        //             //     // Do something
+        //             // }
+        //             // if (response === 'denied') {
+        //             //     // Notify user about Local Network permission denied, advice user to turn on permission
+        //             // }
+        //         });
+        //     }
+        // });
+        // return
         if (!checkDataLogin()) {
             return
         } else {

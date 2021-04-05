@@ -24,6 +24,7 @@ import { HTTPService } from '../../../../data/services/HttpService';
 import { ApiPath } from '../../../../data/services/ApiPath';
 var Sound = require('react-native-sound');
 import moment from 'moment';
+import realmStore from '../../../../data/realm/RealmStore';
 
 
 const TYPE_MODAL = {
@@ -58,6 +59,10 @@ export default (props) => {
     const typeModal = useRef(TYPE_MODAL.DETAIL)
     const isStartPrint = useRef(-1)
     const settingObject = useRef()
+
+    const { deviceType, isFNB } = useSelector(state => {
+        return state.Common
+    });
 
     const [delay, setDelay] = useState(1);
     useInterval(() => {//60s kiem tra va tinh lai hang hoa tính gio
@@ -106,7 +111,7 @@ export default (props) => {
     }, [listOrder])
 
     useEffect(() => {
-        
+
         console.log("CustomerOrder props.jsonContent.OrderDetails :: ", props);
 
         if (props.jsonContent.OrderDetails) {
@@ -115,7 +120,7 @@ export default (props) => {
             setListOrder(listOrder)
             dialogManager.hiddenLoading()
         }
-        
+
     }, [props.jsonContent])
 
     const sendOrder = async () => {
@@ -396,6 +401,31 @@ export default (props) => {
         if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
             jsonContent.RoomName = props.route.params.room.Name
         }
+
+        let MoreAttributes = jsonContent.MoreAttributes ? (typeof (jsonContent.MoreAttributes) == 'string' ? JSON.parse(jsonContent.MoreAttributes) : jsonContent.MoreAttributes) : {}
+        console.log("onClickProvisional MoreAttributes ", MoreAttributes);
+        if (MoreAttributes.toString() == '{}') {
+            MoreAttributes['TemporaryPrints'] = [{ CreatedDate: moment().utc().format("YYYY-MM-DD[T]HH:mm:ss.SS[Z]"), Total: jsonContent.Total }]
+        } else {
+            if (MoreAttributes.TemporaryPrints) {
+                MoreAttributes.TemporaryPrints.push({ CreatedDate: moment().utc().format("YYYY-MM-DD[T]HH:mm:ss.SS[Z]"), Total: jsonContent.Total })
+            } else {
+                MoreAttributes['TemporaryPrints'] = [{ CreatedDate: moment().utc().format("YYYY-MM-DD[T]HH:mm:ss.SS[Z]"), Total: jsonContent.Total }]
+            }
+        }
+        console.log("onClickProvisional MoreAttributes == ", MoreAttributes);
+        jsonContent.MoreAttributes = JSON.stringify(MoreAttributes);
+        let row_key = `${props.route.params.room.Id}_${props.Position}`
+        let serverEvents = await realmStore.queryServerEvents()
+        serverEvents = serverEvents.filtered(`RowKey == '${row_key}'`)[0]
+        if (serverEvents) {
+            let serverEvent = JSON.parse(JSON.stringify(serverEvents));
+            dataManager.calculatateJsonContent(jsonContent)
+            serverEvent.JsonContent = JSON.stringify(jsonContent)
+            serverEvent.Version += 1
+            dataManager.updateServerEventNow(serverEvent, true, isFNB);
+        }
+
         dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: true } })
     }
 
