@@ -112,7 +112,7 @@ export class HTTPService {
         }
         else {
             if (response.status == 401) {
-                if (!(response.url.includes(ApiPath.VENDOR_SESSION) || response.url.includes(ApiPath.LOGIN))) {
+                if (!(response.config.url.includes(ApiPath.VENDOR_SESSION) || response.config.url.includes(ApiPath.LOGIN))) {
                     index401++;
                     if (index401 >= 10) {
                         setFileLuuDuLieu(Constant.CURRENT_ACCOUNT, "");
