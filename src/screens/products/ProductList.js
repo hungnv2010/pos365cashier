@@ -26,14 +26,13 @@ export default (props) => {
     const [itProduct, setItProduct] = useState({})
     const [compositeItemProducts, setCompositeItemProducts] = useState([])
     const itemProduct = useRef()
-    const [textSearch,setTextSearch] = useState('')
+    const [textSearch, setTextSearch] = useState('')
     const debouncedVal = useDebounce(textSearch)
     const [qrScan, setQrScan] = useState()
     const productTmp = useRef([])
     useEffect(() => {
         dialogManager.showLoading()
         getData()
-        dialogManager.hiddenLoading()     
     }, [])
 
     const [idCategory, setIdCategory] = useState(-1)
@@ -43,20 +42,22 @@ export default (props) => {
     // let productTmp = []
     let categoryTmp = []
     const getData = async () => {
+
         productTmp.current = await realmStore.queryProducts()
         console.log("product", productTmp);
-        setListProduct([...productTmp.current])
+        setListProduct(productTmp.current)
         categoryTmp = await realmStore.queryCategories()
         setCategory([{
             Id: -1,
             Name: 'Tất cả'
         }, ...categoryTmp])
-           
+        dialogManager.hiddenLoading()
     }
     useEffect(() => {
         console.log("product item", listProduct);
         console.log("catygorytmp", category);
     }, [listProduct, category])
+
     const filterByCategory = (item) => {
         if (item.Id > 0) {
             setListProduct(productTmp.current.filter(el => el.CategoryId === item.Id));
@@ -68,17 +69,19 @@ export default (props) => {
     const onClickItem = (el) => {
         itemProduct.current = el
         if (deviceType == Constant.PHONE) {
-            props.navigation.navigate(ScreenList.ProductDetail, { product: itemProduct.current, category: category, onCallBack: handleSuccess, })
+            props.navigation.navigate(ScreenList.ProductDetail, { product: itemProduct.current, onCallBack: handleSuccess, })
         } else {
             setItProduct(itemProduct.current)
         }
     }
-    const handleSuccess = async (type1, value) => {
+    const handleSuccess = async (type1, value, data) => {
         console.log("type", type1);
         dialogManager.showLoading()
         try {
+            setCategory([])
             setItProduct({})
             if (value == 2) {
+                setItProduct(data)
                 await realmStore.deleteProduct()
                 await dataManager.syncProduct()
             } else if (value == 1) {
@@ -141,7 +144,7 @@ export default (props) => {
                             <Text style={{ borderRadius: 5, color: '#36a3f7' }}>{item.Code}</Text>
                         </View>
                         <View style={{ borderRadius: 5, }}>
-                            <Text style={{ color: item.OnHand > 0 ? colors.colorLightBlue : colors.colorchinh, padding: 2 }}>{item.ProductType != 2 ? 'Tồn kho: ' + currencyToString(item.OnHand) : '---'}</Text>
+                            <Text style={{ color: item.OnHand > 0 && item.ProductType != 2 ? colors.colorLightBlue : colors.colorchinh, padding: 2 }}>{item.ProductType != 2 ? 'Tồn kho: ' + currencyToString(item.OnHand) : '---'}</Text>
                             {/* <Text style={{ color: colors.colorchinh }}>{item.ProductType ? item.ProductType == 1 ? I18n.t('hang_hoa') : item.ProductType == 2 ? I18n.t('dich_vu') : item.ProductType == 3 ? 'Combo' : '' : ''}</Text> */}
                         </View>
                     </View>
@@ -149,9 +152,9 @@ export default (props) => {
             </TouchableOpacity>
         )
     }
-    useEffect(()=>{
+    useEffect(() => {
         outputIsSelectProduct(debouncedVal)
-    },[debouncedVal])
+    }, [debouncedVal])
     const outputIsSelectProduct = (input) => {
         dialogManager.showLoading()
         console.log("input", input);
@@ -163,7 +166,7 @@ export default (props) => {
             dialogManager.hiddenLoading()
         }
         setIdCategory(-1)
-        
+
     }
     const outputTextSearch = (value) => {
         console.log('outputTextSearch', value);
@@ -211,7 +214,7 @@ export default (props) => {
 
                 {deviceType == Constant.TABLET ? itProduct != null ?
                     <View style={{ flex: 1 }}>
-                        <ProductDetail iproduct={itProduct} iCategory={category} outPutCombo={outPut} handleSuccessTab={handleSuccess} compositeItemProducts={compositeItemProducts} scanQr={qrScan} />
+                        <ProductDetail iproduct={itProduct} outPutCombo={outPut} handleSuccessTab={handleSuccess} compositeItemProducts={compositeItemProducts} scanQr={qrScan} />
                     </View>
                     : <View style={{ flex: 1 }}></View>
                     :

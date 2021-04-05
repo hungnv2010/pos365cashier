@@ -34,7 +34,7 @@ export default (props) => {
         console.log("e ", e);
         if (e.data) {
             props.navigation.pop();
-            props.route.params._onSelect(e.data, 2);
+            props.route.params._onSelectQR(e.data, 2);
         } else {
             notifyErr()
         }

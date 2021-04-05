@@ -17,6 +17,7 @@ export const TYPE_PRINT = {
 }
 
 const typeHeader = "HOÁ ĐƠN THANH TOÁN"
+const typeHeaderProvisional = "HOÁ ĐƠN TẠM TÍNH"
 const code = "HD000000"
 const number = "0000"
 
@@ -26,7 +27,7 @@ class PrintService {
 
     listWaiting = []
 
-    GenHtml = async (html, JsonContent) => {
+    GenHtml = async (html, JsonContent, Base64Qr = "", checkProvisional = false) => {
         let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
         console.log('data', JSON.parse(vendorSession));
         vendorSession = JSON.parse(vendorSession);
@@ -70,7 +71,7 @@ class PrintService {
                 HTMLBase = HTMLBase.replace("{Ten_Cua_Hang}", CurrentBranch.Name)
                 HTMLBase = HTMLBase.replace("{Dia_Chi_Cua_Hang}", vendorSession.CurrentRetailer.Address ? vendorSession.CurrentRetailer.Address : "")
                 HTMLBase = HTMLBase.replace("{Dien_Thoai_Cua_Hang}", vendorSession.CurrentRetailer.Phone)
-                HTMLBase = HTMLBase.replace("{Loai_Hoa_Don}", typeHeader)
+                HTMLBase = HTMLBase.replace("{Loai_Hoa_Don}", !checkProvisional ? typeHeader : typeHeaderProvisional)
                 HTMLBase = HTMLBase.replace("{Ma_Chung_Tu}", number + ": " + (JsonContent.PaymentCode ? JsonContent.PaymentCode : code))
                 HTMLBase = HTMLBase.replace("{Ngay_Tao_Karaoke}", dateToDate(new Date()))
                 HTMLBase = HTMLBase.replace("{Ngay}/{Thang}/{Nam}-{Gio}:{Phut}-Vao", dateToDate(JsonContent.ActiveDate, DATE_FORMAT, "DD/MM/YYYY - HH:mm"))
@@ -100,18 +101,13 @@ class PrintService {
                 HTMLBase = HTMLBase.replace("{Ghi_Chu}", JsonContent.Description)
                 HTMLBase = HTMLBase.replace("{Chan_Trang}", I18n.t('xin_cam_on'))
                 HTMLBase = HTMLBase.replace("{FOOTER_POS_365}", CONTENT_FOOTER_POS365)
+                if (Base64Qr != "")
+                    HTMLBase = HTMLBase.replace("</body>", Base64Qr + " </body>");
                 // console.log("html ", JSON.stringify(HTMLBase));
                 console.log("html Description ", JsonContent.Description);
             }
             console.log("html ", JSON.stringify(HTMLBase));
             resolve(HTMLBase);
-        })
-    }
-
-    PrintHtmlService = (html, JsonContent) => {
-        this.GenHtml(html, JsonContent).then(res => {
-            if (res && res != "")
-                Print.printImage(res)
         })
     }
 

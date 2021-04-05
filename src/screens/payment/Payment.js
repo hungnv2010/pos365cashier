@@ -542,13 +542,16 @@ export default (props) => {
     }
 
     const onClickPay = async () => {
+        i.current = 0;
         console.log("onClickPay jsonContent ", jsonContent);
+        console.log("onClickPay vendorSession.Settings ", vendorSession.Settings);
         let newDate = new Date().getTime();
         if (timeClickPrevious + 2000 < newDate) {
             timeClickPrevious = newDate;
         } else {
             return;
         }
+
         let net = await NetInfo.fetch();
         if (net.isConnected == false || net.isInternetReachable == false) {
             if (checkQRInListMethod()) {
@@ -670,8 +673,8 @@ export default (props) => {
 
     const onError = (json) => {
         dialogManager.showPopupOneButton(I18n.t("khong_co_ket_noi_internet_don_hang_cua_quy_khach_duoc_luu_vao_offline"))
-        updateServerEvent()
         handlerError({ JsonContent: json, RowKey: row_key })
+        updateServerEvent(true)
         // props.navigation.pop()
     }
 
@@ -748,6 +751,7 @@ export default (props) => {
                 if (QRCodeItem && QRCodeItem.Status == true) {
                     qrCodeRealm.current.removeAllListeners()
                     realmStore.deleteQRCode(order.Id);
+                    printAfterPayment(resPayment.current.Code);
                     updateServerEvent(true)
                     setShowModal(false);
                 }
@@ -955,7 +959,9 @@ export default (props) => {
         // xử lý rồi update
         // updateServerEvent(false)
         console.log("onClickRePrint resPayment ", resPayment.current);
-        printAfterPayment(resPayment.current.Code);
+        // printAfterPayment(resPayment.current.Code);
+        jsonContentPayment.current.PaymentCode = resPayment.current.Code;
+        dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContentPayment.current, provisional: false, imgQr: imageQr.current } })
     }
 
     const onClickChangeMethod = () => {
@@ -991,13 +997,25 @@ export default (props) => {
         // props.navigation.pop()
     }
 
-    const callback = (dataURL) => {
+    const i = useRef(0);
+    const imageQr = useRef(0);
+    const callback = async (dataURL) => {
         console.log("Data getRef QrCode  ============ ", dataURL);
-        let image =  `<img id='barcode'
+        let setting = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
+        if (setting && setting != "") {
+            setting = JSON.parse(setting);
+        }
+        console.log("callback setting ", setting);
+        if (dataURL != "" && i.current == 0 && setting.PrintInvoiceBeforePaymentVNPayQR == true) {
+            imageQr.current = `<img id='barcode'
             src="data:image/png;base64,${dataURL}"
-            width="100"
-            height="100" />`
-            
+            width="150"
+            height="150" />`
+            console.log("Data getRef QrCode  ============  image ", i.current, imageQr.current);
+            jsonContentPayment.current.PaymentCode = resPayment.current.Code;
+            dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContentPayment.current, provisional: false, imgQr: imageQr.current } })
+        }
+        i.current++;
     }
 
     const renderFilter = () => {
@@ -1048,7 +1066,8 @@ export default (props) => {
                             size={180}
                             value={qrCode.current}
                             getRef={(c) => {
-                                c.toDataURL(callback)
+                                if (c)
+                                    c.toDataURL((dataURL) => callback(dataURL))
                             }}
                         />
                     </View>
