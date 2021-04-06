@@ -10,12 +10,13 @@ import { TextInput } from 'react-native-gesture-handler';
 import { ceil } from 'react-native-reanimated';
 import { currencyToString } from '../../../common/Utils';
 import ToolBarCombo from '../../../components/toolbar/ToolBarCombo'
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default (props) => {
     const [listProduct, setListProduct] = useState([])
     const [sumQuantity, setSumQuantity] = useState(0)
     const [value, setValue] = useState('')
-    const [product,setProduct] = useState({})
+    const [product, setProduct] = useState({})
     const orientaition = useSelector(state => {
         return state.Common.orientaition
     });
@@ -64,9 +65,9 @@ export default (props) => {
                 Quantity: 1,
                 QuantityLargeUnit: 0
             }
-            if(listProduct.length >0){
-            setListProduct([...listProduct, itemCombo])
-            }else{
+            if (listProduct.length > 0) {
+                setListProduct([...listProduct, itemCombo])
+            } else {
                 let listp = []
                 listp.push(itemCombo)
                 setListProduct(listp)
@@ -129,7 +130,7 @@ export default (props) => {
                     outputTextSearch={outputTextSearch}
                 />
                 <View style={{ flex: 1, }}>
-                    <SelectProduct listProducts={listProduct.length>0?listProduct:[]} valueSearch={value}
+                    <SelectProduct listProducts={listProduct.length > 0 ? listProduct : []} valueSearch={value}
                         numColumns={orientaition == Constant.LANDSCAPE ? 3 : 3}
                         outputSelectedProduct={outputSelectedProduct}
                     />
@@ -142,9 +143,11 @@ export default (props) => {
                     <Text style={{ color: '#4a4a4a' }}>{I18n.t('so_luong')} : {sumQuantity}</Text>
                 </View>
                 {listProduct.length > 0 ?
-                    <FlatList data={listProduct}
-                        renderItem={({ item, index }) => renderItemCombo(item, index)}
-                        keyExtractor={(item, index) => index.toString()} />
+                    <KeyboardAwareScrollView>
+                        <FlatList data={listProduct}
+                            renderItem={({ item, index }) => renderItemCombo(item, index)}
+                            keyExtractor={(item, index) => index.toString()} />
+                    </KeyboardAwareScrollView>
                     : <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                         <Image source={Images.logo_365_long_color} style={{ justifyContent: 'center', alignItems: 'center' }} />
                     </View>

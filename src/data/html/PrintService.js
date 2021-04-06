@@ -129,7 +129,7 @@ class PrintService {
         return Quantity;
     }
 
-    GenHtmlKitchen = (html, JsonContent, i, vendorSession, type = TYPE_PRINT.KITCHEN) => {
+    GenHtmlKitchen = (html, JsonContent, i, vendorSession, type = TYPE_PRINT.KITCHEN, numberDoublePrint = 0) => {
         console.log('GenHtmlKitchen JsonContent ', JsonContent);
         let HTMLBase = html;
         let listHtml = HTMLBase.split("<!--Body Table-->");
@@ -158,8 +158,8 @@ class PrintService {
         HTMLBase = HTMLBase.replace("{Ten_Phong_Ban}", JsonContent[0].RoomName + "[" + (JsonContent[0].Pos ? JsonContent[0].Pos : (JsonContent[0].Position ? JsonContent[0].Position : "")) + "]")
         HTMLBase = HTMLBase.replace("{Gio_Hien_Tai}", moment(new Date()).format('DD/MM/YYYY - HH:mm'))
         HTMLBase = HTMLBase.replace("{STT_Don_Hang}", i)
-        HTMLBase = HTMLBase.replace("{Lien_check}", 1 != 1 ? "style='visibility: unset'" : "style='visibility: collapse; display: none'")
-        HTMLBase = HTMLBase.replace("{Lien}", "5")
+        HTMLBase = HTMLBase.replace("{Lien_check}", numberDoublePrint > 0 ? "style='visibility: unset'" : "style='visibility: collapse; display: none'")
+        HTMLBase = HTMLBase.replace("{Lien}", numberDoublePrint == 0 ? "" : (numberDoublePrint == 1 ? "Liên 1" : "Liên 2"))
         if (vendorSession.CurrentRetailer) {
             HTMLBase = HTMLBase.replace("{Nhan_Vien}", vendorSession.CurrentUser.Name)
         }
