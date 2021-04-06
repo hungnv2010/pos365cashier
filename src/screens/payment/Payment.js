@@ -665,12 +665,13 @@ export default (props) => {
         console.log("onClickPay params== ", params);
 
         dialogManager.showLoading();
-        new HTTPService().setPath(ApiPath.ORDERS, false).POST(params).then(async order => {
+        new HTTPService().setPath(ApiPath.ORDERS).POST(params).then(async order => {
             console.log("onClickPay order== ", order);
+            dialogManager.hiddenLoading()
             if (order) {
                 resPayment.current = order;
                 dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
-                dialogManager.hiddenLoading()
+                
                 if (order.ResponseStatus && order.ResponseStatus.Message && order.ResponseStatus.Message != "") {
                     dialogManager.showPopupOneButton(order.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, ""))
                     return;
@@ -684,9 +685,10 @@ export default (props) => {
                     await printAfterPayment(order.Code)
                     updateServerEvent(true)
                 }
-            } else {
-                onError(json)
             }
+            // else {
+            //     onError(json)
+            // }
         }).catch(err => {
             console.log("onClickPay err ", err);
             onError(json)

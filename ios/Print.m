@@ -339,6 +339,7 @@ RCT_EXPORT_METHOD(keepTheScreenOff:(NSString *)param) {
   if (hasListeners) {
     NSString *myString;
     myString = [NSString stringWithFormat:@"%@::%@", IP , info];
+    NSLog(@"SendSwicthScreen %@" , myString);
     [self sendEventWithName:@"sendSwicthScreen" body:myString];
   } else {
     
