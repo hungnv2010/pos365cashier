@@ -179,7 +179,7 @@ export default () => {
         console.log('handleChangeState', newState, isError);
         dispatch({ type: 'APP_STATE', appState: newState })
         if ((stateApp.current === 'background' || stateApp.current === 'inactive') && newState === 'active') {
-            if (signalRInfo != "" && isError) {
+            if (signalRInfo != "" ) {
                 signalRManager.reconnect()
             }
             // signalRManager.sendMessage(Constant.SERVER_EVENT)
