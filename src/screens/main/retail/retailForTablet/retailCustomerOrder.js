@@ -571,11 +571,36 @@ const RetailCustomerOrder = (props) => {
         setIsQuickPayment(!isQuickPayment)
     }
 
-    const onClickPrint = () => {
+    const onClickPrint = async () => {
         hideMenu()
         console.log("onClickProvisional jsonContent ", props.jsonContent);
         if (listOrder && listOrder.length > 0) {
             props.jsonContent.RoomName = I18n.t('don_hang');
+
+            let MoreAttributes = jsonContent.MoreAttributes ? (typeof (jsonContent.MoreAttributes) == 'string' ? JSON.parse(jsonContent.MoreAttributes) : jsonContent.MoreAttributes) : {}
+            console.log("onClickProvisional MoreAttributes ", MoreAttributes);
+            if (MoreAttributes.toString() == '{}') {
+                MoreAttributes['TemporaryPrints'] = [{ CreatedDate: moment().utc().format("YYYY-MM-DD[T]HH:mm:ss.SS[Z]"), Total: jsonContent.Total }]
+            } else {
+                if (MoreAttributes.TemporaryPrints) {
+                    MoreAttributes.TemporaryPrints.push({ CreatedDate: moment().utc().format("YYYY-MM-DD[T]HH:mm:ss.SS[Z]"), Total: jsonContent.Total })
+                } else {
+                    MoreAttributes['TemporaryPrints'] = [{ CreatedDate: moment().utc().format("YYYY-MM-DD[T]HH:mm:ss.SS[Z]"), Total: jsonContent.Total }]
+                }
+            }
+            console.log("onClickProvisional MoreAttributes == ", MoreAttributes);
+            jsonContent.MoreAttributes = JSON.stringify(MoreAttributes);
+            let row_key = `${props.jsonContent.RoomId}_${props.jsonContent.Pos}`
+            let serverEvents = await realmStore.queryServerEvents()
+            serverEvents = serverEvents.filtered(`RowKey == '${row_key}'`)[0]
+            if (serverEvents) {
+                let serverEvent = JSON.parse(JSON.stringify(serverEvents));
+                dataManager.calculatateJsonContent(jsonContent)
+                serverEvent.JsonContent = JSON.stringify(jsonContent)
+                serverEvent.Version += 1
+                dataManager.updateServerEventNow(serverEvent, true, false);
+            }
+
             dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: props.jsonContent, provisional: true } })
         } else {
             dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))

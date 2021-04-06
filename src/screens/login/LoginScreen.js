@@ -17,7 +17,9 @@ import { getFileDuLieuString, setFileLuuDuLieu } from "../../data/fileStore/File
 import dialogManager from '../../components/dialog/DialogManager';
 import { CommonActions } from '@react-navigation/native';
 import realmStore from '../../data/realm/RealmStore';
+import Permissions, { requestMultiple, PERMISSIONS } from 'react-native-permissions';
 const { Print } = NativeModules;
+
 
 let error = "";
 
@@ -49,6 +51,7 @@ const LoginScreen = (props) => {
             } else {
                 let rememberAccount = await getFileDuLieuString(Constant.REMEMBER_ACCOUNT, true);
                 console.log('rememberAccount', rememberAccount);
+                dialogManager.hiddenLoading()
                 if (rememberAccount && rememberAccount != "") {
                     rememberAccount = JSON.parse(rememberAccount);
                     setHasLogin(false)
@@ -57,8 +60,6 @@ const LoginScreen = (props) => {
                 } else {
                     setHasLogin(false)
                 }
-                dialogManager.hiddenLoading()
-
             }
         }
         getCurrentAccount()

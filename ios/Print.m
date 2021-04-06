@@ -34,6 +34,7 @@
   NSMutableArray *imageArray;
   bool PrintImageClient;
   bool PrintClose;
+  bool isLocalNetwork;
   NSMutableArray *images;
   
   bool isHtml;
@@ -56,8 +57,9 @@ RCT_EXPORT_METHOD(registerPrint:(NSString *)param) {
 
 RCT_EXPORT_METHOD(printImageFromClient:(NSString *)param ip:(NSString *)ip size:(NSString *)size callback:(RCTResponseSenderBlock)callback) {
   NSLog(@"printImageFromClient param %@ ip %@", param, ip);
-  PrintClose = YES;
-  [_printerManager.CurrentPrinter Close];
+//  PrintClose = YES;
+  isLocalNetwork = NO;
+//  [_printerManager.CurrentPrinter Close];
   PrintImageClient = YES;
   isConnectAndPrint = YES;
   isHtml = NO;
@@ -83,6 +85,12 @@ RCT_EXPORT_METHOD(printImageFromClient:(NSString *)param ip:(NSString *)ip size:
   NSLog(@"printImageFromClient imagePrintClient %@", imagePrintClient);
   [self printClient];
   callback(@[@"Done"]);
+}
+
+RCT_EXPORT_METHOD(requestLocalNetwork:(NSString *)ip) {
+  PrintClose = YES;
+  isLocalNetwork = YES;
+  [_printerManager DoConnectwifi:ip Port:9100];
 }
 
 RCT_EXPORT_METHOD(printImage:(NSString *)param) {
@@ -294,7 +302,7 @@ RCT_EXPORT_METHOD(keepTheScreenOff:(NSString *)param) {
       }
     }else if([notification.name isEqualToString:(NSString *)PrinterDisconnectedNotification])
     {
-      if (!self->PrintClose) {
+      if (!self->PrintClose && !self->isLocalNetwork) {
         [self SendSwicthScreen: @"Error"];
       }
     } else if (([notification.name isEqualToString:(NSString *)BleDeviceDataChanged]))

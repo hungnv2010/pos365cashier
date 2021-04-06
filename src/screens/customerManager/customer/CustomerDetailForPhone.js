@@ -345,7 +345,6 @@ export default (props) => {
             }
         }
         if (props.route.params.item.Id == 0) {
-            console.log('add');
             dialogManager.showLoading()
             new HTTPService().setPath(ApiPath.CUSTOMER).POST(params)
                 .then(res => {

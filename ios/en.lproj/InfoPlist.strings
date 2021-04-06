@@ -1,0 +1,9 @@
+/* 
+  InfoPlist.strings
+  Pos365Cashier
+
+  Created by HungNV on 4/2/21.
+  Copyright © 2021 Facebook. All rights reserved.
+*/
+NSLocalNetworkUsageDescription = "Allows this app to connect to printer devices to notification Kitchen Print, notification Payment Print.";
+NSCameraUsageDescription = "POS365 wants to use your camera, use camera to scan item code on order";

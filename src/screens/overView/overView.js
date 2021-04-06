@@ -57,7 +57,7 @@ export default (props) => {
 
     const getListTopSell = () => {
         let params = { TimeRange: timeForTopSell.key }
-        new HTTPService().setPath(ApiPath.TOP_SELL).GET(params).then(res => {
+        new HTTPService().setPath(ApiPath.TOP_SELL, false).GET(params).then(res => {
             console.log('getListTopSell', res);
             if (res) {
                 setListTopSell([...res])
@@ -67,7 +67,7 @@ export default (props) => {
 
     const getDataDashBoard = () => {
         let params = genParams(timeForRevenue, true)
-        new HTTPService().setPath(ApiPath.DASHBOARD).GET(params).then((res) => {
+        new HTTPService().setPath(ApiPath.DASHBOARD, false).GET(params).then((res) => {
             console.log("getDataDashBoard res ", res);
             if (res)
                 setDataDashBoard(res)
@@ -77,7 +77,7 @@ export default (props) => {
     }
     const getRevunue = () => {
         let params = genParams(timeForRevenue, true)
-        new HTTPService().setPath(ApiPath.REVENUE).GET(params).then(async (res) => {
+        new HTTPService().setPath(ApiPath.REVENUE, false).GET(params).then(async (res) => {
             console.log("getRevunue res ", res);
             if (res) {
                 let array = [];
@@ -200,7 +200,7 @@ export default (props) => {
             <MainToolBar
                 navigation={props.navigation}
                 title={I18n.t('tong_quan')}
-                outPutTextSearch={()=>{}}
+                outPutTextSearch={() => { }}
 
             />
             <ScrollView
@@ -236,7 +236,7 @@ export default (props) => {
                                     </View>
                                 </View>
                             </View>
-                            <View style={{ flex: 1 ,marginLeft:20}}>
+                            <View style={{ flex: 1, marginLeft: 20 }}>
                                 <View style={{ flexDirection: "row", paddingVertical: 10 }}>
                                     <Image style={{ width: 48, height: 48 }} source={Images.icon_invoice_overview} />
                                     <View style={{ marginLeft: 12, justifyContent: "space-between" }}>
@@ -296,7 +296,7 @@ export default (props) => {
                                 setShowModal(true);
                                 typeDateTime.current = 1
                             }}
-                            style={{ flexDirection: "row", backgroundColor: "#E6EAEF", borderRadius: 10, padding: 10 , alignItems:"center"}}>
+                            style={{ flexDirection: "row", backgroundColor: "#E6EAEF", borderRadius: 10, padding: 10, alignItems: "center" }}>
                             <Text style={{ marginRight: 10, fontSize: 14, }}>{timeForRevenue.name.includes('-') ? timeForRevenue.name : I18n.t(timeForRevenue.name)}</Text>
                             <Image style={{ width: 10, height: 10 }} source={Images.icon_path_4203} />
                         </TouchableOpacity>

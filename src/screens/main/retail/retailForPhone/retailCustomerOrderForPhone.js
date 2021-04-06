@@ -403,11 +403,36 @@ export default (props) => {
         props.navigation.navigate(ScreenList.Customer, { _onSelect: onCallBack, currentCustomer: currentCustomer })
     }
 
-    const onClickPrint = () => {
+    const onClickPrint = async () => {
         hideMenu()
         console.log("onClickProvisional jsonContent ", jsonContent);
         if (listProducts && listProducts.length > 0) {
             jsonContent.RoomName = I18n.t('don_hang');
+
+            let MoreAttributes = jsonContent.MoreAttributes ? (typeof (jsonContent.MoreAttributes) == 'string' ? JSON.parse(jsonContent.MoreAttributes) : jsonContent.MoreAttributes) : {}
+            console.log("onClickProvisional MoreAttributes ", MoreAttributes);
+            if (MoreAttributes.toString() == '{}') {
+                MoreAttributes['TemporaryPrints'] = [{ CreatedDate: moment().utc().format("YYYY-MM-DD[T]HH:mm:ss.SS[Z]"), Total: jsonContent.Total }]
+            } else {
+                if (MoreAttributes.TemporaryPrints) {
+                    MoreAttributes.TemporaryPrints.push({ CreatedDate: moment().utc().format("YYYY-MM-DD[T]HH:mm:ss.SS[Z]"), Total: jsonContent.Total })
+                } else {
+                    MoreAttributes['TemporaryPrints'] = [{ CreatedDate: moment().utc().format("YYYY-MM-DD[T]HH:mm:ss.SS[Z]"), Total: jsonContent.Total }]
+                }
+            }
+            console.log("onClickProvisional MoreAttributes == ", MoreAttributes);
+            jsonContent.MoreAttributes = JSON.stringify(MoreAttributes);
+            let row_key = `${jsonContent.RoomId}_${jsonContent.Pos}`
+            let serverEvents = await realmStore.queryServerEvents()
+            serverEvents = serverEvents.filtered(`RowKey == '${row_key}'`)[0]
+            if (serverEvents) {
+                let serverEvent = JSON.parse(JSON.stringify(serverEvents));
+                dataManager.calculatateJsonContent(jsonContent)
+                serverEvent.JsonContent = JSON.stringify(jsonContent)
+                serverEvent.Version += 1
+                dataManager.updateServerEventNow(serverEvent, true, false);
+            }
+
             dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: true } })
         } else {
             dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
@@ -716,7 +741,7 @@ export default (props) => {
 
     const printAfterPayment = async (Code) => {
         let jsonContentObj = JSON.parse(JSON.stringify(jsonContent))
-        console.log("printAfterPayment jsonContent 1 ", jsonContent,);
+        console.log("printAfterPayment jsonContent 1 ", jsonContent);
         jsonContentObj.PaymentCode = Code;
         console.log("printAfterPayment jsonContent 2 ", jsonContent);
         dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContentObj, provisional: false } })

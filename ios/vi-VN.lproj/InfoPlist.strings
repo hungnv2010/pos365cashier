@@ -1,0 +1,9 @@
+/* 
+  InfoPlist.strings
+  Pos365Cashier
+
+  Created by HungNV on 4/2/21.
+  Copyright © 2021 Facebook. All rights reserved.
+*/
+NSLocalNetworkUsageDescription = "Cho phép ứng dụng này kết nối với các thiết bị máy in để thực hiện In báo bếp, In thanh toán.";
+NSCameraUsageDescription = "POS365 muốn sử dụng máy ảnh của bạn, sử dụng máy ảnh để quét mã sản phẩm trong đơn hàng";

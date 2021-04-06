@@ -18,6 +18,7 @@ import { Colors } from '../../theme';
 import NetInfo from "@react-native-community/netinfo";
 import useDidMountEffect from '../../customHook/useDidMountEffect';
 const { Print } = NativeModules;
+import Permissions, { requestMultiple, PERMISSIONS } from 'react-native-permissions';
 
 export default (props) => {
 
@@ -65,6 +66,24 @@ export default (props) => {
           console.log('settingObject', settingObject);
           setAutoPrintKitchen(settingObject.tu_dong_in_bao_bep)
         }
+        // Print.requestLocalNetwork("192.168.100.232")
+        // Permissions.check('localNetwork').then((r) => {
+        //   console.log("Permissions.check('localNetwork') r ", r);
+
+        //   if (r === 'granted') {
+        //     // Do something
+        //   } else {
+        //     Permissions.request('localNetwork').then((response) => {
+        //       // if (response === 'authorized') {
+        //       //     // Do something
+        //       // }
+        //       // if (response === 'denied') {
+        //       //     // Notify user about Local Network permission denied, advice user to turn on permission
+        //       // }
+        //     });
+        //   }
+        // });
+
       }
       getSettingObj()
     }, [])
@@ -197,7 +216,7 @@ export default (props) => {
       } else {
         dialogManager.showLoading()
         dispatch({ type: 'ALREADY', already: false })
-        await realmStore.deleteAllForRetail()
+        // await realmStore.deleteAllForRetail()
         await dataManager.syncAllDatasForRetail()
         dispatch({ type: 'ALREADY', already: true })
         dialogManager.hiddenLoading()
