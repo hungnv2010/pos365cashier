@@ -112,8 +112,8 @@ class SignalRManager {
             })
         }
 
-        if (listDifferentFromSv.length > 0) realmStore.insertServerEvents(listDifferentFromSv).subscribe(res => { })
-        if (listDifferentFromLocal.length > 0) {
+        if (listDifferentFromSv && listDifferentFromSv.length > 0) realmStore.insertServerEvents(listDifferentFromSv).subscribe(res => { })
+        if (listDifferentFromLocal && listDifferentFromLocal.length > 0) {
             if (this.isStartSignalR) {
                 for (let index = 0; index < listDifferentFromLocal.length; index++) {
                     this.sendMessageServerEvent(listDifferentFromLocal[index])
