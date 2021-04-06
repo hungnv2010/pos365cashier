@@ -6,7 +6,7 @@ import { Metrics, Images } from '../../theme';
 import { useSelector, useDispatch } from 'react-redux';
 import { Constant } from '../../common/Constant';
 import colors from '../../theme/Colors';
-import { currencyToString, momentToDate } from '../../common/Utils';
+import { currencyToString, dateUTCToMoment, momentToDate, momentToDateUTC } from '../../common/Utils';
 import { TextInput } from 'react-native-gesture-handler';
 import { ApiPath } from "../../data/services/ApiPath";
 import { HTTPService } from "../../data/services/HttpService";
@@ -32,7 +32,7 @@ export default (props) => {
     const [defaultType, setDefaultType] = useState(1)
     const itemProduct = useRef({})
     const typeModal = useRef()
-    const [priceConfig, setPriceConfig] = useState({})
+    const [priceConfig, setPriceConfig] = useState()
     const [printer, setPrinter] = useState([])
     const countPrint = useRef(0)
     const currentUserId = useRef()
@@ -48,6 +48,7 @@ export default (props) => {
     const [qrCode, setQrCode] = useState()
     const [printerPr, setPrinterPr] = useState('')
     const scrollRef = useRef();
+    const [codeProduct, setCodeProduct] = useState()
     const addCate = useRef([{
         Name: 'ten_nhom',
         Hint: 'nhap_ten_nhom_hang_hoa',
@@ -63,12 +64,12 @@ export default (props) => {
     let params = {
         CompareCost: compareCost.current ? compareCost.current : 0,
         CompareOnHand: compareOnHand.current ? compareOnHand.current : 0,
-        Cost: product.Cost ? product.Cost : productOl.Cost,
+        Cost: product.Cost ? product.Cost : productOl.Cost ? productOl.Cost : 0,
         MaxQuantity: productOl.MaxQuantity ? productOl.MaxQuantity : 999,
-        MinQuantity: productOl.MinQuantity,
-        OnHand: productOl.OnHand,
-        PriceByBranch: productOl.PriceByBranch,
-        PriceByBranchLargeUnit: productOl.PriceByBranchLargeUnit,
+        MinQuantity: productOl.MinQuantity ? productOl.MinQuantity : 0,
+        OnHand: productOl.OnHand ? productOl.OnHand : 0,
+        PriceByBranch: productOl.PriceByBranch ? productOl.PriceByBranch : 0,
+        PriceByBranchLargeUnit: productOl.PriceByBranchLargeUnit ? productOl.PriceByBranchLargeUnit : 0,
         Product: {
             AttributesName: product.AttributesName,
             BlockOfTimeToUseService: product.BlockOfTimeToUseService ? product.BlockOfTimeToUseService : 6,
@@ -76,35 +77,35 @@ export default (props) => {
             BonusPointForAssistant: product.BonusPointForAssistant ? product.BonusPointForAssistant : 0,
             BonusPointForAssistant2: product.BonusPointForAssistant2 ? product.BonusPointForAssistant2 : 0,
             BonusPointForAssistant3: product.BonusPointForAssistant3 ? product.BonusPointForAssistant3 : 0,
-            Code: product.Code,
-            Coefficient: product.Coefficient ? product.Coefficient : 1,
+            Code: codeProduct,
+            Coefficient: product.Coefficient ? product.Coefficient : undefined,
             CompositeItemProducts: compositeItemProducts,
             ConversionValue: product.ConversionValue ? product.ConversionValue : 1,
             CreatedBy: currentUserId.current,
             CreatedDate: productOl.CreatedDate,
             Description: product.Description,
-            Hidden: product.Hidden ? product.Hidden : false,
-            Id: product.Id,
+            Hidden: product.Hidden ? product.Hidden : undefined,
+            Id: product.Id ? product.Id : 0,
             IsPercentageOfTotalOrder: product.IsPercentageOfTotalOrder,
             IsPriceForBlock: product.IsPriceForBlock,
             IsSerialNumberTracking: product.IsSerialNumberTracking,
             IsTimer: product.IsTimer ? product.IsTimer : undefined,
             LargeUnit: product.LargeUnit,
-            LargeUnitCode: productOl.LargeUnitCode ? productOl.LargeUnitCode : "",
+            LargeUnitCode: productOl.LargeUnitCode ? productOl.LargeUnitCode : undefined,
             ModifiedBy: currentUserId.current,
             ModifiedDate: momentToDate(modifiedDate),
             Name: product.Name,
-            OrderQuickNotes: productOl.OrderQuickNotes ? productOl.OrderQuickNotes : "",
-            Position: productOl.Position ? productOl.Position : 0,
-            Price: product.Price,
+            OrderQuickNotes: productOl.OrderQuickNotes ? productOl.OrderQuickNotes : undefined,
+            Position: productOl.Position ? productOl.Position : undefined,
+            Price: product.Price ? product.Price : 0,
             PriceConfig: priceConfig ? JSON.stringify(priceConfig) : JSON.stringify({ Type: "percent", Type2: "percent", DontPrintLabel: false, OpenTopping: false }),
             PriceLargeUnit: product.PriceLargeUnit,
             Printer: deviceType == Constant.PHONE ? product.Printer ? product.Printer : 'KitchenA' : printerPr ? printerPr : 'KitchenA',
-            ProductAttributes: productOl.ProductAttributes ? productOl.ProductAttributes : [],
+            ProductAttributes: productOl.ProductAttributes ? productOl.ProductAttributes : undefined,
             ProductImages: productOl.ProductImages,
             ProductType: product.ProductType ? product.ProductType : 1,
             RetailerId: currentRetailerId.current,
-            SplitForSalesOrder: product.SplitForSalesOrder ? product.SplitForSalesOrder : false,
+            SplitForSalesOrder: product.SplitForSalesOrder ? product.SplitForSalesOrder : undefined,
             Unit: product.Unit,
             //ShowOnBranchId: undefined,
             CategoryId: product.CategoryId ? product.CategoryId : undefined
@@ -115,7 +116,6 @@ export default (props) => {
         if (deviceType == Constant.PHONE) {
             getData(props.route.params)
             setDefaultType(product.ProductType)
-
         }
         getCategory()
     }, [])
@@ -127,7 +127,8 @@ export default (props) => {
             getCategory()
             console.log("CompositeItemProducts", props.compositeItemProducts);
             setNameCategory()
-            if (props.iproduct.Id) {
+            if (props.iproduct.Code) {
+                setCodeProduct(props.iproduct.Code)
                 setType('sua')
             } else {
                 setProduct({ ...product, ProductType: 1 })
@@ -146,6 +147,7 @@ export default (props) => {
             console.log('qrcode', qrCode);
             if (qrCode != null) {
                 setProduct({ ...product, Code: qrCode })
+                setCodeProduct(qrCode)
             }
         }
     }, [props.scanQr])
@@ -212,6 +214,7 @@ export default (props) => {
     const getData = (param) => {
         itemProduct.current = JSON.parse(JSON.stringify(param.product))
         setProduct({ ...JSON.parse(JSON.stringify(param.product)) })
+        setCodeProduct(itemProduct.current.Code)
         console.log("data product", param.type);
         setType(params.type)
         // setCategory([...JSON.parse(JSON.stringify(param.category))])
@@ -259,7 +262,7 @@ export default (props) => {
             Name: 'don_vi_tinh_lon',
             Hint: 'nhap_don_vi_tinh_lon',
             Key: 'LargeUnit',
-            Value: product.LargeUnit ? product.LargeUnit : null
+            Value: product.LargeUnit ? product.LargeUnit : ''
         },
         {
             Name: 'ma_dvt_lon',
@@ -322,26 +325,34 @@ export default (props) => {
             }
         }
         setOnShowModal(false)
-
-        new HTTPService().setPath(ApiPath.CATEGORIES_PRODUCT).POST(param).then(res => {
-            if (res) {
-                if (res.ResponseStatus && res.ResponseStatus.Message) {
-                    dialogManager.showLoading()
-                    dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
-                        dialogManager.destroy();
-                        dialogManager.hiddenLoading()
-                    }, null, null, I18n.t('dong'))
-                } else {
-                    if (deviceType == Constant.PHONE) {
-                        props.route.params.onCallBack('them', 1)
-                        handleSuccess('them')
-                    } else
-                        props.handleSuccessTab('them', 1)
-                    getCategory()
+        if (param.Category.Name && param.Category.Name != '') {
+            new HTTPService().setPath(ApiPath.CATEGORIES_PRODUCT).POST(param).then(res => {
+                if (res) {
+                    if (res.ResponseStatus && res.ResponseStatus.Message) {
+                        dialogManager.showLoading()
+                        dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
+                            dialogManager.destroy();
+                            dialogManager.hiddenLoading()
+                        }, null, null, I18n.t('dong'))
+                    } else {
+                        if (deviceType == Constant.PHONE) {
+                            props.route.params.onCallBack('them', 1)
+                            handleSuccess('them')
+                        } else
+                            props.handleSuccessTab('them', 1)
+                        getCategory()
+                    }
                 }
-            }
-        })
-        await dataManager.syncCategories()
+            })
+            await dataManager.syncCategories()
+        } else {
+            dialogManager.showLoading()
+            dialogManager.showPopupOneButton(I18n.t('vui_long_nhap_day_du_thong_tin_truoc_khi_luu'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+                dialogManager.hiddenLoading()
+            }, null, null, I18n.t('dong'))
+        }
+
     }
     const handleSuccess = async (type1) => {
         console.log("type", type1);
@@ -436,22 +447,28 @@ export default (props) => {
         if (product.Id != 0) {
             setType('sua')
         }
-        new HTTPService().setPath(ApiPath.PRODUCT).POST(params).then(res => {
-            console.log('onClickSave', res)
-            if (res) {
-                if (res.ResponseStatus && res.ResponseStatus.Message) {
-                    dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
-                        dialogManager.destroy();
-                    }, null, null, I18n.t('dong'))
-                } else {
-                    if (deviceType == Constant.PHONE) {
-                        props.route.params.onCallBack(type, 2)
-                        props.navigation.pop()
-                    } else
-                        props.handleSuccessTab(type, 2)
+        if (product.Name && product.Name != '') {
+            new HTTPService().setPath(ApiPath.PRODUCT).POST(params).then(res => {
+                console.log('onClickSave', res)
+                if (res) {
+                    if (res.ResponseStatus && res.ResponseStatus.Message) {
+                        dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
+                            dialogManager.destroy();
+                        }, null, null, I18n.t('dong'))
+                    } else {
+                        if (deviceType == Constant.PHONE) {
+                            props.route.params.onCallBack(type, 2)
+                            props.navigation.pop()
+                        } else
+                            props.handleSuccessTab(type, 2)
+                    }
                 }
-            }
-        })
+            })
+        } else {
+            dialogManager.showPopupOneButton(I18n.t('vui_long_nhap_day_du_thong_tin_truoc_khi_luu'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
+        }
     }
     const saveAndCoppy = async () => {
         setType('them')
@@ -464,13 +481,15 @@ export default (props) => {
                     }, null, null, I18n.t('dong'))
                 } else {
                     if (deviceType == Constant.PHONE) {
+                        setProduct({ ...res })
                         setProduct({ ...product, Code: "", Id: 0 })
                     } else
-                        setProduct({ ...product, Code: "", Id: 0 })
+                        setProduct({ ...res })
+                    setProduct({ ...product, Code: "", Id: 0 })
                     props.handleSuccessTab(type, 2, { ...product, Code: "", Id: 0 })
                 }
             }
-        })
+        }).catch(err => console.log('ClickSaveandCoppy err', err))
     }
     const setLargeUnit = (data) => {
         console.log("data", data);
@@ -524,6 +543,7 @@ export default (props) => {
     }
     const onCallBackQr = (data) => {
         setProduct({ ...product, Code: data })
+        setCodeProduct(data)
     }
     const onClickTakePhoto = () => {
         props.navigation.navigate('TakePhoto', {})
@@ -535,16 +555,17 @@ export default (props) => {
                 <View style={{ backgroundColor: colors.colorchinh, paddingVertical: 5, paddingHorizontal: 10, borderRadius: 10 }}>
                     <Text style={{ color: '#fff' }}>{item.Product ? item.Product.Name : null}</Text>
                 </View>
-                <View style={{ marginTop: -5, right: 10, backgroundColor: colors.colorLightBlue, padding: 5, borderRadius: 200, marginBottom: 10, height: 25, width: 25 }}>
+                <View style={{ marginTop: -5, right: 10, backgroundColor: colors.colorLightBlue, padding: 5, borderRadius: 200, marginBottom: 10, height: 30, width: 30 }}>
                     <Text style={{ color: '#fff', textAlign: 'center' }} >{item.Quantity}</Text>
                 </View>
             </View>
         )
     }
     const onClickDelete = () => {
+        console.log("delete", product.Id);
         dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_xoa_hang_hoa'), I18n.t("thong_bao"), res => {
             if (res == 1) {
-                new HTTPService().setPath(ApiPath.PRODUCT + `/${product.Id}`).DELETE()
+                new HTTPService().setPath(`${ApiPath.PRODUCT}/${product.Id}`).DELETE()
                     .then(res => {
                         console.log('onClickDelete', res)
                         if (res) {
@@ -561,11 +582,15 @@ export default (props) => {
                             }
                         }
                     })
-                    .catch(err => console.log('onClickDelete err', err))
+                    .catch(err => console.log('ClickDelete err', err))
             }
         })
 
     }
+
+    useEffect(()=>{
+console.log("data produc",product);
+    },[product])
 
     const renderModal = () => {
         return (
@@ -574,21 +599,21 @@ export default (props) => {
                     <Text style={[styles.titleButtonOff, { padding: 15 }]}>{I18n.t('chon_loai_hang_hoa')}</Text>
                     <View>
                         <View style={{ flexDirection: 'row', padding: 10 }}>
-                            <TouchableOpacity style={[styles.styleButton, { marginLeft: 10, borderColor: defaultType == 1 ? '#36a3f7' : null, borderWidth: 1, backgroundColor: defaultType == 1 ? 'white' : '#f2f2f2' }]} onPress={() => { setDefaultType(1), console.log("click", defaultType); }}>
-                                <Text style={[styles.titleButtonOff, { color: defaultType == 1 ? '#36a3f7' : null }]}>{I18n.t('hang_hoa')}</Text>
+                            <TouchableOpacity style={[styles.styleButton, { marginLeft: 10, borderColor: defaultType == 1 ? colors.colorLightBlue : null, borderWidth: 1, backgroundColor: defaultType == 1 ? 'white' : '#f2f2f2' }]} onPress={() => { setDefaultType(1), console.log("click", defaultType); }}>
+                                <Text style={[styles.titleButtonOff, { color: defaultType == 1 ? colors.colorLightBlue : null }]}>{I18n.t('hang_hoa')}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={[styles.styleButton, { borderColor: defaultType == 2 ? '#36a3f7' : null, borderWidth: 1, backgroundColor: defaultType == 2 ? 'white' : '#f2f2f2' }]} onPress={() => { setDefaultType(2), console.log("click", defaultType); }}>
-                                <Text style={[styles.titleButtonOff, { color: defaultType == 2 ? '#36a3f7' : null }]}>{I18n.t('dich_vu')}</Text>
+                            <TouchableOpacity style={[styles.styleButton, { borderColor: defaultType == 2 ? colors.colorLightBlue : null, borderWidth: 1, backgroundColor: defaultType == 2 ? 'white' : '#f2f2f2' }]} onPress={() => { setDefaultType(2), console.log("click", defaultType); }}>
+                                <Text style={[styles.titleButtonOff, { color: defaultType == 2 ? colors.colorLightBlue : null }]}>{I18n.t('dich_vu')}</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={{ flexDirection: 'row', padding: 10 }}>
-                            <TouchableOpacity style={{ flex: 1, marginRight: 10, marginLeft: 10, justifyContent: 'center', borderWidth: 1, alignItems: 'center', borderRadius: 16, padding: 15, backgroundColor: '#f2f2f2', borderColor: defaultType == 3 ? '#36a3f7' : null, backgroundColor: defaultType == 3 ? 'white' : '#f2f2f2' }}
+                            <TouchableOpacity style={{ flex: 1, marginRight: 10, marginLeft: 10, justifyContent: 'center', borderWidth: 1, alignItems: 'center', borderRadius: 16, padding: 15, backgroundColor: '#f2f2f2', borderColor: defaultType == 3 ? colors.colorLightBlue : null, backgroundColor: defaultType == 3 ? 'white' : '#f2f2f2' }}
                                 onPress={() => { setDefaultType(3), console.log("click", defaultType); }}>
-                                <Text style={[styles.titleButtonOff, { color: defaultType == 3 ? '#36a3f7' : null }]}>Combo</Text>
+                                <Text style={[styles.titleButtonOff, { color: defaultType == 3 ? colors.colorLightBlue : null }]}>Combo</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
-                    <TouchableOpacity style={{ padding: 15, marginRight: 20, marginLeft: 20, marginTop: 20, marginBottom: 10, borderRadius: 15, alignItems: 'center', backgroundColor: '#36a3f7' }} onPress={() => clickOk()}>
+                    <TouchableOpacity style={{ padding: 15, marginRight: 20, marginLeft: 20, marginTop: 20, marginBottom: 10, borderRadius: 15, alignItems: 'center', backgroundColor: colors.colorLightBlue }} onPress={() => clickOk()}>
                         <Text style={[styles.titleButtonOff, { color: 'white' }]}>{I18n.t('xong')}</Text>
                     </TouchableOpacity>
                 </View>
@@ -612,7 +637,7 @@ export default (props) => {
                 <ToolBarDefault
                     {...props}
                     leftIcon="keyboard-backspace"
-                    title={I18n.t('chi_tiet_hang_hoa')}
+                    title={type == 'them'? I18n.t('them_moi_hang_hoa') : I18n.t('chi_tiet_hang_hoa')}
                     clickLeftIcon={() => { props.navigation.goBack() }}
                 /> : <View style={{ padding: 3, backgroundColor: '#f2f2f2' }}></View>
             }
@@ -630,8 +655,11 @@ export default (props) => {
                 </View>
                 <View style={{ padding: 3, backgroundColor: '#f2f2f2' }}></View>
                 <View>
-                    <Text style={styles.title}>{I18n.t('ten_hang_hoa')}</Text>
-                    <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#36a3f7' }]} value={product ? product.Name : null} onChangeText={(text) => setProduct({ ...product, Name: text })}></TextInput>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', }}>
+                        <Text style={styles.title}>{I18n.t('ten_hang_hoa')}</Text>
+                        <Text style={{ color: '#f21e3c', marginLeft: 5, fontSize: 18 }}>*</Text>
+                    </View>
+                    <TextInput style={[styles.textInput, { fontWeight: 'bold', color: colors.colorLightBlue }]} placeholder={I18n.t('ten_hang_hoa')} value={product ? product.Name : null} onChangeText={(text) => setProduct({ ...product, Name: text })}></TextInput>
                 </View>
                 <View>
                     <Text style={styles.title}>{I18n.t('loai_hang')}</Text>
@@ -643,7 +671,7 @@ export default (props) => {
                 <View>
                     <Text style={styles.title}>{I18n.t('ma_hang_ma_sku_ma_vach')}</Text>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#36a3f7', flex: 8 }]} value={product && product.Code ? product.Code : null} onChangeText={(text) => setProduct({ ...product, Code: text })}></TextInput>
+                        <TextInput style={[styles.textInput, { fontWeight: 'bold', color: colors.colorLightBlue, flex: 8 }]} placeholder={I18n.t('tu_dong_tao_ma')} value={codeProduct ? codeProduct : null} onChangeText={(text) => setCodeProduct(text)}></TextInput>
                         <TouchableOpacity style={{ justifyContent: 'flex-end', flex: 1 }} onPress={() => onClickQrcodeScan()}>
                             <Icon name="qrcode-scan" size={25} color={colors.colorLightBlue} />
                         </TouchableOpacity>
@@ -652,10 +680,10 @@ export default (props) => {
                 <View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                         <Text style={styles.title}>{I18n.t('ten_nhom')}</Text>
-                        <Text style={[styles.title, { marginRight: 10, color: '#36a3f7', textDecorationLine: 'underline', }]} onPress={() => { typeModal.current = 3, setOnShowModal(true) }}>{I18n.t('them_moi')}</Text>
+                        <Text style={[styles.title, { marginRight: 10, color: colors.colorLightBlue, textDecorationLine: 'underline', }]} onPress={() => { typeModal.current = 3, setOnShowModal(true) }}>{I18n.t('them_moi')}</Text>
                     </View>
                     <TouchableOpacity style={[styles.textInput, { justifyContent: 'space-between', flexDirection: 'row' }]} onPress={() => { typeModal.current = 2; setOnShowModal(true) }}>
-                        <Text style={styles.titleButton}>{nameCategory}</Text>
+                        <Text style={styles.titleButton}>{nameCategory ? nameCategory : I18n.t('chon_nhom')}</Text>
                         <Image style={{ width: 20, height: 20, marginTop: 5 }} source={Images.icon_arrow_down} />
                     </TouchableOpacity>
                 </View>
@@ -663,13 +691,13 @@ export default (props) => {
                 <View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 5, alignItems: 'center' }}>
                         <Text style={styles.titleBold}>{I18n.t('tach_thanh_nhieu_dong_khi_ban_hang')}</Text>
-                        <Switch style={{ transform: [{ scaleX: .6 }, { scaleY: .6 }] }} value={product.SplitForSalesOrder ? product.SplitForSalesOrder : false} onValueChange={() => setProduct({ ...product, SplitForSalesOrder: !product.SplitForSalesOrder })} trackColor={{ false: "silver", true: colors.colorchinh }} thumbColor={{ true: colors.colorchinh, false: 'silver' }}></Switch>
+                        <Switch style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }] }} value={product.SplitForSalesOrder ? product.SplitForSalesOrder : false} onValueChange={() => setProduct({ ...product, SplitForSalesOrder: !product.SplitForSalesOrder })} trackColor={{ false: "silver", true: colors.colorchinh }} thumbColor={{ true: colors.colorchinh, false: 'silver' }}></Switch>
                     </View>
                     <Text style={styles.titleHint}>{I18n.t('mo_ta_tach_hang')}</Text>
                     <View style={{ padding: 3, backgroundColor: '#f2f2f2' }}></View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 5, alignItems: 'center' }}>
                         <Text style={styles.titleBold}>{I18n.t('hien_thi_hang_hoa')}</Text>
-                        <Switch style={{ transform: [{ scaleX: .6 }, { scaleY: .6 }] }} value={product.Hidden ? !product.Hidden : true} onValueChange={() => setProduct({ ...product, Hidden: !product.Hidden })} trackColor={{ false: "silver", true: colors.colorchinh }} thumbColor={{ true: colors.colorchinh, false: 'silver' }}></Switch>
+                        <Switch style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }], }} value={product.Hidden ? !product.Hidden : true} onValueChange={() => setProduct({ ...product, Hidden: !product.Hidden })} trackColor={{ false: "silver", true: colors.colorchinh }} thumbColor={{ true: colors.colorchinh, false: 'silver' }}></Switch>
                     </View>
                     <Text style={styles.titleHint}>{I18n.t('hien_thi_san_pham_tren_man_hinh_thu_ngan')}</Text>
                     <View style={{ flexDirection: 'column' }}>
@@ -678,26 +706,26 @@ export default (props) => {
                                 <View>
                                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 5, alignItems: 'center' }}>
                                         <Text style={styles.titleBold}>{I18n.t('tinh_theo_phan_tram')}</Text>
-                                        <Switch style={{ transform: [{ scaleX: .6 }, { scaleY: .6 }] }} onValueChange={() => setProduct({ ...product, IsPercentageOfTotalOrder: !product.IsPercentageOfTotalOrder })} value={product.IsPercentageOfTotalOrder} trackColor={{ false: "silver", true: colors.colorchinh }}></Switch>
+                                        <Switch style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }] }} onValueChange={() => setProduct({ ...product, IsPercentageOfTotalOrder: !product.IsPercentageOfTotalOrder })} value={product.IsPercentageOfTotalOrder} trackColor={{ false: "silver", true: colors.colorchinh }}></Switch>
                                     </View>
                                     <Text style={styles.titleHint}>{I18n.t('gia_ban_duoc_tinh_theo_phan_tram_gia_tri_don_hang')}</Text>
                                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 5, alignItems: 'center' }}>
                                         <Text style={styles.titleBold}>{I18n.t('so_luong_theo_thoi_gian')}</Text>
-                                        <Switch style={{ transform: [{ scaleX: .6 }, { scaleY: .6 }] }} onValueChange={() => setProduct({ ...product, IsTimer: !product.IsTimer })} value={product.IsTimer} trackColor={{ false: "silver", true: colors.colorchinh }}></Switch>
+                                        <Switch style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }] }} onValueChange={() => setProduct({ ...product, IsTimer: !product.IsTimer })} value={product.IsTimer} trackColor={{ false: "silver", true: colors.colorchinh }}></Switch>
                                     </View>
                                     <Text style={styles.titleHint}>{I18n.t('so_luong_hang_hoa_duoc_tinh_theo_thoi_gian')}</Text>
                                     {product.ProductType == 2 && product.IsTimer == true ?
                                         <View>
                                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 5, alignItems: 'center' }}>
                                                 <Text style={styles.titleBold}>{I18n.t('thiet_lap_gia_ban_theo_block')}</Text>
-                                                <Switch style={{ transform: [{ scaleX: .6 }, { scaleY: .6 }] }} value={product.IsPriceForBlock} onValueChange={() => setProduct({ ...product, IsPriceForBlock: !product.IsPriceForBlock })} trackColor={{ false: "silver", true: colors.colorchinh }}></Switch>
+                                                <Switch style={{ transform: [{ scaleX: .8 }, { scaleY: .8 }] }} value={product.IsPriceForBlock} onValueChange={() => setProduct({ ...product, IsPriceForBlock: !product.IsPriceForBlock })} trackColor={{ false: "silver", true: colors.colorchinh }}></Switch>
                                             </View>
                                             <Text style={product.IsPriceForBlock == false ? styles.titleHint : { marginLeft: 15 }}>{I18n.t("block_theo_phut")}</Text>
-                                            <TextInput style={{ color: product.IsPriceForBlock == true ? '#36a3f7' : '#B5B5B5', marginHorizontal: 15, fontWeight: 'bold', padding: 10, }} editable={product.IsPriceForBlock == true ? true : false} value={product.BlockOfTimeToUseService ? currencyToString(product.BlockOfTimeToUseService) : null} onChangeText={(text) => { setProduct({ ...product, BlockOfTimeToUseService: onChangeTextInput(text) }) }}></TextInput>
+                                            <TextInput style={{ color: product.IsPriceForBlock == true ? colors.colorLightBlue : '#B5B5B5', marginHorizontal: 15, fontWeight: 'bold', padding: 10, }} editable={product.IsPriceForBlock == true ? true : false} value={product.BlockOfTimeToUseService ? currencyToString(product.BlockOfTimeToUseService) : null} onChangeText={(text) => { setProduct({ ...product, BlockOfTimeToUseService: onChangeTextInput(text) }) }}></TextInput>
                                             <Text style={product.IsPriceForBlock == false ? styles.titleHint : { marginLeft: 15 }}>{I18n.t('so_block_gio_dau_tien')}</Text>
-                                            <TextInput style={{ color: product.IsPriceForBlock == true ? '#36a3f7' : '#B5B5B5', marginHorizontal: 15, fontWeight: 'bold', padding: 10, }} editable={product.IsPriceForBlock == true ? true : false} value={priceConfig && priceConfig.Block ? priceConfig.Block + '' : null} onChangeText={(text) => { setPriceConfig({ ...priceConfig, Block: onChangeTextInput(text) }) }}></TextInput>
+                                            <TextInput style={{ color: product.IsPriceForBlock == true ? colors.colorLightBlue : '#B5B5B5', marginHorizontal: 15, fontWeight: 'bold', padding: 10, }} editable={product.IsPriceForBlock == true ? true : false} value={priceConfig && priceConfig.Block ? priceConfig.Block + '' : null} onChangeText={(text) => { setPriceConfig({ ...priceConfig, Block: onChangeTextInput(text) }) }}></TextInput>
                                             <Text style={product.IsPriceForBlock == false ? styles.titleHint : { marginLeft: 15 }}>{I18n.t('gia')} {priceConfig && priceConfig.Block ? priceConfig.Block : 0} {I18n.t('block_dau_tien')}</Text>
-                                            <TextInput style={{ color: product.IsPriceForBlock == true ? '#36a3f7' : '#B5B5B5', marginHorizontal: 15, fontWeight: 'bold', padding: 10, }} editable={product.IsPriceForBlock == true ? true : false} value={priceConfig && priceConfig.Value ? currencyToString(priceConfig.Value) : null} onChangeText={(text) => { setPriceConfig({ ...priceConfig, Value: onChangeTextInput(text) }) }}></TextInput>
+                                            <TextInput style={{ color: product.IsPriceForBlock == true ? colors.colorLightBlue : '#B5B5B5', marginHorizontal: 15, fontWeight: 'bold', padding: 10, }} editable={product.IsPriceForBlock == true ? true : false} value={priceConfig && priceConfig.Value ? currencyToString(priceConfig.Value) : null} onChangeText={(text) => { setPriceConfig({ ...priceConfig, Value: onChangeTextInput(text) }) }}></TextInput>
                                         </View> : null}
                                 </View>
                                 : product ? product.ProductType == 3 ?
@@ -738,27 +766,27 @@ export default (props) => {
                             <View style={{ flexDirection: 'row' }}>
                                 <View style={{ flex: 1 }}>
                                     <Text style={styles.title}>{I18n.t('gia_von')}</Text>
-                                    <TextInput style={[styles.textInput, { color: '#36a3f7', fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={product && product.Cost ? currencyToString(product.Cost) : productOl.Cost ? currencyToString(productOl.Cost) : 0 + ''} onChangeText={(text) => setProduct({ ...product, Cost: onChangeTextInput(text) })}></TextInput>
+                                    <TextInput style={[styles.textInput, { color: colors.colorLightBlue, fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={product && product.Cost ? currencyToString(product.Cost) : productOl.Cost ? currencyToString(productOl.Cost) : 0 + ''} onChangeText={(text) => setProduct({ ...product, Cost: onChangeTextInput(text) })}></TextInput>
                                 </View>
                                 <View style={{ flex: 1 }}>
                                     <Text style={styles.title} >{I18n.t('gia')}</Text>
-                                    <TextInput style={[styles.textInput, { color: '#36a3f7', fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={product && product.Price ? currencyToString(product.Price) : 0 + ''} onChangeText={(text) => setProduct({ ...product, Price: onChangeTextInput(text) })}></TextInput>
+                                    <TextInput style={[styles.textInput, { color: colors.colorLightBlue, fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={product && product.Price ? currencyToString(product.Price) : 0 + ''} onChangeText={(text) => setProduct({ ...product, Price: onChangeTextInput(text) })}></TextInput>
                                 </View>
                             </View>
-                            {product ? product.ProductType == 2 || product.IsTimer == true ?
+                            {product && product.IsTimer == true ?
                                 <TouchableOpacity style={[styles.textInput, { fontWeight: 'bold', backgroundColor: '#B0E2FF', marginTop: 10, justifyContent: 'center', alignItems: 'center' }]} onPress={() => { typeModal.current = 5, setOnShowModal(true) }}>
                                     <Text style={[styles.titleButton]}>{I18n.t("thiet_lap_khung_gio_dac_biet")}</Text>
                                 </TouchableOpacity>
                                 : product.ProductType == 1 ?
                                     <View>
                                         <Text style={styles.title}>{I18n.t('ton_kho')}</Text>
-                                        <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#36a3f7', textAlign: 'center' }]} value={productOl.OnHand ? productOl.OnHand + '' : 0 + ''} onChangeText={(text) => setProductOl({ ...productOl, OnHand: onChangeTextInput(text) })}></TextInput>
-                                    </View> : null : null
+                                        <TextInput style={[styles.textInput, { fontWeight: 'bold', color: colors.colorLightBlue, textAlign: 'center' }]} value={productOl.OnHand ? productOl.OnHand + '' : 0 + ''} onChangeText={(text) => setProductOl({ ...productOl, OnHand: onChangeTextInput(text) })}></TextInput>
+                                    </View> : null
                             }
 
                             <View>
                                 <Text style={styles.title}>{I18n.t('don_vi_tinh')}</Text>
-                                <TextInput style={[styles.textInput, { fontWeight: 'bold', color: '#36a3f7' }]} value={product ? product.Unit : null} onChangeText={(text) => setProduct({ ...product, Unit: text })}></TextInput>
+                                <TextInput style={[styles.textInput, { fontWeight: 'bold', color: colors.colorLightBlue }]} value={product ? product.Unit : null} onChangeText={(text) => setProduct({ ...product, Unit: text })}></TextInput>
                             </View>
                             {product && product.ProductType != 2 || product.IsTimer == false ?
                                 <TouchableOpacity style={[styles.textInput, { fontWeight: 'bold', backgroundColor: '#B0E2FF', marginTop: 10, justifyContent: 'center', alignItems: 'center' }]} onPress={() => { typeModal.current = 4; setOnShowModal(true) }}>
@@ -836,7 +864,7 @@ const styles = StyleSheet.create({
     },
     titleButton: {
         fontWeight: 'bold',
-        color: '#36a3f7',
+        color: colors.colorLightBlue,
         marginTop: 5
     },
     titleButtonOff: {
@@ -848,13 +876,13 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         alignItems: 'center',
         textAlign: 'center',
-        color: '#36a3f7'
+        color: colors.colorLightBlue
     },
     styleButton: {
         flex: 1, marginRight: 10, justifyContent: 'center', alignItems: 'center', borderRadius: 16, borderWidth: 0.5, padding: 15, backgroundColor: '#f2f2f2'
     },
     styleButtonOn: {
-        flex: 1, marginRight: 10, justifyContent: 'center', alignItems: 'center', borderRadius: 16, borderWidth: 0.5, padding: 15, backgroundColor: 'white', borderColor: '#36a3f7'
+        flex: 1, marginRight: 10, justifyContent: 'center', alignItems: 'center', borderRadius: 16, borderWidth: 0.5, padding: 15, backgroundColor: 'white', borderColor: colors.colorLightBlue
     },
     textInput: { backgroundColor: '#f2f2f2', marginTop: 5, marginLeft: 15, marginRight: 15, height: 40, borderRadius: 15, height: 50, padding: 10, borderWidth: 0.25, borderColor: 'silver' },
     titleHint: {

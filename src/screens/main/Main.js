@@ -150,6 +150,9 @@ export default (props) => {
       if (isFNB === true) {
         await dataManager.syncAllDatas()
       } else {
+        let fromLogin = !props.params
+        console.log('fromLogin', fromLogin);
+        await realmStore.deleteAllForRetail(fromLogin)
         await dataManager.syncAllDatasForRetail()
       }
       dispatch({ type: 'ALREADY', already: true })
@@ -216,7 +219,7 @@ export default (props) => {
       } else {
         dialogManager.showLoading()
         dispatch({ type: 'ALREADY', already: false })
-        await realmStore.deleteAllForRetail()
+        // await realmStore.deleteAllForRetail()
         await dataManager.syncAllDatasForRetail()
         dispatch({ type: 'ALREADY', already: true })
         dialogManager.hiddenLoading()

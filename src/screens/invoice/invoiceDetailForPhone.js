@@ -100,7 +100,7 @@ const InvoiceDetail = (props) => {
                 })
             }
         }
-        return listPaymentMethod
+        return listPaymentMethod.length > 0 ? listPaymentMethod : [I18n.t("tien_mat")]
     }
 
     const renderItemList = (item) => {

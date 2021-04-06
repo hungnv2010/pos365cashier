@@ -57,9 +57,9 @@ RCT_EXPORT_METHOD(registerPrint:(NSString *)param) {
 
 RCT_EXPORT_METHOD(printImageFromClient:(NSString *)param ip:(NSString *)ip size:(NSString *)size callback:(RCTResponseSenderBlock)callback) {
   NSLog(@"printImageFromClient param %@ ip %@", param, ip);
-  PrintClose = YES;
+//  PrintClose = YES;
   isLocalNetwork = NO;
-  [_printerManager.CurrentPrinter Close];
+//  [_printerManager.CurrentPrinter Close];
   PrintImageClient = YES;
   isConnectAndPrint = YES;
   isHtml = NO;
@@ -339,6 +339,7 @@ RCT_EXPORT_METHOD(keepTheScreenOff:(NSString *)param) {
   if (hasListeners) {
     NSString *myString;
     myString = [NSString stringWithFormat:@"%@::%@", IP , info];
+    NSLog(@"SendSwicthScreen %@" , myString);
     [self sendEventWithName:@"sendSwicthScreen" body:myString];
   } else {
     

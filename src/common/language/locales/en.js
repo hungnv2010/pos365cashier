@@ -1008,6 +1008,7 @@ export default {
   ten_extra_topping:'Extra/topping name',
   tach_thanh_nhieu_dong_khi_ban_hang:'Split into multiple lines when selling',
   tao_nhom_hang_hoa: 'Create new group product',
+  them_moi_hang_hoa:'Create new product',
 
   voucher: "Voucher",
   vui_long_nhap_dung_so_tien_khach_tra: "Please enter the correct amount of payment.",
