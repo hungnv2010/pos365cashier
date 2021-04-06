@@ -5,7 +5,7 @@ import I18n from '../../common/language/i18n';
 import realmStore from '../../data/realm/RealmStore';
 import { Images, Metrics } from '../../theme';
 import { ScreenList } from '../../common/ScreenList';
-import { currencyToString, dateToStringFormatUTC, randomUUID} from '../../common/Utils';
+import { currencyToString, dateToStringFormatUTC, randomUUID } from '../../common/Utils';
 import colors from '../../theme/Colors';
 import { useSelector, useDispatch } from 'react-redux';
 import { Constant } from '../../common/Constant';
@@ -837,8 +837,8 @@ export default (props) => {
     }
 
     const calculatorPrice = (jsonContent, totalPrice, update = true) => {
-        console.log("calculator jsonContent ==  ", jsonContent);
-
+        console.log("calculator totalPrice jsonContent ==  ", totalPrice, jsonContent);
+        if (totalPrice == undefined || totalPrice == 0 || jsonContent == "{}") return;
         let realPriceValue = totalPrice;
         let disCountValue = 0;
         if (!percent) {
@@ -850,26 +850,17 @@ export default (props) => {
             setInputDiscount(jsonContent.DiscountRatio)
             disCountValue = realPriceValue / 100 * jsonContent.DiscountRatio
         }
-        console.log("jsonContent ============== disCountValue ", disCountValue);
         let MoreAttributes = jsonContent.MoreAttributes ? JSON.parse(jsonContent.MoreAttributes) : {};
         let totalDiscount = parseFloat(disCountValue) + (MoreAttributes.PointDiscountValue ? parseFloat(MoreAttributes.PointDiscountValue) : 0) + (point);
         totalDiscount = (totalDiscount >= realPriceValue) ? realPriceValue : totalDiscount;
-        console.log("jsonContent ============== totalDiscount1 ", totalDiscount);
-        console.log("jsonContent ============== realPriceValue ", realPriceValue);
         let notVat = (realPriceValue - totalDiscount + (jsonContent.SafeShippingCost ? jsonContent.SafeShippingCost : 0))
         let vat = notVat / 100 * parseFloat(jsonContent.VATRates ? jsonContent.VATRates : 0);
-        console.log("jsonContent ============== point ", point);
-        console.log("jsonContent ============== notVat ", notVat);
-        console.log("jsonContent ============== vat ", vat);
         let total = notVat + vat
         if (total < 0) total = 0.0
         let excess = amountReceived() - total
         let excessCash = (excess < 0.0 && excess > -0.001) ? 0 : excess;
-        console.log("jsonContent ============== totalDiscount ", totalDiscount);
-        console.log("jsonContent ============== total ", total);
         jsonContent.Discount = totalDiscount > realPriceValue ? realPriceValue : totalDiscount;
         jsonContent.DiscountValue = disCountValue > realPriceValue ? realPriceValue : disCountValue;
-        console.log("jsonContent ============== jsonContent.DiscountValue ", jsonContent.DiscountValue);
         jsonContent.VAT = vat
         jsonContent.Total = total
         jsonContent.ExcessCash = excessCash
@@ -882,7 +873,6 @@ export default (props) => {
         }
         setJsonContent({ ...jsonContent })
         console.log("jsonContent ============== ", jsonContent);
-
         if (currentServerEvent.current && update == true) {
             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
             dataManager.calculatateJsonContent(jsonContent)
@@ -1061,7 +1051,6 @@ export default (props) => {
                                                 <Text style={{}}>{item.Name}</Text>
                                                 : <Image source={Images.vnpay_qr} style={{ width: 109, height: 30 }} />
                                         }
-                                        {/* // <Text style={{}}>{item.Name}</Text> */}
                                     </TouchableOpacity>
                                 )
                             })

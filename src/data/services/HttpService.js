@@ -48,7 +48,7 @@ export class HTTPService {
         return this
     }
 
-    GET(jsonParam, headers = getHeaders(),) {
+    GET(jsonParam, headers = getHeaders(), ) {
         let params = jsonParam ? convertJsonToPrameter(jsonParam) : ''
         this._path = this._path + params
 
@@ -60,7 +60,8 @@ export class HTTPService {
             headers: headers,
             withCredentials: true,
         }).then(this.extractData).catch((e) => {
-            this.error();
+            let mes = e.response.data && e.response.data.ResponseStatus && e.response.data.ResponseStatus.Message ? e.response.data.ResponseStatus.Message : "";
+            this.error(mes);
             console.log("GET err ", e);
         })
 
@@ -79,7 +80,8 @@ export class HTTPService {
             // timeout: 2000,
             // timeoutErrorMessage:"thời gian dành cho bạn đã hết"
         }).then(this.extractData).catch((e) => {
-            this.error();
+            let mes = e.response.data && e.response.data.ResponseStatus && e.response.data.ResponseStatus.Message ? e.response.data.ResponseStatus.Message : "";
+            this.error(mes);
             console.log("GET err ", e);
         })
     }
@@ -137,13 +139,18 @@ export class HTTPService {
 
     }
 
-    error() {
+    error(mes = "") {
         if (this.showMessage == true) {
             NetInfo.fetch().then(state => {
                 if (state.isConnected == true && state.isInternetReachable == true) {
-                    dialogManager.showPopupOneButton(I18n.t('loi_server'), I18n.t('thong_bao'), () => {
-                        dialogManager.destroy();
-                    }, null, null, I18n.t('dong'))
+                    if (mes != '')
+                        dialogManager.showPopupOneButton(mes, I18n.t('thong_bao'), () => {
+                            dialogManager.destroy();
+                        }, null, null, I18n.t('dong'))
+                    else
+                        dialogManager.showPopupOneButton(I18n.t('loi_server'), I18n.t('thong_bao'), () => {
+                            dialogManager.destroy();
+                        }, null, null, I18n.t('dong'))
                 } else {
                     dialogManager.showPopupOneButton(I18n.t('loi_ket_noi_mang'), I18n.t('thong_bao'), () => {
                         dialogManager.destroy();

@@ -7,7 +7,6 @@ import { useSelector } from 'react-redux';
 import { Snackbar } from 'react-native-paper';
 import I18n from '../../common/language/i18n'
 import moment from "moment";
-// import { TYPE_PRINT } from '../../screens/more/ViewPrint';
 const { Print } = NativeModules;
 const eventSwicthScreen = new NativeEventEmitter(Print);
 
