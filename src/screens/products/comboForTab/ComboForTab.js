@@ -142,6 +142,7 @@ export default (props) => {
                     <Text style={{ color: '#4a4a4a', fontWeight: 'bold', textTransform: 'uppercase' }}>{listProduct.length} {I18n.t('san_pham')}</Text>
                     <Text style={{ color: '#4a4a4a' }}>{I18n.t('so_luong')} : {sumQuantity}</Text>
                 </View>
+
                 {listProduct.length > 0 ?
                     <KeyboardAwareScrollView>
                         <FlatList data={listProduct}
@@ -152,6 +153,7 @@ export default (props) => {
                         <Image source={Images.logo_365_long_color} style={{ justifyContent: 'center', alignItems: 'center' }} />
                     </View>
                 }
+
                 <TouchableOpacity style={{ backgroundColor: '#36a3f7', paddingHorizontal: 10, }} onPress={() => onClickOk()}>
                     <Text style={{ textAlign: 'center', color: '#fff', paddingVertical: 10, fontWeight: 'bold' }}>{I18n.t('xong')}</Text>
                 </TouchableOpacity>
