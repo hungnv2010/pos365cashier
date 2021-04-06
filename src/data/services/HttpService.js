@@ -104,7 +104,11 @@ export class HTTPService {
             url: this._path + params,
             headers: headers,
             withCredentials: true,
-        }).then(this.extractData)
+        }).then(this.extractData).catch((e) => {
+            let mes = e.response.data && e.response.data.ResponseStatus && e.response.data.ResponseStatus.Message ? e.response.data.ResponseStatus.Message : "";
+            this.error(mes);
+            console.log("GET err ", e);
+        })
     }
 
     extractData(response) {

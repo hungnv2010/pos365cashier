@@ -447,7 +447,6 @@ export default (props) => {
         if (product.Id != 0) {
             setType('sua')
         }
-        let p = {}
         if (product.Name && product.Name != '') {
             new HTTPService().setPath(ApiPath.PRODUCT).POST(params).then(res => {
                 console.log('onClickSave', res)
