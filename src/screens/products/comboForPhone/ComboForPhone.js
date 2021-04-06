@@ -13,6 +13,7 @@ import ToolBarCombo from '../../../components/toolbar/ToolBarCombo'
 import { setFileLuuDuLieu } from '../../../data/fileStore/FileStorage';
 import { AES } from 'crypto-js';
 import colors from '../../../theme/Colors';
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default (props) => {
     const [product, setProduct] = useState({})
@@ -123,7 +124,7 @@ export default (props) => {
             />
             {
                 listFomular.length > 0 ?
-                    <View style={{ marginTop: 5, flexDirection: 'column', flex: 1 }}>
+                    <KeyboardAwareScrollView style={{ marginTop: 5, flexDirection: 'column', flex: 1 }}>
                         <View style={{ height: 44, justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10 }}>
                             <Text style={{ color: '#4a4a4a', fontWeight: 'bold', textTransform: 'uppercase' }}>{listFomular.length} {I18n.t('san_pham')}</Text>
                             <Text style={{ color: '#4a4a4a' }}>{I18n.t('so_luong')} : {sumQuantity}</Text>
@@ -134,7 +135,7 @@ export default (props) => {
                                 keyExtractor={(item, index) => index.toString()} />
 
                         </View>
-                    </View> :
+                    </KeyboardAwareScrollView> :
                     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                         <Image source={Images.logo_365_long_color} style={{ justifyContent: 'center', alignItems: 'center' }} />
                     </View>

@@ -57,9 +57,9 @@ RCT_EXPORT_METHOD(registerPrint:(NSString *)param) {
 
 RCT_EXPORT_METHOD(printImageFromClient:(NSString *)param ip:(NSString *)ip size:(NSString *)size callback:(RCTResponseSenderBlock)callback) {
   NSLog(@"printImageFromClient param %@ ip %@", param, ip);
-  PrintClose = YES;
+//  PrintClose = YES;
   isLocalNetwork = NO;
-  [_printerManager.CurrentPrinter Close];
+//  [_printerManager.CurrentPrinter Close];
   PrintImageClient = YES;
   isConnectAndPrint = YES;
   isHtml = NO;

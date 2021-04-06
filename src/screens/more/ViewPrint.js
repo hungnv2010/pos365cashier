@@ -182,15 +182,34 @@ export default forwardRef((props, ref) => {
                                 }
                             });
                             if (checkPrint || type != TYPE_PRINT.KITCHEN) {
-                                let res = printService.GenHtmlKitchen(htmlKitchen, element, i, vendorSession, type)
-                                if (res && res != "") {
-                                    res = res.replace("</body>", "<p style='display: none;'>" + i + "</p> </body>");
-                                    printService.listWaiting.push({ html: res, ip: printObject[value].ip, size: printObject[value].size })
-                                    if (setting && setting.in_hai_lien_cho_che_bien == true) {
-                                        res = res.replace("</body>", "<p style='display: none;'>" + Math.floor((Math.random() * 1000000000) + 1) + i + "in_hai_lien_cho_che_bien</p> </body>");
+                                if (setting && setting.in_hai_lien_cho_che_bien == true) {
+                                    let res1 = printService.GenHtmlKitchen(htmlKitchen, element, i, vendorSession, type, 1)
+                                    let res2 = printService.GenHtmlKitchen(htmlKitchen, element, i, vendorSession, type, 2)
+                                    if (res1 && res1 != "") {
+                                        res1 = res1.replace("</body>", "<p style='display: none;'>" + i + "</p> </body>");
+                                        printService.listWaiting.push({ html: res1, ip: printObject[value].ip, size: printObject[value].size })
+                                    }
+                                    if (res2 && res2 != "") {
+                                        res2 = res2.replace("</body>", "<p style='display: none;'>" + Math.floor((Math.random() * 1000000000) + 1) + i + "in_hai_lien_cho_che_bien</p> </body>");
+                                        printService.listWaiting.push({ html: res2, ip: printObject[value].ip, size: printObject[value].size })
+                                    }
+
+                                } else {
+                                    let res = printService.GenHtmlKitchen(htmlKitchen, element, i, vendorSession, type)
+                                    if (res && res != "") {
+                                        res = res.replace("</body>", "<p style='display: none;'>" + i + "</p> </body>");
                                         printService.listWaiting.push({ html: res, ip: printObject[value].ip, size: printObject[value].size })
                                     }
                                 }
+                                // let res = printService.GenHtmlKitchen(htmlKitchen, element, i, vendorSession, type, (setting && setting.in_hai_lien_cho_che_bien == true) ? true : false)
+                                // if (res && res != "") {
+                                //     res = res.replace("</body>", "<p style='display: none;'>" + i + "</p> </body>");
+                                //     printService.listWaiting.push({ html: res, ip: printObject[value].ip, size: printObject[value].size })
+                                //     if (setting && setting.in_hai_lien_cho_che_bien == true) {
+                                //         res = res.replace("</body>", "<p style='display: none;'>" + Math.floor((Math.random() * 1000000000) + 1) + i + "in_hai_lien_cho_che_bien</p> </body>");
+                                //         printService.listWaiting.push({ html: res, ip: printObject[value].ip, size: printObject[value].size })
+                                //     }
+                                // }
                             }
                         }
                         i++;
