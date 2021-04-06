@@ -48,7 +48,7 @@ export class HTTPService {
         return this
     }
 
-    GET(jsonParam, headers = getHeaders(), ) {
+    GET(jsonParam, headers = getHeaders(),) {
         let params = jsonParam ? convertJsonToPrameter(jsonParam) : ''
         this._path = this._path + params
 
@@ -60,7 +60,7 @@ export class HTTPService {
             headers: headers,
             withCredentials: true,
         }).then(this.extractData).catch((e) => {
-            let mes = e.response.data && e.response.data.ResponseStatus && e.response.data.ResponseStatus.Message ? e.response.data.ResponseStatus.Message : "";
+            let mes = e && e.response && e.response.data && e.response.data.ResponseStatus && e.response.data.ResponseStatus.Message ? e.response.data.ResponseStatus.Messagereplace(/<strong>/g, "").replace(/<\/strong>/g, "") : "";
             this.error(mes);
             console.log("GET err ", e);
         })
@@ -80,7 +80,8 @@ export class HTTPService {
             // timeout: 2000,
             // timeoutErrorMessage:"thời gian dành cho bạn đã hết"
         }).then(this.extractData).catch((e) => {
-            let mes = e.response.data && e.response.data.ResponseStatus && e.response.data.ResponseStatus.Message ? e.response.data.ResponseStatus.Message : "";
+            console.log("e.response.data ", e.response.data);
+            let mes = e && e.response && e.response.data && e.response.data.ResponseStatus && e.response.data.ResponseStatus.Message ? e.response.data.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, "") : "";
             this.error(mes);
             console.log("GET err ", e);
         })
@@ -105,7 +106,7 @@ export class HTTPService {
             headers: headers,
             withCredentials: true,
         }).then(this.extractData).catch((e) => {
-            let mes = e.response.data && e.response.data.ResponseStatus && e.response.data.ResponseStatus.Message ? e.response.data.ResponseStatus.Message : "";
+            let mes = e && e.response && e.response.data && e.response.data.ResponseStatus && e.response.data.ResponseStatus.Message ? e.response.data.ResponseStatus.Message : "";
             this.error(mes);
             console.log("GET err ", e);
         })
