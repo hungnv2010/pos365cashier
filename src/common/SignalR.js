@@ -86,7 +86,7 @@ class SignalRManager {
     reconnect() {
         console.log('reconnect');
         this.killSignalR()
-        this.startSignalR(this.syncData)
+        this.startSignalR(this.syncData.bind(this))
     }
 
     async syncData() {
@@ -115,7 +115,11 @@ class SignalRManager {
         if (listDifferentFromSv && listDifferentFromSv.length > 0) realmStore.insertServerEvents(listDifferentFromSv).subscribe(res => { })
         if (listDifferentFromLocal && listDifferentFromLocal.length > 0) {
             for (let index = 0; index < listDifferentFromLocal.length; index++) {
-                this.sendMessageServerEvent(listDifferentFromLocal[index])
+                // this.sendMessageServerEvent(listDifferentFromLocal[index])
+                let serverEvent = listDifferentFromLocal[index]
+                delete serverEvent.Timestamp
+                this.sendMessage(serverEvent)
+
             }
         }
         dialogManager.hiddenLoading()
