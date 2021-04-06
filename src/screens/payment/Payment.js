@@ -5,7 +5,7 @@ import I18n from '../../common/language/i18n';
 import realmStore from '../../data/realm/RealmStore';
 import { Images, Metrics } from '../../theme';
 import { ScreenList } from '../../common/ScreenList';
-import { currencyToString, dateToStringFormatUTC, randomUUID } from '../../common/Utils';
+import { currencyToString, dateToStringFormatUTC, randomUUID} from '../../common/Utils';
 import colors from '../../theme/Colors';
 import { useSelector, useDispatch } from 'react-redux';
 import { Constant } from '../../common/Constant';
@@ -526,6 +526,28 @@ export default (props) => {
             if (date && dateTmp.current) {
                 jsonContent.PurchaseDate = "" + date;
             }
+
+            let MoreAttributes = jsonContent.MoreAttributes ? (typeof (jsonContent.MoreAttributes) == 'string' ? JSON.parse(jsonContent.MoreAttributes) : jsonContent.MoreAttributes) : {}
+            console.log("onClickProvisional MoreAttributes ", MoreAttributes);
+            if (MoreAttributes.toString() == '{}') {
+                MoreAttributes['TemporaryPrints'] = [{ CreatedDate: moment().utc().format("YYYY-MM-DD[T]HH:mm:ss.SS[Z]"), Total: jsonContent.Total }]
+            } else {
+                if (MoreAttributes.TemporaryPrints) {
+                    MoreAttributes.TemporaryPrints.push({ CreatedDate: moment().utc().format("YYYY-MM-DD[T]HH:mm:ss.SS[Z]"), Total: jsonContent.Total })
+                } else {
+                    MoreAttributes['TemporaryPrints'] = [{ CreatedDate: moment().utc().format("YYYY-MM-DD[T]HH:mm:ss.SS[Z]"), Total: jsonContent.Total }]
+                }
+            }
+            console.log("onClickProvisional MoreAttributes == ", MoreAttributes);
+            jsonContent.MoreAttributes = JSON.stringify(MoreAttributes);
+            if (currentServerEvent.current) {
+                let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
+                dataManager.calculatateJsonContent(jsonContent)
+                serverEvent.JsonContent = JSON.stringify(jsonContent)
+                serverEvent.Version += 1
+                dataManager.updateServerEventNow(serverEvent, true, isFNB);
+            }
+
             dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: true } })
             timeClickPrevious = newDate;
         }
@@ -592,7 +614,7 @@ export default (props) => {
         console.log("onClickPay paramMethod ", paramMethod);
         MoreAttributes.PointDiscount = pointUse && pointUse > 0 ? pointUse : 0;
         MoreAttributes.PointDiscountValue = 0;
-        MoreAttributes.TemporaryPrints = [];
+        // MoreAttributes.TemporaryPrints = [];
         MoreAttributes.Vouchers = listVoucher;
         MoreAttributes.PaymentMethods = paramMethod
         if (customer && customer.Id) {

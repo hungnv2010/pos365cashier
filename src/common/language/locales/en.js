@@ -977,6 +977,7 @@ export default {
   so_may_in_toi_da: 'Maximum printers',
   san_pham:'Product',
   so_luong_tru_kho_khi_ban:'Quantity in warehouse decrease when selling',
+  so_luong_don_vi_tinh_lon:'Quantity of large unit',
 
   thiet_lap_thanh_toan_vnpay: "Payments setting VNPAY",
   thong_tin_cua_hang: "Store informations",

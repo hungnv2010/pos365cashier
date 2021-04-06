@@ -534,6 +534,7 @@ export default {
   so_may_in_toi_da: "Số máy in tối đa",
   san_pham: "Sản phẩm ",
   so_luong_tru_kho_khi_ban:'Số lượng trừ kho khi bán',
+  so_luong_don_vi_tinh_lon:'Số lượng đơn vị tính lớn',
 
   thiet_lap_thanh_toan_vnpay: "Thiết lập thanh toán VNPAY",
   thong_tin_cua_hang: "Thông tin cửa hàng",

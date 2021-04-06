@@ -15,6 +15,7 @@ export default (props) => {
     const [listProduct, setListProduct] = useState([])
     const [sumQuantity, setSumQuantity] = useState(0)
     const [value, setValue] = useState('')
+    const [product,setProduct] = useState({})
     const orientaition = useSelector(state => {
         return state.Common.orientaition
     });
@@ -25,6 +26,7 @@ export default (props) => {
         //itemProduct.current = JSON.parse(JSON.stringify(param.list))
         setListProduct(param.list)
         console.log("param list", param.list);
+        setProduct(param.product)
     }
     useEffect(() => {
         console.log("list product", listProduct);
@@ -102,10 +104,16 @@ export default (props) => {
                             <Text style={{ textAlign: 'center' }}>{item.Product.Unit}</Text>
                         </TouchableOpacity>
                     </View>
-                    <View style={{ flex: 1, marginLeft: 5 }}>
+                    <View style={{ flex: 1.2, marginLeft: 5 }}>
                         <Text style={{ textAlign: 'left' }}>{I18n.t('so_luong')}</Text>
-                        <TextInput style={{ textAlign: 'center', borderRadius: 5, backgroundColor: '#f2f2f2', padding: 10, marginTop: 5 }} keyboardType={'numbers-and-punctuation'} value={item.Quantity ? item.Quantity + '' : 0 + ''} onChangeText={(text) => { item.Quantity = parseInt(text), setListProduct([...listProduct]) }}></TextInput>
+                        <TextInput style={{ textAlign: 'center', borderRadius: 5, backgroundColor: '#f2f2f2', padding: 10, marginTop: 5 }} keyboardType={'numbers-and-punctuation'} value={item.Quantity ? item.Quantity + '' : 0 + ''} onChangeText={(text) => { item.Quantity = parseInt(text), setListFormular([...listFomular]) }}></TextInput>
                     </View>
+                    {product.LargeUnit ?
+                        <View style={{ flex: 1.7, marginLeft: 5 }}>
+                            <Text style={{ textAlign: 'left' }}>{I18n.t('so_luong_don_vi_tinh_lon')}</Text>
+                            <TextInput style={{ textAlign: 'center', borderRadius: 5, backgroundColor: '#f2f2f2', padding: 10, marginTop: 5 }} keyboardType={'numbers-and-punctuation'} value={item.QuantityLargeUnit ? item.QuantityLargeUnit + '' : 0 + ''} onChangeText={(text) => { item.QuantityLargeUnit = parseInt(text), setListFormular([...listFomular]) }}></TextInput>
+                        </View> : null
+                    }
 
                 </View>
             </View>

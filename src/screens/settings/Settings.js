@@ -18,12 +18,13 @@ import { HTTPService } from "../../data/services/HttpService";
 import { ScreenList } from '../../common/ScreenList';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
-import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import colors from '../../theme/Colors';
 //import { in } from 'react-native/Libraries/Animated/src/Easing';
+import Permissions, { requestMultiple, PERMISSIONS } from 'react-native-permissions';
 const { Print } = NativeModules;
 import moment from 'moment';
 import 'moment/min/locales'
+import DeviceInfo from 'react-native-device-info';
 import DialogSettingPrinter from '../../components/dialog/DialogSettingPrinter'
 
 export const DefaultSetting = {
@@ -112,10 +113,10 @@ export const DefaultSetting = {
     InfoStore: '',
     HtmlPrint: '',
     TempPrint: '',
-    // tu_dong_in_bao_bep: false,
+    tu_dong_in_bao_bep: false,
     in_sau_khi_thanh_toan: true,
-    // in_hai_lien_cho_hoa_don: false,
-    // in_hai_lien_cho_che_bien: false,
+    in_hai_lien_cho_hoa_don: false,
+    in_hai_lien_cho_che_bien: false,
     in_tam_tinh: false,
     in_tem_truoc_thanh_toan: false,
     bao_che_bien_sau_thanh_toan: false,
@@ -325,10 +326,74 @@ export default (props) => {
         setPrintertmp(settingObject.Printer[data.index])
 
     }
+
+    const compare = (a, b) => {
+        if (a === b) {
+            return 0;
+        }
+
+        var a_components = a.split(".");
+        var b_components = b.split(".");
+
+        var len = Math.min(a_components.length, b_components.length);
+
+        // loop while the components are equal
+        for (var i = 0; i < len; i++) {
+            // A bigger than B
+            if (parseInt(a_components[i]) > parseInt(b_components[i])) {
+                return 1;
+            }
+
+            // B bigger than A
+            if (parseInt(a_components[i]) < parseInt(b_components[i])) {
+                return -1;
+            }
+        }
+
+        // If one's a prefix of the other, the longer one is greater.
+        if (a_components.length > b_components.length) {
+            return 1;
+        }
+
+        if (a_components.length < b_components.length) {
+            return -1;
+        }
+
+        // Otherwise they are the same.
+        return 0;
+    }
+
     const outputSetPrinter = (data) => {
+        setShowModal(false)
+        console.log("outputSetPrinter data ", data);
+
+        DeviceInfo.getSystemVersion().then(systemVersion => {
+            console.log("systemVersion ", systemVersion);
+            console.log("systemVersion compare = ", compare(systemVersion, "14"));
+            if (compare(systemVersion, "14") == 1) {
+                Print.requestLocalNetwork(data.ip)
+            }
+        });
+
+        // Permissions.check('localNetwork').then((r) => {
+        //     console.log("Permissions.check('localNetwork') r ", r);
+
+        //     if (r === 'granted') {
+        //         // Do something
+        //     } else {
+        //         Permissions.request('localNetwork').then((response) => {
+        //             // if (response === 'authorized') {
+        //             //     // Do something
+        //             // }
+        //             // if (response === 'denied') {
+        //             //     // Notify user about Local Network permission denied, advice user to turn on permission
+        //             // }
+        //         });
+        //     }
+        // });
+
         settingObject.Printer[positionPrint] = data
         savePrint({ ...settingObject })
-        setShowModal(false)
         savePrintRedux(settingObject.Printer)
     }
     const savePrint = (object) => {
@@ -537,10 +602,10 @@ export default (props) => {
                             : null
                         }
                         <SettingSwitch title={"in_sau_khi_thanh_toan"} output={onSwitchTone} isStatus={settingObject.in_sau_khi_thanh_toan} />
-                        {/* <SettingSwitch title={"in_hai_lien_cho_hoa_don"} output={onSwitchTone} isStatus={settingObject.in_hai_lien_cho_hoa_don} /> */}
-                        {/* {isFNB ?
+                        <SettingSwitch title={"in_hai_lien_cho_hoa_don"} output={onSwitchTone} isStatus={settingObject.in_hai_lien_cho_hoa_don} />
+                        {isFNB ?
                             <SettingSwitch title={"in_hai_lien_cho_che_bien"} output={onSwitchTone} isStatus={settingObject.in_hai_lien_cho_che_bien} />
-                            : null} */}
+                            : null}
                         <SettingSwitch title={"in_tam_tinh"} output={onSwitchTone} isStatus={settingObject.in_tam_tinh} />
                         {/* <SettingSwitch title={"in_tem_truoc_thanh_toan"} output={onSwitchTone} isStatus={settingObject.in_tem_truoc_thanh_toan} /> */}
                         {/* <SettingSwitch title={"bao_che_bien_sau_thanh_toan"} output={onSwitchTone} isStatus={settingObject.bao_che_bien_sau_thanh_toan} /> */}

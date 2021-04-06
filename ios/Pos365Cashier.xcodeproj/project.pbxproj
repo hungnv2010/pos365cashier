@@ -17,6 +17,8 @@
 		1A528578247226380090BA8A /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A528577247226380090BA8A /* libz.tbd */; };
 		1A52857C247228580090BA8A /* Print.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A52857B247228580090BA8A /* Print.m */; };
 		1A53088E25AEEEDE0055ECAB /* file.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 1A53088D25AEEEDE0055ECAB /* file.mp3 */; };
+		1A5AD5C42616F97E00F859E4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A5AD5C72616F97E00F859E4 /* InfoPlist.strings */; };
+		1A5AD5C52616F97E00F859E4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A5AD5C72616F97E00F859E4 /* InfoPlist.strings */; };
 		1A64AFA52612B59200568FC5 /* libRTPrinterSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A64AFA42612B59200568FC5 /* libRTPrinterSDK.a */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
@@ -55,7 +57,6 @@
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = Pos365Cashier/AppDelegate.m; sourceTree = "<group>"; };
 		13B07FB21A68108700A75B9A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Pos365Cashier/Images.xcassets; sourceTree = "<group>"; };
-		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Pos365Cashier/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Pos365Cashier/main.m; sourceTree = "<group>"; };
 		1A19FB73260D7E4B0036D7F0 /* Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Header.h; path = ../Sdk/include/RTPrinterSDK/Header.h; sourceTree = "<group>"; };
 		1A19FB74260D7E4B0036D7F0 /* BarcodeSetting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BarcodeSetting.h; path = ../Sdk/include/RTPrinterSDK/BarcodeSetting.h; sourceTree = "<group>"; };
@@ -103,6 +104,10 @@
 		1A52857A247228480090BA8A /* Print.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Print.h; sourceTree = "<group>"; };
 		1A52857B247228580090BA8A /* Print.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Print.m; sourceTree = "<group>"; };
 		1A53088D25AEEEDE0055ECAB /* file.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = file.mp3; path = ../src/screens/payment/file.mp3; sourceTree = "<group>"; };
+		1A5AD5612616D43A00F859E4 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Pos365Cashier/Info.plist; sourceTree = "<group>"; };
+		1A5AD5BF2616F8F200F859E4 /* vi-VN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "vi-VN"; path = "vi-VN.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
+		1A5AD5C62616F97E00F859E4 /* vi-VN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "vi-VN"; path = "vi-VN.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
+		1A5AD5CC2616F98300F859E4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1A64AF982612B29500568FC5 /* libRTPrinterSDK.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libRTPrinterSDK.a; sourceTree = "<group>"; };
 		1A64AFA42612B59200568FC5 /* libRTPrinterSDK.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libRTPrinterSDK.a; path = Pos365Cashier/Lib/SDK/libRTPrinterSDK.a; sourceTree = "<group>"; };
 		21B9A29277C5EFA95C6A3C4F /* Pods-Pos365Cashier-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pos365Cashier-tvOS.release.xcconfig"; path = "Target Support Files/Pods-Pos365Cashier-tvOS/Pods-Pos365Cashier-tvOS.release.xcconfig"; sourceTree = "<group>"; };
@@ -188,8 +193,9 @@
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
+				1A5AD5612616D43A00F859E4 /* Info.plist */,
+				1A5AD5C72616F97E00F859E4 /* InfoPlist.strings */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
-				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
 				13B07FB71A68108700A75B9A /* main.m */,
 			);
@@ -446,6 +452,7 @@
 				English,
 				en,
 				Base,
+				"vi-VN",
 			);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
@@ -473,6 +480,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				1A5AD5C42616F97E00F859E4 /* InfoPlist.strings in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				1A53088E25AEEEDE0055ECAB /* file.mp3 in Resources */,
 			);
@@ -483,6 +491,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */,
+				1A5AD5C52616F97E00F859E4 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -757,9 +766,19 @@
 			isa = PBXVariantGroup;
 			children = (
 				13B07FB21A68108700A75B9A /* Base */,
+				1A5AD5BF2616F8F200F859E4 /* vi-VN */,
 			);
 			name = LaunchScreen.xib;
 			path = Pos365Cashier;
+			sourceTree = "<group>";
+		};
+		1A5AD5C72616F97E00F859E4 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1A5AD5C62616F97E00F859E4 /* vi-VN */,
+				1A5AD5CC2616F98300F859E4 /* en */,
+			);
+			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
@@ -815,7 +834,7 @@
 			baseConfigurationReference = BC7F917EB6F152A16ACF4402 /* Pods-Pos365Cashier.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CURRENT_PROJECT_VERSION = 26;
+				CURRENT_PROJECT_VERSION = 44;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = S8C4LR9F7U;
 				ENABLE_BITCODE = NO;
@@ -904,7 +923,7 @@
 			baseConfigurationReference = C602AD95F926827C03D70B0F /* Pods-Pos365Cashier.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CURRENT_PROJECT_VERSION = 26;
+				CURRENT_PROJECT_VERSION = 44;
 				DEVELOPMENT_TEAM = S8C4LR9F7U;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";
