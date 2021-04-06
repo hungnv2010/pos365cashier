@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
         flex: 1, marginRight: 10, justifyContent: 'center', alignItems: 'center', borderRadius: 16, borderWidth: 0.5, padding: 10, backgroundColor: '#f2f2f2'
     },
     styleButtonOn: {
-        flex: 1, marginRight: 10, justifyContent: 'center', alignItems: 'center', borderRadius: 16, borderWidth: 0.5, padding: 10, backgroundColor: 'white', borderColor: '#36a3f7'
+        flex: 1, marginRight: 10, justifyContent: 'center', alignItems: 'center', borderRadius: 16, borderWidth: 0.5, padding: 10, backgroundColor: 'white', borderColor: colors.colorLightBlue
     },
     titleButtonOff: {
         fontWeight: 'bold',
@@ -95,7 +95,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         alignItems: 'center',
         textAlign: 'center',
-        color: '#36a3f7'
+        color: colors.colorLightBlue
     },
     titleBold:
         { fontWeight: 'bold', fontSize: 14, justifyContent: 'center', alignItems: 'center', marginLeft: 10, textTransform: 'uppercase' },

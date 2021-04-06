@@ -133,14 +133,20 @@ export default (props) => {
                         }
                         <View style={{ flexDirection: 'column', justifyContent: 'space-between', flex: 1, padding: 5, marginLeft: 5 }}>
                             <Text>{item.Name}</Text>
-                            <Text style={{ color: '#36a3f7', fontWeight: 'bold', marginTop: 5 }}>{currencyToString(item.Price)} đ</Text>
+                            <View style = {{flexDirection:'row'}}>
+                            <Text style={{ color: colors.colorLightBlue, fontWeight: 'bold', marginTop: 5 }}>{currencyToString(item.Price)} đ</Text>
+                            {
+                                item.LargeUnit && item.LargeUnit != ''  ?
+                                <Text style={{ color: colors.colorLightBlue, fontWeight: 'bold', marginTop: 5 }}> - {currencyToString(item.PriceLargeUnit)} đ</Text>:null
+                            }
+                            </View>
                         </View>
 
                     </View>
                     <View style={{ backgroundColor: 'silver', height: 0.5, margin: 5, marginTop: 10 }}></View>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', flex: 1, padding: 5 }}>
                         <View style={{ borderRadius: 5 }}>
-                            <Text style={{ borderRadius: 5, color: '#36a3f7' }}>{item.Code}</Text>
+                            <Text style={{ borderRadius: 5, color: colors.colorLightBlue }}>{item.Code}</Text>
                         </View>
                         <View style={{ borderRadius: 5, }}>
                             <Text style={{ color: item.OnHand > 0 && item.ProductType != 2 ? colors.colorLightBlue : colors.colorchinh, padding: 2 }}>{item.ProductType != 2 ? 'Tồn kho: ' + currencyToString(item.OnHand) : '---'}</Text>
@@ -199,6 +205,7 @@ export default (props) => {
                             data={listProduct}
                             renderItem={({ item, index }) => renderProduct(item, index)}
                             keyExtractor={(item, index) => index.toString()}
+                            style = {{}}
                         /> : null}
                     <FAB
                         style={styles.fab}

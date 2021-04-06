@@ -565,6 +565,7 @@ export default {
   ten_extra_topping:'Tên Extra topping',
   tach_thanh_nhieu_dong_khi_ban_hang:'Tách thành nhiều dòng khi bán hàng',
   tao_nhom_hang_hoa:'Tạo nhóm hàng hoá',
+  them_moi_hang_hoa:'Thêm mới hàng hoá',
 
   voucher: "Mã quà tặng",
   vui_long_nhap_dung_so_tien_khach_tra: "Vui lòng nhập đúng số tiền khách trả.",

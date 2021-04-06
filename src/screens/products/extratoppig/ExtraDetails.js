@@ -40,12 +40,12 @@ export default (props) => {
                     {...props}
                     title={extraTopping.Extra?extraTopping.Extra.Name:null}
                 /> : null}
-                <View style={{backgroundColor:'#fff',flexDirection:'column'}}>
+                <View style={{backgroundColor:'#fff',flexDirection:'column',flex:1}}>
                     <Text style={styles.styleTitle}>{I18n.t('ten_extra_topping')}</Text>
                     <Text style={[styles.styleTitle,{fontWeight:'bold',color:'#36a3f7',fontSize:16}]}>{extraTopping.Extra?extraTopping.Extra.Name:''}</Text>
                     <Text style={styles.styleTitle}>{I18n.t('ten_nhom')}</Text>
                     <View style={{flexDirection:'row',alignItems:'center',paddingHorizontal:10,paddingVertical:10}}>
-                        <TouchableOpacity style={{flex:8,backgroundColor:'#bbbbbb',borderRadius:10}}>
+                        <TouchableOpacity style={{flex:8,backgroundColor:'#f2f2f2',borderRadius:10}}>
                             <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',paddingHorizontal:5,paddingVertical:10}}>
                                 <Text>{I18n.t('chon_nhom')}</Text>
                                 <Image source={Images.icon_arrow_down} style={{width:24,height:24}}/>
@@ -61,11 +61,11 @@ export default (props) => {
                     <TextInput style={styles.styleTextInput} />
                 </View>
                 <View style={{flexDirection:'row',alignItems:'flex-end'}}>
-                    <TouchableOpacity style={{backgroundColor:colors.colorLightBlue,padding:10,flex:1,marginRight:5}}>
+                    <TouchableOpacity style={{backgroundColor:colors.colorLightBlue,padding:8,flex:1,marginRight:2,alignItems:'center',justifyContent:'center'}}>
                         <IconMaterial name={'delete'} color={'#fff'} size={24}/>
                     </TouchableOpacity>
-                    <TouchableOpacity style={{backgroundColor:colors.colorLightBlue,padding:10,flex:8,marginLeft:5}}>
-                        <Text style={{fontWeight:'bold',color:'#fff'}}>{I18n.t('xong')}</Text>
+                    <TouchableOpacity style={{backgroundColor:colors.colorLightBlue,padding:10,flex:8,marginLeft:2,justifyContent:'center',alignItems:'center'}}>
+                        <Text style={{fontWeight:'bold',color:'#fff',fontSize:16}}>{I18n.t('xong')}</Text>
                     </TouchableOpacity>
                 </View>
         </View>
@@ -73,7 +73,7 @@ export default (props) => {
 }
 const styles = StyleSheet.create({
     styleTextInput:{
-        paddingHorizontal:5,paddingVertical:10,backgroundColor:'#bbbbbb',color:'#36a3f7',fontWeight:'bold',marginHorizontal:10,borderRadius:10
+        paddingHorizontal:10,paddingVertical:15,backgroundColor:'#f2f2f2',color:'#36a3f7',fontWeight:'bold',marginHorizontal:10,borderRadius:10
     },
     styleTitle:{
         paddingHorizontal:10,paddingVertical:10
