@@ -82,7 +82,7 @@ export default (props) => {
             }
             console.log("clickUpload params ", params);
 
-            new HTTPService().setPath(ApiPath.ORDERS, false).POST(params).then(async order => {
+            new HTTPService().setPath(ApiPath.ORDERS).POST(params).then(async order => {
                 console.log("clickUpload order ", order);
                 if (order) {
                     dataManager.sentNotification(jsonContent.RoomName, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
@@ -95,10 +95,11 @@ export default (props) => {
                     }
                     dataManager.deleteRow(SchemaName.ORDERS_OFFLINE, element.Id);
                     updateSuccess++;
-                    dialogManager.hiddenLoading()
                 }
+                dialogManager.hiddenLoading()
                 getData();
-            }).catch(err => {
+            })
+            .catch(err => {
                 console.log("clickUpload err ", err);
                 dialogManager.hiddenLoading()
             });

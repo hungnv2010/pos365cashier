@@ -60,7 +60,7 @@ export class HTTPService {
             headers: headers,
             withCredentials: true,
         }).then(this.extractData).catch((e) => {
-            let mes = e.response.data && e.response.data.ResponseStatus && e.response.data.ResponseStatus.Message ? e.response.data.ResponseStatus.Messagereplace(/<strong>/g, "").replace(/<\/strong>/g, "") : "";
+            let mes = e && e.response && e.response.data && e.response.data.ResponseStatus && e.response.data.ResponseStatus.Message ? e.response.data.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, "") : "";
             this.error(mes);
             console.log("GET err ", e);
         })
@@ -80,8 +80,8 @@ export class HTTPService {
             // timeout: 2000,
             // timeoutErrorMessage:"thời gian dành cho bạn đã hết"
         }).then(this.extractData).catch((e) => {
-            console.log("e.response.data ", e.response.data);
-            let mes = e.response.data && e.response.data.ResponseStatus && e.response.data.ResponseStatus.Message ? e.response.data.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, "") : "";
+            console.log("e ", e);
+            let mes = e && e.response && e.response.data && e.response.data.ResponseStatus && e.response.data.ResponseStatus.Message ? e.response.data.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, "") : "";
             this.error(mes);
             console.log("GET err ", e);
         })
