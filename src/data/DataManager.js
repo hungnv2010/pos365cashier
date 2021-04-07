@@ -414,7 +414,6 @@ class DataManager {
             }
         });
         serverEvent.JsonContent = JSON.stringify(cloneJsoncontent)
-        delete serverEvent.Timestamp
         this.subjectUpdateServerEvent.next(serverEvent)
     }
 
@@ -432,7 +431,6 @@ class DataManager {
             }
         });
         serverEvent.JsonContent = JSON.stringify(cloneJsoncontent)
-        delete serverEvent.Timestamp
         await realmStore.insertServerEvent(serverEvent, FromServer)
         if (isFNB) {
             signalRManager.sendMessageServerEvent(serverEvent, FromServer)
