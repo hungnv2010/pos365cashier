@@ -12,6 +12,7 @@ import colors from '../../theme/Colors';
 import { Images } from '../../theme';
 import DetailCustomerGroup from './DetailCustomerGroup';
 import { ScreenList } from '../../common/ScreenList';
+import moment from 'moment';
 
 
 export default (props) => {
@@ -39,6 +40,7 @@ export default (props) => {
             let customer = await new HTTPService().setPath(ApiPath.SYNC_PARTNERS).GET()
             console.log('getListGroup res', allList);
             if (allList) {
+                allList = allList.sort((a, b) => moment(b.CreatedDate) - moment(a.CreatedDate))
                 if (customer && customer.Data && customer.Data.length > 0) {
                     allList.forEach(element => {
                         element.totalMember = 0
@@ -92,9 +94,9 @@ export default (props) => {
                         <Text
                             numberOfLines={1}
                             style={{ fontSize: 15, fontWeight: "bold", color: colors.colorLightBlue }}>{item.Name}</Text>
-                        <Text style={{ paddingVertical: 10, color:"grey" }}>{item.totalMember} {I18n.t('thanh_vien')}</Text>
+                        <Text style={{ paddingVertical: 10, color: "grey" }}>{item.totalMember} {I18n.t('khach_hang')}</Text>
                     </View>
-                 
+
                 </View>
             </TouchableOpacity>
         )

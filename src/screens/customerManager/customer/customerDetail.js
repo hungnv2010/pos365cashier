@@ -261,10 +261,10 @@ export default (props) => {
                     </ScrollView>
                     <View style={{ flexDirection: "row", paddingVertical: 15, justifyContent: "flex-end" }}>
                         <TouchableOpacity onPress={onClickCancelGroupName} style={{ paddingHorizontal: 20 }}>
-                            <Text style={{ fontSize: 16, color: "red", fontWeight: "bold" }}>CANCEL</Text>
+                            <Text style={{ textTransform: "uppercase", fontSize: 16, color: "red", fontWeight: "bold" }}>{I18n.t('huy')}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={onClickOkGroupName} style={{ paddingHorizontal: 20 }}>
-                            <Text style={{ fontSize: 16, color: colors.colorLightBlue, fontWeight: "bold" }}>OK</Text>
+                            <Text style={{ textTransform: "uppercase", fontSize: 16, color: colors.colorLightBlue, fontWeight: "bold" }}>{I18n.t('chon')}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -316,9 +316,11 @@ export default (props) => {
             return
         }
         let PartnerGroupMembers = []
+        let selectedPartnerGroups = []
         listGroup.forEach(item => {
             if (item.status) {
                 PartnerGroupMembers.push({ GroupId: item.Id })
+                selectedPartnerGroups.push(item.Id)
             }
         })
         let params = {
@@ -326,6 +328,7 @@ export default (props) => {
             ComparePoint: 0,
             Debt: customerDetail.TotalDebt,
             Partner: {
+                Type: 1,
                 Code: customerDetail.Code,
                 Name: customerDetail.Name,
                 Phone: customerDetail.Phone,
@@ -337,6 +340,7 @@ export default (props) => {
                 Province: customerDetail.Province,
                 Point: customerDetail.Point,
                 Description: customerDetail.Description,
+                selectedPartnerGroups: selectedPartnerGroups
             }
         }
         if (props.customerDetail.Id == 0) {
@@ -345,11 +349,7 @@ export default (props) => {
             new HTTPService().setPath(ApiPath.CUSTOMER).POST(params)
                 .then(res => {
                     console.log('onClickApply res', res);
-                    if (res && res.ResponseStatus && res.ResponseStatus.Message) {
-                        dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
-                            dialogManager.destroy();
-                        }, null, null, I18n.t('dong'))
-                    } else {
+                    if (res) {
                         props.handleSuccess('them')
                         resetCustomer()
                     }
@@ -361,7 +361,7 @@ export default (props) => {
                 })
         } else {
             console.log('update');
-            params.Partner = { ...customerDetail }
+            params.Partner.Id = customerDetail.Id
             dialogManager.showLoading()
             new HTTPService().setPath(ApiPath.CUSTOMER).POST(params)
                 .then(res => {
