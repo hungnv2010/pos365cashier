@@ -59,51 +59,57 @@ export default (props) => {
         let updateSuccess = 0;
         let updateError = 0;
         let serverEvents = await realmStore.queryServerEvents()
-        dataList.forEach((element, index) => {
-            dialogManager.showLoading();
-            let jsonContent = JSON.parse(element.Orders)
-            jsonContent.AccountId = null;
-            jsonContent.Code = element.Id;
-            let params = {
-                QrCodeEnable: vendorSession.Settings.QrCodeEnable,
-                MerchantCode: vendorSession.Settings.MerchantCode,
-                MerchantName: vendorSession.Settings.MerchantName,
-                DontSetTime: true,
-                ExcessCashType: 0,
+        let net = await NetInfo.fetch();
+        if (net.isConnected == true && net.isInternetReachable == true) {
+            dataList.forEach((element, index) => {
+                dialogManager.showLoading();
+                let jsonContent = JSON.parse(element.Orders)
+                jsonContent.AccountId = null;
+                jsonContent.Code = element.Id;
+                let params = {
+                    QrCodeEnable: vendorSession.Settings.QrCodeEnable,
+                    MerchantCode: vendorSession.Settings.MerchantCode,
+                    MerchantName: vendorSession.Settings.MerchantName,
+                    DontSetTime: true,
+                    ExcessCashType: 0,
 
-                Order: jsonContent,
-            };
+                    Order: jsonContent,
+                };
 
-            if (!isFNB) {
-                params.DeliveryBy = null;//by retain
-                params.ShippingCost = 0;//by retain
-                params.LadingCode = "";//by retain
-                jsonContent.RoomId = null
-            }
-            console.log("clickUpload params ", params);
-
-            new HTTPService().setPath(ApiPath.ORDERS).POST(params).then(async order => {
-                console.log("clickUpload order ", order);
-                if (order) {
-                    dataManager.sentNotification(jsonContent.RoomName, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
-                    let row_key = `${jsonContent.RoomId}_${jsonContent.Pos}`
-                    let currentServerEvent = serverEvents.filtered(`RowKey == '${row_key}'`)[0]
-                    if (currentServerEvent) {
-                        let serverEvent = JSON.parse(JSON.stringify(currentServerEvent));
-                        dataManager.paymentSetServerEvent(serverEvent, {});
-                        dataManager.updateServerEventNow(serverEvent)
-                    }
-                    dataManager.deleteRow(SchemaName.ORDERS_OFFLINE, element.Id);
-                    updateSuccess++;
+                if (!isFNB) {
+                    params.DeliveryBy = null;//by retain
+                    params.ShippingCost = 0;//by retain
+                    params.LadingCode = "";//by retain
+                    jsonContent.RoomId = null
                 }
-                dialogManager.hiddenLoading()
-                getData();
-            })
-            .catch(err => {
-                console.log("clickUpload err ", err);
-                dialogManager.hiddenLoading()
+                console.log("clickUpload params ", params);
+                new HTTPService().setPath(ApiPath.ORDERS).POST(params).then(async order => {
+                    console.log("clickUpload order ", order);
+                    if (order) {
+                        dataManager.sentNotification(jsonContent.RoomName, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
+                        let row_key = `${jsonContent.RoomId}_${jsonContent.Pos}`
+                        let currentServerEvent = serverEvents.filtered(`RowKey == '${row_key}'`)[0]
+                        if (currentServerEvent) {
+                            let serverEvent = JSON.parse(JSON.stringify(currentServerEvent));
+                            dataManager.paymentSetServerEvent(serverEvent, {});
+                            dataManager.updateServerEventNow(serverEvent)
+                        }
+                        dataManager.deleteRow(SchemaName.ORDERS_OFFLINE, element.Id);
+                        updateSuccess++;
+                    }
+                    dialogManager.hiddenLoading()
+                    getData();
+                })
+                    .catch(err => {
+                        console.log("clickUpload err ", err);
+                        dialogManager.hiddenLoading()
+                    });
             });
-        });
+        } else {
+            dialogManager.showPopupOneButton(I18n.t('loi_ket_noi_mang'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
+        }
 
     }
 
@@ -146,7 +152,7 @@ export default (props) => {
                                     </View>
                                     <View style={styles.right}>
                                         <Text style={{ color: Colors.colorchinh }}>{currencyToString(JSON.parse(item.Orders).Total)}</Text>
-                                        <Text style={{ marginTop: 10 }}>{dateUTCToDate(new Date(JSON.parse(item.Orders).PurchaseDate))}</Text>
+                                        <Text style={{ marginTop: 10 }}>{dateUTCToDate(JSON.parse(item.Orders).PurchaseDate ? new Date(JSON.parse(item.Orders).PurchaseDate) : new Date())}</Text>
                                     </View>
                                 </TouchableOpacity>)
                         })
