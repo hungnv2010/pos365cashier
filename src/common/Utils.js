@@ -161,6 +161,17 @@ export const change_alias = (alias) => {
   str = str.trim();
   return str;
 }
+
+export const change_search = (text) =>{
+  var arr = []
+  var str = ""
+  arr = text.split(" ")
+  arr.forEach(el=>{
+    str = str + el.slice(0,1)
+  })
+  return str.toUpperCase()
+}
+
 export const change_quantity = (value) =>{
   var str = value
   str = str.replace(/,|./g,".");
