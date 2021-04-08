@@ -25,7 +25,7 @@ import { ApiPath } from '../../../../data/services/ApiPath';
 var Sound = require('react-native-sound');
 import moment from 'moment';
 import realmStore from '../../../../data/realm/RealmStore';
-
+import NetInfo from "@react-native-community/netinfo";
 
 const TYPE_MODAL = {
     DETAIL: 0,
@@ -146,7 +146,7 @@ export default (props) => {
         }
     }
 
-    const onClickQuickPayment = () => {
+    const onClickQuickPayment = async () => {
         console.log('onClickQuickPayment', props.jsonContent);
         let json = props.jsonContent
         let total = json && json.Total ? json.Total : 0
@@ -166,6 +166,7 @@ export default (props) => {
         json.Status = 2;
         json.SyncStatus = 0;
         json.AccountId = listMethod[0].Id;
+        json.PurchaseDate = moment().utc().format("YYYY-MM-DD[T]HH:mm:ss.SS[Z]");
         let params = {
             QrCodeEnable: vendorSession.Settings.QrCodeEnable,
             MerchantCode: vendorSession.Settings.MerchantCode,
@@ -186,27 +187,31 @@ export default (props) => {
         params.Order = json;
 
         console.log("onClickPay params ", params);
-        dialogManager.showLoading();
-        new HTTPService().setPath(ApiPath.ORDERS, false).POST(params).then(async order => {
-            console.log("onClickPay order ", order);
-            if (order) {
-                dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(json.Total))
+
+        let net = await NetInfo.fetch();
+        if (net.isConnected == true && net.isInternetReachable == true) {
+            dialogManager.showLoading();
+            new HTTPService().setPath(ApiPath.ORDERS).POST(params).then(async order => {
+                console.log("onClickPay order ", order);
                 dialogManager.hiddenLoading()
+                if (order) {
+                    dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(json.Total))
+                    await printAfterPayment(order.Code)
+                    updateServerEvent()
 
-                await printAfterPayment(order.Code)
-
-                updateServerEvent()
-
-                if (order.ResponseStatus && order.ResponseStatus.Message && order.ResponseStatus.Message != "") {
-                    dialogManager.showPopupOneButton(order.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, ""))
+                    if (order.ResponseStatus && order.ResponseStatus.Message && order.ResponseStatus.Message != "") {
+                        dialogManager.showPopupOneButton(order.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, ""))
+                    }
+                } else {
+                    onError(json)
                 }
-            } else {
-                onError(json)
-            }
-        }).catch(err => {
-            console.log("onClickPay err ", err);
+            }, err => {
+                dialogManager.hiddenLoading()
+                console.log("onClickPay err== ", err);
+            })
+        } else {
             onError(json)
-        });
+        }
     }
 
     const onError = (json) => {

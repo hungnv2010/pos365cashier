@@ -42,7 +42,7 @@ export default (props) => {
     });
     let categoryTmp = []
     const getData = async () => {
-        productTmp.current = await (await realmStore.queryProducts()).filtered(`TRUEPREDICATE SORT(Id DESC) DISTINCT(Id)`)
+        productTmp.current = (await realmStore.queryProducts()) //.filtered(`TRUEPREDICATE SORT(Id DESC) DISTINCT(Id)`)
         console.log("product", productTmp);
         setListProduct(productTmp.current)
         categoryTmp = await realmStore.queryCategories()

@@ -16,6 +16,7 @@ import { Constant } from '../../../common/Constant';
 import QRCode from 'react-native-qrcode-svg';
 import { ApiPath } from '../../../data/services/ApiPath';
 import dataManager from '../../../data/DataManager';
+import NetInfo from "@react-native-community/netinfo";
 var Sound = require('react-native-sound');
 const TYPE_MODAL = { FILTER_ACCOUNT: "FILTER_ACCOUNT", QRCODE: "QRCODE" }
 
@@ -160,7 +161,7 @@ export default (props) => {
         onClickPay();
     }
 
-    const onClickPay = () => {
+    const onClickPay = async () => {
         console.log("onClickPay jsonContent ", dataJsonContent);
         let json = { ...dataJsonContent };
         let MoreAttributes = json.MoreAttributes ? (typeof (json.MoreAttributes) == 'string' ? JSON.parse(json.MoreAttributes) : json.MoreAttributes) : {}
@@ -189,31 +190,36 @@ export default (props) => {
         }
         params.Order = json;
         console.log("onClickPay params ", params);
-        dialogManager.showLoading();
-        new HTTPService().setPath(ApiPath.ORDERS, false).POST(params).then(async order => {
-            console.log("onClickPay order ", order);
-            if (order) {
-                dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(json.Total))
+        let net = await NetInfo.fetch();
+        if (net.isConnected == true && net.isInternetReachable == true) {
+            dialogManager.showLoading();
+            new HTTPService().setPath(ApiPath.ORDERS).POST(params).then(async order => {
+                console.log("onClickPay order ", order);
                 dialogManager.hiddenLoading()
-                realmStore.deleteQRCode(dataPaymentPending.Id);
-                if (settingObject.current.am_bao_thanh_toan == true)
-                    playSound()
-                await printAfterPayment(json, order.Code)
-                if (order.ResponseStatus && order.ResponseStatus.Message && order.ResponseStatus.Message != "") {
-                    dialogManager.showPopupOneButton(order.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, ""))
+                if (order) {
+                    dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(json.Total))
+                    realmStore.deleteQRCode(dataPaymentPending.Id);
+                    if (settingObject.current.am_bao_thanh_toan == true)
+                        playSound()
+                    await printAfterPayment(json, order.Code)
+                    if (order.ResponseStatus && order.ResponseStatus.Message && order.ResponseStatus.Message != "") {
+                        dialogManager.showPopupOneButton(order.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, ""))
+                    }
+                    setTimeout(() => {
+                        // if (!isFNB)
+                        //     props.route.params.onCallBack(1, json)
+                        props.navigation.pop()
+                    }, 500);
+                } else {
+                    onError(json)
                 }
-                setTimeout(() => {
-                    // if (!isFNB)
-                    //     props.route.params.onCallBack(1, json)
-                    props.navigation.pop()
-                }, 500);
-            } else {
-                onError(json)
-            }
-        }).catch(err => {
-            console.log("onClickPay err ", err);
+            }, err => {
+                dialogManager.hiddenLoading()
+                console.log("onClickPay err== ", err);
+            })
+        } else {
             onError(json)
-        });
+        }
     }
 
     const onError = (json) => {
