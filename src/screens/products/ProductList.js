@@ -12,7 +12,7 @@ import dataManager from '../../data/DataManager';
 import { useSelector } from 'react-redux';
 import { Constant } from '../../common/Constant';
 import { FlatList, TextInput } from 'react-native-gesture-handler';
-import { currencyToString, dateToString, momentToStringDateLocal, dateToStringFormatUTC, change_alias } from '../../common/Utils';
+import { currencyToString, dateToString, momentToStringDateLocal, dateToStringFormatUTC, change_alias, change_search } from '../../common/Utils';
 import ToolBarNoteBook from '../../components/toolbar/ToolBarNoteBook';
 import ProductDetail from '../../screens/products/ProductDetail'
 import dialogManager from '../../components/dialog/DialogManager';
@@ -30,7 +30,6 @@ export default (props) => {
     const [textSearch, setTextSearch] = useState('')
     const debouncedVal = useDebounce(textSearch)
     const [qrScan, setQrScan] = useState()
-    const [pos, setPos] = useState(0)
     const productTmp = useRef([])
     useEffect(() => {
         dialogManager.showLoading()
@@ -166,7 +165,7 @@ export default (props) => {
         dialogManager.showLoading()
         console.log("input", input);
         if (input != '') {
-            setListProduct(productTmp.current.filter(item => change_alias(item.Name).indexOf(change_alias(input)) > -1))
+            setListProduct(productTmp.current.filter(item => change_alias(item.Name).indexOf(change_alias(input)) > -1 || change_alias(change_search(item.Name)).indexOf(change_alias(input)) > -1))
             dialogManager.hiddenLoading()
         } else {
             setListProduct(productTmp.current)

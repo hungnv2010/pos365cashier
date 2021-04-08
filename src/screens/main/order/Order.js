@@ -168,7 +168,7 @@ export default (props) => {
                     let RoomMoment = ""
                     let IsActive = false
                     listFiters.forEach(elm => {
-                        let JsonContentJS = JSON.parse(elm.JsonContent)
+                        let JsonContentJS = elm.JsonContent ? JSON.parse(elm.JsonContent) : {}
                         let totalPoision = JsonContentJS.Total ? JsonContentJS.Total : 0
                         Total += totalPoision
                         if (JsonContentJS.ActiveDate) {

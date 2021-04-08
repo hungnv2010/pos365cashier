@@ -3,6 +3,7 @@ import { Image, View, Text, TouchableOpacity, TextInput, StyleSheet, FlatList } 
 import { currencyToString, dateToString } from '../../common/Utils';
 import I18n from "../../common/language/i18n";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import colors from '../../theme/Colors';
 
 
 export default (props) => {
@@ -75,7 +76,7 @@ const styles = StyleSheet.create({
         padding: 10
     },
     styleButton: {
-        backgroundColor: '#1E90FF',
+        backgroundColor: colors.colorLightBlue,
         borderRadius: 16, marginLeft: 10, marginRight: 10, marginBottom: 20, marginTop: 10
     },
     styleTextInput: {
