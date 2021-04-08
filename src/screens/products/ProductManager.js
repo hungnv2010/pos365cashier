@@ -34,10 +34,10 @@ export default (props) => {
                     <Image style={styles.iconButton} source={Images.ic_danhsachhanghoa} />
                     <Text style={styles.textButton}>{I18n.t('danh_sach_hang_hoa')}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => onClickNavigation(ScreenList.ListExtraTopping)}>
+                {/* <TouchableOpacity style={styles.button} onPress={() => onClickNavigation(ScreenList.ListExtraTopping)}>
                     <Image style={styles.iconButton} source={Images.ic_danhsachkhachhang} />
                     <Text style={styles.textButton}>{I18n.t('thiet_lap_extra_topping')}</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </View>
             <Snackbar
                 duration={1500}

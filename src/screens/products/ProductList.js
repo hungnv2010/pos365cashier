@@ -18,6 +18,7 @@ import ProductDetail from '../../screens/products/ProductDetail'
 import dialogManager from '../../components/dialog/DialogManager';
 import CustomerToolBar from '../../screens/customerManager/customer/CustomerToolBar';
 import useDebounce from '../../customHook/useDebounce';
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default (props) => {
     const isReLoad = useRef(false);
@@ -39,10 +40,9 @@ export default (props) => {
     const deviceType = useSelector(state => {
         return state.Common.deviceType
     });
-    // let productTmp = []
     let categoryTmp = []
     const getData = async () => {
-        productTmp.current = await realmStore.queryProducts()
+        productTmp.current = await (await realmStore.queryProducts()).filtered(`TRUEPREDICATE SORT(Id DESC) DISTINCT(Id)`)
         console.log("product", productTmp);
         setListProduct(productTmp.current)
         categoryTmp = await realmStore.queryCategories()
@@ -70,7 +70,7 @@ export default (props) => {
         if (deviceType == Constant.PHONE) {
             props.navigation.navigate(ScreenList.ProductDetail, { product: itemProduct.current, onCallBack: handleSuccess, })
         } else {
-            setItProduct(itemProduct.current)
+            setItProduct(el)
         }
     }
     const handleSuccess = async (type1, value, data) => {
@@ -190,6 +190,7 @@ export default (props) => {
             <View style={{ flex: 1, flexDirection: 'row' }}>
                 <View style={{ backgroundColor: '#F5F5F5', flexDirection: 'column', flex: 1 }}>
                     <View style={{ backgroundColor: "#FFDEAD", marginTop: 5, borderRadius: 18, marginLeft: 5, marginRight: 5 }}>
+                        
                         {category.length > 0 ?
                             <FlatList
                                 data={category}
@@ -207,6 +208,7 @@ export default (props) => {
                             keyExtractor={(item, index) => index.toString()}
                             style = {{}}
                         /> : null}
+                       
                     <FAB
                         style={styles.fab}
                         icon='plus'
