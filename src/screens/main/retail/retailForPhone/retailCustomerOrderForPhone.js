@@ -24,7 +24,7 @@ import { getFileDuLieuString } from '../../../../data/fileStore/FileStorage';
 import { Constant } from '../../../../common/Constant';
 import moment from 'moment';
 var Sound = require('react-native-sound');
-
+import NetInfo from "@react-native-community/netinfo";
 
 export default (props) => {
 
@@ -672,6 +672,7 @@ export default (props) => {
         json.Status = 2;
         json.SyncStatus = 0;
         json.AccountId = listMethod[0].Id;
+        json.PurchaseDate = moment().utc().format("YYYY-MM-DD[T]HH:mm:ss.SS[Z]");
         let params = {
             QrCodeEnable: vendorSession.Settings.QrCodeEnable,
             MerchantCode: vendorSession.Settings.MerchantCode,
@@ -692,28 +693,33 @@ export default (props) => {
         params.Order = json;
 
         console.log("onClickPay params ", params);
-        dialogManager.showLoading();
-        new HTTPService().setPath(ApiPath.ORDERS, false).POST(params).then(async order => {
-            console.log("onClickPay order ", order);
-            if (order) {
-                dialogManager.hiddenLoading()
+        let net = await NetInfo.fetch();
+        if (net.isConnected == true && net.isInternetReachable == true) {
+            dialogManager.showLoading();
+            new HTTPService().setPath(ApiPath.ORDERS).POST(params).then(async order => {
+                console.log("onClickPay order ", order);
+                if (order) {
+                    dialogManager.hiddenLoading()
 
-                if (order.ResponseStatus && order.ResponseStatus.Message && order.ResponseStatus.Message != "") {
-                    dialogManager.showPopupOneButton(order.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, ""))
-                    return
+                    if (order.ResponseStatus && order.ResponseStatus.Message && order.ResponseStatus.Message != "") {
+                        dialogManager.showPopupOneButton(order.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, ""))
+                        return
+                    }
+                    await printAfterPayment(order.Code)
+
+                    updateServerEventForPayment()
+                    dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(json.Total))
+
+                } else {
+                    onError(json)
                 }
-                await printAfterPayment(order.Code)
-
-                updateServerEventForPayment()
-                dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(json.Total))
-
-            } else {
-                onError(json)
-            }
-        }).catch(err => {
-            console.log("onClickPay err ", err);
+            }, err => {
+                dialogManager.hiddenLoading()
+                console.log("onClickPay err== ", err);
+            })
+        } else {
             onError(json)
-        });
+        }
     }
 
 

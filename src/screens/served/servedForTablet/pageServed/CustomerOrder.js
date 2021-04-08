@@ -25,6 +25,7 @@ import { useDispatch } from 'react-redux';
 import colors from '../../../../theme/Colors';
 import realmStore from '../../../../data/realm/RealmStore';
 import moment from 'moment';
+import NetInfo from "@react-native-community/netinfo";
 var Sound = require('react-native-sound');
 
 
@@ -485,7 +486,7 @@ const CustomerOrder = (props) => {
     }
 
 
-    const onClickQuickPayment = () => {
+    const onClickQuickPayment = async () => {
         console.log('onClickQuickPayment', props.jsonContent);
         // let newDate = new Date().getTime();
         // if (timeClickPrevious + 2000 < newDate) {
@@ -539,6 +540,7 @@ const CustomerOrder = (props) => {
         json.AmountReceived = total
         json.Status = 2;
         json.SyncStatus = 0;
+        json.PurchaseDate = moment().utc().format("YYYY-MM-DD[T]HH:mm:ss.SS[Z]");
         // if (noteInfo != '') {
         //     json.Description = noteInfo;
         // }
@@ -567,33 +569,35 @@ const CustomerOrder = (props) => {
         params.Order = json;
 
         console.log("onClickPay params ", params);
-        dialogManager.showLoading();
-        new HTTPService().setPath(ApiPath.ORDERS, false).POST(params).then(async order => {
-            console.log("onClickPay order ", order);
-            if (order) {
-                dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(json.Total))
+        let net = await NetInfo.fetch();
+        if (net.isConnected == true && net.isInternetReachable == true) {
+            dialogManager.showLoading();
+            new HTTPService().setPath(ApiPath.ORDERS).POST(params).then(async order => {
+                console.log("onClickPay order ", order);
                 dialogManager.hiddenLoading()
-
-                await printAfterPayment(order.Code)
-
-                updateServerEvent()
-
-                if (order.ResponseStatus && order.ResponseStatus.Message && order.ResponseStatus.Message != "") {
-                    dialogManager.showPopupOneButton(order.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, ""))
+                if (order) {
+                    dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(json.Total))
+                    await printAfterPayment(order.Code)
+                    updateServerEvent()
+                    if (order.ResponseStatus && order.ResponseStatus.Message && order.ResponseStatus.Message != "") {
+                        dialogManager.showPopupOneButton(order.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, ""))
+                    }
+                    // if (order.QRCode != "") {
+                    //     qrCode.current = order.QRCode
+                    //     typeModal.current = TYPE_MODAL.QRCODE
+                    //     setShowModal(true)
+                    //     handlerQRCode(order)
+                    // }
+                } else {
+                    onError(json)
                 }
-                // if (order.QRCode != "") {
-                //     qrCode.current = order.QRCode
-                //     typeModal.current = TYPE_MODAL.QRCODE
-                //     setShowModal(true)
-                //     handlerQRCode(order)
-                // }
-            } else {
-                onError(json)
-            }
-        }).catch(err => {
-            console.log("onClickPay err ", err);
+            }, err => {
+                dialogManager.hiddenLoading()
+                console.log("onClickPay err== ", err);
+            })
+        } else {
             onError(json)
-        });
+        }
     }
 
     const onError = (json) => {

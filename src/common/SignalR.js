@@ -117,7 +117,7 @@ class SignalRManager {
             for (let index = 0; index < listDifferentFromLocal.length; index++) {
                 // this.sendMessageServerEvent(listDifferentFromLocal[index])
                 let serverEvent = listDifferentFromLocal[index]
-                // delete serverEvent.Timestamp
+                delete serverEvent.Timestamp
                 this.sendMessage(serverEvent)
 
             }
@@ -215,7 +215,7 @@ class SignalRManager {
 
     sendMessageServerEventNow = (serverEvent) => {
         console.log('sendMessageServerEventNow serverEvent ');
-        // delete serverEvent.Timestamp
+        delete serverEvent.Timestamp
         try {
             serverEvent.JsonContent = encodeBase64(serverEvent.JsonContent)
             serverEvent.Compress = true
