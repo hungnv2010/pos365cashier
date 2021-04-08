@@ -369,12 +369,8 @@ export default (props) => {
             new HTTPService().setPath(ApiPath.CUSTOMER).POST(params)
                 .then(res => {
                     console.log('onClickDone res', res);
-                    if (res && res.ResponseStatus && res.ResponseStatus.Message) {
-                        dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
-                            dialogManager.destroy();
-                        }, null, null, I18n.t('dong'))
-                    } else {
-                        props.route.params.onCallBack('sua')
+                    if (res) {
+                        props.route.params.onCallBack('them')
                         props.navigation.pop()
                     }
                     dialogManager.hiddenLoading()
