@@ -171,8 +171,8 @@ const Served = (props) => {
                 res.PriceList.forEach((priceBook) => {
                     if (priceBook.ProductId == product.ProductId) {
                         product.DiscountRatio = 0.0
-                        if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
-                        if (!priceBook.Price) priceBook.Price = product.UnitPrice
+                        if (!'PriceLargeUnit' in priceBook) priceBook.PriceLargeUnit = product.PriceLargeUnit
+                        if (!'Price' in priceBook) priceBook.Price = product.UnitPrice
                         let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price
                         product.Price = newBasePrice + product.TotalTopping
                     }
@@ -435,8 +435,8 @@ const Served = (props) => {
                                             // }
                                             product.DiscountRatio = 0.0
                                             product.Discount = 0
-                                            if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
-                                            if (!priceBook.Price) priceBook.Price = product.UnitPrice
+                                            if (!'PriceLargeUnit' in priceBook) priceBook.PriceLargeUnit = product.PriceLargeUnit
+                                            if (!'Price' in priceBook) priceBook.Price = product.UnitPrice
                                             let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price
                                             console.log('newBasePrice', newBasePrice);
                                             product.Price = newBasePrice + product.TotalTopping
