@@ -664,35 +664,59 @@ export default (props) => {
         jsonContentPayment.current = json;
         console.log("onClickPay params== ", params);
 
-        dialogManager.showLoading();
-        new HTTPService().setPath(ApiPath.ORDERS).POST(params).then(async order => {
-            console.log("onClickPay order== ", order);
-            dialogManager.hiddenLoading()
-            if (order) {
-                resPayment.current = order;
-                dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
-                
-                if (order.ResponseStatus && order.ResponseStatus.Message && order.ResponseStatus.Message != "") {
-                    dialogManager.showPopupOneButton(order.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, ""))
-                    return;
-                }
-                if (order.QRCode && order.QRCode != "") {
-                    qrCode.current = order.QRCode
-                    typeModal.current = TYPE_MODAL.QRCODE
-                    setShowModal(true)
-                    handlerQRCode(order, json)
-                } else {
-                    await printAfterPayment(order.Code)
-                    updateServerEvent(true)
-                }
-            }
-            // else {
+        if (net.isConnected == true && net.isInternetReachable == true) {
+            // dialogManager.showLoading();
+            // new HTTPService().setPath(ApiPath.ORDERS).POST(params).then(async order => {
+            //     console.log("onClickPay order== ", order);
+            //     dialogManager.hiddenLoading()
+            //     if (order) {
+            //         resPayment.current = order;
+            //         dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
+            //         // if (order.ResponseStatus && order.ResponseStatus.Message && order.ResponseStatus.Message != "") {
+            //         //     dialogManager.showPopupOneButton(order.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, ""))
+            //         //     return;
+            //         // }
+            //         if (order.QRCode && order.QRCode != "") {
+            //             qrCode.current = order.QRCode
+            //             typeModal.current = TYPE_MODAL.QRCODE
+            //             setShowModal(true)
+            //             handlerQRCode(order, json)
+            //         } else {
+            //             await printAfterPayment(order.Code)
+            //             updateServerEvent(true)
+            //         }
+            //     }
+            // }).catch(err => {
+            //     console.log("onClickPay err " + JSON.stringify(err));
             //     onError(json)
-            // }
-        }).catch(err => {
-            console.log("onClickPay err ", err);
+            // });
+
+            dialogManager.showLoading();
+            new HTTPService().setPath(ApiPath.ORDERS).POST(params).then(async order => {
+                console.log("onClickPay order== ", order);
+                dialogManager.hiddenLoading()
+                if (order) {
+                    resPayment.current = order;
+                    dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
+                    if (order.QRCode && order.QRCode != "") {
+                        qrCode.current = order.QRCode
+                        typeModal.current = TYPE_MODAL.QRCODE
+                        setShowModal(true)
+                        handlerQRCode(order, json)
+                    } else {
+                        await printAfterPayment(order.Code)
+                        updateServerEvent(true)
+                    }
+                }
+            }, err => {
+                dialogManager.hiddenLoading()
+                console.log("onClickPay err== ", err);
+            })
+        } else {
             onError(json)
-        });
+        }
+
+
     }
 
     const onError = (json) => {
