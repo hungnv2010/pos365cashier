@@ -4,7 +4,7 @@ const TYPE_NOTIFY = 'notify';
 const TYPE_SALE_HUB = 'SaleHub';
 import { Subject } from 'rxjs';
 import realmStore from '../data/realm/RealmStore'
-import { decodeBase64 } from './Base64'
+import { decodeBase64, encodeBase64 } from './Base64'
 import I18n from '../common/language/i18n'
 import dialogManager from '../components/dialog/DialogManager';
 import NetInfo from "@react-native-community/netinfo";
@@ -117,7 +117,7 @@ class SignalRManager {
             for (let index = 0; index < listDifferentFromLocal.length; index++) {
                 // this.sendMessageServerEvent(listDifferentFromLocal[index])
                 let serverEvent = listDifferentFromLocal[index]
-                delete serverEvent.Timestamp
+                // delete serverEvent.Timestamp
                 this.sendMessage(serverEvent)
 
             }
@@ -140,8 +140,7 @@ class SignalRManager {
                 }
             });
             serverEvent.JsonContent = JSON.stringify(jsonContentObj)
-            delete serverEvent.Timestamp
-            this.sendMessage(serverEvent)
+            this.sendMessageServerEventNow(serverEvent)
         }
         dialogManager.hiddenLoading()
     }
@@ -216,7 +215,13 @@ class SignalRManager {
 
     sendMessageServerEventNow = (serverEvent) => {
         console.log('sendMessageServerEventNow serverEvent ');
-        delete serverEvent.Timestamp
+        // delete serverEvent.Timestamp
+        try {
+            serverEvent.JsonContent = encodeBase64(serverEvent.JsonContent)
+            serverEvent.Compress = true
+        } catch (error) {
+            serverEvent.Compress = false
+        }
         this.sendMessage(serverEvent)
     }
 
@@ -237,8 +242,8 @@ class SignalRManager {
                 .done((response) => {
                     console.log('sendMessage done', response)
                 })
-                .fail(() => {
-                    console.warn('sendMessage fail')
+                .fail((error) => {
+                    console.warn('sendMessage fail ', error)
                     // dialogManager.showPopupOneButton(I18n.t("khong_the_ket_noi_den_may_chu_don_hang_cua_quy_khach_duoc_luu_vao_offline"))
                 });
         } else {

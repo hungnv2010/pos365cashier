@@ -87,7 +87,7 @@ export default forwardRef((props, ref) => {
         }).then(
             uri => {
                 console.log('Snapshot uri', uri, currentHtml.current.html);
-                // setUriImg(uri)
+                setUriImg(uri)
                 Print.printImageFromClient(uri, currentHtml.current.ip, currentHtml.current.size, (b) => {
                     console.log("printImageFromClient b ", b);
                 })
@@ -253,24 +253,24 @@ export default forwardRef((props, ref) => {
         if (currentHtml.current && currentHtml.current.html && currentHtml.current.html != "") {
             setTimeout(() => {
                 clickCapture()
-            }, 100
+            }, 500
             );
         }
     }
 
     const childRef = useRef();
     return (
-        <View style={{ position: "absolute" }}>
+        <View style={{ position: "absolute"}}>
             <View style={{ opacity: 0 }}>
                 <ScrollView>
                     <View
                         ref={childRef}
                         style={{
-                            flex: 1, alignItems: "center"
+                            flex: 1, alignItems: "center", backgroundColor: "#ffffff"
                         }}>
                         <AutoHeightWebView
                             scrollEnabled={false}
-                            style={{ width: deviceType == Constant.PHONE ? (orientation == Constant.PORTRAIT ? Dimensions.get('window').width / 1.5 : Dimensions.get('window').width / 2.5) : (orientation == Constant.PORTRAIT ? Dimensions.get('window').width / 3 : Dimensions.get('window').height / 3) }}
+                            style={{ backgroundColor: "#ffffff", width: deviceType == Constant.PHONE ? (orientation == Constant.PORTRAIT ? Dimensions.get('window').width / 1.5 : Dimensions.get('window').width / 2.5) : (orientation == Constant.PORTRAIT ? Dimensions.get('window').width / 3 : Dimensions.get('window').height / 3) }}
                             // customScript={`document.body.style.background = 'red';`}
                             files={[{
                                 href: 'cssfileaddress',
@@ -286,7 +286,7 @@ export default forwardRef((props, ref) => {
                 </ScrollView>
             </View>
             {/* <TouchableOpacity style={{backgroundColor:"red", padding: 20, flex: 1}} onPress={() => data.callback("ClickHung")}><Text>Click</Text></TouchableOpacity> */}
-            {/* <Image source={{ uri: uriImg ? uriImg : "" }} resizeMode="contain" style={{ position: "absolute", top: 50, width: 100, height: 100, flex: 1 }} /> */}
+            <Image source={{ uri: uriImg ? uriImg : "" }} resizeMode="contain" style={{ position: "absolute", top: 50, width: 100, height: 100, flex: 1 }} />
         </View>
     )
 

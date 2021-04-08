@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useImperativeHandle, forwardRef, useRef } from 'react';
-import { Image, View, FlatList, Modal, Text, TouchableOpacity, TouchableWithoutFeedback, TextInput, NativeEventEmitter, NativeModules } from 'react-native';
+import { Image, View, FlatList, Modal, Text, TouchableOpacity, TouchableWithoutFeedback, TextInput, NativeEventEmitter, NativeModules, Platform, Keyboard } from 'react-native';
 import MainToolBar from '../main/MainToolBar';
 import I18n from '../../common/language/i18n';
 import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
@@ -23,9 +23,20 @@ export default (props) => {
     const [detailGroup, setDetailGroup] = useState({})
     const [listMember, setListMember] = useState([])
     const [showModal, setShowModal] = useState(false)
+    const [marginModal, setMargin] = useState(0)
     const ModifiedBy = useRef()
     const backupDetailGroup = useRef()
 
+
+    useEffect(() => {
+        var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
+        var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        }
+    }, [])
 
     useEffect(() => {
         console.log('detailGroup props', props);
@@ -58,6 +69,15 @@ export default (props) => {
         }
         getListMember()
     }, [detailGroup])
+
+
+    const _keyboardDidHide = () => {
+        setMargin(0)
+    }
+
+    const _keyboardDidShow = () => {
+        setMargin(Metrics.screenWidth / 1.5)
+    }
 
     const renderListMember = (item, index) => {
         return (
@@ -165,11 +185,14 @@ export default (props) => {
                     </View>
                     <View style={{ flexDirection: "row", marginBottom: 20, alignItems: "center" }}>
                         <Text style={{ flex: 3 }}>{I18n.t('chiet_khau')}</Text>
-                        <TextInput
-                            style={{ flex: 7, borderWidth: 0.5, padding: 7, borderRadius: 4, backgroundColor: "#D5D8DC" }}
-                            value={detailGroup.DiscountRatio ? currencyToString(detailGroup.DiscountRatio) : "0"}
-                            onChangeText={text => { onChangeText(text, 2) }}
-                        />
+                        <View style={{ flex: 7, flexDirection: "row" }}>
+                            <TextInput
+                                style={{ flex: 1, borderWidth: 0.5, padding: 7, borderRadius: 4, backgroundColor: "#D5D8DC", }}
+                                value={detailGroup.DiscountRatio ? currencyToString(detailGroup.DiscountRatio) : "0"}
+                                onChangeText={text => { onChangeText(text, 2) }}
+                            />
+                            <Icon name="percent" size={20} style={{ position: "absolute", right: 0, top: 6 }} />
+                        </View>
                     </View>
                     <View style={{ flexDirection: "row", marginBottom: 10, alignItems: "center", }}>
                         <Checkbox.Android
@@ -210,26 +233,26 @@ export default (props) => {
                                     style={{ paddingVertical: 7, paddingHorizontal: 15, backgroundColor: "#e84e40", borderRadius: 5 }}
                                     onPress={onClickDelete}
                                 >
-                                    <Text style={{ color: "white", fontWeight: "bold" }}>{I18n.t('xoa')}</Text>
+                                    <Text style={{ color: "white", fontWeight: "bold", textAlign: "center" }}>{I18n.t('xoa')}</Text>
                                 </TouchableOpacity>
                                 :
                                 null
                         }
-                        <View style={{ flexDirection: "row", }}>
+                        <View style={{ flexDirection: "row", flex: 1 }}>
                             <TouchableOpacity
-                                style={{ marginRight: 20, borderRadius: 5, paddingVertical: 7, paddingHorizontal: 15, backgroundColor: "#ffc107" }}
+                                style={{ marginRight: 20, borderRadius: 5, paddingVertical: 7, paddingHorizontal: 15, backgroundColor: "#ffc107", flex: 1 }}
                                 onPress={onClickDone}
                             >
-                                <Text style={{ color: "white", fontWeight: "bold" }}>{I18n.t('luu')}</Text>
+                                <Text style={{ color: "white", textAlign: "center", fontWeight: "bold" }}>{I18n.t('luu')}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                style={{ borderRadius: 5, paddingVertical: 7, paddingHorizontal: 15, backgroundColor: "#0072bc" }}
+                                style={{ borderRadius: 5, paddingVertical: 7, paddingHorizontal: 15, backgroundColor: "#0072bc", flex: 1 }}
                                 onPress={() => {
                                     setDetailGroup(backupDetailGroup.current)
                                     setShowModal(false)
                                 }}
                             >
-                                <Text style={{ color: "white", fontWeight: "bold" }}>{I18n.t('huy')}</Text>
+                                <Text style={{ color: "white", fontWeight: "bold", textAlign: "center" }}>{I18n.t('huy')}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -303,7 +326,10 @@ export default (props) => {
                         }}></View>
 
                     </TouchableWithoutFeedback>
-                    <View style={{ width: Metrics.screenWidth * 0.8 }}>
+                    <View style={{
+                        width: Metrics.screenWidth * 0.8,
+                        marginBottom: Platform.OS == 'ios' ? marginModal : 0
+                    }}>
                         {renderModal()}
                     </View>
                 </View>
