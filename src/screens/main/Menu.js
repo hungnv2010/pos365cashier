@@ -82,11 +82,11 @@ const LIST_FUNCITION = [
         icon: Images.icon_customer,
         title: "khach_hang"
     },
-    {
-        func: KEY_FUNC.EMPLOYEE_MANAGER,
-        icon: Images.ic_quanlynhanvien,
-        title: "quan_ly_nhan_vien"
-    },
+    // {
+    //     func: KEY_FUNC.EMPLOYEE_MANAGER,
+    //     icon: Images.ic_quanlynhanvien,
+    //     title: "quan_ly_nhan_vien"
+    // },
     {
         func: KEY_FUNC.REPORT_MANAGER,
         icon: Images.ic_baocao,
@@ -410,7 +410,7 @@ const ContentComponent = (props) => {
     const [numberOrderOffline, setNumberOrderOffline] = useState(0);
 
     realmStore.queryOrdersOffline().then(orderOffline => {
-        console.log("Abc orderOffline ", orderOffline.length);
+        console.log("queryOrdersOffline orderOffline ", orderOffline.length);
         setNumberOrderOffline(orderOffline.length)
     })
 

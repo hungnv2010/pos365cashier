@@ -33,10 +33,7 @@ export default (props) => {
         console.log("onChangeTextInput text ===== ", text, props.route);
         if (text == "") {
             text = 0;
-        } else if (text != "" && typeof (text) == 'string') {
-            text = text
-        }
-        else {
+        } else {
             text = text.replace(/,/g, "");
             text = Number(text);
         }
@@ -46,7 +43,7 @@ export default (props) => {
         return (
             <View >
                 <Text style={styles.styleContent}>{I18n.t(item.Name)}</Text>
-                <TextInput style={styles.styleTextInput} keyboardType={typeof(item.Value) == 'number' ? 'numbers-and-punctuation' : 'default'} value={item.Value ? typeof (item.Value) == 'string' ? item.Value : item.Value == 0 ? 0 + '' : currencyToString(item.Value) : null} placeholder={I18n.t(item.Hint)} placeholderTextColor="#808080" onChangeText={(text) => { setInput(onChangeTextInput(text)), item.Value = onChangeTextInput(text); setKey(item.Key) }}></TextInput>
+                <TextInput style={styles.styleTextInput} keyboardType={typeof(item.Value) == 'number' ? 'numbers-and-punctuation' : 'default'} value={item.Value ? typeof (item.Value) == 'string' ? item.Value : currencyToString(item.Value) : null} placeholder={I18n.t(item.Hint)} placeholderTextColor="#808080" onChangeText={(text) => { setInput(item.isNum == true ? onChangeTextInput(text):text); item.Value = item.isNum== true? onChangeTextInput(text) : text ; setKey(item.Key); setList([...list]); }}></TextInput>
             </View>
         )
     }

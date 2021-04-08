@@ -253,24 +253,24 @@ export default forwardRef((props, ref) => {
         if (currentHtml.current && currentHtml.current.html && currentHtml.current.html != "") {
             setTimeout(() => {
                 clickCapture()
-            }, 100
+            }, 500
             );
         }
     }
 
     const childRef = useRef();
     return (
-        <View style={{ position: "absolute" }}>
+        <View style={{ position: "absolute"}}>
             <View style={{ opacity: 0 }}>
                 <ScrollView>
                     <View
                         ref={childRef}
                         style={{
-                            flex: 1, alignItems: "center"
+                            flex: 1, alignItems: "center", backgroundColor: "#ffffff"
                         }}>
                         <AutoHeightWebView
                             scrollEnabled={false}
-                            style={{ width: deviceType == Constant.PHONE ? (orientation == Constant.PORTRAIT ? Dimensions.get('window').width / 1.5 : Dimensions.get('window').width / 2.5) : (orientation == Constant.PORTRAIT ? Dimensions.get('window').width / 3 : Dimensions.get('window').height / 3) }}
+                            style={{ backgroundColor: "#ffffff", width: deviceType == Constant.PHONE ? (orientation == Constant.PORTRAIT ? Dimensions.get('window').width / 1.5 : Dimensions.get('window').width / 2.5) : (orientation == Constant.PORTRAIT ? Dimensions.get('window').width / 3 : Dimensions.get('window').height / 3) }}
                             // customScript={`document.body.style.background = 'red';`}
                             files={[{
                                 href: 'cssfileaddress',
