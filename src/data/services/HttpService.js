@@ -49,19 +49,6 @@ export class HTTPService {
     }
 
     GET(jsonParam, headers = getHeaders(), ) {
-        // let params = jsonParam ? convertJsonToPrameter(jsonParam) : ''
-        // this._path = this._path + params
-        // console.log('GET:', this._path, JSON.stringify(headers));
-        // return axios({
-        //     method: 'get',
-        //     url: this._path,
-        //     headers: headers,
-        //     withCredentials: true,
-        // }).then(this.extractData).catch((e) => {
-        //     console.log("GET err ", e);
-        //     this.handleError(e);
-        // })
-
         let params = jsonParam ? convertJsonToPrameter(jsonParam) : ''
         this._path = this._path + params
         console.log('GET:', this._path, JSON.stringify(headers));
@@ -82,20 +69,6 @@ export class HTTPService {
     POST(jsonParam, headers = getHeaders()) {
         headers['Content-Type'] = 'application/json'
         console.log('POST:', this._path, headers, jsonParam);
-
-        // return axios({
-        //     method: 'post',
-        //     url: this._path,
-        //     headers: headers,
-        //     withCredentials: true,
-        //     data: JSON.stringify(jsonParam),
-        //     // timeout: 2000,
-        //     // timeoutErrorMessage:"thời gian dành cho bạn đã hết"
-        // }).then(this.extractData).catch((e) => {
-        //     console.log("POST err ", e);
-        //     this.handleError(e);
-        // })
-
         return new Promise((resolve, reject) => {
             axios({
                 method: 'post',
@@ -114,15 +87,6 @@ export class HTTPService {
     }
 
     PUT(jsonParam, headers = getHeaders()) {
-        // headers['Content-Type'] = 'application/json'
-        // return axios({
-        //     method: 'put',
-        //     url: this._path,
-        //     headers: headers,
-        //     withCredentials: true,
-        //     data: JSON.stringify(jsonParam)
-        // }).then(this.extractData)
-
         headers['Content-Type'] = 'application/json'
         return new Promise((resolve, reject) => {
             axios({
@@ -140,17 +104,6 @@ export class HTTPService {
     }
 
     DELETE(jsonParam, headers = getHeaders()) {
-        // let params = convertJsonToPrameter(jsonParam)
-        // return axios({
-        //     method: 'delete',
-        //     url: this._path + params,
-        //     headers: headers,
-        //     withCredentials: true,
-        // }).then(this.extractData).catch((e) => {
-        //     console.log("DELETE err ", e);
-        //     this.handleError(e);
-        // })
-
         let params = convertJsonToPrameter(jsonParam)
         return new Promise((resolve, reject) => {
             axios({
@@ -166,8 +119,6 @@ export class HTTPService {
     }
 
     handleError(e, reject) {
-        // let mes = e && e.response && e.response.data && e.response.data.ResponseStatus && e.response.data.ResponseStatus.Message ? e.response.data.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, "") : "";
-        // this.error(mes);
         if (e && e.response && e.response.data) {
             let mes = e.response.data.ResponseStatus && e.response.data.ResponseStatus.Message ? e.response.data.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, "") : "";
             this.error(mes);
@@ -180,7 +131,6 @@ export class HTTPService {
     extractData(response, resolve) {
         console.log("extractData Responses === ", response)
         if (response.status == 200) {
-            // return response.data;
             resolve(response.data)
         }
         else {
@@ -198,10 +148,8 @@ export class HTTPService {
                         }, null, null, I18n.t('dong'))
                 }
             } else if (response.status == 204) {
-                // return { status: 204 };
                 resolve({ status: 204 })
             } else if (response.status == 400) {
-                // return response.data;
                 resolve(response.data)
             }
             else {
@@ -234,9 +182,7 @@ export class HTTPService {
         } else {
             console.log('http err');
         }
-
     }
-
 }
 
 export function convertJsonToPrameter(jsonData) {
