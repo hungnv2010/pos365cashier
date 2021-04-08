@@ -135,6 +135,7 @@ export default (props) => {
     }
 
     const onClickDelete = async () => {
+        // setShowModal(!showModal)
         dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_xoa_nhom_khach_hang'), I18n.t("thong_bao"), res => {
             if (res == 1) {
                 new HTTPService().setPath(`${ApiPath.GROUP_CUSTOMER}/${detailGroup.Id}`).DELETE()
@@ -160,7 +161,9 @@ export default (props) => {
         try {
             let res = await new HTTPService().setPath(ApiPath.GROUP_CUSTOMER).POST(params)
             console.log('onClickDone res', res);
-            if (res) props.route.params._onSelect(true)
+            if (res) {
+                props.route.params._onSelect(true)
+            }
             props.navigation.goBack()
         } catch (error) {
             console.log('onClickDone err', error);
@@ -178,7 +181,7 @@ export default (props) => {
                     <View style={{ flexDirection: "row", marginBottom: 20, alignItems: "center" }}>
                         <Text style={{ flex: 3 }}>{I18n.t('ten_nhom')}</Text>
                         <TextInput
-                            style={{ flex: 7, borderWidth: 0.5, padding: 7, borderRadius: 4, backgroundColor: "#D5D8DC" }}
+                            style={{ flex: 7, borderWidth: 0.5, padding: 7, borderRadius: 4, backgroundColor: "#D5D8DC", color: "black" }}
                             value={detailGroup.Name}
                             onChangeText={text => { onChangeText(text, 1) }}
                         />
@@ -187,7 +190,7 @@ export default (props) => {
                         <Text style={{ flex: 3 }}>{I18n.t('chiet_khau')}</Text>
                         <View style={{ flex: 7, flexDirection: "row" }}>
                             <TextInput
-                                style={{ flex: 1, borderWidth: 0.5, padding: 7, borderRadius: 4, backgroundColor: "#D5D8DC", }}
+                                style={{ flex: 1, borderWidth: 0.5, padding: 7, borderRadius: 4, backgroundColor: "#D5D8DC", color: "black" }}
                                 value={detailGroup.DiscountRatio ? currencyToString(detailGroup.DiscountRatio) : "0"}
                                 onChangeText={text => { onChangeText(text, 2) }}
                             />
@@ -211,7 +214,7 @@ export default (props) => {
                             <Text style={{ marginBottom: 10, marginLeft: 5 }}>{I18n.t('tu')}</Text>
                             <TextInput
                                 editable={detailGroup.AutomaticallyAddMembers === true}
-                                style={{ borderWidth: 0.5, padding: 7, borderRadius: 4, backgroundColor: "#D5D8DC", }}
+                                style={{ borderWidth: 0.5, padding: 7, borderRadius: 4, backgroundColor: "#D5D8DC", color: "black" }}
                                 value={detailGroup.FromRevenue ? currencyToString(detailGroup.FromRevenue) : "0"}
                                 onChangeText={text => { onChangeText(text, 3) }}
                             />
@@ -220,33 +223,23 @@ export default (props) => {
                             <Text style={{ marginBottom: 10, marginLeft: 5 }}>{I18n.t('den')}</Text>
                             <TextInput
                                 editable={detailGroup.AutomaticallyAddMembers === true}
-                                style={{ borderWidth: 0.5, padding: 7, borderRadius: 4, backgroundColor: "#D5D8DC", }}
+                                style={{ borderWidth: 0.5, padding: 7, borderRadius: 4, backgroundColor: "#D5D8DC", color: "black" }}
                                 value={detailGroup.ToRevenue ? currencyToString(detailGroup.ToRevenue) : "0"}
                                 onChangeText={text => { onChangeText(text, 4) }}
                             />
                         </View>
                     </View>
                     <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
-                        {
-                            detailGroup.Id !== 0 ?
-                                <TouchableOpacity
-                                    style={{ paddingVertical: 7, paddingHorizontal: 15, backgroundColor: "#e84e40", borderRadius: 5 }}
-                                    onPress={onClickDelete}
-                                >
-                                    <Text style={{ color: "white", fontWeight: "bold", textAlign: "center" }}>{I18n.t('xoa')}</Text>
-                                </TouchableOpacity>
-                                :
-                                null
-                        }
+                       
                         <View style={{ flexDirection: "row", flex: 1 }}>
                             <TouchableOpacity
-                                style={{ marginRight: 20, borderRadius: 5, paddingVertical: 7, paddingHorizontal: 15, backgroundColor: "#ffc107", flex: 1 }}
+                                style={{ marginRight: 20, borderRadius: 5, paddingVertical: 7, paddingHorizontal: 15, backgroundColor: colors.colorLightBlue, flex: 1 }}
                                 onPress={onClickDone}
                             >
                                 <Text style={{ color: "white", textAlign: "center", fontWeight: "bold" }}>{I18n.t('luu')}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                style={{ borderRadius: 5, paddingVertical: 7, paddingHorizontal: 15, backgroundColor: "#0072bc", flex: 1 }}
+                                style={{ borderRadius: 5, paddingVertical: 7, paddingHorizontal: 15, backgroundColor: "grey", flex: 1 }}
                                 onPress={() => {
                                     setDetailGroup(backupDetailGroup.current)
                                     setShowModal(false)
@@ -267,36 +260,43 @@ export default (props) => {
                 navigation={props.navigation}
                 title={detailGroup.Id !== 0 ? I18n.t('cap_nhat_nhom') : I18n.t('them_moi_nhom')}
             />
-            <View style={{ flex: 2, backgroundColor: "white", }}>
-                <View style={{ flex: 1, backgroundColor: "#f2f2f2", borderRadius: 30, marginHorizontal: 30, marginVertical: 20, alignItems: "center", justifyContent: "center" }}>
-                    <Image style={{ width: 60, height: 60, marginBottom: 20 }} source={Images.ic_nhomkhachhang} />
-                    <Text style={{ fontSize: 20, color: colors.colorLightBlue, fontWeight: "bold" }}>{detailGroup.Name}</Text>
-                </View>
-                <View style={{ flexDirection: "row", margin: 20, alignSelf: "center" }}>
-                    <TouchableOpacity
-                        style={{ flexDirection: "row", marginRight: 15, backgroundColor: "#fde7d2", borderRadius: 10 }}
-                        onPress={() => { setShowModal(true) }}>
-                        <Text style={{ color: colors.colorchinh, padding: 15, fontWeight: "bold" }}>{I18n.t('chinh_sua')}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={{ flexDirection: "row", marginLeft: 15, backgroundColor: "#F7DCDC", borderRadius: 10 }}
-                        onPress={onClickDelete}
-                    >
-                        <Text style={{ color: "#f21e3c", paddingVertical: 15, paddingHorizontal: 30, fontWeight: "bold" }}>{I18n.t('xoa')}</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-            <View style={{ flex: 3, }}>
-                <View style={{ flexDirection: "row", padding: 10, justifyContent: "space-between" }}>
-                    <Text style={{ fontWeight: "bold", color: "#c3c3c3" }}>{I18n.t('thanh_vien_trong_nhom')}</Text>
-                    <Text style={{ fontWeight: "bold", color: "#c3c3c3" }}>{listMember.length}</Text>
-                </View>
-                <FlatList
-                    data={listMember}
-                    renderItem={({ item, index }) => renderListMember(item, index)}
-                    keyExtractor={(item, index) => index.toString()}
-                />
-            </View>
+            {
+                detailGroup.Id == 0 ?
+                    null
+                    :
+                    <>
+                        <View style={{ flex: 2, backgroundColor: "white", }}>
+                            <View style={{ flex: 1, backgroundColor: "#f2f2f2", borderRadius: 30, marginHorizontal: 30, marginVertical: 20, alignItems: "center", justifyContent: "center" }}>
+                                <Image style={{ width: 60, height: 60, marginBottom: 20 }} source={Images.ic_nhomkhachhang} />
+                                <Text style={{ fontSize: 20, color: colors.colorLightBlue, fontWeight: "bold" }}>{detailGroup.Name}</Text>
+                            </View>
+                            <View style={{ flexDirection: "row", margin: 20, alignSelf: "center" }}>
+                                <TouchableOpacity
+                                    style={{ flexDirection: "row", marginRight: 15, backgroundColor: "#fde7d2", borderRadius: 10 }}
+                                    onPress={() => { setShowModal(true) }}>
+                                    <Text style={{ color: colors.colorchinh, padding: 15, fontWeight: "bold" }}>{I18n.t('chinh_sua')}</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={{ flexDirection: "row", marginLeft: 15, backgroundColor: "#F7DCDC", borderRadius: 10 }}
+                                    onPress={onClickDelete}
+                                >
+                                    <Text style={{ color: "#f21e3c", paddingVertical: 15, paddingHorizontal: 30, fontWeight: "bold" }}>{I18n.t('xoa')}</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        <View style={{ flex: 3, }}>
+                            <View style={{ flexDirection: "row", padding: 10, justifyContent: "space-between" }}>
+                                <Text style={{ fontWeight: "bold", color: "#c3c3c3" }}>{I18n.t('thanh_vien_trong_nhom')}</Text>
+                                <Text style={{ fontWeight: "bold", color: "#c3c3c3" }}>{listMember.length}</Text>
+                            </View>
+                            <FlatList
+                                data={listMember}
+                                renderItem={({ item, index }) => renderListMember(item, index)}
+                                keyExtractor={(item, index) => index.toString()}
+                            />
+                        </View>
+                    </>
+            }
 
             <Modal
                 animationType="fade"

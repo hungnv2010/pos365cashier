@@ -84,7 +84,7 @@ export default (props) => {
             //roomGroups.push(RoomAll)
             serverEvents = await realmStore.queryServerEvents()
             console.log('1serverEvents1', JSON.parse(JSON.stringify(serverEvents)));
-            console.log("init: ", JSON.parse(JSON.stringify(rooms, roomGroups, serverEvents)));
+            console.log("init: ", JSON.parse(JSON.stringify(rooms)), JSON.parse(JSON.stringify(roomGroups)), JSON.parse(JSON.stringify(serverEvents)));
 
             let newDatas = insertServerEvent(getDatas(rooms, roomGroups), serverEvents)
             console.log("init: newDatas ", newDatas);
@@ -124,6 +124,7 @@ export default (props) => {
     }
 
     const getDatas = (rooms, roomGroups) => {
+        console.log('getDatas', rooms, 'getdata', roomGroups);
         let newDatas = []
         //newDatas.push(RoomAll)
         if (rooms && rooms.length > 1) rooms.sorted('Position')
@@ -158,11 +159,13 @@ export default (props) => {
     }
 
     const insertServerEvent = (newDatas, serverEvents) => {
+        console.log('insertServerEvent1', newDatas, serverEvents);
         let totalCash = 0
         let totalUse = 0
         newDatas.forEach(data => {
             if (data.Id != undefined) {
                 let listFiters = serverEvents.filtered(`RoomId == ${data.Id}`)
+                console.log('listFiters', listFiters);
                 if (listFiters && listFiters.length > 0) {
                     let Total = 0
                     let RoomMoment = ""

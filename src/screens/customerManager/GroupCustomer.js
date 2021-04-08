@@ -30,6 +30,8 @@ export default (props) => {
     useEffect(() => {
         if (listGroup.length > 0) {
             setDetailGroup(listGroup[0])
+        } else {
+            setDetailGroup({ Id: -1 })
         }
     }, [listGroup])
 
