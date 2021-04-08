@@ -33,7 +33,7 @@ export default (props) => {
     const [defaultType, setDefaultType] = useState(1)
     const itemProduct = useRef({})
     const typeModal = useRef()
-    const [priceConfig, setPriceConfig] = useState()
+    const [priceConfig, setPriceConfig] = useState({})
     const [printer, setPrinter] = useState([])
     const countPrint = useRef(0)
     const currentUserId = useRef()
@@ -170,7 +170,7 @@ export default (props) => {
     }, [props.compositeItemProducts])
 
     useEffect(() => {
-        setPriceConfig({})
+        //setPriceConfig({})
         setPrinter([])
         product.PriceConfig ? product.PriceConfig != null ? setPriceConfig(JSON.parse(product.PriceConfig)) : null : null
         const getCurrentAccount = async () => {
@@ -300,7 +300,7 @@ export default (props) => {
         getFormular()
     }
     const getFormular = () => {
-        if (product.ProductType == 3) {
+        if (product.ProductType == 3 && product.Id >0) {
             new HTTPService().setPath(`api/products/${product.Id}/components`).GET({ Includes: 'Item' }).then((res) => {
                 if (res != null) {
                     console.log("res formular", res);
@@ -615,7 +615,7 @@ export default (props) => {
                         </View>
                         <View style={{ flexDirection: 'row', padding: 10 }}>
                             <TouchableOpacity style={{ flex: 1, marginRight: 10, marginLeft: 10, justifyContent: 'center', borderWidth: 1, alignItems: 'center', borderRadius: 16, padding: 15, backgroundColor: '#f2f2f2', borderColor: defaultType == 3 ? colors.colorLightBlue : null, backgroundColor: defaultType == 3 ? 'white' : '#f2f2f2' }}
-                                onPress={() => { setDefaultType(3), console.log("click", defaultType); }}>
+                                onPress={() => { setDefaultType(3)  }}>
                                 <Text style={[styles.titleButtonOff, { color: defaultType == 3 ? colors.colorLightBlue : null }]}>Combo</Text>
                             </TouchableOpacity>
                         </View>
@@ -657,7 +657,7 @@ export default (props) => {
             <ScrollView ref={scrollRef} >
                 <KeyboardAwareScrollView>
                     <View style={{ justifyContent: 'center', alignItems: 'center', padding: 20 }} >
-                        <TouchableOpacity onPress={()=>onClickTakePhoto()}>
+                        <TouchableOpacity >
                             {product ? product.ProductImages && JSON.parse(product.ProductImages).length > 0 ?
                                 <Image style={{ height: 70, width: 70, borderRadius: 16 }} source={{ uri: JSON.parse(product.ProductImages)[0].ImageURL }} />
                                 : <View style={{ width: 70, height: 70, justifyContent: 'center', alignItems: 'center', borderRadius: 16, backgroundColor: colors.colorchinh }}>

@@ -30,6 +30,7 @@ export default (props) => {
     const [textSearch, setTextSearch] = useState('')
     const debouncedVal = useDebounce(textSearch)
     const [qrScan, setQrScan] = useState()
+    const [pos, setPos] = useState(0)
     const productTmp = useRef([])
     useEffect(() => {
         dialogManager.showLoading()
@@ -120,6 +121,7 @@ export default (props) => {
         console.log("callback data", data);
         setCompositeItemProducts(data)
     }
+    
     const renderProduct = (item, index) => {
         return (
             <TouchableOpacity key={index.toString()} onPress={() => onClickItem(item)} style={{ backgroundColor: '#F5F5F5' }}>
