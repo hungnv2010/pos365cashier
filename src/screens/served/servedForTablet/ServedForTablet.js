@@ -105,8 +105,7 @@ const Served = (props) => {
             let hasServerEvent = JSON.stringify(serverEvent) != "{}"
             currentServerEvent.current = hasServerEvent ? JSON.parse(JSON.stringify(serverEvent[0]))
                 : await dataManager.createSeverEvent(props.route.params.room.Id, position)
-            console.log('currentServerEvent.current', currentServerEvent.current,JSON.parse(currentServerEvent.current.JsonContent));
-            let jsonContentObject = currentServerEvent.current.JsonContent != "{}" && JSON.parse(currentServerEvent.current.JsonContent).OrderDetails.length > 0 ? JSON.parse(currentServerEvent.current.JsonContent) : dataManager.createJsonContent(props.route.params.room.Id, position, moment(), [], props.route.params.room.Name)
+            let jsonContentObject = currentServerEvent.current.JsonContent && currentServerEvent.current.JsonContent != "{}" && JSON.parse(currentServerEvent.current.JsonContent).OrderDetails.length > 0 ? JSON.parse(currentServerEvent.current.JsonContent) : dataManager.createJsonContent(props.route.params.room.Id, position, moment(), [], props.route.params.room.Name)
             currentServerEvent.current.JsonContent = JSON.stringify(jsonContentObject)
             jsonContentObject.OrderDetails = await dataManager.addPromotion(jsonContentObject.OrderDetails);
             jsonContentObject.RoomName = jsonContentObject.RoomName ? jsonContentObject.RoomName : props.route.params.room.Name
@@ -378,7 +377,7 @@ const Served = (props) => {
         return true;
     }
 
-    const updateServerEvent = (jsonContent,versionIncrease = 1) => {
+    const updateServerEvent = (jsonContent, versionIncrease = 1) => {
         if (currentServerEvent.current) {
             let serverEvent = currentServerEvent.current
             dataManager.calculatateJsonContent(jsonContent)

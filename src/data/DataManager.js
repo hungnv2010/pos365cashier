@@ -213,7 +213,7 @@ class DataManager {
             delete item.ProductImages
         })
         serverEventByRowKey.JsonContent = JSON.stringify(serverEventByRowKey.JsonContent)
-        delete serverEventByRowKey.Timestamp
+        // delete serverEventByRowKey.Timestamp
         console.log('updateServerFromOrder', serverEventByRowKey, JSON.parse(serverEventByRowKey.JsonContent));
         await realmStore.insertServerEvent(serverEventByRowKey)
         signalRManager.sendMessageServerEvent(serverEventByRowKey)
