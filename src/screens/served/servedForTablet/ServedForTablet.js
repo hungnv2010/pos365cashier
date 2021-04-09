@@ -186,10 +186,10 @@ const Served = (props) => {
 
     const outputSelectedProduct = async (product, replace = false) => {
         let jsonContentTmp = JSON.parse(JSON.stringify(jsonContent))
-        console.log('outputSelectedProduct', product, jsonContentTmp);
+        console.log('outputSelectedProduct', product, jsonContentTmp, props);
         if (product.Quantity > 0 && !replace) {
             if (jsonContentTmp.OrderDetails.length == 0) {
-                let title = props.route.params.Name ? props.route.params.Name : ""
+                let title = props.route.params.room.Name ? props.route.params.room.Name : ""
                 let body = I18n.t('gio_khach_vao') + moment().format('HH:mm dd/MM')
                 jsonContentTmp.ActiveDate = moment()
                 dataManager.sentNotification(title, body)
