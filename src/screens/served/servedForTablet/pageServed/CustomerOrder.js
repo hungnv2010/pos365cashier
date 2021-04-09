@@ -616,7 +616,7 @@ const CustomerOrder = (props) => {
         let jsonContent = props.jsonContent
         console.log("printAfterPayment jsonContent 1 ", jsonContent, props.route.params);
         if (!(jsonContent.RoomName && jsonContent.RoomName != "")) {
-            jsonContent.RoomName = props.route.params.Name
+            jsonContent.RoomName = props.route.params.room.Name
         }
         jsonContent.PaymentCode = Code;
         // if (noteInfo != '') {

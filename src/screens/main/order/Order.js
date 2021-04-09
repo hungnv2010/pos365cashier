@@ -165,7 +165,6 @@ export default (props) => {
         newDatas.forEach(data => {
             if (data.Id != undefined) {
                 let listFiters = serverEvents.filtered(`RoomId == ${data.Id}`)
-                console.log('listFiters', listFiters);
                 if (listFiters && listFiters.length > 0) {
                     let Total = 0
                     let RoomMoment = ""
