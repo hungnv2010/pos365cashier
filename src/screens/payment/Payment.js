@@ -713,11 +713,31 @@ export default (props) => {
                 console.log("onClickPay err== ", err);
             })
         } else {
-            onError(json)
+            let isCheckStockControlWhenSelling = await dataManager.checkStockControlWhenSelling(json.OrderDetails)
+            if (vendorSession.Settings.StockControlWhenSelling == true && isCheckStockControlWhenSelling) {
+                return;
+            } else {
+                onError(json)
+            }
         }
-
-
     }
+
+    // const checkStockControlWhenSelling = async (OrderDetails = []) => {
+    //     let listProduct = await realmStore.queryProducts();
+    //     if (OrderDetails.length > 0) {
+    //         OrderDetails.forEach(element => {
+    //             let product = listProduct.filtered(`Id == ${element.ProductId}`)
+    //             if (JSON.stringify(product) != '{}') {
+    //                 product = product[0]
+    //                 if (product.OnHand <= 0) {
+    //                     dialogManager.showPopupOneButton(element.Name + " " + I18n.t("khong_du_ton_kho"))
+    //                     return true;
+    //                 }
+    //             }
+    //         });
+    //     }
+    //     return false;
+    // }
 
     const onError = (json) => {
         dialogManager.showPopupOneButton(I18n.t("khong_co_ket_noi_internet_don_hang_cua_quy_khach_duoc_luu_vao_offline"))

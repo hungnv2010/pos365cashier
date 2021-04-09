@@ -11,6 +11,7 @@ import I18n from '../common/language/i18n';
 import productManager from './objectManager/ProductManager';
 // import { object } from "underscore";
 import _, { map, object } from 'underscore';
+import dialogManager from "../components/dialog/DialogManager";
 class DataManager {
     constructor() {
         this.subjectUpdateServerEvent = new Subject()
@@ -20,6 +21,26 @@ class DataManager {
                 signalRManager.sendMessageServerEvent(serverEvent)
                 // this.updateServerEventNow(serverEvent, true)
             })
+    }
+
+    async checkStockControlWhenSelling(OrderDetails = []) {
+        let listProduct = await realmStore.queryProducts();
+        let status = false;
+        if (OrderDetails.length > 0) {
+            OrderDetails.forEach(element => {
+                let product = listProduct.filtered(`Id == ${element.ProductId}`)
+                if (JSON.stringify(product) != '{}') {
+                    product = product[0]
+                    if (product.OnHand <= 0) {
+                        dialogManager.showPopupOneButton(element.Name + " " + I18n.t("khong_du_ton_kho"))
+                        status = true;
+                        return;
+                    }
+                }
+            });
+        }
+        console.log("checkStockControlWhenSelling status ", status);
+        return status;
     }
 
     checkEndDate(date) {

@@ -14,6 +14,7 @@ import { getFileDuLieuString } from '../../data/fileStore/FileStorage';
 import { Constant } from '../../common/Constant';
 import { useSelector } from 'react-redux';
 import dataManager from '../../data/DataManager';
+import NetInfo from "@react-native-community/netinfo";
 
 export default (props) => {
 
