@@ -167,6 +167,7 @@ export default (props) => {
             props.navigation.goBack()
         } catch (error) {
             console.log('onClickDone err', error);
+            props.navigation.goBack()
         }
         setShowModal(false)
     }
