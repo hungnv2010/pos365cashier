@@ -195,7 +195,7 @@ export default (props) => {
                                 value={detailGroup.DiscountRatio ? currencyToString(detailGroup.DiscountRatio) : "0"}
                                 onChangeText={text => { onChangeText(text, 2) }}
                             />
-                            <Icon name="percent" size={20} style={{ position: "absolute", right: 0, top: 6 }} />
+                            <Icon name="percent" size={20} style={{ position: "absolute", right: 0, top: 6 }} color="grey"/>
                         </View>
                     </View>
                     <View style={{ flexDirection: "row", marginBottom: 10, alignItems: "center", }}>
@@ -244,6 +244,7 @@ export default (props) => {
                                 onPress={() => {
                                     setDetailGroup(backupDetailGroup.current)
                                     setShowModal(false)
+                                    props.navigation.goBack()
                                 }}
                             >
                                 <Text style={{ color: "white", fontWeight: "bold", textAlign: "center" }}>{I18n.t('huy')}</Text>
