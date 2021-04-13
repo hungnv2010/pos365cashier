@@ -25,6 +25,7 @@ export default (props) => {
     const [printInvoice, setPrintInvoice] = useState(false)
     const [paymentPosMachine, setPaymentPosMachine] = useState(false)
     const [marginModal, setMargin] = useState(0)
+    const [placeholder,setPlaceHolder] = useState("")
     const isPost = useRef(false)
 
     useFocusEffect(useCallback(() => {
@@ -48,10 +49,12 @@ export default (props) => {
     const funSetStateModal = (data) => {
         setStateModal(data.status)
         setTitleModal(data.title)
+        setPlaceHolder(data.titleHint)
     }
     const getData = (data) => {
         setStateModal(data.status)
         setTitleModal(data.title)
+        setPlaceHolder(data.titleHint)
     }
     const onClick = (data) => {
         setQRCodeEnable(data.stt)
@@ -67,6 +70,7 @@ export default (props) => {
         setPaymentPosMachine(data.status)
     }
     const setInfoModal = (value) => {
+        console.log("value ",value);
         if (titileModal == 'Merchant Code') {
             setMerchantCode(value)
             updateSetting('MerchantCode', value)
@@ -79,6 +83,7 @@ export default (props) => {
             setMerchantCategory(value)
             updateSetting('SmartPOS_MCC', value)
         }
+        setInput("")
         setStateModal(false)
     }
     useFocusEffect(useCallback(() => {
@@ -181,7 +186,7 @@ export default (props) => {
                         <View style={{ width: Metrics.screenWidth * 0.8, }}>
                             <Text style={styles.titleModal}>{I18n.t('thong_tin_cua_hang')}</Text>
                             <Text style={{ fontSize: 16, justifyContent: 'center', marginTop: 5, marginLeft: 20 }}>Mời nhập {titileModal} </Text>
-                            <TextInput style={styles.textInputStyle} autoFocus onChangeText={text => setInput(text)}></TextInput>
+                            <TextInput style={styles.textInputStyle} placeholder={placeholder} onChangeText={(text) => setInput(text)}></TextInput>
                             <TouchableOpacity style={{ justifyContent: 'flex-end', alignItems: 'flex-end', marginTop: 10, marginBottom: 10, borderRadius: 10 }} onPress={() => setInfoModal(input)}>
                                 <Text style={{ textAlign: 'center', color: '#FFF', marginRight: 40, backgroundColor: colors.colorchinh, paddingVertical: 10, paddingHorizontal: 20 }} >{I18n.t("dong_y")}</Text>
                             </TouchableOpacity>

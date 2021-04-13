@@ -68,7 +68,7 @@ export default (props) => {
     let params = {
         CompareCost: compareCost.current ? compareCost.current : 0,
         CompareOnHand: compareOnHand.current ? compareOnHand.current : 0,
-        Cost: product.Cost ? product.Cost : productOl.Cost ? productOl.Cost : 0,
+        Cost: cost ? cost : 0,
         MaxQuantity: productOl.MaxQuantity ? productOl.MaxQuantity : 999,
         MinQuantity: productOl.MinQuantity ? productOl.MinQuantity : 0,
         OnHand: productOl.OnHand ? productOl.OnHand : 0,

@@ -32,11 +32,10 @@ export default (props) => {
     const [qrScan, setQrScan] = useState()
     const onEndReachedCalledDuringMomentum = useRef(false)
     const currentProduct = useRef(0)
-    const roomHistoryRef = useRef(null)
     const [loadMore, setLoadMore] = useState(false)
     const flatlistRef = useRef(null)
     const productTmp = useRef([])
-    useEffect(() => {  
+    useEffect(() => {
         dialogManager.showLoading()
         getData()
         //dialogManager.hiddenLoading()
@@ -47,9 +46,11 @@ export default (props) => {
         return state.Common.deviceType
     });
     let categoryTmp = []
-    const getData = async () => { 
-        productTmp.current = await (await realmStore.queryProducts()).filtered(`TRUEPREDICATE SORT(Id DESC) DISTINCT(Id)`)
-        console.log("product", productTmp);
+    const getData = async () => {
+        let arr = []
+        arr = await (await realmStore.queryProducts()).filtered(`TRUEPREDICATE SORT(Id DESC) DISTINCT(Id)`)
+        productTmp.current = arr
+        console.log("product", productTmp.current);
         setListProduct(productTmp.current)
         categoryTmp = await realmStore.queryCategories()
         setCategory([{
@@ -58,7 +59,7 @@ export default (props) => {
         }, ...categoryTmp])
     }
     const filterMore = () => {
-        console.log("filtermore",productTmp.current.length);
+        console.log("filtermore", productTmp.current.length);
         if (currentProduct.current < productTmp.current.length && !onEndReachedCalledDuringMomentum.current) {
             console.log("Load more");
             dialogManager.showLoading()
@@ -68,8 +69,9 @@ export default (props) => {
         }
     }
     const getFilterData = () => {
-        let slideData = productTmp.current.slice(currentProduct.current, currentProduct.current + Constant.LOAD_LIMIT)
-        console.log("slice", sliceData);
+        let slideData = []
+        slideData = productTmp.current.slice(currentProduct.current, currentProduct.current + Constant.LOAD_LIMIT)
+        console.log("slice", slideData);
         setListProduct([...listProduct, ...slideData])
         currentProduct.current = currentProduct.current + Constant.LOAD_LIMIT
         console.log("to current", currentProduct.current);
@@ -106,9 +108,9 @@ export default (props) => {
             setCategory([])
             //setItProduct({})
             if (value == 2) {
-                if(data){
-                setItProduct(data)
-                }else{
+                if (data) {
+                    setItProduct(data)
+                } else {
                     setItProduct({})
                 }
                 await realmStore.deleteProduct()
@@ -150,7 +152,7 @@ export default (props) => {
         console.log("callback data", data);
         setCompositeItemProducts(data)
     }
-    
+
     const renderProduct = (item, index) => {
         return (
             <TouchableOpacity key={index.toString()} onPress={() => onClickItem(item)} style={{ backgroundColor: '#F5F5F5' }}>
@@ -164,12 +166,12 @@ export default (props) => {
                         }
                         <View style={{ flexDirection: 'column', justifyContent: 'space-between', flex: 1, padding: 5, marginLeft: 5 }}>
                             <Text>{item.Name}</Text>
-                            <View style = {{flexDirection:'row'}}>
-                            <Text style={{ color: colors.colorLightBlue, fontWeight: 'bold', marginTop: 5 }}>{currencyToString(item.Price)} đ</Text>
-                            {
-                                item.LargeUnit && item.LargeUnit != ''  ?
-                                <Text style={{ color: colors.colorLightBlue, fontWeight: 'bold', marginTop: 5 }}> - {currencyToString(item.PriceLargeUnit)} đ</Text>:null
-                            }
+                            <View style={{ flexDirection: 'row' }}>
+                                <Text style={{ color: colors.colorLightBlue, fontWeight: 'bold', marginTop: 5 }}>{currencyToString(item.Price)} đ</Text>
+                                {
+                                    item.LargeUnit && item.LargeUnit != '' ?
+                                        <Text style={{ color: colors.colorLightBlue, fontWeight: 'bold', marginTop: 5 }}> - {currencyToString(item.PriceLargeUnit)} đ</Text> : null
+                                }
                             </View>
                         </View>
 
@@ -221,7 +223,7 @@ export default (props) => {
             <View style={{ flex: 1, flexDirection: 'row' }}>
                 <View style={{ backgroundColor: '#F5F5F5', flexDirection: 'column', flex: 1 }}>
                     <View style={{ backgroundColor: "#FFDEAD", marginTop: 5, borderRadius: 18, marginLeft: 5, marginRight: 5 }}>
-                        
+
                         {category.length > 0 ?
                             <FlatList
                                 data={category}
@@ -232,18 +234,18 @@ export default (props) => {
                                 showsHorizontalScrollIndicator={false}
                             /> : null}
                     </View>
-                    {listProduct.length > 0 ?
-                        <FlatList
-                            data={listProduct}
-                            // onEndReachedThreshold={0.1}
-                            // onEndReached={filterMore}
-                            renderItem={({ item, index }) => renderProduct(item, index)}
-                            keyExtractor={(item, index) => index.toString()}
-                            // ListFooterComponent={loadMore ? <ActivityIndicator color={colors.colorchinh} /> : null}
-                            // onMomentumScrollBegin={() => { onEndReachedCalledDuringMomentum.current = false }}
-                            style = {{}}
-                        /> : null}
-                       
+
+                    <FlatList
+                        data={listProduct}
+                        // onEndReachedThreshold={0.1}
+                        // onEndReached={filterMore}
+                        renderItem={({ item, index }) => renderProduct(item, index)}
+                        keyExtractor={(item, index) => index.toString()}
+                        // ListFooterComponent={loadMore ? <ActivityIndicator color={colors.colorchinh} /> : null}
+                        // onMomentumScrollBegin={() => { onEndReachedCalledDuringMomentum.current = false }}
+                        style={{}}
+                    />
+
                     <FAB
                         style={styles.fab}
                         icon='plus'
