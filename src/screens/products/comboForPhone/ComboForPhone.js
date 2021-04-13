@@ -7,13 +7,13 @@ import { Constant } from '../../../common/Constant';
 import { useSelector } from 'react-redux';
 import { Images } from '../../../theme';
 import { TextInput } from 'react-native-gesture-handler';
-import { ceil } from 'react-native-reanimated';
 import { currencyToString } from '../../../common/Utils';
 import ToolBarCombo from '../../../components/toolbar/ToolBarCombo'
 import { setFileLuuDuLieu } from '../../../data/fileStore/FileStorage';
-import { AES } from 'crypto-js';
 import colors from '../../../theme/Colors';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { ApiPath } from "../../../data/services/ApiPath";
+import { HTTPService } from "../../../data/services/HttpService";
 
 export default (props) => {
     const [product, setProduct] = useState({})
@@ -42,26 +42,37 @@ export default (props) => {
         console.log("click");
         props.navigation.navigate('SelectProduct', { _onSelect: onCallBack, listProducts: listFomular.length > 0 ? listFomular : [] })
     }
+    const delItem = (index) => {
+        listFomular.splice(index, 1)
+        setListFormular([...listFomular])
+    }
 
     const onCallBack = (data) => {
         console.log("data", data);
         let arrFormular = []
         data.forEach(el => {
             if (el.Id) {
+                let paramFilter = `(substringof('${el.Code}',Code) or substringof('${el.Code}',Name) or substringof('${el.Code}',Code2) or substringof('${el.Code}',Code3) or substringof('${el.Code}',Code4) or substringof('${el.Code}',Code5))`
+            new HTTPService().setPath(ApiPath.PRODUCT).GET({ IncludeSummary: true, Inlinecount: 'allpages', CategoryId: -1, PartnerId: 0, top: 20, filter: paramFilter }).then((res) => {
+                if (res != null) {
                 let itemCombo = {
-                    Cost: el.Cost,
+                    Cost: res.results[0].Cost,
                     ItemId: el.Id,
-                    Product: { Code: el.Code, Cost: el.Cost, Name: el.Name, Unit: el.Unit },
+                    Product: { Code: el.Code, Cost: res.results[0].Cost, Name: el.Name, Unit: el.Unit },
                     Quantity: el.Quantity,
                     QuantityLargeUnit: 0
                 }
                 arrFormular.push(itemCombo)
+                setListFormular([...arrFormular])}
+                }
+                )
             } else {
                 arrFormular.push(el)
+                setListFormular([...arrFormular])
             }
             console.log("arrrrrrrr", arrFormular);
         })
-        setListFormular([...arrFormular])
+        
 
     }
     useEffect(() => {

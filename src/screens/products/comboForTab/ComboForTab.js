@@ -7,16 +7,19 @@ import { Constant } from '../../../common/Constant';
 import { useSelector } from 'react-redux';
 import { Images } from '../../../theme';
 import { TextInput } from 'react-native-gesture-handler';
-import { ceil } from 'react-native-reanimated';
 import { currencyToString } from '../../../common/Utils';
 import ToolBarCombo from '../../../components/toolbar/ToolBarCombo'
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import colors from '../../../theme/Colors';
+import { ApiPath } from "../../../data/services/ApiPath";
+import { HTTPService } from "../../../data/services/HttpService";
 
 export default (props) => {
     const [listProduct, setListProduct] = useState([])
     const [sumQuantity, setSumQuantity] = useState(0)
     const [value, setValue] = useState('')
     const [product, setProduct] = useState({})
+    const cost = useRef(0)
     const orientaition = useSelector(state => {
         return state.Common.orientaition
     });
@@ -45,6 +48,7 @@ export default (props) => {
     }
 
     const outputSelectedProduct = (product) => {
+       
         console.log("click product", product);
         let isExist = false
         if (listProduct.length > 0) {
@@ -58,20 +62,29 @@ export default (props) => {
             })
         }
         if (isExist == false) {
-            let itemCombo = {
-                Cost: product.Cost,
-                ItemId: product.Id,
-                Product: { Code: product.Code, Cost: product.Cost, Name: product.Name, Unit: product.Unit },
-                Quantity: 1,
-                QuantityLargeUnit: 0
-            }
-            if (listProduct.length > 0) {
-                setListProduct([...listProduct, itemCombo])
-            } else {
-                let listp = []
-                listp.push(itemCombo)
-                setListProduct(listp)
-            }
+            let paramFilter = `(substringof('${product.Code}',Code) or substringof('${product.Code}',Name) or substringof('${product.Code}',Code2) or substringof('${product.Code}',Code3) or substringof('${product.Code}',Code4) or substringof('${product.Code}',Code5))`
+            new HTTPService().setPath(ApiPath.PRODUCT).GET({ IncludeSummary: true, Inlinecount: 'allpages', CategoryId: -1, PartnerId: 0, top: 20, filter: paramFilter }).then((res) => {
+                if (res != null) {
+                    let itemCombo = {
+                        Cost:  res.results[0].Cost,
+                        ItemId: product.Id,
+                        Product: { Code: product.Code, Cost:  res.results[0].Cost, Name: product.Name, Unit: product.Unit },
+                        Quantity: 1,
+                        QuantityLargeUnit: 0
+                    }
+                    if (listProduct.length > 0) {
+                        setListProduct([...listProduct, itemCombo])
+                    } else {
+                        let listp = []
+                        listp.push(itemCombo)
+                        setListProduct(listp)
+                    }
+                    }
+                    
+            }).catch((e) => {
+                console.log("error", e);
+            })
+            
         }
 
     }
@@ -79,6 +92,19 @@ export default (props) => {
     const delItem = (index) => {
         listProduct.splice(index, 1)
         setListProduct([...listProduct])
+    }
+    const getCost = (code) =>{
+        let paramFilter = `(substringof('${code}',Code) or substringof('${code}',Name) or substringof('${code}',Code2) or substringof('${code}',Code3) or substringof('${code}',Code4) or substringof('${code}',Code5))`
+            new HTTPService().setPath(ApiPath.PRODUCT).GET({ IncludeSummary: true, Inlinecount: 'allpages', CategoryId: -1, PartnerId: 0, top: 20, filter: paramFilter }).then((res) => {
+                if (res != null) {
+                    console.log("abcdslf",res.results[0].Cost);
+                    cost.current = res.results[0].Cost
+                    }
+                    
+            }).catch((e) => {
+                console.log("error", e);
+            })
+            return cost.current
     }
 
     const onClickOk = () => {
@@ -107,12 +133,12 @@ export default (props) => {
                     </View>
                     <View style={{ flex: 1.2, marginLeft: 5 }}>
                         <Text style={{ textAlign: 'left' }}>{I18n.t('so_luong')}</Text>
-                        <TextInput style={{ textAlign: 'center', borderRadius: 5, backgroundColor: '#f2f2f2', padding: 10, marginTop: 5 }} keyboardType={'numbers-and-punctuation'} value={item.Quantity ? item.Quantity + '' : 0 + ''} onChangeText={(text) => { item.Quantity = parseInt(text), setListFormular([...listFomular]) }}></TextInput>
+                        <TextInput style={{ textAlign: 'center', borderRadius: 5, backgroundColor: '#f2f2f2', padding: 10, marginTop: 5 }} keyboardType={'numbers-and-punctuation'} value={item.Quantity ? item.Quantity + '' : 0 + ''} onChangeText={(text) => { item.Quantity = parseInt(text), setListProduct([...listProduct]) }}></TextInput>
                     </View>
                     {product.LargeUnit ?
                         <View style={{ flex: 1.7, marginLeft: 5 }}>
                             <Text style={{ textAlign: 'left' }}>{I18n.t('so_luong_don_vi_tinh_lon')}</Text>
-                            <TextInput style={{ textAlign: 'center', borderRadius: 5, backgroundColor: '#f2f2f2', padding: 10, marginTop: 5 }} keyboardType={'numbers-and-punctuation'} value={item.QuantityLargeUnit ? item.QuantityLargeUnit + '' : 0 + ''} onChangeText={(text) => { item.QuantityLargeUnit = parseInt(text), setListFormular([...listFomular]) }}></TextInput>
+                            <TextInput style={{ textAlign: 'center', borderRadius: 5, backgroundColor: '#f2f2f2', padding: 10, marginTop: 5 }} keyboardType={'numbers-and-punctuation'} value={item.QuantityLargeUnit ? item.QuantityLargeUnit + '' : 0 + ''} onChangeText={(text) => { item.QuantityLargeUnit = parseInt(text), setListProduct([...listProduct]) }}></TextInput>
                         </View> : null
                     }
 
@@ -154,8 +180,8 @@ export default (props) => {
                     </View>
                 }
 
-                <TouchableOpacity style={{ backgroundColor: '#36a3f7', paddingHorizontal: 10, }} onPress={() => onClickOk()}>
-                    <Text style={{ textAlign: 'center', color: '#fff', paddingVertical: 10, fontWeight: 'bold' }}>{I18n.t('xong')}</Text>
+                <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 10, }} onPress={() => onClickOk()}>
+                    <Text style={{ textAlign: 'center', color: '#fff', paddingVertical: 15, fontWeight: 'bold' }}>{I18n.t('xong')}</Text>
                 </TouchableOpacity>
 
             </View>

@@ -878,6 +878,7 @@ export default {
   chon_hang_hoa: 'Choose product',
   chieu_rong_kho_giay:'Print width paper size',
   chon_nhom_nha_cung_cap:'Sellect group supplier',
+  cap_nhat_extra_topping:"Update Extra/ Topping",
 
   don_vi_tien_te: "Currency unit",
   dollar_my: "Dollar",
@@ -963,6 +964,7 @@ export default {
   ngay_het_han: 'Expiry Date',
   nhap_ten_nhom_hang_hoa: 'Enter category name',
   nhap_don_vi_tinh_lon:'Import large unit',
+  nhap_ten_nhom:'Enter group name',
 
   quan_ly:'Manager',
   quan_ly_hang_hoa:'Product management',
@@ -1004,8 +1006,8 @@ export default {
   thiet_lap_quyen:'Set permissions',
   them_nhan_vien:'Add new employee',
   ten_nha_cung_cap:'Supplier name',
-  thiet_lap_extra_topping:'Extra/topping configuration',
-  ten_extra_topping:'Extra/topping name',
+  thiet_lap_extra_topping:'Extra/ Topping configuration',
+  ten_extra_topping:'Extra/ Topping name',
   tach_thanh_nhieu_dong_khi_ban_hang:'Split into multiple lines when selling',
   tao_nhom_hang_hoa: 'Create new group product',
   them_moi_hang_hoa:'Create new product',

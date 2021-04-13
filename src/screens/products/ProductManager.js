@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import MainToolBar from '../main/MainToolBar';
 import colors from '../../theme/Colors';
 import { ScreenList } from '../../common/ScreenList';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
 export default (props) => {
@@ -34,10 +35,12 @@ export default (props) => {
                     <Image style={styles.iconButton} source={Images.ic_danhsachhanghoa} />
                     <Text style={styles.textButton}>{I18n.t('danh_sach_hang_hoa')}</Text>
                 </TouchableOpacity>
-                {/* <TouchableOpacity style={styles.button} onPress={() => onClickNavigation(ScreenList.ListExtraTopping)}>
-                    <Image style={styles.iconButton} source={Images.ic_danhsachkhachhang} />
+                <TouchableOpacity style={styles.button} onPress={() => {onClickNavigation(ScreenList.ListExtraTopping)}}>
+                    <View style={{backgroundColor:'#36a3f7',borderRadius:16, height:42,width:42,alignItems:'center',justifyContent:'center',marginRight:10}}>
+                        <Icon name={'puzzle-outline'} size={21} color={'#fff'} />
+                    </View>
                     <Text style={styles.textButton}>{I18n.t('thiet_lap_extra_topping')}</Text>
-                </TouchableOpacity> */}
+                </TouchableOpacity>
             </View>
             <Snackbar
                 duration={1500}

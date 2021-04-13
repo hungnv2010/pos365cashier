@@ -48,5 +48,9 @@ export const ApiPath = {
     DELETE_ORDER: "api/orders/{orderId}/void",
     ENDOFDAY: "mobile/endOfDay",
     GROUP_SUPPLIER: "api/groups/treeview",
+    DELETE_EXTRATOPPING:"api/products/deleteextra",
+    ADD_EXTRA:'api/products/addextra',
+    UPDATE_EXTRAGROUP:'api/products/extra/updateextragroup',
+    UPDATE_PRICEEXTRA:'api/products/extra/updateprice',
     // http://cafe365.banhang365.vn/api/orders/95053575/void
 }

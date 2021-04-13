@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
-import { Animated, Image, View, StyleSheet, Text, TouchableOpacity, ScrollView } from "react-native";
+import { Animated, Image, View, StyleSheet, Text, TouchableOpacity, ScrollView, ActivityIndicator } from "react-native";
 import MainToolBar from '../main/MainToolBar';
 import I18n from '../../common/language/i18n';
 import realmStore from '../../data/realm/RealmStore';
@@ -30,10 +30,15 @@ export default (props) => {
     const [textSearch, setTextSearch] = useState('')
     const debouncedVal = useDebounce(textSearch)
     const [qrScan, setQrScan] = useState()
+    const onEndReachedCalledDuringMomentum = useRef(false)
+    const currentProduct = useRef(0)
+    const [loadMore, setLoadMore] = useState(false)
+    const flatlistRef = useRef(null)
     const productTmp = useRef([])
     useEffect(() => {
         dialogManager.showLoading()
         getData()
+        //dialogManager.hiddenLoading()
     }, [])
 
     const [idCategory, setIdCategory] = useState(-1)
@@ -42,15 +47,38 @@ export default (props) => {
     });
     let categoryTmp = []
     const getData = async () => {
-        productTmp.current = await (await realmStore.queryProducts()).filtered(`TRUEPREDICATE SORT(Id DESC) DISTINCT(Id)`)
-        console.log("product", productTmp);
+        let arr = []
+        arr = await (await realmStore.queryProducts()).filtered(`TRUEPREDICATE SORT(Id DESC) DISTINCT(Id)`)
+        productTmp.current = arr
+        console.log("product", productTmp.current);
         setListProduct(productTmp.current)
         categoryTmp = await realmStore.queryCategories()
         setCategory([{
             Id: -1,
             Name: 'Tất cả'
         }, ...categoryTmp])
-        dialogManager.hiddenLoading()
+    }
+    const filterMore = () => {
+        console.log("filtermore", productTmp.current.length);
+        if (currentProduct.current < productTmp.current.length && !onEndReachedCalledDuringMomentum.current) {
+            console.log("Load more");
+            dialogManager.showLoading()
+            setLoadMore(true)
+            onEndReachedCalledDuringMomentum.current = true
+            getFilterData()
+        }
+    }
+    const getFilterData = () => {
+        let slideData = []
+        slideData = productTmp.current.slice(currentProduct.current, currentProduct.current + Constant.LOAD_LIMIT)
+        console.log("slice", slideData);
+        setListProduct([...listProduct, ...slideData])
+        currentProduct.current = currentProduct.current + Constant.LOAD_LIMIT
+        console.log("to current", currentProduct.current);
+        setLoadMore(false)
+        setTimeout(() => {
+            dialogManager.hiddenLoading()
+        }, 1000)
     }
     useEffect(() => {
         console.log("product item", listProduct);
@@ -78,9 +106,13 @@ export default (props) => {
         dialogManager.showLoading()
         try {
             setCategory([])
-            setItProduct({})
+            //setItProduct({})
             if (value == 2) {
-                setItProduct(data)
+                if (data) {
+                    setItProduct(data)
+                } else {
+                    setItProduct({})
+                }
                 await realmStore.deleteProduct()
                 await dataManager.syncProduct()
             } else if (value == 1) {
@@ -120,7 +152,6 @@ export default (props) => {
         console.log("callback data", data);
         setCompositeItemProducts(data)
     }
-    
     const renderProduct = (item, index) => {
         return (
             <TouchableOpacity key={index.toString()} onPress={() => onClickItem(item)} style={{ backgroundColor: '#F5F5F5' }}>
@@ -134,12 +165,12 @@ export default (props) => {
                         }
                         <View style={{ flexDirection: 'column', justifyContent: 'space-between', flex: 1, padding: 5, marginLeft: 5 }}>
                             <Text>{item.Name}</Text>
-                            <View style = {{flexDirection:'row'}}>
-                            <Text style={{ color: colors.colorLightBlue, fontWeight: 'bold', marginTop: 5 }}>{currencyToString(item.Price)} đ</Text>
-                            {
-                                item.LargeUnit && item.LargeUnit != ''  ?
-                                <Text style={{ color: colors.colorLightBlue, fontWeight: 'bold', marginTop: 5 }}> - {currencyToString(item.PriceLargeUnit)} đ</Text>:null
-                            }
+                            <View style={{ flexDirection: 'row' }}>
+                                <Text style={{ color: colors.colorLightBlue, fontWeight: 'bold', marginTop: 5 }}>{currencyToString(item.Price)} đ</Text>
+                                {
+                                    item.LargeUnit && item.LargeUnit != '' ?
+                                        <Text style={{ color: colors.colorLightBlue, fontWeight: 'bold', marginTop: 5 }}> - {currencyToString(item.PriceLargeUnit)} đ</Text> : null
+                                }
                             </View>
                         </View>
 
@@ -191,7 +222,6 @@ export default (props) => {
             <View style={{ flex: 1, flexDirection: 'row' }}>
                 <View style={{ backgroundColor: '#F5F5F5', flexDirection: 'column', flex: 1 }}>
                     <View style={{ backgroundColor: "#FFDEAD", marginTop: 5, borderRadius: 18, marginLeft: 5, marginRight: 5 }}>
-                        
                         {category.length > 0 ?
                             <FlatList
                                 data={category}
@@ -202,14 +232,18 @@ export default (props) => {
                                 showsHorizontalScrollIndicator={false}
                             /> : null}
                     </View>
-                    {listProduct.length > 0 ?
-                        <FlatList
-                            data={listProduct}
-                            renderItem={({ item, index }) => renderProduct(item, index)}
-                            keyExtractor={(item, index) => index.toString()}
-                            style = {{}}
-                        /> : null}
-                       
+
+                    <FlatList
+                        data={listProduct}
+                        // onEndReachedThreshold={0.1}
+                        // onEndReached={filterMore}
+                        renderItem={({ item, index }) => renderProduct(item, index)}
+                        keyExtractor={(item, index) => index.toString()}
+                        // ListFooterComponent={loadMore ? <ActivityIndicator color={colors.colorchinh} /> : null}
+                        // onMomentumScrollBegin={() => { onEndReachedCalledDuringMomentum.current = false }}
+                        style={{}}
+                    />
+
                     <FAB
                         style={styles.fab}
                         icon='plus'
@@ -243,3 +277,4 @@ const styles = StyleSheet.create({
         backgroundColor: colors.colorLightBlue
     }
 })
+

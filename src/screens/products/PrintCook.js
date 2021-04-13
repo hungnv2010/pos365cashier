@@ -15,12 +15,16 @@ import { currencyToString, dateToString, momentToStringDateLocal, dateToStringFo
 export default (props) => {
     const [product, setProduct] = useState(props.productOl)
     const [countPrint, setCountPrint] = useState(props.countPrint)
-    const [printer, setPrinter] = useState(props.printer)
+    const [printer, setPrinter] = useState(props.printer != [] ? props.printer : printCook)
     const [priceConfig,setPriceConfig] = useState({SecondPrinter:'',Printer3:'',Printer4:'',Printer5:''})
     let data = null
 
     useEffect(() => {
+        if(props.printer != []){
         setPrinter(props.printer)
+        }else{
+            setPrinter([...printCook])
+        }
         setCountPrint(props.countPrint)
     }, [props.printer])
     const onClick = (item, index) => {
