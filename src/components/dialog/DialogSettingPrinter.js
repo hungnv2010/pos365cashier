@@ -22,7 +22,7 @@ export default (props) => {
         <View style={{ backgroundColor: '#fff', borderRadius: 16 }}>
             <Text style={{ textAlign: 'center', paddingVertical: 10, fontWeight: 'bold' }}>{I18n.t(props.title)}</Text>
             <View style={{ flexDirection: 'row', paddingHorizontal: 20, paddingVertical: 10 }}>
-                <TouchableOpacity style={[styles.styleButton, { marginRight: 10, backgroundColor: printer.type == '' ? '#fff' : '#f2f2f2', borderColor: printer.type == '' ? colors.colorLightBlue : '#f2f2f2', borderWidth: 1 }]} onPress={() => setPrinter({ ...printer, type: '' })}>
+                <TouchableOpacity style={[styles.styleButton, { marginRight: 10, backgroundColor: printer.type == '' ? '#fff' : '#f2f2f2', borderColor: printer.type == '' ? colors.colorLightBlue : '#f2f2f2', borderWidth: 1 }]} onPress={() => setPrinter({ ...printer, type: '', ip: '', size: '' })}>
                     <Text style={{ textAlign: 'center', color: printer.type == '' ? colors.colorLightBlue : null }}>{I18n.t('khong_in')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={[styles.styleButton, { marginLeft: 10, backgroundColor: printer.type == 'in_qua_bluetooth' ? '#fff' : '#f2f2f2', borderColor: printer.type == 'in_qua_bluetooth' ? colors.colorLightBlue : '#f2f2f2', borderWidth: 1 }]} onPress={() => setPrinter({ ...printer, type: 'in_qua_bluetooth' })}>

@@ -190,7 +190,7 @@ const Served = (props) => {
         if (product.Quantity > 0 && !replace) {
             if (jsonContentTmp.OrderDetails.length == 0) {
                 let title = props.route.params.room.Name ? props.route.params.room.Name : ""
-                let body = I18n.t('gio_khach_vao') + moment().format('HH:mm dd/MM')
+                let body = I18n.t('gio_khach_vao') + moment().format('HH:mm DD/MM')
                 jsonContentTmp.ActiveDate = moment()
                 dataManager.sentNotification(title, body)
             }

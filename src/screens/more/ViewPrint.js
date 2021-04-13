@@ -64,8 +64,8 @@ export default forwardRef((props, ref) => {
             console.log('clickCaptureRef');
             clickCapture()
         },
-        printProvisionalRef(jsonContent, checkProvisional = false, imgBase64 = "") {
-            printProvisional(jsonContent, checkProvisional, imgBase64)
+        printProvisionalRef(jsonContent, checkProvisional = false, imgBase64 = "", isPrintTest = false) {
+            printProvisional(jsonContent, checkProvisional, imgBase64, isPrintTest)
         },
         printKitchenRef(jsonContent, type = TYPE_PRINT.KITCHEN) {
             console.log('printKitchenRef jsonContent type : ', jsonContent, type);
@@ -88,7 +88,7 @@ export default forwardRef((props, ref) => {
             uri => {
                 console.log('Snapshot uri', uri, currentHtml.current.html);
                 // setUriImg(uri)
-                Print.printImageFromClient(uri, currentHtml.current.ip, currentHtml.current.size, (b) => {
+                Print.printImageFromClient(uri, currentHtml.current.ip, currentHtml.current.size, currentHtml.current.isCopies.toString(), (b) => {
                     console.log("printImageFromClient b ", b);
                 })
                 setTimeout(() => {
@@ -122,7 +122,7 @@ export default forwardRef((props, ref) => {
         await setDataHtmlPrint();
     }
 
-    const printProvisional = async (jsonContent, checkProvisional = false, imageQrBase64 = '') => {
+    const printProvisional = async (jsonContent, checkProvisional = false, imageQrBase64 = '', isPrintTest = false) => {
         let setting = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
         if (setting && setting != "") {
             setting = JSON.parse(setting);
@@ -134,24 +134,29 @@ export default forwardRef((props, ref) => {
                 }
             }
         }
-        let ipObject = await checkIP()
-        console.log("printProvisional jsonContent numberLoop ", jsonContent);
-        if (ipObject.ip != "") {
-            if (jsonContent.OrderDetails && jsonContent.OrderDetails.length > 0) {
-                let res = await printService.GenHtml(HtmlDefault, jsonContent, imageQrBase64, checkProvisional)
-                if (res && res != "") {
-                    isProvisional.current = true;
-                    let newRes = res.replace("</body>", "<p style='display: none;'>" + (new Date().getTime().toString()) + "</p> </body>");
-                    printService.listWaiting.push({ html: newRes, ip: ipObject.ip, size: ipObject.size })
-                    if (setting.in_hai_lien_cho_hoa_don == true && !checkProvisional) {
-                        newRes = res.replace("</body>", "<p style='display: none;'>" + (new Date().getTime().toString()) + Math.floor((Math.random() * 1000000000) + 1) + "</p> </body>");
-                        printService.listWaiting.push({ html: newRes, ip: ipObject.ip, size: ipObject.size })
+        if (isPrintTest || (setting.in_sau_khi_thanh_toan == true && !checkProvisional)) {
+            let ipObject = await checkIP()
+            console.log("printProvisional jsonContent numberLoop ", jsonContent);
+            if (ipObject.ip != "") {
+                if (jsonContent.OrderDetails && jsonContent.OrderDetails.length > 0) {
+                    let res = await printService.GenHtml(HtmlDefault, jsonContent, imageQrBase64, checkProvisional)
+                    if (res && res != "") {
+                        let newRes = res.replace("</body>", "<p style='display: none;'>" + (new Date().getTime().toString()) + "</p> </body>");
+                        let object = { html: newRes, ip: ipObject.ip, size: ipObject.size, isCopies: (setting.in_hai_lien_cho_hoa_don == true && !checkProvisional) };
+                        // printService.listWaiting.push()
+                        printService.listWaiting.splice(0, 0, object);
+                        if (setting.in_hai_lien_cho_hoa_don == true && !checkProvisional) {
+                            newRes = res.replace("</body>", "<p style='display: none;'>" + (new Date().getTime().toString()) + Math.floor((Math.random() * 1000000000) + 1) + "</p> </body>");
+                            // printService.listWaiting.push({ html: newRes, ip: ipObject.ip, size: ipObject.size, isCopies: false })
+                            printService.listWaiting.splice(0, 0, { html: newRes, ip: ipObject.ip, size: ipObject.size, isCopies: false });
+                        }
                     }
-                }
-                console.log("listWaiting ==== " + JSON.stringify(printService.listWaiting))
-                setDataHtmlPrint()
-            } else
-                dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
+
+                    console.log("listWaiting ==== " + JSON.stringify(printService.listWaiting))
+                    setDataHtmlPrint()
+                } else
+                    dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
+            }
         }
     }
 
@@ -187,18 +192,18 @@ export default forwardRef((props, ref) => {
                                     let res2 = printService.GenHtmlKitchen(htmlKitchen, element, i, vendorSession, type, 2)
                                     if (res1 && res1 != "") {
                                         res1 = res1.replace("</body>", "<p style='display: none;'>" + i + "</p> </body>");
-                                        printService.listWaiting.push({ html: res1, ip: printObject[value].ip, size: printObject[value].size })
+                                        printService.listWaiting.push({ html: res1, ip: printObject[value].ip, size: printObject[value].size, isCopies: false })
                                     }
                                     if (res2 && res2 != "") {
                                         res2 = res2.replace("</body>", "<p style='display: none;'>" + Math.floor((Math.random() * 1000000000) + 1) + i + "in_hai_lien_cho_che_bien</p> </body>");
-                                        printService.listWaiting.push({ html: res2, ip: printObject[value].ip, size: printObject[value].size })
+                                        printService.listWaiting.push({ html: res2, ip: printObject[value].ip, size: printObject[value].size, isCopies: false })
                                     }
 
                                 } else {
                                     let res = printService.GenHtmlKitchen(htmlKitchen, element, i, vendorSession, type)
                                     if (res && res != "") {
                                         res = res.replace("</body>", "<p style='display: none;'>" + i + "</p> </body>");
-                                        printService.listWaiting.push({ html: res, ip: printObject[value].ip, size: printObject[value].size })
+                                        printService.listWaiting.push({ html: res, ip: printObject[value].ip, size: printObject[value].size, isCopies: false })
                                     }
                                 }
                                 // let res = printService.GenHtmlKitchen(htmlKitchen, element, i, vendorSession, type, (setting && setting.in_hai_lien_cho_che_bien == true) ? true : false)
@@ -260,7 +265,7 @@ export default forwardRef((props, ref) => {
 
     const childRef = useRef();
     return (
-        <View style={{ position: "absolute"}}>
+        <View style={{ position: "absolute" }}>
             <View style={{ opacity: 0 }}>
                 <ScrollView>
                     <View

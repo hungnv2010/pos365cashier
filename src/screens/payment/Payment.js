@@ -93,6 +93,8 @@ export default (props) => {
     const resPayment = useRef({});
     const jsonContentPayment = useRef({});
     const changeMethodQRPay = useRef(false);
+    const indexPayment = useRef(0);
+    const imageQr = useRef(0);
     const debounceTimeInput = useRef(new Subject());
     const qrCodeRealm = useRef()
     let row_key = "";
@@ -564,7 +566,7 @@ export default (props) => {
     }
 
     const onClickPay = async () => {
-        i.current = 0;
+        indexPayment.current = 0;
         console.log("onClickPay jsonContent ", jsonContent);
         console.log("onClickPay vendorSession.Settings ", vendorSession.Settings);
         let newDate = new Date().getTime();
@@ -587,7 +589,7 @@ export default (props) => {
             setShowToast(true)
             return;
         }
-        if (checkQRInListMethod() && !vendorSession.Settings.QrCodeEnable) {
+        if (checkQRInListMethod() && (!vendorSession.Settings.QrCodeEnable || vendorSession.Settings.MerchantCode == '' || vendorSession.Settings.MerchantName == '')) {
             setToastDescription(I18n.t("vui_long_kich_hoat_thanh_toan_qrcode"))
             setShowToast(true)
             return;
@@ -663,34 +665,7 @@ export default (props) => {
         params.Order = json;
         jsonContentPayment.current = json;
         console.log("onClickPay params== ", params);
-
         if (net.isConnected == true && net.isInternetReachable == true) {
-            // dialogManager.showLoading();
-            // new HTTPService().setPath(ApiPath.ORDERS).POST(params).then(async order => {
-            //     console.log("onClickPay order== ", order);
-            //     dialogManager.hiddenLoading()
-            //     if (order) {
-            //         resPayment.current = order;
-            //         dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
-            //         // if (order.ResponseStatus && order.ResponseStatus.Message && order.ResponseStatus.Message != "") {
-            //         //     dialogManager.showPopupOneButton(order.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, ""))
-            //         //     return;
-            //         // }
-            //         if (order.QRCode && order.QRCode != "") {
-            //             qrCode.current = order.QRCode
-            //             typeModal.current = TYPE_MODAL.QRCODE
-            //             setShowModal(true)
-            //             handlerQRCode(order, json)
-            //         } else {
-            //             await printAfterPayment(order.Code)
-            //             updateServerEvent(true)
-            //         }
-            //     }
-            // }).catch(err => {
-            //     console.log("onClickPay err " + JSON.stringify(err));
-            //     onError(json)
-            // });
-
             dialogManager.showLoading();
             new HTTPService().setPath(ApiPath.ORDERS).POST(params).then(async order => {
                 console.log("onClickPay order== ", order);
@@ -1055,8 +1030,6 @@ export default (props) => {
         // props.navigation.pop()
     }
 
-    const i = useRef(0);
-    const imageQr = useRef(0);
     const callback = async (dataURL) => {
         console.log("Data getRef QrCode  ============ ", dataURL);
         let setting = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
@@ -1064,16 +1037,16 @@ export default (props) => {
             setting = JSON.parse(setting);
         }
         console.log("callback setting ", setting);
-        if (dataURL != "" && i.current == 0 && setting.PrintInvoiceBeforePaymentVNPayQR == true) {
+        if (dataURL != "" && indexPayment.current == 0 && setting.PrintInvoiceBeforePaymentVNPayQR == true) {
             imageQr.current = `<img id='barcode'
             src="data:image/png;base64,${dataURL}"
             width="150"
             height="150" />`
-            console.log("Data getRef QrCode  ============  image ", i.current, imageQr.current);
+            console.log("Data getRef QrCode  ============  image ", indexPayment.current, imageQr.current);
             jsonContentPayment.current.PaymentCode = resPayment.current.Code;
             dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContentPayment.current, provisional: false, imgQr: imageQr.current } })
         }
-        i.current++;
+        indexPayment.current++;
     }
 
     const renderFilter = () => {

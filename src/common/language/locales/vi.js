@@ -386,7 +386,7 @@ export default {
   vui_long_chon_linh_vuc_ban_le_ho_tro_shop_thoi_trang_sieu_thi: "Vui lòng chọn lĩnh vực BÁN LẺ hỗ trợ: shop, thời trang, siêu thị...",
   vui_long_nhap_day_du_thong_tin_truoc_khi_luu: "Vui lòng nhập đầy đủ các thông tin bắt buộc trước khi lưu",
   vnd: "VNĐ",
-  vui_long_kich_hoat_thanh_toan_qrcode: "Vui lòng mở thiết lập tính năng kích hoạt thanh toán qua QR Code",
+  vui_long_kich_hoat_thanh_toan_qrcode: "Thanh toán QR chưa có hiệu lực, vui lòng mở Thiết lập tính năng để cấu hình sử dụng.",
 
   // TODO: X
   xoa: "Xóa",
