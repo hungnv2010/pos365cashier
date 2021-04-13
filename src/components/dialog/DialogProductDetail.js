@@ -69,8 +69,8 @@ export default (props) => {
                     if (priceBook.ProductId == itemOrder.ProductId) {
                         itemOrder.DiscountRatio = 0.0
                         itemOrder.Discount = 0
-                        if (priceBook.PriceLargeUnit) LargePrice.current = priceBook.PriceLargeUnit
-                        if (priceBook.Price) UnitPrice.current = priceBook.Price
+                        if ('PriceLargeUnit' in priceBook) LargePrice.current = priceBook.PriceLargeUnit
+                        if ('Price' in priceBook) UnitPrice.current = priceBook.Price
                     }
                 })
             }

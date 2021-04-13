@@ -171,8 +171,8 @@ const Served = (props) => {
                 res.PriceList.forEach((priceBook) => {
                     if (priceBook.ProductId == product.ProductId) {
                         product.DiscountRatio = 0.0
-                        if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
-                        if (!priceBook.Price) priceBook.Price = product.UnitPrice
+                        if (!'PriceLargeUnit' in priceBook) priceBook.PriceLargeUnit = product.PriceLargeUnit
+                        if (!'Price' in priceBook) priceBook.Price = product.UnitPrice
                         let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price
                         product.Price = newBasePrice + product.TotalTopping
                     }
@@ -186,10 +186,10 @@ const Served = (props) => {
 
     const outputSelectedProduct = async (product, replace = false) => {
         let jsonContentTmp = JSON.parse(JSON.stringify(jsonContent))
-        console.log('outputSelectedProduct', product, jsonContentTmp);
+        console.log('outputSelectedProduct', product, jsonContentTmp, props);
         if (product.Quantity > 0 && !replace) {
             if (jsonContentTmp.OrderDetails.length == 0) {
-                let title = props.route.params.Name ? props.route.params.Name : ""
+                let title = props.route.params.room.Name ? props.route.params.room.Name : ""
                 let body = I18n.t('gio_khach_vao') + moment().format('HH:mm dd/MM')
                 jsonContentTmp.ActiveDate = moment()
                 dataManager.sentNotification(title, body)
@@ -435,8 +435,8 @@ const Served = (props) => {
                                             // }
                                             product.DiscountRatio = 0.0
                                             product.Discount = 0
-                                            if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
-                                            if (!priceBook.Price) priceBook.Price = product.UnitPrice
+                                            if (!'PriceLargeUnit' in priceBook) priceBook.PriceLargeUnit = product.PriceLargeUnit
+                                            if (!'Price' in priceBook) priceBook.Price = product.UnitPrice
                                             let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price
                                             console.log('newBasePrice', newBasePrice);
                                             product.Price = newBasePrice + product.TotalTopping

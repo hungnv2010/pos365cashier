@@ -152,8 +152,8 @@ export default (props) => {
                                 if (product.Discount == 0) {
                                     product.DiscountRatio = 0.0
                                     product.Discount = 0
-                                    if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
-                                    if (!priceBook.Price) priceBook.Price = product.UnitPrice
+                                    if (! 'PriceLargeUnit' in priceBook) priceBook.PriceLargeUnit = product.PriceLargeUnit
+                                    if (! 'Price' in priceBook) priceBook.Price = product.UnitPrice
                                     let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price
                                     product.Price = newBasePrice + product.TotalTopping
                                 }
@@ -498,8 +498,8 @@ export default (props) => {
                                         if (priceBook.ProductId == product.ProductId) {
                                             product.DiscountRatio = 0.0
                                             product.Discount = 0
-                                            if (!priceBook.PriceLargeUnit) priceBook.PriceLargeUnit = product.PriceLargeUnit
-                                            if (!priceBook.Price) priceBook.Price = product.UnitPrice
+                                            if (! 'PriceLargeUnit' in priceBook) priceBook.PriceLargeUnit = product.PriceLargeUnit
+                                            if (! 'Price' in priceBook) priceBook.Price = product.UnitPrice
                                             let newBasePrice = (product.IsLargeUnit) ? priceBook.PriceLargeUnit : priceBook.Price
                                             product.Price = newBasePrice + product.TotalTopping
                                         }
