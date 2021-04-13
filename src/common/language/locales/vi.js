@@ -431,6 +431,7 @@ export default {
   chon_hang_hoa: 'Chọn hàng hoá',
   chieu_rong_kho_giay: 'Chiều rộng khổ giấy',
   chon_nhom_nha_cung_cap:'Chọn nhóm nhà cung cấp',
+  cap_nhat_extra_topping:'Cập nhật Extra/ Topping',
 
   don_vi_tien_te: "Đơn vị tiền tệ",
   dollar_my: "Dollar Mỹ",
@@ -520,6 +521,7 @@ export default {
   ngay_het_han: "Ngày hết hạn",
   nhap_ten_nhom_hang_hoa: 'Nhập tên nhóm hàng hoá',
   nhap_don_vi_tinh_lon:'Nhập đơn vị tính lớn',
+  nhap_ten_nhom: 'Nhập tên nhóm',
 
   quan_ly:'Quản lý',
   quan_ly_hang_hoa:'Quản lý hàng hoá',
@@ -561,8 +563,8 @@ export default {
   thiet_lap_quyen:'Thiết lập quyền',
   them_nhan_vien:'Thêm nhân viên',
   ten_nha_cung_cap:'Tên nhà cung cấp',
-  thiet_lap_extra_topping:'Thiết lập Extra topping',
-  ten_extra_topping:'Tên Extra topping',
+  thiet_lap_extra_topping:'Thiết lập Extra/ Topping',
+  ten_extra_topping:'Tên Extra/ Topping',
   tach_thanh_nhieu_dong_khi_ban_hang:'Tách thành nhiều dòng khi bán hàng',
   tao_nhom_hang_hoa:'Tạo nhóm hàng hoá',
   them_moi_hang_hoa:'Thêm mới hàng hoá',

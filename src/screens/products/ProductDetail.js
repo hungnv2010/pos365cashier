@@ -50,6 +50,7 @@ export default (props) => {
     const [printerPr, setPrinterPr] = useState('')
     const scrollRef = useRef();
     const [codeProduct, setCodeProduct] = useState()
+    const [cost, setCost] = useState(0)
     const isCoppy = useRef(false)
     const addCate = useRef([{
         Name: 'ten_nhom',
@@ -131,11 +132,16 @@ export default (props) => {
             getCategory()
             console.log("CompositeItemProducts", props.compositeItemProducts);
             setNameCategory()
+            setCost(props.iproduct.Cost)
             if (props.iproduct.Code) {
                 setCodeProduct(props.iproduct.Code)
                 setType('sua')
             } else {
-                setProduct({ ProductType: 1, BlockOfTimeToUseService: 6 })
+                if(isCoppy == true){
+                setProduct({...product, ProductType: product.ProductType ? product.ProductType :1, BlockOfTimeToUseService: product.BlockOfTimeToUseService ? product.BlockOfTimeToUseService : 6 })
+                }else{
+                    setProduct({ProductType: 1, BlockOfTimeToUseService: 6 })
+                }
                 setCodeProduct("")
                 setPriceConfig({})
                 setType('them')
@@ -166,8 +172,17 @@ export default (props) => {
         if (deviceType == Constant.TABLET) {
             setCompositeItemProducts(props.compositeItemProducts)
             setListItemFormular(props.compositeItemProducts)
+            setCountFormular(props.compositeItemProducts.length)
         }
     }, [props.compositeItemProducts])
+    useEffect(()=>{
+        let t = 0
+        compositeItemProducts.forEach(el =>{
+            t =t + el.Cost
+        })
+        console.log("cost.....",compositeItemProducts);
+        setCost(t)
+    },[compositeItemProducts])
 
     useEffect(() => {
         //setPriceConfig({})
@@ -180,7 +195,10 @@ export default (props) => {
             currentRetailerId.current = JSON.parse(current).CurrentRetailer.Id
         }
         getCurrentAccount()
+        setStatusPrinter()
+        console.log("product data",product);
     }, [product])
+    
     useEffect(() => {
         setStatusPrinter()
     }, [priceConfig])
@@ -226,6 +244,7 @@ export default (props) => {
         itemProduct.current = JSON.parse(JSON.stringify(param.product))
         setProduct({ ...JSON.parse(JSON.stringify(param.product)) })
         setCodeProduct(itemProduct.current.Code)
+        setCost(itemProduct.current.Cost)
         console.log("data product", param.type);
         setType(params.type)
         // setCategory([...JSON.parse(JSON.stringify(param.category))])
@@ -483,7 +502,7 @@ export default (props) => {
                                 setProduct({ ...res })
                                 setProduct({ ...product, Code: "", Id: 0 })
                                 setCodeProduct("")
-                                props.handleSuccessTab(type, 2, { ...product, Code: "", Id: 0 })
+                                props.handleSuccessTab(type, 2, { ...res, Code: "", Id: 0 })
                                 setType('them')
 
                             }
@@ -592,7 +611,6 @@ export default (props) => {
                     .catch(err => console.log('ClickDelete err', err))
             }
         })
-
     }
 
     useEffect(() => {
@@ -780,7 +798,7 @@ export default (props) => {
                                 <View style={{ flexDirection: 'row' }}>
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.title}>{I18n.t('gia_von')}</Text>
-                                        <TextInput style={[styles.textInput, { color: colors.colorLightBlue, fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={product && product.Cost ? currencyToString(product.Cost) : productOl.Cost ? currencyToString(productOl.Cost) : 0 + ''} onChangeText={(text) => setProduct({ ...product, Cost: onChangeTextInput(text) })}></TextInput>
+                                        <TextInput style={[styles.textInput, { color: colors.colorLightBlue, fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={cost ? currencyToString(cost) : 0 + ''} onChangeText={(text) => setCost(onChangeTextInput(text))}></TextInput>
                                     </View>
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.title} >{I18n.t('gia')}</Text>
