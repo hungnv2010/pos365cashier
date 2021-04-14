@@ -51,11 +51,15 @@ export default (props) => {
     const [currentCustomer, setCurrentCustomer] = useState({ Name: "khach_le", Id: 0 })
     const [promotions, setPromotions] = useState([])
     const [listProducts, setListProducts] = useState([])
+    const { already } = useSelector(state => {
+        return state.Common
+    });
 
     let serverEvents = null;
 
 
     useEffect(() => {
+        if (!already) return
         const getCommodityWaiting = async () => {
             serverEvents = await realmStore.queryServerEvents()
             let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
@@ -88,7 +92,7 @@ export default (props) => {
             keyboardDidShowListener.remove();
             keyboardDidHideListener.remove();
         }
-    }, [])
+    }, [already])
 
     useEffect(() => {
         console.log('jsonContent.Partner', jsonContent.Partner);

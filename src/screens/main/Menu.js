@@ -261,7 +261,7 @@ const HeaderComponent = (props) => {
                 routes: [
                     {
                         name: 'Home',
-                        params: { isFromLogin: false}
+                        params: { isFromLogin: false }
                     },
                     {
                         name: "Home"
@@ -294,6 +294,8 @@ const HeaderComponent = (props) => {
             if (res == 1) {
                 dispatch({ type: 'IS_FNB', isFNB: null })
                 dispatch({ type: 'ALREADY', already: false })
+                console.log(Branch);
+                setFileLuuDuLieu(Constant.LAST_BRANCH, JSON.stringify(Branch));
                 setFileLuuDuLieu(Constant.CURRENT_ACCOUNT, "");
                 setFileLuuDuLieu(Constant.CURRENT_BRANCH, "");
                 signalRManager.killSignalR();
