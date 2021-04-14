@@ -97,7 +97,8 @@ export default (props) => {
       vendorSession = JSON.parse(vendorSession)
       let currentBranch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
       currentBranch = JSON.parse(currentBranch)
-      console.log('getStoreInfo', currentBranch);
+      let lastBranch = await getFileDuLieuString(Constant.LAST_BRANCH, true);
+      lastBranch = lastBranch ? JSON.parse(lastBranch) : { Id: null }
 
       if (vendorSession) {
         if (currentBranch && currentBranch.FieldId) {
@@ -135,6 +136,7 @@ export default (props) => {
       if (isFNB === null) return
 
       dispatch({ type: 'ALREADY', already: false })
+
       // NetInfo.fetch().then(async state => {
       //   if (state.isConnected == true && state.isInternetReachable == true) {
       //     if (isFNB === true) {
@@ -148,11 +150,15 @@ export default (props) => {
       // });
 
       if (isFNB === true) {
+        await realmStore.deleteAllForFnb()
         await dataManager.syncAllDatas()
       } else {
-        let fromLogin = !props.params
-        console.log('fromLogin', fromLogin);
-        await realmStore.deleteAllForRetail(fromLogin)
+        let currentBranch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
+        currentBranch = JSON.parse(currentBranch)
+        let lastBranch = await getFileDuLieuString(Constant.LAST_BRANCH, true);
+        lastBranch = lastBranch ? JSON.parse(lastBranch) : { Id: null }
+        console.log('currentBranch.Id', currentBranch, lastBranch, currentBranch.Id == lastBranch.Id);
+        await realmStore.deleteAllForRetail(currentBranch.Id == lastBranch.Id)
         await dataManager.syncAllDatasForRetail()
       }
       dispatch({ type: 'ALREADY', already: true })

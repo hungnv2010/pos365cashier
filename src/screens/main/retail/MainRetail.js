@@ -24,7 +24,7 @@ const MainRetail = (props) => {
     const [currentCustomer, setCurrentCustomer] = useState({ Name: "khach_le", Id: 0 })
     const [numberCommodity, setNumberCommodity] = useState(0)
     const [jsonContent, setJsonContent] = useState({})
-    const { orientaition, deviceType, syncRetail } = useSelector(state => {
+    const { orientaition, deviceType, syncRetail, already } = useSelector(state => {
         return state.Common
     });
     const currentCommodity = useRef()
@@ -40,6 +40,7 @@ const MainRetail = (props) => {
     }, [syncRetail])
 
     useEffect(() => {
+        if (!already) return
         const getCommodityWaiting = async () => {
 
             serverEvents = await realmStore.queryServerEvents()
@@ -59,7 +60,7 @@ const MainRetail = (props) => {
 
         }
         getCommodityWaiting()
-    }, [])
+    }, [already])
 
     useEffect(() => {
         console.log('jsonContent.Partner', jsonContent.Partner);

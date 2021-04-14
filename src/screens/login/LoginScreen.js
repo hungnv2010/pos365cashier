@@ -102,7 +102,7 @@ const LoginScreen = (props) => {
     const handlerLoginSuccess = async (params, res) => {
         let account = { SessionId: res.SessionId, UserName: params.UserName, Link: shop.trim() };
         setFileLuuDuLieu(Constant.CURRENT_ACCOUNT, JSON.stringify(account));
-        await realmStore.deleteAllForFnb()
+        // await realmStore.deleteAllForFnb()
         getRetailerInfoAndNavigate();
     }
 
@@ -133,13 +133,11 @@ const LoginScreen = (props) => {
                 }
             }
 
-            if (res && res.CurrentUser) {
+            if (res && res.CurrentUser && res.CurrentUser.IsActive) {
                 if (userName != '') {
                     let account = { UserName: userName, Link: shop.trim() };
                     setFileLuuDuLieu(Constant.REMEMBER_ACCOUNT, JSON.stringify(account));
                 }
-
-
                 navigateToHome()
             } else {
                 dialogManager.showPopupOneButton(I18n.t('ban_khong_co_quyen_truy_cap'), I18n.t('thong_bao'));

@@ -301,6 +301,7 @@ const HeaderComponent = (props) => {
                     dispatch({ type: 'IS_FNB', isFNB: null })
                     dispatch({ type: 'ALREADY', already: false })
                     dispatch(saveDeviceInfoToStore({ SessionId: "" }))
+                    setFileLuuDuLieu(Constant.LAST_BRANCH, JSON.stringify(Branch));
                     setFileLuuDuLieu(Constant.CURRENT_ACCOUNT, "");
                     setFileLuuDuLieu(Constant.CURRENT_BRANCH, "");
                     signalRManager.killSignalR();
