@@ -56,7 +56,7 @@ class DataManager {
     async addPromotion(list = []) {
         console.log("addPromotion list ", list);
         let promotion = await realmStore.querryPromotion();
-        promotionTmp = promotion
+        let promotionTmp = promotion
         let listProduct = await realmStore.queryProducts()
         let listNewOrder = list.filter(element => (element.IsPromotion == undefined || (element.IsPromotion == false)))
         let listOldPromotion = list.filter(element => (element.IsPromotion != undefined && (element.IsPromotion == true)))
@@ -402,9 +402,14 @@ class DataManager {
             await this.syncServerEvent(),
             await this.syncRooms(),
             await this.syncPartner(),
-            await this.syncCategories(),
+            await this.syncCategories()
+        let vendorSession = await this.selectVendorSession()
+        if (vendorSession && vendorSession.CurrentUser && vendorSession.CurrentUser.IsAdmin) {
+            console.log();
             await this.syncPromotion(),
-            await this.syncPriceBook()
+                await this.syncPriceBook()
+
+        }
     }
 
     syncAllDatasForRetail = async () => {
@@ -413,9 +418,14 @@ class DataManager {
             // await this.syncServerEvent(),
             await this.syncRooms(),
             await this.syncPartner(),
-            await this.syncCategories(),
+            await this.syncCategories()
+        let vendorSession = await this.selectVendorSession()
+        if (vendorSession && vendorSession.CurrentUser && vendorSession.CurrentUser.IsAdmin) {
+            console.log();
             await this.syncPromotion(),
-            await this.syncPriceBook()
+                await this.syncPriceBook()
+
+        }
     }
 
 
