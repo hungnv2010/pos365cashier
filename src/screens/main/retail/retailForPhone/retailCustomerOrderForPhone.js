@@ -51,11 +51,15 @@ export default (props) => {
     const [currentCustomer, setCurrentCustomer] = useState({ Name: "khach_le", Id: 0 })
     const [promotions, setPromotions] = useState([])
     const [listProducts, setListProducts] = useState([])
+    const { already } = useSelector(state => {
+        return state.Common
+    });
 
     let serverEvents = null;
 
 
     useEffect(() => {
+        if (!already) return
         const getCommodityWaiting = async () => {
             serverEvents = await realmStore.queryServerEvents()
             let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
@@ -88,7 +92,7 @@ export default (props) => {
             keyboardDidShowListener.remove();
             keyboardDidHideListener.remove();
         }
-    }, [])
+    }, [already])
 
     useEffect(() => {
         console.log('jsonContent.Partner', jsonContent.Partner);
@@ -718,7 +722,12 @@ export default (props) => {
                 console.log("onClickPay err== ", err);
             })
         } else {
-            onError(json)
+            let isCheckStockControlWhenSelling = await dataManager.checkStockControlWhenSelling(json.OrderDetails)
+            if (vendorSession.Settings.StockControlWhenSelling == true && isCheckStockControlWhenSelling) {
+                return;
+            } else {
+                onError(json)
+            }
         }
     }
 
@@ -733,7 +742,7 @@ export default (props) => {
         console.log("handlerError data ", data);
         dialogManager.hiddenLoading()
         let params = {
-            Id: "OFFLINE" + Math.floor(Math.random() * 9999999),
+            Id: "OFFLINEIOS" + Math.floor(Math.random() * 9999999),
             Orders: JSON.stringify(data.JsonContent),
             ExcessCash: data.JsonContent.ExcessCash,
             DontSetTime: 0,

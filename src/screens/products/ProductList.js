@@ -152,7 +152,6 @@ export default (props) => {
         console.log("callback data", data);
         setCompositeItemProducts(data)
     }
-
     const renderProduct = (item, index) => {
         return (
             <TouchableOpacity key={index.toString()} onPress={() => onClickItem(item)} style={{ backgroundColor: '#F5F5F5' }}>
@@ -223,7 +222,6 @@ export default (props) => {
             <View style={{ flex: 1, flexDirection: 'row' }}>
                 <View style={{ backgroundColor: '#F5F5F5', flexDirection: 'column', flex: 1 }}>
                     <View style={{ backgroundColor: "#FFDEAD", marginTop: 5, borderRadius: 18, marginLeft: 5, marginRight: 5 }}>
-
                         {category.length > 0 ?
                             <FlatList
                                 data={category}

@@ -10,7 +10,7 @@ import { Colors, Metrics, Images } from '../../../../theme'
 import ToolBarSelectProduct from '../../../../components/toolbar/ToolBarSelectProduct'
 import dialogManager from '../../../../components/dialog/DialogManager'
 import ProductManager from '../../../../data/objectManager/ProductManager'
-
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default (props) => {
   const [isLoadMore, setIsLoadMore] = useState(false)
@@ -292,28 +292,30 @@ export default (props) => {
         <View style={{ flex: 1, justifyContent: "center", }}>
           {hasProducts ?
             product.length > 0 ?
-              <FlatList
-                removeClippedSubviews={true}
-                showsVerticalScrollIndicator={false}
-                data={product}
-                renderItem={({ item, index }) =>
-                  <ProductsItemForPhone
-                    onChangeText={onChangeText}
-                    item={item}
-                    index={index}
-                    getQuantity={getQuantity}
-                    onClickProduct={onClickProduct}
-                    handleButtonDecrease={handleButtonDecrease}
-                    handleButtonIncrease={handleButtonIncrease}
-                  />
-                }
-                keyExtractor={(item, index) => '' + index}
-                extraData={product.Quantity}
-                onEndReached={(info) => { loadMore(info) }}
-                ListFooterComponent={isLoadMore ? <ActivityIndicator color={Colors.colorchinh} /> : null}
-              />
+              <KeyboardAwareScrollView>
+                <FlatList
+                  removeClippedSubviews={true}
+                  showsVerticalScrollIndicator={false}
+                  data={product}
+                  renderItem={({ item, index }) =>
+                    <ProductsItemForPhone
+                      onChangeText={onChangeText}
+                      item={item}
+                      index={index}
+                      getQuantity={getQuantity}
+                      onClickProduct={onClickProduct}
+                      handleButtonDecrease={handleButtonDecrease}
+                      handleButtonIncrease={handleButtonIncrease}
+                    />
+                  }
+                  keyExtractor={(item, index) => '' + index}
+                  extraData={product.Quantity}
+                  onEndReached={(info) => { loadMore(info) }}
+                  ListFooterComponent={isLoadMore ? <ActivityIndicator color={Colors.colorchinh} /> : null}
+                />
+              </KeyboardAwareScrollView>
               :
-              <Text style={{textAlign:"center"}}>{I18n.t('khong_tim_thay_san_pham_nao_phu_hop')}</Text>
+              <Text style={{ textAlign: "center" }}>{I18n.t('khong_tim_thay_san_pham_nao_phu_hop')}</Text>
             :
             <ActivityIndicator size="large" style={{}} color={Colors.colorchinh} />}
         </View>

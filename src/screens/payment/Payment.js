@@ -93,6 +93,8 @@ export default (props) => {
     const resPayment = useRef({});
     const jsonContentPayment = useRef({});
     const changeMethodQRPay = useRef(false);
+    const indexPayment = useRef(0);
+    const imageQr = useRef(0);
     const debounceTimeInput = useRef(new Subject());
     const qrCodeRealm = useRef()
     let row_key = "";
@@ -523,9 +525,9 @@ export default (props) => {
             if (noteInfo != '') {
                 jsonContent.Description = noteInfo;
             }
-            if (date && dateTmp.current) {
-                jsonContent.PurchaseDate = "" + date;
-            }
+            // if (date && dateTmp.current) {
+            //     jsonContent.PurchaseDate = "" + date;
+            // }
 
             let MoreAttributes = jsonContent.MoreAttributes ? (typeof (jsonContent.MoreAttributes) == 'string' ? JSON.parse(jsonContent.MoreAttributes) : jsonContent.MoreAttributes) : {}
             console.log("onClickProvisional MoreAttributes ", MoreAttributes);
@@ -564,7 +566,7 @@ export default (props) => {
     }
 
     const onClickPay = async () => {
-        i.current = 0;
+        indexPayment.current = 0;
         console.log("onClickPay jsonContent ", jsonContent);
         console.log("onClickPay vendorSession.Settings ", vendorSession.Settings);
         let newDate = new Date().getTime();
@@ -587,7 +589,7 @@ export default (props) => {
             setShowToast(true)
             return;
         }
-        if (checkQRInListMethod() && !vendorSession.Settings.QrCodeEnable) {
+        if (checkQRInListMethod() && (!vendorSession.Settings.QrCodeEnable || vendorSession.Settings.MerchantCode == '' || vendorSession.Settings.MerchantName == '')) {
             setToastDescription(I18n.t("vui_long_kich_hoat_thanh_toan_qrcode"))
             setShowToast(true)
             return;
@@ -663,34 +665,7 @@ export default (props) => {
         params.Order = json;
         jsonContentPayment.current = json;
         console.log("onClickPay params== ", params);
-
         if (net.isConnected == true && net.isInternetReachable == true) {
-            // dialogManager.showLoading();
-            // new HTTPService().setPath(ApiPath.ORDERS).POST(params).then(async order => {
-            //     console.log("onClickPay order== ", order);
-            //     dialogManager.hiddenLoading()
-            //     if (order) {
-            //         resPayment.current = order;
-            //         dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
-            //         // if (order.ResponseStatus && order.ResponseStatus.Message && order.ResponseStatus.Message != "") {
-            //         //     dialogManager.showPopupOneButton(order.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, ""))
-            //         //     return;
-            //         // }
-            //         if (order.QRCode && order.QRCode != "") {
-            //             qrCode.current = order.QRCode
-            //             typeModal.current = TYPE_MODAL.QRCODE
-            //             setShowModal(true)
-            //             handlerQRCode(order, json)
-            //         } else {
-            //             await printAfterPayment(order.Code)
-            //             updateServerEvent(true)
-            //         }
-            //     }
-            // }).catch(err => {
-            //     console.log("onClickPay err " + JSON.stringify(err));
-            //     onError(json)
-            // });
-
             dialogManager.showLoading();
             new HTTPService().setPath(ApiPath.ORDERS).POST(params).then(async order => {
                 console.log("onClickPay order== ", order);
@@ -713,11 +688,31 @@ export default (props) => {
                 console.log("onClickPay err== ", err);
             })
         } else {
-            onError(json)
+            let isCheckStockControlWhenSelling = await dataManager.checkStockControlWhenSelling(json.OrderDetails)
+            if (vendorSession.Settings.StockControlWhenSelling == true && isCheckStockControlWhenSelling) {
+                return;
+            } else {
+                onError(json)
+            }
         }
-
-
     }
+
+    // const checkStockControlWhenSelling = async (OrderDetails = []) => {
+    //     let listProduct = await realmStore.queryProducts();
+    //     if (OrderDetails.length > 0) {
+    //         OrderDetails.forEach(element => {
+    //             let product = listProduct.filtered(`Id == ${element.ProductId}`)
+    //             if (JSON.stringify(product) != '{}') {
+    //                 product = product[0]
+    //                 if (product.OnHand <= 0) {
+    //                     dialogManager.showPopupOneButton(element.Name + " " + I18n.t("khong_du_ton_kho"))
+    //                     return true;
+    //                 }
+    //             }
+    //         });
+    //     }
+    //     return false;
+    // }
 
     const onError = (json) => {
         dialogManager.showPopupOneButton(I18n.t("khong_co_ket_noi_internet_don_hang_cua_quy_khach_duoc_luu_vao_offline"))
@@ -811,7 +806,7 @@ export default (props) => {
         console.log("handlerError data ", data);
         dialogManager.hiddenLoading()
         let params = {
-            Id: "OFFLINE" + Math.floor(Math.random() * 9999999),
+            Id: "OFFLINEIOS" + Math.floor(Math.random() * 9999999),
             Orders: JSON.stringify(data.JsonContent),
             ExcessCash: data.JsonContent.ExcessCash,
             DontSetTime: 0,
@@ -1035,8 +1030,6 @@ export default (props) => {
         // props.navigation.pop()
     }
 
-    const i = useRef(0);
-    const imageQr = useRef(0);
     const callback = async (dataURL) => {
         console.log("Data getRef QrCode  ============ ", dataURL);
         let setting = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
@@ -1044,16 +1037,16 @@ export default (props) => {
             setting = JSON.parse(setting);
         }
         console.log("callback setting ", setting);
-        if (dataURL != "" && i.current == 0 && setting.PrintInvoiceBeforePaymentVNPayQR == true) {
+        if (dataURL != "" && indexPayment.current == 0 && setting.PrintInvoiceBeforePaymentVNPayQR == true) {
             imageQr.current = `<img id='barcode'
             src="data:image/png;base64,${dataURL}"
             width="150"
             height="150" />`
-            console.log("Data getRef QrCode  ============  image ", i.current, imageQr.current);
+            console.log("Data getRef QrCode  ============  image ", indexPayment.current, imageQr.current);
             jsonContentPayment.current.PaymentCode = resPayment.current.Code;
             dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContentPayment.current, provisional: false, imgQr: imageQr.current } })
         }
-        i.current++;
+        indexPayment.current++;
     }
 
     const renderFilter = () => {

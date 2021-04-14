@@ -596,7 +596,12 @@ const CustomerOrder = (props) => {
                 console.log("onClickPay err== ", err);
             })
         } else {
-            onError(json)
+            let isCheckStockControlWhenSelling = await dataManager.checkStockControlWhenSelling(json.OrderDetails)
+            if (vendorSession.Settings.StockControlWhenSelling == true && isCheckStockControlWhenSelling) {
+                return;
+            } else {
+                onError(json)
+            }
         }
     }
 
@@ -650,7 +655,7 @@ const CustomerOrder = (props) => {
         console.log("handlerError data ", data);
         dialogManager.hiddenLoading()
         let params = {
-            Id: "OFFLINE" + Math.floor(Math.random() * 9999999),
+            Id: "OFFLINEIOS" + Math.floor(Math.random() * 9999999),
             Orders: JSON.stringify(data.JsonContent),
             ExcessCash: data.JsonContent.ExcessCash,
             DontSetTime: 0,

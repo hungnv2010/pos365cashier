@@ -170,6 +170,7 @@ export default {
   khong: "Không",
   khong_co_ket_noi_internet_don_hang_cua_quy_khach_duoc_luu_vao_offline: "Không có kết nối internet, đơn hàng được lưu vào danh sách đơn hàng offline.",
   khong_tim_thay_san_pham_nao_phu_hop: "Không tìm thấy sản phẩm phù hợp",
+  khong_du_ton_kho: "không đủ tồn kho, vui lòng nhập thêm hàng trước khi bán.",
 
   // TODO: H
   hoa_don: "Hoá đơn",
@@ -385,7 +386,7 @@ export default {
   vui_long_chon_linh_vuc_ban_le_ho_tro_shop_thoi_trang_sieu_thi: "Vui lòng chọn lĩnh vực BÁN LẺ hỗ trợ: shop, thời trang, siêu thị...",
   vui_long_nhap_day_du_thong_tin_truoc_khi_luu: "Vui lòng nhập đầy đủ các thông tin bắt buộc trước khi lưu",
   vnd: "VNĐ",
-  vui_long_kich_hoat_thanh_toan_qrcode: "Vui lòng mở thiết lập tính năng kích hoạt thanh toán qua QR Code",
+  vui_long_kich_hoat_thanh_toan_qrcode: "Thanh toán QR chưa có hiệu lực, vui lòng mở Thiết lập tính năng để cấu hình sử dụng.",
 
   // TODO: X
   xoa: "Xóa",

@@ -17,9 +17,9 @@ export default (props) => {
     const { isFNB } = useSelector(state => {
         return state.Common
     })
-    
-    const onClickNavigation = (screen, params={}) => {
-        props.navigation.navigate(screen,params)
+
+    const onClickNavigationProduct = () => {
+        props.navigation.navigate(ScreenList.Product)
     }
 
     return (
@@ -31,7 +31,7 @@ export default (props) => {
             />
 
             <View style={styles.viewContent}>
-                <TouchableOpacity style={styles.button} onPress={() => {onClickNavigation(ScreenList.Product)}}>
+                <TouchableOpacity style={styles.button} onPress={() => onClickNavigationProduct(ScreenList.Product)}>
                     <Image style={styles.iconButton} source={Images.ic_danhsachhanghoa} />
                     <Text style={styles.textButton}>{I18n.t('danh_sach_hang_hoa')}</Text>
                 </TouchableOpacity>

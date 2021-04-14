@@ -124,15 +124,15 @@ export default forwardRef((props, ref) => {
         // let getCurrentIP = await getFileDuLieuString(Constant.IPPRINT, true);
         // console.log('getCurrentIP ', getCurrentIP);
         // if (getCurrentIP && getCurrentIP != "") {
-            if (isClick.current == false) {
-                let html = data.replace("width: 76mm", "")
-                // viewPrintRef.current.clickCaptureRef();
-                viewPrintRef.current.printProvisionalRef(JsonContent1)
-            }
-            // isClick.current = true;
-            // setTimeout(() => {
-            //     isClick.current = false;
-            // }, 2000);
+        if (isClick.current == false) {
+            let html = data.replace("width: 76mm", "")
+            // viewPrintRef.current.clickCaptureRef();
+            viewPrintRef.current.printProvisionalRef(JsonContent1, false, "", true)
+        }
+        // isClick.current = true;
+        // setTimeout(() => {
+        //     isClick.current = false;
+        // }, 2000);
         // } else {
         //     dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_may_in'), I18n.t('thong_bao'))
         // }

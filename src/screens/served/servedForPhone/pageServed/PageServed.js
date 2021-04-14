@@ -210,7 +210,7 @@ export default (props) => {
 
         } else {
             let title = props.route.params.room.Name ? props.route.params.room.Name : ""
-            let body = I18n.t('gio_khach_vao') + moment().format('HH:mm dd/MM')
+            let body = I18n.t('gio_khach_vao') + moment().format('HH:mm DD/MM')
             let { RoomId, Position } = currentServerEvent.current
             let jsonContentObj = JSON.stringify(jsonContent) == "{}" ? dataManager.createJsonContent(RoomId, Position, moment(), title) : jsonContent
             jsonContentObj.OrderDetails = [...list]

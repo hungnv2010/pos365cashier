@@ -17,6 +17,7 @@ import QRCode from 'react-native-qrcode-svg';
 import { ApiPath } from '../../../data/services/ApiPath';
 import dataManager from '../../../data/DataManager';
 import NetInfo from "@react-native-community/netinfo";
+import moment from 'moment';
 var Sound = require('react-native-sound');
 const TYPE_MODAL = { FILTER_ACCOUNT: "FILTER_ACCOUNT", QRCODE: "QRCODE" }
 
@@ -218,7 +219,12 @@ export default (props) => {
                 console.log("onClickPay err== ", err);
             })
         } else {
-            onError(json)
+            let isCheckStockControlWhenSelling = await dataManager.checkStockControlWhenSelling(json.OrderDetails)
+            if (vendorSession.Settings.StockControlWhenSelling == true && isCheckStockControlWhenSelling) {
+                return;
+            } else {
+                onError(json)
+            }
         }
     }
 
@@ -231,7 +237,7 @@ export default (props) => {
         console.log("handlerError data ", data);
         dialogManager.hiddenLoading()
         let params = {
-            Id: "OFFLINE" + Math.floor(Math.random() * 9999999),
+            Id: "OFFLINEIOS" + Math.floor(Math.random() * 9999999),
             Orders: JSON.stringify(data.JsonContent),
             ExcessCash: data.JsonContent.ExcessCash,
             DontSetTime: 0,
@@ -246,7 +252,7 @@ export default (props) => {
     const printAfterPayment = async (jsonContent, Code) => {
         console.log("printAfterPayment jsonContent 1 ", jsonContent, props.route.params);
         jsonContent.PaymentCode = Code;
-        jsonContent.PurchaseDate = new Date().toString();
+        jsonContent.PurchaseDate = moment().utc().format("YYYY-MM-DD[T]HH:mm:ss.SS[Z]");
         console.log("printAfterPayment jsonContent 2 ", jsonContent);
         dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
     }

@@ -55,7 +55,7 @@ RCT_EXPORT_METHOD(registerPrint:(NSString *)param) {
   [_printerManager AddConnectObserver:self selector:@selector(handleNotification:)];//Add
 }
 
-RCT_EXPORT_METHOD(printImageFromClient:(NSString *)param ip:(NSString *)ip size:(NSString *)size callback:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(printImageFromClient:(NSString *)param ip:(NSString *)ip size:(NSString *)size isCopies:(NSString *)isCopies callback:(RCTResponseSenderBlock)callback) {
   NSLog(@"printImageFromClient param %@ ip %@", param, ip);
 //  PrintClose = YES;
   isLocalNetwork = NO;
@@ -83,7 +83,7 @@ RCT_EXPORT_METHOD(printImageFromClient:(NSString *)param ip:(NSString *)ip size:
   
   imagePrintClient = [[UIImage alloc] initWithData:imgData];
   NSLog(@"printImageFromClient imagePrintClient %@", imagePrintClient);
-  [self printClient];
+  [self printClient: isCopies];
   callback(@[@"Done"]);
 }
 
@@ -137,7 +137,7 @@ RCT_EXPORT_METHOD(keepTheScreenOff:(NSString *)param) {
   });
 }
 
-- (void) printClient {
+- (void) printClient: (NSString *)isCopies {
 //  images = [@[] mutableCopy];
 //
 //  float i_width = 1000;
@@ -264,26 +264,33 @@ RCT_EXPORT_METHOD(keepTheScreenOff:(NSString *)param) {
     NSData *dataPrint=[cmd GetCmd];
     [currentprinter Write:dataPrint];
     NSLog(@"printImageFromClient URL 7 %@", dataPrint);
-    
+    NSLog(@"printImageFromClient isCopies 8 %@", isCopies);
     [[currentprinter PrinterPi] setCallbackwhenSendSuccess:^(NSInteger ipackNo, NSInteger ipackcnt, NSString *message) {
-//      cmd=nil;
-//      [_printerManager.CurrentPrinter Close];
-      double delayInSeconds = 2;
-      dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-      dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-        [_printerManager.CurrentPrinter Close];
-      });
+      //      cmd=nil;
+      //      [_printerManager.CurrentPrinter Close];
+      if ([isCopies isEqualToString:@"true"])
+      {
+        NSLog(@"printImageFromClient isCopies connect");
+      }else {
+        NSLog(@"printImageFromClient isCopies disconnect");
+        double delayInSeconds = 3;
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+          NSLog(@"printImageFromClient isCopies disconnect close");
+          [_printerManager.CurrentPrinter Close];
+        });
+      }
+      //      double delayInSeconds = 2;
+      //      dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+      //      dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+      //        [_printerManager.CurrentPrinter Close];
+      //      });
     }];
 //    [[currentprinter PrinterPi] setCallbackPrintFinsh:^(BOOL isSucc, NSString *message) {
 //      [_printerManager.CurrentPrinter Close];
 //    }];
   }
   cmd=nil;
-//  double delayInSeconds = 3;
-//  dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-//  dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-//    [_printerManager.CurrentPrinter Close];
-//  });
 }
 
 #pragma handleNotification
