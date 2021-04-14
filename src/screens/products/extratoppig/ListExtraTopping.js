@@ -106,7 +106,7 @@ export default (props) => {
     const renderExtra = (item, index) => {
         return (
             <TouchableOpacity onPress={()=>onClickExtra(item)}>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', backgroundColor: iExtra && iExtra.Id == item.Id ? '#FFE5B4' : '#FFF', alignItems: 'center', paddingVertical: 10, paddingHorizontal: 5, marginVertical: 2 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', backgroundColor: iExtra && iExtra.Id == item.Id ? '#FFE5B4' : '#FFF', alignItems: 'center', paddingVertical: 10, paddingHorizontal: 5, marginVertical: 1 }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center',flex:8,paddingRight:20 }}>
                     <Icon name={'extension'} size={30} color={colors.colorchinh} />
                     <Text style={{marginLeft:10,textTransform:'uppercase' }}>{item.Extra.Name}</Text>
@@ -121,7 +121,7 @@ export default (props) => {
     const renderExtraGroup = (item, index) => {
         return (
             <TouchableOpacity onPress={() => onClickCate(item)}>
-                <View style={{ backgroundColor: item == cateClick ? colors.colorLightBlue : 'white', paddingHorizontal: 20, paddingVertical: 10, borderRadius: cateClick == item ? 10 : 0 }}>
+                <View style={{ backgroundColor: item == cateClick ? colors.colorLightBlue : '#fff', paddingHorizontal: 20, paddingVertical: 10, borderRadius: cateClick == item ? 10 : 0 }}>
                     <Text style={{ fontWeight: 'bold', color: item == cateClick ? '#fff' : '#000' }}>{item}</Text>
                 </View>
             </TouchableOpacity>
@@ -135,7 +135,7 @@ export default (props) => {
                 title={I18n.t('danh_sach_extra_topping')}
             />
             <View style={{ flex: 1 }}>
-                <View style={{ paddingVertical: 10, paddingHorizontal: 5,backgroundColor:'#fff' }}>
+                <View style={{ paddingVertical: 10, paddingHorizontal: 5,backgroundColor:'#fff',marginBottom:2 }}>
                     <FlatList
                         data={category}
                         renderItem={({ item, index }) => renderExtraGroup(item, index)}

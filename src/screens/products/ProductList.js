@@ -19,6 +19,7 @@ import dialogManager from '../../components/dialog/DialogManager';
 import CustomerToolBar from '../../screens/customerManager/customer/CustomerToolBar';
 import useDebounce from '../../customHook/useDebounce';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { set } from 'react-native-reanimated';
 
 export default (props) => {
     const isReLoad = useRef(false);
@@ -34,6 +35,7 @@ export default (props) => {
     const currentProduct = useRef(0)
     const [loadMore, setLoadMore] = useState(false)
     const flatlistRef = useRef(null)
+    const [viewData,setViewData] = useState([])
     const productTmp = useRef([])
     useEffect(() => {
         dialogManager.showLoading()
@@ -47,10 +49,9 @@ export default (props) => {
     });
     let categoryTmp = []
     const getData = async () => {
-        let arr = []
-        arr = await (await realmStore.queryProducts()).filtered(`TRUEPREDICATE SORT(Id DESC) DISTINCT(Id)`)
-        productTmp.current = arr
-        console.log("product", productTmp.current);
+        productTmp.current = await (await realmStore.queryProducts()).filtered(`TRUEPREDICATE SORT(Id DESC) DISTINCT(Id)`)
+        console.log("productTmp", productTmp.current);
+        //setViewData(productTmp.current)
         setListProduct(productTmp.current)
         categoryTmp = await realmStore.queryCategories()
         setCategory([{
@@ -60,7 +61,7 @@ export default (props) => {
     }
     const filterMore = () => {
         console.log("filtermore", productTmp.current.length);
-        if (currentProduct.current < productTmp.current.length && !onEndReachedCalledDuringMomentum.current) {
+        if ((currentProduct.current < viewData.length) && !onEndReachedCalledDuringMomentum.current) {
             console.log("Load more");
             dialogManager.showLoading()
             setLoadMore(true)
@@ -69,10 +70,9 @@ export default (props) => {
         }
     }
     const getFilterData = () => {
-        let slideData = []
-        slideData = productTmp.current.slice(currentProduct.current, currentProduct.current + Constant.LOAD_LIMIT)
+        let slideData = viewData.slice(currentProduct.current, currentProduct.current + Constant.LOAD_LIMIT)
         console.log("slice", slideData);
-        setListProduct([...listProduct, ...slideData])
+        setListProduct([...listProduct, viewData.slice(currentProduct.current, currentProduct.current + Constant.LOAD_LIMIT)])
         currentProduct.current = currentProduct.current + Constant.LOAD_LIMIT
         console.log("to current", currentProduct.current);
         setLoadMore(false)
