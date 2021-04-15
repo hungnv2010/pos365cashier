@@ -360,7 +360,7 @@ export default (props) => {
                             <Image source={!isPromotion ? Images.icon_trash : Images.icon_gift} style={{ width: 36, height: 36 }} />
                             {/* <Icon name={!isPromotion ? "trash-can-outline" : "gift"} size={40} color={!isPromotion ? "black" : Colors.colorLightBlue} /> */}
                         </TouchableOpacity>
-                        <View style={{ flex: 1, marginTop: 10 }}>
+                        <View style={{ flex: 1 }}>
                             <TextTicker
                                 style={{ fontWeight: "bold", marginBottom: 7, }}
                                 duration={6000}

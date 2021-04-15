@@ -96,20 +96,6 @@ export default (props) => {
 
     }
     const onClickSubmitUpdate = () => {
-        // new HTTPService().setPath(ApiPath.UPDATE_EXTRAGROUP).POST({ ExtraId: extraTopping.Id, ExtraGroup: extraTopping.ExtraGroup ?extraTopping.ExtraGroup != I18n.t('tat_ca') ? extraTopping.ExtraGroup : "" :""}).then(res => {
-        //     console.log('res', res.Message);
-        //     new HTTPService().setPath(ApiPath.UPDATE_PRICEEXTRA).POST({ ExtraId: extraTopping.Id, Price: extraTopping.Price, Quantity: extraTopping.Quantity }).then(res => {
-        //         console.log("res update price", res.Message);
-        //         if (deviceType == Constant.PHONE) {
-        //             props.route.params.onCallBack('sua')
-        //             props.navigation.pop()
-        //         } else {
-        //             props.handleSuccessTab('sua')
-
-        //         }
-        //     })
-
-        // })
         let param = {
             ExtraId: extraTopping.Id,
             Price: extraTopping.Price,
