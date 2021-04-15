@@ -176,7 +176,6 @@ export default (props) => {
   }
 
   useEffect(() => {
-
     const syncDatas = async () => {
       if (isFNB === null) return
 
@@ -187,8 +186,7 @@ export default (props) => {
           if (isFNB === true) {
             await realmStore.deleteAllForFnb()
           } else {
-            let fromLogin = !props.params
-            await realmStore.deleteAllForRetail(fromLogin)
+            await realmStore.deleteAllForRetail()
           }
         }
       });
