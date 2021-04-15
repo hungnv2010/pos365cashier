@@ -187,8 +187,7 @@ export default (props) => {
           if (isFNB === true) {
             await realmStore.deleteAllForFnb()
           } else {
-            let fromLogin = !props.params
-            await realmStore.deleteAllForRetail(fromLogin)
+            await realmStore.deleteAllForRetail()
           }
         }
       });
