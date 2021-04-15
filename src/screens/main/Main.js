@@ -176,7 +176,6 @@ export default (props) => {
   }
 
   useEffect(() => {
-
     const syncDatas = async () => {
       if (isFNB === null) return
 
