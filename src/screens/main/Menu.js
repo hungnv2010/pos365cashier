@@ -20,6 +20,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import DeviceInfo from 'react-native-device-info';
 import signalRManager from '../../common/SignalR';
 import { ScreenList } from '../../common/ScreenList';
+import { saveDeviceInfoToStore } from "../../actions/Common";
 import NetInfo from "@react-native-community/netinfo";
 const { Print } = NativeModules;
 const IP_DEFAULT = "192.168.99.";
@@ -288,12 +289,23 @@ const HeaderComponent = (props) => {
     const onClickLogOut = () => {
         dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_dang_xuat'), I18n.t("thong_bao"), res => {
             if (res == 1) {
-                dispatch({ type: 'IS_FNB', isFNB: null })
-                dispatch({ type: 'ALREADY', already: false })
-                setFileLuuDuLieu(Constant.CURRENT_ACCOUNT, "");
-                setFileLuuDuLieu(Constant.CURRENT_BRANCH, "");
-                signalRManager.killSignalR();
-                navigate('Login', {}, true);
+
+                dialogManager.showLoading()
+                new HTTPService().setPath(ApiPath.LOGOUT).GET({}).then((res) => {
+                    console.log("onClickLogOut res ", res);
+                    
+                    dispatch({ type: 'IS_FNB', isFNB: null })
+                    dispatch({ type: 'ALREADY', already: false })
+                    dispatch(saveDeviceInfoToStore({ SessionId: "" }))
+                    setFileLuuDuLieu(Constant.CURRENT_ACCOUNT, "");
+                    setFileLuuDuLieu(Constant.CURRENT_BRANCH, "");
+                    signalRManager.killSignalR();
+                    navigate('Login', {}, true);
+
+                }).catch((e) => {
+                    dialogManager.hiddenLoading()
+                    console.log("onClickLogOut err ", e);
+                })
             }
         })
     }

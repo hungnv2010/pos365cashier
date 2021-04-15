@@ -134,7 +134,7 @@ export default forwardRef((props, ref) => {
                 }
             }
         }
-        if (isPrintTest || (setting.in_sau_khi_thanh_toan == true && !checkProvisional)) {
+        if (isPrintTest || checkProvisional || (setting.in_sau_khi_thanh_toan == true && !checkProvisional)) {
             let ipObject = await checkIP()
             console.log("printProvisional jsonContent numberLoop ", jsonContent);
             if (ipObject.ip != "") {

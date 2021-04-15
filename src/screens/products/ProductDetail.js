@@ -676,12 +676,12 @@ export default (props) => {
                 <KeyboardAwareScrollView>
                     <View style={{ justifyContent: 'center', alignItems: 'center', padding: 20 }} >
                         <TouchableOpacity >
-                            {product ? product.ProductImages && JSON.parse(product.ProductImages).length > 0 ?
+                            { product.ProductImages && JSON.parse(product.ProductImages).length > 0 ?
                                 <Image style={{ height: 70, width: 70, borderRadius: 16 }} source={{ uri: JSON.parse(product.ProductImages)[0].ImageURL }} />
-                                : <View style={{ width: 70, height: 70, justifyContent: 'center', alignItems: 'center', borderRadius: 16, backgroundColor: colors.colorchinh }}>
+                                :product.Name ? <View style={{ width: 70, height: 70, justifyContent: 'center', alignItems: 'center', borderRadius: 16, backgroundColor: colors.colorchinh }}>
                                     <Text style={{ textAlign: 'center', color: 'white' }}>{product.Name ? product.Name.indexOf(' ') == -1 ? product.Name.slice(0, 2).toUpperCase() : (product.Name.slice(0, 1) + product.Name.slice(product.Name.indexOf(' ') + 1, product.Name.indexOf(' ') + 2)).toUpperCase() : null}</Text>
                                 </View> :
-                                <Image style={{ height: 70, width: 70, borderRadius: 16 }} source={Images.icon_product} />
+                                <Image style={{ height: 70, width: 70, borderRadius: 16 }} source={Images.ic_box} />
                             }
                         </TouchableOpacity>
                     </View>

@@ -965,6 +965,7 @@ export default {
   nhap_ten_nhom_hang_hoa: 'Enter category name',
   nhap_don_vi_tinh_lon:'Import large unit',
   nhap_ten_nhom:'Enter group name',
+  nhap_ten_hang_hoa:'Enter product name',
 
   quan_ly:'Manager',
   quan_ly_hang_hoa:'Product management',

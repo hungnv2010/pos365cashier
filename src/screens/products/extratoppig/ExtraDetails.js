@@ -33,12 +33,12 @@ export default (props) => {
             getData(props.route.params)
         }
     }, [])
-    useEffect(()=>{
-        if(deviceType == Constant.TABLET) {
+    useEffect(() => {
+        if (deviceType == Constant.TABLET) {
             setExtraTopping(props.data)
             setCategory(props.cate)
         }
-    },[props.data,props.cate])
+    }, [props.data, props.cate])
 
     const getData = (param) => {
         setExtraTopping({ ...JSON.parse(JSON.stringify(param.extra)) })
@@ -96,20 +96,37 @@ export default (props) => {
 
     }
     const onClickSubmitUpdate = () => {
-        new HTTPService().setPath(ApiPath.UPDATE_EXTRAGROUP).POST({ ExtraId: extraTopping.Id, ExtraGroup: extraTopping.ExtraGroup ?extraTopping.ExtraGroup != I18n.t('tat_ca') ? extraTopping.ExtraGroup : "" :""}).then(res => {
-            console.log('res', res.Message);
-            new HTTPService().setPath(ApiPath.UPDATE_PRICEEXTRA).POST({ ExtraId: extraTopping.Id, Price: extraTopping.Price, Quantity: extraTopping.Quantity }).then(res => {
-                console.log("res update price", res.Message);
-                if (deviceType == Constant.PHONE) {
-                    props.route.params.onCallBack('sua')
-                    props.navigation.pop()
-                } else {
-                    props.handleSuccessTab('sua')
-        
-                }
-            })
-            
-        })       
+        // new HTTPService().setPath(ApiPath.UPDATE_EXTRAGROUP).POST({ ExtraId: extraTopping.Id, ExtraGroup: extraTopping.ExtraGroup ?extraTopping.ExtraGroup != I18n.t('tat_ca') ? extraTopping.ExtraGroup : "" :""}).then(res => {
+        //     console.log('res', res.Message);
+        //     new HTTPService().setPath(ApiPath.UPDATE_PRICEEXTRA).POST({ ExtraId: extraTopping.Id, Price: extraTopping.Price, Quantity: extraTopping.Quantity }).then(res => {
+        //         console.log("res update price", res.Message);
+        //         if (deviceType == Constant.PHONE) {
+        //             props.route.params.onCallBack('sua')
+        //             props.navigation.pop()
+        //         } else {
+        //             props.handleSuccessTab('sua')
+
+        //         }
+        //     })
+
+        // })
+        let param = {
+            ExtraId: extraTopping.ExtraId,
+            Price: extraTopping.Price,
+            Quantity: extraTopping.Quantity,
+            ExtraGroup: extraTopping.ExtraGroup
+        }
+        new HTTPService().setPath(`api/products/extra/updateall`).POST(param).then(res => {
+            console.log("res...", res.Message);
+            if (deviceType == Constant.PHONE) {
+                props.route.params.onCallBack('sua')
+                props.navigation.pop()
+            } else {
+                props.handleSuccessTab('sua')
+
+            }
+        })
+
     }
 
     const renderModal = () => {
@@ -160,16 +177,16 @@ export default (props) => {
         )
     }
     return (
-        <View style={{ flex: 1 ,borderLeftWidth:deviceType == Constant.TABLET ? 0.5 : 0 }}>
+        <View style={{ flex: 1, borderLeftWidth: deviceType == Constant.TABLET ? 0.5 : 0 }}>
             {deviceType == Constant.PHONE ?
                 <ToolBarExtraTopping
                     {...props}
                     title={extraTopping.Extra ? extraTopping.Extra.Name : null}
                 /> :
-                <View style={{backgroundColor:'#fff',height:44,alignItems:'center',justifyContent:'center',borderBottomWidth:0.3,borderColor:'#4a4a4a'}}> 
-                <Text style={{textAlign:'center',fontSize:16,fontWeight:'bold',color:colors.colorLightBlue}}>{I18n.t('cap_nhat_extra_topping')}</Text>
+                <View style={{ backgroundColor: '#fff', height: 44, alignItems: 'center', justifyContent: 'center', borderBottomWidth: 0.3, borderColor: '#4a4a4a' }}>
+                    <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: 'bold', color: colors.colorLightBlue }}>{I18n.t('cap_nhat_extra_topping')}</Text>
                 </View>
-                }
+            }
             <View style={{ backgroundColor: '#fff', flexDirection: 'column', flex: 1 }}>
                 <Text style={styles.styleTitle}>{I18n.t('ten_extra_topping')}</Text>
                 <Text style={[styles.styleTitle, { fontWeight: 'bold', color: '#36a3f7', fontSize: 16 }]}>{extraTopping.Extra ? extraTopping.Extra.Name : ''}</Text>
@@ -177,7 +194,7 @@ export default (props) => {
                 <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, paddingVertical: 10 }}>
                     <TouchableOpacity style={{ flex: 8, backgroundColor: '#f2f2f2', borderRadius: 10 }} onPress={() => { modalType.current = 2, setOnShowModal(true) }}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 5, paddingVertical: 10 }}>
-                            <Text>{extraTopping.ExtraGroup ? extraTopping.ExtraGroup : I18n.t('chon_nhom')}</Text>
+                            <Text style={{ color: extraTopping.ExtraGroup ? '#36a3f7' : '#000', fontWeight: 'bold' }}>{extraTopping.ExtraGroup ? extraTopping.ExtraGroup : I18n.t('chon_nhom')}</Text>
                             <Image source={Images.icon_arrow_down} style={{ width: 24, height: 24 }} />
                         </View>
                     </TouchableOpacity>

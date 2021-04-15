@@ -116,7 +116,8 @@ const images = {
     icon_lock: require('../../assets/icons/icon_lock.png'),
     icon_edit: require('../../assets/icons/icon_edit.png'),
     icon_supplier: require('../../assets/icons/icon_supplier.png'),
-    ic_danhsachhanghoa: require('../../assets/icons/ic_danhsachhanghoa.png')
+    ic_danhsachhanghoa: require('../../assets/icons/ic_danhsachhanghoa.png'),
+    ic_box: require ('../../assets/icons/box.png'),
 
 }
 

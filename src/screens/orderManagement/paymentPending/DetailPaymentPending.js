@@ -17,6 +17,7 @@ import QRCode from 'react-native-qrcode-svg';
 import { ApiPath } from '../../../data/services/ApiPath';
 import dataManager from '../../../data/DataManager';
 import NetInfo from "@react-native-community/netinfo";
+import moment from 'moment';
 var Sound = require('react-native-sound');
 const TYPE_MODAL = { FILTER_ACCOUNT: "FILTER_ACCOUNT", QRCODE: "QRCODE" }
 
@@ -251,7 +252,7 @@ export default (props) => {
     const printAfterPayment = async (jsonContent, Code) => {
         console.log("printAfterPayment jsonContent 1 ", jsonContent, props.route.params);
         jsonContent.PaymentCode = Code;
-        jsonContent.PurchaseDate = new Date().toString();
+        jsonContent.PurchaseDate = moment().utc().format("YYYY-MM-DD[T]HH:mm:ss.SS[Z]");
         console.log("printAfterPayment jsonContent 2 ", jsonContent);
         dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
     }

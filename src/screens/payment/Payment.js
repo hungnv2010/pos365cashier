@@ -525,9 +525,9 @@ export default (props) => {
             if (noteInfo != '') {
                 jsonContent.Description = noteInfo;
             }
-            if (date && dateTmp.current) {
-                jsonContent.PurchaseDate = "" + date;
-            }
+            // if (date && dateTmp.current) {
+            //     jsonContent.PurchaseDate = "" + date;
+            // }
 
             let MoreAttributes = jsonContent.MoreAttributes ? (typeof (jsonContent.MoreAttributes) == 'string' ? JSON.parse(jsonContent.MoreAttributes) : jsonContent.MoreAttributes) : {}
             console.log("onClickProvisional MoreAttributes ", MoreAttributes);

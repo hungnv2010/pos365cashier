@@ -124,6 +124,7 @@ export class HTTPService {
             this.error(mes);
             reject("")
         } else {
+            this.error();
             reject(e)
         }
     }
