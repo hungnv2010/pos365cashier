@@ -416,7 +416,7 @@ class DataManager {
         await this.syncProduct(),
             // await this.syncTopping(),
             // await this.syncServerEvent(),
-            await this.syncRooms(),
+            // await this.syncRooms(),
             await this.syncPartner(),
             await this.syncCategories()
         let vendorSession = await this.selectVendorSession()

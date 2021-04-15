@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useLayoutEffect } from 'react';
+import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
 import { Image, View, StyleSheet, TouchableWithoutFeedback, Text, TouchableOpacity, NativeModules, Modal, TextInput, Linking, ScrollView } from 'react-native';
 import { Images, Colors, Metrics, Fonts } from '../../theme';
 import { setFileLuuDuLieu, getFileDuLieuString } from '../../data/fileStore/FileStorage';
@@ -234,12 +234,8 @@ const HeaderComponent = (props) => {
             console.log("onClickItemBranch res ", res);
             if (res) {
                 setFileLuuDuLieu(Constant.CURRENT_BRANCH, JSON.stringify(selectBranch));
-                setBranch(selectBranch)
-                // if (isFNB === false) {
-                //     realmStore.deleteSchema([SchemaName.SERVER_EVENT])
-                // }
+                setBranch(selectBranch)              
                 dispatch({ type: 'IS_FNB', isFNB: null })
-                // dispatch({ type: 'ALREADY', already: false })
                 signalRManager.killSignalR();
                 getRetailerInfoAndNavigate();
                 dialogManager.hiddenLoading();
@@ -294,8 +290,6 @@ const HeaderComponent = (props) => {
             if (res == 1) {
                 dispatch({ type: 'IS_FNB', isFNB: null })
                 dispatch({ type: 'ALREADY', already: false })
-                console.log(Branch);
-                setFileLuuDuLieu(Constant.LAST_BRANCH, JSON.stringify(Branch));
                 setFileLuuDuLieu(Constant.CURRENT_ACCOUNT, "");
                 setFileLuuDuLieu(Constant.CURRENT_BRANCH, "");
                 signalRManager.killSignalR();

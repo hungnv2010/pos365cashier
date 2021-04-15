@@ -137,30 +137,22 @@ export default (props) => {
 
       dispatch({ type: 'ALREADY', already: false })
 
-      // NetInfo.fetch().then(async state => {
-      //   if (state.isConnected == true && state.isInternetReachable == true) {
-      //     if (isFNB === true) {
-      //       await realmStore.deleteAllForFnb()
-      //     } else {
-      //       let fromLogin = !props.params
-      //       console.log('fromLogin', fromLogin);
-      //       await realmStore.deleteAllForRetail(fromLogin)
-      //     }
-      //   }
-      // });
-
+      NetInfo.fetch().then(async state => {
+        if (state.isConnected == true && state.isInternetReachable == true) {
+          if (isFNB === true) {
+            await realmStore.deleteAllForFnb()
+          } else {
+           
+            await realmStore.deleteAllForRetail()
+          }
+        }
+      });
       if (isFNB === true) {
-        await realmStore.deleteAllForFnb()
         await dataManager.syncAllDatas()
       } else {
-        let currentBranch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
-        currentBranch = JSON.parse(currentBranch)
-        let lastBranch = await getFileDuLieuString(Constant.LAST_BRANCH, true);
-        lastBranch = lastBranch ? JSON.parse(lastBranch) : { Id: null }
-        console.log('currentBranch.Id', currentBranch, lastBranch, currentBranch.Id == lastBranch.Id);
-        await realmStore.deleteAllForRetail(currentBranch.Id == lastBranch.Id)
         await dataManager.syncAllDatasForRetail()
       }
+
       dispatch({ type: 'ALREADY', already: true })
       dialogManager.hiddenLoading()
     }
