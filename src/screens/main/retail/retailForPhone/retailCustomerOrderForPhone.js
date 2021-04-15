@@ -343,7 +343,7 @@ export default (props) => {
             <>
                 {
                     isPromotion && item.FisrtPromotion != undefined ?
-                        <View style={{ backgroundColor: "#ffedd6", padding: 7, paddingHorizontal: 10 ,marginVertical:5}}>
+                        <View style={{ backgroundColor: "#ffedd6", padding: 7, paddingHorizontal: 10, marginVertical: 5 }}>
                             <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{I18n.t('khuyen_mai')}</Text>
                         </View>
                         : null
@@ -360,7 +360,7 @@ export default (props) => {
                             <Image source={!isPromotion ? Images.icon_trash : Images.icon_gift} style={{ width: 36, height: 36 }} />
                             {/* <Icon name={!isPromotion ? "trash-can-outline" : "gift"} size={40} color={!isPromotion ? "black" : Colors.colorLightBlue} /> */}
                         </TouchableOpacity>
-                        <View style={{ flex: 1 ,marginTop:10}}>
+                        <View style={{ flex: 1, marginTop: 10 }}>
                             <TextTicker
                                 style={{ fontWeight: "bold", marginBottom: 7, }}
                                 duration={6000}
@@ -388,7 +388,7 @@ export default (props) => {
                                 {currencyToString(item.Price * item.Quantity)}
                             </Text>
                         </View>
-                        </Surface>
+                    </Surface>
                 </TouchableOpacity>
             </>
         )
@@ -412,7 +412,15 @@ export default (props) => {
         console.log("onClickProvisional jsonContent ", jsonContent);
         if (listProducts && listProducts.length > 0) {
             jsonContent.RoomName = I18n.t('don_hang');
-
+            let setting = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
+            if (setting && setting != "") {
+                setting = JSON.parse(setting);
+                if (setting.in_tam_tinh == false) {
+                    dialogManager.showPopupOneButton(I18n.t("ban_khong_co_quyen_su_dung_chuc_nang_nay"))
+                    return;
+                }
+            }
+            dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: true } })
             let MoreAttributes = jsonContent.MoreAttributes ? (typeof (jsonContent.MoreAttributes) == 'string' ? JSON.parse(jsonContent.MoreAttributes) : jsonContent.MoreAttributes) : {}
             console.log("onClickProvisional MoreAttributes ", MoreAttributes);
             if (MoreAttributes.toString() == '{}') {
@@ -436,8 +444,6 @@ export default (props) => {
                 serverEvent.Version += 1
                 dataManager.updateServerEventNow(serverEvent, true, false);
             }
-
-            dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: true } })
         } else {
             dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
         }
@@ -820,26 +826,26 @@ export default (props) => {
                 onCLickNoteBook={onCLickNoteBook}
                 onClickSync={onClickSync}
                 outputTextSearch={outputTextSearch} />
-                <View style={{ flexDirection: "row", justifyContent: "space-between", paddingHorizontal: 10, paddingVertical: 5 }}>
-                    <Surface style={{ marginRight: 5, elevation: 4, flex: 1, borderRadius: 5 }}>
-                        <TouchableOpacity
-                            style={{ flexDirection: 'column', alignItems: "center", backgroundColor: 'white', paddingTop: 5, borderRadius: 5 }}
-                            onPress={onClickListedPrice}>
-                            <Entypo style={{ paddingHorizontal: 5 }} name="price-ribbon" size={25} />
-                            <Text ellipsizeMode="tail" numberOfLines={1} style={{ padding: 5 }}>{currentPriceBook.Id == 0 ? I18n.t(currentPriceBook.Name) : currentPriceBook.Name}</Text>
-                        </TouchableOpacity>
-                    </Surface>
-                    <Surface style={{ marginLeft: 5, elevation: 4, flex: 1, borderRadius: 5 }}>
-                        <TouchableOpacity
-                            style={{ flexDirection: 'column', alignItems: "center", backgroundColor: 'white', paddingTop: 5, borderRadius: 5 }}
-                            onPress={onClickRetailCustomer}>
-                            <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} />
-                            <Text ellipsizeMode="tail" numberOfLines={1} style={{ textAlign: "right", padding: 5 }}>{currentCustomer.Id == 0 ? I18n.t(currentCustomer.Name) : currentCustomer.Name}</Text>
+            <View style={{ flexDirection: "row", justifyContent: "space-between", paddingHorizontal: 10, paddingVertical: 5 }}>
+                <Surface style={{ marginRight: 5, elevation: 4, flex: 1, borderRadius: 5 }}>
+                    <TouchableOpacity
+                        style={{ flexDirection: 'column', alignItems: "center", backgroundColor: 'white', paddingTop: 5, borderRadius: 5 }}
+                        onPress={onClickListedPrice}>
+                        <Entypo style={{ paddingHorizontal: 5 }} name="price-ribbon" size={25} />
+                        <Text ellipsizeMode="tail" numberOfLines={1} style={{ padding: 5 }}>{currentPriceBook.Id == 0 ? I18n.t(currentPriceBook.Name) : currentPriceBook.Name}</Text>
+                    </TouchableOpacity>
+                </Surface>
+                <Surface style={{ marginLeft: 5, elevation: 4, flex: 1, borderRadius: 5 }}>
+                    <TouchableOpacity
+                        style={{ flexDirection: 'column', alignItems: "center", backgroundColor: 'white', paddingTop: 5, borderRadius: 5 }}
+                        onPress={onClickRetailCustomer}>
+                        <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} />
+                        <Text ellipsizeMode="tail" numberOfLines={1} style={{ textAlign: "right", padding: 5 }}>{currentCustomer.Id == 0 ? I18n.t(currentCustomer.Name) : currentCustomer.Name}</Text>
 
-                        </TouchableOpacity>
-                    </Surface>
-                </View>
-            <View style={{ flex: 1,paddingVertical:5 }}>
+                    </TouchableOpacity>
+                </Surface>
+            </View>
+            <View style={{ flex: 1, paddingVertical: 5 }}>
                 {listProducts != undefined && listProducts.length > 0 ?
                     <FlatList
                         data={listProducts}

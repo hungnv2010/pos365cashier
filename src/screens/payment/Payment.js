@@ -525,10 +525,12 @@ export default (props) => {
             if (noteInfo != '') {
                 jsonContent.Description = noteInfo;
             }
-            // if (date && dateTmp.current) {
-            //     jsonContent.PurchaseDate = "" + date;
-            // }
 
+            if (settingObject.current.in_tam_tinh == false) {
+                dialogManager.showPopupOneButton(I18n.t("ban_khong_co_quyen_su_dung_chuc_nang_nay"))
+                return;
+            }
+            dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: true } })
             let MoreAttributes = jsonContent.MoreAttributes ? (typeof (jsonContent.MoreAttributes) == 'string' ? JSON.parse(jsonContent.MoreAttributes) : jsonContent.MoreAttributes) : {}
             console.log("onClickProvisional MoreAttributes ", MoreAttributes);
             if (MoreAttributes.toString() == '{}') {
@@ -549,8 +551,6 @@ export default (props) => {
                 serverEvent.Version += 1
                 dataManager.updateServerEventNow(serverEvent, true, isFNB);
             }
-
-            dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: true } })
             timeClickPrevious = newDate;
         }
     }
