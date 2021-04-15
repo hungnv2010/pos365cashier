@@ -111,7 +111,7 @@ export default (props) => {
 
         // })
         let param = {
-            ExtraId: extraTopping.ExtraId,
+            ExtraId: extraTopping.Id,
             Price: extraTopping.Price,
             Quantity: extraTopping.Quantity,
             ExtraGroup: extraTopping.ExtraGroup

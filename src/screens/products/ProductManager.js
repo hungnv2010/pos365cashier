@@ -21,6 +21,9 @@ export default (props) => {
     const onClickNavigationProduct = () => {
         props.navigation.navigate(ScreenList.Product)
     }
+    const onClickNavigationExtra = (data) => {
+        props.navigation.navigate(data)
+    }
 
     return (
         <View style={{ flex: 1 }}>
@@ -35,7 +38,7 @@ export default (props) => {
                     <Image style={styles.iconButton} source={Images.ic_danhsachhanghoa} />
                     <Text style={styles.textButton}>{I18n.t('danh_sach_hang_hoa')}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => {onClickNavigation(ScreenList.ListExtraTopping)}}>
+                <TouchableOpacity style={styles.button} onPress={() => {onClickNavigationExtra(ScreenList.ListExtraTopping)}}>
                     <View style={{backgroundColor:'#36a3f7',borderRadius:16, height:42,width:42,alignItems:'center',justifyContent:'center',marginRight:10}}>
                         <Icon name={'puzzle-outline'} size={21} color={'#fff'} />
                     </View>
