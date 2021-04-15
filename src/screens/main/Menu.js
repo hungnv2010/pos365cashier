@@ -73,11 +73,11 @@ const LIST_FUNCITION = [
         icon: Images.icon_room_table,
         title: "danh_muc_phong_ban"
     },
-    // {
-    //     func: KEY_FUNC.PRODUCT,
-    //     icon: Images.icon_product,
-    //     title: "hang_hoa"
-    // },
+    {
+        func: KEY_FUNC.PRODUCT,
+        icon: Images.icon_product,
+        title: "hang_hoa"
+    },
     {
         func: KEY_FUNC.CUSTOMER_MANAGER,
         icon: Images.icon_customer,
@@ -97,11 +97,6 @@ const LIST_FUNCITION = [
     //     func: KEY_FUNC.SUPPLIER_MANAGER,
     //     icon: Images.icon_supplier,
     //     title: "nha_cung_cap"
-    // },
-    // {
-    //     func: KEY_FUNC.PRODUCT,
-    //     icon: Images.icon_product,
-    //     title: "hang_hoa"
     // },
     // {
     //     func: KEY_FUNC.EMPLOYEE_MANAGER,
