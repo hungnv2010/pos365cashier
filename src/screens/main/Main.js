@@ -176,7 +176,34 @@ export default (props) => {
   }
 
   useEffect(() => {
+<<<<<<< HEAD
 
+=======
+    const syncDatas = async () => {
+      if (isFNB === null) return
+
+      dispatch({ type: 'ALREADY', already: false })
+
+      NetInfo.fetch().then(async state => {
+        if (state.isConnected == true && state.isInternetReachable == true) {
+          if (isFNB === true) {
+            await realmStore.deleteAllForFnb()
+          } else {
+           
+            await realmStore.deleteAllForRetail()
+          }
+        }
+      });
+      if (isFNB === true) {
+        await dataManager.syncAllDatas()
+      } else {
+        await dataManager.syncAllDatasForRetail()
+      }
+
+      dispatch({ type: 'ALREADY', already: true })
+      dialogManager.hiddenLoading()
+    }
+>>>>>>> c96d4c71f367a3270c8031c89cd88c56733d0c75
     syncDatas()
 
 

@@ -261,8 +261,8 @@ export default (props) => {
             }
         } else {
             if (idFilter == -1) {
-                if (status == true || status == false) {
-                    let room = dataRef.current.filter(item => item.IsActive == status)
+                if (status == true) {
+                    let room = dataRef.current.filter(item => item.IsActive && item.IsActive == true)
                     let roomGroup = dataRef.current.filter(item => item.isGroup == true)
                     console.log("Room", room);
                     console.log("group", roomGroup);
@@ -281,7 +281,28 @@ export default (props) => {
                     }
                     setData(newDatas)
 
-                } else {
+                } else if(status == false){
+                    let room = dataRef.current.filter(item =>  item.IsActive != true)
+                    let roomGroup = dataRef.current.filter(item => item.isGroup == true)
+                    console.log("Room", room);
+                    console.log("group", roomGroup);
+                    let newDatas = []
+                    if (roomGroup) {
+                        roomGroup.forEach(roomGroup => {
+                            let roomsInside = room.filter(item => item.RoomGroupId == roomGroup.Id && (item.Name).toLowerCase().indexOf(debouncedVal.toLowerCase()) != -1)
+                            let lengthRoomsInside = roomsInside.length
+                            if (roomsInside && lengthRoomsInside > 0) {
+                                roomGroup.isGroup = true
+                                roomGroup.sum = lengthRoomsInside
+                                newDatas.push(roomGroup)
+                                newDatas = newDatas.concat(roomsInside.slice())
+                            }
+                        })
+                    }
+                    setData(newDatas)
+
+                }
+                 else {
                     setData([...dataRef.current])
                 }
             } else {

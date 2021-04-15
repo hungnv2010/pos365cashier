@@ -523,6 +523,7 @@ export default {
   nhap_ten_nhom_hang_hoa: 'Nhập tên nhóm hàng hoá',
   nhap_don_vi_tinh_lon:'Nhập đơn vị tính lớn',
   nhap_ten_nhom: 'Nhập tên nhóm',
+  nhap_ten_hang_hoa:'Nhập tên hàng hoá',
 
   quan_ly:'Quản lý',
   quan_ly_hang_hoa:'Quản lý hàng hoá',

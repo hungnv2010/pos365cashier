@@ -7,7 +7,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import TextTicker from 'react-native-text-ticker';
 import { currencyToString, randomUUID } from '../../../../common/Utils'
 import I18n from "../../../../common/language/i18n"
-import { Snackbar } from 'react-native-paper';
+import { Snackbar, Surface } from 'react-native-paper';
 import { ScreenList } from '../../../../common/ScreenList';
 import Entypo from 'react-native-vector-icons/Entypo';
 import realmStore from '../../../../data/realm/RealmStore';
@@ -343,7 +343,7 @@ export default (props) => {
             <>
                 {
                     isPromotion && item.FisrtPromotion != undefined ?
-                        <View style={{ backgroundColor: "#ffedd6", padding: 7, paddingHorizontal: 10 }}>
+                        <View style={{ backgroundColor: "#ffedd6", padding: 7, paddingHorizontal: 10 ,marginVertical:5}}>
                             <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{I18n.t('khuyen_mai')}</Text>
                         </View>
                         : null
@@ -353,16 +353,16 @@ export default (props) => {
                     setItemOrder(item)
                     setShowModal(!showModal)
                 }}>
-                    <View style={styles.mainItem}>
+                    <Surface style={[styles.mainItem, { elevation: 4 }]}>
                         <TouchableOpacity
                             style={{ paddingHorizontal: 5 }}
                             onPress={() => { if (!isPromotion) removeItem(item, index) }}>
                             <Image source={!isPromotion ? Images.icon_trash : Images.icon_gift} style={{ width: 36, height: 36 }} />
                             {/* <Icon name={!isPromotion ? "trash-can-outline" : "gift"} size={40} color={!isPromotion ? "black" : Colors.colorLightBlue} /> */}
                         </TouchableOpacity>
-                        <View style={{ flex: 1, }}>
+                        <View style={{ flex: 1 ,marginTop:10}}>
                             <TextTicker
-                                style={{ fontWeight: "bold", marginBottom: 7 }}
+                                style={{ fontWeight: "bold", marginBottom: 7, }}
                                 duration={6000}
                                 marqueeDelay={1000}>
                                 {item.Name}
@@ -388,7 +388,7 @@ export default (props) => {
                                 {currencyToString(item.Price * item.Quantity)}
                             </Text>
                         </View>
-                    </View>
+                        </Surface>
                 </TouchableOpacity>
             </>
         )
@@ -820,21 +820,26 @@ export default (props) => {
                 onCLickNoteBook={onCLickNoteBook}
                 onClickSync={onClickSync}
                 outputTextSearch={outputTextSearch} />
-            <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 2, borderBottomColor: Colors.colorchinh, borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5 }}>
-                <TouchableOpacity
-                    style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
-                    onPress={onClickListedPrice}>
-                    <Entypo style={{ paddingHorizontal: 5 }} name="price-ribbon" size={25} color={Colors.colorchinh} />
-                    <Text ellipsizeMode="tail" numberOfLines={1} style={{ flex: 1, color: Colors.colorchinh, fontWeight: "bold", textTransform: "uppercase" }}>{currentPriceBook.Id == 0 ? I18n.t(currentPriceBook.Name) : currentPriceBook.Name}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                    style={{ flex: 1, flexDirection: "row", alignItems: "center" }}
-                    onPress={onClickRetailCustomer}>
-                    <Text ellipsizeMode="tail" numberOfLines={1} style={{ textAlign: "right", flex: 1, color: Colors.colorchinh, fontWeight: "bold", textTransform: "uppercase" }}>{currentCustomer.Id == 0 ? I18n.t(currentCustomer.Name) : currentCustomer.Name}</Text>
-                    <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} color={Colors.colorchinh} />
-                </TouchableOpacity>
-            </View>
-            <View style={{ flex: 1 }}>
+                <View style={{ flexDirection: "row", justifyContent: "space-between", paddingHorizontal: 10, paddingVertical: 5 }}>
+                    <Surface style={{ marginRight: 5, elevation: 4, flex: 1, borderRadius: 5 }}>
+                        <TouchableOpacity
+                            style={{ flexDirection: 'column', alignItems: "center", backgroundColor: 'white', paddingTop: 5, borderRadius: 5 }}
+                            onPress={onClickListedPrice}>
+                            <Entypo style={{ paddingHorizontal: 5 }} name="price-ribbon" size={25} />
+                            <Text ellipsizeMode="tail" numberOfLines={1} style={{ padding: 5 }}>{currentPriceBook.Id == 0 ? I18n.t(currentPriceBook.Name) : currentPriceBook.Name}</Text>
+                        </TouchableOpacity>
+                    </Surface>
+                    <Surface style={{ marginLeft: 5, elevation: 4, flex: 1, borderRadius: 5 }}>
+                        <TouchableOpacity
+                            style={{ flexDirection: 'column', alignItems: "center", backgroundColor: 'white', paddingTop: 5, borderRadius: 5 }}
+                            onPress={onClickRetailCustomer}>
+                            <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} />
+                            <Text ellipsizeMode="tail" numberOfLines={1} style={{ textAlign: "right", padding: 5 }}>{currentCustomer.Id == 0 ? I18n.t(currentCustomer.Name) : currentCustomer.Name}</Text>
+
+                        </TouchableOpacity>
+                    </Surface>
+                </View>
+            <View style={{ flex: 1,paddingVertical:5 }}>
                 {listProducts != undefined && listProducts.length > 0 ?
                     <FlatList
                         data={listProducts}
@@ -988,13 +993,12 @@ export default (props) => {
 
 const styles = StyleSheet.create({
     mainItem: {
-        borderBottomColor: "#ddd", borderBottomWidth: 0.5,
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-evenly",
-        paddingVertical: 10,
-        borderBottomColor: "#ABB2B9",
-        borderBottomWidth: 0.5,
+        marginVertical: 3,
+        backgroundColor: 'white',
+        borderRadius: 10, marginHorizontal: 6, padding: 5
     },
     wrapTamTinh: {
         borderTopWidth: .5, borderTopColor: "red", paddingVertical: 3, backgroundColor: "white"
