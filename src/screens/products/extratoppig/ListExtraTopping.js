@@ -18,6 +18,8 @@ import dialogManager from '../../../components/dialog/DialogManager';
 import DialogSelectProduct from '../../../components/dialog/DialogSelectProduct';
 import { height } from 'react-native-daterange-picker/src/modules';
 import ExtraDetails from '../extratoppig/ExtraDetails'
+import realmStore from '../../../data/realm/RealmStore';
+import dataManager from '../../../data/DataManager';
 
 export default (props) => {
     const [listExtra, setListExtra] = useState([])
@@ -33,17 +35,11 @@ export default (props) => {
     });
 
     useEffect(() => {
-        
         getExtraTopping()
     }, [])
     const getExtraTopping = async () => {
-        let param = { Includes: 'Extra', inlinecount: 'allpages', top: 50 }
-        let res = await new HTTPService().setPath(ApiPath.PRODUCT + '/extra').GET(param)
-        if (res != null) {
-            console.log("extra", res.results);
-            setListExtra([...res.results])
-            extraTmp.current = res.results
-        }
+        extraTmp.current = await realmStore.queryTopping()
+        setListExtra(extraTmp.current)
     }
     useEffect(() => {
         defaultCate.current = I18n.t('tat_ca')
@@ -87,9 +83,14 @@ export default (props) => {
             setICate(category)
         }
     }
-    const handleSuccess =(type)=>{
+    const handleSuccess = async(type)=>{
         dialogManager.showLoading()
         try {
+            if(deviceType == Constant.TABLET && type == 'xoa'){
+                setIExtra({})
+            }
+            await realmStore.deleteTopping()
+            await dataManager.syncTopping()
             getExtraTopping()
             dialogManager.showPopupOneButton(`${I18n.t(type)} ${I18n.t('thanh_cong')}`, I18n.t('thong_bao'))
             dialogManager.hiddenLoading()
@@ -98,7 +99,8 @@ export default (props) => {
             dialogManager.hiddenLoading()
         }
     }
-    const outputAddExtra =(data) =>{
+    const outputAddExtra = async(data) =>{
+        await dataManager.syncTopping()
         dialogManager.showPopupOneButton(`${data.Message}`, I18n.t('thong_bao'))
         getExtraTopping()
         setOnShowModal(false) 
@@ -109,7 +111,7 @@ export default (props) => {
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', backgroundColor: iExtra && iExtra.Id == item.Id ? '#FFE5B4' : '#FFF', alignItems: 'center', paddingVertical: 10, paddingHorizontal: 5, marginVertical: 1 }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center',flex:8,paddingRight:20 }}>
                     <Icon name={'extension'} size={30} color={colors.colorchinh} />
-                    <Text style={{marginLeft:10,textTransform:'uppercase' }}>{item.Extra.Name}</Text>
+                    <Text style={{marginLeft:10,textTransform:'uppercase' }}>{item.Name}</Text>
                 </View>
                 <View style={{flex:1.5}}>
                 <Text>{currencyToString(item.Price)}</Text>

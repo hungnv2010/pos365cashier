@@ -110,6 +110,15 @@ class RealmStore extends RealmBase {
         }))
 
     }
+    deleteTopping = async () => {
+        console.log("deleteTopping ");
+        let realm = await Realm.open(databaseOption)
+        return new Promise((resolve) => realm.write(() => {
+            let topping = realm.objects(SchemaName.TOPPING)
+            realm.delete(topping)
+            resolve()
+        }))
+    }
 
     deleteCommodity = async (item) => {
         let realm = await Realm.open(databaseOption)
@@ -296,7 +305,7 @@ export const SchemaName = {
     PROMOTION: "Promotion",
     ORDERS_OFFLINE: "OrdersOffline",
     QR_CODE: "QRCode",
-    PRICE_BOOK: "PriceBook"
+    PRICE_BOOK: "PriceBook",
 }
 
 
