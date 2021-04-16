@@ -91,7 +91,9 @@ export default (props) => {
             <TouchableOpacity onPress={() => onClickItem(item)} key={index.toString()}
                 style={{ flexDirection: "row", alignItems: "center", borderBottomColor: "#ddd", borderBottomWidth: 1, padding: 10, backgroundColor: backgroundColor }}>
                 <View style={{ flex: 1, flexDirection: "row", justifyContent: "space-between", alignItems: "center", }}>
-                    <Image style={{ width: 60, height: 60, marginRight: 20 }} source={Images.ic_nhomkhachhang} />
+                    <View style={{padding: 10, backgroundColor:"#D4E6FA", marginRight: 10, borderRadius: 15}}>
+                        <Image style={{ width: 20, height: 20, }} source={Images.ic_khachhang} />
+                    </View>
                     <View style={{ flex: 1.3 }}>
                         <Text
                             numberOfLines={1}
