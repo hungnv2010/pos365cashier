@@ -38,7 +38,7 @@ export default (props) => {
     const dispatch = useDispatch();
     const [listMethod, setListMethod] = useState([CASH])
     const currentCommodity = useRef({})
-    const [numberNewOrder, setNumberNewOrder] = useState(0)
+    const [numberNewOrder, setNumberNewOrder] = useState(1)
     const [showModal, setShowModal] = useState(false)
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
@@ -51,7 +51,7 @@ export default (props) => {
     const [currentCustomer, setCurrentCustomer] = useState({ Name: "khach_le", Id: 0 })
     const [promotions, setPromotions] = useState([])
     const [listProducts, setListProducts] = useState([])
-    const { already } = useSelector(state => {
+    const { already, syncRetail } = useSelector(state => {
         return state.Common
     });
 
@@ -59,25 +59,7 @@ export default (props) => {
 
 
     useEffect(() => {
-        if (!already) return
-        const getCommodityWaiting = async () => {
-            serverEvents = await realmStore.queryServerEvents()
-            let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
-            newServerEvents = Object.values(newServerEvents)
-            setNumberNewOrder(newServerEvents.length)
-            if (newServerEvents.length == 0) {
-                let newSE = await createNewServerEvent()
-                currentCommodity.current = (newSE)
-            } else {
-                currentCommodity.current = JSON.parse(JSON.stringify(newServerEvents[0]))
 
-            }
-            console.log('currentCommodity.currentcurrentCommodity.current', currentCommodity.current);
-            let jsonContent = JSON.parse(currentCommodity.current.JsonContent)
-            setJsonContent(jsonContent)
-
-        }
-        getCommodityWaiting()
         var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
         var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
         const getDataRealm = async () => {
@@ -92,7 +74,36 @@ export default (props) => {
             keyboardDidShowListener.remove();
             keyboardDidHideListener.remove();
         }
+    }, [])
+
+    useEffect(() => {
+        if (!already) return
+        const getCommodityWaiting = async () => {
+            serverEvents = await realmStore.queryServerEvents()
+            let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
+            newServerEvents = Object.values(newServerEvents)
+            if (newServerEvents.length == 0) {
+                let newSE = await createNewServerEvent()
+                currentCommodity.current = (newSE)
+            } else {
+                setNumberNewOrder(newServerEvents.length)
+                currentCommodity.current = JSON.parse(JSON.stringify(newServerEvents[0]))
+
+            }
+            console.log('currentCommodity.currentcurrentCommodity.current', currentCommodity.current);
+            let jsonContent = JSON.parse(currentCommodity.current.JsonContent)
+            setJsonContent(jsonContent)
+
+        }
+        getCommodityWaiting()
     }, [already])
+
+    useEffect(() => {
+        if (syncRetail != false) {
+            onClickSync()
+            dispatch({ type: 'SYNCRETAIL', syncRetail: false })
+        }
+    }, [syncRetail])
 
     useEffect(() => {
         console.log('jsonContent.Partner', jsonContent.Partner);

@@ -16,9 +16,8 @@ import { useFocusEffect } from '@react-navigation/native';
 import ViewPrint, { TYPE_PRINT } from '../more/ViewPrint';
 import { Colors } from '../../theme';
 import NetInfo from "@react-native-community/netinfo";
-import useDidMountEffect from '../../customHook/useDidMountEffect';
 const { Print } = NativeModules;
-import Permissions, { requestMultiple, PERMISSIONS } from 'react-native-permissions';
+import RetailCustomerOrderForPhone from './retail/retailForPhone/retailCustomerOrderForPhone';
 
 export default (props) => {
 
@@ -28,7 +27,7 @@ export default (props) => {
   const dispatch = useDispatch();
   const [textSearch, setTextSearch] = useState('')
   const [autoPrintKitchen, setAutoPrintKitchen] = useState(false)
-  const { listPrint, isFNB, printProvisional, printReturnProduct, appState } = useSelector(state => {
+  const { listPrint, isFNB, printProvisional, printReturnProduct, appState, deviceType } = useSelector(state => {
     return state.Common
   })
 
@@ -136,44 +135,12 @@ export default (props) => {
     room.addListener(async (collection, changes) => {
       if (changes.insertions.length || changes.modifications.length) {
         console.log("room.addListener collection changes ", collection, changes);
-         dispatch({ type: 'ALREADY', already: false })
-         dispatch({ type: 'ALREADY', already: true })
+        dispatch({ type: 'ALREADY', already: false })
+        dispatch({ type: 'ALREADY', already: true })
       }
     })
   }
 
-  const syncDatas = async () => {
-    if (isFNB === null) return
-
-    dispatch({ type: 'ALREADY', already: false })
-
-    // NetInfo.fetch().then(async state => {
-    //   if (state.isConnected == true && state.isInternetReachable == true) {
-    //     if (isFNB === true) {
-    //       await realmStore.deleteAllForFnb()
-    //     } else {
-    //       let fromLogin = !props.params
-    //       console.log('fromLogin', fromLogin);
-    //       await realmStore.deleteAllForRetail(fromLogin)
-    //     }
-    //   }
-    // });
-
-    if (isFNB === true) {
-      await realmStore.deleteAllForFnb()
-      await dataManager.syncAllDatas()
-    } else {
-      let currentBranch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
-      currentBranch = JSON.parse(currentBranch)
-      let lastBranch = await getFileDuLieuString(Constant.LAST_BRANCH, true);
-      lastBranch = lastBranch ? JSON.parse(lastBranch) : { Id: null }
-      console.log('currentBranch.Id', currentBranch, lastBranch, currentBranch.Id == lastBranch.Id);
-      await realmStore.deleteAllForRetail(currentBranch.Id == lastBranch.Id)
-      await dataManager.syncAllDatasForRetail()
-    }
-    dispatch({ type: 'ALREADY', already: true })
-    dialogManager.hiddenLoading()
-  }
 
   useEffect(() => {
     const syncDatas = async () => {
@@ -181,18 +148,14 @@ export default (props) => {
 
       dispatch({ type: 'ALREADY', already: false })
 
-      NetInfo.fetch().then(async state => {
-        if (state.isConnected == true && state.isInternetReachable == true) {
-          if (isFNB === true) {
-            await realmStore.deleteAllForFnb()
-          } else {
-            await realmStore.deleteAllForRetail()
-          }
-        }
-      });
+      let state = await NetInfo.fetch()
+      if (state.isConnected == true && state.isInternetReachable == true) {
+        await realmStore.deleteAllForFnb()
+      }
       if (isFNB === true) {
         await dataManager.syncAllDatas()
-      } else {
+      }
+      if (isFNB === false) {
         await dataManager.syncAllDatasForRetail()
       }
 
@@ -292,9 +255,14 @@ export default (props) => {
               <Order {...props} textSearch={textSearch} />
             </>
             :
-            <MainRetail
-              {...props}
-              syncForRetail={clickSyncForRetail} />
+            deviceType == Constant.TABLET ?
+              <MainRetail
+                {...props}
+                syncForRetail={clickSyncForRetail} />
+              :
+              <RetailCustomerOrderForPhone
+                {...props}
+                syncForRetail={clickSyncForRetail} />
 
       }
     </View>

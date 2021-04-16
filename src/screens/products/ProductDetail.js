@@ -29,7 +29,6 @@ export default (props) => {
     const [product, setProduct] = useState({})
     const [productOl, setProductOl] = useState({})
     const [category, setCategory] = useState([])
-    const [displayProduct, setDisplayProduct] = useState(true)
     const [showModal, setOnShowModal] = useState(false)
     const [defaultType, setDefaultType] = useState(1)
     const itemProduct = useRef({})
@@ -41,7 +40,7 @@ export default (props) => {
     const modifiedDate = new Date()
     const currentRetailerId = useRef()
     const compareCost = useRef()
-    const compareOnHand = useRef(0)
+    const compareOnHand = useRef()
     const [nameCategory, setNameCategory] = useState()
     const [listItemFomular, setListItemFormular] = useState([])
     const [countFormular, setCountFormular] = useState(0)
@@ -132,6 +131,7 @@ export default (props) => {
             setProduct(props.iproduct)
             setPrinterPr(props.iproduct.Printer ? props.iproduct.Printer : '')
             getCategory()
+            getProduct(props.iproduct)
             console.log("CompositeItemProducts", props.compositeItemProducts);
             setNameCategory()
             setCost(props.iproduct.Cost)
@@ -246,6 +246,7 @@ export default (props) => {
         itemProduct.current = JSON.parse(JSON.stringify(param.product))
         setProduct({ ...JSON.parse(JSON.stringify(param.product)) })
         setCodeProduct(itemProduct.current.Code)
+        getProduct(itemProduct.current)
         setCost(itemProduct.current.Cost)
         console.log("data product", param.type);
         setType(params.type)
@@ -269,7 +270,7 @@ export default (props) => {
         }, ...categoryTmp])
     }
 
-    const getProduct = () => {
+    const getProduct = (product) => {
         if (product != null && product.Code != null) {
             console.log("product", product);
             let paramFilter = `(substringof('${product.Code}',Code) or substringof('${product.Code}',Name) or substringof('${product.Code}',Code2) or substringof('${product.Code}',Code3) or substringof('${product.Code}',Code4) or substringof('${product.Code}',Code5))`
@@ -284,6 +285,7 @@ export default (props) => {
                     console.log("add dvt", addDVT.current);
                     compareCost.current = productOl.Cost
                     compareOnHand.current = productOl.OnHand
+
                 }
             }).catch((e) => {
                 console.log("error", e);
@@ -319,9 +321,9 @@ export default (props) => {
             Value: product.ConversionValue ? product.ConversionValue : 1,
             isNum: true
         }])
-        getFormular()
+        getFormular(product)
     }
-    const getFormular = () => {
+    const getFormular = (product) => {
         if (product.ProductType == 3 && product.Id > 0) {
             new HTTPService().setPath(`api/products/${product.Id}/components`).GET({ Includes: 'Item' }).then((res) => {
                 if (res != null) {
@@ -341,7 +343,7 @@ export default (props) => {
     }, [listItemFomular])
     useEffect(() => {
         console.log("afsdfsa", product);
-        getProduct()
+        //getProduct()
     }, [product])
     useEffect(() => {
         console.log('product Ol', productOl);
@@ -701,7 +703,12 @@ export default (props) => {
                                 : product.Name ? <View style={{ width: 70, height: 70, justifyContent: 'center', alignItems: 'center', borderRadius: 16, backgroundColor: colors.colorchinh }}>
                                     <Text style={{ textAlign: 'center', color: 'white' }}>{product.Name ? product.Name.indexOf(' ') == -1 ? product.Name.slice(0, 2).toUpperCase() : (product.Name.slice(0, 1) + product.Name.slice(product.Name.indexOf(' ') + 1, product.Name.indexOf(' ') + 2)).toUpperCase() : null}</Text>
                                 </View> :
-                                    <Image style={{ height: 70, width: 70, borderRadius: 16 }} source={Images.ic_box} />
+                                    <View style={{ flexDirection: 'row' }}>
+                                        <Image style={{ height: 70, width: 70, borderRadius: 16 }} source={Images.ic_box} />
+                                        <View style={{ width: 28, height: 28, borderRadius: 25, alignItems: 'center', justifyContent: 'center', backgroundColor: '#e6ffff', marginLeft: -20, marginTop: 45 }}>
+                                            <Icon name={'camera'} color={'#36a3f7'} size={20} style={{}} />
+                                        </View>
+                                    </View>
                             }
                         </TouchableOpacity>
                     </View>
@@ -832,7 +839,7 @@ export default (props) => {
                                     : product.ProductType == 1 ?
                                         <View>
                                             <Text style={styles.title}>{I18n.t('ton_kho')}</Text>
-                                            <TextInput style={[styles.textInput, { fontWeight: 'bold', color: colors.colorLightBlue, textAlign: 'center' }]} value={productOl.OnHand ? productOl.OnHand + '' : 0 + ''} onChangeText={(text) => setProductOl({ ...productOl, OnHand: onChangeTextInput(text) })}></TextInput>
+                                            <TextInput style={[styles.textInput, { fontWeight: 'bold', color: colors.colorLightBlue, textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={productOl.OnHand ? productOl.OnHand + '' : 0 + ''} onChangeText={(text) => setProductOl({...productOl,OnHand: onChangeTextInput(text)})}></TextInput>
                                         </View> : null
                                 }
 

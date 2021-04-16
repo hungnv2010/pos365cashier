@@ -364,7 +364,7 @@ export default (props) => {
                                 <View key={index} style={{ flexDirection: "row", justifyContent: "space-between", paddingVertical: 15 }}>
                                     <Text style={{ fontSize: 14 }}>{item.Name}</Text>
                                     <View style={{ backgroundColor: "#F3DAC8", borderRadius: 10, padding: 5, }}>
-                                        <Text style={{ fontSize: 16, fontWeight: "bold", color: colors.colorchinh }}>{item.Quantity}</Text>
+                                        <Text style={{ fontSize: 16, fontWeight: "bold", color: colors.colorchinh }}>{Math.round(item.Quantity * 1000) / 1000}</Text>
                                     </View>
                                 </View>
 

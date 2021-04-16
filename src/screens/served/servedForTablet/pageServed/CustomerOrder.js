@@ -874,7 +874,7 @@ const CustomerOrder = (props) => {
                     <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('bao_che_bien')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => onClickPayment()} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
-                    <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{quickPay ? I18n.t('thanh_toan_nhanh') : I18n.t('thanh_toan')}</Text>
+                    <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase", textAlign: "center" }}>{quickPay ? I18n.t('thanh_toan_nhanh') : I18n.t('thanh_toan')}</Text>
                 </TouchableOpacity>
             </View>
             <Modal
