@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef, createRef } from 'react';
-import { View, Modal, Text, FlatList, Switch, Dimensions, TouchableOpacity, StyleSheet, ImageBackground, ScrollView, Image, TouchableWithoutFeedback } from 'react-native';
+import React, { useEffect, useState, useRef, createRef, useCallback } from 'react';
+import { View, Modal, Text, FlatList, Switch, Dimensions, TouchableOpacity, StyleSheet, ImageBackground, ScrollView, Image, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import ToolBarDefault from '../../components/toolbar/ToolBarDefault'
 import I18n from '../../common/language/i18n';
 import { Metrics, Images } from '../../theme';
@@ -23,6 +23,7 @@ import dialogManager from '../../components/dialog/DialogManager';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import dataManager from '../../data/DataManager';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { useFocusEffect } from '@react-navigation/native';
 
 export default (props) => {
     const [product, setProduct] = useState({})
@@ -52,6 +53,7 @@ export default (props) => {
     const [codeProduct, setCodeProduct] = useState()
     const [cost, setCost] = useState(0)
     const isCoppy = useRef(false)
+    const [marginModal, setMargin] = useState(0)
     const addCate = useRef([{
         Name: 'ten_nhom',
         Hint: 'nhap_ten_nhom_hang_hoa',
@@ -137,10 +139,10 @@ export default (props) => {
                 setCodeProduct(props.iproduct.Code)
                 setType('sua')
             } else {
-                if(isCoppy == true){
-                setProduct({...product, ProductType: product.ProductType ? product.ProductType :1, BlockOfTimeToUseService: product.BlockOfTimeToUseService ? product.BlockOfTimeToUseService : 6 })
-                }else{
-                    setProduct({ProductType: 1, BlockOfTimeToUseService: 6 })
+                if (isCoppy.current == true) {
+                    setProduct({ ...product, ProductType: product.ProductType ? product.ProductType : 1, BlockOfTimeToUseService: product.BlockOfTimeToUseService ? product.BlockOfTimeToUseService : 6 })
+                } else {
+                    setProduct({ ProductType: 1, BlockOfTimeToUseService: 6 })
                 }
                 setCodeProduct("")
                 setPriceConfig({})
@@ -175,14 +177,14 @@ export default (props) => {
             setCountFormular(props.compositeItemProducts.length)
         }
     }, [props.compositeItemProducts])
-    useEffect(()=>{
+    useEffect(() => {
         let t = 0
-        compositeItemProducts.forEach(el =>{
-            t =t + el.Cost
+        compositeItemProducts.forEach(el => {
+            t = t + (el.Cost * el.Quantity)
         })
-        console.log("cost.....",compositeItemProducts);
+        console.log("cost.....", compositeItemProducts);
         setCost(t)
-    },[compositeItemProducts])
+    }, [compositeItemProducts])
 
     useEffect(() => {
         //setPriceConfig({})
@@ -196,9 +198,9 @@ export default (props) => {
         }
         getCurrentAccount()
         setStatusPrinter()
-        console.log("product data",product);
+        console.log("product data", product);
     }, [product])
-    
+
     useEffect(() => {
         setStatusPrinter()
     }, [priceConfig])
@@ -276,6 +278,7 @@ export default (props) => {
                     setProductOl({ ...res.results[0] })
                     if (nameCategory == null) {
                         setNameCategory(res.results[0].Category && res.results[0].Category.Name ? res.results[0].Category.Name : '')
+                        setCost(res.results[0].Cost)
                     }
 
                     console.log("add dvt", addDVT.current);
@@ -293,7 +296,7 @@ export default (props) => {
             Hint: 'nhap_don_vi_tinh_lon',
             Key: 'LargeUnit',
             Value: product.LargeUnit ? product.LargeUnit : '',
-            isNum:false
+            isNum: false
         },
         {
             Name: 'ma_dvt_lon',
@@ -307,19 +310,19 @@ export default (props) => {
             Hint: 'gia_ban_don_vi_tinh_lon',
             Key: 'PriceLargeUnit',
             Value: product.PriceLargeUnit ? product.PriceLargeUnit : 0,
-            isNum:true
+            isNum: true
         },
         {
             Name: 'gia_tri_quy_doi',
             Hint: 'gia_tri_quy_doi',
             Key: 'ConversionValue',
             Value: product.ConversionValue ? product.ConversionValue : 1,
-            isNum:true
+            isNum: true
         }])
         getFormular()
     }
     const getFormular = () => {
-        if (product.ProductType == 3 && product.Id >0) {
+        if (product.ProductType == 3 && product.Id > 0) {
             new HTTPService().setPath(`api/products/${product.Id}/components`).GET({ Includes: 'Item' }).then((res) => {
                 if (res != null) {
                     console.log("res formular", res);
@@ -337,7 +340,7 @@ export default (props) => {
 
     }, [listItemFomular])
     useEffect(() => {
-        console.log("afsdfsa", product.Hidden);
+        console.log("afsdfsa", product);
         getProduct()
     }, [product])
     useEffect(() => {
@@ -499,8 +502,8 @@ export default (props) => {
                             if (isCoppy.current == false) {
                                 props.handleSuccessTab(type, 2)
                             } else {
-                                setProduct({ ...res })
-                                setProduct({ ...product, Code: "", Id: 0 })
+                                //setProduct({ ...res })
+                                setProduct({ ...res, Code: "", Id: 0 })
                                 setCodeProduct("")
                                 props.handleSuccessTab(type, 2, { ...res, Code: "", Id: 0 })
                                 setType('them')
@@ -574,6 +577,25 @@ export default (props) => {
     const onClickTakePhoto = () => {
         props.navigation.navigate('TakePhoto', {})
     }
+    useFocusEffect(useCallback(() => {
+
+        var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
+        var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        }
+
+
+    }, []))
+    const _keyboardDidShow = () => {
+        setMargin(Metrics.screenWidth / 2)
+    }
+
+    const _keyboardDidHide = () => {
+        setMargin(0)
+    }
 
     const renderFormular = (item, index) => {
         return (
@@ -633,7 +655,7 @@ export default (props) => {
                         </View>
                         <View style={{ flexDirection: 'row', padding: 10 }}>
                             <TouchableOpacity style={{ flex: 1, marginRight: 10, marginLeft: 10, justifyContent: 'center', borderWidth: 1, alignItems: 'center', borderRadius: 16, padding: 15, backgroundColor: '#f2f2f2', borderColor: defaultType == 3 ? colors.colorLightBlue : null, backgroundColor: defaultType == 3 ? 'white' : '#f2f2f2' }}
-                                onPress={() => { setDefaultType(3)  }}>
+                                onPress={() => { setDefaultType(3) }}>
                                 <Text style={[styles.titleButtonOff, { color: defaultType == 3 ? colors.colorLightBlue : null }]}>Combo</Text>
                             </TouchableOpacity>
                         </View>
@@ -646,13 +668,11 @@ export default (props) => {
                     <DialogSingleChoice listItem={category} title={I18n.t('chon_nhom_hang_hoa')} titleButton='Ok' outputValue={pickCategory} itemName={nameCategory} ></DialogSingleChoice>
                     :
                     typeModal.current == 3 ?
-                        <KeyboardAwareScrollView>
-                            <DialogInput listItem={addCate.current} title={I18n.t('them_moi_nhom_hang_hoa')} titleButton={I18n.t('tao_nhom_hang_hoa')} outputValue={addCategory}></DialogInput>
-                        </KeyboardAwareScrollView> :
+                        <DialogInput listItem={addCate.current} title={I18n.t('them_moi_nhom_hang_hoa')} titleButton={I18n.t('tao_nhom_hang_hoa')} outputValue={addCategory}></DialogInput>
+                        :
                         typeModal.current == 4 ?
-                            <KeyboardAwareScrollView>
-                                <DialogInput listItem={addDVT} title={I18n.t('don_vi_tinh_lon_va_cac_thong_so_khac')} titleButton={I18n.t('ap_dung')} outputValue={setLargeUnit} />
-                            </KeyboardAwareScrollView> :
+                            <DialogInput listItem={addDVT} title={I18n.t('don_vi_tinh_lon_va_cac_thong_so_khac')} titleButton={I18n.t('ap_dung')} outputValue={setLargeUnit} />
+                            :
                             typeModal.current == 5 ?
                                 <DialogSettingTime type1={priceConfig && priceConfig.Type != '' ? priceConfig.Type : null} type2={priceConfig && priceConfig.Type2 != '' ? priceConfig.type2 : null} priceConfig={priceConfig ? priceConfig : null} putData={getDataTime} />
                                 : null
@@ -676,12 +696,12 @@ export default (props) => {
                 <KeyboardAwareScrollView>
                     <View style={{ justifyContent: 'center', alignItems: 'center', padding: 20 }} >
                         <TouchableOpacity >
-                            { product.ProductImages && JSON.parse(product.ProductImages).length > 0 ?
+                            {product.ProductImages && JSON.parse(product.ProductImages).length > 0 ?
                                 <Image style={{ height: 70, width: 70, borderRadius: 16 }} source={{ uri: JSON.parse(product.ProductImages)[0].ImageURL }} />
-                                :product.Name ? <View style={{ width: 70, height: 70, justifyContent: 'center', alignItems: 'center', borderRadius: 16, backgroundColor: colors.colorchinh }}>
+                                : product.Name ? <View style={{ width: 70, height: 70, justifyContent: 'center', alignItems: 'center', borderRadius: 16, backgroundColor: colors.colorchinh }}>
                                     <Text style={{ textAlign: 'center', color: 'white' }}>{product.Name ? product.Name.indexOf(' ') == -1 ? product.Name.slice(0, 2).toUpperCase() : (product.Name.slice(0, 1) + product.Name.slice(product.Name.indexOf(' ') + 1, product.Name.indexOf(' ') + 2)).toUpperCase() : null}</Text>
                                 </View> :
-                                <Image style={{ height: 70, width: 70, borderRadius: 16 }} source={Images.ic_box} />
+                                    <Image style={{ height: 70, width: 70, borderRadius: 16 }} source={Images.ic_box} />
                             }
                         </TouchableOpacity>
                     </View>
@@ -881,7 +901,7 @@ export default (props) => {
                         }}></View>
 
                     </TouchableWithoutFeedback>
-                    <View style={{ width: Metrics.screenWidth * 0.8 }}>
+                    <View style={[{ width: Metrics.screenWidth * 0.8 }, { marginBottom: Platform.OS == 'ios' ? marginModal : 0 }]}>
                         {renderModal()}
                     </View>
                 </View>

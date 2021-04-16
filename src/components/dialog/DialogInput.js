@@ -52,13 +52,11 @@ export default (props) => {
         <View style={{ backgroundColor: 'white', borderRadius: 5 }}>
             <Text style={[styles.styleTitle, { marginTop: 10 }]}>{props.title}</Text>
             <View style={styles.styleLine}></View>
-            <KeyboardAwareScrollView>
                 <FlatList
                     data={list}
                     renderItem={({ item, index }) => renderItem(item, index)}
                     keyExtractor={(item, index) => index.toString()}
                 />
-            </KeyboardAwareScrollView>
             <Text style={[styles.styleContent]}>{props.content}</Text>
             <View style={styles.styleLine}></View>
             <TouchableOpacity style={styles.styleButton} onPress={onClickButton}>
