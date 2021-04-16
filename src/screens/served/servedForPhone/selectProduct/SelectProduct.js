@@ -88,7 +88,7 @@ export default (props) => {
         searchResult.forEach(item => {
           item.Quantity = 0
           listProducts.current.forEach(elm => {
-            if (item.Id == elm.Id) {
+            if (item.Id == elm.Id || item.Id == elm.ItemId) {
               item.Quantity += +elm.Quantity
             }
           })
@@ -149,7 +149,7 @@ export default (props) => {
     if (item.SplitForSalesOrder || (item.ProductType == 2 && item.IsTimer)) {
       listProducts.current.unshift({ ...item, Quantity: qtt })
     } else {
-      let pos = listProducts.current.map(elm => elm.Id).indexOf(item.Id);
+      let pos = listProducts.current.map(elm => elm.Id ? elm.Id : elm.ItemId).indexOf(item.Id);
       let pos_2 = listChangeText.current.map(elm => elm.Id).indexOf(item.Id);
       if (pos == -1) {
         listChangeText.current[pos_2].Quantity += qtt
@@ -164,7 +164,7 @@ export default (props) => {
   const handleButtonDecrease = (item, index) => {
     console.log('asdasdasd');
     let qtt = getQuantity(item)
-    let pos = listProducts.current.map(elm => elm.Id).indexOf(item.Id);
+    let pos = listProducts.current.map(elm => elm.Id ? elm.Id : elm.ItemId).indexOf(item.Id);
     let pos_2 = listChangeText.current.map(elm => elm.Id).indexOf(item.Id);
     if (pos > -1) {
       if (item.SplitForSalesOrder || (item.ProductType == 2 && item.IsTimer)) {
