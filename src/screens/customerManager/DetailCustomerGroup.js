@@ -216,13 +216,13 @@ export default (props) => {
                         } */}
                         <View style={{ flexDirection: "row", }}>
                             <TouchableOpacity
-                                style={{ marginRight: 20, borderRadius: 5, paddingVertical: 7, paddingHorizontal: 15, backgroundColor: colors.colorLightBlue }}
+                                style={{ marginRight: 20, borderRadius: 5, paddingVertical: 7, paddingHorizontal: 60, backgroundColor: colors.colorLightBlue }}
                                 onPress={onClickDone}
                             >
                                 <Text style={{ color: "white", fontWeight: "bold" }}>{I18n.t('luu')}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                style={{ borderRadius: 5, paddingVertical: 7, paddingHorizontal: 15, backgroundColor: "grey" }}
+                                style={{ borderRadius: 5, paddingVertical: 7, paddingHorizontal: 60, backgroundColor: "grey" }}
                                 onPress={() => {
                                     setDetailGroup(backupDetailGroup.current)
                                     setShowModal(false)
