@@ -230,7 +230,7 @@ const HeaderComponent = (props) => {
             console.log("onClickItemBranch res ", res);
             if (res) {
                 setFileLuuDuLieu(Constant.CURRENT_BRANCH, JSON.stringify(selectBranch));
-                setBranch(selectBranch)              
+                setBranch(selectBranch)
                 dispatch({ type: 'IS_FNB', isFNB: null })
                 signalRManager.killSignalR();
                 getRetailerInfoAndNavigate();
@@ -251,14 +251,8 @@ const HeaderComponent = (props) => {
             CommonActions.reset({
                 index: 0,
                 routes: [
-                    {
-                        name: 'Home',
-                        params: { isFromLogin: false }
-                    },
-                    {
-                        name: "Home"
-                    }
-                ]
+                    { name: 'Home' },
+                ],
             })
         )
     }
@@ -288,7 +282,7 @@ const HeaderComponent = (props) => {
                 dialogManager.showLoading()
                 new HTTPService().setPath(ApiPath.LOGOUT).GET({}).then((res) => {
                     console.log("onClickLogOut res ", res);
-                    
+
                     dispatch({ type: 'IS_FNB', isFNB: null })
                     dispatch({ type: 'ALREADY', already: false })
                     dispatch(saveDeviceInfoToStore({ SessionId: "" }))
