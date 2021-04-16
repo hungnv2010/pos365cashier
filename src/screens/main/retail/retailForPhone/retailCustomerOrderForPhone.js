@@ -38,7 +38,7 @@ export default (props) => {
     const dispatch = useDispatch();
     const [listMethod, setListMethod] = useState([CASH])
     const currentCommodity = useRef({})
-    const [numberNewOrder, setNumberNewOrder] = useState(0)
+    const [numberNewOrder, setNumberNewOrder] = useState(1)
     const [showModal, setShowModal] = useState(false)
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
@@ -51,7 +51,7 @@ export default (props) => {
     const [currentCustomer, setCurrentCustomer] = useState({ Name: "khach_le", Id: 0 })
     const [promotions, setPromotions] = useState([])
     const [listProducts, setListProducts] = useState([])
-    const { already } = useSelector(state => {
+    const { already, syncRetail } = useSelector(state => {
         return state.Common
     });
 
@@ -59,25 +59,7 @@ export default (props) => {
 
 
     useEffect(() => {
-        if (!already) return
-        const getCommodityWaiting = async () => {
-            serverEvents = await realmStore.queryServerEvents()
-            let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
-            newServerEvents = Object.values(newServerEvents)
-            setNumberNewOrder(newServerEvents.length)
-            if (newServerEvents.length == 0) {
-                let newSE = await createNewServerEvent()
-                currentCommodity.current = (newSE)
-            } else {
-                currentCommodity.current = JSON.parse(JSON.stringify(newServerEvents[0]))
 
-            }
-            console.log('currentCommodity.currentcurrentCommodity.current', currentCommodity.current);
-            let jsonContent = JSON.parse(currentCommodity.current.JsonContent)
-            setJsonContent(jsonContent)
-
-        }
-        getCommodityWaiting()
         var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
         var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
         const getDataRealm = async () => {
@@ -92,7 +74,36 @@ export default (props) => {
             keyboardDidShowListener.remove();
             keyboardDidHideListener.remove();
         }
+    }, [])
+
+    useEffect(() => {
+        if (!already) return
+        const getCommodityWaiting = async () => {
+            serverEvents = await realmStore.queryServerEvents()
+            let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
+            newServerEvents = Object.values(newServerEvents)
+            if (newServerEvents.length == 0) {
+                let newSE = await createNewServerEvent()
+                currentCommodity.current = (newSE)
+            } else {
+                setNumberNewOrder(newServerEvents.length)
+                currentCommodity.current = JSON.parse(JSON.stringify(newServerEvents[0]))
+
+            }
+            console.log('currentCommodity.currentcurrentCommodity.current', currentCommodity.current);
+            let jsonContent = JSON.parse(currentCommodity.current.JsonContent)
+            setJsonContent(jsonContent)
+
+        }
+        getCommodityWaiting()
     }, [already])
+
+    useEffect(() => {
+        if (syncRetail != false) {
+            onClickSync()
+            dispatch({ type: 'SYNCRETAIL', syncRetail: false })
+        }
+    }, [syncRetail])
 
     useEffect(() => {
         console.log('jsonContent.Partner', jsonContent.Partner);
@@ -343,7 +354,7 @@ export default (props) => {
             <>
                 {
                     isPromotion && item.FisrtPromotion != undefined ?
-                        <View style={{ backgroundColor: "#ffedd6", padding: 7, paddingHorizontal: 10 ,marginVertical:5}}>
+                        <View style={{ backgroundColor: "#ffedd6", padding: 7, paddingHorizontal: 10, marginVertical: 5 }}>
                             <Text style={{ color: Colors.colorchinh, fontWeight: "bold" }}>{I18n.t('khuyen_mai')}</Text>
                         </View>
                         : null
@@ -388,7 +399,7 @@ export default (props) => {
                                 {currencyToString(item.Price * item.Quantity)}
                             </Text>
                         </View>
-                        </Surface>
+                    </Surface>
                 </TouchableOpacity>
             </>
         )
@@ -820,26 +831,26 @@ export default (props) => {
                 onCLickNoteBook={onCLickNoteBook}
                 onClickSync={onClickSync}
                 outputTextSearch={outputTextSearch} />
-                <View style={{ flexDirection: "row", justifyContent: "space-between", paddingHorizontal: 10, paddingVertical: 5 }}>
-                    <Surface style={{ marginRight: 5, elevation: 4, flex: 1, borderRadius: 5 }}>
-                        <TouchableOpacity
-                            style={{ flexDirection: 'column', alignItems: "center", backgroundColor: 'white', paddingTop: 5, borderRadius: 5 }}
-                            onPress={onClickListedPrice}>
-                            <Entypo style={{ paddingHorizontal: 5 }} name="price-ribbon" size={25} />
-                            <Text ellipsizeMode="tail" numberOfLines={1} style={{ padding: 5 }}>{currentPriceBook.Id == 0 ? I18n.t(currentPriceBook.Name) : currentPriceBook.Name}</Text>
-                        </TouchableOpacity>
-                    </Surface>
-                    <Surface style={{ marginLeft: 5, elevation: 4, flex: 1, borderRadius: 5 }}>
-                        <TouchableOpacity
-                            style={{ flexDirection: 'column', alignItems: "center", backgroundColor: 'white', paddingTop: 5, borderRadius: 5 }}
-                            onPress={onClickRetailCustomer}>
-                            <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} />
-                            <Text ellipsizeMode="tail" numberOfLines={1} style={{ textAlign: "right", padding: 5 }}>{currentCustomer.Id == 0 ? I18n.t(currentCustomer.Name) : currentCustomer.Name}</Text>
+            <View style={{ flexDirection: "row", justifyContent: "space-between", paddingHorizontal: 10, paddingVertical: 5 }}>
+                <Surface style={{ marginRight: 5, elevation: 4, flex: 1, borderRadius: 5 }}>
+                    <TouchableOpacity
+                        style={{ flexDirection: 'column', alignItems: "center", backgroundColor: 'white', paddingTop: 5, borderRadius: 5 }}
+                        onPress={onClickListedPrice}>
+                        <Entypo style={{ paddingHorizontal: 5 }} name="price-ribbon" size={25} />
+                        <Text ellipsizeMode="tail" numberOfLines={1} style={{ padding: 5 }}>{currentPriceBook.Id == 0 ? I18n.t(currentPriceBook.Name) : currentPriceBook.Name}</Text>
+                    </TouchableOpacity>
+                </Surface>
+                <Surface style={{ marginLeft: 5, elevation: 4, flex: 1, borderRadius: 5 }}>
+                    <TouchableOpacity
+                        style={{ flexDirection: 'column', alignItems: "center", backgroundColor: 'white', paddingTop: 5, borderRadius: 5 }}
+                        onPress={onClickRetailCustomer}>
+                        <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} />
+                        <Text ellipsizeMode="tail" numberOfLines={1} style={{ textAlign: "right", padding: 5 }}>{currentCustomer.Id == 0 ? I18n.t(currentCustomer.Name) : currentCustomer.Name}</Text>
 
-                        </TouchableOpacity>
-                    </Surface>
-                </View>
-            <View style={{ flex: 1,paddingVertical:5 }}>
+                    </TouchableOpacity>
+                </Surface>
+            </View>
+            <View style={{ flex: 1, paddingVertical: 5 }}>
                 {listProducts != undefined && listProducts.length > 0 ?
                     <FlatList
                         data={listProducts}

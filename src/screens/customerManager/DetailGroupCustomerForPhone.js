@@ -195,7 +195,7 @@ export default (props) => {
                                 value={detailGroup.DiscountRatio ? currencyToString(detailGroup.DiscountRatio) : "0"}
                                 onChangeText={text => { onChangeText(text, 2) }}
                             />
-                            <Icon name="percent" size={20} style={{ position: "absolute", right: 0, top: 6 }} color="grey"/>
+                            <Icon name="percent" size={20} style={{ position: "absolute", right: 0, top: 6 }} color="grey" />
                         </View>
                     </View>
                     <View style={{ flexDirection: "row", marginBottom: 10, alignItems: "center", }}>
@@ -231,7 +231,7 @@ export default (props) => {
                         </View>
                     </View>
                     <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
-                       
+
                         <View style={{ flexDirection: "row", flex: 1 }}>
                             <TouchableOpacity
                                 style={{ marginRight: 20, borderRadius: 5, paddingVertical: 7, paddingHorizontal: 15, backgroundColor: colors.colorLightBlue, flex: 1 }}
@@ -269,7 +269,9 @@ export default (props) => {
                     <>
                         <View style={{ flex: 2, backgroundColor: "white", }}>
                             <View style={{ flex: 1, backgroundColor: "#f2f2f2", borderRadius: 30, marginHorizontal: 30, marginVertical: 20, alignItems: "center", justifyContent: "center" }}>
-                                <Image style={{ width: 60, height: 60, marginBottom: 20 }} source={Images.ic_nhomkhachhang} />
+                                <View style={{padding: 15}}>
+                                    <Image style={{ width: 40, height: 40,}} source={Images.ic_khachhang} />
+                                </View>
                                 <Text style={{ fontSize: 20, color: colors.colorLightBlue, fontWeight: "bold" }}>{detailGroup.Name}</Text>
                             </View>
                             <View style={{ flexDirection: "row", margin: 20, alignSelf: "center" }}>
