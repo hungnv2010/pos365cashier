@@ -61,7 +61,7 @@ export default (props) => {
 
 const styles = StyleSheet.create({
     iconButton: { width: 40, height: 40, marginRight: 10 },
-    viewContent: { paddingHorizontal: 10, margin: 10 },
+    viewContent: { paddingHorizontal: 5, margin: 5 },
     textButton: { color: colors.colorLightBlue, fontWeight: "bold" },
     button: { flexDirection: "row", marginTop: 10, width: "100%", height: 60, justifyContent: "flex-start", alignItems: "center", backgroundColor: "#fff", borderRadius: 10, paddingLeft: 10 },
 })

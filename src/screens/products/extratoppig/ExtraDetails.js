@@ -167,7 +167,7 @@ export default (props) => {
             {deviceType == Constant.PHONE ?
                 <ToolBarExtraTopping
                     {...props}
-                    title={extraTopping.Extra ? extraTopping.Extra.Name : null}
+                    title={extraTopping ? extraTopping.Name : null}
                 /> :
                 <View style={{ backgroundColor: '#fff', height: 44, alignItems: 'center', justifyContent: 'center', borderBottomWidth: 0.3, borderColor: '#4a4a4a' }}>
                     <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: 'bold', color: colors.colorLightBlue }}>{I18n.t('cap_nhat_extra_topping')}</Text>
@@ -175,7 +175,7 @@ export default (props) => {
             }
             <View style={{ backgroundColor: '#fff', flexDirection: 'column', flex: 1 }}>
                 <Text style={styles.styleTitle}>{I18n.t('ten_extra_topping')}</Text>
-                <Text style={[styles.styleTitle, { fontWeight: 'bold', color: '#36a3f7', fontSize: 16 }]}>{extraTopping.Extra ? extraTopping.Extra.Name : ''}</Text>
+                <Text style={[styles.styleTitle, { fontWeight: 'bold', color: '#36a3f7', fontSize: 16 }]}>{extraTopping ? extraTopping.Name : ''}</Text>
                 <Text style={styles.styleTitle}>{I18n.t('ten_nhom')}</Text>
                 <View style={{ flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, paddingVertical: 10 }}>
                     <TouchableOpacity style={{ flex: 8, backgroundColor: '#f2f2f2', borderRadius: 10 }} onPress={() => { modalType.current = 2, setOnShowModal(true) }}>
