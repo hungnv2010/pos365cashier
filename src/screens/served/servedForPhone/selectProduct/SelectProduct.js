@@ -177,7 +177,7 @@ export default (props) => {
         if (listProducts.current[pos].Quantity > qtt) {
           listProducts.current[pos].Quantity -= qtt
         } else {
-          listProducts.current = listProducts.current.filter(elm => elm.Id != item.Id)
+          listProducts.current = listProducts.current.filter(elm => elm.Id != item.Id )
         }
       }
     } else {
@@ -185,7 +185,7 @@ export default (props) => {
         listChangeText.current[pos_2].Quantity -= qtt
       }
       if (listChangeText.current[pos_2].Quantity == 0) {
-        listChangeText.current = listChangeText.current.filter(elm => elm.Id != item.Id)
+        listChangeText.current = listChangeText.current.filter(elm => elm.Id != item.Id )
       }
     }
 
@@ -198,10 +198,10 @@ export default (props) => {
     if (numb <= 0) numb = 0
     let exist = false
     console.log('listChangeText numb2 ', numb);
-    listProducts.current = listProducts.current.filter(elm => elm.Id != item.Id)
+    listProducts.current = listProducts.current.filter(elm => elm.Id != item.Id )
     // listProducts.current.unshift({ ...item, Quantity: numb, Sid: Date.now() })
     listChangeText.current.forEach(elm => {
-      if (elm.Id == item.Id) {
+      if (elm.Id == item.Id ) {
         elm.Quantity = numb
         exist = true
       }

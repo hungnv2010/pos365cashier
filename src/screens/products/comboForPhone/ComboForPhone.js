@@ -44,7 +44,7 @@ export default (props) => {
     }
     const delItem = (index) => {
         listFomular.splice(index, 1)
-        setListFormular([...listFomular])
+        setListFormular(listFomular)
     }
 
     const onCallBack = (data) => {
@@ -94,6 +94,8 @@ export default (props) => {
                 sum = sum + el.Quantity
             })
             setSumQuantity(sum)
+        }else {
+            setSumQuantity(0)
         }
     }, [listFomular])
     const onClickOk = () => {
@@ -105,11 +107,11 @@ export default (props) => {
         return (
             <View style={{ backgroundColor: '#FFF', flexDirection: 'column', marginBottom: 7 }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5, paddingHorizontal: 10 }}>
-                    <View>
+                    <View style={{flex:9}}>
                         <Text style={{ fontWeight: 'bold', textTransform: 'uppercase' }}>{item.Product ? item.Product.Name : ''}</Text>
                         <Text style={{ color: '#4a4a4a', marginTop: 5 }}>{item.Product ? item.Product.Code : ''}</Text>
                     </View>
-                    <TouchableOpacity onPress={() => delItem(index)}>
+                    <TouchableOpacity style={{flex:1}} onPress={() => delItem(index)}>
                         <Image source={Images.icon_trash} style={{ width: 28, height: 28, justifyContent: 'center' }} />
                     </TouchableOpacity>
                 </View>
@@ -122,13 +124,29 @@ export default (props) => {
                     </View>
                     <View style={{ flex: 1.2, marginLeft: 5 }}>
                         <Text style={{ textAlign: 'left' }}>{I18n.t('so_luong')}</Text>
-                        <TextInput style={{ textAlign: 'center', borderRadius: 5, backgroundColor: '#f2f2f2', padding: 10, marginTop: 5,color:'#000' }} keyboardType={'numbers-and-punctuation'} value={item.Quantity ? item.Quantity + '' : 0 + ''} onChangeText={(text) => { item.Quantity = onChangeTextInput(text), setListFormular([...listFomular]) }}></TextInput>
+                        <View style={{ flexDirection: 'row', backgroundColor: '#f2f2f2', borderRadius: 5, marginTop: 5 ,borderWidth:0.5,borderColor:'#36a3f7'}}>
+                            <TouchableOpacity style={styles.styleButton} onPress={() => { item.Quantity = item.Quantity > 0 ? item.Quantity - 1 : 0, setListFormular([...listFomular]) }}>
+                                <Text style={{ color: '#36a3f7', fontWeight: 'bold' }}>-</Text>
+                            </TouchableOpacity>
+                            <TextInput style={{ flex: 2.5, textAlign: 'center', padding: 10, color: '#36a3f7', fontWeight: 'bold' }} keyboardType={'numbers-and-punctuation'} value={item.Quantity ? item.Quantity + '' : 0 + ''} onChangeText={(text) => { item.Quantity = onChangeTextInput(text), setListProduct([...listProduct]) }}></TextInput>
+                            <TouchableOpacity style={styles.styleButton} onPress={() => { item.Quantity = item.Quantity + 1, setListFormular([...listFomular]) }}>
+                                <Text style={{ color: '#36a3f7', fontWeight: 'bold' }}>+</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                     {product.LargeUnit ?
                         <View style={{ flex: 1.7, marginLeft: 5 }}>
                             <Text style={{ textAlign: 'left' }}>{I18n.t('so_luong_don_vi_tinh_lon')}</Text>
-                            <TextInput style={{ textAlign: 'center', borderRadius: 5, backgroundColor: '#f2f2f2', padding: 10, marginTop: 5,color:'#000' }} keyboardType={'numbers-and-punctuation'} value={item.QuantityLargeUnit ? item.QuantityLargeUnit + '' : 0 + ''} onChangeText={(text) => { item.QuantityLargeUnit = onChangeTextInput(text), setListFormular([...listFomular]) }}></TextInput>
-                        </View> : null
+                            <View style={{ flexDirection: 'row', backgroundColor: '#f2f2f2', borderRadius: 5, marginTop: 5,borderWidth:0.5,borderColor:'#36a3f7' }}>
+                                <TouchableOpacity style={styles.styleButton} onPress={() => { item.QuantityLargeUnit = item.QuantityLargeUnit > 0 ? item.QuantityLargeUnit - 1 : 0, setListFormular([...listFomular]) }}>
+                                    <Text style={{ color: '#36a3f7', fontWeight: 'bold' }}>-</Text>
+                                </TouchableOpacity>
+                                <TextInput style={{ flex: 2.5, textAlign: 'center', padding: 10, color: '#36a3f7', fontWeight: 'bold' }} keyboardType={'numbers-and-punctuation'} value={item.QuantityLargeUnit ? item.QuantityLargeUnit + '' : 0 + ''} onChangeText={(text) => { item.QuantityLargeUnit = onChangeTextInput(text), setListProduct([...listProduct]) }}></TextInput>
+                                <TouchableOpacity style={styles.styleButton} onPress={() => { item.QuantityLargeUnit = item.QuantityLargeUnit + 1, setListFormular([...listFomular]) }}>
+                                    <Text style={{ color: '#36a3f7', fontWeight: 'bold' }}>+</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>  : null
                     }
 
                 </View>
@@ -172,3 +190,6 @@ export default (props) => {
         </View>
     )
 }
+const styles = StyleSheet.create({
+    styleButton: { alignItems: 'center', justifyContent: 'center', flex: 1, borderRadius: 5, backgroundColor: '#eeffff' }
+})
