@@ -87,9 +87,9 @@ export default (props) => {
   }, [already])
 
   const getProducts = useCallback(async () => {
+    if (!already) return
 
     let results = await realmStore.queryProducts()
-    // results = results.sorted('Name')
     if (listCateId[0] != -1) {
       results = results.filtered(`CategoryId == ${listCateId[0]}`)
     }
@@ -103,7 +103,7 @@ export default (props) => {
     return () => {
       count.current = 0
     }
-  }, [skip, listCateId])
+  }, [skip, listCateId, already])
 
 
   useEffect(() => {
@@ -246,6 +246,7 @@ export default (props) => {
                 keyExtractor={(item, index) => '' + index}
                 extraData={product.Quantity}
                 onEndReached={(info) => { loadMore(info) }}
+                onEndReachedThreshold={0}
                 ListFooterComponent={isLoadMore ? <ActivityIndicator color={Colors.colorchinh} /> : null}
                 ItemSeparatorComponent={() => <View style={{ height: 14 }}></View>}
               />
