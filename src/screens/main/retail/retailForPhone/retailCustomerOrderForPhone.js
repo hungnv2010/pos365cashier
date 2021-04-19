@@ -423,7 +423,15 @@ export default (props) => {
         console.log("onClickProvisional jsonContent ", jsonContent);
         if (listProducts && listProducts.length > 0) {
             jsonContent.RoomName = I18n.t('don_hang');
-
+            let setting = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
+            if (setting && setting != "") {
+                setting = JSON.parse(setting);
+                if (setting.in_tam_tinh == false) {
+                    dialogManager.showPopupOneButton(I18n.t("ban_khong_co_quyen_su_dung_chuc_nang_nay"))
+                    return;
+                }
+            }
+            dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: true } })
             let MoreAttributes = jsonContent.MoreAttributes ? (typeof (jsonContent.MoreAttributes) == 'string' ? JSON.parse(jsonContent.MoreAttributes) : jsonContent.MoreAttributes) : {}
             console.log("onClickProvisional MoreAttributes ", MoreAttributes);
             if (MoreAttributes.toString() == '{}') {
@@ -447,8 +455,6 @@ export default (props) => {
                 serverEvent.Version += 1
                 dataManager.updateServerEventNow(serverEvent, true, false);
             }
-
-            dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: true } })
         } else {
             dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
         }
