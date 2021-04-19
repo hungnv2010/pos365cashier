@@ -125,22 +125,8 @@ export default (props) => {
   useEffect(() => {
 
     Print.registerPrint("")
-    listenerRoom();
 
   }, [])
-
-  let room = null;
-  const listenerRoom = async () => {
-    room = await realmStore.queryRooms()
-    room.addListener(async (collection, changes) => {
-      if (changes.insertions.length || changes.modifications.length) {
-        console.log("room.addListener collection changes ", collection, changes);
-        dispatch({ type: 'ALREADY', already: false })
-        dispatch({ type: 'ALREADY', already: true })
-      }
-    })
-  }
-
 
   useEffect(() => {
     const syncDatas = async () => {
