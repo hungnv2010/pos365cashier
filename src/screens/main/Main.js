@@ -137,13 +137,14 @@ export default (props) => {
       let state = await NetInfo.fetch()
       if (state.isConnected == true && state.isInternetReachable == true) {
         await realmStore.deleteAllForFnb()
+        if (isFNB === true) {
+          await dataManager.syncAllDatas()
+        }
+        if (isFNB === false) {
+          await dataManager.syncAllDatasForRetail()
+        }
       }
-      if (isFNB === true) {
-        await dataManager.syncAllDatas()
-      }
-      if (isFNB === false) {
-        await dataManager.syncAllDatasForRetail()
-      }
+
 
       dispatch({ type: 'ALREADY', already: true })
       dialogManager.hiddenLoading()

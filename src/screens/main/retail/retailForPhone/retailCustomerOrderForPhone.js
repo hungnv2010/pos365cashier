@@ -593,6 +593,7 @@ export default (props) => {
                             jsonContent.Partner = null
                             jsonContent.PartnerId = null
                             jsonContent.DiscountRatio = 0
+                            jsonContent.DiscountValue = 0
                             updateServerEvent({ ...jsonContent })
                         }
 

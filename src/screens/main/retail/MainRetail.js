@@ -220,6 +220,7 @@ const MainRetail = (props) => {
                             } else {
                                 jsonContent.OrderDetails.forEach((product) => {
                                     product.DiscountRatio = 0.0
+                                    product.Discount = 0
                                     let basePrice = (product.IsLargeUnit) ? product.PriceLargeUnit : product.UnitPrice
                                     product.Price = basePrice + product.TotalTopping
                                 })
@@ -272,6 +273,7 @@ const MainRetail = (props) => {
                             jsonContent.Partner = null
                             jsonContent.PartnerId = null
                             jsonContent.DiscountRatio = 0
+                            jsonContent.DiscountValue = 0
                             updateServerEvent({ ...jsonContent })
                         }
 
