@@ -694,7 +694,8 @@ const RetailCustomerOrder = (props) => {
                             backgroundColor: "#fff", borderRadius: 4, marginHorizontal: 5,
                         }}>
                             <TouchableOpacity onPress={onClickPrint} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
-                                <MaterialIcons style={{ paddingHorizontal: 7 }} name="notifications" size={26} color={Colors.colorchinh} />
+                                {/* <MaterialIcons style={{ paddingHorizontal: 7 }} name="printer" size={26} color={Colors.colorchinh} /> */}
+                                <Icon style={{ paddingHorizontal: 10 }} name="printer" size={26} color={Colors.colorchinh} />
                                 <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('in_tam_tinh')}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => onClickOptionQuickPayment()} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>

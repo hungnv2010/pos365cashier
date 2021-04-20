@@ -402,6 +402,7 @@ export default (props) => {
         if (changeMethodQRPay.current == true) {
             setListMethod([itemMethod])
         } else {
+            onChangeTextPaymentPaid(totalPrice, itemAccountRef.current)
             let list = [];
             listMethod.forEach(element => {
                 if (itemAccountRef.current.Id == element.Id && itemAccountRef.current.UUID == element.UUID) {
@@ -616,7 +617,6 @@ export default (props) => {
         console.log("onClickPay paramMethod ", paramMethod);
         MoreAttributes.PointDiscount = pointUse && pointUse > 0 ? pointUse : 0;
         MoreAttributes.PointDiscountValue = 0;
-        // MoreAttributes.TemporaryPrints = [];
         MoreAttributes.Vouchers = listVoucher;
         MoreAttributes.PaymentMethods = paramMethod
         if (customer && customer.Id) {
