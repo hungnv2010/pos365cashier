@@ -130,6 +130,7 @@ export default (props) => {
 
   useEffect(() => {
     const syncDatas = async () => {
+      dialogManager.hiddenLoading()
       if (isFNB === null) return
 
       dispatch({ type: 'ALREADY', already: false })
@@ -147,7 +148,7 @@ export default (props) => {
 
 
       dispatch({ type: 'ALREADY', already: true })
-      dialogManager.hiddenLoading()
+      // dialogManager.hiddenLoading()
     }
     syncDatas()
 

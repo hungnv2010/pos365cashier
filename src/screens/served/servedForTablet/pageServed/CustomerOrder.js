@@ -19,7 +19,7 @@ import dialogManager from '../../../../components/dialog/DialogManager';
 import dataManager from '../../../../data/DataManager';
 import { ReturnProduct } from '../../ReturnProduct';
 import { getFileDuLieuString, setFileLuuDuLieu } from '../../../../data/fileStore/FileStorage';
-import { HTTPService } from '../../../../data/services/HttpService';
+import { HTTPService, URL } from '../../../../data/services/HttpService';
 import { ApiPath } from '../../../../data/services/ApiPath';
 import { useDispatch } from 'react-redux';
 import colors from '../../../../theme/Colors';
@@ -597,7 +597,7 @@ const CustomerOrder = (props) => {
             })
         } else {
             let isCheckStockControlWhenSelling = await dataManager.checkStockControlWhenSelling(json.OrderDetails)
-            if (vendorSession.Settings.StockControlWhenSelling == true && isCheckStockControlWhenSelling) {
+            if (isCheckStockControlWhenSelling) {
                 return;
             } else {
                 onError(json)

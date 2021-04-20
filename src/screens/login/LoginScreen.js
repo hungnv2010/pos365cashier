@@ -84,6 +84,9 @@ const LoginScreen = (props) => {
                     dialogManager.hiddenLoading();
                     dialogManager.showPopupOneButton(I18n.t('loi_dang_nhap'), I18n.t('thong_bao'))
                 }
+            }, err => {
+                dialogManager.hiddenLoading();
+                dialogManager.showPopupOneButton(I18n.t('loi_dang_nhap'), I18n.t('thong_bao'))
             }).catch((e) => {
                 dialogManager.hiddenLoading();
                 dialogManager.showPopupOneButton(I18n.t('loi_server'), I18n.t('thong_bao'))

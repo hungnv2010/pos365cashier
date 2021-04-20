@@ -15,7 +15,7 @@ import dataManager from '../../../../data/DataManager';
 import RetailToolbar from '../retailToolbar';
 import DialogProductDetail from '../../../../components/dialog/DialogProductDetail';
 import { ApiPath } from '../../../../data/services/ApiPath';
-import { HTTPService } from '../../../../data/services/HttpService';
+import { HTTPService, URL } from '../../../../data/services/HttpService';
 import _, { map } from 'underscore';
 import dialogManager from '../../../../components/dialog/DialogManager';
 import { useDispatch, useSelector } from 'react-redux';
@@ -733,7 +733,7 @@ export default (props) => {
                     dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(json.Total))
 
                 } else {
-                    onError(json)
+                    onError(json, vendorSession)
                 }
             }, err => {
                 dialogManager.hiddenLoading()
@@ -741,22 +741,22 @@ export default (props) => {
             })
         } else {
             let isCheckStockControlWhenSelling = await dataManager.checkStockControlWhenSelling(json.OrderDetails)
-            if (vendorSession.Settings.StockControlWhenSelling == true && isCheckStockControlWhenSelling) {
+            if (isCheckStockControlWhenSelling) {
                 return;
             } else {
-                onError(json)
+                onError(json, vendorSession)
             }
         }
     }
 
 
-    const onError = (json) => {
+    const onError = (json, vendorSession) => {
         dialogManager.showPopupOneButton(I18n.t("khong_co_ket_noi_internet_don_hang_cua_quy_khach_duoc_luu_vao_offline"))
         updateServerEventForPayment()
-        handlerError({ JsonContent: json, })
+        handlerError({ JsonContent: json }, vendorSession)
     }
 
-    const handlerError = (data) => {
+    const handlerError = (data, vendorSession) => {
         console.log("handlerError data ", data);
         dialogManager.hiddenLoading()
         let params = {
