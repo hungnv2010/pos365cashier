@@ -499,7 +499,7 @@ const ContentComponent = (props) => {
             } else {
                 // dialogManager.showLoading()
                 dispatch({ type: 'ALREADY', already: false })
-                // await realmStore.deleteAllForFnb()
+                await realmStore.deleteAllForFnb()
                 await dataManager.syncAllDatas()
                 dispatch({ type: 'ALREADY', already: true })
                 dialogManager.hiddenLoading()

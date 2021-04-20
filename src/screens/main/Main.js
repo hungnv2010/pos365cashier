@@ -210,7 +210,7 @@ export default (props) => {
       } else {
         dialogManager.showLoading()
         dispatch({ type: 'ALREADY', already: false })
-        // await realmStore.deleteAllForRetail()
+        await realmStore.deleteAllForRetail()
         await dataManager.syncAllDatasForRetail()
         dispatch({ type: 'ALREADY', already: true })
         dialogManager.hiddenLoading()
