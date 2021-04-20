@@ -77,7 +77,6 @@ export default (props) => {
     }, [])
 
     useEffect(() => {
-        if (!already) return
         const getCommodityWaiting = async () => {
             serverEvents = await realmStore.queryServerEvents()
             let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
@@ -87,7 +86,8 @@ export default (props) => {
                 currentCommodity.current = (newSE)
             } else {
                 setNumberNewOrder(newServerEvents.length)
-                currentCommodity.current = JSON.parse(JSON.stringify(newServerEvents[0]))
+                let lastIndex = newServerEvents.length - 1
+                currentCommodity.current = JSON.parse(JSON.stringify(newServerEvents[lastIndex]))
 
             }
             console.log('currentCommodity.currentcurrentCommodity.current', currentCommodity.current);
@@ -96,7 +96,7 @@ export default (props) => {
 
         }
         getCommodityWaiting()
-    }, [already])
+    }, [])
 
     useEffect(() => {
         if (syncRetail != false) {
