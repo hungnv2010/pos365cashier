@@ -131,9 +131,7 @@ export default (props) => {
   useEffect(() => {
     const syncDatas = async () => {
       if (isFNB === null) return
-
       dispatch({ type: 'ALREADY', already: false })
-
       let state = await NetInfo.fetch()
       if (state.isConnected == true && state.isInternetReachable == true) {
         await realmStore.deleteAllForFnb()
@@ -144,7 +142,6 @@ export default (props) => {
           await dataManager.syncAllDatasForRetail()
         }
       }
-
 
       dispatch({ type: 'ALREADY', already: true })
       dialogManager.hiddenLoading()

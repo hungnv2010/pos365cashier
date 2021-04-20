@@ -350,7 +350,7 @@ const MainRetail = (props) => {
                             <View style={{ flex: 6 }}>
                                 <SelectProduct
                                     valueSearch={text}
-                                    numColumns={orientaition == Constant.LANDSCAPE ? 3 : 3}
+                                    numColumns={orientaition == Constant.LANDSCAPE ? 3 : 2}
                                     listProducts={jsonContent.OrderDetails ? jsonContent.OrderDetails : []}
                                     outputSelectedProduct={outputSelectedProduct} />
                             </View>

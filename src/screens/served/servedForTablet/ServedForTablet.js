@@ -585,7 +585,7 @@ const Served = (props) => {
                         <View style={!itemOrder.ProductId ? { flex: 1 } : { width: 0, height: 0 }}>
                             <SelectProduct
                                 valueSearch={value}
-                                numColumns={orientaition == Constant.LANDSCAPE ? 3 : 3}
+                                numColumns={orientaition == Constant.LANDSCAPE ? 3 : 2}
                                 listProducts={jsonContent.OrderDetails ? [...jsonContent.OrderDetails] : []}
                                 outputSelectedProduct={outputSelectedProduct} />
                         </View>
