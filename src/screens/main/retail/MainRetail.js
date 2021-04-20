@@ -39,7 +39,6 @@ const MainRetail = (props) => {
     }, [syncRetail])
 
     useEffect(() => {
-        if (!already) return
         const getCommodityWaiting = async () => {
 
             serverEvents = await realmStore.queryServerEvents()
@@ -51,7 +50,8 @@ const MainRetail = (props) => {
                 currentCommodity.current = (newSE)
             } else {
                 setNumberCommodity(newServerEvents.length)
-                currentCommodity.current = JSON.parse(JSON.stringify(newServerEvents[0]))
+                let lastIndex = newServerEvents.length - 1
+                currentCommodity.current = JSON.parse(JSON.stringify(newServerEvents[lastIndex]))
             }
             let jsonContent = JSON.parse(currentCommodity.current.JsonContent)
             setJsonContent(jsonContent)
@@ -59,7 +59,7 @@ const MainRetail = (props) => {
 
         }
         getCommodityWaiting()
-    }, [already])
+    }, [])
 
     useEffect(() => {
         console.log('jsonContent.Partner', jsonContent.Partner);
