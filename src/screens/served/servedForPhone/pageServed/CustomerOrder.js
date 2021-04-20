@@ -20,7 +20,7 @@ import { color } from 'react-native-reanimated';
 import { getFileDuLieuString, setFileLuuDuLieu } from '../../../../data/fileStore/FileStorage';
 import { Constant } from '../../../../common/Constant';
 import { ReturnProduct } from '../../ReturnProduct';
-import { HTTPService } from '../../../../data/services/HttpService';
+import { HTTPService, URL } from '../../../../data/services/HttpService';
 import { ApiPath } from '../../../../data/services/ApiPath';
 var Sound = require('react-native-sound');
 import moment from 'moment';
@@ -211,7 +211,7 @@ export default (props) => {
             })
         } else {
             let isCheckStockControlWhenSelling = await dataManager.checkStockControlWhenSelling(json.OrderDetails)
-            if (vendorSession.Settings.StockControlWhenSelling == true && isCheckStockControlWhenSelling) {
+            if (isCheckStockControlWhenSelling) {
                 return;
             } else {
                 onError(json)

@@ -72,12 +72,14 @@ export default (props) => {
 
     const onCallBack = async (data) => {
         console.log("onCallBack data ", data);
+        dispatch({ type: 'ALREADY', already: false })
         if (data != "Add") {
             setRooms([])
-            dispatch({ type: 'ALREADY', already: false })
+            // dispatch({ type: 'ALREADY', already: false })
             await realmStore.deleteRoom()
         }
         await dataManager.syncRoomsReInsert()
+        dispatch({ type: 'ALREADY', already: true })
         getDataInRealm();
         isReLoad.current = true;
     }

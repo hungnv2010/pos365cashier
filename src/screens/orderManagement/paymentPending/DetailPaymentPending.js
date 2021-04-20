@@ -220,7 +220,7 @@ export default (props) => {
             })
         } else {
             let isCheckStockControlWhenSelling = await dataManager.checkStockControlWhenSelling(json.OrderDetails)
-            if (vendorSession.Settings.StockControlWhenSelling == true && isCheckStockControlWhenSelling) {
+            if (isCheckStockControlWhenSelling) {
                 return;
             } else {
                 onError(json)
