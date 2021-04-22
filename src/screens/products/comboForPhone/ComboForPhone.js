@@ -19,6 +19,7 @@ export default (props) => {
     const [product, setProduct] = useState({})
     const [listFomular, setListFormular] = useState([])
     const [sumQuantity, setSumQuantity] = useState(0)
+    const [listPr, setListPr] = useState([])
     const deviceType = useSelector(state => {
         return state.Common.deviceType
     });
@@ -34,45 +35,49 @@ export default (props) => {
         let productTmp = JSON.parse(JSON.stringify(param.product))
         setProduct(productTmp)
     }
+    useEffect(() => {
+        let arrPr = []
+        listFomular.forEach(el => {
+            let paramFilter = `(substringof('${el.Product.Code}',Code) or substringof('${el.Product.Code}',Name) or substringof('${el.Product.Code}',Code2) or substringof('${el.Product.Code}',Code3) or substringof('${el.Product.Code}',Code4) or substringof('${el.Product.Code}',Code5))`
+            new HTTPService().setPath(ApiPath.PRODUCT).GET({ IncludeSummary: true, Inlinecount: 'allpages', CategoryId: -1, PartnerId: 0, top: 20, filter: paramFilter }).then((res) => {
+                if (res != null) {
+                   arrPr.push({ ...res.results[0], Quantity: el.Quantity })
+                }
+            })
+        })
+        setListPr(arrPr)
+    }, [listFomular])
 
     const outputTextSearch = () => {
 
     }
     const clickSelectProduct = () => {
         console.log("click");
-        props.navigation.navigate('SelectProduct', { _onSelect: onCallBack, listProducts: listFomular.length > 0 ? listFomular : [] })
+        props.navigation.navigate('SelectProduct', { _onSelect: onCallBack, listProducts: listPr })
     }
     const delItem = (index) => {
         listFomular.splice(index, 1)
-        setListFormular(listFomular)
+        setListFormular([...listFomular])
     }
 
     const onCallBack = (data) => {
         console.log("data", data);
         let arrFormular = []
+        setListPr(data)
         data.forEach(el => {
-            if (el.Id) {
-                let paramFilter = `(substringof('${el.Code}',Code) or substringof('${el.Code}',Name) or substringof('${el.Code}',Code2) or substringof('${el.Code}',Code3) or substringof('${el.Code}',Code4) or substringof('${el.Code}',Code5))`
-            new HTTPService().setPath(ApiPath.PRODUCT).GET({ IncludeSummary: true, Inlinecount: 'allpages', CategoryId: -1, PartnerId: 0, top: 20, filter: paramFilter }).then((res) => {
-                if (res != null) {
-                let itemCombo = {
-                    Cost: res.results[0].Cost,
-                    ItemId: el.Id,
-                    Product: { Code: el.Code, Cost: res.results[0].Cost, Name: el.Name, Unit: el.Unit },
-                    Quantity: el.Quantity,
-                    QuantityLargeUnit: 0
-                }
-                arrFormular.push(itemCombo)
-                setListFormular([...arrFormular])}
-                }
-                )
-            } else {
-                arrFormular.push(el)
-                setListFormular([...arrFormular])
+
+            let itemCombo = {
+                Cost: el.Cost,
+                ItemId: el.Id,
+                Product: { Code: el.Code, Cost: el.Cost, Name: el.Name, Unit: el.Unit },
+                Quantity: el.Quantity,
+                QuantityLargeUnit: 0
             }
-            console.log("arrrrrrrr", arrFormular);
+            arrFormular.push(itemCombo)
+
         })
-        
+        setListFormular([...arrFormular])
+
 
     }
     const onChangeTextInput = (text) => {
@@ -85,7 +90,7 @@ export default (props) => {
         }
         return text
     }
-    
+
     useEffect(() => {
         console.log("list formular", listFomular);
         let sum = 0;
@@ -94,7 +99,7 @@ export default (props) => {
                 sum = sum + el.Quantity
             })
             setSumQuantity(sum)
-        }else {
+        } else {
             setSumQuantity(0)
         }
     }, [listFomular])
@@ -107,11 +112,11 @@ export default (props) => {
         return (
             <View style={{ backgroundColor: '#FFF', flexDirection: 'column', marginBottom: 7 }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5, paddingHorizontal: 10 }}>
-                    <View style={{flex:9}}>
+                    <View style={{ flex: 9 }}>
                         <Text style={{ fontWeight: 'bold', textTransform: 'uppercase' }}>{item.Product ? item.Product.Name : ''}</Text>
                         <Text style={{ color: '#4a4a4a', marginTop: 5 }}>{item.Product ? item.Product.Code : ''}</Text>
                     </View>
-                    <TouchableOpacity style={{flex:1}} onPress={() => delItem(index)}>
+                    <TouchableOpacity style={{ flex: 1 }} onPress={() => delItem(index)}>
                         <Image source={Images.icon_trash} style={{ width: 28, height: 28, justifyContent: 'center' }} />
                     </TouchableOpacity>
                 </View>
@@ -124,7 +129,7 @@ export default (props) => {
                     </View>
                     <View style={{ flex: 1.2, marginLeft: 5 }}>
                         <Text style={{ textAlign: 'left' }}>{I18n.t('so_luong')}</Text>
-                        <View style={{ flexDirection: 'row', backgroundColor: '#f2f2f2', borderRadius: 5, marginTop: 5 ,borderWidth:0.5,borderColor:'#36a3f7'}}>
+                        <View style={{ flexDirection: 'row', backgroundColor: '#f2f2f2', borderRadius: 5, marginTop: 5, borderWidth: 0.5, borderColor: '#36a3f7' }}>
                             <TouchableOpacity style={styles.styleButton} onPress={() => { item.Quantity = item.Quantity > 0 ? item.Quantity - 1 : 0, setListFormular([...listFomular]) }}>
                                 <Text style={{ color: '#36a3f7', fontWeight: 'bold' }}>-</Text>
                             </TouchableOpacity>
@@ -137,7 +142,7 @@ export default (props) => {
                     {product.LargeUnit ?
                         <View style={{ flex: 1.7, marginLeft: 5 }}>
                             <Text style={{ textAlign: 'left' }}>{I18n.t('so_luong_don_vi_tinh_lon')}</Text>
-                            <View style={{ flexDirection: 'row', backgroundColor: '#f2f2f2', borderRadius: 5, marginTop: 5,borderWidth:0.5,borderColor:'#36a3f7' }}>
+                            <View style={{ flexDirection: 'row', backgroundColor: '#f2f2f2', borderRadius: 5, marginTop: 5, borderWidth: 0.5, borderColor: '#36a3f7' }}>
                                 <TouchableOpacity style={styles.styleButton} onPress={() => { item.QuantityLargeUnit = item.QuantityLargeUnit > 0 ? item.QuantityLargeUnit - 1 : 0, setListFormular([...listFomular]) }}>
                                     <Text style={{ color: '#36a3f7', fontWeight: 'bold' }}>-</Text>
                                 </TouchableOpacity>
@@ -146,7 +151,7 @@ export default (props) => {
                                     <Text style={{ color: '#36a3f7', fontWeight: 'bold' }}>+</Text>
                                 </TouchableOpacity>
                             </View>
-                        </View>  : null
+                        </View> : null
                     }
 
                 </View>
@@ -181,7 +186,7 @@ export default (props) => {
                     </View>
 
             }
-            <View style={{ alignItems: 'stretch', justifyContent: 'flex-end', marginTop: 40 }}>
+            <View style={{ alignItems: 'stretch', justifyContent: 'flex-end' }}>
                 <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 10, justifyContent: 'flex-end' }} onPress={() => onClickOk()}>
                     <Text style={{ textAlign: 'center', color: '#fff', paddingVertical: 10, fontWeight: 'bold' }}>{I18n.t('xong')}</Text>
                 </TouchableOpacity>
