@@ -890,6 +890,7 @@ export default {
   don_hang_cho_thanh_toan: "Commodity waiting for payment",
   dong_bo_du_lieu: 'Synchronize data',
   dang_xuat_tai_khoan_tren_cac_thiet_bi_dang_dung:'Sign out for all device',
+  dang_xu_li:'Processing',
 
   giu_man_hinh_luon_sang: "Keep the screen on",
   gia: "Price",
@@ -933,6 +934,7 @@ export default {
   luu: 'Save',
   luu_va_sao_chep: "Save & Coppy ",
   loc:'Filter',
+  loai_bo:'Removed',
 
   may_in_thu_ngan: "Printer cashier",
   may_in_bao_bep_a: "Printer kitchen A",
@@ -954,6 +956,7 @@ export default {
   mo_khoa:'Unlock',
   ma_don_vi_tinh_lon:'Large unit code',
   mo_ta_tach_hang:'Adding this item to your order will not add up the quantity, but will split it into multiple lines.',
+  ma_nhap_hnag:'Code',
 
   nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: "Receive messages / notifications from waiter, manager?",
   nhap_so_luong_the: "Enter the number of cards",

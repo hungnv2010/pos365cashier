@@ -447,6 +447,7 @@ export default {
   dang_xuat_tai_khoan_tren_cac_thiet_bi_dang_dung:'Đăng xuất tài khoản trên các thiết bị đang dùng',
   danh_sach_extra_topping:'Danh sách Extra topping',
   danh_sach_hang_hoa:'Danh sách hàng hoá',
+  dang_xu_li:'Đang xử lý',
 
   giu_man_hinh_luon_sang: "Giữ màn hình luôn sáng",
   gia: "Giá bán",
@@ -491,6 +492,7 @@ export default {
   luu: 'Lưu',
   luu_va_sao_chep: "Lưu & Sao chép",
   loc:'Lọc',
+  loai_bo:'Loại bỏ',
 
   may_in_thu_ngan: "Máy in thu ngân",
   may_in_bao_bep_a: "Máy in báo bếp A",
@@ -512,6 +514,7 @@ export default {
   mo_khoa:'Mở khóa nhân viên',
   ma_don_vi_tinh_lon:'Mã đơn vị tính lớn',
   mo_ta_tach_hang:'Khi thêm mặt hàng này vào đơn hàng sẽ không cộng dồn số lượng mà sẽ tách thành nhiều dòng',
+  ma_nhap_hang:'mã nhập hàng',
 
   nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: "Nhận tin nhắn/ thông báo từ phục vụ, quản lý?",
   nhap_so_luong_the: "Nhập số lượng thẻ",

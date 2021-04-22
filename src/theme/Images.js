@@ -121,6 +121,7 @@ const images = {
     ic_khachhang: require('../../assets/icons/ic_khachhang.png'),
     ic_nhomhanghoa: require ('../../assets/icons/ic_nhomhanghoa.png'),
     ic_nhaphang: require ('../../assets/icons/ic_nhaphang.png'),
+    ic_default_orderstock : require ('../../assets/icons/icon_default_orderstock.png'),
 
 }
 

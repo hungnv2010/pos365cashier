@@ -92,7 +92,9 @@ export const ScreenList = {
   ListExtraTopping:'ListExtraTopping',
   ExtraDetails: 'ExtraDetails',
   QrcodeAdd: 'QrcodeAdd',
-  TakePhoto:'TakePhoto'
+  TakePhoto:'TakePhoto',
+  ListOrderStock: 'ListOrderStock',
+  OrderStockDetails: 'OrderStockDetails',
 
 }
 
