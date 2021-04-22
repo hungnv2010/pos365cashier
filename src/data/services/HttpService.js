@@ -119,13 +119,36 @@ export class HTTPService {
     }
 
     handleError(e, reject) {
-        if (e && e.response && e.response.data) {
-            let mes = e.response.data.ResponseStatus && e.response.data.ResponseStatus.Message ? e.response.data.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, "") : "";
-            this.error(mes);
-            reject("")
-        } else {
-            this.error();
-            reject(e)
+        // console.log("handleError error.response.status === ", JSON.stringify(e.response.status))
+        // console.log("handleError Responses === ", JSON.stringify(e))
+        // console.log("handleError Responses === ", e.response.data.ResponseStatus.Message)
+        if (e.response && e.response.status && e.response.status == 401) {
+            if (!(e.response.config.url.includes(ApiPath.VENDOR_SESSION) || e.response.config.url.includes(ApiPath.LOGIN))) {
+                index401++;
+                console.log("index401 ", index401);
+
+                // if (index401 > 10) {
+                setFileLuuDuLieu(Constant.CURRENT_ACCOUNT, "");
+                setFileLuuDuLieu(Constant.CURRENT_BRANCH, "");
+                navigate('Login', {}, true);
+                index401 = 0
+                // } else
+                dialogManager.showPopupOneButton(I18n.t('het_phien_lam_viec'), I18n.t('thong_bao'), () => {
+                    dialogManager.destroy();
+                }, null, null, I18n.t('dong'))
+            } else {
+                reject("")
+            }
+        }
+        else {
+            if (e && e.response && e.response.data) {
+                let mes = e.response.data.ResponseStatus && e.response.data.ResponseStatus.Message ? e.response.data.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, "") : "";
+                this.error(mes);
+                reject("")
+            } else {
+                this.error();
+                reject(e)
+            }
         }
     }
 

@@ -125,38 +125,22 @@ export default (props) => {
   useEffect(() => {
 
     Print.registerPrint("")
-    listenerRoom();
 
   }, [])
-
-  let room = null;
-  const listenerRoom = async () => {
-    room = await realmStore.queryRooms()
-    room.addListener(async (collection, changes) => {
-      if (changes.insertions.length || changes.modifications.length) {
-        console.log("room.addListener collection changes ", collection, changes);
-        dispatch({ type: 'ALREADY', already: false })
-        dispatch({ type: 'ALREADY', already: true })
-      }
-    })
-  }
-
 
   useEffect(() => {
     const syncDatas = async () => {
       if (isFNB === null) return
-
       dispatch({ type: 'ALREADY', already: false })
-
       let state = await NetInfo.fetch()
       if (state.isConnected == true && state.isInternetReachable == true) {
         await realmStore.deleteAllForFnb()
-      }
-      if (isFNB === true) {
-        await dataManager.syncAllDatas()
-      }
-      if (isFNB === false) {
-        await dataManager.syncAllDatasForRetail()
+        if (isFNB === true) {
+          await dataManager.syncAllDatas()
+        }
+        if (isFNB === false) {
+          await dataManager.syncAllDatasForRetail()
+        }
       }
 
       dispatch({ type: 'ALREADY', already: true })

@@ -20,7 +20,7 @@ import { color } from 'react-native-reanimated';
 import { getFileDuLieuString, setFileLuuDuLieu } from '../../../../data/fileStore/FileStorage';
 import { Constant } from '../../../../common/Constant';
 import { ReturnProduct } from '../../ReturnProduct';
-import { HTTPService } from '../../../../data/services/HttpService';
+import { HTTPService, URL } from '../../../../data/services/HttpService';
 import { ApiPath } from '../../../../data/services/ApiPath';
 var Sound = require('react-native-sound');
 import moment from 'moment';
@@ -211,7 +211,7 @@ export default (props) => {
             })
         } else {
             let isCheckStockControlWhenSelling = await dataManager.checkStockControlWhenSelling(json.OrderDetails)
-            if (vendorSession.Settings.StockControlWhenSelling == true && isCheckStockControlWhenSelling) {
+            if (isCheckStockControlWhenSelling) {
                 return;
             } else {
                 onError(json)
@@ -428,6 +428,13 @@ export default (props) => {
             jsonContent.RoomName = props.route.params.room.Name
         }
 
+        if (settingObject.current.in_tam_tinh == false) {
+            dialogManager.showPopupOneButton(I18n.t("ban_khong_co_quyen_su_dung_chuc_nang_nay"))
+            return;
+        }
+
+        dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: true } })
+
         let MoreAttributes = jsonContent.MoreAttributes ? (typeof (jsonContent.MoreAttributes) == 'string' ? JSON.parse(jsonContent.MoreAttributes) : jsonContent.MoreAttributes) : {}
         console.log("onClickProvisional MoreAttributes ", MoreAttributes);
         if (MoreAttributes.toString() == '{}') {
@@ -452,7 +459,7 @@ export default (props) => {
             dataManager.updateServerEventNow(serverEvent, true, isFNB);
         }
 
-        dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: true } })
+        
     }
 
     let _menu = null;

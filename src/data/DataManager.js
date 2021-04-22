@@ -24,20 +24,23 @@ class DataManager {
     }
 
     async checkStockControlWhenSelling(OrderDetails = []) {
-        let listProduct = await realmStore.queryProducts();
         let status = false;
-        if (OrderDetails.length > 0) {
-            OrderDetails.forEach(element => {
-                let product = listProduct.filtered(`Id == ${element.ProductId}`)
-                if (JSON.stringify(product) != '{}') {
-                    product = product[0]
-                    if (product.OnHand <= 0) {
-                        dialogManager.showPopupOneButton(element.Name + " " + I18n.t("khong_du_ton_kho"))
-                        status = true;
-                        return;
+        let vendorSession = await this.selectVendorSession()
+        if (vendorSession && vendorSession.Settings.StockControlWhenSelling == true) {
+            let listProduct = await realmStore.queryProducts();
+            if (OrderDetails.length > 0) {
+                OrderDetails.forEach(element => {
+                    let product = listProduct.filtered(`Id == ${element.ProductId}`)
+                    if (JSON.stringify(product) != '{}') {
+                        product = product[0]
+                        if (product.OnHand <= 0) {
+                            dialogManager.showPopupOneButton(element.Name + " " + I18n.t("khong_du_ton_kho"))
+                            status = true;
+                            return status;
+                        }
                     }
-                }
-            });
+                });
+            }
         }
         console.log("checkStockControlWhenSelling status ", status);
         return status;

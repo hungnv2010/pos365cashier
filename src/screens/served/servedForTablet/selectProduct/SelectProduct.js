@@ -78,30 +78,28 @@ export default (props) => {
           newCategories.push({ ...JSON.parse(JSON.stringify(item)), numberProduct })
         })
         setCategory(newCategories)
-        
+
 
       }
       getCategories()
-      
+
     }
   }, [already])
 
   const getProducts = useCallback(async () => {
-    if (already) {
+    if (!already) return
 
-      let results = await realmStore.queryProducts()
-      // results = results.sorted('Name')
-      if (listCateId[0] != -1) {
-        results = results.filtered(`CategoryId == ${listCateId[0]}`)
-      }
-      let productsRes = results.slice(skip, skip + Constant.LOAD_LIMIT)
-      productsRes = JSON.parse(JSON.stringify(productsRes))
-      console.log('getProductsproductsRes',productsRes);
-      count.current = productsRes.length
-      setProduct([...product, ...productsRes])
-      setHasProducts(true)
-      setIsLoadMore(false)
+    let results = await realmStore.queryProducts()
+    if (listCateId[0] != -1) {
+      results = results.filtered(`CategoryId == ${listCateId[0]}`)
     }
+    let productsRes = results.slice(skip, skip + Constant.LOAD_LIMIT)
+    productsRes = JSON.parse(JSON.stringify(productsRes))
+    console.log('getProductsproductsRes', productsRes);
+    count.current = productsRes.length
+    setProduct([...product, ...productsRes])
+    setHasProducts(true)
+    setIsLoadMore(false)
     return () => {
       count.current = 0
     }
@@ -139,7 +137,7 @@ export default (props) => {
   const getQuantityProduct = (arrItem) => {
     let Quantity = 0
     listProducts.forEach(item => {
-      if (item.ProductId == arrItem.ProductId || item.ItemId ==  arrItem.ProductId) {
+      if (item.ProductId == arrItem.ProductId || item.ItemId == arrItem.ProductId) {
         Quantity += item.Quantity
       }
     })
@@ -206,7 +204,7 @@ export default (props) => {
           :
           <View style={{ width: "24%", backgroundColor: 'white', paddingVertical: 5 }}>
             <View style={{ flex: 1, marginHorizontal: 5, paddingBottom: 5 }}>
-              <TouchableOpacity onPress={() => onClickAll()} style={[styles.renderCateItem, { backgroundColor: "white", backgroundColor: -1 == listCateId[0] ? Colors.colorLightBlue : "white", borderBottomWidth: 0.5, paddingVertical: 20, borderColor: 'gray'}]}>
+              <TouchableOpacity onPress={() => onClickAll()} style={[styles.renderCateItem, { backgroundColor: "white", backgroundColor: -1 == listCateId[0] ? Colors.colorLightBlue : "white", borderBottomWidth: 0.5, paddingVertical: 20, borderColor: 'gray' }]}>
                 <View style={{ backgroundColor: -1 == listCateId[0] ? Colors.colorLightBlue : "white", flex: 1, padding: 7, borderRadius: 50, marginHorizontal: 5 }}>
                   <Text style={{ fontWeight: "bold", textAlign: "center", color: -1 == listCateId[0] ? "white" : Colors.colorLightBlue, fontSize: 12 }}></Text>
                 </View>
@@ -248,6 +246,7 @@ export default (props) => {
                 keyExtractor={(item, index) => '' + index}
                 extraData={product.Quantity}
                 onEndReached={(info) => { loadMore(info) }}
+                onEndReachedThreshold={0}
                 ListFooterComponent={isLoadMore ? <ActivityIndicator color={Colors.colorchinh} /> : null}
                 ItemSeparatorComponent={() => <View style={{ height: 14 }}></View>}
               />
@@ -263,7 +262,7 @@ export default (props) => {
 }
 
 const styles = StyleSheet.create({
-  renderCateItem: { flexDirection: "row", paddingVertical: 20, alignItems: "center", marginBottom: 5,borderRadius:5  },
+  renderCateItem: { flexDirection: "row", paddingVertical: 20, alignItems: "center", marginBottom: 5, borderRadius: 5 },
   textRenderCateItem: { fontWeight: "bold", textTransform: "uppercase", lineHeight: 20, textAlign: "left" },
   button: { borderWidth: 1, padding: 20, borderRadius: 10 },
 });

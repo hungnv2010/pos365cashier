@@ -73,11 +73,11 @@ const LIST_FUNCITION = [
         icon: Images.icon_room_table,
         title: "danh_muc_phong_ban"
     },
-    {
-        func: KEY_FUNC.PRODUCT,
-        icon: Images.icon_product,
-        title: "hang_hoa"
-    },
+    // {
+    //     func: KEY_FUNC.PRODUCT,
+    //     icon: Images.icon_product,
+    //     title: "hang_hoa"
+    // },
     {
         func: KEY_FUNC.CUSTOMER_MANAGER,
         icon: Images.icon_customer,
@@ -278,25 +278,30 @@ const HeaderComponent = (props) => {
     const onClickLogOut = () => {
         dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_dang_xuat'), I18n.t("thong_bao"), res => {
             if (res == 1) {
-
                 dialogManager.showLoading()
-                new HTTPService().setPath(ApiPath.LOGOUT).GET({}).then((res) => {
+                new HTTPService().setPath(ApiPath.LOGOUT, false).GET({}).then((res) => {
                     console.log("onClickLogOut res ", res);
-
-                    dispatch({ type: 'IS_FNB', isFNB: null })
-                    dispatch({ type: 'ALREADY', already: false })
-                    dispatch(saveDeviceInfoToStore({ SessionId: "" }))
-                    setFileLuuDuLieu(Constant.CURRENT_ACCOUNT, "");
-                    setFileLuuDuLieu(Constant.CURRENT_BRANCH, "");
-                    signalRManager.killSignalR();
-                    navigate('Login', {}, true);
-
+                    dialogManager.hiddenLoading()
+                    resetDataNavigate()
+                }, err => {
+                    dialogManager.hiddenLoading()
+                    resetDataNavigate()
                 }).catch((e) => {
                     dialogManager.hiddenLoading()
                     console.log("onClickLogOut err ", e);
                 })
             }
         })
+    }
+
+    const resetDataNavigate = () => {
+        dispatch({ type: 'IS_FNB', isFNB: null })
+        dispatch({ type: 'ALREADY', already: false })
+        dispatch(saveDeviceInfoToStore({ SessionId: "" }))
+        setFileLuuDuLieu(Constant.CURRENT_ACCOUNT, "");
+        setFileLuuDuLieu(Constant.CURRENT_BRANCH, "");
+        signalRManager.killSignalR();
+        navigate('Login', {}, true);
     }
 
     return (
@@ -492,9 +497,9 @@ const ContentComponent = (props) => {
                 }, null, null, I18n.t('dong'))
                 return;
             } else {
-                dialogManager.showLoading()
+                // dialogManager.showLoading()
                 dispatch({ type: 'ALREADY', already: false })
-                // await realmStore.deleteAllForFnb()
+                await realmStore.deleteAllForFnb()
                 await dataManager.syncAllDatas()
                 dispatch({ type: 'ALREADY', already: true })
                 dialogManager.hiddenLoading()

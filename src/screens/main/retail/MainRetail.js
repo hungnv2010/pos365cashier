@@ -39,7 +39,6 @@ const MainRetail = (props) => {
     }, [syncRetail])
 
     useEffect(() => {
-        if (!already) return
         const getCommodityWaiting = async () => {
 
             serverEvents = await realmStore.queryServerEvents()
@@ -51,7 +50,8 @@ const MainRetail = (props) => {
                 currentCommodity.current = (newSE)
             } else {
                 setNumberCommodity(newServerEvents.length)
-                currentCommodity.current = JSON.parse(JSON.stringify(newServerEvents[0]))
+                let lastIndex = newServerEvents.length - 1
+                currentCommodity.current = JSON.parse(JSON.stringify(newServerEvents[lastIndex]))
             }
             let jsonContent = JSON.parse(currentCommodity.current.JsonContent)
             setJsonContent(jsonContent)
@@ -59,7 +59,7 @@ const MainRetail = (props) => {
 
         }
         getCommodityWaiting()
-    }, [already])
+    }, [])
 
     useEffect(() => {
         console.log('jsonContent.Partner', jsonContent.Partner);
@@ -220,6 +220,7 @@ const MainRetail = (props) => {
                             } else {
                                 jsonContent.OrderDetails.forEach((product) => {
                                     product.DiscountRatio = 0.0
+                                    product.Discount = 0
                                     let basePrice = (product.IsLargeUnit) ? product.PriceLargeUnit : product.UnitPrice
                                     product.Price = basePrice + product.TotalTopping
                                 })
@@ -272,6 +273,7 @@ const MainRetail = (props) => {
                             jsonContent.Partner = null
                             jsonContent.PartnerId = null
                             jsonContent.DiscountRatio = 0
+                            jsonContent.DiscountValue = 0
                             updateServerEvent({ ...jsonContent })
                         }
 
@@ -348,7 +350,7 @@ const MainRetail = (props) => {
                             <View style={{ flex: 6 }}>
                                 <SelectProduct
                                     valueSearch={text}
-                                    numColumns={orientaition == Constant.LANDSCAPE ? 3 : 3}
+                                    numColumns={orientaition == Constant.LANDSCAPE ? 3 : 2}
                                     listProducts={jsonContent.OrderDetails ? jsonContent.OrderDetails : []}
                                     outputSelectedProduct={outputSelectedProduct} />
                             </View>

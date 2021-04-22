@@ -15,7 +15,7 @@ import realmStore from '../../../../data/realm/RealmStore';
 import dataManager from '../../../../data/DataManager';
 import _, { map } from 'underscore';
 import { ApiPath } from '../../../../data/services/ApiPath';
-import { HTTPService } from '../../../../data/services/HttpService';
+import { HTTPService, URL } from '../../../../data/services/HttpService';
 import Entypo from 'react-native-vector-icons/Entypo';
 import dialogManager from '../../../../components/dialog/DialogManager';
 import colors from '../../../../theme/Colors';
@@ -500,7 +500,7 @@ const RetailCustomerOrder = (props) => {
                     updateServerEventForPayment()
                     dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(json.Total))
                 } else {
-                    onError(json)
+                    onError(json, vendorSession)
                 }
             }, err => {
                 dialogManager.hiddenLoading()
@@ -508,22 +508,22 @@ const RetailCustomerOrder = (props) => {
             })
         } else {
             let isCheckStockControlWhenSelling = await dataManager.checkStockControlWhenSelling(json.OrderDetails)
-            if (vendorSession.Settings.StockControlWhenSelling == true && isCheckStockControlWhenSelling) {
+            if (isCheckStockControlWhenSelling) {
                 return;
             } else {
-                onError(json)
+                onError(json, vendorSession)
             }
         }
     }
 
 
-    const onError = (json) => {
+    const onError = (json, vendorSession) => {
         dialogManager.showPopupOneButton(I18n.t("khong_co_ket_noi_internet_don_hang_cua_quy_khach_duoc_luu_vao_offline"))
         updateServerEventForPayment()
-        handlerError({ JsonContent: json, })
+        handlerError({ JsonContent: json }, vendorSession)
     }
 
-    const handlerError = (data) => {
+    const handlerError = (data, vendorSession) => {
         console.log("handlerError data ", data);
         dialogManager.hiddenLoading()
         let params = {
@@ -587,6 +587,15 @@ const RetailCustomerOrder = (props) => {
         console.log("onClickProvisional jsonContent ", props.jsonContent);
         if (listOrder && listOrder.length > 0) {
             props.jsonContent.RoomName = I18n.t('don_hang');
+            let setting = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
+            if (setting && setting != "") {
+                setting = JSON.parse(setting);
+                if (setting.in_tam_tinh == false) {
+                    dialogManager.showPopupOneButton(I18n.t("ban_khong_co_quyen_su_dung_chuc_nang_nay"))
+                    return;
+                }
+            }
+            dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: props.jsonContent, provisional: true } })
 
             let MoreAttributes = jsonContent.MoreAttributes ? (typeof (jsonContent.MoreAttributes) == 'string' ? JSON.parse(jsonContent.MoreAttributes) : jsonContent.MoreAttributes) : {}
             console.log("onClickProvisional MoreAttributes ", MoreAttributes);
@@ -611,8 +620,6 @@ const RetailCustomerOrder = (props) => {
                 serverEvent.Version += 1
                 dataManager.updateServerEventNow(serverEvent, true, false);
             }
-
-            dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: props.jsonContent, provisional: true } })
         } else {
             dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
         }
@@ -687,7 +694,8 @@ const RetailCustomerOrder = (props) => {
                             backgroundColor: "#fff", borderRadius: 4, marginHorizontal: 5,
                         }}>
                             <TouchableOpacity onPress={onClickPrint} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
-                                <MaterialIcons style={{ paddingHorizontal: 7 }} name="notifications" size={26} color={Colors.colorchinh} />
+                                {/* <MaterialIcons style={{ paddingHorizontal: 7 }} name="printer" size={26} color={Colors.colorchinh} /> */}
+                                <Icon style={{ paddingHorizontal: 10 }} name="printer" size={26} color={Colors.colorchinh} />
                                 <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('in_tam_tinh')}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity onPress={() => onClickOptionQuickPayment()} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>

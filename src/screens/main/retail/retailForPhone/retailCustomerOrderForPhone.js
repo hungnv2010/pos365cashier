@@ -15,7 +15,7 @@ import dataManager from '../../../../data/DataManager';
 import RetailToolbar from '../retailToolbar';
 import DialogProductDetail from '../../../../components/dialog/DialogProductDetail';
 import { ApiPath } from '../../../../data/services/ApiPath';
-import { HTTPService } from '../../../../data/services/HttpService';
+import { HTTPService, URL } from '../../../../data/services/HttpService';
 import _, { map } from 'underscore';
 import dialogManager from '../../../../components/dialog/DialogManager';
 import { useDispatch, useSelector } from 'react-redux';
@@ -77,7 +77,6 @@ export default (props) => {
     }, [])
 
     useEffect(() => {
-        if (!already) return
         const getCommodityWaiting = async () => {
             serverEvents = await realmStore.queryServerEvents()
             let newServerEvents = JSON.parse(JSON.stringify(serverEvents))
@@ -87,7 +86,8 @@ export default (props) => {
                 currentCommodity.current = (newSE)
             } else {
                 setNumberNewOrder(newServerEvents.length)
-                currentCommodity.current = JSON.parse(JSON.stringify(newServerEvents[0]))
+                let lastIndex = newServerEvents.length - 1
+                currentCommodity.current = JSON.parse(JSON.stringify(newServerEvents[lastIndex]))
 
             }
             console.log('currentCommodity.currentcurrentCommodity.current', currentCommodity.current);
@@ -96,7 +96,7 @@ export default (props) => {
 
         }
         getCommodityWaiting()
-    }, [already])
+    }, [])
 
     useEffect(() => {
         if (syncRetail != false) {
@@ -423,7 +423,15 @@ export default (props) => {
         console.log("onClickProvisional jsonContent ", jsonContent);
         if (listProducts && listProducts.length > 0) {
             jsonContent.RoomName = I18n.t('don_hang');
-
+            let setting = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
+            if (setting && setting != "") {
+                setting = JSON.parse(setting);
+                if (setting.in_tam_tinh == false) {
+                    dialogManager.showPopupOneButton(I18n.t("ban_khong_co_quyen_su_dung_chuc_nang_nay"))
+                    return;
+                }
+            }
+            dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: true } })
             let MoreAttributes = jsonContent.MoreAttributes ? (typeof (jsonContent.MoreAttributes) == 'string' ? JSON.parse(jsonContent.MoreAttributes) : jsonContent.MoreAttributes) : {}
             console.log("onClickProvisional MoreAttributes ", MoreAttributes);
             if (MoreAttributes.toString() == '{}') {
@@ -447,8 +455,6 @@ export default (props) => {
                 serverEvent.Version += 1
                 dataManager.updateServerEventNow(serverEvent, true, false);
             }
-
-            dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: true } })
         } else {
             dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
         }
@@ -587,6 +593,7 @@ export default (props) => {
                             jsonContent.Partner = null
                             jsonContent.PartnerId = null
                             jsonContent.DiscountRatio = 0
+                            jsonContent.DiscountValue = 0
                             updateServerEvent({ ...jsonContent })
                         }
 
@@ -726,7 +733,7 @@ export default (props) => {
                     dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(json.Total))
 
                 } else {
-                    onError(json)
+                    onError(json, vendorSession)
                 }
             }, err => {
                 dialogManager.hiddenLoading()
@@ -734,22 +741,22 @@ export default (props) => {
             })
         } else {
             let isCheckStockControlWhenSelling = await dataManager.checkStockControlWhenSelling(json.OrderDetails)
-            if (vendorSession.Settings.StockControlWhenSelling == true && isCheckStockControlWhenSelling) {
+            if (isCheckStockControlWhenSelling) {
                 return;
             } else {
-                onError(json)
+                onError(json, vendorSession)
             }
         }
     }
 
 
-    const onError = (json) => {
+    const onError = (json, vendorSession) => {
         dialogManager.showPopupOneButton(I18n.t("khong_co_ket_noi_internet_don_hang_cua_quy_khach_duoc_luu_vao_offline"))
         updateServerEventForPayment()
-        handlerError({ JsonContent: json, })
+        handlerError({ JsonContent: json }, vendorSession)
     }
 
-    const handlerError = (data) => {
+    const handlerError = (data, vendorSession) => {
         console.log("handlerError data ", data);
         dialogManager.hiddenLoading()
         let params = {

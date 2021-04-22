@@ -402,6 +402,7 @@ export default (props) => {
         if (changeMethodQRPay.current == true) {
             setListMethod([itemMethod])
         } else {
+            onChangeTextPaymentPaid(totalPrice, itemAccountRef.current)
             let list = [];
             listMethod.forEach(element => {
                 if (itemAccountRef.current.Id == element.Id && itemAccountRef.current.UUID == element.UUID) {
@@ -525,10 +526,12 @@ export default (props) => {
             if (noteInfo != '') {
                 jsonContent.Description = noteInfo;
             }
-            // if (date && dateTmp.current) {
-            //     jsonContent.PurchaseDate = "" + date;
-            // }
 
+            if (settingObject.current.in_tam_tinh == false) {
+                dialogManager.showPopupOneButton(I18n.t("ban_khong_co_quyen_su_dung_chuc_nang_nay"))
+                return;
+            }
+            dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: true } })
             let MoreAttributes = jsonContent.MoreAttributes ? (typeof (jsonContent.MoreAttributes) == 'string' ? JSON.parse(jsonContent.MoreAttributes) : jsonContent.MoreAttributes) : {}
             console.log("onClickProvisional MoreAttributes ", MoreAttributes);
             if (MoreAttributes.toString() == '{}') {
@@ -549,8 +552,6 @@ export default (props) => {
                 serverEvent.Version += 1
                 dataManager.updateServerEventNow(serverEvent, true, isFNB);
             }
-
-            dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: true } })
             timeClickPrevious = newDate;
         }
     }
@@ -616,7 +617,6 @@ export default (props) => {
         console.log("onClickPay paramMethod ", paramMethod);
         MoreAttributes.PointDiscount = pointUse && pointUse > 0 ? pointUse : 0;
         MoreAttributes.PointDiscountValue = 0;
-        // MoreAttributes.TemporaryPrints = [];
         MoreAttributes.Vouchers = listVoucher;
         MoreAttributes.PaymentMethods = paramMethod
         if (customer && customer.Id) {
@@ -689,7 +689,7 @@ export default (props) => {
             })
         } else {
             let isCheckStockControlWhenSelling = await dataManager.checkStockControlWhenSelling(json.OrderDetails)
-            if (vendorSession.Settings.StockControlWhenSelling == true && isCheckStockControlWhenSelling) {
+            if (isCheckStockControlWhenSelling) {
                 return;
             } else {
                 onError(json)

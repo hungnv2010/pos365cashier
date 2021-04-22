@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect, useImperativeHandle, forwardRe
 import { Image, View, StyleSheet, Button, Text, TouchableOpacity, RefreshControl, ScrollView, NativeEventEmitter, NativeModules } from 'react-native';
 import { Images, Colors, Metrics } from '../../theme';
 import dialogManager from '../../components/dialog/DialogManager';
-import { HTTPService } from '../../data/services/HttpService';
+import { HTTPService, URL } from '../../data/services/HttpService';
 import { ApiPath } from '../../data/services/ApiPath';
 import { Snackbar } from 'react-native-paper';
 import I18n from '../../common/language/i18n';
@@ -29,15 +29,23 @@ export default (props) => {
     })
 
     useEffect(() => {
-        getData()
+
 
         const getVendorSession = async () => {
             let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
             setVendorSession(JSON.parse(data));
+
         }
 
         getVendorSession();
+
     }, [])
+
+    useEffect(() => {
+        if (JSON.stringify(vendorSession) != "{}")
+            getData()
+
+    }, [vendorSession])
 
     useEffect(() => {
         console.log("useEffect dataList ", dataList);
@@ -46,6 +54,11 @@ export default (props) => {
 
     const getData = async () => {
         let orderOffline = await realmStore.queryOrdersOffline()
+        console.log("useEffect orderOffline queryOrdersOffline ", orderOffline);
+        let queryString = `HostName == '${URL.link}'`;
+        console.log("getData vendorSession ", JSON.stringify(vendorSession));
+        queryString += (vendorSession.CurrentBranchId && vendorSession.CurrentBranchId != 0 ? ` AND BranchId == ${vendorSession.CurrentBranchId}` : '');
+        orderOffline = orderOffline.filtered(queryString)
         let orderOfflineReverse = [];
         orderOffline.forEach(element => {
             orderOfflineReverse.push(element);
