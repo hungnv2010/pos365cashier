@@ -231,6 +231,8 @@ export default (props) => {
     const onError = (json) => {
         dialogManager.showPopupOneButton(I18n.t("khong_co_ket_noi_internet_don_hang_cua_quy_khach_duoc_luu_vao_offline"))
         handlerError({ JsonContent: json })
+        realmStore.deleteQRCode(dataPaymentPending.Id);
+        props.navigation.pop()
     }
 
     const handlerError = (data) => {
