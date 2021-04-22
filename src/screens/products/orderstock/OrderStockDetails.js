@@ -17,13 +17,15 @@ import ToolBarNoteBook from '../../../components/toolbar/ToolBarNoteBook';
 import dialogManager from '../../../components/dialog/DialogManager';
 import { HTTPService } from '../../../data/services/HttpService';
 import { ApiPath } from '../../../data/services/ApiPath';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
 
 export default (props) => {
     const [orderStock, setOrderStock] = useState({})
     const [listItem, setListItem] = useState([])
     const [quantity, setQuantity] = useState()
     const [totalprovisional, setTotalProvisional] = useState(0)
-    const [methodPay, setMethodPay] = useState()
+    const [methodPay, setMethodPay] = useState(I18n.t('tien_mat'))
 
     useEffect(() => {
         getData(props.route.params)
@@ -52,14 +54,20 @@ export default (props) => {
                 setListItem([...res])
             }
         })
-        // new HTTPService().setPath(`api/accounts/{${accId}}`).GET().then(res =>{
-        //     if(res != null) {
-        //         setMethodPay(res.Name)
-        //     }
-        // })
+        new HTTPService().setPath(ApiPath.ACCOUNT).GET().then(res=>{
+            if(res != null){
+                res.forEach(el =>{
+                    if(el.Id == accId){
+                        setMethodPay(el.Name)
+                    }
+                })
+            }
+        })
+        
     }
+    
     return (
-        <View>
+        <View style={{flex:1}}>
             <ToolBarDefault
                 {...props}
                 title={I18n.t('chi_tiet_nhap_hang')}
@@ -69,7 +77,7 @@ export default (props) => {
                     <View style={{ backgroundColor: '#fff', flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, paddingVertical: 15 }}>
                         <View >
                             <Text>{I18n.t('ma_nhap_hang')}</Text>
-                            <Text style={{paddingVertical:5,textTransform:'uppercase'}}>{orderStock.Code}</Text>
+                            <Text style={{paddingVertical:5,textTransform:'uppercase', fontWeight:'bold'}}>{orderStock.Code}</Text>
                         </View>
                         <View style={{ justifyContent: 'center' }}>
                             <Text style={{ color: orderStock.Status == 1 ? '#f6871e' : orderStock.Status == 2 ? '#00c75f' : orderStock.Status == 3 ? '#f21e3c' : null, fontWeight: 'bold' }}>{orderStock.Status == 2 ? I18n.t('hoan_thanh') : orderStock.Status == 1 ? I18n.t('dang_xu_li') : orderStock.Status == 3 ? I18n.t('loai_bo') : null}</Text>
@@ -78,11 +86,11 @@ export default (props) => {
                     <View style={{ backgroundColor: '#fff', marginTop: 2, paddingVertical: 15, paddingHorizontal: 10 }}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
                             <Text style={{ color: '#bbbbbb' }}>{I18n.t('ngay_tao')}</Text>
-                            <Text>{ }</Text>
+                            <Text>{dateToString(orderStock.CreatedDate)} {dateUTCToDate2(orderStock.CreatedDate)}</Text>
                         </View>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
                             <Text style={{ color: '#bbbbbb' }}>{I18n.t('ngay_nhap')}</Text>
-                            <Text></Text>
+                            <Text>{dateToString(orderStock.DocumentDate)} {dateUTCToDate2(orderStock.DocumentDate)}</Text>
                         </View>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
                             <Text style={{ color: '#bbbbbb' }}>{I18n.t('ngay_giao')}</Text>
@@ -90,7 +98,7 @@ export default (props) => {
                         </View>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
                             <Text style={{ color: '#bbbbbb' }}>{I18n.t('ghi_chu')}</Text>
-                            <Text></Text>
+                            <Text>{orderStock.Description}</Text>
                         </View>
                     </View>
                     <View style={{ paddingVertical: 15, paddingHorizontal: 10 }}>
@@ -103,27 +111,27 @@ export default (props) => {
                         </View>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
                             <Text style={{ color: '#bbbbbb' }}>{I18n.t('tong_tam_tinh')}</Text>
-                            <Text style={{ fontWeight: 'bold', color: '#36a3f7' }}>{currencyToString(totalprovisional)}</Text>
+                            <Text style={{ fontWeight: 'bold', color: colors.colorLightBlue }}>{currencyToString(totalprovisional)}</Text>
                         </View>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
                             <Text style={{ color: '#bbbbbb' }}>{I18n.t('chiet_khau')}</Text>
-                            <Text style={{ fontWeight: 'bold', color: '#36a3f7' }}>{orderStock.Discount}</Text>
+                            <Text style={{ fontWeight: 'bold', color: colors.colorLightBlue }}>{orderStock.Discount}</Text>
                         </View>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
                             <Text style={{ color: '#bbbbbb' }}>{I18n.t('thue_vat')}</Text>
-                            <Text style={{ fontWeight: 'bold', color: '#36a3f7' }}>{orderStock.VAT}</Text>
+                            <Text style={{ fontWeight: 'bold', color: colors.colorLightBlue }}>{orderStock.VAT}</Text>
                         </View>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
                             <Text style={{ color: '#4a4a4a' }}>{I18n.t('tong_cong')}</Text>
-                            <Text style={{ fontWeight: 'bold', color: '#36a3f7' }}>{currencyToString(orderStock.Total)}</Text>
+                            <Text style={{ fontWeight: 'bold', color: colors.colorLightBlue }}>{currencyToString(orderStock.Total)}</Text>
                         </View>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
                             <Text style={{ color: '#4a4a4a' }}>{I18n.t('so_tien_thanh_toan')}</Text>
-                            <Text style={{ fontWeight: 'bold', color: '#36a3f7' }}>{currencyToString(orderStock.TotalPayment)}</Text>
+                            <Text style={{ fontWeight: 'bold', color: colors.colorLightBlue }}>{currencyToString(orderStock.TotalPayment)}</Text>
                         </View>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
                             <Text style={{ color: '#bbbbbb' }}>{I18n.t('phuong_thuc_thanh_toan')}</Text>
-                            <Text>{methodPay}</Text>
+                            <Text style={{textTransform:'uppercase'}}>{methodPay}</Text>
                         </View>
                     </View>
                     <View style={{ paddingVertical: 15, paddingHorizontal: 10 }}>
@@ -140,15 +148,15 @@ export default (props) => {
                                         </View>
                                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
                                             <Text style={{ color: '#bbbbbb' }}>{I18n.t('gia_nhap')}</Text>
-                                            <Text style={{ fontWeight: 'bold', color: '#36a3f7' }}>{item.Price}</Text>
+                                            <Text style={{ fontWeight: 'bold', color: colors.colorLightBlue }}>{item.Price}</Text>
                                         </View>
                                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
                                             <Text style={{ color: '#bbbbbb' }}>{I18n.t('gia_ban')}</Text>
-                                            <Text style={{ fontWeight: 'bold', color: '#36a3f7' }}>{item.IsLargeUnit == true ? currencyToString(item.PriceLargeUnit) : currencyToString(item.PriceUnit)}</Text>
+                                            <Text style={{ fontWeight: 'bold', color: colors.colorLightBlue }}>{item.IsLargeUnit == true ? currencyToString(item.PriceLargeUnit) : currencyToString(item.PriceUnit)}</Text>
                                         </View>
                                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
                                             <Text style={{ color: '#bbbbbb' }}>{I18n.t('so_luong')}</Text>
-                                            <Text style={{ fontWeight: 'bold', color: '#36a3f7' }}>{item.Quantity}</Text>
+                                            <Text style={{ fontWeight: 'bold', color: colors.colorLightBlue }}>{item.Quantity}</Text>
                                         </View>
 
 
@@ -159,6 +167,17 @@ export default (props) => {
                     </ScrollView>
                 </View>
             </ScrollView>
+            <View style={{flexDirection:'row',paddingHorizontal:5,paddingVertical:10}}>
+                <TouchableOpacity style={{flex:1,marginRight:10, backgroundColor:colors.colorLightBlue,paddingVertical:10,alignItems:'center',justifyContent:'center',borderRadius:10}}>
+                        <Icon name={'printer'} size={24} color={'#fff'}/>
+                </TouchableOpacity>
+                <TouchableOpacity style={{flex:3,marginRight:10,backgroundColor:colors.colorLightBlue,alignItems:'center',justifyContent:'center',borderRadius:10}}>
+                    <Text style={{textAlign:'center',fontWeight:'bold', color:'#fff'}}>{I18n.t('xoa')}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={{flex:3,backgroundColor:colors.colorLightBlue,alignItems:'center',justifyContent:'center',borderRadius:10}} onPress={()=>{props.navigation.navigate(ScreenList.AddOrderStock, { orderstock: orderStock, listPr:listItem })}}>
+                    <Text style={{textAlign:'center', fontWeight:'bold', color:'#fff'}}>{I18n.t('chinh_sua')}</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     )
 }

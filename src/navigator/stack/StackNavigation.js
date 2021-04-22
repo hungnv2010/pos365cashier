@@ -64,6 +64,7 @@ import QrcodeAdd from '../../screens/products/QrcodeAdd';
 import TakePhoto from '../../screens/products/TakePhoto';
 import ListOrderStock from '../../screens/products/orderstock/ListOrderStock'
 import OrderStockDetails from '../../screens/products/orderstock/OrderStockDetails'
+import AddOrderStock from '../../screens/products/orderstock/AddOrderStock'
 const MainStack = createStackNavigator();
 
 
@@ -139,6 +140,7 @@ export default (props) => {
                 <MainStack.Screen name={ScreenList.TakePhoto}>{props=><TakePhoto {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.ListOrderStock}>{props=><ListOrderStock {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.OrderStockDetails}>{props=><OrderStockDetails {...props}/>}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.AddOrderStock}>{props=><AddOrderStock {...props}/>}</MainStack.Screen>
             </MainStack.Navigator>
         </Animated.View>
     );

@@ -433,6 +433,7 @@ export default {
   chieu_rong_kho_giay: 'Chiều rộng khổ giấy',
   chon_nhom_nha_cung_cap:'Chọn nhóm nhà cung cấp',
   cap_nhat_extra_topping:'Cập nhật Extra/ Topping',
+  chi_tiet_nhap_hang:'Chi tiết nhập hàng',
 
   don_vi_tien_te: "Đơn vị tiền tệ",
   dollar_my: "Dollar Mỹ",
@@ -459,6 +460,7 @@ export default {
   gia_ban:'Giá bán',
   gia_ban_don_vi_tinh_lon:'Giá bán đơn vị tính lớn',
   gia_tri_quy_doi:'Giá trị quy đổi',
+  gia_nhap:'Giá nhập',
 
   hien_thanh_dieu_huong: "Hiện thanh điều hướng",
   hien_thi_hang_hoa: 'Hiển thị hàng hoá',
@@ -514,7 +516,7 @@ export default {
   mo_khoa:'Mở khóa nhân viên',
   ma_don_vi_tinh_lon:'Mã đơn vị tính lớn',
   mo_ta_tach_hang:'Khi thêm mặt hàng này vào đơn hàng sẽ không cộng dồn số lượng mà sẽ tách thành nhiều dòng',
-  ma_nhap_hang:'mã nhập hàng',
+  ma_nhap_hang:'Mã nhập hàng',
 
   nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: "Nhận tin nhắn/ thông báo từ phục vụ, quản lý?",
   nhap_so_luong_the: "Nhập số lượng thẻ",
@@ -527,6 +529,7 @@ export default {
   nhap_don_vi_tinh_lon:'Nhập đơn vị tính lớn',
   nhap_ten_nhom: 'Nhập tên nhóm',
   nhap_ten_hang_hoa:'Nhập tên hàng hoá',
+  ngay_giao:'Ngày giao',
 
   quan_ly:'Quản lý',
   quan_ly_hang_hoa:'Quản lý hàng hoá',
@@ -542,6 +545,7 @@ export default {
   san_pham: "Sản phẩm ",
   so_luong_tru_kho_khi_ban:'Số lượng trừ kho khi bán',
   so_luong_don_vi_tinh_lon:'Số lượng đơn vị tính lớn',
+  so_tien_thanh_toan:'Số tiền thanh toán',
 
   thiet_lap_thanh_toan_vnpay: "Thiết lập thanh toán VNPAY",
   thong_tin_cua_hang: "Thông tin cửa hàng",
@@ -573,6 +577,8 @@ export default {
   tach_thanh_nhieu_dong_khi_ban_hang:'Tách thành nhiều dòng khi bán hàng',
   tao_nhom_hang_hoa:'Tạo nhóm hàng hoá',
   them_moi_hang_hoa:'Thêm mới hàng hoá',
+  tong_so_luong_nhap:'Tổng số lượng nhập',
+  thue_vat:'Thuế VAT',
 
   voucher: "Mã quà tặng",
   vui_long_nhap_dung_so_tien_khach_tra: "Vui lòng nhập đúng số tiền khách trả.",

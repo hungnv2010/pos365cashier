@@ -95,6 +95,7 @@ export const ScreenList = {
   TakePhoto:'TakePhoto',
   ListOrderStock: 'ListOrderStock',
   OrderStockDetails: 'OrderStockDetails',
+  AddOrderStock: 'AddOrderStock',
 
 }
 

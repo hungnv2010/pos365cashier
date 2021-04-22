@@ -19,6 +19,7 @@ import dialogManager from '../../../components/dialog/DialogManager';
 import useDebounce from '../../../customHook/useDebounce';
 import { HTTPService } from '../../../data/services/HttpService';
 import { ApiPath } from '../../../data/services/ApiPath';
+import CustomerToolBar from '../../../screens/customerManager/customer/CustomerToolBar';
 
 export default (props) => {
     const orderStock = useRef([])
@@ -54,13 +55,13 @@ export default (props) => {
             }
         })
     }
-    const onClickItem = (item) =>{
-        props.navigation.navigate(ScreenList.OrderStockDetails,{orderstock:item})
+    const onClickItem = (item) => {
+        props.navigation.navigate(ScreenList.OrderStockDetails, { orderstock: item })
     }
 
     const renderItemOrderStock = (item, index) => {
         return (
-            <TouchableOpacity style={{ backgroundColor: '#fff' }} onPress={()=>{onClickItem(item)}}>
+            <TouchableOpacity style={{ backgroundColor: '#fff' }} onPress={() => { onClickItem(item) }}>
                 <View style={{ flexDirection: 'row' }}>
                     <View style={{ alignItems: 'center', justifyContent: 'center', paddingHorizontal: 10 }}>
                         <Image source={Images.ic_default_orderstock} style={{ alignItems: 'center', width: 24, height: 24 }} />
@@ -70,7 +71,7 @@ export default (props) => {
                             <Text style={{ fontWeight: 'bold' }}>{item.Code}</Text>
                             <View style={{ flexDirection: 'row' }}>
                                 <Text style={{ marginRight: 10 }}>{dateToString(item.DocumentDate)}</Text>
-                                <Text>{timeToString(item.DocumentDate)}</Text>
+                                <Text>{dateUTCToDate2(item.DocumentDate)}</Text>
                             </View>
                         </View>
                         <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
@@ -84,6 +85,12 @@ export default (props) => {
             </TouchableOpacity>
         )
     }
+    const outputTextSearch = () => {
+
+    }
+    const clickFilter = () =>{
+
+    }
     const renderTitle = (item, index) => {
         return (
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, paddingVertical: 15 }}>
@@ -94,9 +101,12 @@ export default (props) => {
     }
     return (
         <View style={{ flex: 1 }}>
-            <ToolBarNoteBook
+            <CustomerToolBar
                 {...props}
                 title={I18n.t('nhap_hang')}
+                iconfilter={'filter'}
+                outputTextSearch={outputTextSearch}
+                clickFilter={clickFilter}
             />
             <View style={{ flex: 1 }}>
                 <FlatList
@@ -105,6 +115,23 @@ export default (props) => {
                     keyExtractor={(item, index) => index.toString()}
                 />
             </View>
+            <FAB
+                style={styles.fab}
+                icon='plus'
+                color="#fff"
+                // onPress={() => {
+                //     onClickItem({})
+                // }}
+            />
         </View>
     )
 }
+const styles = StyleSheet.create({
+    fab: {
+        position: 'absolute',
+        margin: 16,
+        right: 0,
+        bottom: 0,
+        backgroundColor: colors.colorLightBlue
+    }
+})
