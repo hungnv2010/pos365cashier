@@ -176,7 +176,7 @@ const CustomerOrder = (props) => {
 
         if (itemOrder.Quantity > product.Quantity) {
             setTimeout(() => {
-                setQuantitySubtract(itemOrder.Quantity - product.Quantity)
+                setQuantitySubtract(Math.round((itemOrder.Quantity - product.Quantity) * 1000) / 1000)
                 typeModal.current = TYPE_MODAL.RETURN
                 setShowModal(true)
             }, 300);
@@ -426,7 +426,7 @@ const CustomerOrder = (props) => {
                                                                         style={{
                                                                             fontSize: 16,
                                                                             fontWeight: "bold",
-                                                                        }}>{item.Quantity}</Text>
+                                                                        }}>{Math.round(item.Quantity * 1000) / 1000}</Text>
                                                                 </View>
                                                                 <TouchableOpacity onPress={() => {
                                                                     item.Quantity++

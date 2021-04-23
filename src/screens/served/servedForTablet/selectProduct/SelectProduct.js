@@ -8,6 +8,9 @@ import { change_alias } from '../../../../common/Utils';
 import useDebounce from '../../../../customHook/useDebounce';
 import { Colors, Metrics, Images } from '../../../../theme'
 import { useSelector } from 'react-redux';
+import { useFocusEffect } from '@react-navigation/native';
+import useDidMountEffect from '../../../../customHook/useDidMountEffect';
+
 
 export default (props) => {
   const [isLoadMore, setIsLoadMore] = useState(false)
@@ -86,6 +89,30 @@ export default (props) => {
     }
   }, [already])
 
+  useFocusEffect(
+    React.useCallback(() => {
+      const getProducts = async () => {
+        if (already && props.isRetail) {
+          let results = await realmStore.queryProducts()
+          if (listCateId[0] != -1) {
+            results = results.filtered(`CategoryId == ${listCateId[0]}`)
+          }
+          let productsRes = results.slice(skip, skip + Constant.LOAD_LIMIT)
+          productsRes = JSON.parse(JSON.stringify(productsRes))
+          console.log('getProductsproductsRes', productsRes);
+          count.current = productsRes.length
+          setProduct([...product, ...productsRes])
+          setHasProducts(true)
+          setIsLoadMore(false)
+        }
+      }
+      getProducts()
+      return () => {
+        count.current = 0
+      }
+    }, [already, props.isRetail])
+  );
+
   const getProducts = useCallback(async () => {
     if (!already) return
 
@@ -106,7 +133,7 @@ export default (props) => {
   }, [skip, listCateId, already])
 
 
-  useEffect(() => {
+  useDidMountEffect(() => {
     getProducts()
   }, [getProducts])
 

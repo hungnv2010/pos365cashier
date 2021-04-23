@@ -82,7 +82,7 @@ export const ReturnProduct = (props) => {
                             returnKeyType='done'
                             editable={false} selectTextOnFocus={false}
                             style={[styles.textQuantityModalOnly, { marginHorizontal: 0 }]}
-                            value={"" + ((Quantity - QuantityChange) > 0 ? (Quantity - QuantityChange) : 0)}
+                            value={"" + ((Quantity - QuantityChange) > 0 ? (Math.round((Quantity - QuantityChange) * 1000) / 1000) : 0)}
                             keyboardType="numbers-and-punctuation" />
 
                     </View>

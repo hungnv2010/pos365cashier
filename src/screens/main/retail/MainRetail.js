@@ -349,6 +349,7 @@ const MainRetail = (props) => {
                         <View style={{ flex: 1, flexDirection: "row" }}>
                             <View style={{ flex: 6 }}>
                                 <SelectProduct
+                                    isRetail={true}
                                     valueSearch={text}
                                     numColumns={orientaition == Constant.LANDSCAPE ? 3 : 2}
                                     listProducts={jsonContent.OrderDetails ? jsonContent.OrderDetails : []}
