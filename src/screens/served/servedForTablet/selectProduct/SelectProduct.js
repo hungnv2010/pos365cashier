@@ -93,6 +93,7 @@ export default (props) => {
     React.useCallback(() => {
       const getProducts = async () => {
         if (already && props.isRetail) {
+          onClickAll()
           let results = await realmStore.queryProducts()
           if (listCateId[0] != -1) {
             results = results.filtered(`CategoryId == ${listCateId[0]}`)
