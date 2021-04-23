@@ -49,10 +49,12 @@ export default (props) => {
                     <Image style={styles.iconButton} source={Images.ic_donhangthanhtoanvnpayqr} />
                     <Text style={styles.textButton}>{I18n.t('don_hang_cho_thanh_toan_vnpay_qr')}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => onClickNavigation(ScreenList.RoomHistory)}>
-                    <Image style={styles.iconButton} source={Images.ic_lichsuhuytrahang} />
-                    <Text style={styles.textButton}>{I18n.t('lich_su_huy_tra_do')}</Text>
-                </TouchableOpacity>
+                {isFNB ?
+                    <TouchableOpacity style={styles.button} onPress={() => onClickNavigation(ScreenList.RoomHistory)}>
+                        <Image style={styles.iconButton} source={Images.ic_lichsuhuytrahang} />
+                        <Text style={styles.textButton}>{I18n.t('lich_su_huy_tra_do')}</Text>
+                    </TouchableOpacity>
+                    : null}
             </View>
             <Snackbar
                 duration={1500}
