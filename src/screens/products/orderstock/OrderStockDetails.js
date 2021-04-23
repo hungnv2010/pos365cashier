@@ -65,6 +65,7 @@ export default (props) => {
         })
         
     }
+    console.log("OrderStock",orderStock);
     
     return (
         <View style={{flex:1}}>
@@ -86,11 +87,11 @@ export default (props) => {
                     <View style={{ backgroundColor: '#fff', marginTop: 2, paddingVertical: 15, paddingHorizontal: 10 }}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
                             <Text style={{ color: '#bbbbbb' }}>{I18n.t('ngay_tao')}</Text>
-                            <Text>{dateToString(orderStock.CreatedDate)} {dateUTCToDate2(orderStock.CreatedDate)}</Text>
+                            <Text> {dateUTCToDate2(orderStock.CreatedDate)}</Text>
                         </View>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
                             <Text style={{ color: '#bbbbbb' }}>{I18n.t('ngay_nhap')}</Text>
-                            <Text>{dateToString(orderStock.DocumentDate)} {dateUTCToDate2(orderStock.DocumentDate)}</Text>
+                            <Text> {dateUTCToDate2(orderStock.DocumentDate)}</Text>
                         </View>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
                             <Text style={{ color: '#bbbbbb' }}>{I18n.t('ngay_giao')}</Text>
@@ -141,7 +142,7 @@ export default (props) => {
                         {
                             listItem.map((item, index) => {
                                 return (
-                                    <View style={{ backgroundColor: '#fff', paddingVertical: 15, paddingHorizontal: 10, marginBottom: 10 }}>
+                                    <View style={{ backgroundColor: '#fff', paddingVertical: 15, paddingHorizontal: 10, marginBottom: 10 }} key={index.toString()}>
                                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                             <Text>{item.Name}</Text>
                                             <Text>{item.Code}</Text>

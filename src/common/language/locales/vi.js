@@ -434,6 +434,7 @@ export default {
   chon_nhom_nha_cung_cap:'Chọn nhóm nhà cung cấp',
   cap_nhat_extra_topping:'Cập nhật Extra/ Topping',
   chi_tiet_nhap_hang:'Chi tiết nhập hàng',
+  chinh_sua_nhap_hang:'Chỉnh sửa nhập hàng',
 
   don_vi_tien_te: "Đơn vị tiền tệ",
   dollar_my: "Dollar Mỹ",
@@ -517,6 +518,7 @@ export default {
   ma_don_vi_tinh_lon:'Mã đơn vị tính lớn',
   mo_ta_tach_hang:'Khi thêm mặt hàng này vào đơn hàng sẽ không cộng dồn số lượng mà sẽ tách thành nhiều dòng',
   ma_nhap_hang:'Mã nhập hàng',
+  moi_nhap:'Mời nhập',
 
   nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: "Nhận tin nhắn/ thông báo từ phục vụ, quản lý?",
   nhap_so_luong_the: "Nhập số lượng thẻ",
@@ -579,6 +581,7 @@ export default {
   them_moi_hang_hoa:'Thêm mới hàng hoá',
   tong_so_luong_nhap:'Tổng số lượng nhập',
   thue_vat:'Thuế VAT',
+  toi_da:'Tối đa',
 
   voucher: "Mã quà tặng",
   vui_long_nhap_dung_so_tien_khach_tra: "Vui lòng nhập đúng số tiền khách trả.",

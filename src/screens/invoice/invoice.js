@@ -150,6 +150,10 @@ const Invoice = (props) => {
                     console.log('getInvoiceBySearch', err);
                     dialogManager.hiddenLoading()
                 })
+            }else{
+                if(currentBranch && currentBranch.Id){
+                    onRefresh()
+                }
             }
         }
         getInvoiceBySearch()
