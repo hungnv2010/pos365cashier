@@ -20,7 +20,7 @@ import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
 
 export default (props) => {
     const [roomHistoryData, setRoomHistoryData] = useState([])
-    const [roomHistoryItem, setHistoryItem] = useState()
+    const [roomHistoryItem, setHistoryItem] = useState([])
     const [inputSearch, setInputSearch] = useState('')
     const [loadMore, setLoadMore] = useState(false)
     const [data, setData] = useState([])
@@ -35,7 +35,7 @@ export default (props) => {
     const currentProduct = useRef(0)
     const onEndReachedCalledDuringMomentum = useRef(false)
     const flatlistRef = useRef(null)
-    const { deviceType } = useSelector(state => {
+    const { deviceType, isFNB } = useSelector(state => {
         return state.Common
     })
     const filterRef = useRef({
@@ -44,9 +44,11 @@ export default (props) => {
     })
     const roomHistoryRef = useRef(null)
     const debounceTextSearch = useDebounce(inputSearch)
-    useEffect(() => {    
-        getBranch()
-        setRoomHistoryData([])
+    useEffect(() => {
+        console.log("isFNB",isFNB);
+        if (isFNB)
+            getBranch()
+        //setRoomHistoryData([])
     }, [])
     const getBranch = async () => {
         let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
@@ -57,7 +59,7 @@ export default (props) => {
         }
     }
     // useEffect(() => {
-       
+
     //     const getData = async() => {
     //         let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
     //     if (branch) {
@@ -72,7 +74,7 @@ export default (props) => {
     //             console.log("error", e);
     //         })
     //     }
-            
+
     //     }
     //     //getData()
     // }, [])
@@ -84,6 +86,7 @@ export default (props) => {
             if (debounceTextSearch != '') {
                 filterRoomHistory(debounceTextSearch)
             } else {
+                if(currentBranch.current && currentBranch.current.Id)
                 onRefresh()
             }
         }
@@ -165,6 +168,7 @@ export default (props) => {
                 skip: filterRef.current.skip + Constant.LOAD_LIMIT
             }
             onEndReachedCalledDuringMomentum.current = true
+            console.log("onLoadmore");
             getRoomHistoryData()
         }
     }

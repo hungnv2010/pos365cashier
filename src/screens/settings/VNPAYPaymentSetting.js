@@ -185,7 +185,7 @@ export default (props) => {
                     <View style={[styles.styleViewModal, , { marginBottom: Platform.OS == 'ios' ? marginModal : 0 }]} >
                         <View style={{ width: Metrics.screenWidth * 0.8, }}>
                             <Text style={styles.titleModal}>{I18n.t('thong_tin_cua_hang')}</Text>
-                            <Text style={{ fontSize: 16, justifyContent: 'center', marginTop: 5, marginLeft: 20 }}>Mời nhập {titileModal} </Text>
+                            <Text style={{ fontSize: 16, justifyContent: 'center', marginTop: 5, marginLeft: 20 }}>{I18n.t('moi_nhap')} {titileModal} </Text>
                             <TextInput style={styles.textInputStyle} placeholder={placeholder} onChangeText={(text) => setInput(text)}></TextInput>
                             <TouchableOpacity style={{ justifyContent: 'flex-end', alignItems: 'flex-end', marginTop: 10, marginBottom: 10, borderRadius: 10 }} onPress={() => setInfoModal(input)}>
                                 <Text style={{ textAlign: 'center', color: '#FFF', marginRight: 40, backgroundColor: colors.colorchinh, paddingVertical: 10, paddingHorizontal: 20 }} >{I18n.t("dong_y")}</Text>
