@@ -44,30 +44,38 @@ export default (props) => {
     })
     const roomHistoryRef = useRef(null)
     const debounceTextSearch = useDebounce(inputSearch)
-    useEffect(() => {
-        const getBranch = async () => {
-            let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
-            if (branch) {
-                currentBranch.current = JSON.parse(branch)
-            }
-        }
+    useEffect(() => {    
         getBranch()
-        getRoomHistoryData(true)
-
+        setRoomHistoryData([])
     }, [])
-    useEffect(() => {
-        const getData = () => {
-            params = { includes: ['Room', 'Product'], IncludeSummary: true }
-            new HTTPService().setPath(ApiPath.ROOM_HISTORY).GET(params).then((res) => {
-                let result = res.results.filter(item => item.Id > 0)
-                setData(result)
-                console.log("dataaaaaa", data);
-            }).catch((e) => {
-                console.log("error", e);
-            })
+    const getBranch = async () => {
+        let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
+        if (branch) {
+            currentBranch.current = JSON.parse(branch)
+            getRoomHistoryData(true)
+            console.log("abc", branch);
         }
-        getData()
-    }, [])
+    }
+    // useEffect(() => {
+       
+    //     const getData = async() => {
+    //         let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
+    //     if (branch) {
+    //         currentBranch.current = JSON.parse(branch)
+    //         let params = initParam();
+    //         params = { ...params, includes: ['Room', 'Product'], IncludeSummary: true };
+    //         new HTTPService().setPath(ApiPath.ROOM_HISTORY).GET(params).then((res) => {
+    //             let result = res.results.filter(item => item.Id > 0)
+    //             setData(result)
+    //             console.log("dataaaaaa", data);
+    //         }).catch((e) => {
+    //             console.log("error", e);
+    //         })
+    //     }
+            
+    //     }
+    //     //getData()
+    // }, [])
 
     useEffect(() => {
         const getProductBySearch = () => {
@@ -228,7 +236,7 @@ export default (props) => {
         let arrItemPath = []
 
         if (currentBranch.current.Id) {
-            arrItemPath.push("BranchId eq " + currentBranch.current.Id)
+            arrItemPath.push(`BranchId eq ${currentBranch.current.Id}`)
         }
         if (filterRef.current.time.key != "custom") {
             if (filterRef.current.time.key != Constant.TIME_SELECT_ALL_TIME[4].key) {

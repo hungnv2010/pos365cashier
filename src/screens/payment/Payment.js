@@ -402,7 +402,7 @@ export default (props) => {
         if (changeMethodQRPay.current == true) {
             setListMethod([itemMethod])
         } else {
-            onChangeTextPaymentPaid(totalPrice, itemAccountRef.current)
+            onChangeTextPaymentPaid(jsonContent.Total, itemAccountRef.current)
             let list = [];
             listMethod.forEach(element => {
                 if (itemAccountRef.current.Id == element.Id && itemAccountRef.current.UUID == element.UUID) {
@@ -652,6 +652,7 @@ export default (props) => {
             ExcessCashType: 0,
             Order: {},
         };
+        jsonContentPayment.current = json;
         let tilteNotification = jsonContent.RoomName;
         if (props.route.params.Screen != undefined && props.route.params.Screen == ScreenList.MainRetail) {
             params.DeliveryBy = null;//by retain
@@ -663,7 +664,6 @@ export default (props) => {
             delete json.RoomId;
         }
         params.Order = json;
-        jsonContentPayment.current = json;
         console.log("onClickPay params== ", params);
         if (net.isConnected == true && net.isInternetReachable == true) {
             dialogManager.showLoading();
@@ -681,6 +681,10 @@ export default (props) => {
                     } else {
                         await printAfterPayment(order.Code)
                         updateServerEvent(true)
+                    }
+                    if(!isFNB){
+                        jsonContentPayment.current["RoomName"] = I18n.t('don_hang');
+                        jsonContentPayment.current["Pos"] = "A"
                     }
                 }
             }, err => {

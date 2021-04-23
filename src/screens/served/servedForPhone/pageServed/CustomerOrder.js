@@ -459,7 +459,7 @@ export default (props) => {
             dataManager.updateServerEventNow(serverEvent, true, isFNB);
         }
 
-        
+
     }
 
     let _menu = null;
@@ -514,6 +514,7 @@ export default (props) => {
                                 marqueeDelay={1000}>
                                 {item.Name}
                             </TextTicker>
+                            <Text style={{ marginBottom: 7, fontSize: 12 }} >{item.Code}</Text>
                             <View style={{ flexDirection: "row" }}>
                                 <Text style={{}}>{currencyToString(item.Price)} x </Text>
                                 <View>
@@ -730,7 +731,7 @@ export default (props) => {
                     <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('bao_che_bien')}</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={sendOrder} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
-                    <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase", textAlign:"center" }}>{quickPay ? I18n.t('thanh_toan_nhanh') : I18n.t('thanh_toan')}</Text>
+                    <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase", textAlign: "center" }}>{quickPay ? I18n.t('thanh_toan_nhanh') : I18n.t('thanh_toan')}</Text>
                 </TouchableOpacity>
             </View>
             <Modal

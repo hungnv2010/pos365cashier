@@ -164,7 +164,7 @@ const InvoiceDetail = (props) => {
                         <Text style={{ padding: 0, flex: 1 }}>{I18n.t('phuong_thuc_thanh_toan')}</Text>
                         {/* <Text style={{ paddingLeft: 5 }}>+ {currencyToString(invoiceDetail.VAT)}</Text> */}
                         <View style={{ alignItems: "flex-end" }}>
-                            {getPaymentMethod(JSON.parse(invoiceDetail.MoreAttributes)).map((item, index) => {
+                            {getPaymentMethod(invoiceDetail.MoreAttributes).map((item, index) => {
                                 return (
                                     <Text key={index} style={{ fontStyle: "italic", color: "gray" }}>{item}</Text>
                                 )

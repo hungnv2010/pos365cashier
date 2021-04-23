@@ -30,7 +30,7 @@ export default (props) => {
 
   useEffect(() => {
     console.log('props.route.params.listProducts', props.route.params.listProducts);
-
+    //listProducts.current = JSON.parse(JSON.stringify(props.route.params.listProducts))
     const getCategories = async () => {
       let newCategories = [{ Id: -1, Name: I18n.t('tat_ca') }];
       let results = await realmStore.queryCategories()
@@ -55,7 +55,7 @@ export default (props) => {
     productsRes.forEach((item, index) => {
       item.Quantity = 0
       listProducts.current.forEach(elm => {
-        if (item.ProductId == elm.ProductId || item.ProductId == elm.ItemId) {
+        if (item.ProductId == elm.ProductId || item.ProductId == elm.Id) {
           item.Quantity += +elm.Quantity
         }
       })
@@ -88,7 +88,7 @@ export default (props) => {
         searchResult.forEach(item => {
           item.Quantity = 0
           listProducts.current.forEach(elm => {
-            if (item.Id == elm.Id || item.Id == elm.ItemId) {
+            if (item.Id == elm.Id || item.Id == elm.Id) {
               item.Quantity += +elm.Quantity
             }
           })
@@ -149,7 +149,7 @@ export default (props) => {
     if (item.SplitForSalesOrder || (item.ProductType == 2 && item.IsTimer)) {
       listProducts.current.unshift({ ...item, Quantity: qtt })
     } else {
-      let pos = listProducts.current.map(elm => elm.Id ? elm.Id : elm.ItemId).indexOf(item.Id);
+      let pos = listProducts.current.map(elm => elm.Id ? elm.Id : elm.Id).indexOf(item.Id);
       let pos_2 = listChangeText.current.map(elm => elm.Id).indexOf(item.Id);
       if (pos == -1) {
         listChangeText.current[pos_2].Quantity += qtt
@@ -164,7 +164,7 @@ export default (props) => {
   const handleButtonDecrease = (item, index) => {
     console.log('asdasdasd');
     let qtt = getQuantity(item)
-    let pos = listProducts.current.map(elm => elm.Id ? elm.Id : elm.ItemId).indexOf(item.Id);
+    let pos = listProducts.current.map(elm => elm.Id ? elm.Id : elm.Id).indexOf(item.Id);
     let pos_2 = listChangeText.current.map(elm => elm.Id).indexOf(item.Id);
     if (pos > -1) {
       if (item.SplitForSalesOrder || (item.ProductType == 2 && item.IsTimer)) {
