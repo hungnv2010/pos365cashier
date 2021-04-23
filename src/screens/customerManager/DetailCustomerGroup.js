@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useImperativeHandle, forwardRef, useRef } from 'react';
-import { Image, View, FlatList, Modal, Text, TouchableOpacity, TouchableWithoutFeedback, TextInput, NativeEventEmitter, NativeModules } from 'react-native';
+import { Image, View, FlatList, Modal, Text, TouchableOpacity, TouchableWithoutFeedback, TextInput, NativeEventEmitter, NativeModules, Keyboard, Platform } from 'react-native';
 import MainToolBar from '../main/MainToolBar';
 import I18n from '../../common/language/i18n';
 import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
@@ -23,8 +23,20 @@ export default (props) => {
     const [detailGroup, setDetailGroup] = useState({})
     const [listMember, setListMember] = useState([])
     const [showModal, setShowModal] = useState(false)
+    const [marginModal, setMargin] = useState(0)
     const ModifiedBy = useRef()
     const backupDetailGroup = useRef()
+
+
+    useEffect(() => {
+        var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
+        var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        }
+    }, [])
 
     useEffect(() => {
         console.log('detailGroup props', props.detailGroup);
@@ -57,6 +69,14 @@ export default (props) => {
         }
         getListMember()
     }, [detailGroup])
+
+    const _keyboardDidShow = () => {
+        setMargin(Metrics.screenWidth / 2)
+    }
+
+    const _keyboardDidHide = () => {
+        setMargin(0)
+    }
 
     const renderListMember = (item, index) => {
         return (
@@ -169,7 +189,7 @@ export default (props) => {
                                 value={detailGroup.DiscountRatio ? currencyToString(detailGroup.DiscountRatio) : "0"}
                                 onChangeText={text => { onChangeText(text, 2) }}
                             />
-                            <Icon name="percent" size={20} style={{ position: "absolute", right: 0, top: 6 }} color="grey"/>
+                            <Icon name="percent" size={20} style={{ position: "absolute", right: 0, top: 6 }} color="grey" />
                         </View>
                     </View>
                     <View style={{ flexDirection: "row", marginBottom: 10, alignItems: "center" }}>
@@ -306,7 +326,7 @@ export default (props) => {
                         }}></View>
 
                     </TouchableWithoutFeedback>
-                    <View style={{ width: Metrics.screenWidth * 0.8 }}>
+                    <View style={{ width: Metrics.screenWidth * 0.8, marginBottom: Platform.OS == 'ios' ? marginModal : 0 }}>
                         {renderModal()}
                     </View>
                 </View>
