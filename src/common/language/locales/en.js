@@ -880,6 +880,7 @@ export default {
   chon_nhom_nha_cung_cap:'Sellect group supplier',
   cap_nhat_extra_topping:"Update Extra/ Topping",
   chi_tiet_nhap_hang:'Orderstock details',
+  chinh_sua_nhap_hang:'Edit orderstock',
 
   don_vi_tien_te: "Currency unit",
   dollar_my: "Dollar",
@@ -959,6 +960,7 @@ export default {
   ma_don_vi_tinh_lon:'Large unit code',
   mo_ta_tach_hang:'Adding this item to your order will not add up the quantity, but will split it into multiple lines.',
   ma_nhap_hnag:'Code',
+  moi_nhap:'Input',
 
   nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: "Receive messages / notifications from waiter, manager?",
   nhap_so_luong_the: "Enter the number of cards",
@@ -1021,6 +1023,7 @@ export default {
   them_moi_hang_hoa:'Create new product',
   tong_so_luong_nhap:'Total amount imported',
   thue_vat:'VAT',
+  toi_da:'Max',
 
   voucher: "Voucher",
   vui_long_nhap_dung_so_tien_khach_tra: "Please enter the correct amount of payment.",

@@ -80,7 +80,7 @@ export const dateUTCToMoment = (date, inputFormat = "yyyy-MM-dd'T'HH:mm:ss.SSFFF
   let momentITC = moment(momentUTC).local();
   return momentITC;
 }
-export const dateUTCToDate2 = (date, inputFormat = "yyyy-MM-dd'T'HH:mm:ss.SSFFFFF'Z'", outputFormat = "HH:mm") =>{
+export const dateUTCToDate2 = (date, inputFormat = "yyyy-MM-dd'T'HH:mm:ss.SSFFFFF'Z'", outputFormat = "DD/MM/YYYY HH:mm") =>{
   let momentITC = moment(date).local();
   let dateITC = momentITC.format(outputFormat);
   return dateITC;
