@@ -435,6 +435,7 @@ export default {
   cap_nhat_extra_topping:'Cập nhật Extra/ Topping',
   chi_tiet_nhap_hang:'Chi tiết nhập hàng',
   chinh_sua_nhap_hang:'Chỉnh sửa nhập hàng',
+  chon_nha_cung_cap:'Chọn nhà cung cấp',
 
   don_vi_tien_te: "Đơn vị tiền tệ",
   dollar_my: "Dollar Mỹ",

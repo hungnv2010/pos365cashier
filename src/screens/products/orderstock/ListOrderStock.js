@@ -20,10 +20,12 @@ import useDebounce from '../../../customHook/useDebounce';
 import { HTTPService } from '../../../data/services/HttpService';
 import { ApiPath } from '../../../data/services/ApiPath';
 import CustomerToolBar from '../../../screens/customerManager/customer/CustomerToolBar';
+import { lastIndexOf } from 'underscore';
 
 export default (props) => {
     const orderStock = useRef([])
     const [viewData, setViewData] = useState([])
+    const defauTitle = useRef()
     let arrDate = []
 
     useEffect(() => {
@@ -37,13 +39,17 @@ export default (props) => {
                 orderStock.current = res.results
                 console.log("orderstock", res.results);
                 res.results.forEach(el => {
-                    arrDate.push({ Title: el.DocumentDate })
+                   if(dateToString(el.CreatedDate) != defauTitle.current){
+                        arrDate.push({ Title:dateToString(el.CreatedDate) })
+                        defauTitle.current = dateToString(el.CreatedDate)
+                   }
+                    
                 })
                 console.log("arrr", arrDate);
                 let arrdata = []
                 arrDate.forEach(el => {
                     let arrItem = []
-                    arrItem = orderStock.current.filter(item => item.DocumentDate == el.Title)
+                    arrItem = orderStock.current.filter(item => dateToString(item.CreatedDate) == (el.Title))
                     arrdata.push({ ...el, Sum: arrItem.length })
                     arrItem.forEach(item => {
                         arrdata.push(item)
@@ -70,7 +76,6 @@ export default (props) => {
                         <View style={{ flexDirection: 'column' }}>
                             <Text style={{ fontWeight: 'bold' }}>{item.Code}</Text>
                             <View style={{ flexDirection: 'row' }}>
-                                <Text style={{ marginRight: 10 }}>{dateToString(item.DocumentDate)}</Text>
                                 <Text>{dateUTCToDate2(item.DocumentDate)}</Text>
                             </View>
                         </View>
@@ -94,7 +99,7 @@ export default (props) => {
     const renderTitle = (item, index) => {
         return (
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, paddingVertical: 15 }}>
-                <Text style={{ fontWeight: 'bold', color: '#4a4a4a' }}>{dateToString(item.Title)}</Text>
+                <Text style={{ fontWeight: 'bold', color: '#4a4a4a' }}>{item.Title}</Text>
                 <Text>{item.Sum} {I18n.t('ma_nhap_hang')}</Text>
             </View>
         )
