@@ -438,6 +438,7 @@ export default {
   cap_nhat_extra_topping:"Update Extra/ Topping",
   chi_tiet_nhap_hang:'Orderstock details',
   chinh_sua_nhap_hang:'Edit orderstock',
+  chon_nha_cung_cap:'Choose the supplier',
 
   don_vi_tien_te: "Currency unit",
   dollar_my: "Dollar",
@@ -517,7 +518,7 @@ export default {
   mo_khoa:'Unlock',
   ma_don_vi_tinh_lon:'Large unit code',
   mo_ta_tach_hang:'Adding this item to your order will not add up the quantity, but will split it into multiple lines.',
-  ma_nhap_hnag:'Code',
+  ma_nhap_hang:'Code',
   moi_nhap:'Input',
 
   nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly: "Receive messages / notifications from waiter, manager?",

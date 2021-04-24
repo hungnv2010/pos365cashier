@@ -54,21 +54,26 @@ export default (props) => {
                 setListItem([...res])
             }
         })
-        new HTTPService().setPath(ApiPath.ACCOUNT).GET().then(res=>{
-            if(res != null){
-                res.forEach(el =>{
-                    if(el.Id == accId){
-                        setMethodPay(el.Name)
-                    }
-                })
+        new HTTPService().setPath(ApiPath.ACCOUNT + '/treeview').GET().then(res => {
+            if (res != null) {
+                console.log('res',res);
+                if (accId && accId != "") {
+                    res.forEach(el => {
+                        if (el.Id == accId) {
+                            setMethodPay(el.text)
+                        }
+                    })
+                } else {
+                    setMethodPay(res[1].text)
+                }
             }
         })
-        
+
     }
-    console.log("OrderStock",orderStock);
-    
+    console.log("OrderStock", orderStock);
+
     return (
-        <View style={{flex:1}}>
+        <View style={{ flex: 1 }}>
             <ToolBarDefault
                 {...props}
                 title={I18n.t('chi_tiet_nhap_hang')}
@@ -78,7 +83,7 @@ export default (props) => {
                     <View style={{ backgroundColor: '#fff', flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, paddingVertical: 15 }}>
                         <View >
                             <Text>{I18n.t('ma_nhap_hang')}</Text>
-                            <Text style={{paddingVertical:5,textTransform:'uppercase', fontWeight:'bold'}}>{orderStock.Code}</Text>
+                            <Text style={{ paddingVertical: 5, textTransform: 'uppercase', fontWeight: 'bold' }}>{orderStock.Code}</Text>
                         </View>
                         <View style={{ justifyContent: 'center' }}>
                             <Text style={{ color: orderStock.Status == 1 ? '#f6871e' : orderStock.Status == 2 ? '#00c75f' : orderStock.Status == 3 ? '#f21e3c' : null, fontWeight: 'bold' }}>{orderStock.Status == 2 ? I18n.t('hoan_thanh') : orderStock.Status == 1 ? I18n.t('dang_xu_li') : orderStock.Status == 3 ? I18n.t('loai_bo') : null}</Text>
@@ -132,7 +137,7 @@ export default (props) => {
                         </View>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
                             <Text style={{ color: '#bbbbbb' }}>{I18n.t('phuong_thuc_thanh_toan')}</Text>
-                            <Text style={{textTransform:'uppercase'}}>{methodPay}</Text>
+                            <Text style={{ textTransform: 'uppercase' }}>{methodPay}</Text>
                         </View>
                     </View>
                     <View style={{ paddingVertical: 15, paddingHorizontal: 10 }}>
@@ -168,15 +173,15 @@ export default (props) => {
                     </ScrollView>
                 </View>
             </ScrollView>
-            <View style={{flexDirection:'row',paddingHorizontal:5,paddingVertical:10}}>
-                <TouchableOpacity style={{flex:1,marginRight:10, backgroundColor:colors.colorLightBlue,paddingVertical:10,alignItems:'center',justifyContent:'center',borderRadius:10}}>
-                        <Icon name={'printer'} size={24} color={'#fff'}/>
+            <View style={{ flexDirection: 'row', paddingHorizontal: 5, paddingVertical: 10 }}>
+                <TouchableOpacity style={{ flex: 1, marginRight: 10, backgroundColor: colors.colorLightBlue, paddingVertical: 10, alignItems: 'center', justifyContent: 'center', borderRadius: 10 }}>
+                    <Icon name={'printer'} size={24} color={'#fff'} />
                 </TouchableOpacity>
-                <TouchableOpacity style={{flex:3,marginRight:10,backgroundColor:colors.colorLightBlue,alignItems:'center',justifyContent:'center',borderRadius:10}}>
-                    <Text style={{textAlign:'center',fontWeight:'bold', color:'#fff'}}>{I18n.t('xoa')}</Text>
+                <TouchableOpacity style={{ flex: 3, marginRight: 10, backgroundColor: colors.colorLightBlue, alignItems: 'center', justifyContent: 'center', borderRadius: 10 }}>
+                    <Text style={{ textAlign: 'center', fontWeight: 'bold', color: '#fff' }}>{I18n.t('xoa')}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={{flex:3,backgroundColor:colors.colorLightBlue,alignItems:'center',justifyContent:'center',borderRadius:10}} onPress={()=>{props.navigation.navigate(ScreenList.AddOrderStock, { orderstock: orderStock, listPr:listItem })}}>
-                    <Text style={{textAlign:'center', fontWeight:'bold', color:'#fff'}}>{I18n.t('chinh_sua')}</Text>
+                <TouchableOpacity style={{ flex: 3, backgroundColor: colors.colorLightBlue, alignItems: 'center', justifyContent: 'center', borderRadius: 10 }} onPress={() => { props.navigation.navigate(ScreenList.AddOrderStock, { orderstock: orderStock, listPr: listItem, paymentMethod:methodPay }) }}>
+                    <Text style={{ textAlign: 'center', fontWeight: 'bold', color: '#fff' }}>{I18n.t('chinh_sua')}</Text>
                 </TouchableOpacity>
             </View>
         </View>
