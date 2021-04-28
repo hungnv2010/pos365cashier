@@ -101,13 +101,13 @@ export default (props) => {
                     console.log("clickUpload order ", order);
                     if (order) {
                         dataManager.sentNotification(jsonContent.RoomName, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
-                        let row_key = `${jsonContent.RoomId}_${jsonContent.Pos}`
-                        let currentServerEvent = serverEvents.filtered(`RowKey == '${row_key}'`)[0]
-                        if (currentServerEvent) {
-                            let serverEvent = JSON.parse(JSON.stringify(currentServerEvent));
-                            dataManager.paymentSetServerEvent(serverEvent, {});
-                            dataManager.updateServerEventNow(serverEvent)
-                        }
+                        // let row_key = `${jsonContent.RoomId}_${jsonContent.Pos}`
+                        // let currentServerEvent = serverEvents.filtered(`RowKey == '${row_key}'`)[0]
+                        // if (currentServerEvent) {
+                        //     let serverEvent = JSON.parse(JSON.stringify(currentServerEvent));
+                        //     dataManager.paymentSetServerEvent(serverEvent, {});
+                        //     dataManager.updateServerEventNow(serverEvent)
+                        // }
                         dataManager.deleteRow(SchemaName.ORDERS_OFFLINE, element.Id);
                         updateSuccess++;
                     }
@@ -136,6 +136,15 @@ export default (props) => {
 
     }
 
+    const onClickDelete = (item) => {
+        dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_xoa_hoa_don'), I18n.t("thong_bao"), res => {
+            if (res == 1) {
+                dataManager.deleteRow(SchemaName.ORDERS_OFFLINE, item.Id);
+                getData();
+            }
+        })
+    }
+
     return (
         <View style={{ flex: 1 }}>
             <ToolBarDefault
@@ -160,6 +169,11 @@ export default (props) => {
                         dataList.map((item, index) => {
                             return (
                                 <TouchableOpacity onPress={() => onClickItem(item)} key={index} style={styles.viewItem}>
+                                    <TouchableOpacity
+                                        style={{ marginRight: 20, marginLeft: 5 }}
+                                        onPress={() => { onClickDelete(item) }}>
+                                        <Image source={Images.icon_trash} style={{ width: 36, height: 36 }} />
+                                    </TouchableOpacity>
                                     <View style={styles.name}>
                                         <Text style={{}}>{item.Id}</Text>
                                         <Text style={{ marginTop: 10 }}>{JSON.parse(item.Orders).Partner ? JSON.parse(item.Orders).Partner.Name : I18n.t('khach_le')}</Text>
@@ -189,7 +203,7 @@ export default (props) => {
 
 const styles = StyleSheet.create({
     viewPlus: { backgroundColor: Colors.colorLightBlue, justifyContent: "center", borderRadius: 25, width: 50, height: 50, alignItems: "center" },
-    name: { justifyContent: "center" },
-    right: { justifyContent: "center", alignItems: "flex-end" },
-    viewItem: { padding: 15, flexDirection: "row", justifyContent: "space-between", alignItems: "center", borderBottomColor: "#ddd", borderBottomWidth: 0.5 },
+    name: { justifyContent: "center", flex: 1 },
+    right: { justifyContent: "center", alignItems: "flex-end", flex: 1 },
+    viewItem: { padding: 15, flexDirection: "row", justifyContent: "flex-start", alignItems: "center", borderBottomColor: "#ddd", borderBottomWidth: 0.5 },
 })

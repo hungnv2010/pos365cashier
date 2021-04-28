@@ -591,7 +591,7 @@ export default (props) => {
                 console.log("saveOrder itemOrder ====: " + JSON.stringify(itemOrder));
                 console.log("saveOrder data ====: " + JSON.stringify(data));
                 if (element.Processed > 0 && (((itemOrder.Quantity - itemOrder.Processed) < data.QuantityChange))) {
-                    listOrderReturn.push({ ...data, ...element, Quantity: (itemOrder.Quantity - itemOrder.Processed - data.QuantityChange), Description: data.Description, RoomName: props.route.params.room.Name, Pos: jsonContent.Pos })
+                    listOrderReturn.push({ ...data, ...element, Quantity: (itemOrder.Quantity - itemOrder.Processed - data.QuantityChange), Description: (itemOrder.Description != "" ? itemOrder.Description + " " : "") + data.Description, RoomName: props.route.params.room.Name, Pos: jsonContent.Pos })
                     let listTmp = dataManager.getDataPrintCook(listOrderReturn)
                     console.log("saveOrder listTmp ====: " + JSON.stringify(listTmp));
                     dispatch({ type: 'PRINT_RETURN_PRODUCT', printReturnProduct: JSON.stringify(listTmp) })

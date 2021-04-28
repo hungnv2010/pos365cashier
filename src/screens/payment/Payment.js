@@ -34,12 +34,12 @@ let timeClickPrevious = 1000;
 
 const TYPE_MODAL = { FILTER_ACCOUNT: "FILTER_ACCOUNT", QRCODE: "QRCODE", DATE: "DATE" }
 
-const CUSTOMER_DEFAULT = { Id: 0, Name: I18n.t('khach_le') };
+const CUSTOMER_DEFAULT = { Id: 0, Name: 'khach_le' };
 
 const METHOD = {
-    discount: { name: I18n.t('chiet_khau') },
-    vat: { name: "VAT" },
-    pay: { name: I18n.t('tien_khach_tra') }
+    discount: { name: 'chiet_khau' },
+    vat: { name: "vat" },
+    pay: { name: 'tien_khach_tra' }
 }
 
 export default (props) => {
@@ -682,7 +682,7 @@ export default (props) => {
                         await printAfterPayment(order.Code)
                         updateServerEvent(true)
                     }
-                    if(!isFNB){
+                    if (!isFNB) {
                         jsonContentPayment.current["RoomName"] = I18n.t('don_hang');
                         jsonContentPayment.current["Pos"] = "A"
                     }
@@ -1276,7 +1276,7 @@ export default (props) => {
                             <View style={styles.viewCustomer}>
                                 <Text style={{ flex: 3 }}>{I18n.t('khach_hang')}</Text>
                                 <TouchableOpacity onPress={addCustomer} style={styles.viewNameMethod}>
-                                    <Text ellipsizeMode="tail" numberOfLines={1} style={{ marginLeft: 5, flex: 1 }}>{customer.Name} {customer.Phone ? "-" : ""} {customer.Phone}</Text>
+                                    <Text ellipsizeMode="tail" numberOfLines={1} style={{ marginLeft: 5, flex: 1 }}>{customer.Name == 'khach_le' ? I18n.t(customer.Name) : customer.Name} {customer.Phone ? "-" : ""} {customer.Phone}</Text>
                                     <SimpleLineIcons style={{ marginRight: 5 }} name="user" size={15} color="gray" />
                                 </TouchableOpacity>
                                 <TouchableOpacity onPress={showDetailCustomer} style={{ padding: 10, marginRight: -10 }} >
