@@ -133,7 +133,7 @@ export default (props) => {
                             <TouchableOpacity style={styles.styleButton} onPress={() => { item.Quantity = item.Quantity > 0 ? item.Quantity - 1 : 0, setListFormular([...listFomular]) }}>
                                 <Text style={{ color: '#36a3f7', fontWeight: 'bold' }}>-</Text>
                             </TouchableOpacity>
-                            <TextInput style={{ flex: 2.5, textAlign: 'center', padding: 10, color: '#36a3f7', fontWeight: 'bold' }} keyboardType={'numbers-and-punctuation'} value={item.Quantity ? item.Quantity + '' : 0 + ''} onChangeText={(text) => { item.Quantity = onChangeTextInput(text), setListProduct([...listProduct]) }}></TextInput>
+                            <TextInput style={{ flex: 2.5, textAlign: 'center', padding: 10, color: '#36a3f7', fontWeight: 'bold' }} keyboardType={'numbers-and-punctuation'} value={item.Quantity ? item.Quantity + '' : 0 + ''} onChangeText={(text) => { item.Quantity = onChangeTextInput(text), setListFormular([...listFomular]) }}></TextInput>
                             <TouchableOpacity style={styles.styleButton} onPress={() => { item.Quantity = item.Quantity + 1, setListFormular([...listFomular]) }}>
                                 <Text style={{ color: '#36a3f7', fontWeight: 'bold' }}>+</Text>
                             </TouchableOpacity>
@@ -146,7 +146,7 @@ export default (props) => {
                                 <TouchableOpacity style={styles.styleButton} onPress={() => { item.QuantityLargeUnit = item.QuantityLargeUnit > 0 ? item.QuantityLargeUnit - 1 : 0, setListFormular([...listFomular]) }}>
                                     <Text style={{ color: '#36a3f7', fontWeight: 'bold' }}>-</Text>
                                 </TouchableOpacity>
-                                <TextInput style={{ flex: 2.5, textAlign: 'center', padding: 10, color: '#36a3f7', fontWeight: 'bold' }} keyboardType={'numbers-and-punctuation'} value={item.QuantityLargeUnit ? item.QuantityLargeUnit + '' : 0 + ''} onChangeText={(text) => { item.QuantityLargeUnit = onChangeTextInput(text), setListProduct([...listProduct]) }}></TextInput>
+                                <TextInput style={{ flex: 2.5, textAlign: 'center', padding: 10, color: '#36a3f7', fontWeight: 'bold' }} keyboardType={'numbers-and-punctuation'} value={item.QuantityLargeUnit ? item.QuantityLargeUnit + '' : 0 + ''} onChangeText={(text) => { item.QuantityLargeUnit = onChangeTextInput(text), setListFormular([...listFomular]) }}></TextInput>
                                 <TouchableOpacity style={styles.styleButton} onPress={() => { item.QuantityLargeUnit = item.QuantityLargeUnit + 1, setListFormular([...listFomular]) }}>
                                     <Text style={{ color: '#36a3f7', fontWeight: 'bold' }}>+</Text>
                                 </TouchableOpacity>

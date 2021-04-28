@@ -35,7 +35,7 @@ export default (props) => {
     const currentProduct = useRef(0)
     const [loadMore, setLoadMore] = useState(false)
     const flatlistRef = useRef(null)
-    const [viewData,setViewData] = useState([])
+    const [viewData, setViewData] = useState([])
     const productTmp = useRef([])
     useEffect(() => {
         dialogManager.showLoading()
@@ -49,7 +49,9 @@ export default (props) => {
     });
     let categoryTmp = []
     const getData = async () => {
-        productTmp.current = await (await realmStore.queryProducts()).filtered(`TRUEPREDICATE SORT(Id DESC) DISTINCT(Id)`)
+        productTmp.current = (await realmStore.queryProducts())
+        productTmp.current = productTmp.current.filtered(`TRUEPREDICATE SORT(Id DESC) DISTINCT(Id)`)
+        //productTmp.current = JSON.parse(JSON.stringify(productTmp.current))
         console.log("productTmp", productTmp.current);
         //setViewData(productTmp.current)
         setListProduct(productTmp.current)

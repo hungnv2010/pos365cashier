@@ -27,6 +27,9 @@ export default (props) => {
     const [viewData, setViewData] = useState([])
     const defauTitle = useRef()
     let arrDate = []
+    const deviceType = useSelector(state => {
+        return state.Common.deviceType
+    });
 
     useEffect(() => {
         getOrderStock()
@@ -34,6 +37,7 @@ export default (props) => {
 
     }, [])
     const getOrderStock = async () => {
+        dialogManager.showLoading()
         await new HTTPService().setPath(ApiPath.ORDERSTOCK).GET({ Includes: 'Partner' }).then(res => {
             if (res != null) {
                 orderStock.current = res.results
@@ -58,6 +62,7 @@ export default (props) => {
                 })
                 console.log("arr dataaaaa", arrdata);
                 setViewData([...arrdata])
+                dialogManager.hiddenLoading()
             }
         })
     }
@@ -105,6 +110,7 @@ export default (props) => {
         )
     }
     return (
+        <View style={{ flex: 1,flexDirection:deviceType==Constant.TABLET ? 'row' :'column' }}>
         <View style={{ flex: 1 }}>
             <CustomerToolBar
                 {...props}
@@ -124,10 +130,16 @@ export default (props) => {
                 style={styles.fab}
                 icon='plus'
                 color="#fff"
-                // onPress={() => {
-                //     onClickItem({})
-                // }}
+                onPress={() => {
+                    props.navigation.navigate(ScreenList.AddOrderStock, { orderstock: {}, listPr: [], paymentMethod:""  })
+                }}
             />
+            
+        </View>
+        {
+            deviceType == Constant.TABLET ?
+            <View style={{flex:1,}}></View> :null
+        }
         </View>
     )
 }

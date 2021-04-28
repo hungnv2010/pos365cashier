@@ -858,8 +858,6 @@ export default {
   ban_chac_chan_muon_dang_xuat_khoi_cac_thiet_bi:'Are you want log out account at all devices ?',
   ban_co_chac_chan_muon_khoa_nhan_vien:'Are you sure you want to lock out the staff ?',
   ban_co_chac_chan_muon_mo_khoa_nhan_vien:'Are you sure you want to unlock the employee ?',
-  danh_sach_extra_topping:'List extra/topping',
-  danh_sach_hang_hoa:'Product list',
   block_dau_tien:'first block',
 
   cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang: "Allows to change the name of good when selling",
@@ -892,7 +890,10 @@ export default {
   don_vi_tinh_lon: 'Large unit',
   don_hang_cho_thanh_toan: "Commodity waiting for payment",
   dong_bo_du_lieu: 'Synchronize data',
+  dang_cho_thanh_toan_vui_long_doi:"Waiting for payment, please wait",
   dang_xuat_tai_khoan_tren_cac_thiet_bi_dang_dung:'Sign out for all device',
+  danh_sach_extra_topping:'List extra/topping',
+  danh_sach_hang_hoa:'Product list',
   dang_xu_li:'Processing',
 
   giu_man_hinh_luon_sang: "Keep the screen on",
@@ -924,6 +925,7 @@ export default {
   in_hoa_don_truoc_khi_thanh_toan_VNPAYQR_thanh_cong: "Print bill before successfull payment VNPAY-QR? ",
   in_may_in_thu_ngan: "Print cashier printer",
   in_may_in_tem: "Print stamp printer",
+  in_lai:'Reprint',
 
   khong_cho_phep_ban_hang_khi_het_ton_kho: "Sales are not allowed when out of stock?",
   khong_in: "Don't print",

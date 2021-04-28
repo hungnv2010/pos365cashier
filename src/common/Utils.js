@@ -80,7 +80,11 @@ export const dateUTCToMoment = (date, inputFormat = "yyyy-MM-dd'T'HH:mm:ss.SSFFF
   let momentITC = moment(momentUTC).local();
   return momentITC;
 }
-export const dateUTCToDate2 = (date, inputFormat = "yyyy-MM-dd'T'HH:mm:ss.SSFFFFF'Z'", outputFormat = "DD/MM/YYYY HH:mm") =>{
+export const dateUTCToMoment2 = (date, outputFormat = "YYYY-MM-DD[T]HH:mm:ss.SSSSSSS[Z]") => {
+  let dateTimeUtc = moment.utc(date).format(outputFormat)
+  return dateTimeUtc
+}
+export const dateUTCToDate2 = (date, inputFormat = "yyyy-MM-dd'T'HH:mm:ss.SSFFFFF'Z'", outputFormat = "DD/MM/YYYY HH:mm") => {
   let momentITC = moment(date).local();
   let dateITC = momentITC.format(outputFormat);
   return dateITC;
@@ -137,7 +141,7 @@ export const dateToString = (date, formatOutput = "DD/MM/YYYY") => {
   }
   return momentdate;
 };
-export const timeToString = (date, formatOutput="HH:mm") =>{
+export const timeToString = (date, formatOutput = "HH:mm") => {
   let momentdate = "";
   try {
     momentdate = moment(date, "YYYY-MM-DD HH:mm:ss").local().format(formatOutput);
@@ -167,19 +171,19 @@ export const change_alias = (alias) => {
   return str;
 }
 
-export const change_search = (text) =>{
+export const change_search = (text) => {
   var arr = []
   var str = ""
   arr = text.split(" ")
-  arr.forEach(el=>{
-    str = str + el.slice(0,1)
+  arr.forEach(el => {
+    str = str + el.slice(0, 1)
   })
   return str.toUpperCase()
 }
 
-export const change_quantity = (value) =>{
+export const change_quantity = (value) => {
   var str = value
-  str = str.replace(/,|./g,".");
+  str = str.replace(/,|./g, ".");
   str = str.trim();
   return str
 }

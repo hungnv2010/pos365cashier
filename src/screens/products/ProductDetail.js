@@ -128,10 +128,10 @@ export default (props) => {
 
     useEffect(() => {
         if (deviceType == Constant.TABLET) {
-            setProduct(props.iproduct)
+            setProduct({...JSON.parse(JSON.stringify(props.iproduct))})
             setPrinterPr(props.iproduct.Printer ? props.iproduct.Printer : '')
             getCategory()
-            getProduct(props.iproduct)
+            getProduct({...JSON.parse(JSON.stringify(props.iproduct))})
             console.log("CompositeItemProducts", props.compositeItemProducts);
             setNameCategory()
             setCost(props.iproduct.Cost)
@@ -637,9 +637,6 @@ export default (props) => {
         })
     }
 
-    useEffect(() => {
-        console.log("data produc", product);
-    }, [product])
 
     const renderModal = () => {
         return (
