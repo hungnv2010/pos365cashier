@@ -24,6 +24,8 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import dataManager from '../../data/DataManager';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useFocusEffect } from '@react-navigation/native';
+import ImagePicker from 'react-native-image-picker';
+import { launchCamera } from 'react-native-image-picker';
 
 export default (props) => {
     const [product, setProduct] = useState({})
@@ -128,10 +130,10 @@ export default (props) => {
 
     useEffect(() => {
         if (deviceType == Constant.TABLET) {
-            setProduct({...JSON.parse(JSON.stringify(props.iproduct))})
+            setProduct({ ...JSON.parse(JSON.stringify(props.iproduct)) })
             setPrinterPr(props.iproduct.Printer ? props.iproduct.Printer : '')
             getCategory()
-            getProduct({...JSON.parse(JSON.stringify(props.iproduct))})
+            getProduct({ ...JSON.parse(JSON.stringify(props.iproduct)) })
             console.log("CompositeItemProducts", props.compositeItemProducts);
             setNameCategory()
             setCost(props.iproduct.Cost)
@@ -141,6 +143,7 @@ export default (props) => {
             } else {
                 if (isCoppy.current == true) {
                     setProduct({ ...product, ProductType: product.ProductType ? product.ProductType : 1, BlockOfTimeToUseService: product.BlockOfTimeToUseService ? product.BlockOfTimeToUseService : 6 })
+                    isCoppy.current = false
                 } else {
                     setProduct({ ProductType: 1, BlockOfTimeToUseService: 6 })
                 }
@@ -165,7 +168,7 @@ export default (props) => {
             setQrCode(props.scanQr)
             console.log('qrcode', qrCode);
             if (props.scanQr != null) {
-                setProduct({ ...product, Code: props.scanQr})
+                setProduct({ ...product, Code: props.scanQr })
                 setCodeProduct(props.scanQr)
             }
         }
@@ -478,7 +481,7 @@ export default (props) => {
         //}
         saveProduct()
     }
-    const syncData = async() =>{
+    const syncData = async () => {
         dialogManager.showLoading()
         try {
             await realmStore.deleteProduct()
@@ -493,7 +496,7 @@ export default (props) => {
             new HTTPService().setPath(ApiPath.PRODUCT).POST(params).then(res => {
                 console.log('onClickSave', res)
                 if (res) {
-                    console.log("ressssssss",{ ...res, Code: "", Id: 0 });
+                    console.log("ressssssss", { ...res, Code: "", Id: 0 });
                     if (res.ResponseStatus && res.ResponseStatus.Message) {
                         dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
                             dialogManager.destroy();
@@ -510,7 +513,7 @@ export default (props) => {
                                 dialogManager.hiddenLoading()
                                 dialogManager.showPopupOneButton(`${I18n.t(type)} ${I18n.t('thanh_cong')}`, I18n.t('thong_bao'))
                                 setType('them')
-                                
+
 
                             }
                         } else if (deviceType == Constant.TABLET) {
@@ -590,7 +593,19 @@ export default (props) => {
         setCodeProduct(data)
     }
     const onClickTakePhoto = () => {
-        
+        let options = {
+            title: 'Select Avatar',
+            cameraType: 'front',
+            mediaType: 'photo',
+            storageOptions: {
+                skipBackup: true,
+                path: 'images',
+            },
+        };
+        ImagePicker.launchCamera(options, (response) => {
+            console.log('Response = ', response);
+
+        });
     }
     useFocusEffect(useCallback(() => {
 
@@ -707,7 +722,7 @@ export default (props) => {
             <ScrollView ref={scrollRef} >
                 <KeyboardAwareScrollView>
                     <View style={{ justifyContent: 'center', alignItems: 'center', padding: 20 }} >
-                        <TouchableOpacity>
+                        <TouchableOpacity >
                             {productOl.ProductImages && (productOl.ProductImages).length > 0 ?
                                 <Image style={{ height: 70, width: 70, borderRadius: 16 }} source={{ uri: productOl.ProductImages[0].ImageURL }} />
                                 : product.Name ? <View style={{ width: 70, height: 70, justifyContent: 'center', alignItems: 'center', borderRadius: 16, backgroundColor: colors.colorchinh }}>
@@ -849,7 +864,7 @@ export default (props) => {
                                     : product.ProductType == 1 ?
                                         <View>
                                             <Text style={styles.title}>{I18n.t('ton_kho')}</Text>
-                                            <TextInput style={[styles.textInput, { fontWeight: 'bold', color: colors.colorLightBlue, textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={productOl.OnHand ? productOl.OnHand + '' : 0 + ''} onChangeText={(text) => setProductOl({...productOl,OnHand: onChangeTextInput(text)})}></TextInput>
+                                            <TextInput style={[styles.textInput, { fontWeight: 'bold', color: colors.colorLightBlue, textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={productOl.OnHand ? productOl.OnHand + '' : 0 + ''} onChangeText={(text) => setProductOl({ ...productOl, OnHand: onChangeTextInput(text) })}></TextInput>
                                         </View> : null
                                 }
 
