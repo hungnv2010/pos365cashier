@@ -386,7 +386,10 @@ export default (props) => {
                 new HTTPService().setPath(`${ApiPath.CUSTOMER}/${customerDetail.Id}`).DELETE()
                     .then(res => {
                         console.log('onClickDelete', res)
-                        if (res) props.handleSuccess('xoa')
+                        if (res) {
+                            resetCustomer()
+                            props.handleSuccess('xoa')
+                        }
                     })
                     .catch(err => console.log('onClickDelete err', err))
             }

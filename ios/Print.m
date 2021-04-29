@@ -240,7 +240,7 @@ RCT_EXPORT_METHOD(keepTheScreenOff:(NSString *)param) {
   int ilimitwidth = SizeInput > 0 ? SizeInput : 72;;
   Printer *currentprinter = _printerManager.CurrentPrinter;
   BitmapSetting *bitmapSetting  = currentprinter.BitmapSetts;
-  bitmapSetting.Alignmode = Align_Center;
+  bitmapSetting.Alignmode = Align_NoSetting;//Align_Center
   bitmapSetting.limitWidth = ilimitwidth*8;//ESC
 
   for (int i=0, count = [images count]; i < count; i++) {

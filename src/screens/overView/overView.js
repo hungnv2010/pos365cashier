@@ -13,7 +13,7 @@ import moment from "moment";
 import { getFileDuLieuString } from '../../data/fileStore/FileStorage';
 import { currencyToString, dateToString, momentToStringDateLocal } from '../../common/Utils';
 import DateTime from '../../components/filter/DateTime';
-
+import { useFocusEffect } from '@react-navigation/native';
 
 export default (props) => {
 
@@ -34,6 +34,12 @@ export default (props) => {
     const deviceType = useSelector(state => {
         return state.Common.deviceType
     });
+
+    useFocusEffect(
+        useCallback(() => {
+            onRefresh()
+        }, [])
+    )
 
     useEffect(() => {
         const getBranch = async () => {
