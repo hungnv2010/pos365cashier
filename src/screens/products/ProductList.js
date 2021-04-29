@@ -33,7 +33,6 @@ export default (props) => {
     const onEndReachedCalledDuringMomentum = useRef(false)
     const currentProduct = useRef(0)
     const [loadMore, setLoadMore] = useState(false)
-    const flatlistRef = useRef(null)
     const [viewData, setViewData] = useState([])
     const productTmp = useRef([])
     useEffect(() => {
@@ -62,7 +61,6 @@ export default (props) => {
             getDataFromRealm()
             dialogManager.hiddenLoading()
         }
-
     }
     const getDataFromRealm = async () => {
         dialogManager.showLoading()
