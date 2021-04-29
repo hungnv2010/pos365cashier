@@ -18,6 +18,7 @@ export const Constant = {
     ID_VNPAY_QR: 978,
     OBJECT_SETTING: 'OBJECT_SETTING',
     LANGUAGE: "LANGUAGE",
+    HTML_PRINT: "HTML_PRINT",
     KEY_PRINTER: {
         CashierKey: 'CashierPrint',
         KitchenAKey: 'KitchenA',

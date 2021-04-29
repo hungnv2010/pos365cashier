@@ -170,7 +170,15 @@ export default (props) => {
                     let RoomMoment = ""
                     let IsActive = false
                     listFiters.forEach(elm => {
-                        let JsonContentJS = elm.JsonContent ? JSON.parse(elm.JsonContent) : {}
+                        console.log("insertServerEvent elm ", elm);
+                        let JsonContentJS = {}
+                        try {
+                            JsonContentJS = elm.JsonContent ? JSON.parse(elm.JsonContent) : {}
+                        } catch (error) {
+                            console.log('JsonContentJS error elm ', elm);
+                            console.log('JsonContentJS error', error);
+                        }
+                        // let JsonContentJS = elm.JsonContent ? JSON.parse(elm.JsonContent) : {}
                         let totalPoision = JsonContentJS.Total ? JsonContentJS.Total : 0
                         Total += totalPoision
                         if (JsonContentJS.ActiveDate) {
@@ -281,8 +289,8 @@ export default (props) => {
                     }
                     setData(newDatas)
 
-                } else if(status == false){
-                    let room = dataRef.current.filter(item =>  item.IsActive != true)
+                } else if (status == false) {
+                    let room = dataRef.current.filter(item => item.IsActive != true)
                     let roomGroup = dataRef.current.filter(item => item.isGroup == true)
                     console.log("Room", room);
                     console.log("group", roomGroup);
@@ -302,7 +310,7 @@ export default (props) => {
                     setData(newDatas)
 
                 }
-                 else {
+                else {
                     setData([...dataRef.current])
                 }
             } else {

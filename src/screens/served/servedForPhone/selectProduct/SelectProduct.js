@@ -82,7 +82,9 @@ export default (props) => {
         count.current = 0
         let valueSearchLatin = change_alias(debouncedVal)
         let results = await realmStore.queryProducts()
-        let searchResult = results.filtered(`NameLatin CONTAINS "${valueSearchLatin}" OR Code CONTAINS "${valueSearchLatin}"`)
+        console.log("valueSearchLatin ", debouncedVal);
+        console.log("valueSearchLatin ", valueSearchLatin);
+        let searchResult = results.filtered(`NameLatin CONTAINS[c] "${valueSearchLatin}" OR Code CONTAINS[c] "${debouncedVal}"`)
         searchResult = JSON.parse(JSON.stringify(searchResult))
         searchResult = Object.values(searchResult)
         searchResult.forEach(item => {
