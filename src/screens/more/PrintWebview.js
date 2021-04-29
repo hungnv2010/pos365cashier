@@ -9,7 +9,7 @@ import { ApiPath } from '../../data/services/ApiPath';
 import ToolBarPreviewHtml from '../../components/toolbar/ToolBarPreviewHtml';
 import JsonContent1 from '../../data/json/data_print_demo'
 import { dateToDate, DATE_FORMAT, currencyToString } from '../../common/Utils';
-import { getFileDuLieuString } from '../../data/fileStore/FileStorage';
+import { getFileDuLieuString, setFileLuuDuLieu } from '../../data/fileStore/FileStorage';
 import { Constant } from '../../common/Constant';
 import { useSelector } from 'react-redux';
 import { Snackbar } from 'react-native-paper';
@@ -21,6 +21,7 @@ import HTML from 'react-native-render-html';
 import AutoHeightWebView from 'react-native-autoheight-webview/autoHeightWebView'
 import ViewPrint, { defaultKitchen } from './ViewPrint';
 import I18n from '../../common/language/i18n'
+import colors from '../../theme/Colors';
 
 const FOOTER_HEIGHT = 21;
 const PADDING = 16;
@@ -54,13 +55,16 @@ export default forwardRef((props, ref) => {
             console.log('data', JSON.parse(data));
             setVendorSession(JSON.parse(data))
             let html = HtmlDefault;
+            // html = props.route.params.data;
             if (deviceType == Constant.PHONE) {
                 html = props.route.params.data;
             } else {
+                console.log("Preview props.data", props.data);
                 if (props.data != "")
                     html = props.data
 
             }
+            console.log("Preview html", html);
             printService.GenHtml(html, JsonContent1).then(res => {
                 if (res && res != "") {
                     // if (deviceType == Constant.TABLET)
@@ -111,7 +115,11 @@ export default forwardRef((props, ref) => {
         dialogManager.showLoading();
         new HTTPService().setPath(ApiPath.PRINT_TEMPLATES).POST(params).then((res) => {
             console.log("clickCheck res ", res);
+            if (res) {
+                setFileLuuDuLieu(Constant.HTML_PRINT, "" + params.printTemplate.Content);
+            }
             dialogManager.hiddenLoading()
+            props.navigation.pop();
             props.navigation.pop();
         }).catch((e) => {
             console.log("clickCheck err ", e);
@@ -155,7 +163,16 @@ export default forwardRef((props, ref) => {
                 navigation={props.navigation} title="HTML"
                 clickPrint={() => clickPrint()}
                 clickCheck={() => clickCheck()}
-            /> : null}
+            /> :
+                <View style={{ width: "100%", padding: 10, justifyContent: "space-between", flexDirection: "row" }}>
+                    <TouchableOpacity style={styles.button} onPress={() => { clickPrint() }}>
+                        <Text style={styles.textButton}>{I18n.t('in')}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button} onPress={() => { clickCheck() }}>
+                        <Text style={styles.textButton}>{I18n.t('luu')}</Text>
+                    </TouchableOpacity>
+                </View>
+            }
             <AutoHeightWebView
                 // scrollEnabled={false}
                 style={{ width: deviceType == Constant.PHONE ? Metrics.screenWidth - 20 : Metrics.screenWidth / 2.5 }}
@@ -170,3 +187,8 @@ export default forwardRef((props, ref) => {
         </View>
     );
 });
+
+const styles = StyleSheet.create({
+    button: { padding: 10, paddingHorizontal: 20, borderRadius: 8, backgroundColor: colors.colorLightBlue },
+    textButton: { color: "#fff", textTransform: "uppercase" },
+})

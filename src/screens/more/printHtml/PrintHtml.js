@@ -13,16 +13,36 @@ import { useSelector } from 'react-redux';
 import { Constant } from '../../../common/Constant';
 import PrintWebview from '../PrintWebview';
 import I18n from '../../../common/language/i18n'
+import { setFileLuuDuLieu, getFileDuLieuString } from '../../../data/fileStore/FileStorage';
+import colors from '../../../theme/Colors';
+import ToolBarDefault from '../../../components/toolbar/ToolBarDefault';
 
 export default (props) => {
 
     const [tabType, setTabType] = useState(1);
+    const [dataHtml, setDataHtml] = useState(htmlDefault);
     const [dataDefault, setDataDefault] = useState("");
     const [dataOnline, setDataOnline] = useState("");
 
     const deviceType = useSelector(state => {
         return state.Common.deviceType
     });
+
+    useEffect(() => {
+
+        const getDataHtml = async () => {
+            let HtmlPrint = await getFileDuLieuString(Constant.HTML_PRINT, true)
+            console.log("getDataHtml HtmlPrint ", HtmlPrint);
+
+            if (HtmlPrint != "")
+                setDataHtml(HtmlPrint)
+            else {
+                setDataHtml(htmlDefault)
+            }
+        }
+
+        getDataHtml();
+    }, [])
 
     let preview = null;
     clickCheck = () => {
@@ -33,34 +53,115 @@ export default (props) => {
         childRef.current.clickPrintInRef()
     }
 
+    const onClickTab = (number) => {
+        setTabType(number)
+        // if (number == 1)
+        //     setFileLuuDuLieu(Constant.HTML_PRINT, htmlDefault);
+    }
+
+    const onChangeDataDefault = (text) => {
+        console.log("onChangeDataDefault ", text);
+
+        // setFileLuuDuLieu(Constant.HTML_PRINT, htmlDefault);
+        setDataDefault(text)
+    }
+
+    const onChangeDataOnline = (text) => {
+        setDataOnline(text)
+    }
+
+    const onClickBack = () => {
+        console.log("onClickBack ", tabType);
+        // setFileLuuDuLieu(Constant.HTML_PRINT, dataHtml);
+        props.navigation.pop();
+    }
+
+    const onSelectTab = (number) => {
+        if (number == 1) {
+            setDataHtml(htmlDefault)
+            setFileLuuDuLieu(Constant.HTML_PRINT, htmlDefault);
+        } else {
+            dialogManager.showLoading();
+            let params = {};
+            new HTTPService().setPath(ApiPath.PRINT_TEMPLATES + "/10").GET(params).then((res) => {
+                console.log("onClickLoadOnline res ", res);
+                if (res) {
+                    setDataHtml(res.Content)
+                    setFileLuuDuLieu(Constant.HTML_PRINT, "" + res.Content);
+                    // props.output(res.Content)
+                }
+                dialogManager.hiddenLoading()
+            }).catch((e) => {
+                console.log("onClickLoadOnline err ", e);
+                dialogManager.hiddenLoading()
+            })
+        }
+    }
+
     const childRef = useRef();
+
+    const ViewInputHtml = () => {
+        return (
+            <View style={{ flex: 1 }}>
+                <View style={{ padding: 10, justifyContent: "space-between", flexDirection: "row" }}>
+                    <TouchableOpacity style={styles.button} onPress={() => { onSelectTab(1) }}>
+                        <Text style={styles.textButton}>{I18n.t('mac_dinh')}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button} onPress={() => { onSelectTab(2) }}>
+                        <Text style={styles.textButton}>LOAD ONLINE</Text>
+                    </TouchableOpacity>
+                    {deviceType == Constant.PHONE ?
+                        <TouchableOpacity style={styles.button} onPress={() => { props.navigation.navigate("PrintWebview", { data: dataHtml }) }}>
+                            <Text style={styles.textButton}>{I18n.t('hien_thi')}</Text>
+                        </TouchableOpacity>
+                        : null}
+                </View>
+                <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS == "ios" ? "padding" : "none"}>
+                    <TextInput style={{
+                        margin: 5,
+                        marginRight: 0,
+                        padding: 0,
+                        flex: 1,
+                        paddingBottom: Platform.OS == "ios" ? 20 : 0, color: "#000"
+                    }}
+                        multiline={true}
+                        onChangeText={text => {
+                            setDataHtml(text)
+                        }} value={dataHtml} />
+                </KeyboardAvoidingView>
+            </View>
+        )
+    }
 
     return (
         <View style={{ flex: 1, backgroundColor: "#fff" }}>
-            <ToolBarPrintHtml
+            <ToolBarDefault
+                {...props}
+                leftIcon="keyboard-backspace"
+                navigation={props.navigation}
+                title="Print HTML"
+            />
+            {/* <ToolBarPrintHtml
+                clickRightIcon={onClickBack}
                 navigation={props.navigation} title="Print HTML"
-                clickDefault={() => { setTabType(1) }}
-                clickLoadOnline={() => { setTabType(2) }}
+                clickDefault={() => { onClickTab(1) }}
+                clickLoadOnline={() => { onClickTab(2) }}
                 clickPrint={clickPrint}
                 clickCheck={clickCheck}
                 clickShow={() => { props.navigation.navigate("PrintWebview", { data: tabType == 1 ? dataDefault : dataOnline }) }}
-            />
+            /> */}
+
             {deviceType == Constant.PHONE ?
-                tabType == 1 ?
-                    <DefaultComponent output={(text) => setDataDefault(text)} />
-                    : <OnlineComponent output={(text) => setDataOnline(text)} />
+                ViewInputHtml()
                 :
                 <View style={{ flex: 1, flexDirection: "row" }}>
                     <View style={{ flex: 1 }}>
                         {
-                            tabType == 1 ?
-                                <DefaultComponent output={(text) => setDataDefault(text)} />
-                                : <OnlineComponent output={(text) => setDataOnline(text)} />
+                            ViewInputHtml()
                         }
                     </View>
-                    <View style={{ flex: 1 }}>
-                        {/* <Preview ref={childRef} data={tabType == 1 ? dataDefault : dataOnline} /> */}
-                        <PrintWebview ref={childRef} data={tabType == 1 ? dataDefault : dataOnline} />
+                    <View style={{ flex: 1, borderLeftWidth: 0.5, borderLeftColor: "gray" }}>
+                        <PrintWebview ref={childRef} data={dataHtml} />
                     </View>
                 </View>
             }
@@ -68,65 +169,7 @@ export default (props) => {
     );
 };
 
-const DefaultComponent = (props) => {
-    const [contentHtml, setContentHtml] = useState(htmlDefault);
-    useEffect(() => {
-        props.output(contentHtml)
-    }, [])
-
-    return (
-        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS == "ios" ? "padding" : "none"}>
-            <TextInput style={{
-                margin: 5,
-                marginRight: 0,
-                padding: 0,
-                flex: 1,
-                paddingBottom: Platform.OS == "ios" ? 20 : 0, color: "#000"
-            }}
-                multiline={true} onChangeText={text => {
-                    props.output(text)
-                    setContentHtml(text)
-                }} value={contentHtml} />
-        </KeyboardAvoidingView>
-    )
-}
-
-const OnlineComponent = (props) => {
-
-    const [dataHTML, setDataHTML] = useState("");
-    const onClickLoadOnline = useCallback(() => {
-        dialogManager.showLoading();
-        let params = {};
-        new HTTPService().setPath(ApiPath.PRINT_TEMPLATES + "/10").GET(params).then((res) => {
-            console.log("onClickLoadOnline res ", res);
-            if (res) {
-                setDataHTML(res.Content)
-                props.output(res.Content)
-            }
-            dialogManager.hiddenLoading()
-        }).catch((e) => {
-            console.log("onClickLoadOnline err ", e);
-            dialogManager.hiddenLoading()
-        })
-    }, [])
-
-    useEffect(() => {
-        onClickLoadOnline()
-    }, [])
-
-    return (
-        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS == "ios" ? "padding" : "none"}>
-            <TextInput style={{
-                margin: 5,
-                marginRight: 0,
-                padding: 0,
-                flex: 1,
-                paddingBottom: Platform.OS == "ios" ? 20 : 0, color: "#000"
-            }}
-                multiline={true} onChangeText={text => {
-                    props.output(text)
-                    setDataHTML(text)
-                }} value={dataHTML} />
-        </KeyboardAvoidingView>
-    )
-}
+const styles = StyleSheet.create({
+    button: { padding: 10, paddingHorizontal: 20, borderRadius: 8, backgroundColor: colors.colorLightBlue },
+    textButton: { color: "#fff", textTransform: "uppercase" },
+})

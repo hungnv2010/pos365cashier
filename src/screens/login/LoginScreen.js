@@ -18,6 +18,7 @@ import dialogManager from '../../components/dialog/DialogManager';
 import { CommonActions } from '@react-navigation/native';
 import realmStore from '../../data/realm/RealmStore';
 import Permissions, { requestMultiple, PERMISSIONS } from 'react-native-permissions';
+import htmlDefault from '../../data/html/htmlDefault';
 const { Print } = NativeModules;
 
 
@@ -141,6 +142,7 @@ const LoginScreen = (props) => {
                     let account = { UserName: userName, Link: shop.trim() };
                     setFileLuuDuLieu(Constant.REMEMBER_ACCOUNT, JSON.stringify(account));
                 }
+                setFileLuuDuLieu(Constant.HTML_PRINT, htmlDefault);
                 navigateToHome()
             } else {
                 dialogManager.showPopupOneButton(I18n.t('ban_khong_co_quyen_truy_cap'), I18n.t('thong_bao'));
