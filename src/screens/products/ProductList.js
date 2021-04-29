@@ -144,7 +144,7 @@ export default (props) => {
             console.log("data.list", data.list);
             props.navigation.navigate('ComboForTab', { list: data.list, product: data.product, _onSelect: onCallBack })
         } else if (data.scanQrCode == true) {
-            props.navigation.navigate('QRCode', { _onSelect: onCallBackQr })
+            props.navigation.navigate('QrcodeAdd', {  _onSelectQR: onCallBackQr })
         }
     }
     const onCallBackQr = (data) => {

@@ -40,6 +40,7 @@ export default (props) => {
     const [listProduct, setListProduct] = useState([])
     const [total, setTotal] = useState()
     const [discount, setDiscount] = useState(0)
+    const [listPurchase, setListPurchase] = useState([])
     const totalCurrent = useRef()
 
     useEffect(() => {
@@ -61,8 +62,8 @@ export default (props) => {
             ModifiedBy: orderStock.ModifiedBy,
             ModifiedDate: orderStock.ModifiedDate,
             Partner: orderStock.Partner,
-            PartnerId: orderStock.Partner.Id,
-            PurchaseOrderDetails: [],
+            PartnerId: orderStock.Partner ? orderStock.Partner.Id : undefined,
+            PurchaseOrderDetails: listPurchase,
             RetailerId: orderStock.RetailerId,
             Status: orderStock.Status,
             Total: orderStock.Total,
@@ -172,7 +173,7 @@ export default (props) => {
         setOnShowModal(false)
     }
     const onClickSelectPr = () => {
-        props.navigation.navigate('SelectProduct', { _onSelect: onCallBack, listProducts: listProduct })
+        props.navigation.navigate('SelectProduct', { _onSelect: onCallBack, listProducts: listProduct, type: 1 })
     }
     const onCallBack = (data) => {
         console.log(data);
@@ -200,7 +201,16 @@ export default (props) => {
                         SellingPrice: res.results[0].Price,
                         Unit: res.results[0].Unit,
                     }
+                    // let itemPurchase = {
+                    //     ConversionValue: res.results[0].ConversionValue,
+                    //     IsLargeUnit: false,
+                    //     Price: res.results[0].Cost,
+                    //     ProductId: res.results[0].Id,
+                    //     Quantity: el.Quantity,
+                    //     SellingPrice: res.results[0].Price
+                    // }
                     arrItemPr.push(itemPr)
+                    //setListPurchase([...itemPurchase])
                     setListPr([...arrItemPr])
                 }
             })
@@ -242,6 +252,13 @@ export default (props) => {
     const onClickDelItem = (index) => {
         listPr.splice(index, 1)
         setListPr([...listPr])
+    }
+    const onClickSave = () => {
+        new HTTPService().setPath(ApiPath.ORDERSTOCK).POST(param).then(res => {
+            if (res != null) {
+                console.log("res", res.Message);
+            }
+        })
     }
     const renderModal = () => {
         return (
@@ -463,7 +480,7 @@ export default (props) => {
                         </View>
                     </View>
                 }
-                <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, borderRadius: 10, alignItems: 'center', justifyContent: 'center', paddingVertical: 15, marginHorizontal: 10 }}>
+                <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, borderRadius: 10, alignItems: 'center', justifyContent: 'center', paddingVertical: 15, marginHorizontal: 10 }} onPress={() => { onClickSave() }}>
                     <Text style={{ fontWeight: 'bold', color: '#fff' }}>{I18n.t('luu')}</Text>
                 </TouchableOpacity>
             </View>
