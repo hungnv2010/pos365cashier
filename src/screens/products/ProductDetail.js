@@ -24,6 +24,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import dataManager from '../../data/DataManager';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useFocusEffect } from '@react-navigation/native';
+import ImagePicker from 'react-native-image-picker';
 
 export default (props) => {
     const [product, setProduct] = useState({})
@@ -164,9 +165,9 @@ export default (props) => {
         if (deviceType == Constant.TABLET) {
             setQrCode(props.scanQr)
             console.log('qrcode', qrCode);
-            if (qrCode != null) {
-                setProduct({ ...product, Code: qrCode })
-                setCodeProduct(qrCode)
+            if (props.scanQr != null) {
+                setProduct({ ...product, Code: props.scanQr})
+                setCodeProduct(props.scanQr)
             }
         }
     }, [props.scanQr])
@@ -244,7 +245,7 @@ export default (props) => {
 
     const getData = (param) => {
         itemProduct.current = JSON.parse(JSON.stringify(param.product))
-        setProduct({ ...JSON.parse(JSON.stringify(param.product)) })
+        setProduct({ ...itemProduct.current })
         setCodeProduct(itemProduct.current.Code)
         getProduct(itemProduct.current)
         setCost(itemProduct.current.Cost)
@@ -478,11 +479,22 @@ export default (props) => {
         //}
         saveProduct()
     }
+    const syncData = async() =>{
+        dialogManager.showLoading()
+        try {
+            await realmStore.deleteProduct()
+            await dataManager.syncProduct()
+        } catch (error) {
+            console.log('handleSuccess err', error);
+            //dialogManager.hiddenLoading()
+        }
+    }
     const saveProduct = async () => {
         if (product.Name && product.Name != '') {
             new HTTPService().setPath(ApiPath.PRODUCT).POST(params).then(res => {
                 console.log('onClickSave', res)
                 if (res) {
+                    console.log("ressssssss",{ ...res, Code: "", Id: 0 });
                     if (res.ResponseStatus && res.ResponseStatus.Message) {
                         dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
                             dialogManager.destroy();
@@ -493,11 +505,13 @@ export default (props) => {
                                 props.route.params.onCallBack(type, 2)
                                 props.navigation.pop()
                             } else {
-                                setProduct({ ...res })
                                 setCodeProduct("")
-                                setProduct({ ...product, Code: "", Id: 0 })
+                                setProduct({ ...res, Code: "", Id: 0 })
+                                syncData()
+                                dialogManager.hiddenLoading()
                                 dialogManager.showPopupOneButton(`${I18n.t(type)} ${I18n.t('thanh_cong')}`, I18n.t('thong_bao'))
                                 setType('them')
+                                
 
                             }
                         } else if (deviceType == Constant.TABLET) {
@@ -577,7 +591,14 @@ export default (props) => {
         setCodeProduct(data)
     }
     const onClickTakePhoto = () => {
-        props.navigation.navigate('TakePhoto', {})
+        ImagePicker.launchCamera(options, (response) => {
+            if (response.error) {
+              console.log('LaunchCamera Error: ', response.error);
+            }
+            else {
+              console.log(response.uri);
+            }
+          });
     }
     useFocusEffect(useCallback(() => {
 
@@ -694,9 +715,9 @@ export default (props) => {
             <ScrollView ref={scrollRef} >
                 <KeyboardAwareScrollView>
                     <View style={{ justifyContent: 'center', alignItems: 'center', padding: 20 }} >
-                        <TouchableOpacity >
-                            {product.ProductImages && JSON.parse(product.ProductImages).length > 0 ?
-                                <Image style={{ height: 70, width: 70, borderRadius: 16 }} source={{ uri: JSON.parse(product.ProductImages)[0].ImageURL }} />
+                        <TouchableOpacity>
+                            {productOl.ProductImages && (productOl.ProductImages).length > 0 ?
+                                <Image style={{ height: 70, width: 70, borderRadius: 16 }} source={{ uri: productOl.ProductImages[0].ImageURL }} />
                                 : product.Name ? <View style={{ width: 70, height: 70, justifyContent: 'center', alignItems: 'center', borderRadius: 16, backgroundColor: colors.colorchinh }}>
                                     <Text style={{ textAlign: 'center', color: 'white' }}>{product.Name ? product.Name.indexOf(' ') == -1 ? product.Name.slice(0, 2).toUpperCase() : (product.Name.slice(0, 1) + product.Name.slice(product.Name.indexOf(' ') + 1, product.Name.indexOf(' ') + 2)).toUpperCase() : null}</Text>
                                 </View> :

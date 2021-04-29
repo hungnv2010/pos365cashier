@@ -31,7 +31,7 @@ export default (props) => {
     });
 
     const onSuccess = async e => {
-        console.log("e ", e);
+        console.log("e ", e.data);
         if (e.data) {
             try {
                 let results = await realmStore.queryProducts()

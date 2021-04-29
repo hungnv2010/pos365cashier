@@ -26,6 +26,7 @@ export default (props) => {
   const [showModal, setShowModal] = useState(false)
   const debouncedVal = useDebounce(valueSearch)
   const listChangeText = useRef([])
+  const type = useRef(props.route.params.type ? props.route.params.type : 0)
 
 
   useEffect(() => {
@@ -46,6 +47,9 @@ export default (props) => {
   const getProducts = useCallback(async () => {
     console.log('getProducts');
     let results = await realmStore.queryProducts()
+    if(type.current == 1){
+      results = results.filtered(`ProductType == 1`)
+    }
     if (listCateId[0] != -1) {
       results = results.filtered(`CategoryId == ${listCateId[0]}`)
     }
@@ -82,9 +86,10 @@ export default (props) => {
         count.current = 0
         let valueSearchLatin = change_alias(debouncedVal)
         let results = await realmStore.queryProducts()
-        console.log("valueSearchLatin ", debouncedVal);
-        console.log("valueSearchLatin ", valueSearchLatin);
-        let searchResult = results.filtered(`NameLatin CONTAINS[c] "${valueSearchLatin}" OR Code CONTAINS[c] "${debouncedVal}"`)
+        if(type.current == 1){
+          results = results.filtered(`ProductType == 1`)
+        }
+        let searchResult = results.filtered(`NameLatin CONTAINS[c] "${valueSearchLatin}" OR Code CONTAINS[c] "${valueSearchLatin}"`)
         searchResult = JSON.parse(JSON.stringify(searchResult))
         searchResult = Object.values(searchResult)
         searchResult.forEach(item => {
