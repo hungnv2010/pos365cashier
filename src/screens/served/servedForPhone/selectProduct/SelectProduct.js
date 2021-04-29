@@ -89,7 +89,7 @@ export default (props) => {
         if(type.current == 1){
           results = results.filtered(`ProductType == 1`)
         }
-        let searchResult = results.filtered(`NameLatin CONTAINS[c] "${valueSearchLatin}" OR Code CONTAINS[c] "${valueSearchLatin}"`)
+        let searchResult = results.filtered(`NameLatin CONTAINS[c] "${valueSearchLatin}" OR Code CONTAINS[c] "${debouncedVal}"`)
         searchResult = JSON.parse(JSON.stringify(searchResult))
         searchResult = Object.values(searchResult)
         searchResult.forEach(item => {
