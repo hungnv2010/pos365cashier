@@ -24,7 +24,6 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import dataManager from '../../data/DataManager';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useFocusEffect } from '@react-navigation/native';
-import ImagePicker from 'react-native-image-picker';
 
 export default (props) => {
     const [product, setProduct] = useState({})
@@ -591,14 +590,7 @@ export default (props) => {
         setCodeProduct(data)
     }
     const onClickTakePhoto = () => {
-        ImagePicker.launchCamera(options, (response) => {
-            if (response.error) {
-              console.log('LaunchCamera Error: ', response.error);
-            }
-            else {
-              console.log(response.uri);
-            }
-          });
+        
     }
     useFocusEffect(useCallback(() => {
 

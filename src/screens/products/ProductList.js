@@ -49,17 +49,24 @@ export default (props) => {
     });
     let categoryTmp = []
     const getData = async () => {
-        productTmp.current = (await realmStore.queryProducts())
-        productTmp.current = productTmp.current.filtered(`TRUEPREDICATE SORT(Id DESC) DISTINCT(Id)`)
-        //productTmp.current = JSON.parse(JSON.stringify(productTmp.current))
-        console.log("productTmp", productTmp.current);
-        //setViewData(productTmp.current)
-        setListProduct(productTmp.current)
-        categoryTmp = await realmStore.queryCategories()
-        setCategory([{
-            Id: -1,
-            Name: 'Tất cả'
-        }, ...categoryTmp])
+        try {
+            await realmStore.deleteProduct()
+            await dataManager.syncProduct()
+            productTmp.current = (await realmStore.queryProducts())
+            productTmp.current = productTmp.current.filtered(`TRUEPREDICATE SORT(Id DESC) DISTINCT(Id)`)
+            //productTmp.current = JSON.parse(JSON.stringify(productTmp.current))
+            console.log("productTmp", productTmp.current);
+            //setViewData(productTmp.current)
+            setListProduct(productTmp.current)
+            categoryTmp = await realmStore.queryCategories()
+            setCategory([{
+                Id: -1,
+                Name: 'Tất cả'
+            }, ...categoryTmp])
+        } catch (error) {
+            console.log('handleSuccess err', error);
+        }
+
     }
     const filterMore = () => {
         console.log("filtermore", productTmp.current.length);
@@ -144,7 +151,7 @@ export default (props) => {
             console.log("data.list", data.list);
             props.navigation.navigate('ComboForTab', { list: data.list, product: data.product, _onSelect: onCallBack })
         } else if (data.scanQrCode == true) {
-            props.navigation.navigate('QrcodeAdd', {  _onSelectQR: onCallBackQr })
+            props.navigation.navigate('QrcodeAdd', { _onSelectQR: onCallBackQr })
         }
     }
     const onCallBackQr = (data) => {
