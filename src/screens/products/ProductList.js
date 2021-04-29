@@ -18,8 +18,7 @@ import ProductDetail from '../../screens/products/ProductDetail'
 import dialogManager from '../../components/dialog/DialogManager';
 import CustomerToolBar from '../../screens/customerManager/customer/CustomerToolBar';
 import useDebounce from '../../customHook/useDebounce';
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { set } from 'react-native-reanimated';
+import NetInfo from "@react-native-community/netinfo";
 
 export default (props) => {
     const isReLoad = useRef(false);
@@ -50,23 +49,34 @@ export default (props) => {
     let categoryTmp = []
     const getData = async () => {
         try {
-            await realmStore.deleteProduct()
-            await dataManager.syncProduct()
-            productTmp.current = (await realmStore.queryProducts())
-            productTmp.current = productTmp.current.filtered(`TRUEPREDICATE SORT(Id DESC) DISTINCT(Id)`)
-            //productTmp.current = JSON.parse(JSON.stringify(productTmp.current))
-            console.log("productTmp", productTmp.current);
-            //setViewData(productTmp.current)
-            setListProduct(productTmp.current)
-            categoryTmp = await realmStore.queryCategories()
-            setCategory([{
-                Id: -1,
-                Name: 'Tất cả'
-            }, ...categoryTmp])
+            let state = await NetInfo.fetch()
+            if (state.isConnected == true && state.isInternetReachable == true) {
+                await realmStore.deleteProduct()
+                await dataManager.syncProduct()
+                getDataFromRealm()
+            }else
+            getDataFromRealm()
+            dialogManager.hiddenLoading()
         } catch (error) {
             console.log('handleSuccess err', error);
+            getDataFromRealm()
+            dialogManager.hiddenLoading()
         }
 
+    }
+    const getDataFromRealm = async () => {
+        dialogManager.showLoading()
+        productTmp.current = (await realmStore.queryProducts())
+        productTmp.current = productTmp.current.filtered(`TRUEPREDICATE SORT(Id DESC) DISTINCT(Id)`)
+        //productTmp.current = JSON.parse(JSON.stringify(productTmp.current))
+        console.log("productTmp", productTmp.current);
+        //setViewData(productTmp.current)
+        setListProduct(productTmp.current)
+        categoryTmp = await realmStore.queryCategories()
+        setCategory([{
+            Id: -1,
+            Name: 'Tất cả'
+        }, ...categoryTmp])
     }
     const filterMore = () => {
         console.log("filtermore", productTmp.current.length);
