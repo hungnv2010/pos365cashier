@@ -25,7 +25,7 @@ import dataManager from '../../data/DataManager';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useFocusEffect } from '@react-navigation/native';
 import ImagePicker from 'react-native-image-picker';
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
 export default (props) => {
     const [product, setProduct] = useState({})
@@ -55,6 +55,7 @@ export default (props) => {
     const [cost, setCost] = useState(0)
     const isCoppy = useRef(false)
     const [marginModal, setMargin] = useState(0)
+    const [largeUnitCode, setLargeUnitCode] = useState()
     const addCate = useRef([{
         Name: 'ten_nhom',
         Hint: 'nhap_ten_nhom_hang_hoa',
@@ -283,6 +284,8 @@ export default (props) => {
                     if (nameCategory == null) {
                         setNameCategory(res.results[0].Category && res.results[0].Category.Name ? res.results[0].Category.Name : '')
                         setCost(res.results[0].Cost)
+                        console.log("largeUnitCode",res.results[0].LargeUnitCode);
+                        setLargeUnitCode(res.results[0].LargeUnitCode ? res.results[0].largeUnitCode : null)
                     }
 
                     console.log("add dvt", addDVT.current);
@@ -296,34 +299,7 @@ export default (props) => {
         } else {
             setProductOl({})
         }
-        setAddDVT([{
-            Name: 'don_vi_tinh_lon',
-            Hint: 'nhap_don_vi_tinh_lon',
-            Key: 'LargeUnit',
-            Value: product.LargeUnit ? product.LargeUnit : '',
-            isNum: false
-        },
-        {
-            Name: 'ma_dvt_lon',
-            Hint: 'ma_don_vi_tinh_lon',
-            Key: 'LargeUnitId',
-            Value: productOl.LargeUnitId ? productOl.LargeUnitId : null,
-            isNum: false
-        },
-        {
-            Name: 'gia_ban_dvt_lon',
-            Hint: 'gia_ban_don_vi_tinh_lon',
-            Key: 'PriceLargeUnit',
-            Value: product.PriceLargeUnit ? product.PriceLargeUnit : 0,
-            isNum: true
-        },
-        {
-            Name: 'gia_tri_quy_doi',
-            Hint: 'gia_tri_quy_doi',
-            Key: 'ConversionValue',
-            Value: product.ConversionValue ? product.ConversionValue : 1,
-            isNum: true
-        }])
+        
         getFormular(product)
     }
     const getFormular = (product) => {
@@ -350,6 +326,34 @@ export default (props) => {
     }, [product])
     useEffect(() => {
         console.log('product Ol', productOl);
+        setAddDVT([{
+            Name: 'don_vi_tinh_lon',
+            Hint: 'nhap_don_vi_tinh_lon',
+            Key: 'LargeUnit',
+            Value: product.LargeUnit ? product.LargeUnit : '',
+            isNum: false
+        },
+        {
+            Name: 'ma_dvt_lon',
+            Hint: 'ma_don_vi_tinh_lon',
+            Key: 'LargeUnitId',
+            Value: productOl.LargeUnitCode ? productOl.LargeUnitCode : null,
+            isNum: false
+        },
+        {
+            Name: 'gia_ban_dvt_lon',
+            Hint: 'gia_ban_don_vi_tinh_lon',
+            Key: 'PriceLargeUnit',
+            Value: product.PriceLargeUnit ? product.PriceLargeUnit : 0,
+            isNum: true
+        },
+        {
+            Name: 'gia_tri_quy_doi',
+            Hint: 'gia_tri_quy_doi',
+            Key: 'ConversionValue',
+            Value: product.ConversionValue ? product.ConversionValue : 1,
+            isNum: true
+        }])
     }, [productOl])
 
     const clickOk = () => {
@@ -382,6 +386,13 @@ export default (props) => {
                             handleSuccess('them')
                         } else
                             props.handleSuccessTab('them', 1)
+                            addCate.current = [{
+                                Name: 'ten_nhom',
+                                Hint: 'nhap_ten_nhom_hang_hoa',
+                                Key: 'CategoryName',
+                                Value: '',
+                                isNum: false
+                            }]
                         getCategory()
                     }
                 }
@@ -540,7 +551,8 @@ export default (props) => {
     }
     const setLargeUnit = (data) => {
         console.log("data", data);
-        setProduct({ ...product, LargeUnit: data.LargeUnit, PriceLargeUnit: data.PriceLargeUnit, ConversionValue: data.ConversionValue })
+        setProduct({ ...product, LargeUnit: data.LargeUnit, PriceLargeUnit: data.PriceLargeUnit, ConversionValue: data.ConversionValue, LargeUnitId: data.LargeUnitId })
+        setProductOl({...productOl,LargeUnitCode:data.LargeUnitId})
         setOnShowModal(false)
     }
     const pickCategory = (data) => {
@@ -595,36 +607,36 @@ export default (props) => {
     }
     const onClickTakePhoto = () => {
         let options = {
-            mediaType:'photo',
-            cameraType:'front',
-            includeBase64:true,
-            saveToPhotos:true
-          };
-          launchImageLibrary(options, (response) => {
+            mediaType: 'photo',
+            cameraType: 'front',
+            includeBase64: true,
+            saveToPhotos: true
+        };
+        launchImageLibrary(options, (response) => {
             console.log('Response = ', response);
-      
+
             if (response.didCancel) {
-              console.log('User cancelled image picker');
+                console.log('User cancelled image picker');
             } else if (response.error) {
-              console.log('ImagePicker Error: ', response.error);
+                console.log('ImagePicker Error: ', response.error);
             } else if (response.customButton) {
-              console.log(
-                'User tapped custom button: ',
-                response.customButton
-              );
-              alert(response.customButton);
+                console.log(
+                    'User tapped custom button: ',
+                    response.customButton
+                );
+                alert(response.customButton);
             } else {
-              let source = response;
-              console.log("sourc",source);
-              //productOl.ProductImages[0].ImageURL
-              setProductOl({...productOl,ProductImages:[...ProductImages,{...ProductImages[0],ImageURL:source.uri}]})
-              // You can also display the image using data:
-              // let source = {
-              //   uri: 'data:image/jpeg;base64,' + response.data
-              // };
-              //setFilePath(source);
+                let source = response;
+                console.log("sourc", source);
+                //productOl.ProductImages[0].ImageURL
+                setProductOl({ ...productOl, ProductImages: [...ProductImages, { ...ProductImages[0], ImageURL: source.uri }] })
+                // You can also display the image using data:
+                // let source = {
+                //   uri: 'data:image/jpeg;base64,' + response.data
+                // };
+                //setFilePath(source);
             }
-          });
+        });
     }
     useFocusEffect(useCallback(() => {
 
@@ -741,7 +753,7 @@ export default (props) => {
             <ScrollView ref={scrollRef} >
                 <KeyboardAwareScrollView>
                     <View style={{ justifyContent: 'center', alignItems: 'center', padding: 20 }} >
-                        <TouchableOpacity onPress={()=>onClickTakePhoto()}>
+                        <TouchableOpacity onPress={() => onClickTakePhoto()}>
                             {productOl.ProductImages && (productOl.ProductImages).length > 0 ?
                                 <Image style={{ height: 70, width: 70, borderRadius: 16 }} source={{ uri: productOl.ProductImages[0].ImageURL }} />
                                 : product.Name ? <View style={{ width: 70, height: 70, justifyContent: 'center', alignItems: 'center', borderRadius: 16, backgroundColor: colors.colorchinh }}>
