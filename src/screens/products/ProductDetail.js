@@ -484,7 +484,7 @@ export default (props) => {
     const syncData = async () => {
         dialogManager.showLoading()
         try {
-            await realmStore.deleteProduct()
+            //await realmStore.deleteProduct()
             await dataManager.syncProduct()
         } catch (error) {
             console.log('handleSuccess err', error);
@@ -509,7 +509,8 @@ export default (props) => {
                             } else {
                                 setCodeProduct("")
                                 setProduct({ ...res, Code: "", Id: 0 })
-                                syncData()
+                                //syncData()
+                                props.route.params.onCallBack(type, 2)
                                 dialogManager.hiddenLoading()
                                 dialogManager.showPopupOneButton(`${I18n.t(type)} ${I18n.t('thanh_cong')}`, I18n.t('thong_bao'))
                                 setType('them')
@@ -593,19 +594,30 @@ export default (props) => {
         setCodeProduct(data)
     }
     const onClickTakePhoto = () => {
-        let options = {
-            title: 'Select Avatar',
-            cameraType: 'front',
-            mediaType: 'photo',
-            storageOptions: {
+        launchCamera = () => {
+            let options = {
+              storageOptions: {
                 skipBackup: true,
                 path: 'images',
-            },
-        };
-        ImagePicker.launchCamera(options, (response) => {
-            console.log('Response = ', response);
-
-        });
+              },
+            };
+            ImagePicker.launchCamera(options, (response) => {
+              console.log('Response = ', response);
+        
+              if (response.didCancel) {
+                console.log('User cancelled image picker');
+              } else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+              } else if (response.customButton) {
+                console.log('User tapped custom button: ', response.customButton);
+                alert(response.customButton);
+              } else {
+                const source = { uri: response.uri };
+                console.log('response', JSON.stringify(response));
+              }
+            });
+        
+          }
     }
     useFocusEffect(useCallback(() => {
 

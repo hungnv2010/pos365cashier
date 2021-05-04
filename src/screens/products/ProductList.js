@@ -36,7 +36,6 @@ export default (props) => {
     const [viewData, setViewData] = useState([])
     const productTmp = useRef([])
     useEffect(() => {
-        dialogManager.showLoading()
         getData()
         //dialogManager.hiddenLoading()
     }, [])
@@ -47,14 +46,15 @@ export default (props) => {
     });
     let categoryTmp = []
     const getData = async () => {
+        dialogManager.showLoading()
         try {
             let state = await NetInfo.fetch()
             if (state.isConnected == true && state.isInternetReachable == true) {
                 await realmStore.deleteProduct()
                 await dataManager.syncProduct()
                 getDataFromRealm()
-            }else
-            getDataFromRealm()
+            } else
+                getDataFromRealm()
             dialogManager.hiddenLoading()
         } catch (error) {
             console.log('handleSuccess err', error);
@@ -249,17 +249,21 @@ export default (props) => {
                                 showsHorizontalScrollIndicator={false}
                             /> : null}
                     </View>
-
-                    <FlatList
-                        data={listProduct}
-                        // onEndReachedThreshold={0.1}
-                        // onEndReached={filterMore}
-                        renderItem={({ item, index }) => renderProduct(item, index)}
-                        keyExtractor={(item, index) => index.toString()}
-                        // ListFooterComponent={loadMore ? <ActivityIndicator color={colors.colorchinh} /> : null}
-                        // onMomentumScrollBegin={() => { onEndReachedCalledDuringMomentum.current = false }}
-                        style={{}}
-                    />
+                    {listProduct.length > 0 ?
+                        <FlatList
+                            data={listProduct}
+                            // onEndReachedThreshold={0.1}
+                            // onEndReached={filterMore}
+                            renderItem={({ item, index }) => renderProduct(item, index)}
+                            keyExtractor={(item, index) => index.toString()}
+                            // ListFooterComponent={loadMore ? <ActivityIndicator color={colors.colorchinh} /> : null}
+                            // onMomentumScrollBegin={() => { onEndReachedCalledDuringMomentum.current = false }}
+                            style={{}}
+                        />
+                        : <View style={{flex:1,alignItems: 'center', justifyContent: 'center'}}>
+                        <Image source={Images.logo_365_long_color} style={{  }}></Image>
+                        </View>
+                    }
 
                     <FAB
                         style={styles.fab}
