@@ -134,6 +134,7 @@ export default (props) => {
                 await dataManager.syncProduct()
             } else if (value == 1) {
                 await dataManager.syncCategories()
+                setItProduct({...itproduct})
             }
             getData()
             dialogManager.showPopupOneButton(`${I18n.t(type1)} ${I18n.t('thanh_cong')}`, I18n.t('thong_bao'))

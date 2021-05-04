@@ -25,7 +25,7 @@ import dataManager from '../../data/DataManager';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useFocusEffect } from '@react-navigation/native';
 import ImagePicker from 'react-native-image-picker';
-import { launchCamera } from 'react-native-image-picker';
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 
 export default (props) => {
     const [product, setProduct] = useState({})
@@ -594,30 +594,37 @@ export default (props) => {
         setCodeProduct(data)
     }
     const onClickTakePhoto = () => {
-        launchCamera = () => {
-            let options = {
-              storageOptions: {
-                skipBackup: true,
-                path: 'images',
-              },
-            };
-            ImagePicker.launchCamera(options, (response) => {
-              console.log('Response = ', response);
-        
-              if (response.didCancel) {
-                console.log('User cancelled image picker');
-              } else if (response.error) {
-                console.log('ImagePicker Error: ', response.error);
-              } else if (response.customButton) {
-                console.log('User tapped custom button: ', response.customButton);
-                alert(response.customButton);
-              } else {
-                const source = { uri: response.uri };
-                console.log('response', JSON.stringify(response));
-              }
-            });
-        
-          }
+        let options = {
+            mediaType:'photo',
+            cameraType:'front',
+            includeBase64:true,
+            saveToPhotos:true
+          };
+          launchImageLibrary(options, (response) => {
+            console.log('Response = ', response);
+      
+            if (response.didCancel) {
+              console.log('User cancelled image picker');
+            } else if (response.error) {
+              console.log('ImagePicker Error: ', response.error);
+            } else if (response.customButton) {
+              console.log(
+                'User tapped custom button: ',
+                response.customButton
+              );
+              alert(response.customButton);
+            } else {
+              let source = response;
+              console.log("sourc",source);
+              //productOl.ProductImages[0].ImageURL
+              setProductOl({...productOl,ProductImages:[...ProductImages,{...ProductImages[0],ImageURL:source.uri}]})
+              // You can also display the image using data:
+              // let source = {
+              //   uri: 'data:image/jpeg;base64,' + response.data
+              // };
+              //setFilePath(source);
+            }
+          });
     }
     useFocusEffect(useCallback(() => {
 
@@ -734,7 +741,7 @@ export default (props) => {
             <ScrollView ref={scrollRef} >
                 <KeyboardAwareScrollView>
                     <View style={{ justifyContent: 'center', alignItems: 'center', padding: 20 }} >
-                        <TouchableOpacity >
+                        <TouchableOpacity onPress={()=>onClickTakePhoto()}>
                             {productOl.ProductImages && (productOl.ProductImages).length > 0 ?
                                 <Image style={{ height: 70, width: 70, borderRadius: 16 }} source={{ uri: productOl.ProductImages[0].ImageURL }} />
                                 : product.Name ? <View style={{ width: 70, height: 70, justifyContent: 'center', alignItems: 'center', borderRadius: 16, backgroundColor: colors.colorchinh }}>
