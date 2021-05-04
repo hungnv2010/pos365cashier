@@ -6,11 +6,11 @@ import { Constant } from '../../common/Constant';
 import { useSelector } from 'react-redux';
 import printService from '../../data/html/PrintService';
 const { Print } = NativeModules;
-import HtmlDefault from '../../data/html/htmlDefault';
 import ViewShot, { takeSnapshot, captureRef } from "react-native-view-shot";
 import AutoHeightWebView from 'react-native-autoheight-webview'
 import I18n from '../../common/language/i18n'
 import htmlKitchen from '../../data/html/htmlKitchen';
+import htmlDefault from '../../data/html/htmlDefault';
 
 export const TYPE_PRINT = {
     KITCHEN: "KITCHEN",
@@ -109,6 +109,11 @@ export default forwardRef((props, ref) => {
 
     const printProvisional = async (jsonContent, checkProvisional = false, imageQrBase64 = '', isPrintTest = false) => {
         let setting = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
+        let HtmlPrint = await getFileDuLieuString(Constant.HTML_PRINT, true)
+        if (HtmlPrint == undefined) {
+            setFileLuuDuLieu(Constant.HTML_PRINT, htmlDefault);
+            HtmlPrint = htmlDefault;
+        }
         if (setting && setting != "") {
             setting = JSON.parse(setting);
             console.log("savePrinter setting ", setting);
@@ -124,7 +129,7 @@ export default forwardRef((props, ref) => {
             console.log("printProvisional jsonContent numberLoop ", jsonContent);
             if (ipObject.ip != "") {
                 if (jsonContent.OrderDetails && jsonContent.OrderDetails.length > 0) {
-                    let res = await printService.GenHtml(HtmlDefault, jsonContent, imageQrBase64, checkProvisional)
+                    let res = await printService.GenHtml(HtmlPrint, jsonContent, imageQrBase64, checkProvisional)
                     if (res && res != "") {
                         let newRes = res.replace("</body>", "<p style='display: none;'>" + (new Date().getTime().toString()) + "</p> </body>");
                         let object = { html: newRes, ip: ipObject.ip, size: ipObject.size, isCopies: (setting.in_hai_lien_cho_hoa_don == true && !checkProvisional) };
