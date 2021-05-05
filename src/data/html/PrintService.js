@@ -98,8 +98,8 @@ class PrintService {
                 HTMLBase = HTMLBase.replace("{VAT%}", JsonContent.VATRates + "%")
                 HTMLBase = HTMLBase.replace("{Tong_Cong}", currencyToString(JsonContent.Total))
                 HTMLBase = HTMLBase.replace(/{Excess_Cash_Check}/g, (JsonContent.ExcessCash != 0) &&
-                    (JsonContent.TotalPayment != undefined && JsonContent.TotalPayment != "") ? "style='visibility: unset'" : "style='visibility: collapse; display: none'")
-                HTMLBase = HTMLBase.replace("{Tien_Khach_Dua}", JsonContent.TotalPayment != undefined && JsonContent.TotalPayment != "" ? currencyToString(JsonContent.TotalPayment) : "")
+                    (JsonContent.AmountReceived != undefined && JsonContent.AmountReceived != 0) ? "style='visibility: unset'" : "style='visibility: collapse; display: none'")
+                HTMLBase = HTMLBase.replace("{Tien_Khach_Dua}", JsonContent.AmountReceived != undefined && JsonContent.AmountReceived != 0 ? currencyToString(JsonContent.AmountReceived) : "")
                 HTMLBase = HTMLBase.replace("{Tien_Thua_Tra_Khach}", currencyToString(JsonContent.ExcessCash))
                 HTMLBase = HTMLBase.replace("{Ghi_Chu_Check}", JsonContent.Description && JsonContent.Description != "" ? "style='visibility: unset'" : "style='visibility: collapse; display: none'")
                 HTMLBase = HTMLBase.replace("{Ghi_Chu}", JsonContent.Description)

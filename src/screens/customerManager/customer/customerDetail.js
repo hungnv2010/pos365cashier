@@ -88,7 +88,8 @@ export default (props) => {
             Province: "",
             TotalDebt: 0,
             Point: 0,
-            Description: ""
+            Description: "",
+            Id: 0
         })
     }
 
@@ -343,7 +344,7 @@ export default (props) => {
                 selectedPartnerGroups: selectedPartnerGroups
             }
         }
-        if (props.customerDetail.Id == 0) {
+        if (customerDetail.Id == 0) {
             console.log('add');
             dialogManager.showLoading()
             new HTTPService().setPath(ApiPath.CUSTOMER).POST(params)

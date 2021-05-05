@@ -603,7 +603,7 @@ export default (props) => {
         let json = { ...jsonContent }
         let amountReceived = listMethod.reduce(getSumValue, 0);
         let paramMethod = []
-        console.log("onClickPay listMethod ", listMethod);
+        console.log("onClickPay amountReceived ", amountReceived);
         listMethod.forEach((element, index) => {
             let value = element.Value
             if (index == 0 && giveMoneyBack && amountReceived > json.Total) {
@@ -634,6 +634,7 @@ export default (props) => {
         json.TotalPayment = giveMoneyBack ? json.Total : amountReceived
         json.VATRates = json.VATRates
         json.AmountReceived = amountReceived
+        jsonContent.AmountReceived = amountReceived;
         json.Status = 2;
         json.SyncStatus = 0;
         if (noteInfo != '') {

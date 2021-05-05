@@ -38,13 +38,16 @@ export default function ToolBarPreviewHtml(props) {
                     <Subheading
                         numberOfLines={1}
                         style={{
-                            
+
                         }}
                     >
                         {props.title}
                     </Subheading>
                 </View>
                 <View style={{ flex: 1, alignItems: "center" }}>
+
+                </View>
+                {/* <View style={{ flex: 1, alignItems: "center" }}>
                     <TouchableOpacity onPress={props.clickPrint} style={{ height: "100%", width: 50, justifyContent: "center", alignItems: "center" }}>
                         <Text style={{ color: '#000', textTransform: "uppercase" }}>{I18n.t('in')}</Text>
                     </TouchableOpacity>
@@ -53,7 +56,7 @@ export default function ToolBarPreviewHtml(props) {
                     <TouchableOpacity onPress={props.clickCheck} style={{ height: "100%", width: 50, justifyContent: "center", alignItems: "center" }}>
                         <Icon delayPressIn={0} name="check" size={24} color="#000" />
                     </TouchableOpacity>
-                </View>
+                </View> */}
             </View>
         </View >
     )
@@ -66,8 +69,8 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         height: 44,
         backgroundColor: 'white',
-        zIndex: 99999999,borderBottomColor:'gray',
-        borderBottomWidth:0.5
+        zIndex: 99999999, borderBottomColor: 'gray',
+        borderBottomWidth: 0.5
     },
 })
 
