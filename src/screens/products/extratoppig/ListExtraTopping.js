@@ -115,7 +115,7 @@ export default (props) => {
                         <Icon name={'extension'} size={30} color={colors.colorchinh} />
                         <Text style={{ marginLeft: 10, textTransform: 'uppercase' }}>{item.Name}</Text>
                     </View>
-                    <View style={{ flex: 1.6,marginLeft:15 }}>
+                    <View style={{ flex: 1.6, marginLeft: 15,alignItems:'flex-end' }}>
                         <Text>{currencyToString(item.Price)}</Text>
                     </View>
                 </View>
@@ -147,11 +147,16 @@ export default (props) => {
                             horizontal={true}
                         />
                     </View>
-                    <FlatList
-                        data={listExtra}
-                        renderItem={({ item, index }) => renderExtra(item, index)}
-                        keyExtractor={(item, index) => index.toString()}
-                    />
+                    {listExtra.length > 0 ?
+                        <FlatList
+                            data={listExtra}
+                            renderItem={({ item, index }) => renderExtra(item, index)}
+                            keyExtractor={(item, index) => index.toString()}
+                        /> :
+                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', borderLeftWidth: 0.3 }}>
+                            <Image source={Images.logo_365_long_color} style={{ alignItems: 'center', justifyContent: 'center' }}></Image>
+                        </View>
+                    }
                     <FAB
                         style={styles.fab}
                         icon='plus'
@@ -160,7 +165,6 @@ export default (props) => {
                             onClickAdd({})
                         }}
                     />
-
                 </View>
 
                 <Modal

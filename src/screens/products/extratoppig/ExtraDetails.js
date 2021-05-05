@@ -18,7 +18,6 @@ import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 import { RadioButton } from 'react-native-paper'
 import dataManager from '../../../data/DataManager';
 import dialogManager from '../../../components/dialog/DialogManager';
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default (props) => {
     const [extraTopping, setExtraTopping] = useState({})
@@ -38,8 +37,8 @@ export default (props) => {
     }, [])
     useEffect(() => {
         if (deviceType == Constant.TABLET) {
-            setExtraTopping(props.data)
-            setCategory(props.cate)
+            setExtraTopping({...JSON.parse(JSON.stringify(props.data))})
+            setCategory([...JSON.parse(JSON.stringify(props.cate))])
         }
     }, [props.data, props.cate])
 
@@ -51,6 +50,7 @@ export default (props) => {
     }
     const onClickAdd = () => {
         setCategory([...category, textInput])
+        setExtraTopping({...extraTopping,ExtraGroup:textInput})
         setTextInput()
         setOnShowModal(false)
     }

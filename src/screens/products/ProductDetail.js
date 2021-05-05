@@ -629,12 +629,22 @@ export default (props) => {
                 let source = response;
                 console.log("sourc", source);
                 //productOl.ProductImages[0].ImageURL
-                setProductOl({ ...productOl, ProductImages: [...ProductImages, { ...ProductImages[0], ImageURL: source.uri }] })
+                //setProductOl({ ...productOl, ProductImages: [...ProductImages, { ...ProductImages[0], ImageURL: source.uri }] })
                 // You can also display the image using data:
                 // let source = {
                 //   uri: 'data:image/jpeg;base64,' + response.data
                 // };
                 //setFilePath(source);
+                // GDrive.files.createFileMultipart(
+                //     response.base64,
+                //     "'image/jpg'", {
+                //     parents: ["root"], //or any path
+                //     name: response.fileName
+                //   },
+                //     true)              //make it true because you are passing base64 string otherwise the uploaded file will be not supported
+                //      .then(a=>{
+                //     console.log(a);
+                //   });
             }
         });
     }else {
