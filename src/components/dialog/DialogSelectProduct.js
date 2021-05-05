@@ -49,8 +49,8 @@ export default (props) => {
                                 <View style={{marginRight:10,flex:4,flexDirection:'row'}}>
                                 <Text>{item.Name}</Text>
                                 </View>
-                                <View style={{flex:1,flexDirection:'row'}}>
-                                <Text>{item.Price}</Text>
+                                <View style={{flex:1.8,flexDirection:'row'}}>
+                                <Text>{currencyToString(item.Price)}</Text>
                                 </View>
                             </TouchableOpacity>
                         </View>)

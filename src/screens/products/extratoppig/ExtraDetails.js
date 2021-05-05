@@ -1,6 +1,7 @@
-import React, { useState, useCallback, useEffect, useImperativeHandle, forwardRef, useRef } from 'react';
-import { Image, View, StyleSheet, Button, Text, TouchableOpacity, RefreshControl, ScrollView, TouchableWithoutFeedback, Modal } from 'react-native';
+import React, { useState, useCallback, useEffect, forwardRef, useRef } from 'react';
+import { Image, View, StyleSheet, Button, Text, TouchableOpacity, Platform, ScrollView, TouchableWithoutFeedback, Modal, Keyboard } from 'react-native';
 import { Images, Colors, Metrics } from '../../../theme';
+import { useFocusEffect } from '@react-navigation/native';
 import I18n from '../../../common/language/i18n';
 import { useSelector } from 'react-redux';
 import colors from '../../../theme/Colors';
@@ -17,6 +18,7 @@ import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 import { RadioButton } from 'react-native-paper'
 import dataManager from '../../../data/DataManager';
 import dialogManager from '../../../components/dialog/DialogManager';
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default (props) => {
     const [extraTopping, setExtraTopping] = useState({})
@@ -25,6 +27,7 @@ export default (props) => {
     const modalType = useRef()
     const [textInput, setTextInput] = useState()
     const [defaultGroup, setDefaultGroup] = useState()
+    const [marginModal, setMargin] = useState(0)
     const deviceType = useSelector(state => {
         return state.Common.deviceType
     });
@@ -57,6 +60,26 @@ export default (props) => {
     const onClickSubmit = () => {
         setExtraTopping({ ...extraTopping, ExtraGroup: defaultGroup })
         setOnShowModal(false)
+    }
+    useFocusEffect(useCallback(() => {
+
+        var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
+        var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        }
+
+
+    }, []))
+
+    const _keyboardDidShow = () => {
+        setMargin(Metrics.screenWidth / 2)
+    }
+
+    const _keyboardDidHide = () => {
+        setMargin(0)
     }
     const onChangeTextInput = (text) => {
         console.log("onChangeTextInput text ===== ", text, props.route);
@@ -120,8 +143,8 @@ export default (props) => {
             <View style={{ backgroundColor: '#fff', borderRadius: 5 }}>
                 {modalType.current == 1 ?
                     <View style={{ flexDirection: 'column', padding: 10 }}>
-                        <Text style={{ fontSize: 16, fontWeight: 'bold', textAlign: 'center' }}>{I18n.t('them_moi_nhom')}</Text>
-                        <TextInput style={{ paddingVertical: 15, fontSize: 14, paddingHorizontal: 10 }} value={textInput} placeholder={I18n.t('nhap_ten_nhom')} onChangeText={(text) => setTextInput(text)}></TextInput>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', textAlign: 'center' ,paddingVertical:10}}>{I18n.t('them_moi_nhom')}</Text>
+                        <TextInput style={{ paddingVertical: 15, fontSize: 14, paddingHorizontal: 10,color:'#000',backgroundColor:'#f2f2f2',borderRadius:10 }} value={textInput} placeholder={I18n.t('nhap_ten_nhom')} onChangeText={(text) => setTextInput(text)}></TextInput>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10 }}>
                             <View style={{ flex: 1 }}></View>
                             <View style={{ flexDirection: 'row', flex: 1, paddingVertical: 10 }}>
@@ -229,7 +252,7 @@ export default (props) => {
                         }}></View>
 
                     </TouchableWithoutFeedback>
-                    <View style={{ width: Metrics.screenWidth * 0.8 }}>
+                    <View style={{ width: Metrics.screenWidth * 0.8 ,marginBottom: Platform.OS == 'ios' ? marginModal : 0 }}>
                         {renderModal()}
                     </View>
                 </View>

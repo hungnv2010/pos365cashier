@@ -199,7 +199,7 @@ export default (props) => {
                             <Text style={{ borderRadius: 5, color: colors.colorLightBlue }}>{item.Code}</Text>
                         </View>
                         <View style={{ borderRadius: 5, }}>
-                            <Text style={{ color: item.OnHand > 0 && item.ProductType != 2 ? colors.colorLightBlue : colors.colorchinh, padding: 2 }}>{item.ProductType != 2 ? 'Tồn kho: ' + currencyToString(item.OnHand) : '---'}</Text>
+                            <Text style={{ color: item.OnHand > 0 && item.ProductType != 2 ? colors.colorLightBlue : colors.colorchinh, padding: 2 }}>{item.ProductType == 2 || item.ProductType == 3 ? '---' : 'Tồn kho: ' + currencyToString(item.OnHand)}</Text>
                             {/* <Text style={{ color: colors.colorchinh }}>{item.ProductType ? item.ProductType == 1 ? I18n.t('hang_hoa') : item.ProductType == 2 ? I18n.t('dich_vu') : item.ProductType == 3 ? 'Combo' : '' : ''}</Text> */}
                         </View>
                     </View>

@@ -110,6 +110,8 @@ export default {
   chi_tiet_nhap_hang: 'Orderstock details',
   chinh_sua_nhap_hang: 'Edit orderstock',
   chon_nha_cung_cap:'Choose suplier',
+  chup_moi:'New picture',
+  chon_tu_thu_vien:'Choose libs',
 
   // TODO: D 
 

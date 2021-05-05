@@ -55,7 +55,7 @@ export default (props) => {
     const [cost, setCost] = useState(0)
     const isCoppy = useRef(false)
     const [marginModal, setMargin] = useState(0)
-    const [largeUnitCode, setLargeUnitCode] = useState()
+    const [isTakePhoto, setIsTakePhoto] = useState(true)
     const addCate = useRef([{
         Name: 'ten_nhom',
         Hint: 'nhap_ten_nhom_hang_hoa',
@@ -284,8 +284,7 @@ export default (props) => {
                     if (nameCategory == null) {
                         setNameCategory(res.results[0].Category && res.results[0].Category.Name ? res.results[0].Category.Name : '')
                         setCost(res.results[0].Cost)
-                        console.log("largeUnitCode",res.results[0].LargeUnitCode);
-                        setLargeUnitCode(res.results[0].LargeUnitCode ? res.results[0].largeUnitCode : null)
+                        console.log("largeUnitCode", res.results[0].LargeUnitCode);
                     }
 
                     console.log("add dvt", addDVT.current);
@@ -299,7 +298,7 @@ export default (props) => {
         } else {
             setProductOl({})
         }
-        
+
         getFormular(product)
     }
     const getFormular = (product) => {
@@ -362,6 +361,13 @@ export default (props) => {
     }
 
     const addCategory = async (data) => {
+        addCate.current = [{
+            Name: 'ten_nhom',
+            Hint: 'nhap_ten_nhom_hang_hoa',
+            Key: 'CategoryName',
+            Value: '',
+            isNum: false
+        }]
         console.log(data);
         let param = {
             Category: {
@@ -386,13 +392,6 @@ export default (props) => {
                             handleSuccess('them')
                         } else
                             props.handleSuccessTab('them', 1)
-                            addCate.current = [{
-                                Name: 'ten_nhom',
-                                Hint: 'nhap_ten_nhom_hang_hoa',
-                                Key: 'CategoryName',
-                                Value: '',
-                                isNum: false
-                            }]
                         getCategory()
                     }
                 }
@@ -552,7 +551,7 @@ export default (props) => {
     const setLargeUnit = (data) => {
         console.log("data", data);
         setProduct({ ...product, LargeUnit: data.LargeUnit, PriceLargeUnit: data.PriceLargeUnit, ConversionValue: data.ConversionValue, LargeUnitId: data.LargeUnitId })
-        setProductOl({...productOl,LargeUnitCode:data.LargeUnitId})
+        setProductOl({ ...productOl, LargeUnitCode: data.LargeUnitId })
         setOnShowModal(false)
     }
     const pickCategory = (data) => {
@@ -612,6 +611,7 @@ export default (props) => {
             includeBase64: true,
             saveToPhotos: true
         };
+        if(isTakePhoto == false){
         launchImageLibrary(options, (response) => {
             console.log('Response = ', response);
 
@@ -637,6 +637,31 @@ export default (props) => {
                 //setFilePath(source);
             }
         });
+    }else {
+        launchCamera(options, (response) => {
+            console.log('Response = ', response);
+
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            } else if (response.customButton) {
+                console.log(
+                    'User tapped custom button: ',
+                    response.customButton
+                );
+                alert(response.customButton);
+            } else {
+                let source = response;
+                console.log("sourc", source);
+                // You can also display the image using data:
+                // let source = {
+                //   uri: 'data:image/jpeg;base64,' + response.data
+                // };
+                //setFilePath(source);
+            }
+        });
+    }
     }
     useFocusEffect(useCallback(() => {
 
@@ -733,7 +758,30 @@ export default (props) => {
                             :
                             typeModal.current == 5 ?
                                 <DialogSettingTime type1={priceConfig && priceConfig.Type != '' ? priceConfig.Type : null} type2={priceConfig && priceConfig.Type2 != '' ? priceConfig.type2 : null} priceConfig={priceConfig ? priceConfig : null} putData={getDataTime} />
-                                : null
+                                : typeModal.current == 6 ?
+                                    <View style={{ backgroundColor: '#fff', borderRadius: 10 }}>
+                                        <Text style={{ padding: 10, fontWeight: 'bold', color: colors.colorchinh }}>{I18n.t('chon_nhom')}</Text>
+                                        <TouchableOpacity style={{ paddingHorizontal: 10, paddingVertical: 5, flexDirection: 'row', alignItems: 'center' }} onPress={() => setIsTakePhoto(true)}>
+                                            <Icon name={isTakePhoto == true ? 'radiobox-marked' : 'radiobox-blank'} size={20} />
+                                            <Text style={{ marginLeft: 10 }}>{I18n.t('chup_moi')}</Text>
+                                        </TouchableOpacity>
+                                        <TouchableOpacity style={{ paddingHorizontal: 10, paddingVertical: 5, flexDirection: 'row', alignItems: 'center' }} onPress={() => setIsTakePhoto(false)}>
+                                            <Icon name={isTakePhoto == false ? 'radiobox-marked' : 'radiobox-blank'} size={20} />
+                                            <Text style={{ marginLeft: 10 }}>{I18n.t('chon_tu_thu_vien')}</Text>
+                                        </TouchableOpacity>
+                                        <View style={{ flexDirection: 'row', paddingVertical: 10, paddingHorizontal: 10 }}>
+                                            <View style={{ flex: 1 }}></View>
+                                            <View style={{ flex: 1, flexDirection: 'row' }}>
+                                                <TouchableOpacity style={{ borderRadius: 10, borderWidth: 1, borderColor: colors.colorchinh, flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 10, marginRight: 10 }} onPress={() => setOnShowModal(false)}>
+                                                    <Text style={{ color: colors.colorchinh }}>{I18n.t('huy')}</Text>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center', flex: 1, backgroundColor: colors.colorchinh, borderRadius: 10, paddingVertical: 10, marginLeft: 10 }} onPress={() => { setOnShowModal(false), onClickTakePhoto() }}>
+                                                    <Text style={{ color: '#fff' }}>{I18n.t('dong_y')}</Text>
+                                                </TouchableOpacity>
+                                            </View>
+                                        </View>
+                                    </View>
+                                    : null
             }
             </View>
         )
@@ -753,7 +801,7 @@ export default (props) => {
             <ScrollView ref={scrollRef} >
                 <KeyboardAwareScrollView>
                     <View style={{ justifyContent: 'center', alignItems: 'center', padding: 20 }} >
-                        <TouchableOpacity onPress={() => onClickTakePhoto()}>
+                        <TouchableOpacity onPress={() => { typeModal.current = 6, setOnShowModal(true) }}>
                             {productOl.ProductImages && (productOl.ProductImages).length > 0 ?
                                 <Image style={{ height: 70, width: 70, borderRadius: 16 }} source={{ uri: productOl.ProductImages[0].ImageURL }} />
                                 : product.Name ? <View style={{ width: 70, height: 70, justifyContent: 'center', alignItems: 'center', borderRadius: 16, backgroundColor: colors.colorchinh }}>
