@@ -204,7 +204,7 @@ export default (props) => {
             </View>{
                 deviceType == Constant.TABLET ?
                     <View style={{ flex: 1 }}>
-                        {listExtra.length > 0 ?
+                        {listExtra.length > 0 && iExtra.Id?
                             <ExtraDetails data={iExtra} handleSuccessTab={handleSuccess} cate={iCate} />
                             :
                             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', borderLeftWidth: 0.3 }}>
