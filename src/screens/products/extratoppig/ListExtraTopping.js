@@ -195,7 +195,7 @@ export default (props) => {
                             }}></View>
 
                         </TouchableWithoutFeedback>
-                        <View style={{ width: Metrics.screenWidth * 0.8, height: Metrics.screenHeight * 0.6, alignItems: 'center' }}>
+                        <View style={{ width: Metrics.screenWidth * 0.8, height: Metrics.screenHeight * 0.6, alignItems: 'center',justifyContent:'center' }}>
                             <DialogSelectProduct outPut={outputAddExtra} />
                         </View>
                     </View>

@@ -122,7 +122,7 @@ export default (props) => {
         console.log("type", type1);
         dialogManager.showLoading()
         try {
-            setCategory([])
+            //setCategory([])
             //setItProduct({})
             if (value == 2) {
                 if (data) {
@@ -134,7 +134,8 @@ export default (props) => {
                 await dataManager.syncProduct()
             } else if (value == 1) {
                 await dataManager.syncCategories()
-                setItProduct({...itproduct})
+                setItProduct({...itProduct})
+                console.log("abcdef");
             }
             getData()
             dialogManager.showPopupOneButton(`${I18n.t(type1)} ${I18n.t('thanh_cong')}`, I18n.t('thong_bao'))
@@ -214,7 +215,7 @@ export default (props) => {
         dialogManager.showLoading()
         console.log("input", input);
         if (input != '') {
-            setListProduct(productTmp.current.filter(item => change_alias(item.Name).indexOf(change_alias(input)) > -1 || change_alias(change_search(item.Name)).indexOf(change_alias(input)) > -1))
+            setListProduct(productTmp.current.filter(item => change_alias(item.Name).indexOf(change_alias(input)) > -1 || change_alias(change_search(item.Name)).indexOf(change_alias(input)) > -1 || (item.Code).toUpperCase().indexOf(input.toUpperCase()) > -1))
             dialogManager.hiddenLoading()
         } else {
             setListProduct(productTmp.current)

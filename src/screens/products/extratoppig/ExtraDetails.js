@@ -216,11 +216,11 @@ export default (props) => {
                 <Text style={styles.styleTitle}>{I18n.t('gia_ban')}</Text>
                 <TextInput style={styles.styleTextInput} value={currencyToString(extraTopping.Price)} keyboardType={'numbers-and-punctuation'} onChangeText={(text) => setExtraTopping({ ...extraTopping, Price: onChangeTextInput(text) })} />
             </View>
-            <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-                <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, padding: 8, flex: 1, marginRight: 2, alignItems: 'center', justifyContent: 'center' }} onPress={() => onClickDel()}>
+            <View style={{ flexDirection: 'row', alignItems: 'flex-end',paddingHorizontal:2,marginBottom:5 }}>
+                <TouchableOpacity style={{ backgroundColor: '#f21e3c',borderRadius:5, paddingHorizontal:5,paddingVertical:8, flex: 1, marginRight: 1, alignItems: 'center', justifyContent: 'center' }} onPress={() => onClickDel()}>
                     <IconMaterial name={'delete'} color={'#fff'} size={24} />
                 </TouchableOpacity>
-                <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, padding: 10, flex: 8, marginLeft: 2, justifyContent: 'center', alignItems: 'center' }} onPress={() => onClickSubmitUpdate()}>
+                <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, padding: 10, flex: 9, marginLeft: 1, justifyContent: 'center', alignItems: 'center',borderRadius:5 }} onPress={() => onClickSubmitUpdate()}>
                     <Text style={{ fontWeight: 'bold', color: '#fff', fontSize: 16 }}>{I18n.t('xong')}</Text>
                 </TouchableOpacity>
             </View>
