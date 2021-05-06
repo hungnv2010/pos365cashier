@@ -114,6 +114,7 @@ export default forwardRef((props, ref) => {
             setFileLuuDuLieu(Constant.HTML_PRINT, htmlDefault);
             HtmlPrint = htmlDefault;
         }
+        // HtmlPrint = htmlDefault;
         if (setting && setting != "") {
             setting = JSON.parse(setting);
             console.log("savePrinter setting ", setting);
@@ -265,7 +266,7 @@ export default forwardRef((props, ref) => {
                         }}>
                         <AutoHeightWebView
                             scrollEnabled={false}
-                            style={{ backgroundColor: "#ffffff", width: deviceType == Constant.PHONE ? (orientation == Constant.PORTRAIT ? Dimensions.get('window').width / 1.4 : Dimensions.get('window').width / 2.5) : (orientation == Constant.PORTRAIT ? Dimensions.get('window').width / 3 : Dimensions.get('window').height / 3) }}
+                            style={{ backgroundColor: "#ffffff", width: deviceType == Constant.PHONE ? (orientation == Constant.PORTRAIT ? Dimensions.get('window').width / 1.35 : Dimensions.get('window').width / 2.5) : (orientation == Constant.PORTRAIT ? Dimensions.get('window').width / 3 : Dimensions.get('window').height / 3) }}
                             // customScript={`document.body.style.background = 'red';`}
                             files={[{
                                 href: 'cssfileaddress',
