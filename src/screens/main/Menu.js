@@ -217,7 +217,7 @@ const HeaderComponent = (props) => {
         setListBranch([...listBranch])
     }
 
-    const onDoneClickItemBranch = () => {
+    const onDoneClickItemBranch = async () => {
         let selectBranch = listBranch.filter(item => item.checked)
         selectBranch = selectBranch.length > 0 ? selectBranch[0] : {}
         if (Branch.Id == selectBranch.Id) {
@@ -229,6 +229,7 @@ const HeaderComponent = (props) => {
         new HTTPService().setPath(ApiPath.CHANGE_BRANCH).GET(params).then(async (res) => {
             console.log("onClickItemBranch res ", res);
             if (res) {
+                await realmStore.deleteAllForFnb()
                 setFileLuuDuLieu(Constant.CURRENT_BRANCH, JSON.stringify(selectBranch));
                 setBranch(selectBranch)
                 dispatch({ type: 'IS_FNB', isFNB: null })
@@ -490,28 +491,39 @@ const ContentComponent = (props) => {
         props.navigation.closeDrawer();
     }
     const clickRightIcon = async () => {
-        NetInfo.fetch().then(async state => {
-            if (!(state.isConnected == true && state.isInternetReachable == true)) {
-                dialogManager.showPopupOneButton(I18n.t('loi_ket_noi_mang'), I18n.t('thong_bao'), () => {
-                    dialogManager.destroy();
-                }, null, null, I18n.t('dong'))
-                return;
-            } else {
-                // dialogManager.showLoading()
-                dispatch({ type: 'ALREADY', already: false })
-                await realmStore.deleteAllForFnb()
-                await dataManager.syncAllDatas()
-                dispatch({ type: 'ALREADY', already: true })
-                dialogManager.hiddenLoading()
-                console.log("FNB");
-            }
-        });
-        // dialogManager.showLoading()
-        // dispatch({ type: 'ALREADY', already: false })
-        // await realmStore.deleteAllForFnb()
-        // await dataManager.syncAllDatas()
-        // dispatch({ type: 'ALREADY', already: true })
-        // dialogManager.hiddenLoading()
+        let state = await NetInfo.fetch()
+        if (state.isConnected == true && state.isInternetReachable == true) {
+            // dialogManager.showLoading()
+            dispatch({ type: 'ALREADY', already: false })
+            await dataManager.syncServerEvent()
+            await realmStore.deleteAllForFnb(false)
+            await dataManager.syncAllDatas()
+            dispatch({ type: 'ALREADY', already: true })
+            dialogManager.hiddenLoading()
+            console.log("FNB");
+        } else {
+            dialogManager.showPopupOneButton(I18n.t('loi_ket_noi_mang'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
+            return;
+        }
+        // NetInfo.fetch().then(async state => {
+        //     if (!(state.isConnected == true && state.isInternetReachable == true)) {
+        // dialogManager.showPopupOneButton(I18n.t('loi_ket_noi_mang'), I18n.t('thong_bao'), () => {
+        //     dialogManager.destroy();
+        // }, null, null, I18n.t('dong'))
+        // return;
+        //     } else {
+        //         // dialogManager.showLoading()
+        //         dispatch({ type: 'ALREADY', already: false })
+        //         await dataManager.syncServerEvent()
+        //         await realmStore.deleteAllForFnb(false)
+        //         await dataManager.syncAllDatas()
+        //         dispatch({ type: 'ALREADY', already: true })
+        //         dialogManager.hiddenLoading()
+        //         console.log("FNB");
+        //     }
+        // });
     }
 
     const _renderItem = (chucnang = {}, indexchucnnag = 0) => {

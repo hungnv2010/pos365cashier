@@ -32,13 +32,13 @@ export default (props) => {
                 if (item.ExtraGroup !== '' && newCategories.filter(cate => cate.Name == item.ExtraGroup).length == 0) {
                     newCategories.push({ Id: item.Id, Name: item.ExtraGroup })
                 }
-                newTopping.push({ ...JSON.parse(JSON.stringify(item)), Quantity: 0 })
+                newTopping.push({ ...JSON.parse(JSON.stringify(item)), QuantityExtra: 0 })
             })
 
             newTopping.forEach(top => {
                 toppingIntial.forEach(ls => {
                     if (top.ExtraId == ls.ExtraId) {
-                        top.Quantity = ls.Quantity
+                        top.QuantityExtra = ls.QuantityExtra
                     }
                 })
             })
@@ -62,25 +62,25 @@ export default (props) => {
     }, [listCateId])
 
     const getTotalPrice = () => {
-        let priceTotal = topping.reduce((accumulator, currentValue) => accumulator + currentValue.Price * currentValue.Quantity, 0)
+        let priceTotal = topping.reduce((accumulator, currentValue) => accumulator + currentValue.Price * currentValue.QuantityExtra, 0)
         return priceTotal
     }
 
     const handleButtonDecrease = (item, index) => {
-        topping[index].Quantity += 1;
+        topping[index].QuantityExtra += 1;
         setTopping([...topping])
     }
 
     const handleButtonIncrease = (item, index) => {
-        if (item.Quantity == 0) {
+        if (item.QuantityExtra == 0) {
             return
         }
-        topping[index].Quantity -= 1;
+        topping[index].QuantityExtra -= 1;
         setTopping([...topping])
     }
 
     const saveListTopping = () => {
-        let ls = toppingRef.current.filter(item => item.Quantity > 0)
+        let ls = toppingRef.current.filter(item => item.QuantityExtra > 0)
         ls = JSON.parse(JSON.stringify(ls))
         navigationBack(ls)
     }
@@ -102,7 +102,7 @@ export default (props) => {
 
     const renderTopping = (item, index) => {
         return (
-            <View key={item.Id} style={[styles.toppingItem, { backgroundColor: item.Quantity > 0 ? "#EED6A7" : "white" }]}>
+            <View key={item.Id} style={[styles.toppingItem, { backgroundColor: item.QuantityExtra > 0 ? "#EED6A7" : "white" }]}>
                 <View style={{ flex: 3, paddingRight: 10 }}>
                     <Text numberOfLines={2} style={{}}>{item.Name}</Text>
                     <Text numberOfLines={2} style={{ fontStyle: "italic", fontSize: 13, color: "gray" }}>{currencyToString(item.Price)}</Text>
@@ -111,7 +111,7 @@ export default (props) => {
                     <TouchableOpacity onPress={() => { handleButtonIncrease(item, index) }}>
                         <Text style={styles.button}>-</Text>
                     </TouchableOpacity>
-                    <Text>{item.Quantity}</Text>
+                    <Text>{item.QuantityExtra}</Text>
                     <TouchableOpacity onPress={() => { handleButtonDecrease(item, index) }}>
                         <Text style={styles.button}>+</Text>
                     </TouchableOpacity>

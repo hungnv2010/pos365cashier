@@ -8,7 +8,6 @@ import { decodeBase64, encodeBase64 } from './Base64'
 import I18n from '../common/language/i18n'
 import dialogManager from '../components/dialog/DialogManager';
 import NetInfo from "@react-native-community/netinfo";
-import dataManager from '../data/DataManager';
 import { HTTPService } from '../data/services/HttpService';
 import { ApiPath } from '../data/services/ApiPath';
 
@@ -91,73 +90,29 @@ class SignalRManager {
 
     async syncData() {
         dialogManager.showLoading()
-        let listDifferentFromSv = []
-        listDifferentFromLocal = []
         let svFromSv = await new HTTPService().setPath(ApiPath.SERVER_EVENT, false).GET()
-        let svFromLocal = await realmStore.queryServerEvents()
-        svFromLocal = JSON.parse(JSON.stringify(svFromLocal))
-        svFromLocal = Object.values(svFromLocal)
-        if (svFromSv.length > 0 && svFromLocal.length > 0) {
-            svFromSv.forEach(item => {
-                svFromLocal.forEach(elm => {
-                    if (item.RowKey == elm.RowKey) {
-                        if (item.Version > elm.Version) {
-                            listDifferentFromSv.push(item)
-                        }
-                        if (item.Version < elm.Version) {
-                            listDifferentFromLocal.push(elm)
-                        }
-                    }
-                })
+        let listDifferentFromSv = []
+        if (svFromSv && svFromSv.length > 0) {
+            await realmStore.insertServerEvents(svFromSv).subscribe((res) => {
+                if (!res.result) {
+                    let serverEvent = JSON.parse(JSON.stringify(res.serverEvent))
+                    serverEvent.isSend = true
+                    realmStore.insertServerEvent(serverEvent)
+                }
             })
         }
-
-        if (listDifferentFromSv && listDifferentFromSv.length > 0) realmStore.insertServerEvents(listDifferentFromSv).subscribe(res => { })
-        if (listDifferentFromLocal && listDifferentFromLocal.length > 0) {
-            for (let index = 0; index < listDifferentFromLocal.length; index++) {
-                // this.sendMessageServerEvent(listDifferentFromLocal[index])
-                let serverEvent = listDifferentFromLocal[index]
-                delete serverEvent.Timestamp
-                this.sendMessage(serverEvent)
-
+        // console.log('listDifferentFromSv', listDifferentFromSv);
+        if (listDifferentFromSv.length > 0) {
+            // listDifferentFromSv.forEach(item => { item.isSend = true })
+            // await realmStore.insertServerEvents(listDifferentFromSv).subscribe(res => { })
+            for (let index = 0; index < listDifferentFromSv.length; index++) {
+                let serverEvent = listDifferentFromSv[index]
+                signalRManager.sendMessageServerEventNow(serverEvent)
             }
         }
         dialogManager.hiddenLoading()
     }
 
-    async syncFromLocal() {
-        console.log('syncFromLocal');
-        dialogManager.showLoading()
-        let allServerEvent = await realmStore.queryServerEvents()
-        allServerEvent = JSON.parse(JSON.stringify(allServerEvent))
-        for (const sv in allServerEvent) {
-            let serverEvent = allServerEvent[sv]
-            let jsonContentObj = JSON.parse(serverEvent.JsonContent)
-            jsonContentObj.OrderDetails.forEach(product => {
-                delete product.ProductImages
-                if (isNaN(product.Quantity)) {
-                    product.Quantity = 0;
-                }
-            });
-            serverEvent.JsonContent = JSON.stringify(jsonContentObj)
-            this.sendMessageServerEventNow(serverEvent)
-        }
-        dialogManager.hiddenLoading()
-    }
-
-    async getAllData() {
-
-        dialogManager.showLoading()
-        store.dispatch({ type: 'ALREADY', already: false })
-        NetInfo.fetch().then(async state => {
-            if (state.isConnected == true && state.isInternetReachable == true) {
-                await realmStore.deleteAllForFnb()
-            }
-        });
-        await dataManager.syncAllDatas()
-        store.dispatch({ type: 'ALREADY', already: true })
-        dialogManager.hiddenLoading()
-    }
 
     startSignalR(callback = () => { }) {
         this.connectionHub.start()

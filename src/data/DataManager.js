@@ -318,10 +318,29 @@ class DataManager {
 
     //Synchoronous
     syncServerEvent = async () => {
-        let res = await new HTTPService().setPath(ApiPath.SERVER_EVENT, false).GET()
-
-        if (res && res.length > 0)
-            realmStore.insertServerEvents(res).subscribe((res, serverEvent) => { })
+        let svFromSv = await new HTTPService().setPath(ApiPath.SERVER_EVENT, false).GET()
+        let listDifferentFromSv = []
+        if (svFromSv && svFromSv.length > 0) {
+            await realmStore.insertServerEvents(svFromSv).subscribe((res) => {
+                if (!res.result) {
+                    let serverEvent = JSON.parse(JSON.stringify(res.serverEvent))
+                    console.log('syncServerEvent', serverEvent);
+                    serverEvent.isSend = true
+                    realmStore.insertServerEvent(serverEvent)
+                }
+            })
+        }
+        // console.log('listDifferentFromSv', listDifferentFromSv);
+        if (listDifferentFromSv.length > 0) {
+            // listDifferentFromSv.forEach(item => { item.isSend = true })
+            // await realmStore.insertServerEvents(listDifferentFromSv).subscribe(res => {
+            //     console.log('listDifferentFromSv_insertServerEvents', res);
+            // })
+            for (let index = 0; index < listDifferentFromSv.length; index++) {
+                let serverEvent = listDifferentFromSv[index]
+                signalRManager.sendMessageServerEventNow(serverEvent)
+            }
+        }
     }
 
     syncProduct = async () => {
@@ -402,7 +421,7 @@ class DataManager {
     syncAllDatas = async () => {
         await this.syncProduct(),
             await this.syncTopping(),
-            await this.syncServerEvent(),
+            // await this.syncServerEvent(),
             await this.syncRooms(),
             await this.syncPartner(),
             await this.syncCategories()

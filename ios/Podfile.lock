@@ -229,6 +229,8 @@ PODS:
     - React
   - react-native-date-picker (3.2.5):
     - React-Core
+  - react-native-image-picker (3.5.0):
+    - React-Core
   - react-native-netinfo (5.9.4):
     - React
   - react-native-safe-area-context (0.7.3):
@@ -342,6 +344,7 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-camera (from `../node_modules/react-native-camera`)
   - react-native-date-picker (from `../node_modules/react-native-date-picker`)
+  - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-view-shot (from `../node_modules/react-native-view-shot`)
@@ -445,6 +448,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-camera"
   react-native-date-picker:
     :path: "../node_modules/react-native-date-picker"
+  react-native-image-picker:
+    :path: "../node_modules/react-native-image-picker"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
   react-native-safe-area-context:
@@ -540,6 +545,7 @@ SPEC CHECKSUMS:
   React-jsinspector: fa0ecc501688c3c4c34f28834a76302233e29dc0
   react-native-camera: 9e3d60336e221d62e5b72adf551ca31ff74a94b5
   react-native-date-picker: 7b03feaea96db983f1de449e9d6d1dea4fa61010
+  react-native-image-picker: 189e8d3653b00442cb790bce09a283edaf8e02b6
   react-native-netinfo: eed0fb1d6a9424e98ce686f92aad62ff427d4bc9
   react-native-safe-area-context: 8260e5157617df4b72865f44006797f895b2ada7
   react-native-view-shot: 08c46c9e8e92f6681e8f2ffa55ac3d06e7e99070
@@ -572,4 +578,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 8c6781225775f597b268418e423b4ccb8bbcda9b
 
-COCOAPODS: 1.8.4
+COCOAPODS: 1.9.3

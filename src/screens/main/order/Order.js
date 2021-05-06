@@ -23,6 +23,8 @@ import moment from 'moment';
 import Menu from 'react-native-material-menu';
 import useDebounce from '../../../customHook/useDebounce';
 import { useFocusEffect } from '@react-navigation/native';
+import signalRManager from '../../../common/SignalR';
+import dataManager from '../../../data/DataManager';
 
 const _nodes = new Map();
 
@@ -32,6 +34,7 @@ export default (props) => {
     const [loadDone, setLoadDone] = useState(false)
     const [textSearch, setTextSearch] = useState(() => props.textSearch)
     const debouncedVal = useDebounce(textSearch)
+    const idInterval = useRef(null)
     const { already } = useSelector(state => {
         return state.Common
     });
@@ -49,6 +52,7 @@ export default (props) => {
     let rooms = null
     let roomGroups = null
     let serverEvents = null
+    let isSendServer = null
     let updateTime = null
     const [datas, setData] = useState([])
     const [valueAll, setValueAll] = useState({})
@@ -75,6 +79,7 @@ export default (props) => {
     );
 
     useEffect(() => {
+        console.log('alreadyalreadyalready', already);
         if (!already) return
         const init = async () => {
             rooms = await realmStore.queryRooms()
@@ -83,6 +88,8 @@ export default (props) => {
             roomGroups = roomGroups.sorted('Id')
             //roomGroups.push(RoomAll)
             serverEvents = await realmStore.queryServerEvents()
+            isSendServer = serverEvents.filtered(`isSend == true`)
+            // console.log('isSendServer==', isSendServer);
             console.log('1serverEvents1', JSON.parse(JSON.stringify(serverEvents)));
             console.log("init: ", JSON.parse(JSON.stringify(rooms)), JSON.parse(JSON.stringify(roomGroups)), JSON.parse(JSON.stringify(serverEvents)));
 
@@ -106,16 +113,40 @@ export default (props) => {
                     setIndexRoom(0)
                 }
             })
+
+            // isSendServer.addListener((collection, changes) => {
+            //     if (changes.insertions.length || changes.modifications.length) {
+            //         console.log('isSendServer.addListener', JSON.parse(JSON.stringify(isSendServer[0])));
+            //         let serverEvent = JSON.parse(JSON.stringify(isSendServer[0]))
+            //         signalRManager.sendMessageServerEventNow(serverEvent)
+            //         realmStore.insertServerEvent({ ...serverEvent, isSend: false })
+            //     }
+            // })
+
             setTextSearch(props.textSearch)
 
             setLoadDone(true)
         }
+        const getServerEventIsSend = async () => {
+            let serverEvents = await realmStore.queryServerEvents()
+            let isSendServer = serverEvents.filtered(`isSend == TRUE`)
+            console.log('isSendServer.length', isSendServer.length);
+            if (isSendServer.length == 0) return
+            let serverEvent = JSON.parse(JSON.stringify(isSendServer[0]))
+            signalRManager.sendMessageServerEventNow(serverEvent)
+            realmStore.insertServerEvent({ ...serverEvent, isSend: false })
+        }
         init()
+        
+        idInterval.current = setInterval(() => {
+            getServerEventIsSend()
+        }, 3000);
+
         return () => {
             setLoadDone(false)
             if (serverEvents) serverEvents.removeAllListeners()
+            if (idInterval.current) clearInterval(idInterval.current)
         }
-
 
     }, [already])
 
@@ -159,7 +190,6 @@ export default (props) => {
     }
 
     const insertServerEvent = (newDatas, serverEvents) => {
-        console.log('insertServerEvent1', newDatas, serverEvents);
         let totalCash = 0
         let totalUse = 0
         newDatas.forEach(data => {
@@ -170,7 +200,6 @@ export default (props) => {
                     let RoomMoment = ""
                     let IsActive = false
                     listFiters.forEach(elm => {
-                        console.log("insertServerEvent elm ", elm);
                         let JsonContentJS = {}
                         try {
                             JsonContentJS = elm.JsonContent ? JSON.parse(elm.JsonContent) : {}
