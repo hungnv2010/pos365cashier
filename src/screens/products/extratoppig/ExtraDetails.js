@@ -1,6 +1,7 @@
-import React, { useState, useCallback, useEffect, useImperativeHandle, forwardRef, useRef } from 'react';
-import { Image, View, StyleSheet, Button, Text, TouchableOpacity, RefreshControl, ScrollView, TouchableWithoutFeedback, Modal } from 'react-native';
+import React, { useState, useCallback, useEffect, forwardRef, useRef } from 'react';
+import { Image, View, StyleSheet, Button, Text, TouchableOpacity, Platform, ScrollView, TouchableWithoutFeedback, Modal, Keyboard } from 'react-native';
 import { Images, Colors, Metrics } from '../../../theme';
+import { useFocusEffect } from '@react-navigation/native';
 import I18n from '../../../common/language/i18n';
 import { useSelector } from 'react-redux';
 import colors from '../../../theme/Colors';
@@ -25,6 +26,7 @@ export default (props) => {
     const modalType = useRef()
     const [textInput, setTextInput] = useState()
     const [defaultGroup, setDefaultGroup] = useState()
+    const [marginModal, setMargin] = useState(0)
     const deviceType = useSelector(state => {
         return state.Common.deviceType
     });
@@ -35,8 +37,8 @@ export default (props) => {
     }, [])
     useEffect(() => {
         if (deviceType == Constant.TABLET) {
-            setExtraTopping(props.data)
-            setCategory(props.cate)
+            setExtraTopping({...JSON.parse(JSON.stringify(props.data))})
+            setCategory([...JSON.parse(JSON.stringify(props.cate))])
         }
     }, [props.data, props.cate])
 
@@ -48,6 +50,7 @@ export default (props) => {
     }
     const onClickAdd = () => {
         setCategory([...category, textInput])
+        setExtraTopping({...extraTopping,ExtraGroup:textInput})
         setTextInput()
         setOnShowModal(false)
     }
@@ -57,6 +60,26 @@ export default (props) => {
     const onClickSubmit = () => {
         setExtraTopping({ ...extraTopping, ExtraGroup: defaultGroup })
         setOnShowModal(false)
+    }
+    useFocusEffect(useCallback(() => {
+
+        var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
+        var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        }
+
+
+    }, []))
+
+    const _keyboardDidShow = () => {
+        setMargin(Metrics.screenWidth / 2)
+    }
+
+    const _keyboardDidHide = () => {
+        setMargin(0)
     }
     const onChangeTextInput = (text) => {
         console.log("onChangeTextInput text ===== ", text, props.route);
@@ -120,8 +143,8 @@ export default (props) => {
             <View style={{ backgroundColor: '#fff', borderRadius: 5 }}>
                 {modalType.current == 1 ?
                     <View style={{ flexDirection: 'column', padding: 10 }}>
-                        <Text style={{ fontSize: 16, fontWeight: 'bold', textAlign: 'center' }}>{I18n.t('them_moi_nhom')}</Text>
-                        <TextInput style={{ paddingVertical: 15, fontSize: 14, paddingHorizontal: 10 }} value={textInput} placeholder={I18n.t('nhap_ten_nhom')} onChangeText={(text) => setTextInput(text)}></TextInput>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', textAlign: 'center' ,paddingVertical:10}}>{I18n.t('them_moi_nhom')}</Text>
+                        <TextInput style={{ paddingVertical: 15, fontSize: 14, paddingHorizontal: 10,color:'#000',backgroundColor:'#f2f2f2',borderRadius:10 }} value={textInput} placeholder={I18n.t('nhap_ten_nhom')} onChangeText={(text) => setTextInput(text)}></TextInput>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10 }}>
                             <View style={{ flex: 1 }}></View>
                             <View style={{ flexDirection: 'row', flex: 1, paddingVertical: 10 }}>
@@ -193,11 +216,11 @@ export default (props) => {
                 <Text style={styles.styleTitle}>{I18n.t('gia_ban')}</Text>
                 <TextInput style={styles.styleTextInput} value={currencyToString(extraTopping.Price)} keyboardType={'numbers-and-punctuation'} onChangeText={(text) => setExtraTopping({ ...extraTopping, Price: onChangeTextInput(text) })} />
             </View>
-            <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-                <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, padding: 8, flex: 1, marginRight: 2, alignItems: 'center', justifyContent: 'center' }} onPress={() => onClickDel()}>
+            <View style={{ flexDirection: 'row', alignItems: 'flex-end',paddingHorizontal:2,marginBottom:5 }}>
+                <TouchableOpacity style={{ backgroundColor: '#f21e3c',borderRadius:5, paddingHorizontal:5,paddingVertical:8, flex: 1, marginRight: 1, alignItems: 'center', justifyContent: 'center' }} onPress={() => onClickDel()}>
                     <IconMaterial name={'delete'} color={'#fff'} size={24} />
                 </TouchableOpacity>
-                <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, padding: 10, flex: 8, marginLeft: 2, justifyContent: 'center', alignItems: 'center' }} onPress={() => onClickSubmitUpdate()}>
+                <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, padding: 10, flex: 9, marginLeft: 1, justifyContent: 'center', alignItems: 'center',borderRadius:5 }} onPress={() => onClickSubmitUpdate()}>
                     <Text style={{ fontWeight: 'bold', color: '#fff', fontSize: 16 }}>{I18n.t('xong')}</Text>
                 </TouchableOpacity>
             </View>
@@ -229,7 +252,7 @@ export default (props) => {
                         }}></View>
 
                     </TouchableWithoutFeedback>
-                    <View style={{ width: Metrics.screenWidth * 0.8 }}>
+                    <View style={{ width: Metrics.screenWidth * 0.8 ,marginBottom: Platform.OS == 'ios' ? marginModal : 0 }}>
                         {renderModal()}
                     </View>
                 </View>

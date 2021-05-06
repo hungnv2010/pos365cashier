@@ -103,7 +103,7 @@ export default (props) => {
     const ViewInputHtml = () => {
         return (
             <View style={{ flex: 1 }}>
-                <View style={{ padding: 10, justifyContent: "space-between", flexDirection: "row" }}>
+                <View style={{ padding: 5, justifyContent: "space-between", flexDirection: "row" }}>
                     <TouchableOpacity style={styles.button} onPress={() => { onSelectTab(1) }}>
                         <Text style={styles.textButton}>{I18n.t('mac_dinh')}</Text>
                     </TouchableOpacity>
@@ -170,6 +170,6 @@ export default (props) => {
 };
 
 const styles = StyleSheet.create({
-    button: { padding: 10, paddingHorizontal: 20, borderRadius: 8, backgroundColor: colors.colorLightBlue },
+    button: { flex: 1, padding: 12, justifyContent: "center", alignItems: "center", margin: 5, paddingHorizontal: 10, borderRadius: 8, backgroundColor: colors.colorLightBlue },
     textButton: { color: "#fff", textTransform: "uppercase" },
 })

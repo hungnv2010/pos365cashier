@@ -45,12 +45,12 @@ export default (props) => {
                 listProduct.map((item, index) => {
                     return (
                         <View style={{borderBottomWidth:1,borderBottomColor:'#f2f2f2',paddingVertical:10}}>
-                            <TouchableOpacity style={{ flexDirection: 'row'}} onPress={()=>onClickItem(item.Id)}>
+                            <TouchableOpacity style={{ flexDirection: 'row',justifyContent:'space-between'}} onPress={()=>onClickItem(item.Id)}>
                                 <View style={{marginRight:10,flex:4,flexDirection:'row'}}>
                                 <Text>{item.Name}</Text>
                                 </View>
-                                <View style={{flex:1,flexDirection:'row'}}>
-                                <Text>{item.Price}</Text>
+                                <View style={{flex:1.8,flexDirection:'row',alignItems:'flex-end',justifyContent:'flex-end'}}>
+                                <Text>{currencyToString(item.Price)}</Text>
                                 </View>
                             </TouchableOpacity>
                         </View>)

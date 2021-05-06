@@ -110,6 +110,8 @@ export default {
   chi_tiet_nhap_hang:'Chi tiết nhập hàng',
   chinh_sua_nhap_hang:'Chỉnh sửa nhập hàng',
   chon_nha_cung_cap:'Chọn nhà cung cấp',
+  chup_moi:'Chụp mới',
+  chon_tu_thu_vien:'Chọn từ thư viện',
 
   // TODO: D
 

@@ -163,16 +163,24 @@ export default forwardRef((props, ref) => {
                 navigation={props.navigation} title="HTML"
                 clickPrint={() => clickPrint()}
                 clickCheck={() => clickCheck()}
-            /> :
-                <View style={{ width: "100%", padding: 10, justifyContent: "space-between", flexDirection: "row" }}>
-                    <TouchableOpacity style={styles.button} onPress={() => { clickPrint() }}>
-                        <Text style={styles.textButton}>{I18n.t('in')}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={() => { clickCheck() }}>
-                        <Text style={styles.textButton}>{I18n.t('luu')}</Text>
-                    </TouchableOpacity>
-                </View>
+            /> : null
+                // <View style={{ width: "100%", padding: 10, justifyContent: "space-between", flexDirection: "row" }}>
+                //     <TouchableOpacity style={styles.button} onPress={() => { clickPrint() }}>
+                //         <Text style={styles.textButton}>{I18n.t('in')}</Text>
+                //     </TouchableOpacity>
+                //     <TouchableOpacity style={styles.button} onPress={() => { clickCheck() }}>
+                //         <Text style={styles.textButton}>{I18n.t('luu')}</Text>
+                //     </TouchableOpacity>
+                // </View>
             }
+            <View style={{ width: "100%", padding: 5, justifyContent: "space-between", flexDirection: "row" }}>
+                <TouchableOpacity style={styles.button} onPress={() => { clickPrint() }}>
+                    <Text style={styles.textButton}>{I18n.t('in')}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={() => { clickCheck() }}>
+                    <Text style={styles.textButton}>{I18n.t('luu')}</Text>
+                </TouchableOpacity>
+            </View>
             <AutoHeightWebView
                 // scrollEnabled={false}
                 style={{ width: deviceType == Constant.PHONE ? Metrics.screenWidth - 20 : Metrics.screenWidth / 2.5 }}
@@ -189,6 +197,6 @@ export default forwardRef((props, ref) => {
 });
 
 const styles = StyleSheet.create({
-    button: { padding: 10, paddingHorizontal: 20, borderRadius: 8, backgroundColor: colors.colorLightBlue },
+    button: { flex: 1, padding: 12, justifyContent: "center", alignItems: "center", margin: 5, paddingHorizontal: 10, borderRadius: 8, backgroundColor: colors.colorLightBlue },
     textButton: { color: "#fff", textTransform: "uppercase" },
 })
