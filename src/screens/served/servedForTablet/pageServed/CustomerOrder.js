@@ -143,7 +143,7 @@ const CustomerOrder = (props) => {
                 if (item.Quantity > 0) {
                     description += ` -${item.Name} x${item.Quantity} = ${currencyToString(item.Quantity * item.Price)};\n `
                     totalPrice += item.Quantity * item.Price
-                    topping.push({ ExtraId: item.ExtraId, QuantityExtra: item.Quantity, Price: item.Price, Quantity: item.Quantity })
+                    topping.push({ ExtraId: item.ExtraId, QuantityExtra: item.QuantityExtra, Price: item.Price, Quantity: item.Quantity })
                 }
             })
             return [description, totalPrice, topping]

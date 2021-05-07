@@ -168,7 +168,7 @@ class SignalRManager {
         }
     }
 
-    sendMessageServerEventNow = (serverEvent) => {
+    sendMessageServerEventNow = (serverEvent, callback = () => { }) => {
         console.log('sendMessageServerEventNow serverEvent ');
         delete serverEvent.Timestamp
         try {
@@ -177,7 +177,7 @@ class SignalRManager {
         } catch (error) {
             serverEvent.Compress = false
         }
-        this.sendMessage(serverEvent)
+        this.sendMessage(serverEvent, callback)
     }
 
     async onReceiveServerEvent(serverEvent) {
@@ -191,11 +191,12 @@ class SignalRManager {
         await realmStore.insertServerEvent(serverEvent, true)
     }
 
-    sendMessage = (message, type = 'SynchronizationOrder') => {
+    sendMessage = (message, callback = () => { }, type = 'SynchronizationOrder') => {
         if (this.isStartSignalR) {
             this.proxy.invoke(type, message)
                 .done((response) => {
                     console.log('sendMessage done', response)
+                    callback()
                 })
                 .fail((error) => {
                     console.warn('sendMessage fail ', error)

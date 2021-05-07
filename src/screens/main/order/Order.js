@@ -130,14 +130,17 @@ export default (props) => {
         const getServerEventIsSend = async () => {
             let serverEvents = await realmStore.queryServerEvents()
             let isSendServer = serverEvents.filtered(`isSend == TRUE`)
-            console.log('isSendServer.length', isSendServer.length);
             if (isSendServer.length == 0) return
             let serverEvent = JSON.parse(JSON.stringify(isSendServer[0]))
-            signalRManager.sendMessageServerEventNow(serverEvent)
-            realmStore.insertServerEvent({ ...serverEvent, isSend: false })
+            signalRManager.sendMessageServerEventNow(JSON.parse(JSON.stringify(serverEvent)), () => {
+                serverEvent.isSend = false
+                realmStore.insertServerEvent(serverEvent)
+            })
+            console.log('isSendServer.length', isSendServer.length);
+
         }
         init()
-        
+
         idInterval.current = setInterval(() => {
             getServerEventIsSend()
         }, 3000);
