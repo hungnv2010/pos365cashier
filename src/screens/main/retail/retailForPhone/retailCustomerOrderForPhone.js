@@ -512,7 +512,7 @@ export default (props) => {
             })
         })
         list = list.filter((newItem) => !newItem.exist)
-        setDataOrder([...list, ...listProducts])
+        setListProducts([...list, ...listProducts])
 
     }
 
