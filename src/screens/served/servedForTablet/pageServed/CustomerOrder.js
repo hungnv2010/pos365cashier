@@ -137,27 +137,27 @@ const CustomerOrder = (props) => {
 
         const getInfoTopping = (listTopping) => {
             let description = '';
-            let totalPrice = 0;
+            let totalTopping = 0;
             let topping = []
             listTopping.forEach(item => {
                 if (item.QuantityExtra > 0) {
                     description += ` -${item.Name} x${item.QuantityExtra} = ${currencyToString(item.QuantityExtra * item.Price)};\n `
-                    totalPrice += item.QuantityExtra * item.Price
+                    totalTopping += item.QuantityExtra * item.Price
                     topping.push({ ExtraId: item.ExtraId, QuantityExtra: item.QuantityExtra, Price: item.Price, Quantity: item.Quantity })
                 }
             })
-            return [description, totalPrice, topping]
+            return [description, totalTopping, topping]
         }
-        let [description, totalPrice, topping] = getInfoTopping(props.listTopping)
+        let [description, totalTopping, topping] = getInfoTopping(props.listTopping)
         let indexFind = -1
         listOrder.forEach((element, index) => {
             if (element.ProductId == props.itemOrder.ProductId && index == props.itemOrder.index) {
                 indexFind = index
                 element.Description = description
                 element.Topping = JSON.stringify(topping)
-                element.TotalTopping = totalPrice
+                element.TotalTopping = totalTopping
                 let basePrice = (element.IsLargeUnit) ? element.PriceLargeUnit : element.UnitPrice
-                element.Price = basePrice + totalPrice
+                element.Price = basePrice + totalTopping
             }
         });
         setListOrder([...listOrder])

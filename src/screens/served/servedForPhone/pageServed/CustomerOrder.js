@@ -369,7 +369,7 @@ export default (props) => {
                 element.TotalTopping = totalTopping
 
                 let basePrice = (element.IsLargeUnit) ? element.PriceLargeUnit : element.UnitPrice
-                element.Price = basePrice + totalPrice
+                element.Price = basePrice + totalTopping
             }
         });
         // setListOrder([...listOrder])
