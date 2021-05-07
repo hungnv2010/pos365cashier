@@ -156,7 +156,8 @@ const CustomerOrder = (props) => {
                 element.Description = description
                 element.Topping = JSON.stringify(topping)
                 element.TotalTopping = totalPrice
-                element.Price += totalPrice
+                let basePrice = (element.IsLargeUnit) ? element.PriceLargeUnit : element.UnitPrice
+                element.Price = basePrice + totalPrice
             }
         });
         setListOrder([...listOrder])

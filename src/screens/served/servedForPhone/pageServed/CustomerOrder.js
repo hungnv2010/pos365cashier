@@ -368,7 +368,8 @@ export default (props) => {
                 element.Topping = JSON.stringify(topping)
                 element.TotalTopping = totalTopping
 
-                element.Price += totalTopping
+                let basePrice = (element.IsLargeUnit) ? element.PriceLargeUnit : element.UnitPrice
+                element.Price = basePrice + totalPrice
             }
         });
         // setListOrder([...listOrder])
