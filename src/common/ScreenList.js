@@ -96,6 +96,6 @@ export const ScreenList = {
   ListOrderStock: 'ListOrderStock',
   OrderStockDetails: 'OrderStockDetails',
   AddOrderStock: 'AddOrderStock',
-
+  DetailOrderOffline: "DetailOrderOffline",
 }
 
