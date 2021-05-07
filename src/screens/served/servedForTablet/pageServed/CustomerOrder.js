@@ -140,9 +140,9 @@ const CustomerOrder = (props) => {
             let totalPrice = 0;
             let topping = []
             listTopping.forEach(item => {
-                if (item.Quantity > 0) {
-                    description += ` -${item.Name} x${item.Quantity} = ${currencyToString(item.Quantity * item.Price)};\n `
-                    totalPrice += item.Quantity * item.Price
+                if (item.QuantityExtra > 0) {
+                    description += ` -${item.Name} x${item.QuantityExtra} = ${currencyToString(item.QuantityExtra * item.Price)};\n `
+                    totalPrice += item.QuantityExtra * item.Price
                     topping.push({ ExtraId: item.ExtraId, QuantityExtra: item.QuantityExtra, Price: item.Price, Quantity: item.Quantity })
                 }
             })

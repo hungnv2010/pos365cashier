@@ -353,9 +353,9 @@ export default (props) => {
             let totalTopping = 0;
             let topping = []
             lt.forEach(item => {
-                if (item.Quantity > 0) {
-                    description += ` -${item.Name} x${item.Quantity} = ${currencyToString(item.Quantity * item.Price)};\n `
-                    totalTopping += item.Quantity * item.Price
+                if (item.QuantityExtra > 0) {
+                    description += ` -${item.Name} x${item.QuantityExtra} = ${currencyToString(item.QuantityExtra * item.Price)};\n `
+                    totalTopping += item.QuantityExtra * item.Price
                     topping.push({ ExtraId: item.ExtraId, QuantityExtra: item.QuantityExtra, Price: item.Price, Quantity: item.Quantity })
                 }
             })
