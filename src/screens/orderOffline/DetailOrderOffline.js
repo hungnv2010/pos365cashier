@@ -80,7 +80,9 @@ export default (props) => {
 
     const onRePrint = () => {
         console.log("onRePrint ", props.route.params.data.Orders);
-        dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: dataJsonContent, provisional: false } })
+        let jsonContent = dataJsonContent
+        jsonContent.PaymentCode = props.route.params.data.Id;
+        dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
     }
 
     const onDeleteOrder = () => {
@@ -160,7 +162,7 @@ export default (props) => {
                 <View style={styles.content}>
                     <View style={styles.rowInfo}>
                         <Text style={[styles.textBoldBlack, { textTransform: "uppercase" }]}>{dataOrder.Id}</Text>
-                        <Text style={styles.textOrange}>{dataOrder.Status == false ? I18n.t('chua_hoan_thanh') : I18n.t('hoan_thanh')}</Text>
+                        <Text style={styles.textOrange}>{(dataJsonContent.PartnerId && dataJsonContent.PartnerId.Id != 0 && dataOrder.ExcessCash < 0) ? I18n.t('ghi_no') : I18n.t('hoan_thanh')}</Text>
                     </View>
                     <View style={styles.rowInfo}>
                         <Text style={{}}>{I18n.t('ngay_ban')}</Text>
@@ -186,14 +188,14 @@ export default (props) => {
                     </View>
                     <View style={styles.rowInfo}>
                         <Text style={styles.textGray}>{I18n.t('phuong_thuc_thanh_toan')}</Text>
-                        <View style={{flexDirection: 'column', alignItems: "flex-end"}}>
-                        {
-                            renderMethod(dataJsonContent.MoreAttributes).map((item, index) => {
-                                return (
-                                    <Text key={index} style={{ fontStyle: "italic", color: "gray" }}>{item}</Text>
-                                )
-                            })
-                        }
+                        <View style={{ flexDirection: 'column', alignItems: "flex-end" }}>
+                            {
+                                renderMethod(dataJsonContent.MoreAttributes).map((item, index) => {
+                                    return (
+                                        <Text key={index} style={{ fontStyle: "italic", color: "gray" }}>{item}</Text>
+                                    )
+                                })
+                            }
                         </View>
                     </View>
                     <View style={styles.rowInfo}>
@@ -202,7 +204,7 @@ export default (props) => {
                     </View>
                     <View style={styles.rowInfo}>
                         <Text style={styles.textGray}>{I18n.t('tong_thanh_toan')}</Text>
-                        <Text style={styles.textBoldBlue}>{0} đ</Text>
+                        <Text style={styles.textBoldBlue}>{dataJsonContent && (dataJsonContent.AmountReceived && dataJsonContent.PartnerId && dataJsonContent.PartnerId.Id != 0) ? currencyToString(dataJsonContent.AmountReceived) : currencyToString(dataJsonContent.Total)} đ</Text>
                     </View>
                 </View>
                 <View style={[styles.content, { marginTop: 10, padding: 20, flex: 1 }]}>
@@ -215,15 +217,20 @@ export default (props) => {
                                         <TouchableOpacity key={index.toString()} style={[styles.viewItem]} onPress={() => onClickItemOrder(item)}>
                                             <Image style={styles.imageProduct}
                                                 source={renderImage(item.ProductImages)}
-                                            // source={JSON.parse(item.ProductImages).length > 0 ? { uri: JSON.parse(item.ProductImages)[0].ImageURL } : Images.default_food_image}
                                             />
                                             <View style={styles.viewNameProduct}>
                                                 <Text style={{ textTransform: 'uppercase' }}>{item.Name}</Text>
                                                 <Text style={{ marginTop: 10, color: "gray" }}>{currencyToString(item.Price)} x {item.Quantity}{item.IsLargeUnit ? item.LargeUnit ? `/${item.LargeUnit}` : '' : item.Unit ? `/${item.Unit}` : ''}</Text>
+                                                {
+                                                    item.Description && item.Description != "" ?
+                                                        <Text style={{ color: "gray", fontSize: 12, marginTop: 5 }}>{item.Description}</Text>
+                                                        : null
+                                                }
                                             </View>
                                             <View style={styles.viewTotalProduct}>
                                                 <Text style={{ color: "gray" }}></Text>
                                                 <Text style={{ fontWeight: "bold", marginTop: 10, color: colors.colorLightBlue, }}>{currencyToString(item.Price * item.Quantity)} đ</Text>
+                                                <Text style={{ color: "gray" }}></Text>
                                             </View>
                                         </TouchableOpacity>
                                     );
