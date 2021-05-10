@@ -415,15 +415,20 @@ export default (props) => {
                                         <TouchableOpacity key={index.toString()} style={[styles.viewItem]} onPress={() => onClickItemOrder(item)}>
                                             <Image style={styles.imageProduct}
                                                 source={renderImage(item.ProductImages)}
-                                            // source={JSON.parse(item.ProductImages).length > 0 ? { uri: JSON.parse(item.ProductImages)[0].ImageURL } : Images.default_food_image}
                                             />
                                             <View style={styles.viewNameProduct}>
                                                 <Text style={{ textTransform: 'uppercase' }}>{item.Name}</Text>
                                                 <Text style={{ marginTop: 10, color: "gray" }}>{currencyToString(item.Price)} x {item.Quantity}{item.IsLargeUnit ? item.LargeUnit ? `/${item.LargeUnit}` : '' : item.Unit ? `/${item.Unit}` : ''}</Text>
+                                                {
+                                                    item.Description && item.Description != "" ?
+                                                        <Text style={{ color: "gray", fontSize: 12, marginTop: 5 }}>{item.Description}</Text>
+                                                        : null
+                                                }
                                             </View>
                                             <View style={styles.viewTotalProduct}>
                                                 <Text style={{ color: "gray" }}></Text>
                                                 <Text style={{ fontWeight: "bold", marginTop: 10, color: colors.colorLightBlue, }}>{currencyToString(item.Price * item.Quantity)} đ</Text>
+                                                <Text style={{ color: "gray" }}></Text>
                                             </View>
                                         </TouchableOpacity>
                                     );

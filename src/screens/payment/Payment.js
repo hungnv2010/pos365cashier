@@ -1407,7 +1407,7 @@ export default (props) => {
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.viewTextExcessCash}>
-                                <Text style={{ flex: 2 }}>{jsonContent.ExcessCash >= 0 ? I18n.t('tien_thua') : I18n.t('tien_thieu')}</Text>
+                                <Text style={{ flex: 2 }}>{jsonContent.ExcessCash >= 0 ? !giveMoneyBack ? I18n.t('ghi_no') : I18n.t('tien_thua') : I18n.t('tien_thieu')}</Text>
                                 <Text style={{ flex: 4, textAlign: "right", color: jsonContent.ExcessCash > 0 ? "green" : "red" }}>{currencyToString(jsonContent.ExcessCash)}</Text>
                             </View>
                             {
@@ -1511,12 +1511,12 @@ const styles = StyleSheet.create({
     textInfo: { width: "30%", paddingVertical: 7 },
     line: { width: "100%", height: 1, backgroundColor: "#eeeeee" },
     inputNote: { width: "70%", height: 70, backgroundColor: "#eeeeee", marginLeft: 0, borderWidth: 0.5, borderRadius: 5, padding: 6, color: "#000" },
-    inputListMethod: { textAlign: "right", backgroundColor: "#eeeeee", marginLeft: 0, flex: 3, borderWidth: 0.5, borderRadius: 5, padding: 6.8, color: "#000" },
+    inputListMethod: { textAlign: "right", backgroundColor: "#eeeeee", marginLeft: 0, flex: 4, borderWidth: 0.5, borderRadius: 5, padding: 6.8, color: "#000" },
     buttonCaculatorMothod: { width: 32, height: 32, justifyContent: "center", alignItems: "center", borderRadius: 5, borderWidth: 0.5, borderColor: colors.colorchinh },
     viewCalculatorMethod: { flex: 3, justifyContent: "center", alignItems: "center", },
     iconArrowDown: { width: 14, height: 14, marginHorizontal: 10 },
     textNameMethod: { marginLeft: 5 },
-    viewNameMethod: { flexDirection: "row", justifyContent: "space-between", marginLeft: 20, backgroundColor: "#eeeeee", marginLeft: 10, flex: 7, borderColor: "gray", borderWidth: 0.5, borderRadius: 5, paddingVertical: 7 },
+    viewNameMethod: { flexDirection: "row", justifyContent: "space-between", marginLeft: 20, backgroundColor: "#eeeeee", marginLeft: 10, flex: 6, borderColor: "gray", borderWidth: 0.5, borderRadius: 5, paddingVertical: 7 },
     viewIconEmpty: { width: 32, height: 32 },
     iconCloseMethod: { marginTop: 3, alignContent: "center" },
     viewIconCloseMethod: { width: 32, height: 32, justifyContent: "center", alignItems: "center", borderRadius: 5, borderWidth: 0.5, borderColor: colors.colorchinh },
