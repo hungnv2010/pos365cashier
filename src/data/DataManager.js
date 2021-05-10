@@ -175,7 +175,8 @@ class DataManager {
                         let products = await realmStore.queryProducts()
                         let productItem = products.filtered(`Id == '${newOrder.ProductId}'`)
                         productItem = JSON.parse(JSON.stringify(productItem))[0];
-                        productItem = { ...productItem, ...newOrder, Price: newOrder.IsLargeUnit ? productItem.PriceLargeUnit : productItem.UnitPrice }
+                        let Price = (newOrder.IsLargeUnit ? productItem.PriceLargeUnit : productItem.UnitPrice) + newOrder.TotalTopping
+                        productItem = { ...productItem, ...newOrder, Price: Price }
                         listOrders.push({ ...productItem })
                         for (const item of listRoom) {
                             if (item.rowKey == rowKey) {
