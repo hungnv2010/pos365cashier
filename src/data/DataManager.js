@@ -472,7 +472,7 @@ class DataManager {
     }
 
     updateServerEventNow = async (serverEvent, FromServer = false, isFNB = true) => {
-        let cloneJsoncontent = null
+        let cloneJsoncontent = {};
         if (typeof serverEvent.JsonContent === "string") {
             cloneJsoncontent = JSON.parse(serverEvent.JsonContent)
         } else {

@@ -28,7 +28,7 @@ class PrintService {
 
     GenHtml = async (html, JsonContent, Base64Qr = "", checkProvisional = false) => {
         let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
-        console.log('vendorSession data ', JSON.parse(vendorSession));
+        console.log('GenHtml JsonContent ', JsonContent);
         vendorSession = JSON.parse(vendorSession);
         return new Promise((resolve, reject) => {
             let HTMLBase = html;
@@ -79,7 +79,7 @@ class PrintService {
                 HTMLBase = HTMLBase.replace("{Ma_Chung_Tu}", number + ": " + (JsonContent.PaymentCode ? JsonContent.PaymentCode : code))
                 HTMLBase = HTMLBase.replace("{Ngay_Tao_Karaoke}", dateToDate(new Date()))
                 HTMLBase = HTMLBase.replace("{Ngay}/{Thang}/{Nam}-{Gio}:{Phut}-Vao", dateToDate(JsonContent.ActiveDate, DATE_FORMAT, "DD/MM/YYYY - HH:mm"))
-                HTMLBase = HTMLBase.replace("{Ngay}/{Thang}/{Nam}-{Gio}:{Phut}-Ra", dateToDate(new Date(), DATE_FORMAT, "DD/MM/YYYY - HH:mm"))
+                HTMLBase = HTMLBase.replace("{Ngay}/{Thang}/{Nam}-{Gio}:{Phut}-Ra", (JsonContent.PurchaseDate && JsonContent.PurchaseDate != "") ? moment(JsonContent.PurchaseDate).format("DD/MM/YYYY - HH:mm") : dateToDate(new Date(), DATE_FORMAT, "DD/MM/YYYY - HH:mm"))
                 HTMLBase = HTMLBase.replace("{Ten_Phong_Ban}", JsonContent.RoomName + "[" + JsonContent.Pos + "]")
                 HTMLBase = HTMLBase.replace("{Ten_Khach_Hang}", JsonContent && JsonContent.Partner && JsonContent.Partner.Name != "" ? JsonContent.Partner.Name : "Khách lẻ")
                 HTMLBase = HTMLBase.replace("{Nhan_Vien}", vendorSession.CurrentUser.Name)

@@ -222,6 +222,10 @@ export default (props) => {
     const onError = (json) => {
         let row_key = `${props.route.params.room.Id}_${props.Position}`
         dialogManager.showPopupOneButton(I18n.t("khong_co_ket_noi_internet_don_hang_cua_quy_khach_duoc_luu_vao_offline"))
+        if (!isFNB) {
+            json["RoomName"] = I18n.t('don_hang');
+            json["Pos"] = "A"
+        }
         updateServerEvent()
         handlerError({ JsonContent: json, RowKey: row_key })
     }

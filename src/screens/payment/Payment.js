@@ -613,8 +613,7 @@ export default (props) => {
         });
         console.log("onClickPay json.MoreAttributes ", typeof (json.MoreAttributes), json.MoreAttributes);
         let MoreAttributes = json.MoreAttributes ? (typeof (json.MoreAttributes) == 'string' ? JSON.parse(json.MoreAttributes) : json.MoreAttributes) : {}
-        console.log("onClickPay pointUse ", pointUse);
-        console.log("onClickPay paramMethod ", paramMethod);
+
         MoreAttributes.PointDiscount = pointUse && pointUse > 0 ? pointUse : 0;
         MoreAttributes.PointDiscountValue = 0;
         MoreAttributes.Vouchers = listVoucher;
@@ -640,8 +639,13 @@ export default (props) => {
         if (noteInfo != '') {
             json.Description = noteInfo;
         }
+        console.log("onClickPay date ", date);
+        console.log("onClickPay dateTmp.current ", dateTmp.current);
         if (date && dateTmp.current) {
-            json.PurchaseDate = "" + date;
+            let PurchaseDate = moment(date).utc().format("YYYY-MM-DD[T]HH:mm:ss.SSS[Z]");
+            console.log("onClickPay PurchaseDate ", PurchaseDate);
+            json.PurchaseDate = PurchaseDate;
+            jsonContent.PurchaseDate = PurchaseDate;
         }
         if (listMethod.length > 0)
             json.AccountId = listMethod[0].Id;
@@ -649,7 +653,7 @@ export default (props) => {
             QrCodeEnable: vendorSession.Settings.QrCodeEnable,
             MerchantCode: vendorSession.Settings.MerchantCode,
             MerchantName: vendorSession.Settings.MerchantName,
-            DontSetTime: true,
+            DontSetTime: (date && dateTmp.current) ? false : true,
             ExcessCashType: 0,
             Order: {},
         };
@@ -721,6 +725,10 @@ export default (props) => {
 
     const onError = (json) => {
         dialogManager.showPopupOneButton(I18n.t("khong_co_ket_noi_internet_don_hang_cua_quy_khach_duoc_luu_vao_offline"))
+        if (!isFNB) {
+            json["RoomName"] = I18n.t('don_hang');
+            json["Pos"] = "A"
+        }
         handlerError({ JsonContent: json, RowKey: row_key })
         updateServerEvent(true)
         // props.navigation.pop()
@@ -768,7 +776,7 @@ export default (props) => {
             jsonContent.Description = noteInfo;
         }
         if (date && dateTmp.current) {
-            jsonContent.PurchaseDate = "" + date;
+            jsonContent.PurchaseDate = date.toString();
         }
         console.log("printAfterPayment jsonContent 2 ", jsonContent);
         dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
