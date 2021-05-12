@@ -15,6 +15,7 @@ import { Constant } from '../../common/Constant';
 import { useSelector } from 'react-redux';
 import dataManager from '../../data/DataManager';
 import NetInfo from "@react-native-community/netinfo";
+import { ScreenList } from '../../common/ScreenList';
 
 export default (props) => {
 
@@ -132,7 +133,13 @@ export default (props) => {
         getData()
     }
 
+    const onCallBackDelete = () => {
+        refreshList()
+    }
+
     const onClickItem = (item) => {
+        console.log("onClickItem item ", item);
+        props.navigation.navigate(ScreenList.DetailOrderOffline, { data: item, onCallBack: onCallBackDelete })
 
     }
 

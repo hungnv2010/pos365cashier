@@ -134,11 +134,13 @@ export default (props) => {
       dispatch({ type: 'ALREADY', already: false })
       let state = await NetInfo.fetch()
       if (state.isConnected == true && state.isInternetReachable == true) {
-        await realmStore.deleteAllForFnb()
         if (isFNB === true) {
+          await dataManager.syncServerEvent()
+          // await realmStore.deleteAllForFnb(false)
           await dataManager.syncAllDatas()
         }
         if (isFNB === false) {
+          // await realmStore.deleteAllForRetail()
           await dataManager.syncAllDatasForRetail()
         }
       }
@@ -150,6 +152,7 @@ export default (props) => {
 
 
   }, [isFNB])
+
 
   useEffect(() => {
     if (autoPrintKitchen && isFNB && appState == 'active') {
@@ -207,7 +210,7 @@ export default (props) => {
       } else {
         dialogManager.showLoading()
         dispatch({ type: 'ALREADY', already: false })
-        // await realmStore.deleteAllForRetail()
+        await realmStore.deleteAllForRetail()
         await dataManager.syncAllDatasForRetail()
         dispatch({ type: 'ALREADY', already: true })
         dialogManager.hiddenLoading()

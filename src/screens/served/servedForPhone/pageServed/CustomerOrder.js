@@ -222,6 +222,10 @@ export default (props) => {
     const onError = (json) => {
         let row_key = `${props.route.params.room.Id}_${props.Position}`
         dialogManager.showPopupOneButton(I18n.t("khong_co_ket_noi_internet_don_hang_cua_quy_khach_duoc_luu_vao_offline"))
+        if (!isFNB) {
+            json["RoomName"] = I18n.t('don_hang');
+            json["Pos"] = "A"
+        }
         updateServerEvent()
         handlerError({ JsonContent: json, RowKey: row_key })
     }
@@ -353,10 +357,10 @@ export default (props) => {
             let totalTopping = 0;
             let topping = []
             lt.forEach(item => {
-                if (item.Quantity > 0) {
-                    description += ` -${item.Name} x${item.Quantity} = ${currencyToString(item.Quantity * item.Price)};\n `
-                    totalTopping += item.Quantity * item.Price
-                    topping.push({ ExtraId: item.ExtraId, QuantityExtra: item.Quantity, Price: item.Price, Quantity: item.Quantity })
+                if (item.QuantityExtra > 0) {
+                    description += ` -${item.Name} x${item.QuantityExtra} = ${currencyToString(item.QuantityExtra * item.Price)};\n `
+                    totalTopping += item.QuantityExtra * item.Price
+                    topping.push({ ExtraId: item.ExtraId, QuantityExtra: item.QuantityExtra, Price: item.Price, Quantity: item.Quantity })
                 }
             })
             return [description, totalTopping, topping]
@@ -368,7 +372,8 @@ export default (props) => {
                 element.Topping = JSON.stringify(topping)
                 element.TotalTopping = totalTopping
 
-                element.Price += totalTopping
+                let basePrice = (element.IsLargeUnit) ? element.PriceLargeUnit : element.UnitPrice
+                element.Price = basePrice + totalTopping
             }
         });
         // setListOrder([...listOrder])

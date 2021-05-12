@@ -356,7 +356,7 @@ const Invoice = (props) => {
                         <View style={{ alignItems: "flex-end" }}>
                             <Text style={{ fontSize: 14, color: checkColor(item) ? "black" : "red" }}>{currencyToString(item.TotalPayment)}</Text>
                             <Text style={{ color: colors.colorchinh, fontSize: 13 }}>{"Status" in item ? I18n.t(getStatus(item.Status)) : ""}</Text>
-                            <Text style={{ color: "#0072bc", fontSize: 12 }}>{moment.utc(momentToDateUTC(item.CreatedDate)).local().format("HH:mm DD/MM/YYYY")}</Text>
+                            <Text style={{ color: "#0072bc", fontSize: 12 }}>{moment.utc(momentToDateUTC(item.PurchaseDate)).local().format("HH:mm DD/MM/YYYY")}</Text>
                         </View>
                     </View>
                     {

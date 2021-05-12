@@ -512,7 +512,9 @@ export default (props) => {
             })
         })
         list = list.filter((newItem) => !newItem.exist)
-        setDataOrder([...list, ...listProducts])
+        // setListProducts([...list, ...listProducts])
+        jsonContent.OrderDetails = [...list, ...listProducts]
+        updateServerEvent({ ...jsonContent })
 
     }
 
@@ -753,6 +755,8 @@ export default (props) => {
 
     const onError = (json, vendorSession) => {
         dialogManager.showPopupOneButton(I18n.t("khong_co_ket_noi_internet_don_hang_cua_quy_khach_duoc_luu_vao_offline"))
+        json["RoomName"] = I18n.t('don_hang');
+        json["Pos"] = "A"
         updateServerEventForPayment()
         handlerError({ JsonContent: json }, vendorSession)
     }

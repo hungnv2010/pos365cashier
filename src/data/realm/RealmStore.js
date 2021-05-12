@@ -40,8 +40,13 @@ class RealmStore extends RealmBase {
         await this.deleteSchema(newSchemaName)
     }
 
-    deleteAllForFnb = async () => {
+    deleteAllForFnb = async (isDelServerEvent = true) => {
         let newSchemaName = { ...SchemaName }
+        if (!isDelServerEvent) {
+            delete newSchemaName.SERVER_EVENT
+            // delete newSchemaName.ROOM
+            // delete newSchemaName.ROOM_GROUP
+        }
         delete newSchemaName.ORDERS_OFFLINE
         delete newSchemaName.QR_CODE
         await this.deleteSchema(newSchemaName)
@@ -49,16 +54,9 @@ class RealmStore extends RealmBase {
 
     deleteAllForRetail = async (islogin = true) => {
         let newSchemaName = { ...SchemaName }
-        // if (islogin) delete newSchemaName.SERVER_EVENT
         delete newSchemaName.ORDERS_OFFLINE
         delete newSchemaName.QR_CODE
         await this.deleteSchema(newSchemaName)
-        // realm.write(() => {
-        //     for (const schema in newSchemaName) {
-        //         realm.delete(realm.objects(newSchemaName[schema]))
-        //     }
-        //     return Promise.resolve()
-        // })
     }
 
     deleteRoom = async () => {
@@ -91,7 +89,7 @@ class RealmStore extends RealmBase {
             resolve()
         }))
     }
-    deleteCategory = async () =>{
+    deleteCategory = async () => {
         console.log("deleteProduct ");
         let realm = await Realm.open(databaseOption)
         return new Promise((resolve) => realm.write(() => {
@@ -384,7 +382,8 @@ const ServerEventSchema = {
         RowKey: 'string',
         Timestamp: { type: 'string', default: '' },
         ETag: 'string',
-        FromServer: { type: 'bool', default: false }
+        FromServer: { type: 'bool', default: false },
+        isSend: { type: 'bool', default: false }
     }
 }
 
@@ -518,7 +517,7 @@ const PromotionSchema = {
 const databaseOption = {
     path: 'Pos365Boss.realm',
     schema: [ServerEventSchema, RoomSchema, RoomGroupSchema, ProductSchema, CategoriesSchema, ToppingsSchema, CustomerSchema, PromotionSchema, OrdersOffline, QRCode, PriceBook],
-    schemaVersion: 41
+    schemaVersion: 42
 }
 
 const realm = new Realm(databaseOption);

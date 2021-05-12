@@ -230,6 +230,10 @@ export default (props) => {
 
     const onError = (json) => {
         dialogManager.showPopupOneButton(I18n.t("khong_co_ket_noi_internet_don_hang_cua_quy_khach_duoc_luu_vao_offline"))
+        if (!isFNB) {
+            json["RoomName"] = I18n.t('don_hang');
+            json["Pos"] = "A"
+        }
         handlerError({ JsonContent: json })
         realmStore.deleteQRCode(dataPaymentPending.Id);
         props.navigation.pop()
@@ -415,15 +419,20 @@ export default (props) => {
                                         <TouchableOpacity key={index.toString()} style={[styles.viewItem]} onPress={() => onClickItemOrder(item)}>
                                             <Image style={styles.imageProduct}
                                                 source={renderImage(item.ProductImages)}
-                                            // source={JSON.parse(item.ProductImages).length > 0 ? { uri: JSON.parse(item.ProductImages)[0].ImageURL } : Images.default_food_image}
                                             />
                                             <View style={styles.viewNameProduct}>
                                                 <Text style={{ textTransform: 'uppercase' }}>{item.Name}</Text>
                                                 <Text style={{ marginTop: 10, color: "gray" }}>{currencyToString(item.Price)} x {item.Quantity}{item.IsLargeUnit ? item.LargeUnit ? `/${item.LargeUnit}` : '' : item.Unit ? `/${item.Unit}` : ''}</Text>
+                                                {
+                                                    item.Description && item.Description != "" ?
+                                                        <Text style={{ color: "gray", fontSize: 12, marginTop: 5 }}>{item.Description}</Text>
+                                                        : null
+                                                }
                                             </View>
                                             <View style={styles.viewTotalProduct}>
                                                 <Text style={{ color: "gray" }}></Text>
                                                 <Text style={{ fontWeight: "bold", marginTop: 10, color: colors.colorLightBlue, }}>{currencyToString(item.Price * item.Quantity)} đ</Text>
+                                                <Text style={{ color: "gray" }}></Text>
                                             </View>
                                         </TouchableOpacity>
                                     );
