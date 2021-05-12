@@ -31,6 +31,7 @@
     "react-native-exit-app": "^1.1.0",
     "react-native-fs": "2.16.6",
     "react-native-gesture-handler": "^1.6.1",
+    "react-native-google-drive-api-wrapper": "^1.4.0",
     "react-native-i18n": "^2.0.15",
     "react-native-image-picker": "^3.5.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.1",

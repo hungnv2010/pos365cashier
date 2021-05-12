@@ -133,8 +133,11 @@ export default (props) => {
                 await realmStore.deleteProduct()
                 await dataManager.syncProduct()
             } else if (value == 1) {
+                if (data) {
+                    console.log(data);
+                    setItProduct({...data}) 
+                }
                 await dataManager.syncCategories()
-                setItProduct({...itProduct})
                 console.log("abcdef");
             }
             getData()
@@ -145,6 +148,9 @@ export default (props) => {
             dialogManager.hiddenLoading()
         }
     }
+    useEffect(()=>{
+        console.log("iproduct",itProduct);
+    },[itProduct])
 
     const renderCategory = (item, index) => {
         return (
