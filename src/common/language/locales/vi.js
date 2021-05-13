@@ -330,7 +330,7 @@ export default {
   mo_cashbox_sau_khi_thanh_toan: "Mở cashbox sau khi thanh toán",
   ma_san_pham: "Mã sản phẩm",
   ma_voucher: 'Mã Voucher',
-  ma_hang_ma_sku_ma_vach: "Mã hàng / SKU/ Mã vạch",
+  ma_hang_ma_sku_ma_vach: "Mã hàng / SKU / Mã vạch",
   ma_dvt_lon: 'Mã đơn vị tính lớn',
   may_tinh: "Máy tính",
   ma_nhan_vien:'Mã nhân viên',

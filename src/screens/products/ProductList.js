@@ -36,6 +36,7 @@ export default (props) => {
     const [viewData, setViewData] = useState([])
     const productTmp = useRef([])
     useEffect(() => {
+        dialogManager.showLoading()
         getData()
         //dialogManager.hiddenLoading()
     }, [])
@@ -46,7 +47,6 @@ export default (props) => {
     });
     let categoryTmp = []
     const getData = async () => {
-        dialogManager.showLoading()
         try {
             let state = await NetInfo.fetch()
             if (state.isConnected == true && state.isInternetReachable == true) {

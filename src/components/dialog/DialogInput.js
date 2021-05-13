@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Image, View, Text, TouchableOpacity, TextInput, StyleSheet, FlatList } from 'react-native';
 import { currencyToString, dateToString } from '../../common/Utils';
+import { Images, Metrics } from '../../theme';
 import I18n from "../../common/language/i18n";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import colors from '../../theme/Colors';
@@ -78,7 +79,7 @@ const styles = StyleSheet.create({
         borderRadius: 10, marginLeft: 10, marginRight: 10, marginBottom: 20, marginTop: 10
     },
     styleTextInput: {
-        borderRadius: 16, padding: 12, marginRight: 10, marginLeft: 10, fontSize: 14, color: "#4a4a4a",backgroundColor:'#f2f2f2'
+        borderRadius: 16, padding: 12, marginRight: 10, marginLeft: 10, fontSize: 14, color: "#4a4a4a",backgroundColor:'#f2f2f2', borderColor:'#bbbbbb',borderWidth:0.5
     },
     styleLine: {
         height: 1, marginLeft: 10, marginRight: 10, backgroundColor: '#DCDCDC'
