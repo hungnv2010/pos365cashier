@@ -66,6 +66,9 @@ import ListOrderStock from '../../screens/products/orderstock/ListOrderStock'
 import OrderStockDetails from '../../screens/products/orderstock/OrderStockDetails'
 import AddOrderStock from '../../screens/products/orderstock/AddOrderStock'
 import DetailOrderOffline from '../../screens/orderOffline/DetailOrderOffline'
+import SetupTemp from '../../screens/tempPrint/SetupTemp'
+import PreviewTempPrint from '../../screens/tempPrint/PreviewTempPrint'
+
 
 const MainStack = createStackNavigator();
 
@@ -144,6 +147,9 @@ export default (props) => {
                 <MainStack.Screen name={ScreenList.OrderStockDetails}>{props=><OrderStockDetails {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.AddOrderStock}>{props=><AddOrderStock {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.DetailOrderOffline}>{props=><DetailOrderOffline {...props}/>}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.SetupTemp}>{props=><SetupTemp {...props}/>}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.PreviewTempPrint}>{props=><PreviewTempPrint {...props}/>}</MainStack.Screen>
+                
             </MainStack.Navigator>
         </Animated.View>
     );

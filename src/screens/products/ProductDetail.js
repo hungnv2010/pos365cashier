@@ -892,7 +892,7 @@ export default (props) => {
                             <Text style={styles.title}>{I18n.t('ten_hang_hoa')}</Text>
                             <Text style={{ color: '#f21e3c', marginLeft: 5, fontSize: 18 }}>*</Text>
                         </View>
-                        <TextInput style={[styles.textInput, { fontWeight: 'bold', color: colors.colorLightBlue }]} placeholder={I18n.t('ten_hang_hoa')} value={product ? product.Name : null} onChangeText={(text) => setProduct({ ...product, Name: text })}></TextInput>
+                        <TextInput style={[styles.textInput, { fontWeight: 'bold'}]} placeholder={I18n.t('ten_hang_hoa')} value={product ? product.Name : null} onChangeText={(text) => setProduct({ ...product, Name: text })}></TextInput>
                     </View>
                     <View>
                         <Text style={styles.title}>{I18n.t('loai_hang')}</Text>
@@ -1121,7 +1121,7 @@ const styles = StyleSheet.create({
     styleButtonOn: {
         flex: 1, marginRight: 10, justifyContent: 'center', alignItems: 'center', borderRadius: 16, borderWidth: 0.5, padding: 15, backgroundColor: 'white', borderColor: colors.colorLightBlue
     },
-    textInput: { backgroundColor: '#f2f2f2', marginTop: 5, marginLeft: 15, marginRight: 15, height: 40, borderRadius: 15, height: 50, padding: 10, borderWidth: 0.25, borderColor: 'silver' },
+    textInput: { backgroundColor: '#f2f2f2', marginTop: 5, marginLeft: 15, marginRight: 15, height: 40, borderRadius: 15, height: 50, padding: 10, borderWidth: 0.25, borderColor: 'silver',color:colors.colorLightBlue },
     titleHint: {
         marginLeft: 15, marginRight: 10, color: '#B5B5B5', marginBottom: 5, marginTop: 5
     },

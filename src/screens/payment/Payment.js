@@ -670,40 +670,42 @@ export default (props) => {
         }
         params.Order = json;
         console.log("onClickPay params== ", params);
-        if (net.isConnected == true && net.isInternetReachable == true) {
-            dialogManager.showLoading();
-            new HTTPService().setPath(ApiPath.ORDERS).POST(params).then(async order => {
-                console.log("onClickPay order== ", order);
-                dialogManager.hiddenLoading()
-                if (order) {
-                    resPayment.current = order;
-                    dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
-                    if (order.QRCode && order.QRCode != "") {
-                        qrCode.current = order.QRCode
-                        typeModal.current = TYPE_MODAL.QRCODE
-                        setShowModal(true)
-                        handlerQRCode(order, json)
-                    } else {
-                        await printAfterPayment(order.Code)
-                        updateServerEvent(true)
-                    }
-                    if (!isFNB) {
-                        jsonContentPayment.current["RoomName"] = I18n.t('don_hang');
-                        jsonContentPayment.current["Pos"] = "A"
-                    }
+        // if (net.isConnected == true && net.isInternetReachable == true) {
+        dialogManager.showLoading();
+        new HTTPService().setPath(ApiPath.ORDERS).POST(params).then(async order => {
+            console.log("onClickPay order== ", order);
+            dialogManager.hiddenLoading()
+            if (order) {
+                resPayment.current = order;
+                dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
+                if (order.QRCode && order.QRCode != "") {
+                    qrCode.current = order.QRCode
+                    typeModal.current = TYPE_MODAL.QRCODE
+                    setShowModal(true)
+                    handlerQRCode(order, json)
+                } else {
+                    await printAfterPayment(order.Code)
+                    updateServerEvent(true)
                 }
-            }, err => {
-                dialogManager.hiddenLoading()
-                console.log("onClickPay err== ", err);
-            })
-        } else {
-            let isCheckStockControlWhenSelling = await dataManager.checkStockControlWhenSelling(json.OrderDetails)
-            if (isCheckStockControlWhenSelling) {
-                return;
-            } else {
-                onError(json)
+                if (!isFNB) {
+                    jsonContentPayment.current["RoomName"] = I18n.t('don_hang');
+                    jsonContentPayment.current["Pos"] = "A"
+                }
             }
-        }
+        }, err => {
+            if (err && err.config && err.config.timeoutErrorMessage && err.config.timeoutErrorMessage == "TIMEOUT")
+                onError(json)
+            dialogManager.hiddenLoading()
+            console.log("onClickPay err== " + JSON.stringify(err.config.timeoutErrorMessage));
+        })
+        // } else {
+        //     let isCheckStockControlWhenSelling = await dataManager.checkStockControlWhenSelling(json.OrderDetails)
+        //     if (isCheckStockControlWhenSelling) {
+        //         return;
+        //     } else {
+        //         onError(json)
+        //     }
+        // }
     }
 
     // const checkStockControlWhenSelling = async (OrderDetails = []) => {

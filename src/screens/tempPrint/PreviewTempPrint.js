@@ -17,7 +17,6 @@ const { Print } = NativeModules;
 import HtmlDefault from '../../data/html/htmlDefault';
 import ViewShot, { takeSnapshot, captureRef } from "react-native-view-shot";
 import AutoHeightWebView from 'react-native-autoheight-webview/autoHeightWebView'
-import ViewPrint, { defaultKitchen } from './ViewPrint';
 import I18n from '../../common/language/i18n'
 import colors from '../../theme/Colors';
 
@@ -153,10 +152,7 @@ export default forwardRef((props, ref) => {
 
     return (
         <View style={{ backgroundColor: "#fff", alignItems: "center", flex: 1 }}>
-            <ViewPrint
-                ref={viewPrintRef}
-                html={data}
-            />
+           
             {deviceType == Constant.PHONE ? <ToolBarPreviewHtml
                 navigation={props.navigation} title="HTML"
                 clickPrint={() => clickPrint()}
