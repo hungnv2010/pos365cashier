@@ -275,7 +275,7 @@ export default (props) => {
             Id: -1,
             Name: 'Tất cả'
         }, ...categoryTmp])
-        setProduct({...product})
+       
     }
 
     const getProduct = (product) => {
