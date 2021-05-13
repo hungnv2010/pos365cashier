@@ -24,8 +24,8 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import dataManager from '../../data/DataManager';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useFocusEffect } from '@react-navigation/native';
-import ImagePicker from 'react-native-image-picker';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
+import GDrive from "react-native-google-drive-api-wrapper";
 
 export default (props) => {
     const [product, setProduct] = useState({})
@@ -56,6 +56,9 @@ export default (props) => {
     const isCoppy = useRef(false)
     const [marginModal, setMargin] = useState(0)
     const [isTakePhoto, setIsTakePhoto] = useState(true)
+    const [imageUrl, setImageUrl] = useState()
+    const [onHand, setOnHand] = useState()
+    const token = useRef()
     const addCate = useRef([{
         Name: 'ten_nhom',
         Hint: 'nhap_ten_nhom_hang_hoa',
@@ -75,7 +78,7 @@ export default (props) => {
         Cost: cost ? cost : 0,
         MaxQuantity: productOl.MaxQuantity ? productOl.MaxQuantity : 999,
         MinQuantity: productOl.MinQuantity ? productOl.MinQuantity : 0,
-        OnHand: productOl.OnHand ? productOl.OnHand : 0,
+        OnHand: onHand ? parseFloat(onHand) : 0,
         PriceByBranch: productOl.PriceByBranch ? productOl.PriceByBranch : 0,
         PriceByBranchLargeUnit: productOl.PriceByBranchLargeUnit ? productOl.PriceByBranchLargeUnit : 0,
         Product: {
@@ -146,7 +149,12 @@ export default (props) => {
                     setProduct({ ...product, ProductType: product.ProductType ? product.ProductType : 1, BlockOfTimeToUseService: product.BlockOfTimeToUseService ? product.BlockOfTimeToUseService : 6 })
                     isCoppy.current = false
                 } else {
-                    setProduct({ ProductType: 1, BlockOfTimeToUseService: 6 })
+                    if (product == '{}') {
+                        setProduct({ ProductType: 1, BlockOfTimeToUseService: 6 }) 
+                    }else{
+                        setProduct({...product,ProductType: 1, BlockOfTimeToUseService: 6 })
+                    }
+                    
                 }
                 setCodeProduct("")
                 setPriceConfig({})
@@ -272,6 +280,7 @@ export default (props) => {
             Id: -1,
             Name: 'Tất cả'
         }, ...categoryTmp])
+       
     }
 
     const getProduct = (product) => {
@@ -285,6 +294,7 @@ export default (props) => {
                         setNameCategory(res.results[0].Category && res.results[0].Category.Name ? res.results[0].Category.Name : '')
                         setCost(res.results[0].Cost)
                         console.log("largeUnitCode", res.results[0].LargeUnitCode);
+                        setOnHand(res.results[0].OnHand)
                     }
 
                     console.log("add dvt", addDVT.current);
@@ -325,6 +335,14 @@ export default (props) => {
     }, [product])
     useEffect(() => {
         console.log('product Ol', productOl);
+        if (productOl.ProductImages && productOl.ProductImages.length > 0) {
+            let img = productOl.ProductImages.filter(el => el.IsDefault == true)
+            console.log("img", img);
+            if (img.length > 0) {
+                setImageUrl(img[0].ImageURL)
+            }
+        }
+
         setAddDVT([{
             Name: 'don_vi_tinh_lon',
             Hint: 'nhap_don_vi_tinh_lon',
@@ -391,12 +409,13 @@ export default (props) => {
                             props.route.params.onCallBack('them', 1)
                             handleSuccess('them')
                         } else
-                            props.handleSuccessTab('them', 1)
+                            props.handleSuccessTab('them', 1, product)
+                        //setProduct({...product})
                         getCategory()
                     }
                 }
             })
-            await dataManager.syncCategories()
+            //await dataManager.syncCategories()
         } else {
             dialogManager.showLoading()
             dialogManager.showPopupOneButton(I18n.t('vui_long_nhap_day_du_thong_tin_truoc_khi_luu'), I18n.t('thong_bao'), () => {
@@ -410,7 +429,9 @@ export default (props) => {
         console.log("type", type1);
         //dialogManager.showLoading()
         try {
-            await realmStore.deleteCategory()
+            if (type1 != 'them') {
+                await realmStore.deleteCategory()
+            }
             await dataManager.syncCategories()
             getCategory()
             // dialogManager.showPopupOneButton(`${I18n.t(type1)} ${I18n.t('thanh_cong')}`, I18n.t('thong_bao'))
@@ -524,8 +545,10 @@ export default (props) => {
                                 dialogManager.hiddenLoading()
                                 dialogManager.showPopupOneButton(`${I18n.t(type)} ${I18n.t('thanh_cong')}`, I18n.t('thong_bao'))
                                 setType('them')
-
-
+                                scrollRef.current?.scrollTo({
+                                    y: 0,
+                                    animated: true,
+                                });
                             }
                         } else if (deviceType == Constant.TABLET) {
                             if (isCoppy.current == false) {
@@ -555,10 +578,14 @@ export default (props) => {
         setOnShowModal(false)
     }
     const pickCategory = (data) => {
-        console.log("value", data.key.CategoryName);
-        setProduct({ ...product, CategoryId: data.key.Id })
-        //product.CategoryId = data.key.Id
-        setNameCategory(data.key.Name)
+        console.log(data);
+        if (data.key) {
+            console.log("value", data.key.Name);
+            setProduct({ ...product, CategoryId: data.key.Id })
+            //product.CategoryId = data.key.Id
+            setNameCategory(data.key.Name) 
+            console.log(data);
+        } 
         setOnShowModal(false)
     }
     const getDataTime = (data) => {
@@ -604,50 +631,53 @@ export default (props) => {
         setProduct({ ...product, Code: data })
         setCodeProduct(data)
     }
-    const onClickTakePhoto = () => {
+    const upLoadPhoto = async (source) => {
+        dialogManager.showLoading()
+        await new HTTPService().setPath(`api/google/tocken`).GET().then(res => {
+            if (res != null) {
+                token.current = res.Tocken
+                console.log("Token", res.Tocken);
+            }
+        })
+        GDrive.setAccessToken(token.current)
+        GDrive.init()
+
+        GDrive.files.createFileMultipart(
+            source.base64,
+            "'image/jpg'", {
+            parents: ["0B0kuvBxLBrKiflFvTW5EUkRkZEg1UEZpSXZaVGIwTjFFeGlJSV9vTG5kbm9NUW5sQ2tiSGc"],
+            name: source.fileName
+        },
+            true)
+            .then(
+                (response) => response.json()
+            ).then((res) => {
+                // result data
+                console.log(res.id);
+                let url = "https://docs.google.com/uc?id=" + `${res.id}` + "&export=view"
+                let item = {
+                    ImageURL: url,
+                    IsDefault: true,
+                    ThumbnailUrl: url
+                }
+                let image = []
+                // if (productOl.ProductImages) {
+                //     image = JSON.parse(JSON.stringify(productOl.ProductImages))
+                // }
+                image = [...image, item]
+                setProductOl({ ...productOl, ProductImages: image })
+                setImageUrl(url)
+                console.log(image);
+                dialogManager.hiddenLoading()
+            })
+    }
+    const captureImage = () => {
         let options = {
             mediaType: 'photo',
             cameraType: 'front',
             includeBase64: true,
             saveToPhotos: true
         };
-        if(isTakePhoto == false){
-        launchImageLibrary(options, (response) => {
-            console.log('Response = ', response);
-
-            if (response.didCancel) {
-                console.log('User cancelled image picker');
-            } else if (response.error) {
-                console.log('ImagePicker Error: ', response.error);
-            } else if (response.customButton) {
-                console.log(
-                    'User tapped custom button: ',
-                    response.customButton
-                );
-                alert(response.customButton);
-            } else {
-                let source = response;
-                console.log("sourc", source);
-                //productOl.ProductImages[0].ImageURL
-                //setProductOl({ ...productOl, ProductImages: [...ProductImages, { ...ProductImages[0], ImageURL: source.uri }] })
-                // You can also display the image using data:
-                // let source = {
-                //   uri: 'data:image/jpeg;base64,' + response.data
-                // };
-                //setFilePath(source);
-                // GDrive.files.createFileMultipart(
-                //     response.base64,
-                //     "'image/jpg'", {
-                //     parents: ["root"], //or any path
-                //     name: response.fileName
-                //   },
-                //     true)              //make it true because you are passing base64 string otherwise the uploaded file will be not supported
-                //      .then(a=>{
-                //     console.log(a);
-                //   });
-            }
-        });
-    }else {
         launchCamera(options, (response) => {
             console.log('Response = ', response);
 
@@ -664,14 +694,40 @@ export default (props) => {
             } else {
                 let source = response;
                 console.log("sourc", source);
-                // You can also display the image using data:
-                // let source = {
-                //   uri: 'data:image/jpeg;base64,' + response.data
-                // };
-                //setFilePath(source);
+                setOnShowModal(false)
+                upLoadPhoto(source)
             }
         });
     }
+
+    const chooseImage = async () => {
+        let options = {
+            mediaType: 'photo',
+            maxWidth: 300,
+            maxHeight: 550,
+            quality: 1,
+            includeBase64: true,
+        };
+        launchImageLibrary(options, (response) => {
+            console.log('Response = ', response);
+            if (response.didCancel) {
+                console.log('User cancelled image picker');
+            } else if (response.error) {
+                console.log('ImagePicker Error: ', response.error);
+            } else if (response.customButton) {
+                console.log(
+                    'User tapped custom button: ',
+                    response.customButton
+                );
+                alert(response.customButton);
+            } else {
+                let source = response;
+                console.log("sourc", source);
+                setOnShowModal(false)
+                upLoadPhoto(source)
+
+            }
+        });
     }
     useFocusEffect(useCallback(() => {
 
@@ -691,6 +747,10 @@ export default (props) => {
 
     const _keyboardDidHide = () => {
         setMargin(0)
+    }
+    const outputOnHand = (data) => {
+        console.log(parseFloat(data.value));
+        setProductOl({ ...productOl, OnHand: parseFloat(data.value) })
     }
 
     const renderFormular = (item, index) => {
@@ -771,11 +831,11 @@ export default (props) => {
                                 : typeModal.current == 6 ?
                                     <View style={{ backgroundColor: '#fff', borderRadius: 10 }}>
                                         <Text style={{ padding: 10, fontWeight: 'bold', color: colors.colorchinh }}>{I18n.t('chon_nhom')}</Text>
-                                        <TouchableOpacity style={{ paddingHorizontal: 10, paddingVertical: 5, flexDirection: 'row', alignItems: 'center' }} onPress={() => setIsTakePhoto(true)}>
+                                        <TouchableOpacity style={{ paddingHorizontal: 10, paddingVertical: 5, flexDirection: 'row', alignItems: 'center' }} onPress={() => { setIsTakePhoto(true), captureImage() }}>
                                             <Icon name={isTakePhoto == true ? 'radiobox-marked' : 'radiobox-blank'} size={20} />
                                             <Text style={{ marginLeft: 10 }}>{I18n.t('chup_moi')}</Text>
                                         </TouchableOpacity>
-                                        <TouchableOpacity style={{ paddingHorizontal: 10, paddingVertical: 5, flexDirection: 'row', alignItems: 'center' }} onPress={() => setIsTakePhoto(false)}>
+                                        <TouchableOpacity style={{ paddingHorizontal: 10, paddingVertical: 5, flexDirection: 'row', alignItems: 'center' }} onPress={() => { setIsTakePhoto(false), chooseImage() }}>
                                             <Icon name={isTakePhoto == false ? 'radiobox-marked' : 'radiobox-blank'} size={20} />
                                             <Text style={{ marginLeft: 10 }}>{I18n.t('chon_tu_thu_vien')}</Text>
                                         </TouchableOpacity>
@@ -783,11 +843,11 @@ export default (props) => {
                                             <View style={{ flex: 1 }}></View>
                                             <View style={{ flex: 1, flexDirection: 'row' }}>
                                                 <TouchableOpacity style={{ borderRadius: 10, borderWidth: 1, borderColor: colors.colorchinh, flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 10, marginRight: 10 }} onPress={() => setOnShowModal(false)}>
-                                                    <Text style={{ color: colors.colorchinh }}>{I18n.t('huy')}</Text>
+                                                    <Text style={{ color: colors.colorchinh, justifyContent: 'flex-end' }}>{I18n.t('huy')}</Text>
                                                 </TouchableOpacity>
-                                                <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center', flex: 1, backgroundColor: colors.colorchinh, borderRadius: 10, paddingVertical: 10, marginLeft: 10 }} onPress={() => { setOnShowModal(false), onClickTakePhoto() }}>
+                                                {/* <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center', flex: 1, backgroundColor: colors.colorchinh, borderRadius: 10, paddingVertical: 10, marginLeft: 10 }} onPress={() => { setOnShowModal(false), onClickTakePhoto() }}>
                                                     <Text style={{ color: '#fff' }}>{I18n.t('dong_y')}</Text>
-                                                </TouchableOpacity>
+                                                </TouchableOpacity> */}
                                             </View>
                                         </View>
                                     </View>
@@ -813,7 +873,7 @@ export default (props) => {
                     <View style={{ justifyContent: 'center', alignItems: 'center', padding: 20 }} >
                         <TouchableOpacity onPress={() => { typeModal.current = 6, setOnShowModal(true) }}>
                             {productOl.ProductImages && (productOl.ProductImages).length > 0 ?
-                                <Image style={{ height: 70, width: 70, borderRadius: 16 }} source={{ uri: productOl.ProductImages[0].ImageURL }} />
+                                <Image style={{ height: 70, width: 70, borderRadius: 16 }} source={{ uri: imageUrl }} />
                                 : product.Name ? <View style={{ width: 70, height: 70, justifyContent: 'center', alignItems: 'center', borderRadius: 16, backgroundColor: colors.colorchinh }}>
                                     <Text style={{ textAlign: 'center', color: 'white' }}>{product.Name ? product.Name.indexOf(' ') == -1 ? product.Name.slice(0, 2).toUpperCase() : (product.Name.slice(0, 1) + product.Name.slice(product.Name.indexOf(' ') + 1, product.Name.indexOf(' ') + 2)).toUpperCase() : null}</Text>
                                 </View> :
@@ -953,7 +1013,8 @@ export default (props) => {
                                     : product.ProductType == 1 ?
                                         <View>
                                             <Text style={styles.title}>{I18n.t('ton_kho')}</Text>
-                                            <TextInput style={[styles.textInput, { fontWeight: 'bold', color: colors.colorLightBlue, textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={productOl.OnHand ? productOl.OnHand + '' : 0 + ''} onChangeText={(text) => setProductOl({ ...productOl, OnHand: onChangeTextInput(text) })}></TextInput>
+                                            <TextInput style={[styles.textInput, { fontWeight: 'bold', color: colors.colorLightBlue, textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={onHand ? onHand + '' : 0} onChangeText={(text) => setOnHand(text)}></TextInput>
+                                            {/* <ItemInput valueOH={productOl.OnHand} outputOnHand={outputOnHand} /> */}
                                         </View> : null
                                 }
 
@@ -1031,6 +1092,7 @@ export default (props) => {
 
     )
 }
+
 const styles = StyleSheet.create({
     title: {
         padding: 5,
