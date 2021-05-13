@@ -348,18 +348,11 @@ const CustomerOrder = (props) => {
                                 <View style={{ flex: 3, flexDirection: 'row' }}>
                                     <View style={{ flexDirection: "column", flex: 1, }}>
                                         <Text style={{ fontWeight: "bold", marginBottom: 7 }}>{item.Name}</Text>
-                                        <Text style={{ marginBottom: 7, fontSize: 12 }} >{item.Code}</Text>
+                                        {/* <Text style={{ marginBottom: 7, fontSize: 12 }} >{item.Code}</Text> */}
                                         <View style={{ flexDirection: "row" }}>
                                             <Text style={{}}>{currencyToString(item.Price)} x <Text style={{ color: Colors.colorchinh }}>{(isPromotion && orientaition != Constant.PORTRAIT) ? item.Quantity : null}</Text></Text>
                                             <View>
-                                                {
-                                                    orientaition == Constant.PORTRAIT ?
-                                                        <Text style={{ color: Colors.colorchinh, }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text>
-                                                        :
-                                                        <View>
-                                                            <Text style={{ color: Colors.colorchinh, }}>{item.IsLargeUnit ? (item.LargeUnit ? "/" + item.LargeUnit : "") : (item.Unit ? "/" + item.Unit : "")}</Text>
-                                                        </View>
-                                                }
+                                                <Text style={{ color: Colors.colorchinh, }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text>
                                             </View>
                                         </View>
 

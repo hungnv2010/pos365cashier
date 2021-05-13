@@ -519,7 +519,7 @@ export default (props) => {
                                 marqueeDelay={1000}>
                                 {item.Name}
                             </TextTicker>
-                            <Text style={{ marginBottom: 7, fontSize: 12 }} >{item.Code}</Text>
+                            {/* <Text style={{ marginBottom: 7, fontSize: 12 }} >{item.Code}</Text> */}
                             <View style={{ flexDirection: "row" }}>
                                 <Text style={{}}>{currencyToString(item.Price)} x </Text>
                                 <View>
