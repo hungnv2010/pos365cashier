@@ -688,10 +688,11 @@ export default (props) => {
             } else {
                 let source = response;
                 console.log("sourc", source);
-                setOnShowModal(false)
                 upLoadPhoto(source)
             }
         });
+        dialogManager.hiddenLoading()
+        setOnShowModal(false)
     }
 
     const chooseImage = async () => {
@@ -717,10 +718,12 @@ export default (props) => {
             } else {
                 let source = response;
                 console.log("sourc", source);
-                setOnShowModal(false)
+                
                 upLoadPhoto(source)
 
             }
+            setOnShowModal(false)
+            dialogManager.hiddenLoading()
         });
     }
     useFocusEffect(useCallback(() => {
@@ -825,27 +828,29 @@ export default (props) => {
                             typeModal.current == 5 ?
                                 <DialogSettingTime type1={priceConfig && priceConfig.Type != '' ? priceConfig.Type : null} type2={priceConfig && priceConfig.Type2 != '' ? priceConfig.type2 : null} priceConfig={priceConfig ? priceConfig : null} putData={getDataTime} />
                                 : typeModal.current == 6 ?
-                                    <View style={{ backgroundColor: '#fff', borderRadius: 10 }}>
-                                        <Text style={{ padding: 10, fontWeight: 'bold', color: colors.colorchinh }}>{I18n.t('chon_nhom')}</Text>
-                                        <TouchableOpacity style={{ paddingHorizontal: 10, paddingVertical: 5, flexDirection: 'row', alignItems: 'center' }} onPress={() => { setIsTakePhoto(true), captureImage() }}>
-                                            <Icon name={isTakePhoto == true ? 'radiobox-marked' : 'radiobox-blank'} size={20} />
+                                    <View style={{ backgroundColor: '#fff', borderRadius: 10, alignItems:'center'}}>
+                                        <Text style={{ padding: 10, fontWeight: 'bold', color: colors.colorchinh }}>{I18n.t('chon_anh')}</Text>
+                                        <View style={{flexDirection:'column',backgroundColor:'#fff',marginBottom:20}}>
+                                        <TouchableOpacity style={styles.styleBtn} onPress={() => { setIsTakePhoto(true), captureImage() }}>
+                                            {/* <Icon name={isTakePhoto == true ? 'radiobox-marked' : 'radiobox-blank'} size={20} /> */}
                                             <Text style={{ marginLeft: 10 }}>{I18n.t('chup_moi')}</Text>
                                         </TouchableOpacity>
-                                        <TouchableOpacity style={{ paddingHorizontal: 10, paddingVertical: 5, flexDirection: 'row', alignItems: 'center' }} onPress={() => { setIsTakePhoto(false), chooseImage() }}>
-                                            <Icon name={isTakePhoto == false ? 'radiobox-marked' : 'radiobox-blank'} size={20} />
+                                        <TouchableOpacity style={styles.styleBtn} onPress={() => { setIsTakePhoto(false), chooseImage() }}>
+                                            {/* <Icon name={isTakePhoto == false ? 'radiobox-marked' : 'radiobox-blank'} size={20} /> */}
                                             <Text style={{ marginLeft: 10 }}>{I18n.t('chon_tu_thu_vien')}</Text>
                                         </TouchableOpacity>
-                                        <View style={{ flexDirection: 'row', paddingVertical: 10, paddingHorizontal: 10 }}>
+                                        </View>
+                                        {/* <View style={{ flexDirection: 'row', paddingVertical: 10, paddingHorizontal: 10 }}>
                                             <View style={{ flex: 1 }}></View>
                                             <View style={{ flex: 1, flexDirection: 'row' }}>
                                                 <TouchableOpacity style={{ borderRadius: 10, borderWidth: 1, borderColor: colors.colorchinh, flex: 1, alignItems: 'center', justifyContent: 'center', paddingVertical: 10, marginRight: 10 }} onPress={() => setOnShowModal(false)}>
                                                     <Text style={{ color: colors.colorchinh, justifyContent: 'flex-end' }}>{I18n.t('huy')}</Text>
                                                 </TouchableOpacity>
-                                                {/* <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center', flex: 1, backgroundColor: colors.colorchinh, borderRadius: 10, paddingVertical: 10, marginLeft: 10 }} onPress={() => { setOnShowModal(false), onClickTakePhoto() }}>
+                                                <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center', flex: 1, backgroundColor: colors.colorchinh, borderRadius: 10, paddingVertical: 10, marginLeft: 10 }} onPress={() => { setOnShowModal(false), onClickTakePhoto() }}>
                                                     <Text style={{ color: '#fff' }}>{I18n.t('dong_y')}</Text>
-                                                </TouchableOpacity> */}
+                                                </TouchableOpacity>
                                             </View>
-                                        </View>
+                                        </View> */}
                                     </View>
                                     : null
             }
@@ -1116,7 +1121,7 @@ const styles = StyleSheet.create({
     styleButtonOn: {
         flex: 1, marginRight: 10, justifyContent: 'center', alignItems: 'center', borderRadius: 16, borderWidth: 0.5, padding: 15, backgroundColor: 'white', borderColor: colors.colorLightBlue
     },
-    textInput: {  marginTop: 5, marginLeft: 15, marginRight: 15, height: 40, borderRadius: 15, height: 50, padding: 10, borderWidth: 0.25, borderColor: 'silver', color:colors.colorLightBlue },
+    textInput: {backgroundColor:'#f2f2f2',  marginTop: 5, marginLeft: 15, marginRight: 15, height: 40, borderRadius: 15, height: 50, padding: 10, borderWidth: 0.25, borderColor: 'silver', color:colors.colorLightBlue },
     titleHint: {
         marginLeft: 15, marginRight: 10, color: '#B5B5B5', marginBottom: 5, marginTop: 5
     },
@@ -1128,5 +1133,8 @@ const styles = StyleSheet.create({
     backgroundModal: {
         backgroundColor: 'white',
         borderRadius: 5
+    },
+    styleBtn:{
+        backgroundColor:'#f2f2f2', paddingHorizontal: Metrics.screenWidth *0.2,borderRadius:10, paddingVertical: 15, flexDirection: 'row', alignItems: 'center',justifyContent:'center',marginBottom:5, borderWidth:0.5,borderColor:'#bbbbbb' 
     }
 })

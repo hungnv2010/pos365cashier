@@ -112,6 +112,7 @@ export default {
   chon_nha_cung_cap:'Chọn nhà cung cấp',
   chup_moi:'Chụp mới',
   chon_tu_thu_vien:'Chọn từ thư viện',
+  chon_anh:'Chọn ảnh',
 
   // TODO: D
 

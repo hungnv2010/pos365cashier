@@ -112,6 +112,7 @@ export default {
   chon_nha_cung_cap:'Choose suplier',
   chup_moi:'New picture',
   chon_tu_thu_vien:'Choose libs',
+  chon_anh:'Choose image',
 
   // TODO: D 
 
