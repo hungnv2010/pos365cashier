@@ -149,7 +149,12 @@ export default (props) => {
                     setProduct({ ...product, ProductType: product.ProductType ? product.ProductType : 1, BlockOfTimeToUseService: product.BlockOfTimeToUseService ? product.BlockOfTimeToUseService : 6 })
                     isCoppy.current = false
                 } else {
-                    setProduct({ ProductType: 1, BlockOfTimeToUseService: 6 })
+                    if (product == '{}') {
+                        setProduct({ ProductType: 1, BlockOfTimeToUseService: 6 }) 
+                    }else{
+                        setProduct({...product,ProductType: 1, BlockOfTimeToUseService: 6 })
+                    }
+                    
                 }
                 setCodeProduct("")
                 setPriceConfig({})
