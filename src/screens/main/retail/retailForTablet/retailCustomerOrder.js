@@ -336,14 +336,15 @@ const RetailCustomerOrder = (props) => {
                             <View style={{ flexDirection: "row" }}>
                                 <Text style={{}}>{currencyToString(item.Price)} x {(isPromotion) ? item.Quantity : null}</Text>
                                 <View onPress={() => onClickUnit({ ...item })}>
-                                    {
+                                    {/* {
                                         orientaition == Constant.PORTRAIT ?
                                             <Text style={{ color: Colors.colorchinh, }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text>
                                             :
                                             <View>
                                                 <Text style={{ color: Colors.colorchinh, }}>{item.IsLargeUnit ? (item.LargeUnit ? "/" + item.LargeUnit : "") : (item.Unit ? "/" + item.Unit : "")}</Text>
                                             </View>
-                                    }
+                                    } */}
+                                    <Text style={{ color: Colors.colorchinh, }}>{Math.round(item.Quantity * 1000) / 1000} {item.IsLargeUnit ? item.LargeUnit : item.Unit}</Text>
                                 </View>
                             </View>
                             <Text
