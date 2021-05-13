@@ -35,26 +35,28 @@ export default (props) => {
     const [loadMore, setLoadMore] = useState(false)
     const [viewData, setViewData] = useState([])
     const productTmp = useRef([])
-    useEffect(() => {
-        getData()
-        //dialogManager.hiddenLoading()
-    }, [])
-
     const [idCategory, setIdCategory] = useState(-1)
     const deviceType = useSelector(state => {
         return state.Common.deviceType
     });
+    useEffect(() => {
+        getData()
+    }, [])
+
     let categoryTmp = []
     const getData = async () => {
-        dialogManager.showLoading()
         try {
             let state = await NetInfo.fetch()
             if (state.isConnected == true && state.isInternetReachable == true) {
+                dialogManager.showLoading()
                 await realmStore.deleteProduct()
                 await dataManager.syncProduct()
                 getDataFromRealm()
-            } else
+            } else {
+                dialogManager.showLoading()
                 getDataFromRealm()
+            }
+            
             dialogManager.hiddenLoading()
         } catch (error) {
             console.log('handleSuccess err', error);
@@ -63,7 +65,6 @@ export default (props) => {
         }
     }
     const getDataFromRealm = async () => {
-        dialogManager.showLoading()
         productTmp.current = (await realmStore.queryProducts())
         productTmp.current = productTmp.current.filtered(`TRUEPREDICATE SORT(Id DESC) DISTINCT(Id)`)
         //productTmp.current = JSON.parse(JSON.stringify(productTmp.current))
@@ -135,7 +136,7 @@ export default (props) => {
             } else if (value == 1) {
                 if (data) {
                     console.log(data);
-                    setItProduct({...data}) 
+                    setItProduct({ ...data })
                 }
                 await dataManager.syncCategories()
                 console.log("abcdef");
@@ -148,9 +149,9 @@ export default (props) => {
             dialogManager.hiddenLoading()
         }
     }
-    useEffect(()=>{
-        console.log("iproduct",itProduct);
-    },[itProduct])
+    useEffect(() => {
+        console.log("iproduct", itProduct);
+    }, [itProduct])
 
     const renderCategory = (item, index) => {
         return (
@@ -268,8 +269,8 @@ export default (props) => {
                             // onMomentumScrollBegin={() => { onEndReachedCalledDuringMomentum.current = false }}
                             style={{}}
                         />
-                        : <View style={{flex:1,alignItems: 'center', justifyContent: 'center'}}>
-                        <Image source={Images.logo_365_long_color} style={{  }}></Image>
+                        : <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                            <Image source={Images.logo_365_long_color} style={{}}></Image>
                         </View>
                     }
 
