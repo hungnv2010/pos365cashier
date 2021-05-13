@@ -821,9 +821,7 @@ export default (props) => {
                         <DialogInput listItem={addCate.current} title={I18n.t('them_moi_nhom_hang_hoa')} titleButton={I18n.t('tao_nhom_hang_hoa')} outputValue={addCategory}></DialogInput>
                         :
                         typeModal.current == 4 ?
-                        <View style={{width:Metrics.screenWidth * 0.6,justifyContent:'center',marginLeft:Metrics.screenWidth*0.1}}>
                             <DialogInput listItem={addDVT} title={I18n.t('don_vi_tinh_lon_va_cac_thong_so_khac')} titleButton={I18n.t('ap_dung')} outputValue={setLargeUnit} />
-                            </View>
                             :
                             typeModal.current == 5 ?
                                 <DialogSettingTime type1={priceConfig && priceConfig.Type != '' ? priceConfig.Type : null} type2={priceConfig && priceConfig.Type2 != '' ? priceConfig.type2 : null} priceConfig={priceConfig ? priceConfig : null} putData={getDataTime} />
