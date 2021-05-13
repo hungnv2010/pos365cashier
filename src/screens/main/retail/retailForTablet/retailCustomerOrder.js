@@ -546,6 +546,8 @@ const RetailCustomerOrder = (props) => {
         let jsonContentObj = JSON.parse(JSON.stringify(props.jsonContent))
         console.log("printAfterPayment jsonContent 1 ", jsonContentObj);
         jsonContentObj.PaymentCode = Code;
+        jsonContentObj.RoomName = I18n.t('don_hang');
+        jsonContentObj.Pos = "A"
         console.log("printAfterPayment jsonContent 2 ", jsonContentObj);
         dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContentObj, provisional: false } })
     }

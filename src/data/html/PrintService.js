@@ -81,7 +81,7 @@ class PrintService {
                 HTMLBase = HTMLBase.replace("{Ngay}/{Thang}/{Nam}-{Gio}:{Phut}-Vao", dateToDate(JsonContent.ActiveDate, DATE_FORMAT, "DD/MM/YYYY - HH:mm"))
                 HTMLBase = HTMLBase.replace("{Ngay}/{Thang}/{Nam}-{Gio}:{Phut}-Ra", (JsonContent.PurchaseDate && JsonContent.PurchaseDate != "") ? moment(JsonContent.PurchaseDate).format("DD/MM/YYYY - HH:mm") : dateToDate(new Date(), DATE_FORMAT, "DD/MM/YYYY - HH:mm"))
                 HTMLBase = HTMLBase.replace("{Ten_Phong_Ban}", JsonContent.RoomName + "[" + JsonContent.Pos + "]")
-                HTMLBase = HTMLBase.replace("{Ten_Khach_Hang}", JsonContent && JsonContent.Partner && JsonContent.Partner.Name != "" ? JsonContent.Partner.Name : "Khách lẻ")
+                HTMLBase = HTMLBase.replace("{Ten_Khach_Hang}", JsonContent && JsonContent.Partner && JsonContent.Partner.Name != "" ? JsonContent.Partner.Name : I18n.t("khach_le"))
                 HTMLBase = HTMLBase.replace("{Nhan_Vien}", vendorSession.CurrentUser.Name)
 
                 let partnerPhone = JsonContent.Partner && JsonContent.Partner.Phone ? JsonContent.Partner.Phone : ""
@@ -111,7 +111,7 @@ class PrintService {
                     fontSize = fontSize.split("font-size:")[1];
                     fontSize = fontSize.split("px")[0];
                     console.log("fontSize === ", fontSize);
-                    HTMLBase = HTMLBase.replace(/(font-size:)(\d+.*\d*)(px;)/g, "font-size:" + (parseFloat(fontSize) + 2) + "px;");
+                    HTMLBase = HTMLBase.replace(/(font-size:\s*)(\d+.*\d*)(px;)/g, "font-size:" + (parseFloat(fontSize) + 2) + "px;");
                     console.log("fontSize ==== HTMLBase  ", HTMLBase);
                 }
 

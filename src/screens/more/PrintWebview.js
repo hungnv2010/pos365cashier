@@ -183,7 +183,7 @@ export default forwardRef((props, ref) => {
             </View>
             <AutoHeightWebView
                 // scrollEnabled={false}
-                style={{ width: deviceType == Constant.PHONE ? Metrics.screenWidth - 20 : Metrics.screenWidth / 2.5 }}
+                style={{  }}
                 files={[{
                     href: 'cssfileaddress',
                     type: 'text/css',

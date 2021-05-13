@@ -32,9 +32,9 @@ export default (props) => {
 
         const getDataHtml = async () => {
             let HtmlPrint = await getFileDuLieuString(Constant.HTML_PRINT, true)
-            console.log("getDataHtml HtmlPrint ", HtmlPrint);
+            console.log("getDataHtml HtmlPrint ", HtmlPrint, typeof(HtmlPrint));
 
-            if (HtmlPrint != "")
+            if (HtmlPrint != undefined && HtmlPrint != "")
                 setDataHtml(HtmlPrint)
             else {
                 setDataHtml(htmlDefault)
@@ -85,10 +85,12 @@ export default (props) => {
             let params = {};
             new HTTPService().setPath(ApiPath.PRINT_TEMPLATES + "/10").GET(params).then((res) => {
                 console.log("onClickLoadOnline res ", res);
-                if (res) {
+                if (res && res.Content) {
                     setDataHtml(res.Content)
                     setFileLuuDuLieu(Constant.HTML_PRINT, "" + res.Content);
-                    // props.output(res.Content)
+                } else {
+                    setDataHtml(htmlDefault)
+                    setFileLuuDuLieu(Constant.HTML_PRINT, htmlDefault);
                 }
                 dialogManager.hiddenLoading()
             }).catch((e) => {
