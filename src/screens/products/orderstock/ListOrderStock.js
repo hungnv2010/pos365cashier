@@ -14,7 +14,7 @@ import { Constant } from '../../../common/Constant';
 import { FlatList, TextInput } from 'react-native-gesture-handler';
 import { currencyToString, dateToString, momentToStringDateLocal, dateToStringFormatUTC, change_alias, change_search, dateUTCToMoment, dateUTCToDate2, timeToString } from '../../../common/Utils';
 import ToolBarNoteBook from '../../../components/toolbar/ToolBarNoteBook';
-import ProductDetail from '../../../screens/products/ProductDetail'
+import OrderStockDetails from '../../../screens/products/orderstock/OrderStockDetails'
 import dialogManager from '../../../components/dialog/DialogManager';
 import useDebounce from '../../../customHook/useDebounce';
 import { HTTPService } from '../../../data/services/HttpService';
@@ -25,6 +25,7 @@ import { lastIndexOf } from 'underscore';
 export default (props) => {
     const orderStock = useRef([])
     const [viewData, setViewData] = useState([])
+    const [defaultItem, setDefaultItem] = useState({})
     const defauTitle = useRef()
     let arrDate = []
     const deviceType = useSelector(state => {
@@ -67,7 +68,11 @@ export default (props) => {
         })
     }
     const onClickItem = (item) => {
-        props.navigation.navigate(ScreenList.OrderStockDetails, { orderstock: item })
+        setDefaultItem(item)
+        if (deviceType == Constant.PHONE) {
+            props.navigation.navigate(ScreenList.OrderStockDetails, { orderstock: item })
+        }
+        
     }
 
     const renderItemOrderStock = (item, index) => {
@@ -126,6 +131,7 @@ export default (props) => {
                     keyExtractor={(item, index) => index.toString()}
                 />
             </View>
+
             <FAB
                 style={styles.fab}
                 icon='plus'
@@ -137,8 +143,13 @@ export default (props) => {
             
         </View>
         {
-            deviceType == Constant.TABLET ?
-            <View style={{flex:1,}}></View> :null
+            deviceType == Constant.TABLET ? defaultItem.Id ?
+            <View style={{flex:1,marginLeft:0.5}}>
+                <OrderStockDetails iOrderStock={defaultItem} />
+            </View> :
+            <View style={{flex:1, alignItems:'center', justifyContent:'center'}}>
+                <Image source={Images.logo_365_long_color} />
+            </View>:null
         }
         </View>
     )

@@ -577,6 +577,7 @@ export default {
   vui_long_nhap_dung_so_tien_khach_tra: "Vui lòng nhập đúng số tiền khách trả.",
   vi_tri: 'Vị trí',
   vat: "VAT",
+  vui_long_kiem_tra_ket_noi_internet:'Vui lòng kiểm tra kết nối internet.',
 
   // TODO: X
 

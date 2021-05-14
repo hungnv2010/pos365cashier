@@ -26,6 +26,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { useFocusEffect } from '@react-navigation/native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import GDrive from "react-native-google-drive-api-wrapper";
+import NetInfo from "@react-native-community/netinfo";
 
 export default (props) => {
     const [product, setProduct] = useState({})
@@ -113,7 +114,7 @@ export default (props) => {
             PriceLargeUnit: product.PriceLargeUnit,
             Printer: deviceType == Constant.PHONE ? product.Printer ? product.Printer : 'KitchenA' : printerPr ? printerPr : 'KitchenA',
             ProductAttributes: productOl.ProductAttributes ? productOl.ProductAttributes : undefined,
-            ProductImages: productOl.ProductImages? productOl.ProductImages : product.ProductImages,
+            ProductImages: productOl.ProductImages ? productOl.ProductImages : product.ProductImages,
             ProductType: product.ProductType ? product.ProductType : 1,
             RetailerId: currentRetailerId.current,
             SplitForSalesOrder: product.SplitForSalesOrder ? product.SplitForSalesOrder : undefined,
@@ -150,8 +151,8 @@ export default (props) => {
                     setProduct({ ...product, ProductType: product.ProductType ? product.ProductType : 1, BlockOfTimeToUseService: product.BlockOfTimeToUseService ? product.BlockOfTimeToUseService : 6 })
                     isCoppy.current = false
                 } else {
-                        setProduct({...JSON.parse(JSON.stringify(props.iproduct)),ProductType: 1, BlockOfTimeToUseService: 6 })
-                        setOnHand(0)   
+                    setProduct({ ...JSON.parse(JSON.stringify(props.iproduct)), ProductType: 1, BlockOfTimeToUseService: 6 })
+                    setOnHand(0)
                 }
                 setCodeProduct("")
                 setPriceConfig({})
@@ -271,10 +272,16 @@ export default (props) => {
     }
     const getCategory = async () => {
         setCategory([])
-        await dataManager.syncCategories()
+        let state = await NetInfo.fetch()
+        if (state.isConnected == true && state.isInternetReachable == true) {
+            await dataManager.syncCategories()
+        }
         let categoryTmp = await realmStore.queryCategories()
         setCategory([...categoryTmp])
-       
+        if (product.CategoryId) {
+            let cate = categoryTmp.filter(item => item.Id == product.CategoryId)
+            setNameCategory(cate.Name)
+        }
     }
 
     const getProduct = (product) => {
@@ -517,50 +524,57 @@ export default (props) => {
         }
     }
     const saveProduct = async () => {
-        if (product.Name && product.Name != '') {
-            new HTTPService().setPath(ApiPath.PRODUCT).POST(params).then(res => {
-                console.log('onClickSave', res)
-                if (res) {
-                    console.log("ressssssss", { ...res, Code: "", Id: 0 });
-                    if (res.ResponseStatus && res.ResponseStatus.Message) {
-                        dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
-                            dialogManager.destroy();
-                        }, null, null, I18n.t('dong'))
-                    } else {
-                        if (deviceType == Constant.PHONE) {
-                            if (isCoppy.current == false) {
-                                props.route.params.onCallBack(type, 2)
-                                props.navigation.pop()
-                            } else {
-                                setCodeProduct("")
-                                setProduct({ ...res, Code: "", Id: 0 })
-                                //syncData()
-                                props.route.params.onCallBack(type, 2)
-                                dialogManager.hiddenLoading()
-                                dialogManager.showPopupOneButton(`${I18n.t(type)} ${I18n.t('thanh_cong')}`, I18n.t('thong_bao'))
-                                setType('them')
-                                scrollRef.current?.scrollTo({
-                                    y: 0,
-                                    animated: true,
-                                });
-                            }
-                        } else if (deviceType == Constant.TABLET) {
-                            if (isCoppy.current == false) {
-                                props.handleSuccessTab(type, 2)
-                            } else {
-                                //setProduct({ ...res })
-                                setProduct({ ...res, Code: "", Id: 0 })
-                                setCodeProduct("")
-                                props.handleSuccessTab(type, 2, { ...res, Code: "", Id: 0 })
-                                setType('them')
-                                setImageUrl(imageUrl)
+        let state = await NetInfo.fetch()
+        if (state.isConnected == true && state.isInternetReachable == true) {
+            if (product.Name && product.Name != '') {
+                new HTTPService().setPath(ApiPath.PRODUCT).POST(params).then(res => {
+                    console.log('onClickSave', res)
+                    if (res) {
+                        console.log("ressssssss", { ...res, Code: "", Id: 0 });
+                        if (res.ResponseStatus && res.ResponseStatus.Message) {
+                            dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
+                                dialogManager.destroy();
+                            }, null, null, I18n.t('dong'))
+                        } else {
+                            if (deviceType == Constant.PHONE) {
+                                if (isCoppy.current == false) {
+                                    props.route.params.onCallBack(type, 2)
+                                    props.navigation.pop()
+                                } else {
+                                    setCodeProduct("")
+                                    setProduct({ ...res, Code: "", Id: 0 })
+                                    //syncData()
+                                    props.route.params.onCallBack(type, 2)
+                                    dialogManager.hiddenLoading()
+                                    dialogManager.showPopupOneButton(`${I18n.t(type)} ${I18n.t('thanh_cong')}`, I18n.t('thong_bao'))
+                                    setType('them')
+                                    scrollRef.current?.scrollTo({
+                                        y: 0,
+                                        animated: true,
+                                    });
+                                }
+                            } else if (deviceType == Constant.TABLET) {
+                                if (isCoppy.current == false) {
+                                    props.handleSuccessTab(type, 2)
+                                } else {
+                                    //setProduct({ ...res })
+                                    setProduct({ ...res, Code: "", Id: 0 })
+                                    setCodeProduct("")
+                                    props.handleSuccessTab(type, 2, { ...res, Code: "", Id: 0 })
+                                    setType('them')
+                                    setImageUrl(imageUrl)
+                                }
                             }
                         }
                     }
-                }
-            })
+                })
+            } else {
+                dialogManager.showPopupOneButton(I18n.t('vui_long_nhap_day_du_thong_tin_truoc_khi_luu'), I18n.t('thong_bao'), () => {
+                    dialogManager.destroy();
+                }, null, null, I18n.t('dong'))
+            }
         } else {
-            dialogManager.showPopupOneButton(I18n.t('vui_long_nhap_day_du_thong_tin_truoc_khi_luu'), I18n.t('thong_bao'), () => {
+            dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_internet'), I18n.t('thong_bao'), () => {
                 dialogManager.destroy();
             }, null, null, I18n.t('dong'))
         }
@@ -577,9 +591,9 @@ export default (props) => {
             console.log("value", data.key.Name);
             setProduct({ ...product, CategoryId: data.key.Id })
             //product.CategoryId = data.key.Id
-            setNameCategory(data.key.Name) 
+            setNameCategory(data.key.Name)
             console.log(data);
-        } 
+        }
         setOnShowModal(false)
     }
     const getDataTime = (data) => {
@@ -663,16 +677,19 @@ export default (props) => {
                 setImageUrl(url)
                 console.log(image);
                 dialogManager.hiddenLoading()
+
             })
+        setOnShowModal(false)
     }
-    const captureImage = () => {
+    const captureImage = async () => {
+        //setOnShowModal(false)
         let options = {
             mediaType: 'photo',
             cameraType: 'front',
             includeBase64: true,
             saveToPhotos: true
         };
-        launchCamera(options, (response) => {
+        await launchCamera(options, (response) => {
             console.log('Response = ', response);
 
             if (response.didCancel) {
@@ -689,10 +706,11 @@ export default (props) => {
                 let source = response;
                 console.log("sourc", source);
                 upLoadPhoto(source)
+                setOnShowModal(false)
             }
         });
         dialogManager.hiddenLoading()
-        setOnShowModal(false)
+
     }
 
     const chooseImage = async () => {
@@ -718,11 +736,9 @@ export default (props) => {
             } else {
                 let source = response;
                 console.log("sourc", source);
-                
                 upLoadPhoto(source)
-
+                setOnShowModal(false)
             }
-            setOnShowModal(false)
             dialogManager.hiddenLoading()
         });
     }
@@ -821,24 +837,22 @@ export default (props) => {
                         <DialogInput listItem={addCate.current} title={I18n.t('them_moi_nhom_hang_hoa')} titleButton={I18n.t('tao_nhom_hang_hoa')} outputValue={addCategory}></DialogInput>
                         :
                         typeModal.current == 4 ?
-                        <View style={{width:Metrics.screenWidth * 0.6,justifyContent:'center',marginLeft:Metrics.screenWidth*0.1}}>
                             <DialogInput listItem={addDVT} title={I18n.t('don_vi_tinh_lon_va_cac_thong_so_khac')} titleButton={I18n.t('ap_dung')} outputValue={setLargeUnit} />
-                            </View>
                             :
                             typeModal.current == 5 ?
                                 <DialogSettingTime type1={priceConfig && priceConfig.Type != '' ? priceConfig.Type : null} type2={priceConfig && priceConfig.Type2 != '' ? priceConfig.type2 : null} priceConfig={priceConfig ? priceConfig : null} putData={getDataTime} />
                                 : typeModal.current == 6 ?
-                                    <View style={{ backgroundColor: '#fff', borderRadius: 10, alignItems:'center'}}>
+                                    <View style={{ backgroundColor: '#fff', borderRadius: 10, alignItems: 'center' }}>
                                         <Text style={{ padding: 10, fontWeight: 'bold', color: colors.colorchinh }}>{I18n.t('chon_anh')}</Text>
-                                        <View style={{flexDirection:'column',backgroundColor:'#fff',marginBottom:20}}>
-                                        <TouchableOpacity style={styles.styleBtn} onPress={() => { setIsTakePhoto(true), captureImage() }}>
-                                            {/* <Icon name={isTakePhoto == true ? 'radiobox-marked' : 'radiobox-blank'} size={20} /> */}
-                                            <Text style={{ marginLeft: 10 }}>{I18n.t('chup_moi')}</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity style={styles.styleBtn} onPress={() => { setIsTakePhoto(false), chooseImage() }}>
-                                            {/* <Icon name={isTakePhoto == false ? 'radiobox-marked' : 'radiobox-blank'} size={20} /> */}
-                                            <Text style={{ marginLeft: 10 }}>{I18n.t('chon_tu_thu_vien')}</Text>
-                                        </TouchableOpacity>
+                                        <View style={{ flexDirection: 'column', backgroundColor: '#fff', marginBottom: 20 }}>
+                                            <TouchableOpacity style={styles.styleBtn} onPress={() => { setIsTakePhoto(true), captureImage(), console.log("click capture"); }}>
+                                                {/* <Icon name={isTakePhoto == true ? 'radiobox-marked' : 'radiobox-blank'} size={20} /> */}
+                                                <Text style={{ marginLeft: 10 }}>{I18n.t('chup_moi')}</Text>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity style={styles.styleBtn} onPress={() => { setIsTakePhoto(false), chooseImage() }}>
+                                                {/* <Icon name={isTakePhoto == false ? 'radiobox-marked' : 'radiobox-blank'} size={20} /> */}
+                                                <Text style={{ marginLeft: 10 }}>{I18n.t('chon_tu_thu_vien')}</Text>
+                                            </TouchableOpacity>
                                         </View>
                                         {/* <View style={{ flexDirection: 'row', paddingVertical: 10, paddingHorizontal: 10 }}>
                                             <View style={{ flex: 1 }}></View>
@@ -874,16 +888,16 @@ export default (props) => {
                     <View style={{ justifyContent: 'center', alignItems: 'center', padding: 20 }} >
                         <TouchableOpacity onPress={() => { typeModal.current = 6, setOnShowModal(true) }}>
                             {productOl.ProductImages && (productOl.ProductImages).length > 0 || product.ProductImages && product.ProductImages.length > 0 ?
-                                <Image style={{ height: 70, width: 70, borderRadius: 16 }} source={{ uri: imageUrl }} />:
+                                <Image style={{ height: 70, width: 70, borderRadius: 16 }} source={{ uri: imageUrl }} /> :
                                 // : product.Name ? <View style={{ width: 70, height: 70, justifyContent: 'center', alignItems: 'center', borderRadius: 16, backgroundColor: colors.colorchinh }}>
                                 //     <Text style={{ textAlign: 'center', color: 'white' }}>{product.Name ? product.Name.indexOf(' ') == -1 ? product.Name.slice(0, 2).toUpperCase() : (product.Name.slice(0, 1) + product.Name.slice(product.Name.indexOf(' ') + 1, product.Name.indexOf(' ') + 2)).toUpperCase() : null}</Text>
                                 // </View> :
-                                    <View style={{ flexDirection: 'row' }}>
-                                        <Image style={{ height: 70, width: 70, borderRadius: 16 }} source={Images.ic_box} />
-                                        <View style={{ width: 28, height: 28, borderRadius: 25, alignItems: 'center', justifyContent: 'center', backgroundColor: '#e6ffff', marginLeft: -20, marginTop: 45 }}>
-                                            <Icon name={'camera'} color={'#36a3f7'} size={20} style={{}} />
-                                        </View>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <Image style={{ height: 70, width: 70, borderRadius: 16 }} source={Images.ic_box} />
+                                    <View style={{ width: 28, height: 28, borderRadius: 25, alignItems: 'center', justifyContent: 'center', backgroundColor: '#e6ffff', marginLeft: -20, marginTop: 45 }}>
+                                        <Icon name={'camera'} color={'#36a3f7'} size={20} style={{}} />
                                     </View>
+                                </View>
                             }
                         </TouchableOpacity>
                     </View>
@@ -1014,7 +1028,7 @@ export default (props) => {
                                     : product.ProductType == 1 ?
                                         <View>
                                             <Text style={styles.title}>{I18n.t('ton_kho')}</Text>
-                                            <TextInput style={[styles.textInput, { fontWeight: 'bold', color: colors.colorLightBlue, textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={onHand ? onHand + '' : 0} onChangeText={(text) => setOnHand(text)}></TextInput>
+                                            <TextInput style={[styles.textInput, { fontWeight: 'bold', color: colors.colorLightBlue, textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={onHand ? onHand + '' : null} onChangeText={(text) => setOnHand(text)}></TextInput>
                                         </View> : null
                                 }
 
@@ -1121,7 +1135,7 @@ const styles = StyleSheet.create({
     styleButtonOn: {
         flex: 1, marginRight: 10, justifyContent: 'center', alignItems: 'center', borderRadius: 16, borderWidth: 0.5, padding: 15, backgroundColor: 'white', borderColor: colors.colorLightBlue
     },
-    textInput: {backgroundColor:'#f2f2f2',  marginTop: 5, marginLeft: 15, marginRight: 15, height: 40, borderRadius: 15, height: 50, padding: 10, borderWidth: 0.25, borderColor: 'silver', color:colors.colorLightBlue },
+    textInput: { backgroundColor: '#f2f2f2', marginTop: 5, marginLeft: 15, marginRight: 15, height: 40, borderRadius: 15, height: 50, padding: 10, borderWidth: 0.25, borderColor: 'silver', color: colors.colorLightBlue },
     titleHint: {
         marginLeft: 15, marginRight: 10, color: '#B5B5B5', marginBottom: 5, marginTop: 5
     },
@@ -1134,7 +1148,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         borderRadius: 5
     },
-    styleBtn:{
-        backgroundColor:'#f2f2f2', paddingHorizontal: Metrics.screenWidth *0.2,borderRadius:10, paddingVertical: 15, flexDirection: 'row', alignItems: 'center',justifyContent:'center',marginBottom:5, borderWidth:0.5,borderColor:'#bbbbbb' 
+    styleBtn: {
+        backgroundColor: '#f2f2f2', paddingHorizontal: Metrics.screenWidth * 0.2, borderRadius: 10, paddingVertical: 15, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 5, borderWidth: 0.5, borderColor: '#bbbbbb'
     }
 })

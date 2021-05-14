@@ -43,7 +43,7 @@ export default (props) => {
     }
     const renderItem = (item, index) => {
         return (
-            <View >
+            <View style={{paddingHorizontal:Metrics.screenWidth*0.07}} >
                 <Text style={styles.styleContent}>{I18n.t(item.Name)}</Text>
                 <TextInput style={styles.styleTextInput} keyboardType={typeof(item.Value) == 'number' ? 'numbers-and-punctuation' : 'default'} value={item.Value ? typeof (item.Value) == 'string' ? item.Value : currencyToString(item.Value) : null} placeholder={I18n.t(item.Hint)} placeholderTextColor="#808080" onChangeText={(text) => { setInput(item.isNum == true ? onChangeTextInput(text):text); item.Value = item.isNum== true? onChangeTextInput(text) : text ; setKey(item.Key); setList([...list]); }}></TextInput>
             </View>
@@ -59,7 +59,6 @@ export default (props) => {
                     keyExtractor={(item, index) => index.toString()}
                 />
             <Text style={[styles.styleContent]}>{props.content}</Text>
-            <View style={styles.styleLine}></View>
             <TouchableOpacity style={styles.styleButton} onPress={onClickButton}>
                 <Text style={[styles.styleTitle, { color: 'white' }]}>{props.titleButton}</Text>
             </TouchableOpacity>
@@ -76,10 +75,10 @@ const styles = StyleSheet.create({
     },
     styleButton: {
         backgroundColor: colors.colorLightBlue,
-        borderRadius: 10, marginLeft: 10, marginRight: 10, marginBottom: 20, marginTop: 10
+        borderRadius: 10,  marginBottom: 20,marginHorizontal:Metrics.screenWidth*0.07+10
     },
     styleTextInput: {
-        borderRadius: 16, padding: 12, marginRight: 10, marginLeft: 10, fontSize: 14, color: "#4a4a4a",backgroundColor:'#f2f2f2', borderColor:'#bbbbbb',borderWidth:0.5
+        borderRadius: 10, padding: 12, marginRight: 10, marginLeft: 10, fontSize: 14, color: "#4a4a4a",backgroundColor:'#f2f2f2', borderColor:'#bbbbbb',borderWidth:0.5
     },
     styleLine: {
         height: 1, marginLeft: 10, marginRight: 10, backgroundColor: '#DCDCDC'
