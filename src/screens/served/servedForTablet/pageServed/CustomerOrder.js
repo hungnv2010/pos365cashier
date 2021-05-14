@@ -63,6 +63,7 @@ const CustomerOrder = (props) => {
     const [vendorSession, setVendorSession] = useState({});
     const [QuantitySubtract, setQuantitySubtract] = useState(0)
     const [quickPay, setQuickPay] = useState(false)
+    const [totalQuantity, setTotalQuantity] = useState(0)
     const { isFNB, orientaition } = useSelector(state => {
         return state.Common
     });
@@ -112,7 +113,12 @@ const CustomerOrder = (props) => {
     }
 
     useEffect(() => {
-        listOrder.forEach((elm, index) => elm.index = index)
+        let totalQuantity = 0
+        listOrder.forEach((elm, index) => {
+            elm.index = index
+            totalQuantity += elm.Quantity
+        })
+        setTotalQuantity(Math.round(totalQuantity * 1000) / 1000)
     }, [listOrder])
 
     useEffect(() => {
@@ -799,9 +805,14 @@ const CustomerOrder = (props) => {
             <View style={{}}>
                 <TouchableOpacity
                     onPress={() => { setExpand(!expand) }}
-                    style={{ borderTopWidth: .5, borderTopColor: colors.colorchinh, paddingVertical: 5, backgroundColor: "white", }}>
+                    style={{ paddingVertical: 5, backgroundColor: "#FFE9CC", borderTopWidth: .5, borderTopColor: "red", }}>
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
-                        <Text style={{ fontWeight: "bold", paddingLeft: 10 }}>{I18n.t('tong_thanh_tien')}</Text>
+                        <View style={{ flexDirection: "row", alignItems: "center" }}>
+                            <Text style={{ fontWeight: "bold", marginHorizontal: 10 }}>{I18n.t('tong_thanh_tien')}</Text>
+                            <View style={{ padding: 5, borderWidth: 1, borderColor: "black", borderRadius: 10, backgroundColor: "white", }}>
+                                <Text style={{ fontWeight: "bold", }}>{totalQuantity}</Text>
+                            </View>
+                        </View>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
                             <Text style={{ fontWeight: "bold", fontSize: 16, color: Colors.colorchinh }}>{currencyToString(props.jsonContent.Total - (props.jsonContent.VAT ? props.jsonContent.VAT : 0) + props.jsonContent.Discount)} đ</Text>
                             {expand ?
