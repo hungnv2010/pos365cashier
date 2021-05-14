@@ -27,9 +27,23 @@ export default (props) => {
     const [totalprovisional, setTotalProvisional] = useState(0)
     const [methodPay, setMethodPay] = useState(I18n.t('tien_mat'))
 
+    const deviceType = useSelector(state => {
+        return state.Common.deviceType
+    });
+
     useEffect(() => {
-        getData(props.route.params)
+        if (deviceType == Constant.PHONE) {
+            getData(props.route.params)
+        }
     }, [])
+
+    useEffect(() => {
+        if (deviceType == Constant.TABLET) {
+            let data = JSON.parse(JSON.stringify(props.iOrderStock))
+            setOrderStock({ ...data })
+            getItemDetail(data.Id, data.AccountId)
+        }
+    }, [props.iOrderStock])
 
     const getData = (param) => {
         let data = JSON.parse(JSON.stringify(param.orderstock))
@@ -56,7 +70,7 @@ export default (props) => {
         })
         new HTTPService().setPath(ApiPath.ACCOUNT + '/treeview').GET().then(res => {
             if (res != null) {
-                console.log('res',res);
+                console.log('res', res);
                 if (accId && accId != "") {
                     res.forEach(el => {
                         if (el.Id == accId) {
@@ -74,10 +88,13 @@ export default (props) => {
 
     return (
         <View style={{ flex: 1 }}>
-            <ToolBarDefault
-                {...props}
-                title={I18n.t('chi_tiet_nhap_hang')}
-            />
+            {
+                deviceType == Constant.PHONE ?
+                    <ToolBarDefault
+                        {...props}
+                        title={I18n.t('chi_tiet_nhap_hang')}
+                    /> : null
+            }
             <ScrollView>
                 <View style={{ flex: 1 }}>
                     <View style={{ backgroundColor: '#fff', flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, paddingVertical: 15 }}>
@@ -180,7 +197,7 @@ export default (props) => {
                 <TouchableOpacity style={{ flex: 3, marginRight: 10, backgroundColor: colors.colorLightBlue, alignItems: 'center', justifyContent: 'center', borderRadius: 10 }}>
                     <Text style={{ textAlign: 'center', fontWeight: 'bold', color: '#fff' }}>{I18n.t('xoa')}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={{ flex: 3, backgroundColor: colors.colorLightBlue, alignItems: 'center', justifyContent: 'center', borderRadius: 10 }} onPress={() => { props.navigation.navigate(ScreenList.AddOrderStock, { orderstock: orderStock, listPr: listItem, paymentMethod:methodPay }) }}>
+                <TouchableOpacity style={{ flex: 3, backgroundColor: colors.colorLightBlue, alignItems: 'center', justifyContent: 'center', borderRadius: 10 }} onPress={() => { props.navigation.navigate(ScreenList.AddOrderStock, { orderstock: orderStock, listPr: listItem, paymentMethod: methodPay }) }}>
                     <Text style={{ textAlign: 'center', fontWeight: 'bold', color: '#fff' }}>{I18n.t('chinh_sua')}</Text>
                 </TouchableOpacity>
             </View>

@@ -577,6 +577,7 @@ nhom_nha_cung_cap: "Group supplier",
   vui_long_nhap_dung_so_tien_khach_tra: "Please enter the correct amount of payment.",
   vi_tri: 'Position',
   vat: "VAT",
+  vui_long_kiem_tra_ket_noi_internet:'Please check internet connection.',
 
   // TODO: X
 
