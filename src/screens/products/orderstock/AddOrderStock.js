@@ -480,9 +480,14 @@ export default (props) => {
                         </View>
                     </View>
                 }
-                <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, borderRadius: 10, alignItems: 'center', justifyContent: 'center', paddingVertical: 15, marginHorizontal: 10 }} onPress={() => { onClickSave() }}>
+                <View style={{paddingHorizontal:10, flexDirection:'row'}}>
+                <TouchableOpacity style={{flex:1, backgroundColor: colors.colorLightBlue, borderRadius: 10, alignItems: 'center', justifyContent: 'center', paddingVertical: 15, marginHorizontal: 10 }} onPress={() => { onClickSave() }}>
                     <Text style={{ fontWeight: 'bold', color: '#fff' }}>{I18n.t('luu')}</Text>
                 </TouchableOpacity>
+                <TouchableOpacity style={{flex:1, backgroundColor: "#34bfa3", borderRadius: 10, alignItems: 'center', justifyContent: 'center', paddingVertical: 15, marginHorizontal: 10 }} onPress={() => { onClickSave() }}>
+                    <Text style={{ fontWeight: 'bold', color: '#fff' }}>{I18n.t('hoan_thanh')}</Text>
+                </TouchableOpacity>
+                </View>
             </View>
             <Modal
                 animationType="fade"
