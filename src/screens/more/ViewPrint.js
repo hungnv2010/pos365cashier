@@ -266,7 +266,7 @@ export default forwardRef((props, ref) => {
                         }}>
                         <AutoHeightWebView
                             scrollEnabled={false}
-                            style={{ backgroundColor: "#ffffff", width: deviceType == Constant.PHONE ? (orientation == Constant.PORTRAIT ? Dimensions.get('window').width / 1.35 : Dimensions.get('window').width / 2.3) : (orientation == Constant.PORTRAIT ? Dimensions.get('window').width / 2.8 : Dimensions.get('window').height / 2.8) }}
+                            // style={{ backgroundColor: "#ffffff", width: deviceType == Constant.PHONE ? (orientation == Constant.PORTRAIT ? Dimensions.get('window').width / 1.3 : Dimensions.get('window').width / 2.3) : (orientation == Constant.PORTRAIT ? Dimensions.get('window').width / 2.8 : Dimensions.get('window').height / 2.8) }}
                             // customScript={`document.body.style.background = 'red';`}
                             files={[{
                                 href: 'cssfileaddress',

@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { Image, View, StyleSheet, Button, Text, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import {NativeModules, Image, View, StyleSheet, Button, Text, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
 import ToolBarPrintHtml from '../../components/toolbar/ToolBarPrintHtml';
 import { Images, Colors, Metrics } from '../../theme';
 import { WebView } from 'react-native-webview';
@@ -18,6 +18,7 @@ import colors from '../../theme/Colors';
 import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
 import { ScreenList } from '../../common/ScreenList';
 import tempDefault from './tempDefault';
+const { PrintTemp } = NativeModules;
 
 const Code = {
     Ten_Cua_Hang: "{Ten_Cua_Hang}",
@@ -87,6 +88,7 @@ export default (props) => {
     }
 
     const onSelectTab = (number) => {
+        PrintTemp.registerPrint("Hung")
         if (number == 1) {
             setDataHtml(tempDefault)
             setFileLuuDuLieu(Constant.HTML_PRINT, tempDefault);

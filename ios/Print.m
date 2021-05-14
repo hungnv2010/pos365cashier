@@ -11,6 +11,7 @@
 #import <WebKit/WebKit.h>
 #import "TSCCmd.h"
 #import "PrinterManager.h"
+#import "ESCCmd.h"
 
 @interface Print ()
 {
@@ -36,7 +37,7 @@
   bool PrintClose;
   bool isLocalNetwork;
   NSMutableArray *images;
-  
+  NSString *TempCode;
   bool isHtml;
   
 }
@@ -135,6 +136,94 @@ RCT_EXPORT_METHOD(keepTheScreenOff:(NSString *)param) {
   dispatch_async(dispatch_get_main_queue(), ^{
     [[UIApplication sharedApplication] setIdleTimerDisabled: NO];
   });
+}
+
+RCT_EXPORT_METHOD(PrintTemp:(NSString *)param ip:(NSString *)ip size:(NSString *)size ) {
+  NSLog(@"PrintTemp param %@ ip %@", param, ip);
+  isLocalNetwork = NO;
+  PrintImageClient = YES;
+  isConnectAndPrint = YES;
+  isHtml = NO;
+  PrintClose = NO;
+  
+  IP = ip;
+  TempCode = param;
+  [_printerManager DoConnectwifi:ip Port:9100];
+  
+  
+  double delayInSeconds = 1;
+  dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+  dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+    NSLog(@"printTemp EscPrint");
+    [self EscPrint];
+  });
+}
+
+-(void)EscPrint{
+    Printer * currentprinter = _printerManager.CurrentPrinter;
+    NSLog(@"inputStr=1");
+    if (currentprinter.IsOpen){
+      NSLog(@"inputStr=2");
+        NSString* inputStr = TempCode;
+        NSLog(@"inputStr=%@",inputStr);
+        TextSetting *textst = currentprinter.TextSets;
+        //[textst setEscFonttype:ESCFontType_FontA];
+        [textst setIsBold:Set_Enabled];
+        [textst setIsItalic:Set_Enabled];
+        [textst setIsTimes_Wide:Set_DisEnable];
+        [textst setIsTimes_Heigh:Set_DisEnable];
+        [textst setIsTimes4_Wide:Set_DisEnable];
+        [textst setIsTimes_Wide:Set_Enabled];
+        [textst setAlignmode:Align_Left];
+        [textst setIsUnderline:Set_Enabled];
+        [textst setRotate:Rotate0];//ESC: Rotate90,Rotate0 有效(valid)
+        Cmd *cmd =  [_printerManager CreateCmdClass:_printerManager.CurrentPrinterCmdType];
+        [cmd Clear];
+        [cmd setEncodingType:Encoding_GBK];
+        NSData *headercmd = [_printerManager GetHeaderCmd:cmd cmdtype:_printerManager.CurrentPrinterCmdType];//
+        [cmd Append:headercmd];
+//        NSData *data1 = [(ESCCmd*)cmd GetSetAreaWidthCmd:80*8];
+//        [cmd Append:data1];
+        NSData *data = [cmd GetTextCmd:currentprinter.TextSets text:inputStr];
+        [cmd Append:data];
+//        for (int i=0; i<1; i++) {
+//            [cmd Append:[cmd GetLFCRCmd]];
+//        }
+//        data1 = [(ESCCmd*)cmd GetSetAreaWidthCmd:72*8];
+//        [cmd Append:data1];
+//        NSData *data2 = [(ESCCmd*)cmd GetSetLeftStartSpacingCmd:10*8];
+//        [cmd Append:data2];
+//        [cmd Append:data];
+        [cmd Append:[cmd GetPrintEndCmd]];
+        //询问打印是否完成，打印完成，返回 “print Ok" 适用于 Rpp80Use 定制客户使用。
+
+        //Inquire whether the printing is completed, printing is completed, return "print Ok" For Rpp80Use custom customer use.
+        //       [cmd Append:[cmd GetAskPrintOkCmd]];
+
+
+        [cmd Append:[cmd GetCutPaperCmd:CutterMode_half]];
+        [cmd Append:[cmd GetPrintEndCmd]];
+        [cmd Append:[cmd GetBeepCmd:1 interval:3]];//level，interval:max is(最大值) 9
+        [cmd Append:[cmd GetPrintEndCmd]];
+        //        [cmd Append:[cmd GetOpenDrawerCmd:0 startTime:5 endTime:0]];
+        //
+
+        if ([currentprinter IsOpen]){
+            NSData *data=[cmd GetCmd];
+            NSString *aString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+
+            aString = [aString stringByReplacingOccurrencesOfString:@"\r" withString:@""];
+            NSLog(@"%@",aString);
+            // for (int i=0; i<60; i++) {
+            [currentprinter Write:data];
+            // }
+
+        }
+
+
+
+
+    }
 }
 
 - (void) printClient: (NSString *)isCopies {

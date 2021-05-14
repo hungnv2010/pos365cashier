@@ -47,28 +47,29 @@ export default forwardRef((props, ref) => {
     useEffect(() => {
         console.log("Preview props", props);
         const getVendorSession = async () => {
-            isClick.current = false;
-            let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
-            console.log('data', JSON.parse(data));
-            setVendorSession(JSON.parse(data))
-            let html = HtmlDefault;
+            setData(props.route.params.data)
+            // isClick.current = false;
+            // let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
+            // console.log('data', JSON.parse(data));
+            // setVendorSession(JSON.parse(data))
+            // let html = HtmlDefault;
             // html = props.route.params.data;
-            if (deviceType == Constant.PHONE) {
-                html = props.route.params.data;
-            } else {
-                console.log("Preview props.data", props.data);
-                if (props.data != "")
-                    html = props.data
+            // if (deviceType == Constant.PHONE) {
+            //     html = props.route.params.data;
+            // } else {
+            //     console.log("Preview props.data", props.data);
+            //     if (props.data != "")
+            //         html = props.data
 
-            }
-            console.log("Preview html", html);
-            printService.GenHtml(html, JsonContent1).then(res => {
-                if (res && res != "") {
-                    // if (deviceType == Constant.TABLET)
-                    //     res = res.replace("font-size:16.0px;", "font-size:22.0px;")
-                    setData(res)
-                }
-            })
+            // }
+            // console.log("Preview html", html);
+            // printService.GenHtml(html, JsonContent1).then(res => {
+            //     if (res && res != "") {
+            //         // if (deviceType == Constant.TABLET)
+            //         //     res = res.replace("font-size:16.0px;", "font-size:22.0px;")
+            //         setData(res)
+            //     }
+            // })
             // // printService.GenHtmlKitchen(html, defaultKitchen).then(res => {
             // //     if (res && res != "") {
             // //         setData(res)
@@ -126,21 +127,7 @@ export default forwardRef((props, ref) => {
 
     function clickPrint() {
         console.log("clickPrint data ", data)
-        // let getCurrentIP = await getFileDuLieuString(Constant.IPPRINT, true);
-        // console.log('getCurrentIP ', getCurrentIP);
-        // if (getCurrentIP && getCurrentIP != "") {
-        if (isClick.current == false) {
-            let html = data.replace("width: 76mm", "")
-            // viewPrintRef.current.clickCaptureRef();
-            viewPrintRef.current.printProvisionalRef(JsonContent1, false, "", true)
-        }
-        // isClick.current = true;
-        // setTimeout(() => {
-        //     isClick.current = false;
-        // }, 2000);
-        // } else {
-        //     dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_may_in'), I18n.t('thong_bao'))
-        // }
+        Print.PrintTemp(data, "192.168.100.238", "30x40")
     }
 
     onCapture = uri => {
@@ -152,20 +139,12 @@ export default forwardRef((props, ref) => {
 
     return (
         <View style={{ backgroundColor: "#fff", alignItems: "center", flex: 1 }}>
-           
+
             {deviceType == Constant.PHONE ? <ToolBarPreviewHtml
                 navigation={props.navigation} title="HTML"
                 clickPrint={() => clickPrint()}
                 clickCheck={() => clickCheck()}
             /> : null
-                // <View style={{ width: "100%", padding: 10, justifyContent: "space-between", flexDirection: "row" }}>
-                //     <TouchableOpacity style={styles.button} onPress={() => { clickPrint() }}>
-                //         <Text style={styles.textButton}>{I18n.t('in')}</Text>
-                //     </TouchableOpacity>
-                //     <TouchableOpacity style={styles.button} onPress={() => { clickCheck() }}>
-                //         <Text style={styles.textButton}>{I18n.t('luu')}</Text>
-                //     </TouchableOpacity>
-                // </View>
             }
             <View style={{ width: "100%", padding: 5, justifyContent: "space-between", flexDirection: "row" }}>
                 <TouchableOpacity style={styles.button} onPress={() => { clickPrint() }}>
@@ -175,9 +154,12 @@ export default forwardRef((props, ref) => {
                     <Text style={styles.textButton}>{I18n.t('luu')}</Text>
                 </TouchableOpacity>
             </View>
-            <AutoHeightWebView
+            <View style={{ padding: 10 }}>
+                <Text>{data.replace(/\n/g, " ")}</Text>
+            </View>
+            {/* <AutoHeightWebView
                 // scrollEnabled={false}
-                style={{  }}
+                style={{}}
                 files={[{
                     href: 'cssfileaddress',
                     type: 'text/css',
@@ -185,7 +167,7 @@ export default forwardRef((props, ref) => {
                 }]}
                 source={{ html: data }}
             // scalesPageToFit={true}
-            />
+            /> */}
         </View>
     );
 });

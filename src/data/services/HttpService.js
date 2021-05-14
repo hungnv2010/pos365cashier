@@ -77,7 +77,7 @@ export class HTTPService {
                 withCredentials: true,
                 data: JSON.stringify(jsonParam),
                 timeout: 30000,
-                timeoutErrorMessage:"TIMEOUT"
+                timeoutErrorMessage: "TIMEOUT"
             }).then((response) => { this.extractData(response, resolve) })
                 .catch((e) => {
                     console.log("POST err ", e);
@@ -146,7 +146,8 @@ export class HTTPService {
                 this.error(mes);
                 reject(mes)
             } else {
-                this.error();
+                if (!(e && e.config && e.config.timeoutErrorMessage && e.config.timeoutErrorMessage == "TIMEOUT"))
+                    this.error();
                 reject(e)
             }
         }
