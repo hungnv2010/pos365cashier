@@ -663,11 +663,13 @@ export default (props) => {
                 setImageUrl(url)
                 console.log(image);
                 dialogManager.hiddenLoading()
-                //setOnShowModal(false)
+                
             })
+            setOnShowModal(false)
     }
     const captureImage = async() => {
-        
+        console.log("start");
+        //setOnShowModal(false)
         let options = {
             mediaType: 'photo',
             cameraType: 'front',
@@ -725,7 +727,6 @@ export default (props) => {
                 upLoadPhoto(source)
                 setOnShowModal(false)
             }
-            
             dialogManager.hiddenLoading()
         });
     }
@@ -832,7 +833,7 @@ export default (props) => {
                                     <View style={{ backgroundColor: '#fff', borderRadius: 10, alignItems:'center'}}>
                                         <Text style={{ padding: 10, fontWeight: 'bold', color: colors.colorchinh }}>{I18n.t('chon_anh')}</Text>
                                         <View style={{flexDirection:'column',backgroundColor:'#fff',marginBottom:20}}>
-                                        <TouchableOpacity style={styles.styleBtn} onPress={() => { setIsTakePhoto(true), captureImage() }}>
+                                        <TouchableOpacity style={styles.styleBtn} onPress={() => { setIsTakePhoto(true), captureImage(), console.log("click capture"); }}>
                                             {/* <Icon name={isTakePhoto == true ? 'radiobox-marked' : 'radiobox-blank'} size={20} /> */}
                                             <Text style={{ marginLeft: 10 }}>{I18n.t('chup_moi')}</Text>
                                         </TouchableOpacity>
