@@ -51,6 +51,7 @@ export default (props) => {
     const [currentCustomer, setCurrentCustomer] = useState({ Name: "khach_le", Id: 0 })
     const [promotions, setPromotions] = useState([])
     const [listProducts, setListProducts] = useState([])
+    const [totalQuantity, setTotalQuantity] = useState(0)
     const { already, syncRetail } = useSelector(state => {
         return state.Common
     });
@@ -138,7 +139,12 @@ export default (props) => {
     }, [jsonContent.OrderDetails])
 
     useEffect(() => {
-        listProducts.forEach((elm, index) => elm.index = index)
+        let totalQuantity = 0
+        listProducts.forEach((elm, index) => {
+            elm.index = index
+            totalQuantity += elm.Quantity
+        })
+        setTotalQuantity(Math.round(totalQuantity * 1000) / 1000)
     }, [listProducts])
 
 
@@ -831,6 +837,7 @@ export default (props) => {
         // setListOrder([...listOrder])
         // setDataOrder([...listOrder].filter(item => item.Quantity > 0))
         listProducts.filter(item => item.Quantity > 0)
+        jsonContent.OrderDetails = [...listProducts]
         updateServerEvent({ ...jsonContent })
     }
 
@@ -881,9 +888,14 @@ export default (props) => {
 
                 <TouchableOpacity
                     onPress={() => { setExpand(!expand) }}
-                    style={{ borderTopWidth: .5, borderTopColor: "red", paddingVertical: 3, backgroundColor: "white", marginLeft: 0 }}>
+                    style={{ borderTopWidth: .5, borderTopColor: "red", paddingVertical: 3, backgroundColor: "#FFE9CC", marginLeft: 0 }}>
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginLeft: 10 }}>
-                        <Text style={{ fontWeight: "bold" }}>{I18n.t('tong_thanh_tien')}</Text>
+                        <View style={{ flexDirection: "row", alignItems: "center" }}>
+                            <Text style={{ fontWeight: "bold", marginRight: 10 }}>{I18n.t('tong_thanh_tien')}</Text>
+                            <View style={{ padding: 5, borderWidth: 1, borderColor: "black", borderRadius: 10, backgroundColor: "white", }}>
+                                <Text style={{ fontWeight: "bold", }}>{totalQuantity}</Text>
+                            </View>
+                        </View>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
                             <Text style={{ fontWeight: "bold", fontSize: 16, color: Colors.colorchinh }}>{currencyToString(jsonContent.Total + jsonContent.Discount - jsonContent.VAT)} đ</Text>
                             {expand ?
