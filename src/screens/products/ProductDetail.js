@@ -663,16 +663,19 @@ export default (props) => {
                 setImageUrl(url)
                 console.log(image);
                 dialogManager.hiddenLoading()
+                //setOnShowModal(false)
             })
     }
-    const captureImage = () => {
+    const captureImage = async() => {
+        
         let options = {
             mediaType: 'photo',
             cameraType: 'front',
             includeBase64: true,
             saveToPhotos: true
         };
-        launchCamera(options, (response) => {
+        console.log("a");
+        await launchCamera(options, (response) => {
             console.log('Response = ', response);
 
             if (response.didCancel) {
@@ -689,10 +692,11 @@ export default (props) => {
                 let source = response;
                 console.log("sourc", source);
                 upLoadPhoto(source)
+                setOnShowModal(false)
             }
         });
         dialogManager.hiddenLoading()
-        setOnShowModal(false)
+        
     }
 
     const chooseImage = async () => {
@@ -718,11 +722,10 @@ export default (props) => {
             } else {
                 let source = response;
                 console.log("sourc", source);
-                
                 upLoadPhoto(source)
-
+                setOnShowModal(false)
             }
-            setOnShowModal(false)
+            
             dialogManager.hiddenLoading()
         });
     }
@@ -1012,7 +1015,7 @@ export default (props) => {
                                     : product.ProductType == 1 ?
                                         <View>
                                             <Text style={styles.title}>{I18n.t('ton_kho')}</Text>
-                                            <TextInput style={[styles.textInput, { fontWeight: 'bold', color: colors.colorLightBlue, textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={onHand ? onHand + '' : 0} onChangeText={(text) => setOnHand(text)}></TextInput>
+                                            <TextInput style={[styles.textInput, { fontWeight: 'bold', color: colors.colorLightBlue, textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={onHand ? onHand + '' : null} onChangeText={(text) => setOnHand(text)}></TextInput>
                                         </View> : null
                                 }
 
