@@ -662,9 +662,11 @@ const RetailCustomerOrder = (props) => {
                          */}
                           <View style={{ flexDirection: "row", alignItems: "center" }}>
                             <Text style={{ fontWeight: "bold", marginRight: 10 }}>{I18n.t('tong_thanh_tien')}</Text>
-                            <View style={{ padding: 5, borderWidth: 1, borderColor: "black", borderRadius: 10, backgroundColor: "white", }}>
+                            {totalQuantity > 0?
+                            <View style={{ paddingVertical: 4,paddingHorizontal:7, borderWidth: 1, borderColor: "#bbbbbb", borderRadius: 12, backgroundColor: "white", }}>
                                 <Text style={{ fontWeight: "bold", }}>{totalQuantity}</Text>
                             </View>
+                            :null}
                         </View>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
                             <Text style={{ fontWeight: "bold", fontSize: 16, color: Colors.colorchinh }}>{currencyToString(props.jsonContent.Total - props.jsonContent.VAT + props.jsonContent.Discount)} đ</Text>
