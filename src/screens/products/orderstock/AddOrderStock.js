@@ -41,36 +41,14 @@ export default (props) => {
     const [total, setTotal] = useState()
     const [discount, setDiscount] = useState(0)
     const [listPurchase, setListPurchase] = useState([])
+    const isFinish = useRef(false)
     const totalCurrent = useRef()
 
     useEffect(() => {
         getData(props.route.params)
     }, [])
 
-    let param = {
-        ChangeSellingPrice: false,
-        PurchaseOrder: {
-            BranchId: Constant.CURRENT_BRANCH,
-            Code: orderStock.Code,
-            CreatedBy: orderStock.CreatedBy,
-            CreatedDate: orderStock.CreatedDate,
-            Description: orderStock.Description,
-            Discount: isPercent == true ? totalCurrent.current * discount / 100 : discount,
-            DocumentDate: orderStock.DocumentDate,
-            ExchangeRate: orderStock.ExchangeRate,
-            Id: orderStock.Id,
-            ModifiedBy: orderStock.ModifiedBy,
-            ModifiedDate: orderStock.ModifiedDate,
-            Partner: orderStock.Partner,
-            PartnerId: orderStock.Partner ? orderStock.Partner.Id : undefined,
-            PurchaseOrderDetails: listPurchase,
-            RetailerId: orderStock.RetailerId,
-            Status: orderStock.Status,
-            Total: orderStock.Total,
-            TotalPayment: orderStock.TotalPayment,
-            VAT: orderStock.VAT
-        }
-    }
+
     const onChangeDate = (selectedDate) => {
         const currentDate = dateTmp;
         let date = selectedDate.getDate();
@@ -233,10 +211,11 @@ export default (props) => {
             list.push(itemPurchase)
         })
         setListPurchase(list)
+        console.log(orderStock);
     }, [listPr])
-    useEffect(()=>{
+    useEffect(() => {
         console.log(listPurchase);
-    },[listPurchase])
+    }, [listPurchase])
     const onChangeText = (text, item) => {
         text = +text
         if (text < 0) text = 0
@@ -272,8 +251,35 @@ export default (props) => {
         setListPr([...listPr])
     }
     const onClickSave = () => {
+        if (isFinish.current == true) {
+            setOrderStock({ ...orderStock, Status: 2 })
+        }
+        let paramAdd = {
+            ChangeSellingPrice: false,
+            PurchaseOrder: {
+                BranchId: Constant.CURRENT_BRANCH,
+                Code: orderStock.Code,
+                CreatedBy: orderStock.CreatedBy,
+                CreatedDate: orderStock.CreatedDate,
+                Description: orderStock.Description,
+                Discount: isPercent == true ? totalCurrent.current * discount / 100 : discount,
+                DocumentDate: orderStock.DocumentDate,
+                ExchangeRate: orderStock.ExchangeRate,
+                Id: orderStock.Id,
+                ModifiedBy: orderStock.ModifiedBy,
+                ModifiedDate: orderStock.ModifiedDate,
+                Partner: orderStock.Partner,
+                PartnerId: orderStock.Partner ? orderStock.Partner.Id : undefined,
+                PurchaseOrderDetails: listPurchase,
+                RetailerId: orderStock.RetailerId,
+                Status: orderStock.Status ? orderStock.isStatus : 1,
+                Total: total,
+                TotalPayment: orderStock.TotalPayment,
+                VAT: orderStock.VAT
+            }
+        }
         dialogManager.showLoading()
-        new HTTPService().setPath(ApiPath.ORDERSTOCK).POST(param).then(res => {
+        new HTTPService().setPath(ApiPath.ORDERSTOCK).POST(paramAdd).then(res => {
             if (res != null) {
                 console.log("res", res.Message);
                 dialogManager.showPopupOneButton(res.Message, I18n.t('thong_bao'), () => {
@@ -507,7 +513,7 @@ export default (props) => {
                     <TouchableOpacity style={{ flex: 1, backgroundColor: colors.colorLightBlue, borderRadius: 10, alignItems: 'center', justifyContent: 'center', paddingVertical: 15, marginHorizontal: 10 }} onPress={() => { onClickSave() }}>
                         <Text style={{ fontWeight: 'bold', color: '#fff' }}>{I18n.t('luu')}</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={{ flex: 1, backgroundColor: "#34bfa3", borderRadius: 10, alignItems: 'center', justifyContent: 'center', paddingVertical: 15, marginHorizontal: 10 }} onPress={() => { onClickSave() }}>
+                    <TouchableOpacity style={{ flex: 1, backgroundColor: "#34bfa3", borderRadius: 10, alignItems: 'center', justifyContent: 'center', paddingVertical: 15, marginHorizontal: 10 }} onPress={() => { onClickSave(), isFinish.current = true }}>
                         <Text style={{ fontWeight: 'bold', color: '#fff' }}>{I18n.t('hoan_thanh')}</Text>
                     </TouchableOpacity>
                 </View>

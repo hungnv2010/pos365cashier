@@ -4,6 +4,7 @@ import { currencyToString } from '../../../../common/Utils';
 import { Colors, Images, Metrics } from '../../../../theme';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import TextTicker from 'react-native-text-ticker';
+import colors from '../../../../theme/Colors';
 
 
 const ProductsItem = ({ item, index, getQuantityProduct, numColumns, onClickProduct }) => {
@@ -42,8 +43,8 @@ const ProductsItem = ({ item, index, getQuantityProduct, numColumns, onClickProd
                 // <Icon
                 //     style={{ height: 30, width: 30, position: "absolute", top: 10, right: 10 }}
                 //     name="check-circle" size={30} color={Colors.colorchinh} />
-                <View style={{ position: "absolute", top: 10, right: 10, paddingHorizontal: 10, paddingVertical: 7, borderRadius: 50, backgroundColor: Colors.colorLightBlue }}>
-                    <Text style={{ color: "white", fontWeight: "bold" }}>{Math.round(getQuantityProduct * 1000) / 1000}</Text>
+                <View style={{ position: "absolute", top: 5, right: 5, paddingHorizontal: 9.5, paddingVertical: 5, borderRadius: 50,borderColor:colors.colorchinh,borderWidth:1, backgroundColor: "#fff" }}>
+                    <Text style={{ color: colors.colorchinh, fontWeight: "bold" }}>{Math.round(getQuantityProduct * 1000) / 1000}</Text>
                 </View>
                 :
                 null}
