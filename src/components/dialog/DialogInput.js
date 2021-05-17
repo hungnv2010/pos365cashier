@@ -5,6 +5,8 @@ import { Images, Metrics } from '../../theme';
 import I18n from "../../common/language/i18n";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import colors from '../../theme/Colors';
+import { Constant } from '../../common/Constant';
+import { useSelector } from 'react-redux';
 
 
 export default (props) => {
@@ -19,6 +21,10 @@ export default (props) => {
 
 
     }
+    const deviceType = useSelector(state => {
+        return state.Common.deviceType
+    });
+
     useEffect(() => {
         setList[props.listItem]
         list.forEach(element => {
@@ -50,7 +56,7 @@ export default (props) => {
         )
     }
     return (
-        <View style={{ backgroundColor: 'white', borderRadius: 5, width:Metrics.screenWidth*0.65, marginLeft:Metrics.screenWidth*0.075 }}>
+        <View style={{ backgroundColor: 'white', borderRadius: 5, width:deviceType == Constant.PHONE ? Metrics.screenWidth*0.8 : Metrics.screenWidth*0.65, marginLeft:deviceType == Constant.TABLET ? Metrics.screenWidth*0.075 :0 }}>
             <Text style={[styles.styleTitle, { marginTop: 10 }]}>{props.title}</Text>
             <View style={styles.styleLine}></View>
                 <FlatList

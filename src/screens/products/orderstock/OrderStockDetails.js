@@ -73,7 +73,7 @@ export default (props) => {
                 console.log('res', res);
                 if (accId && accId != "") {
                     res.forEach(el => {
-                        if (el.Id == accId) {
+                        if (el.id == accId) {
                             setMethodPay(el.text)
                         }
                     })
@@ -85,6 +85,58 @@ export default (props) => {
 
     }
     console.log("OrderStock", orderStock);
+    const onClickDel = () =>{
+        console.log("delete", orderStock.Id);
+        if(orderStock.Status != 3){
+        dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_xoa_phieu_nhap_hang_nay'), I18n.t("thong_bao"), res => {
+            if (res == 1) {
+                new HTTPService().setPath(`${ApiPath.ORDERSTOCK}/${orderStock.Id}/void`).DELETE()
+                    .then(res => {
+                        console.log('onClickDelete', res)
+                        if (res) {
+                            if (res.ResponseStatus && res.ResponseStatus.Message) {
+                                dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
+                                    dialogManager.destroy();
+                                }, null, null, I18n.t('dong'))
+                            } else {
+                                console.log('success');
+                                if (deviceType == Constant.PHONE) {
+                                    props.route.params.onCallBack('xoa', 2)
+                                    props.navigation.pop()
+                                } else
+                                    props.handleSuccessTab('xoa', 2)
+                            }
+                        }
+                    })
+                    .catch(err => console.log('ClickDelete err', err))
+            }
+        })
+    }else{
+        dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_xoa_phieu_nhap_hang_nay'), I18n.t("thong_bao"), res => {
+            if (res == 1) {
+                new HTTPService().setPath(`${ApiPath.ORDERSTOCK}/${orderStock.Id}`).DELETE()
+                    .then(res => {
+                        console.log('onClickDelete', res)
+                        if (res) {
+                            if (res.ResponseStatus && res.ResponseStatus.Message) {
+                                dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
+                                    dialogManager.destroy();
+                                }, null, null, I18n.t('dong'))
+                            } else {
+                                console.log('success');
+                                if (deviceType == Constant.PHONE) {
+                                    props.route.params.onCallBack('xoa', 2)
+                                    props.navigation.pop()
+                                } else
+                                    props.handleSuccessTab('xoa', 2)
+                            }
+                        }
+                    })
+                    .catch(err => console.log('ClickDelete err', err))
+            }
+        })
+    }
+    }
 
     return (
         <View style={{ flex: 1 }}>
@@ -107,20 +159,20 @@ export default (props) => {
                         </View>
                     </View>
                     <View style={{ backgroundColor: '#fff', marginTop: 2, paddingVertical: 15, paddingHorizontal: 10 }}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
-                            <Text style={{ color: '#bbbbbb' }}>{I18n.t('ngay_tao')}</Text>
+                        <View style={styles.styleView}>
+                            <Text style={styles.styleTitle}>{I18n.t('ngay_tao')}</Text>
                             <Text> {dateUTCToDate2(orderStock.CreatedDate)}</Text>
                         </View>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
-                            <Text style={{ color: '#bbbbbb' }}>{I18n.t('ngay_nhap')}</Text>
+                        <View style={styles.styleView}>
+                            <Text style={styles.styleTitle}>{I18n.t('ngay_nhap')}</Text>
                             <Text> {dateUTCToDate2(orderStock.DocumentDate)}</Text>
                         </View>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
-                            <Text style={{ color: '#bbbbbb' }}>{I18n.t('ngay_giao')}</Text>
+                        <View style={styles.styleView}>
+                            <Text style={styles.styleTitle}>{I18n.t('ngay_giao')}</Text>
                             <Text></Text>
                         </View>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
-                            <Text style={{ color: '#bbbbbb' }}>{I18n.t('ghi_chu')}</Text>
+                        <View style={styles.styleView}>
+                            <Text style={styles.styleTitle}>{I18n.t('ghi_chu')}</Text>
                             <Text>{orderStock.Description}</Text>
                         </View>
                     </View>
@@ -128,32 +180,32 @@ export default (props) => {
                         <Text style={{ fontWeight: 'bold', textTransform: 'uppercase' }}>{I18n.t('thanh_toan')}</Text>
                     </View>
                     <View style={{ backgroundColor: '#fff', paddingHorizontal: 10, paddingVertical: 15 }}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
-                            <Text style={{ color: '#bbbbbb' }}>{I18n.t('tong_so_luong_nhap')}</Text>
+                        <View style={styles.styleView}>
+                            <Text style={styles.styleTitle}>{I18n.t('tong_so_luong_nhap')}</Text>
                             <Text style={{ fontWeight: 'bold' }}>{quantity}</Text>
                         </View>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
-                            <Text style={{ color: '#bbbbbb' }}>{I18n.t('tong_tam_tinh')}</Text>
-                            <Text style={{ fontWeight: 'bold', color: colors.colorLightBlue }}>{currencyToString(totalprovisional)}</Text>
+                        <View style={styles.styleView}>
+                            <Text style={styles.styleTitle}>{I18n.t('tong_tam_tinh')}</Text>
+                            <Text style={styles.styleValue}>{currencyToString(totalprovisional)}</Text>
                         </View>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
-                            <Text style={{ color: '#bbbbbb' }}>{I18n.t('chiet_khau')}</Text>
-                            <Text style={{ fontWeight: 'bold', color: colors.colorLightBlue }}>{orderStock.Discount}</Text>
+                        <View style={styles.styleView}>
+                            <Text style={styles.styleTitle}>{I18n.t('chiet_khau')}</Text>
+                            <Text style={styles.styleValue}>{orderStock.Discount}</Text>
                         </View>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
-                            <Text style={{ color: '#bbbbbb' }}>{I18n.t('thue_vat')}</Text>
-                            <Text style={{ fontWeight: 'bold', color: colors.colorLightBlue }}>{orderStock.VAT}</Text>
+                        <View style={styles.styleView}>
+                            <Text style={styles.styleTitle}>{I18n.t('thue_vat')}</Text>
+                            <Text style={styles.styleValue}>{orderStock.VAT}</Text>
                         </View>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
-                            <Text style={{ color: '#4a4a4a' }}>{I18n.t('tong_cong')}</Text>
-                            <Text style={{ fontWeight: 'bold', color: colors.colorLightBlue }}>{currencyToString(orderStock.Total)}</Text>
+                        <View style={styles.styleView}>
+                            <Text style={styles.styleTitle}>{I18n.t('tong_cong')}</Text>
+                            <Text style={styles.styleValue}>{currencyToString(orderStock.Total)}</Text>
                         </View>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
-                            <Text style={{ color: '#4a4a4a' }}>{I18n.t('so_tien_thanh_toan')}</Text>
-                            <Text style={{ fontWeight: 'bold', color: colors.colorLightBlue }}>{currencyToString(orderStock.TotalPayment)}</Text>
+                        <View style={styles.styleView}>
+                            <Text style={styles.styleTitle}>{I18n.t('so_tien_thanh_toan')}</Text>
+                            <Text style={styles.styleValue}>{currencyToString(orderStock.TotalPayment)}</Text>
                         </View>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
-                            <Text style={{ color: '#bbbbbb' }}>{I18n.t('phuong_thuc_thanh_toan')}</Text>
+                        <View style={styles.styleView}>
+                            <Text style={styles.styleTitle}>{I18n.t('phuong_thuc_thanh_toan')}</Text>
                             <Text style={{ textTransform: 'uppercase' }}>{methodPay}</Text>
                         </View>
                     </View>
@@ -169,16 +221,16 @@ export default (props) => {
                                             <Text>{item.Name}</Text>
                                             <Text>{item.Code}</Text>
                                         </View>
-                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
-                                            <Text style={{ color: '#bbbbbb' }}>{I18n.t('gia_nhap')}</Text>
+                                        <View style={styles.styleView}>
+                                            <Text style={styles.styleTitle}>{I18n.t('gia_nhap')}</Text>
                                             <Text style={{ fontWeight: 'bold', color: colors.colorLightBlue }}>{item.Price}</Text>
                                         </View>
-                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
-                                            <Text style={{ color: '#bbbbbb' }}>{I18n.t('gia_ban')}</Text>
+                                        <View style={styles.styleView}>
+                                            <Text style={styles.styleTitle}>{I18n.t('gia_ban')}</Text>
                                             <Text style={{ fontWeight: 'bold', color: colors.colorLightBlue }}>{item.IsLargeUnit == true ? currencyToString(item.PriceLargeUnit) : currencyToString(item.PriceUnit)}</Text>
                                         </View>
-                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 }}>
-                                            <Text style={{ color: '#bbbbbb' }}>{I18n.t('so_luong')}</Text>
+                                        <View style={styles.styleView}>
+                                            <Text style={styles.styleTitle}>{I18n.t('so_luong')}</Text>
                                             <Text style={{ fontWeight: 'bold', color: colors.colorLightBlue }}>{item.Quantity}</Text>
                                         </View>
 
@@ -194,16 +246,22 @@ export default (props) => {
                 <TouchableOpacity style={{ flex: 1, marginRight: 10, backgroundColor: colors.colorLightBlue, paddingVertical: 10, alignItems: 'center', justifyContent: 'center', borderRadius: 10 }}>
                     <Icon name={'printer'} size={24} color={'#fff'} />
                 </TouchableOpacity>
-                <TouchableOpacity style={{ flex: 3, marginRight: 10, backgroundColor: colors.colorLightBlue, alignItems: 'center', justifyContent: 'center', borderRadius: 10 }}>
-                    <Text style={{ textAlign: 'center', fontWeight: 'bold', color: '#fff' }}>{I18n.t('xoa')}</Text>
+                <TouchableOpacity style={styles.styleBtn} onPress={()=> onClickDel()}>
+                    <Text style={styles.styleTittleBtn}>{orderStock.Status != 3 ? I18n.t('huy') : I18n.t('xoa')}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={{ flex: 3, backgroundColor: colors.colorLightBlue, alignItems: 'center', justifyContent: 'center', borderRadius: 10 }} onPress={() => { props.navigation.navigate(ScreenList.AddOrderStock, { orderstock: orderStock, listPr: listItem, paymentMethod: methodPay }) }}>
-                    <Text style={{ textAlign: 'center', fontWeight: 'bold', color: '#fff' }}>{I18n.t('chinh_sua')}</Text>
+                <TouchableOpacity style={[styles.styleBtn,{marginLeft:10}]} onPress={() => { props.navigation.navigate(ScreenList.AddOrderStock, { orderstock: orderStock, listPr: listItem, paymentMethod: methodPay }) }}>
+                    <Text style={styles.styleTittleBtn}>{I18n.t('chinh_sua')}</Text>
                 </TouchableOpacity>
             </View>
         </View>
     )
 }
 const styles = StyleSheet.create({
-
+    styleTittleBtn:{ textAlign: 'center', fontWeight: 'bold', color: '#fff' },
+    styleTitle:{
+        color:'#bbbbbb'
+    },
+    styleView:{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 },
+    styleBtn:{ flex: 3, backgroundColor: colors.colorLightBlue, alignItems: 'center', justifyContent: 'center', borderRadius: 10 },
+    styleValue :{ fontWeight: 'bold', color: colors.colorLightBlue }
 })

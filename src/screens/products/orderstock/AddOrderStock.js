@@ -20,6 +20,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import DatePicker from 'react-native-date-picker';
 import ItemPrOrderStock from './ItemPrOrderStock';
+import { getFileDuLieuString, setFileLuuDuLieu } from '../../../data/fileStore/FileStorage';
 
 export default (props) => {
     const [orderStock, setOrderStock] = useState({})
@@ -43,12 +44,43 @@ export default (props) => {
     const [listPurchase, setListPurchase] = useState([])
     const isFinish = useRef(false)
     const totalCurrent = useRef()
+    const currentBranch = useRef()
 
     useEffect(() => {
         getData(props.route.params)
+        getCurrentBranch()
     }, [])
+    const getCurrentBranch = async () => {
+        let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
+        currentBranch.current = JSON.parse(branch)
+        console.log("branh", currentBranch.current.Id);
+    }
 
-
+    let paramAdd = {
+        ChangeSellingPrice: false,
+        PurchaseOrder: {
+            AccountId:orderStock.AccountId ? orderStock.AccountId : undefined,
+            BranchId: currentBranch.current,
+            Code: orderStock.Code,
+            CreatedBy: orderStock.CreatedBy,
+            CreatedDate: orderStock.CreatedDate,
+            Description: orderStock.Description,
+            Discount: isPercent == true ? totalCurrent.current * discount / 100 : discount,
+            DocumentDate: orderStock.DocumentDate,
+            ExchangeRate: orderStock.ExchangeRate,
+            Id: orderStock.Id,
+            ModifiedBy: orderStock.ModifiedBy,
+            ModifiedDate: orderStock.ModifiedDate,
+            Partner: orderStock.Partner,
+            PartnerId: orderStock.Partner ? orderStock.Partner.Id : undefined,
+            PurchaseOrderDetails: listPurchase,
+            RetailerId: orderStock.RetailerId,
+            Status: orderStock.Status ? orderStock.Status : 1,
+            Total: total,
+            TotalPayment: orderStock.TotalPayment,
+            VAT: orderStock.VAT
+        }
+    }
     const onChangeDate = (selectedDate) => {
         const currentDate = dateTmp;
         let date = selectedDate.getDate();
@@ -75,6 +107,7 @@ export default (props) => {
     const getData = (param) => {
         let os = JSON.parse(JSON.stringify(param.orderstock))
         setOrderStock({ ...os })
+        setDiscount(os.Discount)
         let arrPr = JSON.parse(JSON.stringify(param.listPr))
         setListPr([...arrPr])
         setPaymentMethod(param.paymentMethod)
@@ -179,23 +212,13 @@ export default (props) => {
                         SellingPrice: res.results[0].Price,
                         Unit: res.results[0].Unit,
                     }
-                    // let itemPurchase = {
-                    //     ConversionValue: res.results[0].ConversionValue,
-                    //     IsLargeUnit: false,
-                    //     Price: res.results[0].Cost,
-                    //     ProductId: res.results[0].Id,
-                    //     Quantity: el.Quantity,
-                    //     SellingPrice: res.results[0].Price
-                    // }
                     arrItemPr.push(itemPr)
-                    //setListPurchase([...itemPurchase])
                     setListPr([...arrItemPr])
                 }
             })
         })
         console.log(arrItemPr);
         //setListPr([...arrItemPr])
-
     }
     useEffect(() => {
         let list = []
@@ -250,35 +273,14 @@ export default (props) => {
         listPr.splice(index, 1)
         setListPr([...listPr])
     }
-    const onClickSave = () => {
-        if (isFinish.current == true) {
-            setOrderStock({ ...orderStock, Status: 2 })
-        }
-        let paramAdd = {
-            ChangeSellingPrice: false,
-            PurchaseOrder: {
-                BranchId: Constant.CURRENT_BRANCH,
-                Code: orderStock.Code,
-                CreatedBy: orderStock.CreatedBy,
-                CreatedDate: orderStock.CreatedDate,
-                Description: orderStock.Description,
-                Discount: isPercent == true ? totalCurrent.current * discount / 100 : discount,
-                DocumentDate: orderStock.DocumentDate,
-                ExchangeRate: orderStock.ExchangeRate,
-                Id: orderStock.Id,
-                ModifiedBy: orderStock.ModifiedBy,
-                ModifiedDate: orderStock.ModifiedDate,
-                Partner: orderStock.Partner,
-                PartnerId: orderStock.Partner ? orderStock.Partner.Id : undefined,
-                PurchaseOrderDetails: listPurchase,
-                RetailerId: orderStock.RetailerId,
-                Status: orderStock.Status ? orderStock.isStatus : 1,
-                Total: total,
-                TotalPayment: orderStock.TotalPayment,
-                VAT: orderStock.VAT
-            }
-        }
+    const onClickSave = (st) => {
         dialogManager.showLoading()
+        // if (isFinish.current == true) {
+        //     setOrderStock({ ...orderStock, Status: 2 })
+        // }
+        if (orderStock.Status != 2) {
+            paramAdd.PurchaseOrder.Status = st
+        }
         new HTTPService().setPath(ApiPath.ORDERSTOCK).POST(paramAdd).then(res => {
             if (res != null) {
                 console.log("res", res.Message);
@@ -286,6 +288,7 @@ export default (props) => {
                     dialogManager.destroy();
                 }, null, null, I18n.t('dong'))
                 dialogManager.hiddenLoading()
+                props.navigation.goBack()
             }
         })
     }
@@ -304,7 +307,7 @@ export default (props) => {
                                 {
                                     listSupplier.map((item, index) => {
                                         return (
-                                            <TouchableOpacity onPress={() => onClickSelectSupplier(item)}>
+                                            <TouchableOpacity onPress={() => onClickSelectSupplier(item)} key={index.toString()}>
                                                 <View key={index.toString()} style={{ paddingVertical: 10, borderWidth: 0.5, borderRadius: 10, paddingHorizontal: 20, flexDirection: 'row', borderColor: '#4a4a4a', marginVertical: 2 }}>
                                                     <Image source={item.Image ? { uri: item.Image } : Images.icon_employee} style={{ width: 48, height: 48, marginRight: 10 }} />
                                                     <View style={{ justifyContent: 'center' }}>
@@ -326,7 +329,7 @@ export default (props) => {
                                     {
                                         listMethod.map((item, index) => {
                                             return (
-                                                <TouchableOpacity onPress={() => onClickSelectMethod(item)}>
+                                                <TouchableOpacity onPress={() => onClickSelectMethod(item)} key={index.toString()}>
                                                     <View key={index.toString()} style={{ paddingVertical: 10, borderWidth: 0.5, borderRadius: 10, paddingHorizontal: 20, flexDirection: 'row', borderColor: paymentMethod == item.text ? colors.colorLightBlue : '#4a4a4a', marginVertical: 2 }}>
                                                         <View style={{ justifyContent: 'center' }}>
                                                             <Text style={{ textAlign: 'center', color: paymentMethod == item.text ? colors.colorLightBlue : '#4a4a4a' }}>{item.text}</Text>
@@ -510,10 +513,10 @@ export default (props) => {
                     </View>
                 }
                 <View style={{ paddingHorizontal: 10, flexDirection: 'row' }}>
-                    <TouchableOpacity style={{ flex: 1, backgroundColor: colors.colorLightBlue, borderRadius: 10, alignItems: 'center', justifyContent: 'center', paddingVertical: 15, marginHorizontal: 10 }} onPress={() => { onClickSave() }}>
+                    <TouchableOpacity style={{ flex: 1, backgroundColor: colors.colorLightBlue, borderRadius: 10, alignItems: 'center', justifyContent: 'center', paddingVertical: 15, marginHorizontal: 10 }} onPress={() => { onClickSave(1) }}>
                         <Text style={{ fontWeight: 'bold', color: '#fff' }}>{I18n.t('luu')}</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={{ flex: 1, backgroundColor: "#34bfa3", borderRadius: 10, alignItems: 'center', justifyContent: 'center', paddingVertical: 15, marginHorizontal: 10 }} onPress={() => { onClickSave(), isFinish.current = true }}>
+                    <TouchableOpacity style={{ flex: 1, backgroundColor: "#34bfa3", borderRadius: 10, alignItems: 'center', justifyContent: 'center', paddingVertical: 15, marginHorizontal: 10 }} onPress={() => { isFinish.current = true, setOrderStock({ ...orderStock, Status: 2 }), onClickSave(2) }}>
                         <Text style={{ fontWeight: 'bold', color: '#fff' }}>{I18n.t('hoan_thanh')}</Text>
                     </TouchableOpacity>
                 </View>

@@ -46,6 +46,7 @@ export default {
   ban_co_chac_chan_muon_khoa_nhan_vien:'Bạn có chắc muốn khoá nhân viên ?',
   ban_co_chac_chan_muon_mo_khoa_nhan_vien:'Bạn có chắc chắn muốn mở khoá nhân viên ?',
   block_dau_tien:'block đầu tiên',
+  ban_co_chac_chan_muon_xoa_phieu_nhap_hang_nay:'Bạn có chắc chắn muốn xoá phiếu nhập hàng này ?',
 
   // TODO: C
 
@@ -340,6 +341,7 @@ export default {
   mo_ta_tach_hang:'Khi thêm mặt hàng này vào đơn hàng sẽ không cộng dồn số lượng mà sẽ tách thành nhiều dòng',
   ma_nhap_hang:'Mã nhập hàng',
   moi_nhap:'Mời nhập',
+  ma_hang_hoa:'Mã hàng hoá',
 
   // TODO: N
 

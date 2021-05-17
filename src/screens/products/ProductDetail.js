@@ -642,6 +642,8 @@ export default (props) => {
         setCodeProduct(data)
     }
     const upLoadPhoto = async (source) => {
+        let state = await NetInfo.fetch()
+        if (state.isConnected == true && state.isInternetReachable == true) {
         dialogManager.showLoading()
         await new HTTPService().setPath(`api/google/tocken`).GET().then(res => {
             if (res != null) {
@@ -682,7 +684,12 @@ export default (props) => {
 
             })
         setOnShowModal(false)
+    }else{
+        dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_internet'), I18n.t('thong_bao'), () => {
+            dialogManager.destroy();
+        }, null, null, I18n.t('dong'))
     }
+}
     const captureImage = async () => {
         //setOnShowModal(false)
         let options = {
