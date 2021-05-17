@@ -810,7 +810,7 @@ const CustomerOrder = (props) => {
                         <View style={{ flexDirection: "row", alignItems: "center" }}>
                             <Text style={{ fontWeight: "bold", marginHorizontal: 10 }}>{I18n.t('tong_thanh_tien')}</Text>
                             {totalQuantity > 0 ?
-                                <View style={{ paddingVertical: 4, paddingHorizontal: 7, borderWidth: 1, borderColor: "#bbbbbb", borderRadius: 12, backgroundColor: "white", }}>
+                                <View style={{ paddingVertical: 3, paddingHorizontal: 7, borderWidth: 1, borderColor: "#bbbbbb", borderRadius: 9, backgroundColor: "white", }}>
                                     <Text style={{ fontWeight: "bold", }}>{totalQuantity}</Text>
                                 </View>
                                 : null}
