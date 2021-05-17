@@ -959,7 +959,7 @@ export default (props) => {
                     props.navigation.navigate(ScreenList.CommodityWaiting, { _onSelect: onCallBack })
                 }} style={{ flex: .5, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%", flexDirection: 'row' }}>
                     <Icon name="file-document-edit-outline" size={30} color="white" />
-                    <View style={{ backgroundColor: colors.colorLightBlue, borderRadius: 40, position: "absolute", right: 10, top: -5 }}>
+                    <View style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 3.5, borderRadius: 40, position: "absolute", right: 3, top: -5 }}>
                         <Text style={{ fontWeight: "bold", padding: 4, color: 'white', fontSize: 14 }}>{numberNewOrder}</Text>
                     </View>
                 </TouchableOpacity>

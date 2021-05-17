@@ -46,6 +46,7 @@ export default {
   ban_co_chac_chan_muon_khoa_nhan_vien: 'Are you sure you want to lock out the staff ?',
   ban_co_chac_chan_muon_mo_khoa_nhan_vien: 'Are you sure you want to unlock the employee ?',
   block_dau_tien: 'first block',
+  ban_co_chac_chan_muon_xoa_phieu_nhap_hang_nay:'Do you want to delete this order stock ?',
 
   // TODO: C 
 
@@ -340,6 +341,7 @@ export default {
   mo_ta_tach_hang: 'Adding this item to your order will not add up the quantity, but will split it into multiple lines.',
   ma_nhap_hnag: 'Code',
   moi_nhap: 'Input',
+  ma_hang_hoa:'Product code',
 
   // TODO: N
 
