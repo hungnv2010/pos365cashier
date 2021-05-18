@@ -114,6 +114,7 @@ export default {
   chup_moi:'Chụp mới',
   chon_tu_thu_vien:'Chọn từ thư viện',
   chon_anh:'Chọn ảnh',
+  chieu_dai_x_chieu_rong:'Rộng x Dài',
 
   // TODO: D
 
@@ -258,6 +259,7 @@ export default {
   kieu_thay_doi_gia: 'Kiểu thay đổi giá',
   khung_gio_dac_biet: 'Khung giờ đặc biệt',
   khoa:'Khoá',
+  kich_thuoc_kho_temp:'Kích thước khổ temp',
 
   // TODO: H
 
