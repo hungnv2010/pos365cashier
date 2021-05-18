@@ -959,9 +959,10 @@ export default (props) => {
                     props.navigation.navigate(ScreenList.CommodityWaiting, { _onSelect: onCallBack })
                 }} style={{ flex: .5, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%", flexDirection: 'row' }}>
                     <Icon name="file-document-edit-outline" size={30} color="white" />
-                    <View style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 3.5, borderRadius: 40, position: "absolute", right: 3, top: -5 }}>
-                        <Text style={{ fontWeight: "bold", padding: 4, color: 'white', fontSize: 14 }}>{numberNewOrder}</Text>
-                    </View>
+                    {numberNewOrder > 0 ?
+                        <View style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 3.5, borderRadius: 40, position: "absolute", right: 3, top: -5 }}>
+                            <Text style={{ fontWeight: "bold", padding: 4, color: 'white', fontSize: 14 }}>{numberNewOrder}</Text>
+                        </View> : null}
                 </TouchableOpacity>
                 <TouchableOpacity onPress={onClickNewOrder} style={{ flex: .8, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
                     <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('don_hang_moi')}</Text>

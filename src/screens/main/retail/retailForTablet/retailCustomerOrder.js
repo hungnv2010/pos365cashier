@@ -662,13 +662,13 @@ const RetailCustomerOrder = (props) => {
                     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginLeft: 10 }}>
                         {/* <Text style={{ fontWeight: "bold" }}>{I18n.t('tong_thanh_tien')}</Text>
                          */}
-                          <View style={{ flexDirection: "row", alignItems: "center" }}>
+                        <View style={{ flexDirection: "row", alignItems: "center" }}>
                             <Text style={{ fontWeight: "bold", marginRight: 10 }}>{I18n.t('tong_thanh_tien')}</Text>
-                            {totalQuantity > 0?
-                            <View style={{ paddingVertical: 3,paddingHorizontal:7, borderWidth: 1, borderColor: "#bbbbbb", borderRadius: 9, backgroundColor: "white", }}>
-                                <Text style={{ fontWeight: "bold", }}>{totalQuantity}</Text>
-                            </View>
-                            :null}
+                            {totalQuantity > 0 ?
+                                <View style={{ paddingVertical: 3, paddingHorizontal: 7, borderWidth: 1, borderColor: "#bbbbbb", borderRadius: 9, backgroundColor: "white", }}>
+                                    <Text style={{ fontWeight: "bold", }}>{totalQuantity}</Text>
+                                </View>
+                                : null}
                         </View>
                         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
                             <Text style={{ fontWeight: "bold", fontSize: 16, color: Colors.colorchinh }}>{currencyToString(props.jsonContent.Total - props.jsonContent.VAT + props.jsonContent.Discount)} đ</Text>
@@ -728,9 +728,10 @@ const RetailCustomerOrder = (props) => {
                 </TouchableOpacity>
                 <TouchableOpacity onPress={onCLickCommodity} style={{ flex: .5, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%", flexDirection: 'row' }}>
                     <Icon name="file-document-edit-outline" size={30} color="white" />
-                    <View style={{ backgroundColor: Colors.colorLightBlue,paddingHorizontal:3.5, borderRadius: 40, position: "absolute", right: 3, top: -5 }}>
-                        <Text style={{ fontWeight: "bold", padding: 4, color: 'white', fontSize: 14 }}>{numberCommodity}</Text>
-                    </View>
+                    {numberCommodity > 0 ?
+                        <View style={{ backgroundColor: Colors.colorLightBlue, paddingHorizontal: 3.5, borderRadius: 40, position: "absolute", right: 3, top: -5 }}>
+                            <Text style={{ fontWeight: "bold", padding: 4, color: 'white', fontSize: 14 }}>{numberCommodity}</Text>
+                        </View> : null}
                 </TouchableOpacity>
                 <TouchableOpacity onPress={onClickNewOrder} style={{ flex: .8, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
                     <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('don_hang_moi')}</Text>

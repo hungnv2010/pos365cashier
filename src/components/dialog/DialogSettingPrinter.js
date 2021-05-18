@@ -7,6 +7,8 @@ import colors from '../../theme/Colors';
 
 export default (props) => {
     const [printer, setPrinter] = useState(props.printer)
+    const [textInput, setTextIput] = useState('')
+    const textTmp = useRef(textInput)
     useEffect(() => {
         setPrinter(props.printer)
     }, [props.printer])
@@ -17,6 +19,15 @@ export default (props) => {
     const onClickConfirm = () => {
         Keyboard.dismiss()
         props.outputPrinter(printer)
+    }
+    const onSetSizeStampPrint = (value) =>{
+        if(textInput.length > textTmp.current.length){
+            textTmp.current = textInput
+            setPrinter({ ...printer, size: value.length == 2 ? value+'x' : value })
+        }else{
+            textTmp.current = textInput
+            setPrinter({ ...printer, size: value })
+        }
     }
     return (
         <View style={{ backgroundColor: '#fff', borderRadius: 16 }}>
@@ -40,13 +51,17 @@ export default (props) => {
             {printer.type != '' ?
                 <View style={{ paddingHorizontal: 20, flexDirection: 'column', paddingTop: 20 }}>
                     <View style={{ flexDirection: 'row' }}>
-                        <Text style={{ flex: 1 }}>{I18n.t('chieu_rong_kho_giay')}</Text>
+                        <Text style={{ flex: 1 }}>{printer.title != 'may_in_tem' ? I18n.t('chieu_rong_kho_giay') : I18n.t('kich_thuoc_kho_temp')}</Text>
                         {printer.type == 'in_qua_mang_lan' ?
                             <Text style={{ marginLeft: 10, flex: 1 }}>{I18n.t('dia_chi_ip')}</Text> : null}
 
                     </View>
                     <View style={{ flexDirection: 'row' }}>
+                        {printer.title != 'may_in_tem' ?
                         <TextInput style={[styles.styleTextInput, { flex: 1 }]} placeholderTextColor={'#808080'} placeholder={'58..80 mm'} keyboardType={'numbers-and-punctuation'} onChangeText={(text) => setPrinter({ ...printer, size: parseInt(text) > 80 ? '80' : parseInt(text) < 58 ? '58' : text })} editable={printer.type != '' ? true : false}></TextInput>
+                        :
+                        <TextInput style={[styles.styleTextInput, { flex: 1 }]} placeholderTextColor={'#808080'} value={printer.size} placeholder={I18n.t('chieu_dai_x_chieu_rong')} keyboardType={'numbers-and-punctuation'}  onChangeText={(text) =>{onSetSizeStampPrint(text), setTextIput(text)}} editable={printer.type != '' ? true : false} maxLength={5}></TextInput> 
+                        }
                         {printer.type == 'in_qua_mang_lan' ?
                             <TextInput style={[styles.styleTextInput, { marginLeft: 10, flex: 1 }]} placeholderTextColor={'#808080'} placeholder={'192.168.100.'} value={printer.ip != '' ? printer.ip : '192.168.100.'} keyboardType={'numbers-and-punctuation'} editable={printer.type == 'in_qua_mang_lan' ? true : false} onChangeText={(text) => setPrinter({ ...printer, ip: printer.type == 'in_qua_mang_lan' ? text : '' })}></TextInput> : null
                         }

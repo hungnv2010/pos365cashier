@@ -114,6 +114,7 @@ export default {
   chup_moi:'New picture',
   chon_tu_thu_vien:'Choose libs',
   chon_anh:'Choose image',
+  chieu_dai_x_chieu_rong:"Width x Height",
 
   // TODO: D 
 
@@ -258,6 +259,7 @@ export default {
   kieu_thay_doi_gia: 'Price change type',
   khung_gio_dac_biet: 'Special time slot',
   khoa: 'Locked',
+  kich_thuoc_kho_temp:'Temp size',
 
   // TODO: H
 
