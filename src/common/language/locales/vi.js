@@ -386,6 +386,7 @@ export default {
   nhap_ten_nhom: 'Nhập tên nhóm',
   nhap_ten_hang_hoa:'Nhập tên hàng hoá',
   ngay_giao:'Ngày giao',
+  nhom_hang_hoa:'Nhóm hàng hoá',
   
   // TODO: O
   

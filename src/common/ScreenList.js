@@ -97,5 +97,7 @@ export const ScreenList = {
   OrderStockDetails: 'OrderStockDetails',
   AddOrderStock: 'AddOrderStock',
   DetailOrderOffline: "DetailOrderOffline",
+  ListGroupProduct:"ListGroupProduct",
+  GroupProductDetail: "GroupProductDetail",
 }
 

@@ -20,6 +20,7 @@ import { height } from 'react-native-daterange-picker/src/modules';
 import ExtraDetails from '../extratoppig/ExtraDetails'
 import realmStore from '../../../data/realm/RealmStore';
 import dataManager from '../../../data/DataManager';
+import NetInfo from "@react-native-community/netinfo";
 
 export default (props) => {
     const [listExtra, setListExtra] = useState([])
@@ -102,10 +103,18 @@ export default (props) => {
         }
     }
     const outputAddExtra = async (data) => {
+        setOnShowModal(false)
+        let state = await NetInfo.fetch()
+        if (state.isConnected == true && state.isInternetReachable == true) {
         await dataManager.syncTopping()
         dialogManager.showPopupOneButton(`${data.Message}`, I18n.t('thong_bao'))
         getExtraTopping()
-        setOnShowModal(false)
+        }else{
+            dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_internet'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
+        }
+        
     }
     const renderExtra = (item, index) => {
         return (

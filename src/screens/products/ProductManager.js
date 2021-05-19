@@ -34,6 +34,10 @@ export default (props) => {
             />
 
             <View style={styles.viewContent}>
+            <TouchableOpacity style={styles.button} onPress={() => onClickNavigationExtra(ScreenList.ListGroupProduct)}>
+                    <Image style={styles.iconButton} source={Images.ic_nhomhanghoa} />
+                    <Text style={styles.textButton}>{I18n.t('nhom_hang_hoa')}</Text>
+                </TouchableOpacity>
                 <TouchableOpacity style={styles.button} onPress={() => onClickNavigationProduct(ScreenList.Product)}>
                     <Image style={styles.iconButton} source={Images.ic_danhsachhanghoa} />
                     <Text style={styles.textButton}>{I18n.t('danh_sach_hang_hoa')}</Text>

@@ -18,6 +18,7 @@ import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 import { RadioButton } from 'react-native-paper'
 import dataManager from '../../../data/DataManager';
 import dialogManager from '../../../components/dialog/DialogManager';
+import NetInfo from "@react-native-community/netinfo";
 
 export default (props) => {
     const [extraTopping, setExtraTopping] = useState({})
@@ -118,13 +119,15 @@ export default (props) => {
         })
 
     }
-    const onClickSubmitUpdate = () => {
+    const onClickSubmitUpdate = async() => {
         let param = {
             ExtraId: extraTopping.Id,
             Price: extraTopping.Price,
             Quantity: extraTopping.Quantity,
             ExtraGroup: extraTopping.ExtraGroup
         }
+        let state = await NetInfo.fetch()
+        if (state.isConnected == true && state.isInternetReachable == true) {
         new HTTPService().setPath(`api/products/extra/updateall`).POST(param).then(res => {
             console.log("res...", res.Message);
             if (deviceType == Constant.PHONE) {
@@ -135,6 +138,11 @@ export default (props) => {
 
             }
         })
+    }else{
+        dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_internet'), I18n.t('thong_bao'), () => {
+            dialogManager.destroy();
+        }, null, null, I18n.t('dong'))
+    }
 
     }
 
