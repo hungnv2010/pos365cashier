@@ -386,6 +386,7 @@ nhom_nha_cung_cap: "Group supplier",
   nhap_ten_nhom: 'Enter group name',
   nhap_ten_hang_hoa: 'Enter product name',
   ngay_giao: 'Delivery date',
+  nhom_hang_hoa:'Group product',
   
   // TODO: O
   

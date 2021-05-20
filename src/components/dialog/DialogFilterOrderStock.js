@@ -19,12 +19,14 @@ export default (props) => {
     const [listSupplier, setListSuppiler] = useState([])
     const typeModal = useRef()
     const typeDate = useRef()
-    const dateTmp = useRef()
+    const dateTmp = useRef(new Date())
     const statusTmp = useRef()
 
     const onChange = (selectedDate) => {
-        
+        if(selectedDate)
         dateTmp.current = selectedDate;
+        else
+        dateTmp.current = new Date()
     }
     useEffect(()=>{
         new HTTPService().setPath(ApiPath.CUSTOMER).GET({ Type: 2 }).then(res => {
@@ -43,7 +45,12 @@ export default (props) => {
         setOnShowModal(false)
     }
     const outPutSupplier = (data) =>{
+        setObject({...object,Supplier : data})
         console.log(data);
+        setOnShowModal(false)
+    }
+    const onCLickDone = () =>{
+        props.outPutFilter(object)
     }
 
     const renderModalContent = () => {
@@ -68,19 +75,19 @@ export default (props) => {
                     </View>
                     : typeModal.current == 2 ?
                     <View style={{paddingHorizontal:15,paddingVertical:20}}>
-                        <Text style={{textAlign:'center'}}>{I18n.t('trang_thai')}</Text>
+                        <Text style={{textAlign:'center',fontWeight:'bold'}}>{I18n.t('trang_thai')}</Text>
                         <View style={{flexDirection:'row',marginTop:15}}>
-                            <TouchableOpacity style={{flex:1,paddingVertical:15,marginRight:5,borderRadius:10,backgroundColor:'#f2f2f2'}} onPress={()=> statusTmp.current = 1}>
-                                <Text style={{fontWeight:'bold',textAlign:'center'}}>{I18n.t('dang_xu_li')}</Text>
+                            <TouchableOpacity style={{flex:1,paddingVertical:15,marginRight:5,borderRadius:10,backgroundColor:object.Status == 1?'#fff':'#f2f2f2',borderWidth:1,borderColor:object.Status == 1 ? colors.colorLightBlue : null}} onPress={()=> setObject({...object,Status: 1})}>
+                                <Text style={{fontWeight:'bold',textAlign:'center',color:object.Status ==1 ? colors.colorLightBlue : '#000'}}>{I18n.t('dang_xu_li')}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={{flex:1,paddingVertical:15,marginLeft:5,borderRadius:10,backgroundColor:'#f2f2f2'}} onPress={()=> statusTmp.current = 3}>
-                                <Text style={{fontWeight:'bold',textAlign:'center'}}>{I18n.t('loai_bo')}</Text>
+                            <TouchableOpacity style={{flex:1,paddingVertical:15,marginLeft:5,borderRadius:10,backgroundColor:object.Status == 3?'#fff':'#f2f2f2',borderWidth:1,borderColor:object.Status == 3 ? colors.colorLightBlue : null}} onPress={()=> setObject({...object,Status: 3})}>
+                                <Text style={{fontWeight:'bold',textAlign:'center',color:object.Status ==3 ? colors.colorLightBlue : '#000'}}>{I18n.t('loai_bo')}</Text>
                             </TouchableOpacity>
                         </View>
-                        <TouchableOpacity style={{paddingVertical:15,borderRadius:10,backgroundColor:'#f2f2f2',marginTop:10}} onPress={()=> statusTmp.current = 2}>
-                            <Text style={{fontWeight:'bold',textAlign:'center'}}>{I18n.t('hoan_thanh')}</Text>
+                        <TouchableOpacity style={{paddingVertical:15,borderRadius:10,backgroundColor:object.Status == 2?'#fff':'#f2f2f2',borderWidth:1,borderColor:object.Status == 2 ? colors.colorLightBlue : null,marginTop:10}} onPress={()=> setObject({...object,Status: 2})}>
+                            <Text style={{fontWeight:'bold',textAlign:'center',color:object.Status ==2 ? colors.colorLightBlue : '#000'}}>{I18n.t('hoan_thanh')}</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={{paddingVertical:15,marginVertical:10,backgroundColor:colors.colorLightBlue,borderRadius:10}} onPress={()=>{setObject({...object,Status: statusTmp.current}), setOnShowModal(false)}}>
+                        <TouchableOpacity style={{paddingVertical:15,marginVertical:10,backgroundColor:colors.colorLightBlue,borderRadius:10}} onPress={()=>{ setOnShowModal(false)}}>
                             <Text style={{fontWeight:'bold',textAlign:'center', color:'#fff'}}>{I18n.t('ap_dung')}</Text>
                         </TouchableOpacity>
                         <View></View>
@@ -127,7 +134,7 @@ export default (props) => {
                     <Text>{I18n.t('nha_cung_cap')}</Text>
                     <TouchableOpacity style={styles.background} onPress={()=>{typeModal.current = 3, setOnShowModal(true)}}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <Text></Text>
+                            <Text>{object.Supplier ? object.Supplier.Name : I18n.t('tat_ca')}</Text>
                             <Image source={Images.icon_arrow_down} style={{ width: 20, height: 20 }} />
                         </View>
                     </TouchableOpacity>
@@ -140,7 +147,7 @@ export default (props) => {
                     <Text>{I18n.t('ma_hang_hoa')}</Text>
                     <TextInput style={styles.background} onChangeText={(text)=> setObject({...object, ProductCode : text})}></TextInput>
                 </View>
-                <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, alignItems: 'center', justifyContent: 'center', paddingVertical: 15, borderRadius: 10, marginHorizontal: 10, marginVertical: 10 }}>
+                <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, alignItems: 'center', justifyContent: 'center', paddingVertical: 15, borderRadius: 10, marginHorizontal: 10, marginVertical: 10 }} onPress={()=>onCLickDone()}>
                     <Text style={{ color: '#fff', fontWeight: 'bold' }}>{I18n.t('ap_dung')}</Text>
                 </TouchableOpacity>
             </View>
@@ -183,5 +190,6 @@ export default (props) => {
 const styles = StyleSheet.create({
     background: {
         backgroundColor: '#fff', paddingHorizontal: 5, paddingVertical: 10, borderRadius: 10, marginTop: 5
-    }
+    },
+    titleBtn:{fontWeight:'bold',textAlign:'center'}
 })

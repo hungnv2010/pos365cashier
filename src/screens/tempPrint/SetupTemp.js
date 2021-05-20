@@ -18,6 +18,7 @@ import colors from '../../theme/Colors';
 import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
 import { ScreenList } from '../../common/ScreenList';
 import tempDefault from './tempDefault';
+import { handerDataPrintTemp } from './ServicePrintTemp';
 const { PrintTemp } = NativeModules;
 
 const Code = {
@@ -50,6 +51,8 @@ export default (props) => {
             else {
                 setDataHtml(tempDefault)
             }
+
+            handerDataPrintTemp()
         }
 
         getDataHtml();
@@ -88,10 +91,10 @@ export default (props) => {
     }
 
     const onSelectTab = (number) => {
-        PrintTemp.registerPrint("Hung")
+        // PrintTemp.registerPrint("Hung")
         if (number == 1) {
             setDataHtml(tempDefault)
-            setFileLuuDuLieu(Constant.HTML_PRINT, tempDefault);
+            // setFileLuuDuLieu(Constant.HTML_PRINT, tempDefault);
         } else {
             dialogManager.showLoading();
             let params = {};
@@ -99,10 +102,10 @@ export default (props) => {
                 console.log("onClickLoadOnline res ", res);
                 if (res && res.Content) {
                     setDataHtml(res.Content)
-                    setFileLuuDuLieu(Constant.HTML_PRINT, "" + res.Content);
+                    // setFileLuuDuLieu(Constant.HTML_PRINT, "" + res.Content);
                 } else {
                     setDataHtml(tempDefault)
-                    setFileLuuDuLieu(Constant.HTML_PRINT, tempDefault);
+                    // setFileLuuDuLieu(Constant.HTML_PRINT, tempDefault);
                 }
                 dialogManager.hiddenLoading()
             }).catch((e) => {

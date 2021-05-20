@@ -30,7 +30,7 @@ export const Constant = {
         BartenderBKey: 'BartenderB',
         BartenderCKey: 'BartenderC',
         BartenderDKey: 'BartenderD',
-        StampPrintKey: 'StamPrintKey',
+        StampPrintKey: 'StampPrintKey',
     },
     TIME_FOR_REPORT: [
         {

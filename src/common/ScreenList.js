@@ -99,5 +99,7 @@ export const ScreenList = {
   DetailOrderOffline: "DetailOrderOffline",
   SetupTemp: "SetupTemp",
   PreviewTempPrint: "PreviewTempPrint",
+  ListGroupProduct:"ListGroupProduct",
+  GroupProductDetail: "GroupProductDetail",
 }
 

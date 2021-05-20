@@ -150,8 +150,8 @@ const Invoice = (props) => {
                     console.log('getInvoiceBySearch', err);
                     dialogManager.hiddenLoading()
                 })
-            }else{
-                if(currentBranch && currentBranch.Id){
+            } else {
+                if (currentBranch && currentBranch.Id) {
                     onRefresh()
                 }
             }
@@ -165,7 +165,7 @@ const Invoice = (props) => {
         params = { ...params, includes: ['Room', 'Partner'], IncludeSummary: true };
         dialogManager.showLoading()
         new HTTPService().setPath(ApiPath.INVOICE).GET(params).then((res) => {
-            console.log("getInvoicesData res ", res);
+            console.log("getInvoicesData res ", JSON.stringify(res));
             let results = res.results.filter(item => item.Id > 0);
             console.log('res.__count', res.__count);
             count.current = res.__count;
@@ -248,13 +248,16 @@ const Invoice = (props) => {
         }
     }
 
+    const onCallBack = () => {
+        onRefresh()
+    }
 
     const onClickInvoiceItem = (item) => {
         if (deviceType == Constant.TABLET) {
             setCurrentItem({ ...item })
         } else {
             console.log('onClickInvoiceItem', item, props);
-            props.navigation.navigate(ScreenList.InvoiceDetailForPhone, { item })
+            props.navigation.navigate(ScreenList.InvoiceDetailForPhone, { item, onCallBack: onCallBack })
 
         }
     }
@@ -342,7 +345,7 @@ const Invoice = (props) => {
     const renderItemList = (item, index) => {
         return (
             <TouchableOpacity
-                onPress={() => onClickInvoiceItem(item)} 
+                onPress={() => onClickInvoiceItem(item)}
                 key={item.Id}>
                 <View style={{ flex: 1, alignItems: "center", padding: 15, marginBottom: 5, backgroundColor: item.Id == currentItem.Id ? "#F6DFCE" : 'white', borderRadius: 10 }}>
                     <View style={{ flexDirection: "row", }}>
@@ -487,6 +490,7 @@ const Invoice = (props) => {
                     deviceType == Constant.TABLET ?
                         <View style={{ flex: 1 }}>
                             <InvoiceDetail
+                                onCallBack={onCallBack}
                                 currentItem={currentItem} />
                         </View>
                         :

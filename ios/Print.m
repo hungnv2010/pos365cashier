@@ -155,16 +155,23 @@ RCT_EXPORT_METHOD(PrintTemp:(NSString *)param ip:(NSString *)ip size:(NSString *
   dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
   dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
     NSLog(@"printTemp EscPrint");
-    [self EscPrint];
+    NSArray *arrayOfComponents = [param componentsSeparatedByString:@"|||"];
+    
+    for (int i=0, count = [arrayOfComponents count]; i < count; i++) {
+      NSLog(@"printTemp EscPrint %@", [arrayOfComponents objectAtIndex:i]);
+      [self EscPrint:[arrayOfComponents objectAtIndex:i] ];
+    }
+    
+//    [self EscPrint:param ];
   });
 }
 
--(void)EscPrint{
+-(void)EscPrint: (NSString *)txt{
     Printer * currentprinter = _printerManager.CurrentPrinter;
     NSLog(@"inputStr=1");
     if (currentprinter.IsOpen){
       NSLog(@"inputStr=2");
-        NSString* inputStr = TempCode;
+        NSString* inputStr = txt;
         NSLog(@"inputStr=%@",inputStr);
         TextSetting *textst = currentprinter.TextSets;
         //[textst setEscFonttype:ESCFontType_FontA];
@@ -334,6 +341,7 @@ RCT_EXPORT_METHOD(PrintTemp:(NSString *)param ip:(NSString *)ip size:(NSString *
 
   for (int i=0, count = [images count]; i < count; i++) {
     data = [cmd GetBitMapCmd:bitmapSetting image:[images objectAtIndex:i]];
+//    data = [cmd GetBitMapCmdZoom:bitmapSetting  image:[images objectAtIndex:i] limitmaxzooms:0];
     [cmd Append:data];
     NSLog(@"printImageFromClient URL 5");
     [cmd Append:[cmd GetLFCmd]];

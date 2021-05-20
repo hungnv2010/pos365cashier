@@ -19,6 +19,8 @@
 		1A53088E25AEEEDE0055ECAB /* file.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 1A53088D25AEEEDE0055ECAB /* file.mp3 */; };
 		1A5AD5C42616F97E00F859E4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A5AD5C72616F97E00F859E4 /* InfoPlist.strings */; };
 		1A5AD5C52616F97E00F859E4 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A5AD5C72616F97E00F859E4 /* InfoPlist.strings */; };
+		1A5FB3EA264E2D2C003ECF4A /* PrintTemp.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A5FB3E9264E2D2C003ECF4A /* PrintTemp.m */; };
+		1A5FB3EB264E2D2C003ECF4A /* PrintTemp.m in Sources */ = {isa = PBXBuildFile; fileRef = 1A5FB3E9264E2D2C003ECF4A /* PrintTemp.m */; };
 		1A64AFA52612B59200568FC5 /* libRTPrinterSDK.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A64AFA42612B59200568FC5 /* libRTPrinterSDK.a */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
@@ -108,6 +110,8 @@
 		1A5AD5BF2616F8F200F859E4 /* vi-VN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "vi-VN"; path = "vi-VN.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
 		1A5AD5C62616F97E00F859E4 /* vi-VN */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "vi-VN"; path = "vi-VN.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		1A5AD5CC2616F98300F859E4 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		1A5FB3E8264E2CFF003ECF4A /* PrintTemp.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrintTemp.h; sourceTree = "<group>"; };
+		1A5FB3E9264E2D2C003ECF4A /* PrintTemp.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PrintTemp.m; sourceTree = "<group>"; };
 		1A64AF982612B29500568FC5 /* libRTPrinterSDK.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libRTPrinterSDK.a; sourceTree = "<group>"; };
 		1A64AFA42612B59200568FC5 /* libRTPrinterSDK.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libRTPrinterSDK.a; path = Pos365Cashier/Lib/SDK/libRTPrinterSDK.a; sourceTree = "<group>"; };
 		21B9A29277C5EFA95C6A3C4F /* Pods-Pos365Cashier-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Pos365Cashier-tvOS.release.xcconfig"; path = "Target Support Files/Pods-Pos365Cashier-tvOS/Pods-Pos365Cashier-tvOS.release.xcconfig"; sourceTree = "<group>"; };
@@ -262,6 +266,8 @@
 			children = (
 				1A52857A247228480090BA8A /* Print.h */,
 				1A52857B247228580090BA8A /* Print.m */,
+				1A5FB3E8264E2CFF003ECF4A /* PrintTemp.h */,
+				1A5FB3E9264E2D2C003ECF4A /* PrintTemp.m */,
 			);
 			name = Print;
 			sourceTree = "<group>";
@@ -715,6 +721,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				00E356F31AD99517003FC87E /* Pos365CashierTests.m in Sources */,
+				1A5FB3EB264E2D2C003ECF4A /* PrintTemp.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -723,6 +730,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+				1A5FB3EA264E2D2C003ECF4A /* PrintTemp.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				1A19FB9D260D7E4E0036D7F0 /* PrinterManager.m in Sources */,
 				1A52857C247228580090BA8A /* Print.m in Sources */,
@@ -834,7 +842,7 @@
 			baseConfigurationReference = BC7F917EB6F152A16ACF4402 /* Pods-Pos365Cashier.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 9;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = S8C4LR9F7U;
 				ENABLE_BITCODE = NO;
@@ -923,7 +931,7 @@
 			baseConfigurationReference = C602AD95F926827C03D70B0F /* Pods-Pos365Cashier.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = S8C4LR9F7U;
 				ENABLE_BITCODE = NO;
 				EXCLUDED_ARCHS = "";

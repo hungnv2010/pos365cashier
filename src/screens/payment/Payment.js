@@ -29,6 +29,8 @@ import DatePicker from 'react-native-date-picker';
 import NetInfo from "@react-native-community/netinfo";
 import moment from 'moment';
 import { Subject } from 'rxjs';
+import { handerDataPrintTemp } from '../tempPrint/ServicePrintTemp';
+const { Print } = NativeModules;
 var Sound = require('react-native-sound');
 let timeClickPrevious = 1000;
 
@@ -781,6 +783,14 @@ export default (props) => {
             jsonContent.PurchaseDate = date.toString();
         }
         console.log("printAfterPayment jsonContent 2 ", jsonContent);
+        console.log("printAfterPayment settingObject.current ", settingObject.current);
+        settingObject.current.Printer.forEach(async element => {
+            if(element.key == Constant.KEY_PRINTER.StampPrintKey && element.ip != ""){
+                let value = await handerDataPrintTemp(jsonContent)
+                console.log("printAfterPayment value  ", value);
+                Print.PrintTemp(value, element.ip, "30x40")
+            }
+        });
         dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
     }
 

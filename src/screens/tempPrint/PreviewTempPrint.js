@@ -19,6 +19,7 @@ import ViewShot, { takeSnapshot, captureRef } from "react-native-view-shot";
 import AutoHeightWebView from 'react-native-autoheight-webview/autoHeightWebView'
 import I18n from '../../common/language/i18n'
 import colors from '../../theme/Colors';
+import { handerDataPrintTemp } from './ServicePrintTemp';
 
 const FOOTER_HEIGHT = 21;
 const PADDING = 16;
@@ -33,63 +34,25 @@ export default forwardRef((props, ref) => {
 
     const [data, setData] = useState("");
     const [vendorSession, setVendorSession] = useState({});
-    const [uri, setUri] = useState("");
-    let isClick = useRef();
 
     const deviceType = useSelector(state => {
         return state.Common.deviceType
     });
 
-    useEffect(() => {
+    // useEffect(() => {
 
-    }, [])
+    // }, [])
 
     useEffect(() => {
         console.log("Preview props", props);
         const getVendorSession = async () => {
             setData(props.route.params.data)
-            // isClick.current = false;
-            // let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
-            // console.log('data', JSON.parse(data));
-            // setVendorSession(JSON.parse(data))
-            // let html = HtmlDefault;
-            // html = props.route.params.data;
-            // if (deviceType == Constant.PHONE) {
-            //     html = props.route.params.data;
-            // } else {
-            //     console.log("Preview props.data", props.data);
-            //     if (props.data != "")
-            //         html = props.data
-
-            // }
-            // console.log("Preview html", html);
-            // printService.GenHtml(html, JsonContent1).then(res => {
-            //     if (res && res != "") {
-            //         // if (deviceType == Constant.TABLET)
-            //         //     res = res.replace("font-size:16.0px;", "font-size:22.0px;")
-            //         setData(res)
-            //     }
-            // })
-            // // printService.GenHtmlKitchen(html, defaultKitchen).then(res => {
-            // //     if (res && res != "") {
-            // //         setData(res)
-            // //     }
-            // // })
-            // let i = 0;
-            // for (const key in defaultKitchen) {
-            //     if (defaultKitchen.hasOwnProperty(key)) {
-            //         const element = defaultKitchen[key];
-            //         console.log("printKitchen key element.length ", key, element.length);
-            //         let res = await printService.GenHtmlKitchen(html, element)
-            //         if (res && res != "" && i == 0) {
-            //             setData(res)
-            //         }
-            //     }
-            //     i++;
-            // }
+            let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
+            console.log('data', JSON.parse(data));
+            setVendorSession(JSON.parse(data))
         }
         getVendorSession()
-    }, [props.data])
+    }, [])
 
     useImperativeHandle(ref, () => ({
         clickCheckInRef() {
@@ -125,17 +88,16 @@ export default forwardRef((props, ref) => {
         })
     }
 
-    function clickPrint() {
+    async function clickPrint() {
         console.log("clickPrint data ", data)
-        Print.PrintTemp(data, "192.168.100.238", "30x40")
+        let value = await handerDataPrintTemp()
+        Print.PrintTemp(value, "192.168.100.238", "30x40")
     }
 
     onCapture = uri => {
         console.log("do something with ", uri);
         setUri(uri);
     }
-
-    const viewPrintRef = useRef();
 
     return (
         <View style={{ backgroundColor: "#fff", alignItems: "center", flex: 1 }}>
