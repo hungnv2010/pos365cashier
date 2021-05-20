@@ -25,7 +25,7 @@ export default (props) => {
     const [category, setCategory] = useState([])
     const [showModal, setOnShowModal] = useState(false)
     const modalType = useRef()
-    const [textInput, setTextInput] = useState()
+    const [textInput, setTextInput] = useState('')
     const [defaultGroup, setDefaultGroup] = useState()
     const [marginModal, setMargin] = useState(0)
     const deviceType = useSelector(state => {
@@ -50,10 +50,13 @@ export default (props) => {
         console.log("category", category);
     }
     const onClickAdd = () => {
+        if(textInput!=''){
         setCategory([...category, textInput])
         setExtraTopping({...extraTopping,ExtraGroup:textInput})
         setTextInput()
         setOnShowModal(false)
+        }
+        
     }
     useEffect(() => {
         setDefaultGroup(extraTopping.ExtraGroup)
@@ -157,10 +160,10 @@ export default (props) => {
                             <View style={{ flex: 1 }}></View>
                             <View style={{ flexDirection: 'row', flex: 1, paddingVertical: 10 }}>
                                 <TouchableOpacity style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} onPress={() => { setOnShowModal(false) }}>
-                                    <Text style={{ fontSize: 14 }}>{I18n.t('huy')}</Text>
+                                    <Text style={{ fontSize: 14,color:colors.colorchinh }}>{I18n.t('huy')}</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} onPress={() => onClickAdd()}>
-                                    <Text style={{ fontSize: 14, color: colors.colorchinh }}>{I18n.t('dong_y')}</Text>
+                                    <Text style={{ fontSize: 14, color:textInput!='' ? colors.colorLightBlue : '#bbbbbb' }}>{I18n.t('dong_y')}</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>

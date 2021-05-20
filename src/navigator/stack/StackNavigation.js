@@ -70,6 +70,7 @@ import SetupTemp from '../../screens/tempPrint/SetupTemp'
 import PreviewTempPrint from '../../screens/tempPrint/PreviewTempPrint'
 
 import ListGroupProduct from '../../screens/products/groupproduct/ListGroupProduct';
+import GroupProductDetail from '../../screens/products/groupproduct/GroupProductDetail'
 
 const MainStack = createStackNavigator();
 
@@ -152,7 +153,7 @@ export default (props) => {
                 <MainStack.Screen name={ScreenList.PreviewTempPrint}>{props=><PreviewTempPrint {...props}/>}</MainStack.Screen>
                 
                 <MainStack.Screen name={ScreenList.ListGroupProduct}>{props => <ListGroupProduct {...props}/>}</MainStack.Screen>
-                <MainStack.Screen name={ScreenList.GroupProductDetail}>{props => <GroupProductDetail {...props}/>}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.GroupProductDetail}>{props=><GroupProductDetail {...props}/>}</MainStack.Screen>
             </MainStack.Navigator>
         </Animated.View>
     );

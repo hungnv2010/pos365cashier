@@ -116,6 +116,7 @@ export default {
   chon_tu_thu_vien:'Chọn từ thư viện',
   chon_anh:'Chọn ảnh',
   chieu_dai_x_chieu_rong:'Rộng x Dài',
+  chi_tiet_nhom_hang_hoa:'Chi tiết nhóm hàng hoá',
 
   // TODO: D
 
@@ -280,6 +281,7 @@ export default {
   hien_thi_san_pham_tren_man_hinh_thu_ngan: 'Hiển thị sản phẩm trên danh sách của màn hình thu ngân',
   hoac: 'hoặc',
   hoat_dong:'Hoạt động',
+  hang_hoa_trong_nhom:'Hàng hoá trong nhóm',
 
   // TODO: L
 
