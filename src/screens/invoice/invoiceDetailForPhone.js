@@ -112,13 +112,16 @@ const InvoiceDetail = (props) => {
             return { ...item.Product, ...item }
         })
         jsonContent.OrderDetails = OrderDetails;
+        if (invoiceDetail.VAT && invoiceDetail.VAT > 0) {
+            jsonContent.VATRates = (invoiceDetail.Total - invoiceDetail.VAT) / invoiceDetail.VAT
+        }
         jsonContent["RoomName"] = invoiceDetail.Room && invoiceDetail.Room.Name ? invoiceDetail.Room.Name : "";
         console.log("onRePrint jsonContent ", jsonContent);
         dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
     }
 
     const onDeleteOrder = () => {
-        dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_xoa_hoa_don'), I18n.t("thong_bao"), res => {
+        dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_huy_hoa_don'), I18n.t("thong_bao"), res => {
             if (res == 1) {
                 let id = invoiceDetail.Id && invoiceDetail.Id != -1 ? invoiceDetail.Id : ""
                 new HTTPService().setPath(ApiPath.DELETE_ORDER.replace("{orderId}", id)).DELETE()
@@ -243,7 +246,7 @@ const InvoiceDetail = (props) => {
                 {invoiceDetail.Status != 3 ?
                     <TouchableOpacity style={styles.buttonCreateQR} onPress={() => onDeleteOrder()}>
                         <Image source={Images.icon_trash} style={styles.iconButton} />
-                        <Text style={styles.textCreateQR}>{I18n.t('xoa')}</Text>
+                        <Text style={styles.textCreateQR}>{I18n.t('huy_don_hang')}</Text>
                     </TouchableOpacity>
                     : null}
             </View>

@@ -47,6 +47,7 @@ export default {
   ban_co_chac_chan_muon_mo_khoa_nhan_vien: 'Are you sure you want to unlock the employee ?',
   block_dau_tien: 'first block',
   ban_co_chac_chan_muon_xoa_phieu_nhap_hang_nay:'Do you want to delete this order stock ?',
+  ban_co_chac_chan_muon_huy_hoa_don: "Are you sure you want to cancel this order?",
 
   // TODO: C 
 
