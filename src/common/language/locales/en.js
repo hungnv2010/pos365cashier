@@ -115,6 +115,7 @@ export default {
   chon_tu_thu_vien:'Choose libs',
   chon_anh:'Choose image',
   chieu_dai_x_chieu_rong:"Width x Height",
+  chi_tiet_nhom_hang_hoa:'Group product detail',
 
   // TODO: D 
 
@@ -279,6 +280,7 @@ export default {
   hien_thi_san_pham_tren_man_hinh_thu_ngan: "Display product on the list of the cashier screen",
   hoac: 'or',
   hoat_dong: 'Action',
+  hang_hoa_trong_nhom:'Product in category',
 
   // TODO: L
 
