@@ -76,8 +76,8 @@ export class HTTPService {
                 headers: headers,
                 withCredentials: true,
                 data: JSON.stringify(jsonParam),
-                // timeout: 2000,
-                // timeoutErrorMessage:"thời gian dành cho bạn đã hết"
+                timeout: 30000,
+                timeoutErrorMessage: "TIMEOUT"
             }).then((response) => { this.extractData(response, resolve) })
                 .catch((e) => {
                     console.log("POST err ", e);
@@ -144,9 +144,10 @@ export class HTTPService {
             if (e && e.response && e.response.data) {
                 let mes = e.response.data.ResponseStatus && e.response.data.ResponseStatus.Message ? e.response.data.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, "") : "";
                 this.error(mes);
-                reject("")
+                reject(mes)
             } else {
-                this.error();
+                if (!(e && e.config && e.config.timeoutErrorMessage && e.config.timeoutErrorMessage == "TIMEOUT"))
+                    this.error();
                 reject(e)
             }
         }

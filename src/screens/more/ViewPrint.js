@@ -11,6 +11,7 @@ import AutoHeightWebView from 'react-native-autoheight-webview'
 import I18n from '../../common/language/i18n'
 import htmlKitchen from '../../data/html/htmlKitchen';
 import htmlDefault from '../../data/html/htmlDefault';
+import { Metrics } from '../../theme';
 
 export const TYPE_PRINT = {
     KITCHEN: "KITCHEN",
@@ -41,7 +42,7 @@ export default forwardRef((props, ref) => {
     });
 
     useEffect(() => {
-        console.log("ViewPrint props ", props);
+        console.log("ViewPrint props Dimensions.get('window').width ", Dimensions.get('window').width);
     }, [])
 
     useImperativeHandle(ref, () => ({
@@ -170,7 +171,7 @@ export default forwardRef((props, ref) => {
                     for (const key in item) {
                         if (item.hasOwnProperty(key)) {
                             const element = item[key];
-                            console.log('element == ', element);
+                            console.log('element == ', element, Metrics.screenWidth);
                             let checkPrint = false;
                             element.forEach(el => {
                                 if (el.Quantity > el.Processed) {
@@ -193,19 +194,10 @@ export default forwardRef((props, ref) => {
                                 } else {
                                     let res = printService.GenHtmlKitchen(htmlKitchen, element, i, vendorSession, type)
                                     if (res && res != "") {
-                                        res = res.replace("</body>", "<p style='display: none;'>" + i + "</p> </body>");
+                                        res = res.replace("</body>", "<p style='display: none;'>" + Math.floor((Math.random() * 1000000000) + 1) + i + "</p> </body>");
                                         printService.listWaiting.push({ html: res, ip: printObject[value].ip, size: printObject[value].size, isCopies: false })
                                     }
                                 }
-                                // let res = printService.GenHtmlKitchen(htmlKitchen, element, i, vendorSession, type, (setting && setting.in_hai_lien_cho_che_bien == true) ? true : false)
-                                // if (res && res != "") {
-                                //     res = res.replace("</body>", "<p style='display: none;'>" + i + "</p> </body>");
-                                //     printService.listWaiting.push({ html: res, ip: printObject[value].ip, size: printObject[value].size })
-                                //     if (setting && setting.in_hai_lien_cho_che_bien == true) {
-                                //         res = res.replace("</body>", "<p style='display: none;'>" + Math.floor((Math.random() * 1000000000) + 1) + i + "in_hai_lien_cho_che_bien</p> </body>");
-                                //         printService.listWaiting.push({ html: res, ip: printObject[value].ip, size: printObject[value].size })
-                                //     }
-                                // }
                             }
                         }
                         i++;
@@ -254,6 +246,33 @@ export default forwardRef((props, ref) => {
         }
     }
 
+    const widthWebView = () => {
+        let width = 100;
+        let screenWidth = Dimensions.get('window').width;
+        let screenHeight = Dimensions.get('window').height;
+        // deviceType == Constant.PHONE ? (orientation == Constant.PORTRAIT ? Dimensions.get('window').width / 1.3 : Dimensions.get('window').width / 2.3) : (orientation == Constant.PORTRAIT ? Dimensions.get('window').width / 2.8 : Dimensions.get('window').height / 2.8)
+        if (deviceType == Constant.PHONE) {
+            if (orientation == Constant.PORTRAIT) {
+                if (screenWidth >= 414 && screenWidth < 428) {
+                    width = screenWidth / 1.45;
+                } else if (screenWidth >= 428) {
+                    width = screenWidth / 1.5;
+                } else {
+                    width = screenWidth / 1.3;
+                }
+            } else {
+                width = screenWidth / 2.3;
+            }
+        } else {
+            if (orientation == Constant.PORTRAIT) {
+                width = screenHeight / 3.7;
+            } else {
+                width = screenHeight / 2.8;
+            }
+        }
+        return width;
+    }
+
     const childRef = useRef();
     return (
         <View style={{ position: "absolute" }}>
@@ -266,7 +285,8 @@ export default forwardRef((props, ref) => {
                         }}>
                         <AutoHeightWebView
                             scrollEnabled={false}
-                            style={{ backgroundColor: "#ffffff", width: deviceType == Constant.PHONE ? (orientation == Constant.PORTRAIT ? Dimensions.get('window').width / 1.35 : Dimensions.get('window').width / 2.3) : (orientation == Constant.PORTRAIT ? Dimensions.get('window').width / 2.8 : Dimensions.get('window').height / 2.8) }}
+                            // style={(deviceType != Constant.PHONE ? { width: Metrics.screenHeight / 3.5 } :  {width: Dimensions.get('window').width} )} // plus thì 1.45 
+                            style={{ backgroundColor: "#ffffff", width: widthWebView() }}
                             // customScript={`document.body.style.background = 'red';`}
                             files={[{
                                 href: 'cssfileaddress',
@@ -277,6 +297,7 @@ export default forwardRef((props, ref) => {
                             scalesPageToFit={true}
                             startInLoadingState
                             onLoadEnd={e => checkHtmlPrint(e)}
+                            viewportContent={'width=device-width, user-scalable=no'}
                         />
                     </View>
                 </ScrollView>

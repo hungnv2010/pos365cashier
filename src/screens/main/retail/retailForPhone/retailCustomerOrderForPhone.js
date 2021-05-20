@@ -787,6 +787,8 @@ export default (props) => {
         let jsonContentObj = JSON.parse(JSON.stringify(jsonContent))
         console.log("printAfterPayment jsonContent 1 ", jsonContent);
         jsonContentObj.PaymentCode = Code;
+        jsonContentObj.RoomName = I18n.t('don_hang');
+        jsonContentObj.Pos = "A"
         console.log("printAfterPayment jsonContent 2 ", jsonContent);
         dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContentObj, provisional: false } })
     }

@@ -19,6 +19,7 @@ export const Constant = {
     OBJECT_SETTING: 'OBJECT_SETTING',
     LANGUAGE: "LANGUAGE",
     HTML_PRINT: "HTML_PRINT",
+    TEMP_DEFAULT: "TEMP_DEFAULT",
     KEY_PRINTER: {
         CashierKey: 'CashierPrint',
         KitchenAKey: 'KitchenA',
@@ -29,7 +30,7 @@ export const Constant = {
         BartenderBKey: 'BartenderB',
         BartenderCKey: 'BartenderC',
         BartenderDKey: 'BartenderD',
-        StampPrintKey: 'StamPrintKey',
+        StampPrintKey: 'StampPrintKey',
     },
     TIME_FOR_REPORT: [
         {

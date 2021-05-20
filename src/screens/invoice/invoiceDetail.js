@@ -10,6 +10,7 @@ import { currencyToString, dateToString, momentToDateUTC } from '../../common/Ut
 import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
 import dialogManager from '../../components/dialog/DialogManager';
 import moment from "moment";
+import { useDispatch } from 'react-redux';
 
 
 const InvoiceDetail = (props) => {
@@ -17,6 +18,7 @@ const InvoiceDetail = (props) => {
     const [dataDetail, setDataDetail] = useState([])
     const moreAttributes = useRef(null)
     const listAccount = useRef([])
+    const dispatch = useDispatch();
 
     useEffect(() => {
         const getAccount = async () => {
@@ -74,6 +76,36 @@ const InvoiceDetail = (props) => {
                 return 'dang_xu_ly';
                 break;
         }
+    }
+
+    const onRePrint = () => {
+        console.log("onRePrint invoiceDetail ", invoiceDetail);
+        let jsonContent = invoiceDetail
+        jsonContent.PaymentCode = invoiceDetail.Code;
+        let OrderDetails = dataDetail.map(item => {
+            return { ...item.Product, ...item }
+        })
+        jsonContent.OrderDetails = OrderDetails;
+        jsonContent["RoomName"] = invoiceDetail.Room && invoiceDetail.Room.Name ? invoiceDetail.Room.Name : "";
+        console.log("onRePrint jsonContent ", jsonContent);
+        dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
+    }
+
+    const onDeleteOrder = () => {
+        dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_xoa_hoa_don'), I18n.t("thong_bao"), res => {
+            if (res == 1) {
+                let id = invoiceDetail.Id && invoiceDetail.Id != -1 ? invoiceDetail.Id : ""
+                new HTTPService().setPath(ApiPath.DELETE_ORDER.replace("{orderId}", id)).DELETE()
+                    .then(result => {
+                        console.log('onDeleteOrder result', result);
+                        if (result) {
+                            props.onCallBack()
+                        }
+                    }).catch(err => {
+                        console.log("onDeleteOrder err ", err);
+                    })
+            }
+        })
     }
 
     const renderItemList = (item) => {
@@ -201,6 +233,18 @@ const InvoiceDetail = (props) => {
             {
                 JSON.stringify(invoiceDetail) != "{}" ?
                     <View style={{ paddingHorizontal: 10, flex: 1 }}>
+                        <View style={styles.syncData}>
+                            <TouchableOpacity style={styles.buttonCreateQR} onPress={() => onRePrint()}>
+                                <Image source={Images.printer} style={styles.iconButton} />
+                                <Text style={styles.textCreateQR}>{I18n.t('in_lai')}</Text>
+                            </TouchableOpacity>
+                            {invoiceDetail.Status != 3 ?
+                                <TouchableOpacity style={styles.buttonCreateQR} onPress={() => onDeleteOrder()}>
+                                    <Image source={Images.icon_trash} style={styles.iconButton} />
+                                    <Text style={styles.textCreateQR}>{I18n.t('xoa')}</Text>
+                                </TouchableOpacity>
+                                : null}
+                        </View>
                         <View style={{ borderBottomColor: "#0072bc", borderBottomWidth: 1, }}>
                             <View style={{ margin: 5, flexDirection: "row", justifyContent: "space-between" }}>
                                 <Text style={{ padding: 0, flex: 1, fontWeight: 'bold', }}>{I18n.t("ngay_tao")}</Text>
@@ -267,7 +311,15 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flex: 1,
         textAlign: "center"
-    }
+    },
+    syncData: { flexDirection: "row", padding: 10, justifyContent: "center" },
+    iconButton: { width: 32, height: 32 },
+    textCreateQR: { marginTop: 10, textAlign: "center" },
+    buttonCreateQR: {
+        borderColor: "gray", borderWidth: 0.5,
+        width: Metrics.screenWidth / 4 - 20, backgroundColor: "#fff",
+        justifyContent: "center", alignItems: "center", padding: 15, borderRadius: 10, marginHorizontal: 5
+    },
 });
 
 export default InvoiceDetail

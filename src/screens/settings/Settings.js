@@ -607,9 +607,9 @@ export default (props) => {
                         <TouchableOpacity onPress={() => screenSwitch(ScreenList.PrintHtml)}>
                             <Text style={styles.textTitleItem}>HTML print</Text>
                         </TouchableOpacity>
-                        {/* <TouchableOpacity onPress={() => screenSwitch(ScreenList.PrintWebview)}>
+                        <TouchableOpacity onPress={() => screenSwitch(ScreenList.SetupTemp)}>
                             <Text style={styles.textTitleItem}>Temp print</Text>
-                        </TouchableOpacity> */}
+                        </TouchableOpacity>
                         {isFNB ?
                             <SettingSwitch title={"tu_dong_in_bao_bep"} output={onSwitchTone} isStatus={settingObject.tu_dong_in_bao_bep} />
                             : null
