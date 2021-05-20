@@ -104,7 +104,7 @@ export default (props) =>{
                             data.ListPr.map((item,index)=>{
                                 return(
                                     <View style={{backgroundColor:'#fff',marginVertical:2,marginHorizontal:5,paddingVertical:10,paddingHorizontal:15,borderRadius:10,flexDirection:'row'}}>
-                                        <Image style={{ height: 50, width: 50, borderRadius: 16 }} source={ item.ProductImages ? {uri: JSON.parse(item.ProductImages)[0].ImageURL}:Images.ic_nhomhanghoa  } />
+                                        <Image style={{ height: 50, width: 50, borderRadius: 16 }} source={ item.ProductImages && JSON.parse(item.ProductImages).length > 0 ? {uri: JSON.parse(item.ProductImages)[0].ImageURL}:Images.ic_nhomhanghoa  } />
                                         <View style={{marginLeft:15,paddingVertical:10}}>
                                         <Text>{item.Name}</Text>
                                         <Text style={{color:'#bbbbbb',marginTop:5}}>{item.Code}</Text>

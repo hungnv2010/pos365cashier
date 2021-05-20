@@ -55,6 +55,7 @@ export default (props) => {
         setExtraTopping({...extraTopping,ExtraGroup:textInput})
         setTextInput()
         setOnShowModal(false)
+        setTextInput('')
         }
         
     }
