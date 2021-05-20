@@ -783,14 +783,16 @@ export default (props) => {
             jsonContent.PurchaseDate = date.toString();
         }
         console.log("printAfterPayment jsonContent 2 ", jsonContent);
-        console.log("printAfterPayment settingObject.current ", settingObject.current);
-        settingObject.current.Printer.forEach(async element => {
-            if(element.key == Constant.KEY_PRINTER.StampPrintKey && element.ip != ""){
-                let value = await handerDataPrintTemp(jsonContent)
-                console.log("printAfterPayment value  ", value);
-                Print.PrintTemp(value, element.ip, "30x40")
-            }
-        });
+        if (isFNB) {
+            console.log("printAfterPayment settingObject.current ", settingObject.current);
+            settingObject.current.Printer.forEach(async element => {
+                if (element.key == Constant.KEY_PRINTER.StampPrintKey && element.ip != "") {
+                    let value = await handerDataPrintTemp(jsonContent)
+                    console.log("printAfterPayment value  ", value);
+                    Print.PrintTemp(value, element.ip, "30x40")
+                }
+            });
+        }
         dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
     }
 
@@ -1015,9 +1017,7 @@ export default (props) => {
 
     const onClickRePrint = () => {
         // xử lý rồi update
-        // updateServerEvent(false)
         console.log("onClickRePrint resPayment ", resPayment.current);
-        // printAfterPayment(resPayment.current.Code);
         jsonContentPayment.current.PaymentCode = resPayment.current.Code;
         dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContentPayment.current, provisional: false, imgQr: imageQr.current } })
     }

@@ -47,6 +47,7 @@ export default {
   ban_co_chac_chan_muon_mo_khoa_nhan_vien:'Bạn có chắc chắn muốn mở khoá nhân viên ?',
   block_dau_tien:'block đầu tiên',
   ban_co_chac_chan_muon_xoa_phieu_nhap_hang_nay:'Bạn có chắc chắn muốn xoá phiếu nhập hàng này ?',
+  ban_co_chac_chan_muon_huy_hoa_don: "Bạn có chắc chắn muốn huỷ đơn hàng này?",
 
   // TODO: C
 
