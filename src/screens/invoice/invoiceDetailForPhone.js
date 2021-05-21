@@ -16,9 +16,10 @@ const InvoiceDetail = (props) => {
     const [invoiceDetail, setInvoiceDetail] = useState({})
     const [dataDetail, setDataDetail] = useState([])
     const moreAttributes = useRef(null)
-    const deviceType = useSelector(state => {
-        return state.Common.deviceType
+    const { deviceType, isFNB } = useSelector(state => {
+        return state.Common
     });
+
     const listAccount = useRef([])
     const dispatch = useDispatch();
 
@@ -113,9 +114,13 @@ const InvoiceDetail = (props) => {
         })
         jsonContent.OrderDetails = OrderDetails;
         if (invoiceDetail.VAT && invoiceDetail.VAT > 0) {
-            jsonContent.VATRates = (invoiceDetail.Total - invoiceDetail.VAT) / invoiceDetail.VAT
+            jsonContent.VATRates = (invoiceDetail.VAT * 100) / (invoiceDetail.Total - invoiceDetail.VAT)
         }
         jsonContent["RoomName"] = invoiceDetail.Room && invoiceDetail.Room.Name ? invoiceDetail.Room.Name : "";
+        if (!isFNB) {
+            jsonContent["RoomName"] = I18n.t('don_hang');
+            jsonContent["Pos"] = "A"
+        }
         console.log("onRePrint jsonContent ", jsonContent);
         dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
     }
