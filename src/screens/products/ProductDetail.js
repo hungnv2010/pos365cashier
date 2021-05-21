@@ -72,6 +72,9 @@ export default (props) => {
     const deviceType = useSelector(state => {
         return state.Common.deviceType
     });
+    const { isFNB } = useSelector(state => {
+        return state.Common
+    });
 
     let params = {
         CompareCost: compareCost.current ? compareCost.current : 0,
@@ -217,7 +220,8 @@ export default (props) => {
 
     const setStatusPrinter = () => {
         countPrint.current = 0
-        let printCook = [{ Name: 'may_in_bao_bep_a', Key: 'KitchenA', Status: false },
+        let printCook
+        printCook = [{ Name: 'may_in_bao_bep_a', Key: 'KitchenA', Status: false },
         { Name: 'may_in_bao_bep_b', Key: 'KitchenB', Status: false },
         { Name: 'may_in_bao_bep_c', Key: 'KitchenC', Status: false },
         { Name: 'may_in_bao_bep_d', Key: 'KitchenD', Status: false },
@@ -341,7 +345,7 @@ export default (props) => {
             console.log("img", img);
             if (img.length > 0) {
                 setImageUrl(img[0].ImageURL)
-            }else{
+            } else {
                 setImageUrl()
             }
         }
@@ -644,52 +648,52 @@ export default (props) => {
     const upLoadPhoto = async (source) => {
         let state = await NetInfo.fetch()
         if (state.isConnected == true && state.isInternetReachable == true) {
-        dialogManager.showLoading()
-        await new HTTPService().setPath(`api/google/tocken`).GET().then(res => {
-            if (res != null) {
-                token.current = res.Tocken
-                console.log("Token", res.Tocken);
-            }
-        })
-        GDrive.setAccessToken(token.current)
-        GDrive.init()
-
-        GDrive.files.createFileMultipart(
-            source.base64,
-            "'image/jpg'", {
-            parents: ["0B0kuvBxLBrKiflFvTW5EUkRkZEg1UEZpSXZaVGIwTjFFeGlJSV9vTG5kbm9NUW5sQ2tiSGc"],
-            name: source.fileName
-        },
-            true)
-            .then(
-                (response) => response.json()
-            ).then((res) => {
-                // result data
-                console.log(res.id);
-                let url = "https://docs.google.com/uc?id=" + `${res.id}` + "&export=view"
-                let item = {
-                    ImageURL: url,
-                    IsDefault: true,
-                    ThumbnailUrl: url
+            dialogManager.showLoading()
+            await new HTTPService().setPath(`api/google/tocken`).GET().then(res => {
+                if (res != null) {
+                    token.current = res.Tocken
+                    console.log("Token", res.Tocken);
                 }
-                let image = []
-                // if (productOl.ProductImages) {
-                //     image = JSON.parse(JSON.stringify(productOl.ProductImages))
-                // }
-                image = [...image, item]
-                setProductOl({ ...productOl, ProductImages: image })
-                setImageUrl(url)
-                console.log(image);
-                dialogManager.hiddenLoading()
-
             })
-        setOnShowModal(false)
-    }else{
-        dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_internet'), I18n.t('thong_bao'), () => {
-            dialogManager.destroy();
-        }, null, null, I18n.t('dong'))
+            GDrive.setAccessToken(token.current)
+            GDrive.init()
+
+            GDrive.files.createFileMultipart(
+                source.base64,
+                "'image/jpg'", {
+                parents: ["0B0kuvBxLBrKiflFvTW5EUkRkZEg1UEZpSXZaVGIwTjFFeGlJSV9vTG5kbm9NUW5sQ2tiSGc"],
+                name: source.fileName
+            },
+                true)
+                .then(
+                    (response) => response.json()
+                ).then((res) => {
+                    // result data
+                    console.log(res.id);
+                    let url = "https://docs.google.com/uc?id=" + `${res.id}` + "&export=view"
+                    let item = {
+                        ImageURL: url,
+                        IsDefault: true,
+                        ThumbnailUrl: url
+                    }
+                    let image = []
+                    // if (productOl.ProductImages) {
+                    //     image = JSON.parse(JSON.stringify(productOl.ProductImages))
+                    // }
+                    image = [...image, item]
+                    setProductOl({ ...productOl, ProductImages: image })
+                    setImageUrl(url)
+                    console.log(image);
+                    dialogManager.hiddenLoading()
+
+                })
+            setOnShowModal(false)
+        } else {
+            dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_internet'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
+        }
     }
-}
     const captureImage = async () => {
         //setOnShowModal(false)
         let options = {
@@ -896,7 +900,7 @@ export default (props) => {
                 <KeyboardAwareScrollView>
                     <View style={{ justifyContent: 'center', alignItems: 'center', padding: 20 }} >
                         <TouchableOpacity onPress={() => { typeModal.current = 6, setOnShowModal(true) }}>
-                            {productOl.ProductImages && (productOl.ProductImages).length > 0  ?
+                            {productOl.ProductImages && (productOl.ProductImages).length > 0 ?
                                 <Image style={{ height: 70, width: 70, borderRadius: 16 }} source={{ uri: imageUrl }} /> :
                                 // : product.Name ? <View style={{ width: 70, height: 70, justifyContent: 'center', alignItems: 'center', borderRadius: 16, backgroundColor: colors.colorchinh }}>
                                 //     <Text style={{ textAlign: 'center', color: 'white' }}>{product.Name ? product.Name.indexOf(' ') == -1 ? product.Name.slice(0, 2).toUpperCase() : (product.Name.slice(0, 1) + product.Name.slice(product.Name.indexOf(' ') + 1, product.Name.indexOf(' ') + 2)).toUpperCase() : null}</Text>
@@ -1052,7 +1056,7 @@ export default (props) => {
                                 }
                             </View>
                             <View style={{ padding: 3, backgroundColor: '#f2f2f2', marginTop: 10, }}></View>
-                            {product ?
+                            {product && isFNB == true ?
                                 <PrintCook productOl={product} config={priceConfig} printer={printer} countPrint={countPrint.current} outPutPrint={outPutPrinter}></PrintCook> : null}
                         </View>
                     </View>
@@ -1144,7 +1148,7 @@ const styles = StyleSheet.create({
     styleButtonOn: {
         flex: 1, marginRight: 10, justifyContent: 'center', alignItems: 'center', borderRadius: 16, borderWidth: 0.5, padding: 15, backgroundColor: 'white', borderColor: colors.colorLightBlue
     },
-    textInput: { backgroundColor: '#f2f2f2',fontSize:14, marginTop: 5, marginLeft: 15, marginRight: 15, height: 40, borderRadius: 15, height: 50, padding: 10, borderWidth: 0.25, borderColor: 'silver', color: colors.colorLightBlue },
+    textInput: { backgroundColor: '#f2f2f2', fontSize: 14, marginTop: 5, marginLeft: 15, marginRight: 15, height: 40, borderRadius: 15, height: 50, padding: 10, borderWidth: 0.25, borderColor: 'silver', color: colors.colorLightBlue },
     titleHint: {
         marginLeft: 15, marginRight: 10, color: '#B5B5B5', marginBottom: 5, marginTop: 5
     },
