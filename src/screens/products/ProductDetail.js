@@ -661,7 +661,7 @@ export default (props) => {
             GDrive.files.createFileMultipart(
                 source.base64,
                 "'image/jpg'", {
-                parents: ["0B0kuvBxLBrKiflFvTW5EUkRkZEg1UEZpSXZaVGIwTjFFeGlJSV9vTG5kbm9NUW5sQ2tiSGc"],
+                parents: ["1uNWm1G_BusweTf7x8g1O1wC3z9ET-2n_"],
                 name: source.fileName
             },
                 true)
