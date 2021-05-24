@@ -155,7 +155,7 @@ export default (props) => {
                             <Text style={{ paddingVertical: 5, textTransform: 'uppercase', fontWeight: 'bold' }}>{orderStock.Code}</Text>
                         </View>
                         <View style={{ justifyContent: 'center' }}>
-                            <Text style={{ color: orderStock.Status == 1 ? '#f6871e' : orderStock.Status == 2 ? '#00c75f' : orderStock.Status == 3 ? '#f21e3c' : null, fontWeight: 'bold' }}>{orderStock.Status == 2 ? I18n.t('hoan_thanh') : orderStock.Status == 1 ? I18n.t('dang_xu_li') : orderStock.Status == 3 ? I18n.t('loai_bo') : null}</Text>
+                            <Text style={{ color: orderStock.Status == 1 ? '#f6871e' : orderStock.Status == 2 ? '#00c75f' : orderStock.Status == 3 ? '#f21e3c' : null, fontWeight: 'bold' }}>{orderStock.Status == 2 ? I18n.t('hoan_thanh') : orderStock.Status == 1 ? I18n.t('dang_xu_ly') : orderStock.Status == 3 ? I18n.t('loai_bo') : null}</Text>
                         </View>
                     </View>
                     <View style={{ backgroundColor: '#fff', marginTop: 2, paddingVertical: 15, paddingHorizontal: 10 }}>

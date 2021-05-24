@@ -171,7 +171,7 @@ export default {
   dang_xuat_tai_khoan_tren_cac_thiet_bi_dang_dung: 'Sign out for all device',
   danh_sach_extra_topping: 'List extra/topping',
   danh_sach_hang_hoa: 'Product list',
-  dang_xu_li: 'Processing',
+  dang_xu_ly: 'Processing',
 
   // TODO: E
 

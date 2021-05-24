@@ -78,7 +78,7 @@ export default (props) => {
                         <Text style={{textAlign:'center',fontWeight:'bold'}}>{I18n.t('trang_thai')}</Text>
                         <View style={{flexDirection:'row',marginTop:15}}>
                             <TouchableOpacity style={{flex:1,paddingVertical:15,marginRight:5,borderRadius:10,backgroundColor:object.Status == 1?'#fff':'#f2f2f2',borderWidth:1,borderColor:object.Status == 1 ? colors.colorLightBlue : null}} onPress={()=> setObject({...object,Status: 1})}>
-                                <Text style={{fontWeight:'bold',textAlign:'center',color:object.Status ==1 ? colors.colorLightBlue : '#000'}}>{I18n.t('dang_xu_li')}</Text>
+                                <Text style={{fontWeight:'bold',textAlign:'center',color:object.Status ==1 ? colors.colorLightBlue : '#000'}}>{I18n.t('dang_xu_ly')}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={{flex:1,paddingVertical:15,marginLeft:5,borderRadius:10,backgroundColor:object.Status == 3?'#fff':'#f2f2f2',borderWidth:1,borderColor:object.Status == 3 ? colors.colorLightBlue : null}} onPress={()=> setObject({...object,Status: 3})}>
                                 <Text style={{fontWeight:'bold',textAlign:'center',color:object.Status ==3 ? colors.colorLightBlue : '#000'}}>{I18n.t('loai_bo')}</Text>
@@ -125,7 +125,7 @@ export default (props) => {
                     <Text >{I18n.t('trang_thai')}</Text>
                     <TouchableOpacity style={styles.background} onPress={()=>{typeModal.current = 2, setOnShowModal(true)}}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <Text>{object.Status == 1 ? I18n.t('dang_xu_li') : object.Status == 2 ? I18n.t('hoan_thanh') : object.Status == 3 ? I18n.t('loai_bo') : I18n.t('tat_ca')}</Text>
+                            <Text>{object.Status == 1 ? I18n.t('dang_xu_ly') : object.Status == 2 ? I18n.t('hoan_thanh') : object.Status == 3 ? I18n.t('loai_bo') : I18n.t('tat_ca')}</Text>
                             <Image source={Images.icon_arrow_down} style={{ width: 20, height: 20 }} />
                         </View>
                     </TouchableOpacity>

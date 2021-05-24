@@ -171,7 +171,7 @@ export default {
   dang_xuat_tai_khoan_tren_cac_thiet_bi_dang_dung:'Đăng xuất tài khoản trên các thiết bị đang dùng',
   danh_sach_extra_topping:'Danh sách Extra topping',
   danh_sach_hang_hoa:'Danh sách hàng hoá',
-  dang_xu_li:'Đang xử lý',
+  dang_xu_ly:'Đang xử lý',
 
   // TODO: E
 
