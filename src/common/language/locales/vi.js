@@ -570,7 +570,8 @@ export default {
   tong_so_luong_nhap:'Tổng số lượng nhập',
   thue_vat:'Thuế VAT',
   toi_da:'Tối đa',
-
+  thong_bao_cap_nhat_phien_ban_moi: 'Đã có phiên bản mới Quý khách vui lòng cập nhật để trải nghiệm ứng dụng được tốt hơn.',
+  
   // TODO: U
 
   // TODO: V

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useFocusEffect, useCallback, useRef } from 
 import {
     StyleSheet,
     NativeModules,
-    Dimensions, ToastAndroid, NativeEventEmitter, AppState, View, Text
+    Dimensions, ToastAndroid, NativeEventEmitter, AppState, View, Text, Linking, Platform
 } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import StackNavigation from './navigator/stack/StackNavigation';
@@ -20,6 +20,9 @@ import moment from 'moment';
 import 'moment/min/locales'
 import { DefaultSetting } from './screens/settings/Settings';
 import dataManager from './data/DataManager';
+import dialogManager from './components/dialog/DialogManager';
+import { HTTPService } from './data/services/HttpService';
+import DeviceInfo from 'react-native-device-info';
 
 var numberInternetReachable = 0;
 
@@ -46,7 +49,54 @@ export default () => {
         return (aspectRatio <= 1.6) ? Constant.TABLET : Constant.PHONE;
     }
 
+    const checkVersionApplication = async () => {
+        return new Promise((resolve) => {
+            new HTTPService().setLinkFileTinh("https://api.pos365.vn/appversion.json").GET({}).then((res) => {
+                console.log("checkVersionApplication res ", JSON.stringify(res));
+                let res1 = { "Android": "1.41", "iOS": "1.4.10" }
+                if (res && res.iOS && res.iOS != "") {
+                    DeviceInfo.getVersion().then(res => {
+                        console.log("DeviceInfo.getVersion() ===  ", res);
+                        let clientVersion = res.replace(/\./g, "");
+                        let strVersion = (typeof (res1.iOS) === "string") ? res1.iOS : JSON.stringify(res1.iOS);
+                        let serverVersion = strVersion.replace(/\./g, "");
+                        console.log("clientVersion  ", clientVersion, typeof (clientVersion));
+                        console.log("serverVersion  ", serverVersion, typeof (serverVersion));
+                        if (parseInt(clientVersion) < parseInt(serverVersion)) {
+                            console.log("Phiên bản hiện tại chưa phải là mới nhất");
+                            resolve(true);
+                        } else {
+                            console.log("Phiên bản hiện tại là mới nhất");
+                            resolve(false);
+                        }
+                    });
+                } else {
+                    resolve(false);
+                }
+            }).catch((e) => {
+                resolve(false);
+                console.log(" err ", e);
+            })
+        })
+    }
+
+    const LinkUpdateVersionApp = () => {
+        let APP_STORE = 'apps.apple.com/vn/app/pos365/id1541115617';
+        Linking.openURL(("http://", "https://") + APP_STORE);
+    };
+
     useEffect(() => {
+        const updateVersionApplication = async () => {
+            let status = await checkVersionApplication();
+            if (status) {
+                dialogManager.showPopupTwoButton(I18n.t('thong_bao_cap_nhat_phien_ban_moi'), I18n.t("thong_bao"), res => {
+                    if (res == 1) {
+                        LinkUpdateVersionApp()
+                    }
+                })
+            }
+        }
+        // updateVersionApplication()
         const savePrinter = async () => {
             let setting = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
             if (setting && setting != "") {
@@ -96,7 +146,7 @@ export default () => {
         }
         if (netInfo === true) {
             if (hasInternet.current === false) {
-                if (signalRInfo != "" ) {
+                if (signalRInfo != "") {
                     signalRManager.reconnect()
                 }
                 hasInternet.current = true
@@ -179,7 +229,7 @@ export default () => {
         console.log('handleChangeState', newState, isError);
         dispatch({ type: 'APP_STATE', appState: newState })
         if ((stateApp.current === 'background' || stateApp.current === 'inactive') && newState === 'active') {
-            if (signalRInfo != "" ) {
+            if (signalRInfo != "") {
                 signalRManager.reconnect()
             }
             // signalRManager.sendMessage(Constant.SERVER_EVENT)
