@@ -66,18 +66,19 @@ const InvoiceDetail = (props) => {
     }, [invoiceDetail])
 
     const getStatus = (status) => {
+        console.log("getStatus status ", status);
         switch (status) {
             case 2:
-                return 'hoan_thanh';
+                return <Text style={{ color: "green", fontSize: 13 }}>{I18n.t('hoan_thanh')}</Text>;
                 break;
             case 1:
-                return 'dang_xu_ly';
+                return <Text style={{ color: Colors.colorchinh, fontSize: 13 }}>{I18n.t('dang_xu_ly')}</Text>;
                 break;
             case 3:
-                return 'huy';
+                return <Text style={{ color: "red", fontSize: 13 }}>{I18n.t('huy')}</Text>;;
                 break;
             default:
-                return 'dang_xu_ly';
+                return <Text style={{ color: Colors.colorchinh, fontSize: 13 }}>{I18n.t('dang_xu_ly')}</Text>;
                 break;
         }
     }
@@ -284,7 +285,10 @@ const InvoiceDetail = (props) => {
                                 : null
                             }
                             <View style={{ margin: 5, alignItems: "center", }}>
-                                <Text style={{ fontWeight: 'bold' }}>{I18n.t("trang_thai")} :  <Text style={{ color: colors.colorchinh }}>{"Status" in invoiceDetail ? I18n.t(getStatus(invoiceDetail.Status)) : ""}</Text></Text>
+                                <Text style={{ fontWeight: 'bold' }}>{I18n.t("trang_thai")} :
+                                {"Status" in invoiceDetail ? getStatus(invoiceDetail.Status) : null}
+                                    {/* <Text style={{ color: colors.colorchinh }}>{"Status" in invoiceDetail ? I18n.t(getStatus(invoiceDetail.Status)) : ""}</Text> */}
+                                </Text>
                             </View>
 
                         </View>

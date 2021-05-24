@@ -66,9 +66,10 @@ export default forwardRef((props, ref) => {
     const clickCapture = () => {
         console.log('clickCapture');
         captureRef(childRef, {
-            // format: "png",
-            // quality: 1.0
-            width: 900,
+            format: "jpg",
+            quality: 1.0,
+            // width: 100,
+            // height: 270
             // snapshotContentContainer: true,
         }).then(
             uri => {

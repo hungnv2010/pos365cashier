@@ -115,7 +115,7 @@ export default (props) => {
                             </View>
                         </View>
                         <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
-                            <Text style={{ color: item.Status == 2 ? '#00c75f' : item.Status == 1 ? '#f6871e' : item.Status == 3 ? '#f21e3c' : null, fontWeight: 'bold' }}>{item.Status == 2 ? I18n.t('hoan_thanh') : item.Status == 1 ? I18n.t('dang_xu_li') : item.Status == 3 ? I18n.t('loai_bo') : null}</Text>
+                            <Text style={{ color: item.Status == 2 ? '#00c75f' : item.Status == 1 ? '#f6871e' : item.Status == 3 ? '#f21e3c' : null, fontWeight: 'bold' }}>{item.Status == 2 ? I18n.t('hoan_thanh') : item.Status == 1 ? I18n.t('dang_xu_ly') : item.Status == 3 ? I18n.t('loai_bo') : null}</Text>
                             <Text>{item.Partner ? item.Partner.Name : ''}</Text>
                             <Text style={{ fontWeight: 'bold', color: '#36a3f7' }}>{currencyToString(item.Total)}</Text>
                         </View>
