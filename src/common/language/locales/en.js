@@ -48,6 +48,7 @@ export default {
   block_dau_tien: 'first block',
   ban_co_chac_chan_muon_xoa_phieu_nhap_hang_nay:'Do you want to delete this order stock ?',
   ban_co_chac_chan_muon_huy_hoa_don: "Are you sure you want to cancel this order?",
+  ban_co_chac_chan_muon_xoa_nhom_hang_hoa:'Are you sure you want to delete this group ?',
 
   // TODO: C 
 
@@ -117,6 +118,8 @@ export default {
   chon_anh:'Choose image',
   chieu_dai_x_chieu_rong:"Width x Height",
   chi_tiet_nhom_hang_hoa:'Group product detail',
+  cap_nhat:'Update',
+  cap_nhat_nhom_hang_hoa:'Update group product',
 
   // TODO: D 
 
