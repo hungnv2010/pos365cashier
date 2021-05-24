@@ -20,9 +20,10 @@ import { HTTPService } from '../../../data/services/HttpService';
 import { ApiPath } from '../../../data/services/ApiPath';
 import { getFileDuLieuString, setFileLuuDuLieu } from '../../../data/fileStore/FileStorage';
 import DialogInput from '../../../components/dialog/DialogInput'
+import GroupProductDetail from '../../products/groupproduct/GroupProductDetail'
 
 export default (props) => {
-    const [category, setCategory] = useState([])
+    const [category, setCategory] = useState({})
     const [listPr, setListPr] = useState([])
     const [dataView, setDataView] = useState([])
     const productTmp = useRef([])
@@ -32,6 +33,7 @@ export default (props) => {
     const debouncedVal = useDebounce(textSearch)
     const [marginModal, setMargin] = useState(0)
     const [showModal, setOnShowModal] = useState(false)
+    const currentBranch = useRef({})
     const addCate = useRef([{
         Name: 'ten_nhom',
         Hint: 'nhap_ten_nhom_hang_hoa',
@@ -40,12 +42,22 @@ export default (props) => {
         isNum: false
     }])
 
-    const deviceType = useSelector(state => {
-        return state.Common.deviceType
-    });
+    const { deviceType, isFNB } = useSelector(state => {
+        return state.Common
+    })
     useEffect(() => {
         getDataFromRealm()
+        if(isFNB){
+            getBranch()
+        }
     }, [])
+    const getBranch = async () => {
+        let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
+        if (branch) {
+            currentBranch.current = JSON.parse(branch)
+            console.log("abc", branch);
+        }
+    }
     const getDataFromRealm = async () => {
         dialogManager.showLoading()
         productTmp.current = (await realmStore.queryProducts())
@@ -54,7 +66,6 @@ export default (props) => {
         console.log("productTmp", productTmp.current);
         setListPr([...productTmp.current])
         categoryTmp.current = await realmStore.queryCategories()
-        setCategory([...categoryTmp.current])
         getSum(categoryTmp.current, productTmp.current)
 
     }
@@ -102,7 +113,7 @@ export default (props) => {
             Category: {
                 Id: 0,
                 Name: data.CategoryName,
-                ShowOnBranchId: 21883
+                //ShowOnBranchId: 21883
             }
         }
         setOnShowModal(false)
@@ -132,12 +143,20 @@ export default (props) => {
             }, null, null, I18n.t('dong'))
         }
     }
-    const handleSuccess = async (type1) => {
+    const handleSuccess = async (type1,stt,data) => {
         console.log("type", type1);
         dialogManager.showLoading()
         try {
             if (type1 != 'them') {
+                if(deviceType == Constant.TABLET){   
+                    if(data){
+                        setCategory(data)
+                    }else{
+                        setCategory({})
+                    }
+                }
                 await realmStore.deleteCategory()
+                setDataView({}) 
             }
             await dataManager.syncCategories()
             getDataFromRealm()
@@ -153,15 +172,16 @@ export default (props) => {
         if (deviceType == Constant.PHONE) {
             props.navigation.navigate(ScreenList.GroupProductDetail, { data: item, onCallBack:handleSuccess })
         } else {
-            //setItProduct(el)
+           setCategory(item)
         }
     }
     return (
-        <View style={{ flex: 1, backgroundColor: '#f2f2f2' }}>
+        <View style={{ flex: 1, backgroundColor: '#f2f2f2',flexDirection:'row' }}>
+            <View style={{flex:1}}>
             <CustomerToolBar
                 {...props}
                 navigation={props.navigation}
-                title={I18n.t('hang_hoa')}
+                title={I18n.t('nhom_hang_hoa')}
                 outputTextSearch={outputTextSearch}
                 size={30}
             />
@@ -195,6 +215,19 @@ export default (props) => {
                     onClickAddItem()
                 }}
             />
+            </View>
+            {
+                deviceType == Constant.TABLET ?
+                <View style={{flex:1}}>
+                    {
+                        category.Id ? 
+                        <GroupProductDetail categoryItem={category} handleSuccessTab={handleSuccess} /> :
+                        <View style={{alignItems:'center',justifyContent:'center',flex:1}} >
+                        <Image source={Images.logo_365_long_color} />
+                        </View>
+                    }
+                </View>:null
+            }
             <Modal
                 animationType="fade"
                 supportedOrientations={['portrait', 'landscape']}

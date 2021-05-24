@@ -123,6 +123,7 @@ const images = {
     ic_nhaphang: require ('../../assets/icons/ic_nhaphang.png'),
     ic_default_orderstock : require ('../../assets/icons/icon_default_orderstock.png'),
     printer: require ('../../assets/icons/printer.png'),
+    ic_default_group: require ('../../assets/icons/diet.png'),
 
 }
 
