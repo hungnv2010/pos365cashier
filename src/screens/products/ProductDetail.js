@@ -1067,21 +1067,21 @@ export default (props) => {
                         <View style={{ flexDirection: 'row' }}>
                             {product.Id ?
                                 <View style={{ flex: 1 }}>
-                                    <TouchableOpacity style={{ flex: 1, backgroundColor: colors.colorLightBlue, paddingHorizontal: 10, paddingVertical: 5, justifyContent: 'center', margin: 4, alignItems: 'center', borderRadius: 10, height: 50 }} onPress={() => { onClickDelete() }}>
+                                    <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 7, paddingVertical: 10, justifyContent: 'center', margin: 4, alignItems: 'center', borderRadius: 10 }} onPress={() => { onClickDelete() }}>
                                         <Icon name={'trash-can'} size={24} color={'#fff'} />
                                     </TouchableOpacity>
                                 </View> : null
                             }
                             <View style={{ flex: product.Id ? 1 : 0.9 }}>
-                                <TouchableOpacity style={{ flex: 1, backgroundColor: colors.colorLightBlue, paddingHorizontal: 10, paddingVertical: 5, justifyContent: 'center', margin: 4, alignItems: 'center', borderRadius: 10, height: 50 }} onPress={() => { onClickDelete() }}>
+                                <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 7, paddingVertical: 10, justifyContent: 'center', margin: 4, alignItems: 'center', borderRadius: 10 }} onPress={() => { onClickDelete() }}>
                                     <Icon name={'barcode-scan'} size={24} color={'#fff'} />
                                 </TouchableOpacity>
                             </View>
                             <View style={{ flexDirection: 'row', flex:deviceType == Constant.PHONE ? 5 : 7 }}>
-                                <TouchableOpacity style={{ flex: 1, backgroundColor: colors.colorLightBlue, padding: 15, justifyContent: 'center', margin: 4, alignItems: 'center', borderRadius: 10, height: 50 }} onPress={() => { isCoppy.current = true, onClickSave() }}>
+                                <TouchableOpacity style={{ flex: 1, backgroundColor: colors.colorLightBlue, paddingHorizontal: 7,paddingVertical:10, justifyContent: 'center', margin: 4, alignItems: 'center', borderRadius: 10 }} onPress={() => { isCoppy.current = true, onClickSave() }}>
                                     <Text style={{ color: 'white', fontWeight: 'bold' }}>{I18n.t('luu_va_sao_chep')}</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={{ flex: 1, backgroundColor: colors.colorLightBlue, padding: 15, justifyContent: 'center', margin: 4, alignItems: 'center', borderRadius: 10, height: 50 }} onPress={() => { isCoppy.current = false, onClickSave() }}>
+                                <TouchableOpacity style={{ flex: 1, backgroundColor: colors.colorLightBlue, paddingHorizontal: 7,paddingVertical:10, justifyContent: 'center', margin: 4, alignItems: 'center', borderRadius: 10 }} onPress={() => { isCoppy.current = false, onClickSave() }}>
                                     <Text style={{ color: 'white', fontWeight: 'bold' }}>{I18n.t('luu')}</Text>
                                 </TouchableOpacity>
                             </View>
