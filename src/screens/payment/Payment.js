@@ -869,7 +869,7 @@ export default (props) => {
 
     const onTouchInput = (value) => {
         console.log("onTouchInput value ", value);
-        //setListSuggestions([5,10,15,20,50,100])
+        setListSuggestions([5,10,15,20,50,100])
         setChoosePoint(0);
         if (value != sendMethod) {
             setSendMethod(value)
