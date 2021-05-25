@@ -573,7 +573,8 @@ nhom_nha_cung_cap: "Group supplier",
   tong_so_luong_nhap: 'Total amount imported',
   thue_vat: 'VAT',
   toi_da: 'Max',
-
+  thong_bao_cap_nhat_phien_ban_moi: 'There was a new version, please update to experience better application.',
+  
   // TODO: U
 
   // TODO: V
