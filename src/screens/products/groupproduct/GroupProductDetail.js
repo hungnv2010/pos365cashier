@@ -93,6 +93,7 @@ export default (props) => {
         })
     }
     const editCategory = async (value) => {
+        setOnShowModal(false)
         console.log(value.CategoryName);
         let param = {
             Category: {
@@ -107,11 +108,10 @@ export default (props) => {
         let state = await NetInfo.fetch()
         if (state.isConnected == true && state.isInternetReachable == true) {
             if (value.CategoryName != '') {
-                dialogManager.showLoading()
+                //dialogManager.showLoading()
                 new HTTPService().setPath(ApiPath.CATEGORIES_PRODUCT).POST(param).then(res => {
                     if (res) {
                         if (res.ResponseStatus && res.ResponseStatus.Message) {
-                            dialogManager.showLoading()
                             dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
                                 dialogManager.destroy();
                                 dialogManager.hiddenLoading()
@@ -120,10 +120,12 @@ export default (props) => {
                             if (deviceType == Constant.PHONE) {
                                 props.route.params.onCallBack('them', 1)
                                 handleSuccess('sua', value.CategoryName)
-                            } else
+                            } else{
                              setData({ ...data, Name: value.CategoryName })
                             props.handleSuccessTab('sua', 1,{ ...data, Name: value.CategoryName })
+                            }
                         }
+                        //dialogManager.hiddenLoading()
                     }
                 })
             } else {
@@ -136,7 +138,7 @@ export default (props) => {
                 dialogManager.destroy();
             }, null, null, I18n.t('dong'))
         }
-        setOnShowModal(false)
+        
     }
     const handleSuccess = (type, name) => {
         setData({ ...data, Name: name })

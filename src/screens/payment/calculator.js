@@ -18,16 +18,16 @@ let specialChar = ['/', '*', '-', '+', '.']
 export default (props) => {
 
     const [method, setMethod] = useState(props.method)
-    //const [suggestions,setSuggestions] = useState(props.listSuggest)
+    const [suggestions,setSuggestions] = useState(props.listSuggest)
     const [results, setResults] = useState("")
 
     useEffect(() => {
         setMethod(props.method)
         setResults("")
     }, [props.method])
-    // useEffect(()=>{
-    //     setSuggestions(props.listSuggest)
-    // },[props.listSuggest])
+    useEffect(()=>{
+        setSuggestions(props.listSuggest)
+    },[props.listSuggest])
 
     useEffect(() => {
         console.log("results === ", results);
@@ -144,10 +144,10 @@ export default (props) => {
             setResults("" + res)
         }
     }
-    // const clickItemSuggest = (value) =>{
-    //     setResults(value.toString())
-    //     props.outputPercent(value)
-    // }
+    const clickItemSuggest = (value) =>{
+        setResults(value.toString())
+        props.outputPercent(value)
+    }
 
     return (
         <View style={{ flex: 1 }}>
@@ -179,7 +179,7 @@ export default (props) => {
                             <Text style={{ color: colors.colorchinh, textAlign: "center", paddingVertical: 30, fontWeight: "bold", fontSize: 18 }}>{method && method.name ? I18n.t(method.name) : ""}</Text>
                             <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
                                 <Text style={[styles.textButton, { fontSize: 35 }]}>{results != '' || results == '0' ? results : '0'}</Text>
-                                {/* <View style={{flexDirection:'row',justifyContent:'flex-end',marginTop:70}}>
+                                <View style={{flexDirection:'row',justifyContent:'flex-end',marginTop:70}}>
                                 {
                                     suggestions && suggestions.length > 0 ?
                                     suggestions.map((item,index)=>{
@@ -190,7 +190,7 @@ export default (props) => {
                                         )
                                     }):null
                                 }
-                                </View> */}
+                                </View>
                             </View>
                         </View>
                         <View style={{ flex: 1 }}>

@@ -1075,9 +1075,9 @@ export default (props) => {
         }
         indexPayment.current++;
     }
-    // const getOutputPercent = (value) =>{
-    //     onChangeTextInput(value.toString(),1)
-    // }
+    const getOutputPercent = (value) =>{
+        onChangeTextInput(value.toString(),1)
+    }
 
     const renderFilter = () => {
         if (typeModal.current == TYPE_MODAL.FILTER_ACCOUNT) {
@@ -1259,9 +1259,9 @@ export default (props) => {
             if (choosePoint == 0) {
                 return <Calculator
                     method={sendMethod}
-                    outputResult={outputResult}/>
-                    // listSuggest={listSuggestions}
-                    // outputPercent={getOutputPercent} />
+                    outputResult={outputResult}
+                    listSuggest={listSuggestions}
+                    outputPercent={getOutputPercent} />
             } else if (choosePoint == 1) {
                 return <PointVoucher
                     grandTotal={totalPrice}

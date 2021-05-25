@@ -657,7 +657,7 @@ export default (props) => {
             })
             GDrive.setAccessToken(token.current)
             GDrive.init()
-
+            //if (source.fileName && source.fileName != '') {
             GDrive.files.createFileMultipart(
                 source.base64,
                 "'image/jpg'", {
@@ -687,6 +687,9 @@ export default (props) => {
                     dialogManager.hiddenLoading()
 
                 })
+            // }
+            // else
+            //     dialogManager.hiddenLoading()
             setOnShowModal(false)
         } else {
             dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_internet'), I18n.t('thong_bao'), () => {
@@ -1061,22 +1064,28 @@ export default (props) => {
                         </View>
                     </View>
                     <View style={{ backgroundColor: '#f2f2f2', padding: 10 }}>
-                        <View style={{ flexDirection: 'column' }}>
-                            <View style={{ flexDirection: 'row' }}>
-                                <TouchableOpacity style={{ flex: 1, backgroundColor: '#00AE72', padding: 15, justifyContent: 'center', margin: 7, alignItems: 'center', borderRadius: 15, height: 50 }} onPress={() => { isCoppy.current = true, onClickSave() }}>
-                                    <Text style={{ color: 'white', fontWeight: 'bold' }}>{I18n.t('luu_va_sao_chep')}</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={{ flex: 1, backgroundColor: '#00BFFF', padding: 15, justifyContent: 'center', margin: 7, alignItems: 'center', borderRadius: 15, height: 50 }} onPress={() => { isCoppy.current = false, onClickSave() }}>
-                                    <Text style={{ color: 'white', fontWeight: 'bold' }}>{I18n.t('luu')}</Text>
-                                </TouchableOpacity>
-                            </View>
+                        <View style={{ flexDirection: 'row' }}>
                             {product.Id ?
-                                <View>
-                                    <TouchableOpacity style={{ flex: 1, backgroundColor: '#FF3030', padding: 15, justifyContent: 'center', margin: 7, alignItems: 'center', borderRadius: 15, height: 50 }} onPress={() => { onClickDelete() }}>
-                                        <Text style={{ color: 'white', fontWeight: 'bold' }}>{I18n.t('xoa')}</Text>
+                                <View style={{ flex: 1 }}>
+                                    <TouchableOpacity style={{ flex: 1, backgroundColor: colors.colorLightBlue, paddingHorizontal: 10, paddingVertical: 5, justifyContent: 'center', margin: 4, alignItems: 'center', borderRadius: 15, height: 50 }} onPress={() => { onClickDelete() }}>
+                                        <Icon name={'trash-can'} size={24} color={'#fff'} />
                                     </TouchableOpacity>
                                 </View> : null
                             }
+                            <View style={{ flex: product.Id ? 1 : 0.9 }}>
+                                <TouchableOpacity style={{ flex: 1, backgroundColor: colors.colorLightBlue, paddingHorizontal: 10, paddingVertical: 5, justifyContent: 'center', margin: 4, alignItems: 'center', borderRadius: 15, height: 50 }} onPress={() => { onClickDelete() }}>
+                                    <Icon name={'barcode-scan'} size={24} color={'#fff'} />
+                                </TouchableOpacity>
+                            </View>
+                            <View style={{ flexDirection: 'row', flex: 7 }}>
+                                <TouchableOpacity style={{ flex: 1, backgroundColor: colors.colorLightBlue, padding: 15, justifyContent: 'center', margin: 4, alignItems: 'center', borderRadius: 15, height: 50 }} onPress={() => { isCoppy.current = true, onClickSave() }}>
+                                    <Text style={{ color: 'white', fontWeight: 'bold' }}>{I18n.t('luu_va_sao_chep')}</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={{ flex: 1, backgroundColor: colors.colorLightBlue, padding: 15, justifyContent: 'center', margin: 4, alignItems: 'center', borderRadius: 15, height: 50 }} onPress={() => { isCoppy.current = false, onClickSave() }}>
+                                    <Text style={{ color: 'white', fontWeight: 'bold' }}>{I18n.t('luu')}</Text>
+                                </TouchableOpacity>
+                            </View>
+
                         </View>
                     </View>
                 </KeyboardAwareScrollView>
