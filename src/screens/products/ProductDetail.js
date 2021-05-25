@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, createRef, useCallback } from 'react';
-import { View, Modal, Text, FlatList, Switch, Dimensions, TouchableOpacity, StyleSheet, ImageBackground, ScrollView, Image, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, Modal, Text, FlatList, Switch, Dimensions, TouchableOpacity, StyleSheet, NativeModules, ScrollView, Image, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import ToolBarDefault from '../../components/toolbar/ToolBarDefault'
 import I18n from '../../common/language/i18n';
 import { Metrics, Images } from '../../theme';
@@ -27,6 +27,8 @@ import { useFocusEffect } from '@react-navigation/native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import GDrive from "react-native-google-drive-api-wrapper";
 import NetInfo from "@react-native-community/netinfo";
+import { handerDataPrintTempProduct } from '../tempPrint/ServicePrintTemp';
+const { Print } = NativeModules;
 
 export default (props) => {
     const [product, setProduct] = useState({})
@@ -67,10 +69,14 @@ export default (props) => {
         Value: '',
         isNum: false
     }])
+    const printStamp = useRef([])
     const [addDVT, setAddDVT] = useState([])
 
     const deviceType = useSelector(state => {
         return state.Common.deviceType
+    });
+    const { isFNB } = useSelector(state => {
+        return state.Common
     });
 
     let params = {
@@ -214,6 +220,20 @@ export default (props) => {
         getCurrentAccount()
         setStatusPrinter()
         console.log("product data", product);
+        printStamp.current = [{
+            Name: 'so_luong_ma_vach_can_in',
+            Hint: '',
+            Key: 'quantity',
+            Value: 1,
+            isNum: true
+        },
+        {
+            Name: 'gia_ban',
+            Hint: '',
+            Key: 'price',
+            Value: product.Price,
+            isNum: true
+        }]
     }, [product])
 
     useEffect(() => {
@@ -222,7 +242,8 @@ export default (props) => {
 
     const setStatusPrinter = () => {
         countPrint.current = 0
-        let printCook = [{ Name: 'may_in_bao_bep_a', Key: 'KitchenA', Status: false },
+        let printCook
+        printCook = [{ Name: 'may_in_bao_bep_a', Key: 'KitchenA', Status: false },
         { Name: 'may_in_bao_bep_b', Key: 'KitchenB', Status: false },
         { Name: 'may_in_bao_bep_c', Key: 'KitchenC', Status: false },
         { Name: 'may_in_bao_bep_d', Key: 'KitchenD', Status: false },
@@ -682,11 +703,11 @@ export default (props) => {
             })
             GDrive.setAccessToken(token.current)
             GDrive.init()
-
+            //if (source.fileName && source.fileName != '') {
             GDrive.files.createFileMultipart(
                 source.base64,
                 "'image/jpg'", {
-                parents: ["0B0kuvBxLBrKiflFvTW5EUkRkZEg1UEZpSXZaVGIwTjFFeGlJSV9vTG5kbm9NUW5sQ2tiSGc"],
+                parents: ["1uNWm1G_BusweTf7x8g1O1wC3z9ET-2n_"],
                 name: source.fileName
             },
                 true)
@@ -712,6 +733,9 @@ export default (props) => {
                     dialogManager.hiddenLoading()
 
                 })
+            // }
+            // else
+            //     dialogManager.hiddenLoading()
             setOnShowModal(false)
         } else {
             dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_internet'), I18n.t('thong_bao'), () => {
@@ -842,6 +866,23 @@ export default (props) => {
         })
     }
 
+    const onClickPrintTemp = async (data) => {
+        console.log("temp", data);
+        console.log("onClickPrintTemp product ", product);
+        let settingObject = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
+        if (settingObject && settingObject != "") {
+            settingObject = JSON.parse(settingObject)
+            console.log("onClickPrintTemp settingObject ", settingObject);
+            settingObject.Printer.forEach(async element => {
+                if (element.key == Constant.KEY_PRINTER.StampPrintKey && element.ip != "") {
+                    let value = await handerDataPrintTempProduct(product)
+                    console.log("handerDataPrintTempProduct value  ", value);
+                    //Print.PrintTemp(value, element.ip, "40x30")
+                }
+            });
+        }
+        setOnShowModal(false)
+    }
 
     const renderModal = () => {
         return (
@@ -904,7 +945,9 @@ export default (props) => {
                                             </View>
                                         </View> */}
                                     </View>
-                                    : null
+                                    : typeModal.current == 7 ?
+                                        <DialogInput listItem={printStamp.current} title={product.Name} titleButton={I18n.t('in_tem')} outputValue={onClickPrintTemp} /> :
+                                        null
             }
             </View>
         )
@@ -1052,7 +1095,7 @@ export default (props) => {
                                 <View style={{ flexDirection: 'row' }}>
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.title}>{I18n.t('gia_von')}</Text>
-                                        <TextInput style={[styles.textInput, { color: colors.colorLightBlue, fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={cost ? currencyToString(cost) : 0 + ''} onChangeText={(text) => setCost(onChangeTextInput(text))}></TextInput>
+                                        <TextInput editable={props.allPer.updateCost} style={[styles.textInput, { color: colors.colorLightBlue, fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={cost && props.allPer.viewCost ? currencyToString(cost) : '--'} onChangeText={(text) => setCost(onChangeTextInput(text))}></TextInput>
                                     </View>
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.title} >{I18n.t('gia')}</Text>
@@ -1081,27 +1124,33 @@ export default (props) => {
                                 }
                             </View>
                             <View style={{ padding: 3, backgroundColor: '#f2f2f2', marginTop: 10, }}></View>
-                            {product ?
+                            {product && isFNB == true ?
                                 <PrintCook productOl={product} config={priceConfig} printer={printer} countPrint={countPrint.current} outPutPrint={outPutPrinter}></PrintCook> : null}
                         </View>
                     </View>
                     <View style={{ backgroundColor: '#f2f2f2', padding: 10 }}>
-                        <View style={{ flexDirection: 'column' }}>
-                            <View style={{ flexDirection: 'row' }}>
-                                <TouchableOpacity style={{ flex: 1, backgroundColor: '#00AE72', padding: 15, justifyContent: 'center', margin: 7, alignItems: 'center', borderRadius: 15, height: 50 }} onPress={onClickSaveAndCopy}>
-                                    <Text style={{ color: 'white', fontWeight: 'bold' }}>{I18n.t('luu_va_sao_chep')}</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={{ flex: 1, backgroundColor: '#00BFFF', padding: 15, justifyContent: 'center', margin: 7, alignItems: 'center', borderRadius: 15, height: 50 }} onPress={onClickSave}>
-                                    <Text style={{ color: 'white', fontWeight: 'bold' }}>{I18n.t('luu')}</Text>
-                                </TouchableOpacity>
-                            </View>
+                        <View style={{ flexDirection: 'row' }}>
                             {product.Id && props.allPer.delete ?
-                                <View>
-                                    <TouchableOpacity style={{ flex: 1, backgroundColor: '#FF3030', padding: 15, justifyContent: 'center', margin: 7, alignItems: 'center', borderRadius: 15, height: 50 }} onPress={() => { onClickDelete() }}>
-                                        <Text style={{ color: 'white', fontWeight: 'bold' }}>{I18n.t('xoa')}</Text>
+                                <View style={{ flex: 1 }}>
+                                    <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 7, paddingVertical: 10, justifyContent: 'center', margin: 2, alignItems: 'center', borderRadius: 10 }} onPress={() => { onClickDelete() }}>
+                                        <Icon name={'trash-can'} size={24} color={'#fff'} />
                                     </TouchableOpacity>
                                 </View> : null
                             }
+                            <View style={{ flex: product.Id ? 1 : 0.9 }}>
+                                <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 7, paddingVertical: 10, justifyContent: 'center', margin: 2, alignItems: 'center', borderRadius: 10 }} onPress={() => { typeModal.current = 7, setOnShowModal(true) }}>
+                                    <Icon name={'barcode-scan'} size={24} color={'#fff'} />
+                                </TouchableOpacity>
+                            </View>
+                            <View style={{ flexDirection: 'row', flex: deviceType == Constant.PHONE ? 5 : 7 }}>
+                                <TouchableOpacity style={{ flex: 1, backgroundColor: colors.colorLightBlue, paddingHorizontal: 2, paddingVertical: 10, justifyContent: 'center', margin: 2, alignItems: 'center', borderRadius: 10 }} onPress={() => { onClickSaveAndCopy() }}>
+                                    <Text style={{ color: 'white', fontWeight: 'bold' }}>{I18n.t('luu_va_sao_chep')}</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={{ flex: 1, backgroundColor: colors.colorLightBlue, paddingHorizontal: 2, paddingVertical: 10, justifyContent: 'center', margin: 2, alignItems: 'center', borderRadius: 10 }} onPress={() => { onClickSave() }}>
+                                    <Text style={{ color: 'white', fontWeight: 'bold' }}>{I18n.t('luu')}</Text>
+                                </TouchableOpacity>
+                            </View>
+
                         </View>
                     </View>
                 </KeyboardAwareScrollView>

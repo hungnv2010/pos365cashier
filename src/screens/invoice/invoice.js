@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, createRef, useCallback } from 'reac
 import { View, Text, Modal, TouchableOpacity, RefreshControl, TouchableWithoutFeedback, Image, ActivityIndicator, TextInput, Keyboard } from 'react-native';
 import I18n from '../../common/language/i18n';
 import MainToolBar from '../main/MainToolBar';
-import { Metrics, Images } from '../../theme';
+import { Metrics, Images, Colors } from '../../theme';
 import colors from '../../theme/Colors';
 import { useSelector } from 'react-redux';
 import { URL, HTTPService } from '../../data/services/HttpService';
@@ -150,8 +150,8 @@ const Invoice = (props) => {
                     console.log('getInvoiceBySearch', err);
                     dialogManager.hiddenLoading()
                 })
-            }else{
-                if(currentBranch && currentBranch.Id){
+            } else {
+                if (currentBranch && currentBranch.Id) {
                     onRefresh()
                 }
             }
@@ -165,7 +165,7 @@ const Invoice = (props) => {
         params = { ...params, includes: ['Room', 'Partner'], IncludeSummary: true };
         dialogManager.showLoading()
         new HTTPService().setPath(ApiPath.INVOICE).GET(params).then((res) => {
-            console.log("getInvoicesData res ", res);
+            console.log("getInvoicesData res ", JSON.stringify(res));
             let results = res.results.filter(item => item.Id > 0);
             console.log('res.__count', res.__count);
             count.current = res.__count;
@@ -248,13 +248,16 @@ const Invoice = (props) => {
         }
     }
 
+    const onCallBack = () => {
+        onRefresh()
+    }
 
     const onClickInvoiceItem = (item) => {
         if (deviceType == Constant.TABLET) {
             setCurrentItem({ ...item })
         } else {
             console.log('onClickInvoiceItem', item, props);
-            props.navigation.navigate(ScreenList.InvoiceDetailForPhone, { item })
+            props.navigation.navigate(ScreenList.InvoiceDetailForPhone, { item, onCallBack: onCallBack })
 
         }
     }
@@ -286,18 +289,19 @@ const Invoice = (props) => {
     }
 
     const getStatus = (status) => {
+        console.log("getStatus status ", status);
         switch (status) {
             case 2:
-                return 'hoan_thanh';
+                return <Text style={{ color: "green", fontSize: 13 }}>{I18n.t('hoan_thanh')}</Text>;
                 break;
             case 1:
-                return 'dang_xu_ly';
+                return <Text style={{ color: Colors.colorchinh, fontSize: 13 }}>{I18n.t('dang_xu_ly')}</Text>;
                 break;
             case 3:
-                return 'huy';
+                return <Text style={{ color: "red", fontSize: 13 }}>{I18n.t('huy')}</Text>;;
                 break;
             default:
-                return 'dang_xu_ly';
+                return <Text style={{ color: Colors.colorchinh, fontSize: 13 }}>{I18n.t('dang_xu_ly')}</Text>;
                 break;
         }
     }
@@ -342,7 +346,7 @@ const Invoice = (props) => {
     const renderItemList = (item, index) => {
         return (
             <TouchableOpacity
-                onPress={() => onClickInvoiceItem(item)} 
+                onPress={() => onClickInvoiceItem(item)}
                 key={item.Id}>
                 <View style={{ flex: 1, alignItems: "center", padding: 15, marginBottom: 5, backgroundColor: item.Id == currentItem.Id ? "#F6DFCE" : 'white', borderRadius: 10 }}>
                     <View style={{ flexDirection: "row", }}>
@@ -355,7 +359,8 @@ const Invoice = (props) => {
 
                         <View style={{ alignItems: "flex-end" }}>
                             <Text style={{ fontSize: 14, color: checkColor(item) ? "black" : "red" }}>{currencyToString(item.TotalPayment)}</Text>
-                            <Text style={{ color: colors.colorchinh, fontSize: 13 }}>{"Status" in item ? I18n.t(getStatus(item.Status)) : ""}</Text>
+                            {"Status" in item ? getStatus(item.Status) : null}
+                            {/* <Text style={{ color: colors.colorchinh, fontSize: 13 }}>{"Status" in item ? I18n.t(getStatus(item.Status)) : ""}</Text> */}
                             <Text style={{ color: "#0072bc", fontSize: 12 }}>{moment.utc(momentToDateUTC(item.PurchaseDate)).local().format("HH:mm DD/MM/YYYY")}</Text>
                         </View>
                     </View>
@@ -487,6 +492,7 @@ const Invoice = (props) => {
                     deviceType == Constant.TABLET ?
                         <View style={{ flex: 1 }}>
                             <InvoiceDetail
+                                onCallBack={onCallBack}
                                 currentItem={currentItem} />
                         </View>
                         :

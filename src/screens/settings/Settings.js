@@ -102,13 +102,14 @@ export const DefaultSetting = {
             ip: '',
             show: true
         },
-        // {
-        //     key: Constant.KEY_PRINTER.StampPrintKey,
-        //     title: 'may_in_tem',
-        //     type: '',
-        //     size: '',
-        //     ip: ''
-        // },
+        {
+            key: Constant.KEY_PRINTER.StampPrintKey,
+            title: 'may_in_tem',
+            type: '',
+            size: '',
+            ip: '',
+            show: true
+        },
     ],
     InfoStore: '',
     HtmlPrint: '',
@@ -159,14 +160,26 @@ export default (props) => {
             console.log("setting data", JSON.parse(data));
             if (data != "") {
                 data = JSON.parse(data);
+                
                 data.Printer.forEach(element => {
-                    if (isFNB || element.key == Constant.KEY_PRINTER.CashierKey) {
+                    if (isFNB || element.key == Constant.KEY_PRINTER.CashierKey || element.key == Constant.KEY_PRINTER.StampPrintKey) {
                         element.show = true;
                     } else {
                         element.show = false;
                     }
                 });
+                if(data.Printer.filter(item =>item.key == Constant.KEY_PRINTER.StampPrintKey).length < 1){
+                    setSettingObject({...data,Printer:[...data.Printer,{
+                        key: Constant.KEY_PRINTER.StampPrintKey,
+                        title: 'may_in_tem',
+                        type: '',
+                        size: '',
+                        ip: '',
+                        show: true
+                    }]})
+                }else
                 setSettingObject({ ...data })
+                
 
             } else {
                 DefaultSetting.Printer.forEach(element => {
@@ -579,7 +592,7 @@ export default (props) => {
                                 settingObject.Printer.map((item, index) => {
                                     if (item.show)
                                         return (
-                                            <PrintConnect key={index.toString()} title={I18n.t(item.title)} onSet={index == 9 ? onShowModalStampPrint : onShowModal} stylePrinter={(item.type ? I18n.t(item.type) : I18n.t('khong_in')) + (item.size ? ', size ' + item.size + ' mm ' : '') + (item.ip ? '(' + item.ip + ')' : '')} pos={index} status={showModal} />
+                                            <PrintConnect key={index.toString()} title={I18n.t(item.title)} onSet={onShowModal} stylePrinter={(item.type ? I18n.t(item.type) : I18n.t('khong_in')) + (item.size ? ', size ' + item.size + ' mm ' : '') + (item.ip ? '(' + item.ip + ')' : '')} pos={index} status={showModal} />
                                         )
                                 })
                                 : null
@@ -594,9 +607,9 @@ export default (props) => {
                         <TouchableOpacity onPress={() => screenSwitch(ScreenList.PrintHtml)}>
                             <Text style={styles.textTitleItem}>HTML print</Text>
                         </TouchableOpacity>
-                        {/* <TouchableOpacity onPress={() => screenSwitch(ScreenList.PrintWebview)}>
+                        <TouchableOpacity onPress={() => screenSwitch(ScreenList.SetupTemp)}>
                             <Text style={styles.textTitleItem}>Temp print</Text>
-                        </TouchableOpacity> */}
+                        </TouchableOpacity>
                         {isFNB ?
                             <SettingSwitch title={"tu_dong_in_bao_bep"} output={onSwitchTone} isStatus={settingObject.tu_dong_in_bao_bep} />
                             : null

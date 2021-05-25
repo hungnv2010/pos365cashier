@@ -1,21 +1,33 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { Image, View, StyleSheet, Button, Text, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
-import ToolBarPrintHtml from '../../../components/toolbar/ToolBarPrintHtml';
-import { Images, Colors, Metrics } from '../../../theme';
+import {NativeModules, Image, View, StyleSheet, Button, Text, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
+import ToolBarPrintHtml from '../../components/toolbar/ToolBarPrintHtml';
+import { Images, Colors, Metrics } from '../../theme';
 import { WebView } from 'react-native-webview';
-import htmlDefault from '../../../data/html/htmlDefault';
-import HtmlKitchen from '../../../data/html/htmlKitchen';
-import useDidMountEffect from '../../../customHook/useDidMountEffect';
-import dialogManager from '../../../components/dialog/DialogManager';
-import { HTTPService } from '../../../data/services/HttpService';
-import { ApiPath } from '../../../data/services/ApiPath';
+import htmlDefault from '../../data/html/htmlDefault';
+import HtmlKitchen from '../../data/html/htmlKitchen';
+import useDidMountEffect from '../../customHook/useDidMountEffect';
+import dialogManager from '../../components/dialog/DialogManager';
+import { HTTPService } from '../../data/services/HttpService';
+import { ApiPath } from '../../data/services/ApiPath';
 import { useSelector } from 'react-redux';
-import { Constant } from '../../../common/Constant';
-import PrintWebview from '../PrintWebview';
-import I18n from '../../../common/language/i18n'
-import { setFileLuuDuLieu, getFileDuLieuString } from '../../../data/fileStore/FileStorage';
-import colors from '../../../theme/Colors';
-import ToolBarDefault from '../../../components/toolbar/ToolBarDefault';
+import { Constant } from '../../common/Constant';
+import PreviewTempPrint from './PreviewTempPrint';
+import I18n from '../../common/language/i18n'
+import { setFileLuuDuLieu, getFileDuLieuString } from '../../data/fileStore/FileStorage';
+import colors from '../../theme/Colors';
+import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
+import { ScreenList } from '../../common/ScreenList';
+import tempDefault from './tempDefault';
+import { handerDataPrintTemp } from './ServicePrintTemp';
+const { PrintTemp } = NativeModules;
+
+const Code = {
+    Ten_Cua_Hang: "{Ten_Cua_Hang}",
+    Dia_chi_Cua_Hang: "{Dia_chi_Cua_Hang}",
+    Dien_Thoai_Cua_Hang: "{Dien_Thoai_Cua_Hang}",
+    Ma_Chung_Tu: "{Ma_Chung_Tu}",
+
+}
 
 export default (props) => {
 
@@ -31,14 +43,16 @@ export default (props) => {
     useEffect(() => {
 
         const getDataHtml = async () => {
-            let HtmlPrint = await getFileDuLieuString(Constant.HTML_PRINT, true)
-            console.log("getDataHtml HtmlPrint ", HtmlPrint, typeof(HtmlPrint));
+            let TempDefault = await getFileDuLieuString(Constant.TEMP_DEFAULT, true)
+            console.log("getDataHtml TempDefault ", TempDefault, typeof (TempDefault));
 
-            if (HtmlPrint != undefined && HtmlPrint != "")
-                setDataHtml(HtmlPrint)
+            if (TempDefault != undefined && TempDefault != "")
+                setDataHtml(TempDefault)
             else {
-                setDataHtml(htmlDefault)
+                setDataHtml(tempDefault)
             }
+
+            handerDataPrintTemp()
         }
 
         getDataHtml();
@@ -77,20 +91,21 @@ export default (props) => {
     }
 
     const onSelectTab = (number) => {
+        // PrintTemp.registerPrint("Hung")
         if (number == 1) {
-            setDataHtml(htmlDefault)
-            setFileLuuDuLieu(Constant.HTML_PRINT, htmlDefault);
+            setDataHtml(tempDefault)
+            // setFileLuuDuLieu(Constant.HTML_PRINT, tempDefault);
         } else {
             dialogManager.showLoading();
             let params = {};
-            new HTTPService().setPath(ApiPath.PRINT_TEMPLATES + "/10").GET(params).then((res) => {
+            new HTTPService().setPath(ApiPath.PRINT_TEMPLATES + "/12").GET(params).then((res) => {
                 console.log("onClickLoadOnline res ", res);
                 if (res && res.Content) {
                     setDataHtml(res.Content)
-                    setFileLuuDuLieu(Constant.HTML_PRINT, "" + res.Content);
+                    // setFileLuuDuLieu(Constant.HTML_PRINT, "" + res.Content);
                 } else {
-                    setDataHtml(htmlDefault)
-                    setFileLuuDuLieu(Constant.HTML_PRINT, htmlDefault);
+                    setDataHtml(tempDefault)
+                    // setFileLuuDuLieu(Constant.HTML_PRINT, tempDefault);
                 }
                 dialogManager.hiddenLoading()
             }).catch((e) => {
@@ -113,23 +128,28 @@ export default (props) => {
                         <Text style={styles.textButton}>LOAD ONLINE</Text>
                     </TouchableOpacity>
                     {deviceType == Constant.PHONE ?
-                        <TouchableOpacity style={styles.button} onPress={() => { props.navigation.navigate("PrintWebview", { data: dataHtml }) }}>
+                        <TouchableOpacity style={styles.button} onPress={() => { props.navigation.navigate(ScreenList.PreviewTempPrint, { data: dataHtml }) }}>
                             <Text style={styles.textButton}>{I18n.t('hien_thi')}</Text>
                         </TouchableOpacity>
                         : null}
                 </View>
-                <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS == "ios" ? "padding" : "none"}>
+                <KeyboardAvoidingView style={{ flex: 1, flexDirection: "column" }} behavior={Platform.OS == "ios" ? "padding" : "none"}>
                     <TextInput style={{
-                        margin: 5,
-                        marginRight: 0,
-                        padding: 0,
-                        flex: 1,
-                        paddingBottom: Platform.OS == "ios" ? 20 : 0, color: "#000"
+                        padding: 10,
+                        flex: 1.6,
                     }}
                         multiline={true}
                         onChangeText={text => {
                             setDataHtml(text)
                         }} value={dataHtml} />
+
+                    <ScrollView style={{ flex: 1, padding: 10, borderTopColor: "gray", borderTopWidth: 0.5 }}>
+                        <Text style={{ textTransform: "uppercase", color: "orange" }}>Mã nhúng</Text>
+                        <Text><Text style={styles.noteCode}>{Code.Ten_Cua_Hang} :</Text> Tên cửa hàng</Text>
+                        <Text><Text style={styles.noteCode}>{Code.Dia_chi_Cua_Hang} :</Text> Tên cửa hàng</Text>
+                        <Text><Text style={styles.noteCode}>{Code.Dien_Thoai_Cua_Hang} :</Text> Tên cửa hàng</Text>
+                        <Text><Text style={styles.noteCode}>{Code.Ma_Chung_Tu} :</Text> Tên cửa hàng</Text>
+                    </ScrollView>
                 </KeyboardAvoidingView>
             </View>
         )
@@ -141,18 +161,8 @@ export default (props) => {
                 {...props}
                 leftIcon="keyboard-backspace"
                 navigation={props.navigation}
-                title="Print HTML"
+                title="Temp Print"
             />
-            {/* <ToolBarPrintHtml
-                clickRightIcon={onClickBack}
-                navigation={props.navigation} title="Print HTML"
-                clickDefault={() => { onClickTab(1) }}
-                clickLoadOnline={() => { onClickTab(2) }}
-                clickPrint={clickPrint}
-                clickCheck={clickCheck}
-                clickShow={() => { props.navigation.navigate("PrintWebview", { data: tabType == 1 ? dataDefault : dataOnline }) }}
-            /> */}
-
             {deviceType == Constant.PHONE ?
                 ViewInputHtml()
                 :
@@ -163,7 +173,7 @@ export default (props) => {
                         }
                     </View>
                     <View style={{ flex: 1, borderLeftWidth: 0.5, borderLeftColor: "gray" }}>
-                        <PrintWebview ref={childRef} data={dataHtml} />
+                        <PreviewTempPrint ref={childRef} data={dataHtml} />
                     </View>
                 </View>
             }
@@ -174,4 +184,5 @@ export default (props) => {
 const styles = StyleSheet.create({
     button: { flex: 1, padding: 12, justifyContent: "center", alignItems: "center", margin: 5, paddingHorizontal: 10, borderRadius: 8, backgroundColor: colors.colorLightBlue },
     textButton: { color: "#fff", textTransform: "uppercase" },
+    noteCode: { color: colors.colorLightBlue },
 })

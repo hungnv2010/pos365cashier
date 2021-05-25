@@ -18,13 +18,14 @@ import IconMaterial from 'react-native-vector-icons/MaterialIcons';
 import { RadioButton } from 'react-native-paper'
 import dataManager from '../../../data/DataManager';
 import dialogManager from '../../../components/dialog/DialogManager';
+import NetInfo from "@react-native-community/netinfo";
 
 export default (props) => {
     const [extraTopping, setExtraTopping] = useState({})
     const [category, setCategory] = useState([])
     const [showModal, setOnShowModal] = useState(false)
     const modalType = useRef()
-    const [textInput, setTextInput] = useState()
+    const [textInput, setTextInput] = useState('')
     const [defaultGroup, setDefaultGroup] = useState()
     const [marginModal, setMargin] = useState(0)
     const deviceType = useSelector(state => {
@@ -49,10 +50,14 @@ export default (props) => {
         console.log("category", category);
     }
     const onClickAdd = () => {
+        if(textInput!=''){
         setCategory([...category, textInput])
         setExtraTopping({...extraTopping,ExtraGroup:textInput})
         setTextInput()
         setOnShowModal(false)
+        setTextInput('')
+        }
+        
     }
     useEffect(() => {
         setDefaultGroup(extraTopping.ExtraGroup)
@@ -118,13 +123,15 @@ export default (props) => {
         })
 
     }
-    const onClickSubmitUpdate = () => {
+    const onClickSubmitUpdate = async() => {
         let param = {
             ExtraId: extraTopping.Id,
             Price: extraTopping.Price,
             Quantity: extraTopping.Quantity,
             ExtraGroup: extraTopping.ExtraGroup
         }
+        let state = await NetInfo.fetch()
+        if (state.isConnected == true && state.isInternetReachable == true) {
         new HTTPService().setPath(`api/products/extra/updateall`).POST(param).then(res => {
             console.log("res...", res.Message);
             if (deviceType == Constant.PHONE) {
@@ -135,6 +142,11 @@ export default (props) => {
 
             }
         })
+    }else{
+        dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_internet'), I18n.t('thong_bao'), () => {
+            dialogManager.destroy();
+        }, null, null, I18n.t('dong'))
+    }
 
     }
 
@@ -149,10 +161,10 @@ export default (props) => {
                             <View style={{ flex: 1 }}></View>
                             <View style={{ flexDirection: 'row', flex: 1, paddingVertical: 10 }}>
                                 <TouchableOpacity style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} onPress={() => { setOnShowModal(false) }}>
-                                    <Text style={{ fontSize: 14 }}>{I18n.t('huy')}</Text>
+                                    <Text style={{ fontSize: 14,color:colors.colorchinh }}>{I18n.t('huy')}</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} onPress={() => onClickAdd()}>
-                                    <Text style={{ fontSize: 14, color: colors.colorchinh }}>{I18n.t('dong_y')}</Text>
+                                    <Text style={{ fontSize: 14, color:textInput!='' ? colors.colorLightBlue : '#bbbbbb' }}>{I18n.t('dong_y')}</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>

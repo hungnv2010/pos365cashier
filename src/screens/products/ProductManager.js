@@ -69,9 +69,18 @@ export default (props) => {
             }, null, null, I18n.t('dong'))
         }
     }
-    
+
     const onClickNavigationExtra = () => {
         props.navigation.navigate(ScreenList.ListExtraTopping)
+    }
+
+    const onClickToListGroup = () => {
+        if (perProduct.read) props.navigation.navigate(ScreenList.ListGroupProduct, { permission: perProduct })
+        else {
+            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
+        }
     }
 
     const onClickListOrderStock = () => {
@@ -94,6 +103,10 @@ export default (props) => {
             />
 
             <View style={styles.viewContent}>
+                <TouchableOpacity style={styles.button} onPress={() => onClickToListGroup()}>
+                    <Image style={styles.iconButton} source={Images.ic_nhomhanghoa} />
+                    <Text style={styles.textButton}>{I18n.t('nhom_hang_hoa')}</Text>
+                </TouchableOpacity>
                 <TouchableOpacity style={styles.button} onPress={() => onClickNavigationProduct()}>
                     <Image style={styles.iconButton} source={Images.ic_danhsachhanghoa} />
                     <Text style={styles.textButton}>{I18n.t('danh_sach_hang_hoa')}</Text>

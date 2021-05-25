@@ -52,10 +52,10 @@ export default (props) => {
         getOrderStock()
         console.log("branh", currentBranch.current.Id);
     }
-    const getOrderStock = async () => {
+    const getOrderStock = async (params = { Includes: 'Partner', inlinecount: 'allpages', filter: `(substringof('${debouncedVal}',Code) and BranchId eq ${currentBranch.current.Id})` }) => {
         dialogManager.showLoading()
         let param = { Includes: 'Partner', inlinecount: 'allpages', filter: `(substringof('${debouncedVal}',Code) and BranchId eq ${currentBranch.current.Id})` }
-        await new HTTPService().setPath(ApiPath.ORDERSTOCK).GET(param).then(res => {
+        await new HTTPService().setPath(ApiPath.ORDERSTOCK).GET(params).then(res => {
             if (res != null) {
                 orderStock.current = res.results
                 console.log("orderstock", res.results);
@@ -112,11 +112,11 @@ export default (props) => {
                         <View style={{ flexDirection: 'column' }}>
                             <Text style={{ fontWeight: 'bold' }}>{item.Code}</Text>
                             <View style={{ flexDirection: 'row' }}>
-                                <Text>{dateUTCToDate2(item.DocumentDate)}</Text>
+                                <Text>{dateUTCToDate2(item.CreatedDate)}</Text>
                             </View>
                         </View>
                         <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
-                            <Text style={{ color: item.Status == 2 ? '#00c75f' : item.Status == 1 ? '#f6871e' : item.Status == 3 ? '#f21e3c' : null, fontWeight: 'bold' }}>{item.Status == 2 ? I18n.t('hoan_thanh') : item.Status == 1 ? I18n.t('dang_xu_li') : item.Status == 3 ? I18n.t('loai_bo') : null}</Text>
+                            <Text style={{ color: item.Status == 2 ? '#00c75f' : item.Status == 1 ? '#f6871e' : item.Status == 3 ? '#f21e3c' : null, fontWeight: 'bold' }}>{item.Status == 2 ? I18n.t('hoan_thanh') : item.Status == 1 ? I18n.t('dang_xu_ly') : item.Status == 3 ? I18n.t('loai_bo') : null}</Text>
                             <Text>{item.Partner ? item.Partner.Name : ''}</Text>
                             <Text style={{ fontWeight: 'bold', color: '#36a3f7' }}>{currencyToString(item.Total)}</Text>
                         </View>
@@ -132,6 +132,25 @@ export default (props) => {
     }
     const clickFilter = () => {
         setOnShowModal(true)
+    }
+    const getOutputFilter = async (data) => {
+        setOnShowModal(false)
+        let param
+        if (data.dateFrom && data.dateTo) {
+            if (data.Status)
+                param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', top: 20, filter: `(substringof('${data.OrderStockCode ? data.OrderStockCode : ''}',Code) and PartnerId eq ${data.Supplier ? data.Supplier.Id : ''} and BranchId eq ${currentBranch.current.Id} and Status eq ${data.Status} and DocumentDate ge 'datetime''${momentToStringDateLocal(data.dateFrom)}''' and DocumentDate lt 'datetime''${momentToStringDateLocal(data.dateTo)}''')` }
+            else
+                param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', top: 20, filter: `(substringof('${data.OrderStockCode ? data.OrderStockCode : ''}',Code) and PartnerId eq ${data.Supplier ? data.Supplier.Id : ''} and BranchId eq ${currentBranch.current.Id}  and DocumentDate ge 'datetime''${momentToStringDateLocal(data.dateFrom)}''' and DocumentDate lt 'datetime''${momentToStringDateLocal(data.dateTo)}''')` }
+        }
+        else {
+            if (data.Status)
+                param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', top: 20, filter: `(substringof('${data.OrderStockCode ? data.OrderStockCode : ''}',Code) and PartnerId eq ${data.Supplier ? data.Supplier.Id : ''} and BranchId eq ${currentBranch.current.Id} and Status eq ${data.Status} )` }
+            else
+                param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', top: 20, filter: `(substringof('${data.OrderStockCode ? data.OrderStockCode : ''}',Code) and PartnerId eq ${data.Supplier ? data.Supplier.Id : ''} and BranchId eq ${currentBranch.current.Id}  )` }
+        }
+        getOrderStock(param)
+        console.log(param);
+        console.log(data);
     }
     const renderTitle = (item, index) => {
         return (
@@ -177,7 +196,7 @@ export default (props) => {
             {
                 deviceType == Constant.TABLET ? defaultItem.Id ?
                     <View style={{ flex: 1, marginLeft: 0.5 }}>
-                        <OrderStockDetails iOrderStock={defaultItem} />
+                        <OrderStockDetails allPer={allPer} iOrderStock={defaultItem} />
                     </View> :
                     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                         <Image source={Images.logo_365_long_color} />
@@ -212,7 +231,7 @@ export default (props) => {
 
                     </TouchableWithoutFeedback>
                     <View style={[{ width: Metrics.screenWidth * 0.8 }, { marginBottom: Platform.OS == 'ios' ? marginModal : 0 }]}>
-                        <DialogFilterOrderStock />
+                        <DialogFilterOrderStock outPutFilter={getOutputFilter} />
                     </View>
                 </View>
             </Modal>

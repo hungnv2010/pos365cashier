@@ -9,17 +9,19 @@ import { Constant } from '../../common/Constant';
 import { currencyToString, dateToString, momentToDateUTC } from '../../common/Utils';
 import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
 import dialogManager from '../../components/dialog/DialogManager';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import moment from "moment";
 
 const InvoiceDetail = (props) => {
     const [invoiceDetail, setInvoiceDetail] = useState({})
     const [dataDetail, setDataDetail] = useState([])
     const moreAttributes = useRef(null)
-    const deviceType = useSelector(state => {
-        return state.Common.deviceType
+    const { deviceType, isFNB } = useSelector(state => {
+        return state.Common
     });
+
     const listAccount = useRef([])
+    const dispatch = useDispatch();
 
     useEffect(() => {
         const getAccount = async () => {
@@ -64,18 +66,19 @@ const InvoiceDetail = (props) => {
     }, [invoiceDetail])
 
     const getStatus = (status) => {
+        console.log("getStatus status ", status);
         switch (status) {
             case 2:
-                return 'hoan_thanh';
+                return <Text style={{ color: "green", fontSize: 13 }}>{I18n.t('hoan_thanh')}</Text>;
                 break;
             case 1:
-                return 'dang_xu_ly';
+                return <Text style={{ color: Colors.colorchinh, fontSize: 13 }}>{I18n.t('dang_xu_ly')}</Text>;
                 break;
             case 3:
-                return 'huy';
+                return <Text style={{ color: "red", fontSize: 13 }}>{I18n.t('huy')}</Text>;;
                 break;
             default:
-                return 'dang_xu_ly';
+                return <Text style={{ color: Colors.colorchinh, fontSize: 13 }}>{I18n.t('dang_xu_ly')}</Text>;
                 break;
         }
     }
@@ -101,6 +104,44 @@ const InvoiceDetail = (props) => {
             }
         }
         return listPaymentMethod.length > 0 ? listPaymentMethod : [I18n.t("tien_mat")]
+    }
+
+    const onRePrint = () => {
+        console.log("onRePrint invoiceDetail ", invoiceDetail);
+        let jsonContent = invoiceDetail
+        jsonContent.PaymentCode = invoiceDetail.Code;
+        let OrderDetails = dataDetail.map(item => {
+            return { ...item.Product, ...item }
+        })
+        jsonContent.OrderDetails = OrderDetails;
+        if (invoiceDetail.VAT && invoiceDetail.VAT > 0) {
+            jsonContent.VATRates = (invoiceDetail.VAT * 100) / (invoiceDetail.Total - invoiceDetail.VAT)
+        }
+        jsonContent["RoomName"] = invoiceDetail.Room && invoiceDetail.Room.Name ? invoiceDetail.Room.Name : "";
+        if (!isFNB) {
+            jsonContent["RoomName"] = I18n.t('don_hang');
+            jsonContent["Pos"] = "A"
+        }
+        console.log("onRePrint jsonContent ", jsonContent);
+        dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
+    }
+
+    const onDeleteOrder = () => {
+        dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_huy_hoa_don'), I18n.t("thong_bao"), res => {
+            if (res == 1) {
+                let id = invoiceDetail.Id && invoiceDetail.Id != -1 ? invoiceDetail.Id : ""
+                new HTTPService().setPath(ApiPath.DELETE_ORDER.replace("{orderId}", id)).DELETE()
+                    .then(result => {
+                        console.log('onDeleteOrder result', result);
+                        if (result) {
+                            props.route.params.onCallBack()
+                            props.navigation.pop()
+                        }
+                    }).catch(err => {
+                        console.log("onDeleteOrder err ", err);
+                    })
+            }
+        })
     }
 
     const renderItemList = (item) => {
@@ -203,6 +244,18 @@ const InvoiceDetail = (props) => {
         <View style={{ flex: 1, backgroundColor: 'white' }}>
 
             <ToolBarDefault {...props} title={invoiceDetail.Code ? invoiceDetail.Code : ""} />
+            <View style={styles.syncData}>
+                <TouchableOpacity style={styles.buttonCreateQR} onPress={() => onRePrint()}>
+                    <Image source={Images.printer} style={styles.iconButton} />
+                    <Text style={styles.textCreateQR}>{I18n.t('in_lai')}</Text>
+                </TouchableOpacity>
+                {invoiceDetail.Status != 3 ?
+                    <TouchableOpacity style={styles.buttonCreateQR} onPress={() => onDeleteOrder()}>
+                        <Image source={Images.icon_trash} style={styles.iconButton} />
+                        <Text style={styles.textCreateQR}>{I18n.t('huy_don_hang')}</Text>
+                    </TouchableOpacity>
+                    : null}
+            </View>
             <View style={{ paddingHorizontal: 10, flex: 1 }}>
                 <View style={{ borderBottomColor: "#0072bc", borderBottomWidth: 1, }}>
                     <View style={{ margin: 5, flexDirection: "row", justifyContent: "space-between" }}>
@@ -232,7 +285,10 @@ const InvoiceDetail = (props) => {
                         : null
                     }
                     <View style={{ margin: 5, alignItems: "center", }}>
-                        <Text style={{ fontWeight: 'bold' }}>{I18n.t("trang_thai")} :  <Text style={{ color: colors.colorchinh }}>{invoiceDetail.Status ? I18n.t(getStatus(invoiceDetail.Status)) : ""}</Text></Text>
+                        <Text style={{ fontWeight: 'bold' }}>{I18n.t("trang_thai")} :
+                        {"Status" in invoiceDetail ? getStatus(invoiceDetail.Status) : null}
+                            {/* <Text style={{ color: colors.colorchinh }}>{invoiceDetail.Status ? I18n.t(getStatus(invoiceDetail.Status)) : ""}</Text> */}
+                        </Text>
                     </View>
 
                 </View>
@@ -268,7 +324,15 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flex: 1,
         textAlign: "center"
-    }
+    },
+    syncData: { flexDirection: "row", padding: 10, justifyContent: "center" },
+    iconButton: { width: 32, height: 32 },
+    textCreateQR: { marginTop: 10, textAlign: "center" },
+    buttonCreateQR: {
+        borderColor: "gray", borderWidth: 0.5,
+        width: Metrics.screenWidth / 2 - 20, backgroundColor: "#fff",
+        justifyContent: "center", alignItems: "center", padding: 15, borderRadius: 10, marginHorizontal: 5
+    },
 });
 
 export default InvoiceDetail
