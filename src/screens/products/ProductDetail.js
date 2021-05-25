@@ -67,6 +67,21 @@ export default (props) => {
         Value: '',
         isNum: false
     }])
+    const printStamp = useRef([{
+        Name: 'so_luong_ma_vach_can_in',
+        Hint: '',
+        Key: 'quantity',
+        Value: '',
+        isNum: true 
+    },
+    {
+        Name: 'gia_ban',
+        Hint: '',
+        Key: 'price',
+        Value: '',
+        isNum: true 
+    }
+])
     const [addDVT, setAddDVT] = useState([])
 
     const deviceType = useSelector(state => {
@@ -1067,21 +1082,21 @@ export default (props) => {
                         <View style={{ flexDirection: 'row' }}>
                             {product.Id ?
                                 <View style={{ flex: 1 }}>
-                                    <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 7, paddingVertical: 10, justifyContent: 'center', margin: 4, alignItems: 'center', borderRadius: 10 }} onPress={() => { onClickDelete() }}>
+                                    <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 7, paddingVertical: 10, justifyContent: 'center', margin: 2, alignItems: 'center', borderRadius: 10 }} onPress={() => { onClickDelete() }}>
                                         <Icon name={'trash-can'} size={24} color={'#fff'} />
                                     </TouchableOpacity>
                                 </View> : null
                             }
                             <View style={{ flex: product.Id ? 1 : 0.9 }}>
-                                <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 7, paddingVertical: 10, justifyContent: 'center', margin: 4, alignItems: 'center', borderRadius: 10 }} onPress={() => { onClickDelete() }}>
+                                <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 7, paddingVertical: 10, justifyContent: 'center', margin: 2, alignItems: 'center', borderRadius: 10 }} onPress={() => { onClickDelete() }}>
                                     <Icon name={'barcode-scan'} size={24} color={'#fff'} />
                                 </TouchableOpacity>
                             </View>
-                            <View style={{ flexDirection: 'row', flex:deviceType == Constant.PHONE ? 5 : 7 }}>
-                                <TouchableOpacity style={{ flex: 1, backgroundColor: colors.colorLightBlue, paddingHorizontal: 7,paddingVertical:10, justifyContent: 'center', margin: 4, alignItems: 'center', borderRadius: 10 }} onPress={() => { isCoppy.current = true, onClickSave() }}>
+                            <View style={{ flexDirection: 'row', flex: deviceType == Constant.PHONE ? 5 : 7 }}>
+                                <TouchableOpacity style={{ flex: 1, backgroundColor: colors.colorLightBlue, paddingHorizontal: 2, paddingVertical: 10, justifyContent: 'center', margin: 2, alignItems: 'center', borderRadius: 10 }} onPress={() => { isCoppy.current = true, onClickSave() }}>
                                     <Text style={{ color: 'white', fontWeight: 'bold' }}>{I18n.t('luu_va_sao_chep')}</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={{ flex: 1, backgroundColor: colors.colorLightBlue, paddingHorizontal: 7,paddingVertical:10, justifyContent: 'center', margin: 4, alignItems: 'center', borderRadius: 10 }} onPress={() => { isCoppy.current = false, onClickSave() }}>
+                                <TouchableOpacity style={{ flex: 1, backgroundColor: colors.colorLightBlue, paddingHorizontal: 2, paddingVertical: 10, justifyContent: 'center', margin: 2, alignItems: 'center', borderRadius: 10 }} onPress={() => { isCoppy.current = false, onClickSave() }}>
                                     <Text style={{ color: 'white', fontWeight: 'bold' }}>{I18n.t('luu')}</Text>
                                 </TouchableOpacity>
                             </View>
