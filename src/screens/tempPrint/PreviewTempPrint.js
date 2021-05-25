@@ -19,7 +19,7 @@ import ViewShot, { takeSnapshot, captureRef } from "react-native-view-shot";
 import AutoHeightWebView from 'react-native-autoheight-webview/autoHeightWebView'
 import I18n from '../../common/language/i18n'
 import colors from '../../theme/Colors';
-import { handerDataPrintTemp } from './ServicePrintTemp';
+import { handerDataPrintTemp, handerDataPrintTempProduct } from './ServicePrintTemp';
 
 const FOOTER_HEIGHT = 21;
 const PADDING = 16;
@@ -35,13 +35,9 @@ export default forwardRef((props, ref) => {
     const [data, setData] = useState("");
     const [vendorSession, setVendorSession] = useState({});
 
-    const deviceType = useSelector(state => {
-        return state.Common.deviceType
+    const { deviceType, isFNB } = useSelector(state => {
+        return state.Common
     });
-
-    // useEffect(() => {
-
-    // }, [])
 
     useEffect(() => {
         console.log("Preview props", props);
@@ -70,7 +66,8 @@ export default forwardRef((props, ref) => {
                 Content: deviceType != Constant.PHONE ? props.data : props.route.params.data,
                 Id: 0,
                 RetailerId: vendorSession.CurrentRetailer.Id,
-                Type: 10,
+                Type: 12,
+                BranchId: vendorSession.CurrentBranchId,
             }
         };
         dialogManager.showLoading();
@@ -81,7 +78,8 @@ export default forwardRef((props, ref) => {
             }
             dialogManager.hiddenLoading()
             props.navigation.pop();
-            props.navigation.pop();
+            if (deviceType == Constant.PHONE)
+                props.navigation.pop();
         }).catch((e) => {
             console.log("clickCheck err ", e);
             dialogManager.hiddenLoading()
@@ -90,20 +88,15 @@ export default forwardRef((props, ref) => {
 
     async function clickPrint() {
         console.log("clickPrint data ", data)
-        let value = await handerDataPrintTemp()
-        Print.PrintTemp(value, "192.168.100.238", "30x40")
-    }
-
-    onCapture = uri => {
-        console.log("do something with ", uri);
-        setUri(uri);
+        let value = isFNB ? await handerDataPrintTemp() : await handerDataPrintTempProduct()
+        Print.PrintTemp(value, "192.168.100.238", "50x30")
     }
 
     return (
         <View style={{ backgroundColor: "#fff", alignItems: "center", flex: 1 }}>
 
             {deviceType == Constant.PHONE ? <ToolBarPreviewHtml
-                navigation={props.navigation} title="HTML"
+                navigation={props.navigation} title="Temp"
                 clickPrint={() => clickPrint()}
                 clickCheck={() => clickCheck()}
             /> : null

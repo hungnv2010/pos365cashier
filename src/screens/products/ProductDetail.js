@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, createRef, useCallback } from 'react';
-import { View, Modal, Text, FlatList, Switch, Dimensions, TouchableOpacity, StyleSheet, ImageBackground, ScrollView, Image, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, Modal, Text, FlatList, Switch, Dimensions, TouchableOpacity, StyleSheet, NativeModules, ScrollView, Image, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import ToolBarDefault from '../../components/toolbar/ToolBarDefault'
 import I18n from '../../common/language/i18n';
 import { Metrics, Images } from '../../theme';
@@ -27,6 +27,8 @@ import { useFocusEffect } from '@react-navigation/native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import GDrive from "react-native-google-drive-api-wrapper";
 import NetInfo from "@react-native-community/netinfo";
+import { handerDataPrintTempProduct } from '../tempPrint/ServicePrintTemp';
+const { Print } = NativeModules;
 
 export default (props) => {
     const [product, setProduct] = useState({})
@@ -835,6 +837,21 @@ export default (props) => {
         })
     }
 
+    const onClickPrintTemp = async () => {
+        console.log("onClickPrintTemp product ", product);
+        let settingObject = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
+        if (settingObject && settingObject != "") {
+            settingObject = JSON.parse(settingObject)
+            console.log("onClickPrintTemp settingObject ", settingObject);
+            settingObject.Printer.forEach(async element => {
+                if (element.key == Constant.KEY_PRINTER.StampPrintKey && element.ip != "") {
+                    let value = await handerDataPrintTempProduct(product)
+                    console.log("handerDataPrintTempProduct value  ", value);
+                    Print.PrintTemp(value, element.ip, "40x30")
+                }
+            });
+        }
+    }
 
     const renderModal = () => {
         return (
@@ -1088,7 +1105,7 @@ export default (props) => {
                                 </View> : null
                             }
                             <View style={{ flex: product.Id ? 1 : 0.9 }}>
-                                <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 7, paddingVertical: 10, justifyContent: 'center', margin: 2, alignItems: 'center', borderRadius: 10 }} onPress={() => { onClickDelete() }}>
+                                <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 7, paddingVertical: 10, justifyContent: 'center', margin: 2, alignItems: 'center', borderRadius: 10 }} onPress={() => { onClickPrintTemp() }}>
                                     <Icon name={'barcode-scan'} size={24} color={'#fff'} />
                                 </TouchableOpacity>
                             </View>
