@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, createRef, useCallback } from 'react';
-import { View, Modal, Text, FlatList, Switch, Dimensions, TouchableOpacity, StyleSheet, ImageBackground, ScrollView, Image, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, Modal, Text, FlatList, Switch, Dimensions, TouchableOpacity, StyleSheet, NativeModules, ScrollView, Image, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import ToolBarDefault from '../../components/toolbar/ToolBarDefault'
 import I18n from '../../common/language/i18n';
 import { Metrics, Images } from '../../theme';
@@ -27,6 +27,8 @@ import { useFocusEffect } from '@react-navigation/native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import GDrive from "react-native-google-drive-api-wrapper";
 import NetInfo from "@react-native-community/netinfo";
+import { handerDataPrintTempProduct } from '../tempPrint/ServicePrintTemp';
+const { Print } = NativeModules;
 
 export default (props) => {
     const [product, setProduct] = useState({})
@@ -820,6 +822,21 @@ export default (props) => {
         })
     }
 
+    const onClickPrintTemp = async () => {
+        console.log("onClickPrintTemp product ", product);
+        let settingObject = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
+        if (settingObject && settingObject != "") {
+            settingObject = JSON.parse(settingObject)
+            console.log("onClickPrintTemp settingObject ", settingObject);
+            settingObject.Printer.forEach(async element => {
+                if (element.key == Constant.KEY_PRINTER.StampPrintKey && element.ip != "") {
+                    let value = await handerDataPrintTempProduct(product)
+                    console.log("handerDataPrintTempProduct value  ", value);
+                    Print.PrintTemp(value, element.ip, "40x30")
+                }
+            });
+        }
+    }
 
     const renderModal = () => {
         return (
@@ -1067,21 +1084,21 @@ export default (props) => {
                         <View style={{ flexDirection: 'row' }}>
                             {product.Id ?
                                 <View style={{ flex: 1 }}>
-                                    <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 7, paddingVertical: 10, justifyContent: 'center', margin: 4, alignItems: 'center', borderRadius: 10 }} onPress={() => { onClickDelete() }}>
+                                    <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 7, paddingVertical: 10, justifyContent: 'center', margin: 2, alignItems: 'center', borderRadius: 10 }} onPress={() => { onClickDelete() }}>
                                         <Icon name={'trash-can'} size={24} color={'#fff'} />
                                     </TouchableOpacity>
                                 </View> : null
                             }
                             <View style={{ flex: product.Id ? 1 : 0.9 }}>
-                                <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 7, paddingVertical: 10, justifyContent: 'center', margin: 4, alignItems: 'center', borderRadius: 10 }} onPress={() => { onClickDelete() }}>
+                                <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 7, paddingVertical: 10, justifyContent: 'center', margin: 2, alignItems: 'center', borderRadius: 10 }} onPress={() => { onClickPrintTemp() }}>
                                     <Icon name={'barcode-scan'} size={24} color={'#fff'} />
                                 </TouchableOpacity>
                             </View>
-                            <View style={{ flexDirection: 'row', flex:deviceType == Constant.PHONE ? 5 : 7 }}>
-                                <TouchableOpacity style={{ flex: 1, backgroundColor: colors.colorLightBlue, paddingHorizontal: 7,paddingVertical:10, justifyContent: 'center', margin: 4, alignItems: 'center', borderRadius: 10 }} onPress={() => { isCoppy.current = true, onClickSave() }}>
+                            <View style={{ flexDirection: 'row', flex: deviceType == Constant.PHONE ? 5 : 7 }}>
+                                <TouchableOpacity style={{ flex: 1, backgroundColor: colors.colorLightBlue, paddingHorizontal: 2, paddingVertical: 10, justifyContent: 'center', margin: 2, alignItems: 'center', borderRadius: 10 }} onPress={() => { isCoppy.current = true, onClickSave() }}>
                                     <Text style={{ color: 'white', fontWeight: 'bold' }}>{I18n.t('luu_va_sao_chep')}</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={{ flex: 1, backgroundColor: colors.colorLightBlue, paddingHorizontal: 7,paddingVertical:10, justifyContent: 'center', margin: 4, alignItems: 'center', borderRadius: 10 }} onPress={() => { isCoppy.current = false, onClickSave() }}>
+                                <TouchableOpacity style={{ flex: 1, backgroundColor: colors.colorLightBlue, paddingHorizontal: 2, paddingVertical: 10, justifyContent: 'center', margin: 2, alignItems: 'center', borderRadius: 10 }} onPress={() => { isCoppy.current = false, onClickSave() }}>
                                     <Text style={{ color: 'white', fontWeight: 'bold' }}>{I18n.t('luu')}</Text>
                                 </TouchableOpacity>
                             </View>
