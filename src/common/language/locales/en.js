@@ -589,6 +589,7 @@ nhom_nha_cung_cap: "Group supplier",
   vi_tri: 'Position',
   vat: "VAT",
   vui_long_kiem_tra_ket_noi_internet:'Please check internet connection.',
+  vui_long_nhap_ten_nhom_hang_hoa:'Please enter name group',
 
   // TODO: X
 

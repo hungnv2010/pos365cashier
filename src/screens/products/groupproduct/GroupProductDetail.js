@@ -1,27 +1,23 @@
-import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
-import { Animated, Image, View, StyleSheet, Text, TouchableOpacity, ScrollView, ActivityIndicator, Modal, TouchableWithoutFeedback } from "react-native";
-import MainToolBar from '../../main/MainToolBar';
+import React, { useEffect, useState, useLayoutEffect, useRef,useCallback } from 'react';
+import { Animated, Image, View, StyleSheet, Text, TouchableOpacity, ScrollView, ActivityIndicator, Modal, TouchableWithoutFeedback, Keyboard} from "react-native";
 import I18n from '../../../common/language/i18n';
 import realmStore from '../../../data/realm/RealmStore';
 import { Images, Metrics } from '../../../theme';
 import ToolBarDefault from '../../../components/toolbar/ToolBarNoteBook';
-import CustomerToolBar from '../../../screens/customerManager/customer/CustomerToolBar';
-import { Chip, Snackbar, FAB } from 'react-native-paper';
 import colors from '../../../theme/Colors';
-import { ScreenList } from '../../../common/ScreenList';
 import dataManager from '../../../data/DataManager';
 import { useSelector } from 'react-redux';
 import { Constant } from '../../../common/Constant';
-import { FlatList, TextInput } from 'react-native-gesture-handler';
 import { currencyToString, dateToString, momentToStringDateLocal, dateToStringFormatUTC, change_alias, change_search, dateUTCToMoment, dateUTCToDate2, timeToString } from '../../../common/Utils';
 import dialogManager from '../../../components/dialog/DialogManager';
-import useDebounce from '../../../customHook/useDebounce';
 import { HTTPService } from '../../../data/services/HttpService';
 import { ApiPath } from '../../../data/services/ApiPath';
 import { getFileDuLieuString, setFileLuuDuLieu } from '../../../data/fileStore/FileStorage';
 import DialogInput from '../../../components/dialog/DialogInput'
 import Ionicons from 'react-native-vector-icons/Fontisto';
 import NetInfo from "@react-native-community/netinfo";
+import { useFocusEffect } from '@react-navigation/native';
+
 
 export default (props) => {
     const [data, setData] = useState({})
@@ -110,8 +106,8 @@ export default (props) => {
         }
         let state = await NetInfo.fetch()
         if (state.isConnected == true && state.isInternetReachable == true) {
-            dialogManager.showLoading()
             if (value.CategoryName != '') {
+                dialogManager.showLoading()
                 new HTTPService().setPath(ApiPath.CATEGORIES_PRODUCT).POST(param).then(res => {
                     if (res) {
                         if (res.ResponseStatus && res.ResponseStatus.Message) {
@@ -131,7 +127,7 @@ export default (props) => {
                     }
                 })
             } else {
-                dialogManager.showPopupOneButton(I18n.t('vui_long_nhap_day_du_thong_tin_truoc_khi_luu'), I18n.t('thong_bao'), () => {
+                dialogManager.showPopupOneButton(I18n.t('vui_long_nhap_ten_nhom_hang_hoa'), I18n.t('thong_bao'), () => {
                     dialogManager.destroy();
                 }, null, null, I18n.t('dong'))
             }
@@ -146,6 +142,26 @@ export default (props) => {
         setData({ ...data, Name: name })
         dialogManager.showPopupOneButton(`${I18n.t(type)} ${I18n.t('thanh_cong')}`, I18n.t('thong_bao'))
         dialogManager.hiddenLoading()
+    }
+    useFocusEffect(useCallback(() => {
+
+        var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
+        var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        }
+
+
+    }, []))
+
+    const _keyboardDidShow = () => {
+        setMargin(Metrics.screenWidth / 2)
+    }
+
+    const _keyboardDidHide = () => {
+        setMargin(0)
     }
     return (
         <View style={{ flex: 1, borderLeftWidth: 0.3, borderColor: '#bbbbbb' }}>
@@ -185,7 +201,7 @@ export default (props) => {
                         <Text style={{ fontWeight: 'bold' }}>{data.Sum}</Text>
                     </View>
                     {data.ListPr && data.ListPr.length > 0 ?
-                        <ScrollView>
+                        <ScrollView style={{}}>
                             {
                                 data.ListPr.map((item, index) => {
                                     return (

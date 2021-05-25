@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
-import { Animated, Image, View, StyleSheet, Text, TouchableOpacity, ScrollView, ActivityIndicator, Modal, TouchableWithoutFeedback } from "react-native";
+import React, { useEffect, useState, useLayoutEffect, useRef,useCallback } from 'react';
+import { Animated, Image, View, StyleSheet, Text, TouchableOpacity, ScrollView, ActivityIndicator, Modal, TouchableWithoutFeedback,Keyboard } from "react-native";
 import MainToolBar from '../../main/MainToolBar';
 import I18n from '../../../common/language/i18n';
 import realmStore from '../../../data/realm/RealmStore';
@@ -21,6 +21,7 @@ import { ApiPath } from '../../../data/services/ApiPath';
 import { getFileDuLieuString, setFileLuuDuLieu } from '../../../data/fileStore/FileStorage';
 import DialogInput from '../../../components/dialog/DialogInput'
 import GroupProductDetail from '../../products/groupproduct/GroupProductDetail'
+import { useFocusEffect } from '@react-navigation/native';
 
 export default (props) => {
     const [category, setCategory] = useState({})
@@ -46,12 +47,14 @@ export default (props) => {
         return state.Common
     })
     useEffect(() => {
+        dialogManager.showLoading()
         getDataFromRealm()
         if(isFNB){
             getBranch()
         }
     }, [])
     const getBranch = async () => {
+       
         let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
         if (branch) {
             currentBranch.current = JSON.parse(branch)
@@ -59,10 +62,9 @@ export default (props) => {
         }
     }
     const getDataFromRealm = async () => {
-        dialogManager.showLoading()
+        
         productTmp.current = (await realmStore.queryProducts())
         productTmp.current = productTmp.current.filtered(`TRUEPREDICATE SORT(Id DESC) DISTINCT(Id)`)
-        //productTmp.current = JSON.parse(JSON.stringify(productTmp.current))
         console.log("productTmp", productTmp.current);
         setListPr([...productTmp.current])
         categoryTmp.current = await realmStore.queryCategories()
@@ -130,8 +132,7 @@ export default (props) => {
                         if (deviceType == Constant.PHONE) {
                             handleSuccess('them')
                         } else
-                            props.handleSuccessTab('them', 1, product)
-                        getCategory()
+                            handleSuccess('them', 1)
                     }
                 }
             })
@@ -174,6 +175,26 @@ export default (props) => {
         } else {
            setCategory(item)
         }
+    }
+    useFocusEffect(useCallback(() => {
+
+        var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
+        var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        }
+
+
+    }, []))
+
+    const _keyboardDidShow = () => {
+        setMargin(Metrics.screenWidth / 2)
+    }
+
+    const _keyboardDidHide = () => {
+        setMargin(0)
     }
     return (
         <View style={{ flex: 1, backgroundColor: '#f2f2f2',flexDirection:'row' }}>

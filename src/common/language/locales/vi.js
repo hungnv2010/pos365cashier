@@ -589,6 +589,7 @@ export default {
   vi_tri: 'Vị trí',
   vat: "VAT",
   vui_long_kiem_tra_ket_noi_internet:'Vui lòng kiểm tra kết nối internet.',
+  vui_long_nhap_ten_nhom_hang_hoa:'Vui lòng nhập tên nhóm hàng hoá',
 
   // TODO: X
 

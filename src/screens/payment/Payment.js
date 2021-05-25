@@ -99,6 +99,7 @@ export default (props) => {
     const imageQr = useRef(0);
     const debounceTimeInput = useRef(new Subject());
     const qrCodeRealm = useRef()
+    const [listSuggestions,setListSuggestions] = useState([])
     let row_key = "";
 
     const { deviceType, isFNB } = useSelector(state => {
@@ -868,6 +869,7 @@ export default (props) => {
 
     const onTouchInput = (value) => {
         console.log("onTouchInput value ", value);
+        //setListSuggestions([5,10,15,20,50,100])
         setChoosePoint(0);
         if (value != sendMethod) {
             setSendMethod(value)
@@ -1073,6 +1075,9 @@ export default (props) => {
         }
         indexPayment.current++;
     }
+    // const getOutputPercent = (value) =>{
+    //     onChangeTextInput(value.toString(),1)
+    // }
 
     const renderFilter = () => {
         if (typeModal.current == TYPE_MODAL.FILTER_ACCOUNT) {
@@ -1254,7 +1259,9 @@ export default (props) => {
             if (choosePoint == 0) {
                 return <Calculator
                     method={sendMethod}
-                    outputResult={outputResult} />
+                    outputResult={outputResult}/>
+                    // listSuggest={listSuggestions}
+                    // outputPercent={getOutputPercent} />
             } else if (choosePoint == 1) {
                 return <PointVoucher
                     grandTotal={totalPrice}
