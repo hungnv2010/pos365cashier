@@ -41,6 +41,8 @@ export default (props) => {
         }, [])
     )
 
+
+
     useEffect(() => {
         const getBranch = async () => {
             let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
@@ -196,6 +198,7 @@ export default (props) => {
     }
 
     const onRefresh = () => {
+        console.log('props', props);
         getDataDashBoard()
         getRevunue()
         getListTopSell()

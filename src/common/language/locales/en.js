@@ -46,7 +46,7 @@ export default {
   ban_co_chac_chan_muon_khoa_nhan_vien: 'Are you sure you want to lock out the staff ?',
   ban_co_chac_chan_muon_mo_khoa_nhan_vien: 'Are you sure you want to unlock the employee ?',
   block_dau_tien: 'first block',
-  ban_co_chac_chan_muon_xoa_phieu_nhap_hang_nay:'Do you want to delete this order stock ?',
+  ban_co_chac_chan_muon_xoa_phieu_nhap_hang_nay: 'Do you want to delete this order stock ?',
 
   // TODO: C 
 
@@ -110,10 +110,10 @@ export default {
   cap_nhat_extra_topping: "Update Extra/ Topping",
   chi_tiet_nhap_hang: 'Orderstock details',
   chinh_sua_nhap_hang: 'Edit orderstock',
-  chon_nha_cung_cap:'Choose suplier',
-  chup_moi:'New picture',
-  chon_tu_thu_vien:'Choose libs',
-  chon_anh:'Choose image',
+  chon_nha_cung_cap: 'Choose suplier',
+  chup_moi: 'New picture',
+  chon_tu_thu_vien: 'Choose libs',
+  chon_anh: 'Choose image',
 
   // TODO: D 
 
@@ -341,12 +341,12 @@ export default {
   mo_ta_tach_hang: 'Adding this item to your order will not add up the quantity, but will split it into multiple lines.',
   ma_nhap_hnag: 'Code',
   moi_nhap: 'Input',
-  ma_hang_hoa:'Product code',
+  ma_hang_hoa: 'Product code',
 
   // TODO: N
 
-ngay_thanh_lap: "Founding",
-nhom_nha_cung_cap: "Group supplier",
+  ngay_thanh_lap: "Founding",
+  nhom_nha_cung_cap: "Group supplier",
   nhom_khach_hang: "Group customers",
   no: "Debt",
   ngon_ngu: 'Language',
@@ -384,9 +384,9 @@ nhom_nha_cung_cap: "Group supplier",
   nhap_ten_nhom: 'Enter group name',
   nhap_ten_hang_hoa: 'Enter product name',
   ngay_giao: 'Delivery date',
-  
+
   // TODO: O
-  
+
   // TODO: P
 
   phong_ban: "Room / Table",
@@ -399,7 +399,7 @@ nhom_nha_cung_cap: "Group supplier",
   phien_ban_ngay: "Version",
   phuong_thuc_khac: "Other method",
   phuong_thuc_thanh_toan: "Payment methods",
-  
+
   // TODO: Q
 
   quan_ly_nhan_vien: "Employee manager",
@@ -413,6 +413,8 @@ nhom_nha_cung_cap: "Group supplier",
   quan_ly_don_hang: "Order management",
   quan_ly: 'Manager',
   quan_ly_hang_hoa: 'Product management',
+  quan_ly_doi_tac: "Quản lý đối tác",
+
 
   // TODO: R
 
@@ -564,6 +566,7 @@ nhom_nha_cung_cap: "Group supplier",
   tong_so_luong_nhap: 'Total amount imported',
   thue_vat: 'VAT',
   toi_da: 'Max',
+  tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay: "Account does not have permission to use this function năng",
 
   // TODO: U
 
@@ -579,7 +582,7 @@ nhom_nha_cung_cap: "Group supplier",
   vui_long_nhap_dung_so_tien_khach_tra: "Please enter the correct amount of payment.",
   vi_tri: 'Position',
   vat: "VAT",
-  vui_long_kiem_tra_ket_noi_internet:'Please check internet connection.',
+  vui_long_kiem_tra_ket_noi_internet: 'Please check internet connection.',
 
   // TODO: X
 
@@ -594,7 +597,7 @@ nhom_nha_cung_cap: "Group supplier",
   xin_cam_on_va_hen_gap_lai: "Thank you, see you again!",
 
   // TODO: Y
-  
+
   yeu_cau_thanh_toan: "Payment request",
-  
+
 };

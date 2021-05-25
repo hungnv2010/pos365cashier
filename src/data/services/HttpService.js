@@ -48,7 +48,7 @@ export class HTTPService {
         return this
     }
 
-    GET(jsonParam, headers = getHeaders(), ) {
+    GET(jsonParam, headers = getHeaders()) {
         let params = jsonParam ? convertJsonToPrameter(jsonParam) : ''
         this._path = this._path + params
         console.log('GET:', this._path, JSON.stringify(headers));
@@ -139,6 +139,11 @@ export class HTTPService {
             } else {
                 reject("")
             }
+            // } else if (e.response && e.response.status && e.response.status == 403) {
+            //     dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+            //         dialogManager.destroy();
+            //     }, null, null, I18n.t('dong'))
+            //     dialogManager.hiddenLoading()
         }
         else {
             if (e && e.response && e.response.data) {

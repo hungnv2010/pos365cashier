@@ -27,6 +27,7 @@ export default (props) => {
   const dispatch = useDispatch();
   const [textSearch, setTextSearch] = useState('')
   const [autoPrintKitchen, setAutoPrintKitchen] = useState(false)
+  const [permission, setPermission] = useState(true)
   const { listPrint, isFNB, printProvisional, printReturnProduct, appState, deviceType } = useSelector(state => {
     return state.Common
   })
@@ -88,7 +89,7 @@ export default (props) => {
     }, [])
   );
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     console.log('mainScreen props', props);
     const getStoreInfo = async () => {
       dialogManager.showLoading()
@@ -98,6 +99,9 @@ export default (props) => {
       currentBranch = JSON.parse(currentBranch)
       let lastBranch = await getFileDuLieuString(Constant.LAST_BRANCH, true);
       lastBranch = lastBranch ? JSON.parse(lastBranch) : { Id: null }
+      let privileges = await getFileDuLieuString(Constant.PRIVILEGES, true)
+      console.log('privileges', privileges);
+      privileges = privileges ? JSON.parse(privileges) : []
 
       if (vendorSession) {
         if (currentBranch && currentBranch.FieldId) {
@@ -118,6 +122,9 @@ export default (props) => {
           }
         }
       }
+
+      let permission = privileges.filter(itm => itm.id == 'Order')
+      if (permission.length > 0) setPermission(permission[0].expanded)
     }
     getStoreInfo()
   }, [])
@@ -239,7 +246,14 @@ export default (props) => {
                 rightIcon="md-search"
                 outPutTextSearch={onClickSearch}
               />
-              <Order {...props} textSearch={textSearch} />
+              {
+                permission ?
+                  <Order {...props} textSearch={textSearch} />
+                  :
+                  <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                    <Text style={{ fontSize: 20 }}>{I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay')}</Text>
+                  </View>
+              }
             </>
             :
             deviceType == Constant.TABLET ?

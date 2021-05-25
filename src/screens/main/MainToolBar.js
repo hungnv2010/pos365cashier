@@ -33,6 +33,7 @@ export default function MainToolBar(props) {
             >
 
                 <TouchableOpacity onPress={() => {
+                    props.onClickLeft ? props.onClickLeft() : null
                     console.log("Click this.props ", props);
                     props.navigation.openDrawer();
                 }} style={[{}, deviceType == Constant.TABLET ? { alignSelf: "flex-start" } : { alignItems: "center" }]}>

@@ -260,11 +260,29 @@ export default (props) => {
                         resetRoom();
                     }
                 }
-                
+
             }).catch((e) => {
                 dialogManager.hiddenLoading();
                 console.log("onClickApply err ", e);
             })
+        }
+    }
+
+    const onClickDone = () => {
+        if (isEditRoom) {
+            if (props.permission.update) onClickApply()
+            else {
+                dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                    dialogManager.destroy();
+                }, null, null, I18n.t('dong'))
+            }
+        } else {
+            if (props.permission.create) onClickApply()
+            else {
+                dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                    dialogManager.destroy();
+                }, null, null, I18n.t('dong'))
+            }
         }
     }
 
@@ -388,7 +406,7 @@ export default (props) => {
                     clickLeftIcon={() => {
                         props.navigation.goBack()
                     }}
-                    title={(props.route.params.room && props.route.params.room.Name) ? I18n.t('cap_nhat_phong_ban') :  I18n.t('them_phong_ban')}
+                    title={(props.route.params.room && props.route.params.room.Name) ? I18n.t('cap_nhat_phong_ban') : I18n.t('them_phong_ban')}
                 /> : null}
 
             <KeyboardAwareScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" style={styles.view_content}>
@@ -436,12 +454,12 @@ export default (props) => {
                     </View>
                 </View>
                 <View style={{ flexDirection: "row", margin: 10, marginHorizontal: 0, marginTop: 50 }}>
-                    {isEditRoom ?
+                    {isEditRoom && props.permission.delete ?
                         <TouchableOpacity onPress={onClickDelete} style={{ flex: 1, flexDirection: "row", marginTop: 0, borderRadius: 5, backgroundColor: "#f2f2f2", justifyContent: "center", alignItems: "center", padding: 10 }}>
                             <IconAntDesign name={"delete"} size={25} color="black" />
                         </TouchableOpacity>
                         : null}
-                    <TouchableOpacity onPress={onClickApply} style={{ flex: 8, flexDirection: "row", marginLeft: isEditRoom ? 15 : 0, marginTop: 0, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 15 }}>
+                    <TouchableOpacity onPress={onClickDone} style={{ flex: 8, flexDirection: "row", marginLeft: isEditRoom ? 15 : 0, marginTop: 0, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 15 }}>
                         <Text style={{ color: "#fff", fontWeight: "bold" }}>{I18n.t('ap_dung')}</Text>
                     </TouchableOpacity>
                 </View>

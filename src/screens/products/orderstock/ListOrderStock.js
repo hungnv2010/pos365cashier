@@ -31,6 +31,7 @@ export default (props) => {
     const debouncedVal = useDebounce(textSearch)
     const [showModal, setOnShowModal] = useState(false)
     const [marginModal, setMargin] = useState(0)
+    const [allPer, setPer] = useState(props.route.params.permission ? props.route.params.permission : {})
     const defauTitle = useRef()
     const currentBranch = useRef()
     let arrDate = []
@@ -158,14 +159,19 @@ export default (props) => {
                     />
                 </View>
 
-                <FAB
-                    style={styles.fab}
-                    icon='plus'
-                    color="#fff"
-                    onPress={() => {
-                        props.navigation.navigate(ScreenList.AddOrderStock, { orderstock: {}, listPr: [], paymentMethod: "" })
-                    }}
-                />
+                {
+                    allPer.create ?
+                        <FAB
+                            style={styles.fab}
+                            icon='plus'
+                            color="#fff"
+                            onPress={() => {
+                                props.navigation.navigate(ScreenList.AddOrderStock, { orderstock: {}, listPr: [], paymentMethod: "" })
+                            }}
+                        />
+                        :
+                        null
+                }
 
             </View>
             {

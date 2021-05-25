@@ -42,11 +42,11 @@ export default {
   ban_co_chac_chan_muon_xoa_nha_cung_cap: "Bạn có chắc muốn xóa nhà cung cấp này",
   block_theo_phut: "Block tính theo phút",
   ban_co_chac_chan_muon_xoa_hang_hoa: 'Bạn có chắc chắn muốn xoá hàng hoá này?',
-  ban_chac_chan_muon_dang_xuat_khoi_cac_thiet_bi:'Bạn chắc chắn muốn đăng xuất khỏi các thiết bị ?',
-  ban_co_chac_chan_muon_khoa_nhan_vien:'Bạn có chắc muốn khoá nhân viên ?',
-  ban_co_chac_chan_muon_mo_khoa_nhan_vien:'Bạn có chắc chắn muốn mở khoá nhân viên ?',
-  block_dau_tien:'block đầu tiên',
-  ban_co_chac_chan_muon_xoa_phieu_nhap_hang_nay:'Bạn có chắc chắn muốn xoá phiếu nhập hàng này ?',
+  ban_chac_chan_muon_dang_xuat_khoi_cac_thiet_bi: 'Bạn chắc chắn muốn đăng xuất khỏi các thiết bị ?',
+  ban_co_chac_chan_muon_khoa_nhan_vien: 'Bạn có chắc muốn khoá nhân viên ?',
+  ban_co_chac_chan_muon_mo_khoa_nhan_vien: 'Bạn có chắc chắn muốn mở khoá nhân viên ?',
+  block_dau_tien: 'block đầu tiên',
+  ban_co_chac_chan_muon_xoa_phieu_nhap_hang_nay: 'Bạn có chắc chắn muốn xoá phiếu nhập hàng này ?',
 
   // TODO: C
 
@@ -106,14 +106,14 @@ export default {
   chua_co: 'Chưa có',
   chon_hang_hoa: 'Chọn hàng hoá',
   chieu_rong_kho_giay: 'Chiều rộng khổ giấy',
-  chon_nhom_nha_cung_cap:'Chọn nhóm nhà cung cấp',
-  cap_nhat_extra_topping:'Cập nhật Extra/ Topping',
-  chi_tiet_nhap_hang:'Chi tiết nhập hàng',
-  chinh_sua_nhap_hang:'Chỉnh sửa nhập hàng',
-  chon_nha_cung_cap:'Chọn nhà cung cấp',
-  chup_moi:'Chụp mới',
-  chon_tu_thu_vien:'Chọn từ thư viện',
-  chon_anh:'Chọn ảnh',
+  chon_nhom_nha_cung_cap: 'Chọn nhóm nhà cung cấp',
+  cap_nhat_extra_topping: 'Cập nhật Extra/ Topping',
+  chi_tiet_nhap_hang: 'Chi tiết nhập hàng',
+  chinh_sua_nhap_hang: 'Chỉnh sửa nhập hàng',
+  chon_nha_cung_cap: 'Chọn nhà cung cấp',
+  chup_moi: 'Chụp mới',
+  chon_tu_thu_vien: 'Chọn từ thư viện',
+  chon_anh: 'Chọn ảnh',
 
   // TODO: D
 
@@ -162,10 +162,10 @@ export default {
   don_hang_cho_thanh_toan: 'Đơn hàng chờ thanh toán',
   dong_bo_du_lieu: 'Đồng bộ dữ liệu',
   dang_cho_thanh_toan_vui_long_doi: "Đang chờ thanh toán, vui lòng đợi",
-  dang_xuat_tai_khoan_tren_cac_thiet_bi_dang_dung:'Đăng xuất tài khoản trên các thiết bị đang dùng',
-  danh_sach_extra_topping:'Danh sách Extra topping',
-  danh_sach_hang_hoa:'Danh sách hàng hoá',
-  dang_xu_li:'Đang xử lý',
+  dang_xuat_tai_khoan_tren_cac_thiet_bi_dang_dung: 'Đăng xuất tài khoản trên các thiết bị đang dùng',
+  danh_sach_extra_topping: 'Danh sách Extra topping',
+  danh_sach_hang_hoa: 'Danh sách hàng hoá',
+  dang_xu_li: 'Đang xử lý',
 
   // TODO: E
 
@@ -196,10 +196,10 @@ export default {
   gia_ban_dvt_lon: 'Giá bán đơn vị tính lớn',
   gia_tri_quy_doi: 'Giá trị quy đổi',
   gia_tri_thay_doi: 'Giá trị thay đổi',
-  gia_ban:'Giá bán',
-  gia_ban_don_vi_tinh_lon:'Giá bán đơn vị tính lớn',
-  gia_tri_quy_doi:'Giá trị quy đổi',
-  gia_nhap:'Giá nhập',
+  gia_ban: 'Giá bán',
+  gia_ban_don_vi_tinh_lon: 'Giá bán đơn vị tính lớn',
+  gia_tri_quy_doi: 'Giá trị quy đổi',
+  gia_nhap: 'Giá nhập',
 
   // TODO: H
 
@@ -228,7 +228,7 @@ export default {
   // TODO: K
 
   khach_le: "Khách lẻ",
-  khong_the_ket_noi_den_may_chu_don_hang_cua_quy_khach_duoc_luu_vao_offline:"Không thể kết nối đến máy chủ, đơn hàng của quý khách được lưu vào offline",
+  khong_the_ket_noi_den_may_chu_don_hang_cua_quy_khach_duoc_luu_vao_offline: "Không thể kết nối đến máy chủ, đơn hàng của quý khách được lưu vào offline",
   kiem_ke: "Kiểm kê",
   khach_hang: "Khách hàng",
   khac: "Khác",
@@ -257,7 +257,7 @@ export default {
   khung_gio: "Khung giờ",
   kieu_thay_doi_gia: 'Kiểu thay đổi giá',
   khung_gio_dac_biet: 'Khung giờ đặc biệt',
-  khoa:'Khoá',
+  khoa: 'Khoá',
 
   // TODO: H
 
@@ -276,7 +276,7 @@ export default {
   hien_thi_hang_hoa: 'Hiển thị hàng hoá',
   hien_thi_san_pham_tren_man_hinh_thu_ngan: 'Hiển thị sản phẩm trên danh sách của màn hình thu ngân',
   hoac: 'hoặc',
-  hoat_dong:'Hoạt động',
+  hoat_dong: 'Hoạt động',
 
   // TODO: L
 
@@ -298,8 +298,8 @@ export default {
   ly_do: "Lý do",
   luu: 'Lưu',
   luu_va_sao_chep: "Lưu & Sao chép",
-  loc:'Lọc',
-  loai_bo:'Loại bỏ',
+  loc: 'Lọc',
+  loai_bo: 'Loại bỏ',
 
   // TODO: M
 
@@ -335,13 +335,13 @@ export default {
   ma_hang_ma_sku_ma_vach: "Mã hàng / SKU / Mã vạch",
   ma_dvt_lon: 'Mã đơn vị tính lớn',
   may_tinh: "Máy tính",
-  ma_nhan_vien:'Mã nhân viên',
-  mo_khoa:'Mở khóa nhân viên',
-  ma_don_vi_tinh_lon:'Mã đơn vị tính lớn',
-  mo_ta_tach_hang:'Khi thêm mặt hàng này vào đơn hàng sẽ không cộng dồn số lượng mà sẽ tách thành nhiều dòng',
-  ma_nhap_hang:'Mã nhập hàng',
-  moi_nhap:'Mời nhập',
-  ma_hang_hoa:'Mã hàng hoá',
+  ma_nhan_vien: 'Mã nhân viên',
+  mo_khoa: 'Mở khóa nhân viên',
+  ma_don_vi_tinh_lon: 'Mã đơn vị tính lớn',
+  mo_ta_tach_hang: 'Khi thêm mặt hàng này vào đơn hàng sẽ không cộng dồn số lượng mà sẽ tách thành nhiều dòng',
+  ma_nhap_hang: 'Mã nhập hàng',
+  moi_nhap: 'Mời nhập',
+  ma_hang_hoa: 'Mã hàng hoá',
 
   // TODO: N
 
@@ -380,13 +380,13 @@ export default {
   ngay_huy_tra: "Ngày hủy/trả",
   ngay_het_han: "Ngày hết hạn",
   nhap_ten_nhom_hang_hoa: 'Nhập tên nhóm hàng hoá',
-  nhap_don_vi_tinh_lon:'Nhập đơn vị tính lớn',
+  nhap_don_vi_tinh_lon: 'Nhập đơn vị tính lớn',
   nhap_ten_nhom: 'Nhập tên nhóm',
-  nhap_ten_hang_hoa:'Nhập tên hàng hoá',
-  ngay_giao:'Ngày giao',
-  
+  nhap_ten_hang_hoa: 'Nhập tên hàng hoá',
+  ngay_giao: 'Ngày giao',
+
   // TODO: O
-  
+
   // TODO: P
 
   phong_ban: "Phòng / Bàn",
@@ -399,7 +399,7 @@ export default {
   phien_ban_ngay: "Phiên bản",
   phuong_thuc_khac: "Phương thức khác",
   phuong_thuc_thanh_toan: "Phương thức thanh toán",
-  
+
   // TODO: Q
 
   quan_ly_nhan_vien: "Quản lý nhân viên",
@@ -411,8 +411,9 @@ export default {
   quet_barcode_hoac_qrcode: "Quét BarCode hoặc QRCode",
   quay_lai: "Quay lại",
   quan_ly_don_hang: "Quản lý đơn hàng",
-  quan_ly:'Quản lý',
-  quan_ly_hang_hoa:'Quản lý hàng hoá',
+  quan_ly: 'Quản lý',
+  quan_ly_hang_hoa: 'Quản lý hàng hoá',
+  quan_ly_doi_tac: "Quản lý đối tác",
 
   // TODO: R
 
@@ -443,9 +444,9 @@ export default {
   so_block_gio_dau_tien: "Số block giờ đầu tiên",
   so_may_in_toi_da: "Số máy in tối đa",
   san_pham: "Sản phẩm ",
-  so_luong_tru_kho_khi_ban:'Số lượng trừ kho khi bán',
-  so_luong_don_vi_tinh_lon:'Số lượng đơn vị tính lớn',
-  so_tien_thanh_toan:'Số tiền thanh toán',
+  so_luong_tru_kho_khi_ban: 'Số lượng trừ kho khi bán',
+  so_luong_don_vi_tinh_lon: 'Số lượng đơn vị tính lớn',
+  so_tien_thanh_toan: 'Số tiền thanh toán',
 
   // TODO: T
 
@@ -477,7 +478,7 @@ export default {
   them: "Thêm mới",
   ten_hang: "Tên",
   TT: "TT",
-  them_nha_cung_cap:"Create new supplier",
+  them_nha_cung_cap: "Create new supplier",
   them_khach_hang: "Thêm khách hàng",
   trieu: "triệu",
   tong_so_hoa_don: "Tổng số hóa đơn",
@@ -551,19 +552,21 @@ export default {
   thanh_phan_combo: "Thành phần combo",
   tien_thieu: 'Tiền thiếu',
   ty_le_thay_doi: 'Tỷ lệ thay đổi',
-  ten_nhan_vien:'Tên nhân viên',
-  tim_kiem_nhan_vien:'Tìm kiếm nhân viên',
-  thiet_lap_quyen:'Thiết lập quyền',
-  them_nhan_vien:'Thêm nhân viên',
-  ten_nha_cung_cap:'Tên nhà cung cấp',
-  thiet_lap_extra_topping:'Thiết lập Extra/ Topping',
-  ten_extra_topping:'Tên Extra/ Topping',
-  tach_thanh_nhieu_dong_khi_ban_hang:'Tách thành nhiều dòng khi bán hàng',
-  tao_nhom_hang_hoa:'Tạo nhóm hàng hoá',
-  them_moi_hang_hoa:'Thêm mới hàng hoá',
-  tong_so_luong_nhap:'Tổng số lượng nhập',
-  thue_vat:'Thuế VAT',
-  toi_da:'Tối đa',
+  ten_nhan_vien: 'Tên nhân viên',
+  tim_kiem_nhan_vien: 'Tìm kiếm nhân viên',
+  thiet_lap_quyen: 'Thiết lập quyền',
+  them_nhan_vien: 'Thêm nhân viên',
+  ten_nha_cung_cap: 'Tên nhà cung cấp',
+  thiet_lap_extra_topping: 'Thiết lập Extra/ Topping',
+  ten_extra_topping: 'Tên Extra/ Topping',
+  tach_thanh_nhieu_dong_khi_ban_hang: 'Tách thành nhiều dòng khi bán hàng',
+  tao_nhom_hang_hoa: 'Tạo nhóm hàng hoá',
+  them_moi_hang_hoa: 'Thêm mới hàng hoá',
+  tong_so_luong_nhap: 'Tổng số lượng nhập',
+  thue_vat: 'Thuế VAT',
+  toi_da: 'Tối đa',
+  tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay: "Tài khoản không có quyền sử dụng chức năng này",
+
 
   // TODO: U
 
@@ -579,7 +582,7 @@ export default {
   vui_long_nhap_dung_so_tien_khach_tra: "Vui lòng nhập đúng số tiền khách trả.",
   vi_tri: 'Vị trí',
   vat: "VAT",
-  vui_long_kiem_tra_ket_noi_internet:'Vui lòng kiểm tra kết nối internet.',
+  vui_long_kiem_tra_ket_noi_internet: 'Vui lòng kiểm tra kết nối internet.',
 
   // TODO: X
 
@@ -594,7 +597,7 @@ export default {
   xin_cam_on_va_hen_gap_lai: "Xin cám ơn, hẹn gặp lại quý khách!",
 
   // TODO: Y
-  
+
   yeu_cau_thanh_toan: "Yêu cầu thanh toán",
 
 };

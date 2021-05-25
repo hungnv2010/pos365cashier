@@ -423,6 +423,24 @@ export default (props) => {
         }
     }
 
+    const onClickDone = () => {
+        if (props.customerDetail.Id.Id == 0) {
+            if (props.allPer.create) onClickApply()
+            else {
+                dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                    dialogManager.destroy();
+                }, null, null, I18n.t('dong'))
+            }
+        } else {
+            if (props.allPer.update) onClickApply()
+            else {
+                dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                    dialogManager.destroy();
+                }, null, null, I18n.t('dong'))
+            }
+        }
+    }
+
     return (
         <View style={{ flex: 1 }}>
             <View style={{ backgroundColor: 'white', marginLeft: 5, paddingVertical: 10 }}>
@@ -621,15 +639,20 @@ export default (props) => {
                         null
                         :
                         <>
-                            <TouchableOpacity onPress={onClickDelete} style={{ flex: 1, flexDirection: "row", marginTop: 0, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 10 }}>
-                                <IconAntDesign name={"delete"} size={25} color="white" />
-                            </TouchableOpacity>
+                            {
+                                props.allPer.delete ?
+                                    <TouchableOpacity onPress={onClickDelete} style={{ flex: 1, flexDirection: "row", marginTop: 0, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 10 }}>
+                                        <IconAntDesign name={"delete"} size={25} color="white" />
+                                    </TouchableOpacity>
+                                    :
+                                    null
+                            }
                             <TouchableOpacity onPress={onClickPrint} style={{ flex: 1, flexDirection: "row", marginLeft: 10, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 10 }}>
                                 <IconAntDesign name={"printer"} size={25} color="white" />
                             </TouchableOpacity>
                         </>
                 }
-                <TouchableOpacity onPress={onClickApply} style={{ flex: 8, flexDirection: "row", marginLeft: 10, marginTop: 0, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 15 }}>
+                <TouchableOpacity onPress={onClickDone} style={{ flex: 8, flexDirection: "row", marginLeft: 10, marginTop: 0, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 15 }}>
                     <Text style={{ color: "#fff", fontWeight: "bold" }}>{I18n.t('ap_dung')}</Text>
                 </TouchableOpacity>
             </View>

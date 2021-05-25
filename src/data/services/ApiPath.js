@@ -54,5 +54,6 @@ export const ApiPath = {
     UPDATE_PRICEEXTRA:'api/products/extra/updateprice',
     ORDERSTOCK: 'api/orderstock',
     DETAILFOREDIT:'api/orderstock/detailforedit',
+    PRIVILEGES:'api/users/{userId}/privileges'
     // http://cafe365.banhang365.vn/api/orders/95053575/void
 }

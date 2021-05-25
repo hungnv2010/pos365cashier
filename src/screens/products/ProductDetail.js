@@ -124,6 +124,11 @@ export default (props) => {
         },
         ProductPartners: productOl.ProductPartners ? productOl.ProductPartners : []
     }
+
+    useEffect(() => {
+        console.log('props.allPer', props.allPer);
+    }, [])
+
     useEffect(() => {
         if (deviceType == Constant.PHONE) {
             getData(props.route.params)
@@ -341,7 +346,7 @@ export default (props) => {
             console.log("img", img);
             if (img.length > 0) {
                 setImageUrl(img[0].ImageURL)
-            }else{
+            } else {
                 setImageUrl()
             }
         }
@@ -506,7 +511,7 @@ export default (props) => {
             console.log("price config", printerPr);
         }
     }
-    const onClickSave = (type) => {
+    const onSave = (type) => {
         // if (product.CategoryId && product.CategoryId > 0) {
         //     params.Product = { ...params.Product, CategoryId: product.CategoryId }
         // if (product.ProductType == 2) {
@@ -515,6 +520,29 @@ export default (props) => {
         //}
         saveProduct()
     }
+
+    const onClickSaveAndCopy = () => {
+        if (props.allPer.update) {
+            isCoppy.current = true
+            onSave()
+        } else {
+            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
+        }
+    }
+
+    const onClickSave = () => {
+        if (props.allPer.update) {
+            isCoppy.current = false
+            onSave()
+        } else {
+            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
+        }
+    }
+
     const syncData = async () => {
         dialogManager.showLoading()
         try {
@@ -581,6 +609,7 @@ export default (props) => {
             }, null, null, I18n.t('dong'))
         }
     }
+
     const setLargeUnit = (data) => {
         console.log("data", data);
         setProduct({ ...product, LargeUnit: data.LargeUnit, PriceLargeUnit: data.PriceLargeUnit, ConversionValue: data.ConversionValue, LargeUnitId: data.LargeUnitId })
@@ -644,52 +673,52 @@ export default (props) => {
     const upLoadPhoto = async (source) => {
         let state = await NetInfo.fetch()
         if (state.isConnected == true && state.isInternetReachable == true) {
-        dialogManager.showLoading()
-        await new HTTPService().setPath(`api/google/tocken`).GET().then(res => {
-            if (res != null) {
-                token.current = res.Tocken
-                console.log("Token", res.Tocken);
-            }
-        })
-        GDrive.setAccessToken(token.current)
-        GDrive.init()
-
-        GDrive.files.createFileMultipart(
-            source.base64,
-            "'image/jpg'", {
-            parents: ["0B0kuvBxLBrKiflFvTW5EUkRkZEg1UEZpSXZaVGIwTjFFeGlJSV9vTG5kbm9NUW5sQ2tiSGc"],
-            name: source.fileName
-        },
-            true)
-            .then(
-                (response) => response.json()
-            ).then((res) => {
-                // result data
-                console.log(res.id);
-                let url = "https://docs.google.com/uc?id=" + `${res.id}` + "&export=view"
-                let item = {
-                    ImageURL: url,
-                    IsDefault: true,
-                    ThumbnailUrl: url
+            dialogManager.showLoading()
+            await new HTTPService().setPath(`api/google/tocken`).GET().then(res => {
+                if (res != null) {
+                    token.current = res.Tocken
+                    console.log("Token", res.Tocken);
                 }
-                let image = []
-                // if (productOl.ProductImages) {
-                //     image = JSON.parse(JSON.stringify(productOl.ProductImages))
-                // }
-                image = [...image, item]
-                setProductOl({ ...productOl, ProductImages: image })
-                setImageUrl(url)
-                console.log(image);
-                dialogManager.hiddenLoading()
-
             })
-        setOnShowModal(false)
-    }else{
-        dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_internet'), I18n.t('thong_bao'), () => {
-            dialogManager.destroy();
-        }, null, null, I18n.t('dong'))
+            GDrive.setAccessToken(token.current)
+            GDrive.init()
+
+            GDrive.files.createFileMultipart(
+                source.base64,
+                "'image/jpg'", {
+                parents: ["0B0kuvBxLBrKiflFvTW5EUkRkZEg1UEZpSXZaVGIwTjFFeGlJSV9vTG5kbm9NUW5sQ2tiSGc"],
+                name: source.fileName
+            },
+                true)
+                .then(
+                    (response) => response.json()
+                ).then((res) => {
+                    // result data
+                    console.log(res.id);
+                    let url = "https://docs.google.com/uc?id=" + `${res.id}` + "&export=view"
+                    let item = {
+                        ImageURL: url,
+                        IsDefault: true,
+                        ThumbnailUrl: url
+                    }
+                    let image = []
+                    // if (productOl.ProductImages) {
+                    //     image = JSON.parse(JSON.stringify(productOl.ProductImages))
+                    // }
+                    image = [...image, item]
+                    setProductOl({ ...productOl, ProductImages: image })
+                    setImageUrl(url)
+                    console.log(image);
+                    dialogManager.hiddenLoading()
+
+                })
+            setOnShowModal(false)
+        } else {
+            dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_internet'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
+        }
     }
-}
     const captureImage = async () => {
         //setOnShowModal(false)
         let options = {
@@ -896,7 +925,7 @@ export default (props) => {
                 <KeyboardAwareScrollView>
                     <View style={{ justifyContent: 'center', alignItems: 'center', padding: 20 }} >
                         <TouchableOpacity onPress={() => { typeModal.current = 6, setOnShowModal(true) }}>
-                            {productOl.ProductImages && (productOl.ProductImages).length > 0  ?
+                            {productOl.ProductImages && (productOl.ProductImages).length > 0 ?
                                 <Image style={{ height: 70, width: 70, borderRadius: 16 }} source={{ uri: imageUrl }} /> :
                                 // : product.Name ? <View style={{ width: 70, height: 70, justifyContent: 'center', alignItems: 'center', borderRadius: 16, backgroundColor: colors.colorchinh }}>
                                 //     <Text style={{ textAlign: 'center', color: 'white' }}>{product.Name ? product.Name.indexOf(' ') == -1 ? product.Name.slice(0, 2).toUpperCase() : (product.Name.slice(0, 1) + product.Name.slice(product.Name.indexOf(' ') + 1, product.Name.indexOf(' ') + 2)).toUpperCase() : null}</Text>
@@ -1059,14 +1088,14 @@ export default (props) => {
                     <View style={{ backgroundColor: '#f2f2f2', padding: 10 }}>
                         <View style={{ flexDirection: 'column' }}>
                             <View style={{ flexDirection: 'row' }}>
-                                <TouchableOpacity style={{ flex: 1, backgroundColor: '#00AE72', padding: 15, justifyContent: 'center', margin: 7, alignItems: 'center', borderRadius: 15, height: 50 }} onPress={() => { isCoppy.current = true, onClickSave() }}>
+                                <TouchableOpacity style={{ flex: 1, backgroundColor: '#00AE72', padding: 15, justifyContent: 'center', margin: 7, alignItems: 'center', borderRadius: 15, height: 50 }} onPress={onClickSaveAndCopy}>
                                     <Text style={{ color: 'white', fontWeight: 'bold' }}>{I18n.t('luu_va_sao_chep')}</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={{ flex: 1, backgroundColor: '#00BFFF', padding: 15, justifyContent: 'center', margin: 7, alignItems: 'center', borderRadius: 15, height: 50 }} onPress={() => { isCoppy.current = false, onClickSave() }}>
+                                <TouchableOpacity style={{ flex: 1, backgroundColor: '#00BFFF', padding: 15, justifyContent: 'center', margin: 7, alignItems: 'center', borderRadius: 15, height: 50 }} onPress={onClickSave}>
                                     <Text style={{ color: 'white', fontWeight: 'bold' }}>{I18n.t('luu')}</Text>
                                 </TouchableOpacity>
                             </View>
-                            {product.Id ?
+                            {product.Id && props.allPer.delete ?
                                 <View>
                                     <TouchableOpacity style={{ flex: 1, backgroundColor: '#FF3030', padding: 15, justifyContent: 'center', margin: 7, alignItems: 'center', borderRadius: 15, height: 50 }} onPress={() => { onClickDelete() }}>
                                         <Text style={{ color: 'white', fontWeight: 'bold' }}>{I18n.t('xoa')}</Text>
@@ -1144,7 +1173,7 @@ const styles = StyleSheet.create({
     styleButtonOn: {
         flex: 1, marginRight: 10, justifyContent: 'center', alignItems: 'center', borderRadius: 16, borderWidth: 0.5, padding: 15, backgroundColor: 'white', borderColor: colors.colorLightBlue
     },
-    textInput: { backgroundColor: '#f2f2f2',fontSize:14, marginTop: 5, marginLeft: 15, marginRight: 15, height: 40, borderRadius: 15, height: 50, padding: 10, borderWidth: 0.25, borderColor: 'silver', color: colors.colorLightBlue },
+    textInput: { backgroundColor: '#f2f2f2', fontSize: 14, marginTop: 5, marginLeft: 15, marginRight: 15, height: 40, borderRadius: 15, height: 50, padding: 10, borderWidth: 0.25, borderColor: 'silver', color: colors.colorLightBlue },
     titleHint: {
         marginLeft: 15, marginRight: 10, color: '#B5B5B5', marginBottom: 5, marginTop: 5
     },

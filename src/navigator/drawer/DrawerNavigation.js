@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Image, View, StyleSheet, Button, Text, TouchableOpacity } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import DrawerContent from './DrawerContent';
@@ -24,10 +24,12 @@ import Supplier from '../../screens/supplierManager/SupplierManager';
 import EmployeeManager from '../../screens/employeeManager/EmployeeManager';
 import ReportManager from '../../screens/reportManager/ReportManager';
 import CustomerManage from '../../screens/customerManager/CustomerManage';
+import RoomList from '../../screens/room/RoomList';
+import Menu from '../../screens/main/Menu';
+import { getFileDuLieuString } from '../../data/fileStore/FileStorage';
+import { Constant } from '../../common/Constant';
 const Drawer = createDrawerNavigator();
 export default (propsFunc) => {
-
-  console.log("props Func ", propsFunc);
 
 
   return (
@@ -38,7 +40,7 @@ export default (propsFunc) => {
           width: 300,
         }}
         drawerContent={props => {
-          return <DrawerContent {...props} />;
+          return <Menu {...props} />;
         }}
       >
 
@@ -50,8 +52,8 @@ export default (propsFunc) => {
           {props => <OverView {...props} />}
         </Drawer.Screen>
 
-        <Drawer.Screen name={ScreenList.RoomCatalog} options={{ title: ScreenList.RoomCatalog }}>
-          {props => <RoomCatalog {...props} />}
+        <Drawer.Screen name={ScreenList.RoomList} options={{ title: ScreenList.RoomList }}>
+          {props => <RoomList {...props} />}
         </Drawer.Screen>
         <Drawer.Screen name={ScreenList.CustomerManager} options={{ title: ScreenList.CustomerManager }}>
           {props => <CustomerManage {...props} />}
@@ -74,7 +76,7 @@ export default (propsFunc) => {
         <Drawer.Screen name={ScreenList.VNPayPaymentSetting} options={{ title: ScreenList.Settings }}>
           {props => <VNPayPaymentSetting{...props} />}
         </Drawer.Screen>
-   
+
         <Drawer.Screen name={ScreenList.Vouchers} options={{ title: ScreenList.Vouchers }}>
           {props => <Vouchers{...props} />}
         </Drawer.Screen>
