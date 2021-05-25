@@ -115,6 +115,7 @@ export default (props) => {
             let jsonContentTmp = JSON.parse(currentServerEvent.current.JsonContent)
             console.log("useEffect serverEvent ", currentServerEvent.current);
             console.log("useEffect jsonContentTmp ", jsonContentTmp);
+            jsonContentTmp.ExcessCash = 0;
             if (jsonContentTmp.Partner && jsonContentTmp.Partner.Id) {
                 setCustomer(jsonContentTmp.Partner)
             }
