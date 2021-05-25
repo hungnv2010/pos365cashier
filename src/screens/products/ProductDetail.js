@@ -69,21 +69,7 @@ export default (props) => {
         Value: '',
         isNum: false
     }])
-    const printStamp = useRef([{
-        Name: 'so_luong_ma_vach_can_in',
-        Hint: '',
-        Key: 'quantity',
-        Value: 1,
-        isNum: true
-    },
-    {
-        Name: 'gia_ban',
-        Hint: '',
-        Key: 'price',
-        Value: 0,
-        isNum: true
-    }
-    ])
+    const printStamp = useRef([])
     const [addDVT, setAddDVT] = useState([])
 
     const deviceType = useSelector(state => {
@@ -229,6 +215,20 @@ export default (props) => {
         getCurrentAccount()
         setStatusPrinter()
         console.log("product data", product);
+        printStamp.current = [{
+            Name: 'so_luong_ma_vach_can_in',
+            Hint: '',
+            Key: 'quantity',
+            Value: 1,
+            isNum: true
+        },
+        {
+            Name: 'gia_ban',
+            Hint: '',
+            Key: 'price',
+            Value: product.Price,
+            isNum: true
+        }]
     }, [product])
 
     useEffect(() => {
