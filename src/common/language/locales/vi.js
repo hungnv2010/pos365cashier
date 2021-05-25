@@ -455,6 +455,7 @@ export default {
   so_luong_tru_kho_khi_ban:'Số lượng trừ kho khi bán',
   so_luong_don_vi_tinh_lon:'Số lượng đơn vị tính lớn',
   so_tien_thanh_toan:'Số tiền thanh toán',
+  so_luong_ma_vach_can_in:'Số lượng mã vạch cần in',
 
   // TODO: T
 

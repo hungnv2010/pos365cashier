@@ -73,17 +73,17 @@ export default (props) => {
         Name: 'so_luong_ma_vach_can_in',
         Hint: '',
         Key: 'quantity',
-        Value: '',
-        isNum: true 
+        Value: 1,
+        isNum: true
     },
     {
         Name: 'gia_ban',
         Hint: '',
         Key: 'price',
-        Value: '',
-        isNum: true 
+        Value: 0,
+        isNum: true
     }
-])
+    ])
     const [addDVT, setAddDVT] = useState([])
 
     const deviceType = useSelector(state => {
@@ -837,7 +837,8 @@ export default (props) => {
         })
     }
 
-    const onClickPrintTemp = async () => {
+    const onClickPrintTemp = async (data) => {
+        console.log("temp",data);
         console.log("onClickPrintTemp product ", product);
         let settingObject = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
         if (settingObject && settingObject != "") {
@@ -847,10 +848,11 @@ export default (props) => {
                 if (element.key == Constant.KEY_PRINTER.StampPrintKey && element.ip != "") {
                     let value = await handerDataPrintTempProduct(product)
                     console.log("handerDataPrintTempProduct value  ", value);
-                    Print.PrintTemp(value, element.ip, "40x30")
+                    //Print.PrintTemp(value, element.ip, "40x30")
                 }
             });
         }
+        setOnShowModal(false)
     }
 
     const renderModal = () => {
@@ -914,7 +916,9 @@ export default (props) => {
                                             </View>
                                         </View> */}
                                     </View>
-                                    : null
+                                    : typeModal.current == 7 ?
+                                        <DialogInput listItem={printStamp.current} title={product.Name} titleButton={I18n.t('in_tem')} outputValue={onClickPrintTemp}  /> :
+                                        null
             }
             </View>
         )
@@ -1105,7 +1109,7 @@ export default (props) => {
                                 </View> : null
                             }
                             <View style={{ flex: product.Id ? 1 : 0.9 }}>
-                                <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 7, paddingVertical: 10, justifyContent: 'center', margin: 2, alignItems: 'center', borderRadius: 10 }} onPress={() => { onClickPrintTemp() }}>
+                                <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 7, paddingVertical: 10, justifyContent: 'center', margin: 2, alignItems: 'center', borderRadius: 10 }} onPress={() => { typeModal.current = 7, setOnShowModal(true) }}>
                                     <Icon name={'barcode-scan'} size={24} color={'#fff'} />
                                 </TouchableOpacity>
                             </View>

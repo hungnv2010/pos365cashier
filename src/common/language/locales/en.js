@@ -455,6 +455,7 @@ nhom_nha_cung_cap: "Group supplier",
   so_luong_tru_kho_khi_ban: 'Quantity in warehouse decrease when selling',
   so_luong_don_vi_tinh_lon: 'Quantity of large unit',
   so_tien_thanh_toan: 'Payment amount',
+  so_luong_ma_vach_can_in:'Number of barcodes to print',
 
   // TODO: T
 
