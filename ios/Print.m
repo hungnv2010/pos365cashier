@@ -159,14 +159,14 @@ RCT_EXPORT_METHOD(PrintTemp:(NSString *)param ip:(NSString *)ip size:(NSString *
     
     for (int i=0, count = [arrayOfComponents count]; i < count; i++) {
       NSLog(@"printTemp EscPrint %@", [arrayOfComponents objectAtIndex:i]);
-      [self EscPrint:[arrayOfComponents objectAtIndex:i] ];
+      [self EscPrint:[arrayOfComponents objectAtIndex:i]];
     }
-    
+    [_printerManager.CurrentPrinter Close];
 //    [self EscPrint:param ];
   });
 }
-
--(void)EscPrint: (NSString *)txt{
+//end:(NSString *)end
+-(void)EscPrint: (NSString *)txt {
   Printer * currentprinter = _printerManager.CurrentPrinter;
   NSLog(@"inputStr=1");
   if (currentprinter.IsOpen){
@@ -212,9 +212,11 @@ RCT_EXPORT_METHOD(PrintTemp:(NSString *)param ip:(NSString *)ip size:(NSString *
       aString = [aString stringByReplacingOccurrencesOfString:@"\r" withString:@""];
       NSLog(@"%@",aString);
       [currentprinter Write:data];
-      
+      [[currentprinter PrinterPi] setCallbackwhenSendSuccess:^(NSInteger ipackNo, NSInteger ipackcnt, NSString *message) {
+//            [_printerManager.CurrentPrinter Close];
+      }];
     }
-    [_printerManager.CurrentPrinter Close];
+//    [_printerManager.CurrentPrinter Close];
   }
 }
 

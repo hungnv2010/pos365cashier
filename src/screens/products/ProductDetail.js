@@ -838,17 +838,22 @@ export default (props) => {
     }
 
     const onClickPrintTemp = async (data) => {
-        console.log("temp",data);
+        console.log("temp", data);
         console.log("onClickPrintTemp product ", product);
+        let listProduct = []
+        for (let index = 0; index < data.quantity; index++) {
+            listProduct.push({ ...product, Price: data.price })
+        }
+        console.log("onClickPrintTemp listProduct ", listProduct);
         let settingObject = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
         if (settingObject && settingObject != "") {
             settingObject = JSON.parse(settingObject)
             console.log("onClickPrintTemp settingObject ", settingObject);
             settingObject.Printer.forEach(async element => {
                 if (element.key == Constant.KEY_PRINTER.StampPrintKey && element.ip != "") {
-                    let value = await handerDataPrintTempProduct(product)
+                    let value = await handerDataPrintTempProduct(listProduct)
                     console.log("handerDataPrintTempProduct value  ", value);
-                    //Print.PrintTemp(value, element.ip, "40x30")
+                    Print.PrintTemp(value, element.ip, "40x30")
                 }
             });
         }
@@ -917,7 +922,7 @@ export default (props) => {
                                         </View> */}
                                     </View>
                                     : typeModal.current == 7 ?
-                                        <DialogInput listItem={printStamp.current} title={product.Name} titleButton={I18n.t('in_tem')} outputValue={onClickPrintTemp}  /> :
+                                        <DialogInput listItem={printStamp.current} title={product.Name} titleButton={I18n.t('in_tem')} outputValue={onClickPrintTemp} /> :
                                         null
             }
             </View>
