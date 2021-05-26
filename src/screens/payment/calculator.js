@@ -185,7 +185,7 @@ export default (props) => {
                                     suggestions.map((item,index)=>{
                                         return(
                                             <TouchableOpacity style={[styles.button,{paddingHorizontal:20,paddingVertical:10}]} onPress={()=>clickItemSuggest(item)}>
-                                                <Text>{item} %</Text>
+                                                <Text>{currencyToString(item)} {item <= 100 ? '%' :''}</Text>
                                             </TouchableOpacity>
                                         )
                                     }):null

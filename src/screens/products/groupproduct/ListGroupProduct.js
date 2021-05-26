@@ -227,8 +227,8 @@ export default (props) => {
                     }
                 </View>
 
-                {
-                    allPer.create ?
+                {/* {
+                    allPer.create ? */}
                         <FAB
                             style={styles.fab}
                             icon='plus'
@@ -237,9 +237,9 @@ export default (props) => {
                                 onClickAddItem()
                             }}
                         />
-                        :
+                        {/* :
                         null
-                }
+                } */}
             </View>
             {
                 deviceType == Constant.TABLET ?

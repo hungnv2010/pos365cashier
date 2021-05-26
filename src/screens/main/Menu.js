@@ -496,8 +496,8 @@ const ContentComponent = (props) => {
 
     const onClickItem = (chucnang, index) => {
         console.log("onClickItem props ", props, Privileges.current);
-        if (chucnang.func == KEY_FUNC.OVERVIEW || KEY_FUNC.ORDER_MANAGEMENT || KEY_FUNC.ROOM_LIST || KEY_FUNC.PRODUCT || KEY_FUNC.CUSTOMER_MANAGER || KEY_FUNC.REPORT_MANAGER || KEY_FUNC.SETTING_FUNC) {
-        }
+        // if (chucnang.func == KEY_FUNC.OVERVIEW || KEY_FUNC.ORDER_MANAGEMENT || KEY_FUNC.ROOM_LIST || KEY_FUNC.PRODUCT || KEY_FUNC.CUSTOMER_MANAGER || KEY_FUNC.REPORT_MANAGER || KEY_FUNC.SETTING_FUNC) {
+        // }
         if (chucnang.func == KEY_FUNC.VERSION) return;
         if (chucnang.func == KEY_FUNC.SYNCHRONIZE) {
             if (isFNB == true) {
@@ -508,43 +508,48 @@ const ContentComponent = (props) => {
             props.navigation.closeDrawer();
             return;
         }
-        if (chucnang.func == KEY_FUNC.HOME) {
-            getPermission(chucnang.func, index, 'Order')
+        let params = {};
+        if (chucnang.func == ScreenList.OrderManagement || chucnang.func == ScreenList.Home || chucnang.func == ScreenList.Customer || chucnang.func == ScreenList.Settings || chucnang.func == ScreenList.Invoice || chucnang.func == ScreenList.OverView || chucnang.func == ScreenList.RoomHistory || chucnang.func == ScreenList.Vouchers) {
+            setCurrentItemMenu(index)
         }
-        if (chucnang.func == KEY_FUNC.OVERVIEW) {
-            getPermission(chucnang.func, index, 'DashBoard')
-        }
-        if (chucnang.func == KEY_FUNC.ORDER_MANAGEMENT) {
-            getPermission(chucnang.func, index, 'Order')
-        }
-        if (chucnang.func == KEY_FUNC.ROOM_LIST) {
-            getPermission(chucnang.func, index, 'Room')
-        }
-        if (chucnang.func == KEY_FUNC.PRODUCT) {
-            // getPermission(chucnang.func, index, 'Product')
-            // PurchaseOrder
-            let perProduct = Privileges.current.filter(itm => itm.id == 'Product')
-            let perImport = Privileges.current.filter(itm => itm.id == 'PurchaseOrder')
-            if (perProduct[0].expanded || perImport[0].expanded) {
-                setCurrentItemMenu(index)
-                props.navigation.navigate(chucnang.func, { perProduct: perProduct[0], perImport: perImport[0] })
-            } else {
-                dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
-                    dialogManager.destroy();
-                }, null, null, I18n.t('dong'))
-                return
-            }
+        props.navigation.navigate(chucnang.func, params)
+        // if (chucnang.func == KEY_FUNC.HOME) {
+        //     getPermission(chucnang.func, index, 'Order')
+        // }
+        // if (chucnang.func == KEY_FUNC.OVERVIEW) {
+        //     getPermission(chucnang.func, index, 'DashBoard')
+        // }
+        // if (chucnang.func == KEY_FUNC.ORDER_MANAGEMENT) {
+        //     getPermission(chucnang.func, index, 'Order')
+        // }
+        // if (chucnang.func == KEY_FUNC.ROOM_LIST) {
+        //     getPermission(chucnang.func, index, 'Room')
+        // }
+        // if (chucnang.func == KEY_FUNC.PRODUCT) {
+        //     // getPermission(chucnang.func, index, 'Product')
+        //     // PurchaseOrder
+        //     let perProduct = Privileges.current.filter(itm => itm.id == 'Product')
+        //     let perImport = Privileges.current.filter(itm => itm.id == 'PurchaseOrder')
+        //     if (perProduct[0].expanded || perImport[0].expanded) {
+        //         setCurrentItemMenu(index)
+        //         props.navigation.navigate(chucnang.func, { perProduct: perProduct[0], perImport: perImport[0] })
+        //     } else {
+        //         dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+        //             dialogManager.destroy();
+        //         }, null, null, I18n.t('dong'))
+        //         return
+        //     }
 
-        }
-        if (chucnang.func == KEY_FUNC.CUSTOMER_MANAGER) {
-            getPermission(chucnang.func, index, 'Partner')
-        }
-        if (chucnang.func == KEY_FUNC.REPORT_MANAGER) {
-            getPermission(chucnang.func, index, 'Report')
-        }
-        if (chucnang.func == KEY_FUNC.SETTING_FUNC) {
-            getPermission(chucnang.func, index, 'PosParameter')
-        }
+        // }
+        // if (chucnang.func == KEY_FUNC.CUSTOMER_MANAGER) {
+        //     getPermission(chucnang.func, index, 'Partner')
+        // }
+        // if (chucnang.func == KEY_FUNC.REPORT_MANAGER) {
+        //     getPermission(chucnang.func, index, 'Report')
+        // }
+        // if (chucnang.func == KEY_FUNC.SETTING_FUNC) {
+        //     getPermission(chucnang.func, index, 'PosParameter')
+        // }
 
         props.navigation.closeDrawer();
     }
