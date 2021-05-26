@@ -875,7 +875,7 @@ export default (props) => {
         if (value != sendMethod) {
             setSendMethod(value)
             if (value.name == METHOD.pay.name) { 
-                setListSuggestions([])
+                setListSuggestions(listSuggestTotal(totalPrice))
                 listMethod.forEach(element => {
                     if (value.Id == element.Id && element.UUID == value.UUID) {
                         element.Value = 0;
@@ -891,6 +891,7 @@ export default (props) => {
     const listSuggestTotal = (total) =>{
         let list = [total]
         
+        return list
 
     }
 
