@@ -96,12 +96,6 @@ const LoginScreen = (props) => {
         }
     }
 
-    // useEffect(() => {
-    //     onClickLogin()
-    //     return () => {
-    //         setLogIn(false)
-    //     }
-    // }, [onClickLogin])
 
     const handlerLoginSuccess = async (params, res) => {
         let account = { SessionId: res.SessionId, UserName: params.UserName, Link: shop.trim() };
@@ -122,7 +116,7 @@ const LoginScreen = (props) => {
         dialogManager.hiddenLoading();
     }
 
-    const getRetailerInfoAndNavigate = () => {
+    const getRetailerInfoAndNavigate = async () => {
         let inforParams = {};
         new HTTPService().setPath(ApiPath.VENDOR_SESSION).GET(inforParams, getHeaders()).then(async (res) => {
             console.log("getDataRetailerInfo res ", res);
@@ -141,6 +135,18 @@ const LoginScreen = (props) => {
                 if (userName != '') {
                     let account = { UserName: userName, Link: shop.trim() };
                     setFileLuuDuLieu(Constant.REMEMBER_ACCOUNT, JSON.stringify(account));
+                }
+                if (!res.CurrentUser.IsAdmin) {
+                    let params = {
+                        ShowAll: true,
+                        BranchId: res.Branchs[0].Id
+                    }
+                    let apiPath = ApiPath.PRIVILEGES.replace('{userId}', res.CurrentUser.Id)
+                    let privileges = await new HTTPService().setPath(apiPath).GET(params, getHeaders())
+                    console.log('privileges', privileges);
+                    setFileLuuDuLieu(Constant.PRIVILEGES, JSON.stringify(privileges));
+
+
                 }
                 setFileLuuDuLieu(Constant.HTML_PRINT, htmlDefault);
                 navigateToHome()

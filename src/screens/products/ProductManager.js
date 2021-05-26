@@ -8,22 +8,91 @@ import MainToolBar from '../main/MainToolBar';
 import colors from '../../theme/Colors';
 import { ScreenList } from '../../common/ScreenList';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import dialogManager from '../../components/dialog/DialogManager';
 
 
 export default (props) => {
 
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
+    const [perProduct, setPerProduct] = useState({
+        read: true,
+        create: true,
+        update: true,
+        delete: true,
+        viewCost: true,
+        updateCost: true
+    })
+    const [perImport, setPerImport] = useState({
+        read: true,
+        create: true,
+        update: true,
+        delete: true,
+        viewCost: true,
+        updateCost: true
+    })
     const { isFNB } = useSelector(state => {
         return state.Common
     })
 
+    useEffect(() => {
+        console.log('props product manager', props);
+        let itemProduct = props.route.params.perProduct.items
+        let itemImport = props.route.params.perImport.items
+        let allPerProduct = {}
+        let allPerImport = {}
+        itemProduct.forEach(element => {
+            if (element.id == "Product_Read") allPerProduct.read = element.Checked
+            if (element.id == "Product_Create") allPerProduct.create = element.Checked
+            if (element.id == "Product_Update") allPerProduct.update = element.Checked
+            if (element.id == "Product_Delete") allPerProduct.delete = element.Checked
+            if (element.id == "Product_ViewCost") allPerProduct.viewCost = element.Checked
+            if (element.id == "Product_UpdateCost") allPerProduct.updateCost = element.Checked
+        });
+        itemImport.forEach(element => {
+            if (element.id == "PurchaseOrder_Read") allPerImport.read = element.Checked
+            if (element.id == "PurchaseOrder_Create") allPerImport.create = element.Checked
+            if (element.id == "PurchaseOrder_Update") allPerImport.update = element.Checked
+            if (element.id == "PurchaseOrder_Delete") allPerImport.delete = element.Checked
+            if (element.id == "PurchaseOrder_ViewCost") allPerImport.viewCost = element.Checked
+            if (element.id == "PurchaseOrder_UpdateCost") allPerImport.updateCost = element.Checked
+        })
+        setPerProduct(allPerProduct)
+        setPerImport(allPerImport)
+    }, [])
+
     const onClickNavigationProduct = () => {
-        props.navigation.navigate(ScreenList.Product)
+        if (perProduct.read) props.navigation.navigate(ScreenList.Product, { permission: perProduct })
+        else {
+            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
+        }
     }
-    const onClickNavigationExtra = (data) => {
-        props.navigation.navigate(data)
+
+    const onClickNavigationExtra = () => {
+        props.navigation.navigate(ScreenList.ListExtraTopping)
     }
+
+    const onClickToListGroup = () => {
+        if (perProduct.read) props.navigation.navigate(ScreenList.ListGroupProduct, { permission: perProduct })
+        else {
+            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
+        }
+    }
+
+    const onClickListOrderStock = () => {
+        if (perImport.read) props.navigation.navigate(ScreenList.ListOrderStock, { permission: perImport })
+        else {
+            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
+        }
+    }
+
+
 
     return (
         <View style={{ flex: 1 }}>
@@ -34,22 +103,22 @@ export default (props) => {
             />
 
             <View style={styles.viewContent}>
-            <TouchableOpacity style={styles.button} onPress={() => onClickNavigationExtra(ScreenList.ListGroupProduct)}>
+                <TouchableOpacity style={styles.button} onPress={() => onClickToListGroup()}>
                     <Image style={styles.iconButton} source={Images.ic_nhomhanghoa} />
                     <Text style={styles.textButton}>{I18n.t('nhom_hang_hoa')}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => onClickNavigationProduct(ScreenList.Product)}>
+                <TouchableOpacity style={styles.button} onPress={() => onClickNavigationProduct()}>
                     <Image style={styles.iconButton} source={Images.ic_danhsachhanghoa} />
                     <Text style={styles.textButton}>{I18n.t('danh_sach_hang_hoa')}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => {onClickNavigationExtra(ScreenList.ListExtraTopping)}}>
-                    <View style={{backgroundColor:'#36a3f7',borderRadius:16, height:42,width:42,alignItems:'center',justifyContent:'center',marginRight:10}}>
+                <TouchableOpacity style={styles.button} onPress={() => { onClickNavigationExtra() }}>
+                    <View style={{ backgroundColor: '#36a3f7', borderRadius: 16, height: 42, width: 42, alignItems: 'center', justifyContent: 'center', marginRight: 10 }}>
                         <Icon name={'puzzle-outline'} size={21} color={'#fff'} />
                     </View>
                     <Text style={styles.textButton}>{I18n.t('thiet_lap_extra_topping')}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => {onClickNavigationExtra(ScreenList.ListOrderStock)}}>
-                <Image style={styles.iconButton} source={Images.ic_nhaphang} />
+                <TouchableOpacity style={styles.button} onPress={() => { onClickListOrderStock() }}>
+                    <Image style={styles.iconButton} source={Images.ic_nhaphang} />
                     <Text style={styles.textButton}>{I18n.t('nhap_hang')}</Text>
                 </TouchableOpacity>
             </View>

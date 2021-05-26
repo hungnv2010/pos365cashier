@@ -34,18 +34,13 @@ export default (props) => {
     const [customerData, setCustomerData] = useState([])
     const [customerItem, setCustomerItem] = useState(GUEST)
     const [textSearch, setTextSearch] = useState('')
+    const [allPer, setPer] = useState(props.route.params.permission ? props.route.params.permission : {})
     const debouncedVal = useDebounce(textSearch)
     const backUpCustomer = useRef([])
     const { deviceType } = useSelector(state => {
         return state.Common
     });
     const currentBranch = useRef()
-
-    // useFocusEffect(
-    //     useCallback(() => {
-    //         getCustomer()
-    //     }, [])
-    // )
 
     useEffect(() => {
         console.log('customer props ', props);
@@ -209,18 +204,24 @@ export default (props) => {
                         renderItem={({ item, index }) => renderListItem(item, index)}
                         keyExtractor={(item, index) => index.toString()}
                     />
-                    <FAB
-                        style={styles.fab}
-                        big
-                        icon="plus"
-                        color="#fff"
-                        onPress={onClickAddCustomer}
-                    />
+                    {
+                        allPer.create ?
+                            <FAB
+                                style={styles.fab}
+                                big
+                                icon="plus"
+                                color="#fff"
+                                onPress={onClickAddCustomer}
+                            />
+                            :
+                            null
+                    }
                 </View>
                 {
                     deviceType == Constant.TABLET ?
                         <View style={{ flex: 1 }}>
                             <CustomerDetail
+                                allPer={allPer}
                                 customerDetail={customerItem}
                                 handleSuccess={handleSuccess} />
                         </View>

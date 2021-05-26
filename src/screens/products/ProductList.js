@@ -32,6 +32,7 @@ export default (props) => {
     const [qrScan, setQrScan] = useState()
     const onEndReachedCalledDuringMomentum = useRef(false)
     const currentProduct = useRef(0)
+    const [allPer, setPer] = useState(props.route.params.permission ? props.route.params.permission : {})
     const [loadMore, setLoadMore] = useState(false)
     const [viewData, setViewData] = useState([])
     const productTmp = useRef([])
@@ -39,6 +40,12 @@ export default (props) => {
     const deviceType = useSelector(state => {
         return state.Common.deviceType
     });
+
+
+    useEffect(() => {
+        console.log('props product', props);
+    }, [])
+
     useEffect(() => {
         getData()
     }, [])
@@ -56,7 +63,7 @@ export default (props) => {
                 dialogManager.showLoading()
                 getDataFromRealm()
             }
-            
+
             dialogManager.hiddenLoading()
         } catch (error) {
             console.log('handleSuccess err', error);
@@ -274,22 +281,35 @@ export default (props) => {
                         </View>
                     }
 
-                    <FAB
-                        style={styles.fab}
-                        icon='plus'
-                        color="#fff"
-                        onPress={() => {
-                            onClickItem({})
-                        }}
-                    />
+                    {
+                        allPer.create ?
+                            <FAB
+                                style={styles.fab}
+                                icon='plus'
+                                color="#fff"
+                                onPress={() => {
+                                    onClickItem({})
+                                }}
+                            />
+                            :
+                            null
+                    }
 
                 </View>
 
                 {deviceType == Constant.TABLET ? itProduct != null ?
                     <View style={{ flex: 1 }}>
-                        <ProductDetail iproduct={itProduct} outPutCombo={outPut} handleSuccessTab={handleSuccess} compositeItemProducts={compositeItemProducts} scanQr={qrScan} />
+                        <ProductDetail
+                            iproduct={itProduct}
+                            outPutCombo={outPut}
+                            handleSuccessTab={handleSuccess}
+                            compositeItemProducts={compositeItemProducts}
+                            scanQr={qrScan}
+                            allPer={allPer}
+                        />
                     </View>
-                    : <View style={{ flex: 1 }}></View>
+                    :
+                    <View style={{ flex: 1 }}></View>
                     :
                     null
                 }

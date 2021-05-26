@@ -85,57 +85,57 @@ export default (props) => {
 
     }
     console.log("OrderStock", orderStock);
-    const onClickDel = () =>{
+    const onClickDel = () => {
         console.log("delete", orderStock.Id);
-        if(orderStock.Status != 3){
-        dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_xoa_phieu_nhap_hang_nay'), I18n.t("thong_bao"), res => {
-            if (res == 1) {
-                new HTTPService().setPath(`${ApiPath.ORDERSTOCK}/${orderStock.Id}/void`).DELETE()
-                    .then(res => {
-                        console.log('onClickDelete', res)
-                        if (res) {
-                            if (res.ResponseStatus && res.ResponseStatus.Message) {
-                                dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
-                                    dialogManager.destroy();
-                                }, null, null, I18n.t('dong'))
-                            } else {
-                                console.log('success');
-                                if (deviceType == Constant.PHONE) {
-                                    props.route.params.onCallBack('xoa', 2)
-                                    props.navigation.pop()
-                                } else
-                                    props.handleSuccessTab('xoa', 2)
+        if (orderStock.Status != 3) {
+            dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_xoa_phieu_nhap_hang_nay'), I18n.t("thong_bao"), res => {
+                if (res == 1) {
+                    new HTTPService().setPath(`${ApiPath.ORDERSTOCK}/${orderStock.Id}/void`).DELETE()
+                        .then(res => {
+                            console.log('onClickDelete', res)
+                            if (res) {
+                                if (res.ResponseStatus && res.ResponseStatus.Message) {
+                                    dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
+                                        dialogManager.destroy();
+                                    }, null, null, I18n.t('dong'))
+                                } else {
+                                    console.log('success');
+                                    if (deviceType == Constant.PHONE) {
+                                        props.route.params.onCallBack('xoa', 2)
+                                        props.navigation.pop()
+                                    } else
+                                        props.handleSuccessTab('xoa', 2)
+                                }
                             }
-                        }
-                    })
-                    .catch(err => console.log('ClickDelete err', err))
-            }
-        })
-    }else{
-        dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_xoa_phieu_nhap_hang_nay'), I18n.t("thong_bao"), res => {
-            if (res == 1) {
-                new HTTPService().setPath(`${ApiPath.ORDERSTOCK}/${orderStock.Id}`).DELETE()
-                    .then(res => {
-                        console.log('onClickDelete', res)
-                        if (res) {
-                            if (res.ResponseStatus && res.ResponseStatus.Message) {
-                                dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
-                                    dialogManager.destroy();
-                                }, null, null, I18n.t('dong'))
-                            } else {
-                                console.log('success');
-                                if (deviceType == Constant.PHONE) {
-                                    props.route.params.onCallBack('xoa', 2)
-                                    props.navigation.pop()
-                                } else
-                                    props.handleSuccessTab('xoa', 2)
+                        })
+                        .catch(err => console.log('ClickDelete err', err))
+                }
+            })
+        } else {
+            dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_xoa_phieu_nhap_hang_nay'), I18n.t("thong_bao"), res => {
+                if (res == 1) {
+                    new HTTPService().setPath(`${ApiPath.ORDERSTOCK}/${orderStock.Id}`).DELETE()
+                        .then(res => {
+                            console.log('onClickDelete', res)
+                            if (res) {
+                                if (res.ResponseStatus && res.ResponseStatus.Message) {
+                                    dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
+                                        dialogManager.destroy();
+                                    }, null, null, I18n.t('dong'))
+                                } else {
+                                    console.log('success');
+                                    if (deviceType == Constant.PHONE) {
+                                        props.route.params.onCallBack('xoa', 2)
+                                        props.navigation.pop()
+                                    } else
+                                        props.handleSuccessTab('xoa', 2)
+                                }
                             }
-                        }
-                    })
-                    .catch(err => console.log('ClickDelete err', err))
-            }
-        })
-    }
+                        })
+                        .catch(err => console.log('ClickDelete err', err))
+                }
+            })
+        }
     }
 
     return (
@@ -246,22 +246,32 @@ export default (props) => {
                 <TouchableOpacity style={{ flex: 1, marginRight: 10, backgroundColor: colors.colorLightBlue, paddingVertical: 10, alignItems: 'center', justifyContent: 'center', borderRadius: 10 }}>
                     <Icon name={'printer'} size={24} color={'#fff'} />
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.styleBtn} onPress={()=> onClickDel()}>
-                    <Text style={styles.styleTittleBtn}>{orderStock.Status != 3 ? I18n.t('huy') : I18n.t('xoa')}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.styleBtn,{marginLeft:10}]} onPress={() => { props.navigation.navigate(ScreenList.AddOrderStock, { orderstock: orderStock, listPr: listItem, paymentMethod: methodPay }) }}>
-                    <Text style={styles.styleTittleBtn}>{I18n.t('chinh_sua')}</Text>
-                </TouchableOpacity>
+                {
+                    props.allPer.delete ?
+                        <TouchableOpacity style={styles.styleBtn} onPress={() => onClickDel()}>
+                            <Text style={styles.styleTittleBtn}>{orderStock.Status != 3 ? I18n.t('huy') : I18n.t('xoa')}</Text>
+                        </TouchableOpacity>
+                        :
+                        null
+                }
+                {
+                    props.allPer.update ?
+                        <TouchableOpacity style={[styles.styleBtn, { marginLeft: 10 }]} onPress={() => { props.navigation.navigate(ScreenList.AddOrderStock, { orderstock: orderStock, listPr: listItem, paymentMethod: methodPay }) }}>
+                            <Text style={styles.styleTittleBtn}>{I18n.t('chinh_sua')}</Text>
+                        </TouchableOpacity>
+                        :
+                        null
+                }
             </View>
         </View>
     )
 }
 const styles = StyleSheet.create({
-    styleTittleBtn:{ textAlign: 'center', fontWeight: 'bold', color: '#fff' },
-    styleTitle:{
-        color:'#bbbbbb'
+    styleTittleBtn: { textAlign: 'center', fontWeight: 'bold', color: '#fff' },
+    styleTitle: {
+        color: '#bbbbbb'
     },
-    styleView:{ flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 },
-    styleBtn:{ flex: 3, backgroundColor: colors.colorLightBlue, alignItems: 'center', justifyContent: 'center', borderRadius: 10 },
-    styleValue :{ fontWeight: 'bold', color: colors.colorLightBlue }
+    styleView: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 },
+    styleBtn: { flex: 3, backgroundColor: colors.colorLightBlue, alignItems: 'center', justifyContent: 'center', borderRadius: 10 },
+    styleValue: { fontWeight: 'bold', color: colors.colorLightBlue }
 })

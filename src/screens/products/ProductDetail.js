@@ -130,6 +130,11 @@ export default (props) => {
         },
         ProductPartners: productOl.ProductPartners ? productOl.ProductPartners : []
     }
+
+    useEffect(() => {
+        console.log('props.allPer', props.allPer);
+    }, [])
+
     useEffect(() => {
         if (deviceType == Constant.PHONE) {
             getData(props.route.params)
@@ -527,7 +532,7 @@ export default (props) => {
             console.log("price config", printerPr);
         }
     }
-    const onClickSave = (type) => {
+    const onSave = (type) => {
         // if (product.CategoryId && product.CategoryId > 0) {
         //     params.Product = { ...params.Product, CategoryId: product.CategoryId }
         // if (product.ProductType == 2) {
@@ -536,6 +541,29 @@ export default (props) => {
         //}
         saveProduct()
     }
+
+    const onClickSaveAndCopy = () => {
+        if (props.allPer.update) {
+            isCoppy.current = true
+            onSave()
+        } else {
+            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
+        }
+    }
+
+    const onClickSave = () => {
+        if (props.allPer.update) {
+            isCoppy.current = false
+            onSave()
+        } else {
+            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
+        }
+    }
+
     const syncData = async () => {
         dialogManager.showLoading()
         try {
@@ -602,6 +630,7 @@ export default (props) => {
             }, null, null, I18n.t('dong'))
         }
     }
+
     const setLargeUnit = (data) => {
         console.log("data", data);
         setProduct({ ...product, LargeUnit: data.LargeUnit, PriceLargeUnit: data.PriceLargeUnit, ConversionValue: data.ConversionValue, LargeUnitId: data.LargeUnitId })
@@ -838,17 +867,22 @@ export default (props) => {
     }
 
     const onClickPrintTemp = async (data) => {
-        console.log("temp",data);
+        console.log("temp", data);
         console.log("onClickPrintTemp product ", product);
+        let listProduct = []
+        for (let index = 0; index < data.quantity; index++) {
+            listProduct.push({ ...product, Price: data.price })
+        }
+        console.log("onClickPrintTemp listProduct ", listProduct);
         let settingObject = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
         if (settingObject && settingObject != "") {
             settingObject = JSON.parse(settingObject)
             console.log("onClickPrintTemp settingObject ", settingObject);
             settingObject.Printer.forEach(async element => {
                 if (element.key == Constant.KEY_PRINTER.StampPrintKey && element.ip != "") {
-                    let value = await handerDataPrintTempProduct(product)
+                    let value = await handerDataPrintTempProduct(listProduct)
                     console.log("handerDataPrintTempProduct value  ", value);
-                    //Print.PrintTemp(value, element.ip, "40x30")
+                    Print.PrintTemp(value, element.ip, "40x30")
                 }
             });
         }
@@ -917,7 +951,7 @@ export default (props) => {
                                         </View> */}
                                     </View>
                                     : typeModal.current == 7 ?
-                                        <DialogInput listItem={printStamp.current} title={product.Name} titleButton={I18n.t('in_tem')} outputValue={onClickPrintTemp}  /> :
+                                        <DialogInput listItem={printStamp.current} title={product.Name} titleButton={I18n.t('in_tem')} outputValue={onClickPrintTemp} /> :
                                         null
             }
             </View>
@@ -1066,7 +1100,7 @@ export default (props) => {
                                 <View style={{ flexDirection: 'row' }}>
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.title}>{I18n.t('gia_von')}</Text>
-                                        <TextInput style={[styles.textInput, { color: colors.colorLightBlue, fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={cost ? currencyToString(cost) : 0 + ''} onChangeText={(text) => setCost(onChangeTextInput(text))}></TextInput>
+                                        <TextInput editable={props.allPer.updateCost} style={[styles.textInput, { color: colors.colorLightBlue, fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={cost && props.allPer.viewCost ? currencyToString(cost) : '--'} onChangeText={(text) => setCost(onChangeTextInput(text))}></TextInput>
                                     </View>
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.title} >{I18n.t('gia')}</Text>
@@ -1101,7 +1135,7 @@ export default (props) => {
                     </View>
                     <View style={{ backgroundColor: '#f2f2f2', padding: 10 }}>
                         <View style={{ flexDirection: 'row' }}>
-                            {product.Id ?
+                            {product.Id && props.allPer.delete ?
                                 <View style={{ flex: 1 }}>
                                     <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 7, paddingVertical: 10, justifyContent: 'center', margin: 2, alignItems: 'center', borderRadius: 10 }} onPress={() => { onClickDelete() }}>
                                         <Icon name={'trash-can'} size={24} color={'#fff'} />
@@ -1114,10 +1148,10 @@ export default (props) => {
                                 </TouchableOpacity>
                             </View>
                             <View style={{ flexDirection: 'row', flex: deviceType == Constant.PHONE ? 5 : 7 }}>
-                                <TouchableOpacity style={{ flex: 1, backgroundColor: colors.colorLightBlue, paddingHorizontal: 2, paddingVertical: 10, justifyContent: 'center', margin: 2, alignItems: 'center', borderRadius: 10 }} onPress={() => { isCoppy.current = true, onClickSave() }}>
+                                <TouchableOpacity style={{ flex: 1, backgroundColor: colors.colorLightBlue, paddingHorizontal: 2, paddingVertical: 10, justifyContent: 'center', margin: 2, alignItems: 'center', borderRadius: 10 }} onPress={() => { onClickSaveAndCopy() }}>
                                     <Text style={{ color: 'white', fontWeight: 'bold' }}>{I18n.t('luu_va_sao_chep')}</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={{ flex: 1, backgroundColor: colors.colorLightBlue, paddingHorizontal: 2, paddingVertical: 10, justifyContent: 'center', margin: 2, alignItems: 'center', borderRadius: 10 }} onPress={() => { isCoppy.current = false, onClickSave() }}>
+                                <TouchableOpacity style={{ flex: 1, backgroundColor: colors.colorLightBlue, paddingHorizontal: 2, paddingVertical: 10, justifyContent: 'center', margin: 2, alignItems: 'center', borderRadius: 10 }} onPress={() => { onClickSave() }}>
                                     <Text style={{ color: 'white', fontWeight: 'bold' }}>{I18n.t('luu')}</Text>
                                 </TouchableOpacity>
                             </View>

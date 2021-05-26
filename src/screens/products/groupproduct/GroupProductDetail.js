@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useLayoutEffect, useRef,useCallback } from 'react';
-import { Animated, Image, View, StyleSheet, Text, TouchableOpacity, ScrollView, ActivityIndicator, Modal, TouchableWithoutFeedback, Keyboard} from "react-native";
+import React, { useEffect, useState, useLayoutEffect, useRef, useCallback } from 'react';
+import { Animated, Image, View, StyleSheet, Text, TouchableOpacity, ScrollView, ActivityIndicator, Modal, TouchableWithoutFeedback, Keyboard } from "react-native";
 import I18n from '../../../common/language/i18n';
 import realmStore from '../../../data/realm/RealmStore';
 import { Images, Metrics } from '../../../theme';
@@ -120,9 +120,9 @@ export default (props) => {
                             if (deviceType == Constant.PHONE) {
                                 props.route.params.onCallBack('them', 1)
                                 handleSuccess('sua', value.CategoryName)
-                            } else{
-                             setData({ ...data, Name: value.CategoryName })
-                            props.handleSuccessTab('sua', 1,{ ...data, Name: value.CategoryName })
+                            } else {
+                                setData({ ...data, Name: value.CategoryName })
+                                props.handleSuccessTab('sua', 1, { ...data, Name: value.CategoryName })
                             }
                         }
                         //dialogManager.hiddenLoading()
@@ -138,7 +138,7 @@ export default (props) => {
                 dialogManager.destroy();
             }, null, null, I18n.t('dong'))
         }
-        
+
     }
     const handleSuccess = (type, name) => {
         setData({ ...data, Name: name })
@@ -183,18 +183,28 @@ export default (props) => {
                         <Text style={{ color: colors.colorLightBlue, marginTop: 10, fontWeight: 'bold' }}>{data.Name}</Text>
                     </View>
                     <View style={{ flexDirection: 'row', paddingHorizontal: 50 }}>
-                        <View style={{ flex: 1, marginRight: 10, paddingVertical: 10, alignItems: 'center', justifyContent: 'center' }}>
-                            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }} onPress={() => onClickEditCate()}>
-                                <Image source={Images.icon_edit} style={{ width: 16, height: 16 }} />
-                                <Text style={{ marginLeft: 8, color: '#f6871e', fontSize: 16 }}>{I18n.t('chinh_sua')}</Text>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={{ flex: 1, marginLeft: 10, paddingVertical: 10, alignItems: 'center', justifyContent: 'center' }}>
-                            <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }} onPress={() => onCLickDelCate()}>
-                                <Ionicons name={'trash'} size={17} color={'#f21e3c'} />
-                                <Text style={{ marginLeft: 8, color: '#f21e3c', fontSize: 16 }}>{I18n.t('xoa')}</Text>
-                            </TouchableOpacity>
-                        </View>
+                        {
+                            props.allPer.update ?
+                                <View style={{ flex: 1, marginRight: 10, paddingVertical: 10, alignItems: 'center', justifyContent: 'center' }}>
+                                    <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }} onPress={() => onClickEditCate()}>
+                                        <Image source={Images.icon_edit} style={{ width: 16, height: 16 }} />
+                                        <Text style={{ marginLeft: 8, color: '#f6871e', fontSize: 16 }}>{I18n.t('chinh_sua')}</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                :
+                                null
+                        }
+                        {
+                            props.allPer.delete ?
+                                <View style={{ flex: 1, marginLeft: 10, paddingVertical: 10, alignItems: 'center', justifyContent: 'center' }}>
+                                    <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }} onPress={() => onCLickDelCate()}>
+                                        <Ionicons name={'trash'} size={17} color={'#f21e3c'} />
+                                        <Text style={{ marginLeft: 8, color: '#f21e3c', fontSize: 16 }}>{I18n.t('xoa')}</Text>
+                                    </TouchableOpacity>
+                                </View>
+                                :
+                                null
+                        }
                     </View>
                 </View>
                 <View>

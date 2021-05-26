@@ -40,6 +40,7 @@ export default (props) => {
     const debouncedVal = useDebounce(textSearch)
     const [showModal, setOnShowModal] = useState(false)
     const backUpCustomer = useRef([])
+    const [allPer, setPer] = useState(props.route.params.permission ? props.route.params.permission : {})
     const { deviceType } = useSelector(state => {
         return state.Common
     });
@@ -255,18 +256,24 @@ export default (props) => {
                         renderItem={({ item, index }) => renderListItem(item, index)}
                         keyExtractor={(item, index) => index.toString()}
                     />
-                    <FAB
-                        style={styles.fab}
-                        big
-                        icon="plus"
-                        color="#fff"
-                        onPress={onClickAddCustomer}
-                    />
+                    {
+                        allPer.create ?
+                            <FAB
+                                style={styles.fab}
+                                big
+                                icon="plus"
+                                color="#fff"
+                                onPress={onClickAddCustomer}
+                            />
+                            :
+                            null
+                    }
                 </View>
                 {
                     deviceType == Constant.TABLET ?
                         <View style={{ flex: 1 }}>
                             <SupplierDetail
+                                allPer={allPer}
                                 customerDetail={customerItem}
                                 handleSuccess={handleSuccess} />
                         </View>

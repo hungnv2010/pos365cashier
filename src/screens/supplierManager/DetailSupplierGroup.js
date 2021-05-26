@@ -256,17 +256,27 @@ export default (props) => {
                     <Text style={{ fontSize: 20, color: colors.colorLightBlue, fontWeight: "bold" }}>{detailGroup.text}</Text>
                 </View>
                 <View style={{ flexDirection: "row", margin: 20, alignSelf: "center" }}>
-                    <TouchableOpacity
-                        style={{ flexDirection: "row", marginRight: 15, backgroundColor: "#fde7d2", borderRadius: 10 }}
-                        onPress={() => { setShowModal(true) }}>
-                        <Text style={{ color: colors.colorchinh, padding: 15, fontWeight: "bold" }}>{I18n.t('chinh_sua')}</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={{ flexDirection: "row", marginLeft: 15, backgroundColor: "#F7DCDC", borderRadius: 10 }}
-                        onPress={onClickDelete}
-                    >
-                        <Text style={{ color: "#f21e3c", paddingVertical: 15, paddingHorizontal: 30, fontWeight: "bold" }}>{I18n.t('xoa')}</Text>
-                    </TouchableOpacity>
+                    {
+                        props.allPer.update ?
+                            <TouchableOpacity
+                                style={{ flexDirection: "row", marginRight: 15, backgroundColor: "#fde7d2", borderRadius: 10 }}
+                                onPress={() => { setShowModal(true) }}>
+                                <Text style={{ color: colors.colorchinh, padding: 15, fontWeight: "bold" }}>{I18n.t('chinh_sua')}</Text>
+                            </TouchableOpacity>
+                            :
+                            null
+                    }
+                    {
+                        props.allPer.delete ?
+                            <TouchableOpacity
+                                style={{ flexDirection: "row", marginLeft: 15, backgroundColor: "#F7DCDC", borderRadius: 10 }}
+                                onPress={onClickDelete}
+                            >
+                                <Text style={{ color: "#f21e3c", paddingVertical: 15, paddingHorizontal: 30, fontWeight: "bold" }}>{I18n.t('xoa')}</Text>
+                            </TouchableOpacity>
+                            :
+                            null
+                    }
                 </View>
             </View>
             <View style={{ flex: 3, }}>

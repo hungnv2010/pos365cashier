@@ -349,12 +349,12 @@ export default {
   mo_ta_tach_hang: 'Adding this item to your order will not add up the quantity, but will split it into multiple lines.',
   ma_nhap_hnag: 'Code',
   moi_nhap: 'Input',
-  ma_hang_hoa:'Product code',
+  ma_hang_hoa: 'Product code',
 
   // TODO: N
 
-ngay_thanh_lap: "Founding",
-nhom_nha_cung_cap: "Group supplier",
+  ngay_thanh_lap: "Founding",
+  nhom_nha_cung_cap: "Group supplier",
   nhom_khach_hang: "Group customers",
   no: "Debt",
   ngon_ngu: 'Language',
@@ -392,10 +392,11 @@ nhom_nha_cung_cap: "Group supplier",
   nhap_ten_nhom: 'Enter group name',
   nhap_ten_hang_hoa: 'Enter product name',
   ngay_giao: 'Delivery date',
+
   nhom_hang_hoa:'Group product',
   
   // TODO: O
-  
+
   // TODO: P
 
   phong_ban: "Room / Table",
@@ -408,7 +409,7 @@ nhom_nha_cung_cap: "Group supplier",
   phien_ban_ngay: "Version",
   phuong_thuc_khac: "Other method",
   phuong_thuc_thanh_toan: "Payment methods",
-  
+
   // TODO: Q
 
   quan_ly_nhan_vien: "Employee manager",
@@ -422,6 +423,8 @@ nhom_nha_cung_cap: "Group supplier",
   quan_ly_don_hang: "Order management",
   quan_ly: 'Manager',
   quan_ly_hang_hoa: 'Product management',
+  quan_ly_doi_tac: "Quản lý đối tác",
+
 
   // TODO: R
 
@@ -574,6 +577,8 @@ nhom_nha_cung_cap: "Group supplier",
   tong_so_luong_nhap: 'Total amount imported',
   thue_vat: 'VAT',
   toi_da: 'Max',
+  tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay: "Account does not have permission to use this function năng",
+
   thong_bao_cap_nhat_phien_ban_moi: 'There was a new version, please update to experience better application.',
   
   // TODO: U
@@ -606,7 +611,7 @@ nhom_nha_cung_cap: "Group supplier",
   xin_cam_on_va_hen_gap_lai: "Thank you, see you again!",
 
   // TODO: Y
-  
+
   yeu_cau_thanh_toan: "Payment request",
-  
+
 };

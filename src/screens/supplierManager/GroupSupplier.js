@@ -20,6 +20,7 @@ export default (props) => {
 
     const [listGroup, setListGroup] = useState([])
     const [detailGroup, setDetailGroup] = useState({})
+    const [allPer, setPer] = useState(props.route.params.permission ? props.route.params.permission : {})
     const { deviceType } = useSelector(state => {
         return state.Common
     });
@@ -129,18 +130,24 @@ export default (props) => {
                         renderItem={({ item, index }) => renderListItem(item, index)}
                         keyExtractor={(item, index) => index.toString()}
                     />
-                    <FAB
-                        style={styles.fab}
-                        big
-                        icon="plus"
-                        color="#fff"
-                        onPress={onClickAdd}
-                    />
+                    {
+                        allPer.create ?
+                            <FAB
+                                style={styles.fab}
+                                big
+                                icon="plus"
+                                color="#fff"
+                                onPress={onClickAdd}
+                            />
+                            :
+                            null
+                    }
                 </View>
                 {
                     deviceType == Constant.TABLET ?
                         <View style={{ flex: 1 }}>
                             <DetailSupplierGroup
+                                allPer={allPer}
                                 onClickDone={onClickDone}
                                 detailGroup={detailGroup} />
                         </View>

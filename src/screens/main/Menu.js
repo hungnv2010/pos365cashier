@@ -32,7 +32,7 @@ const KEY_FUNC = {
     VERSION: "VERSION",
     MORE: ScreenList.More,
     HISTORY: ScreenList.History,
-    ROOM_CATALOG: ScreenList.RoomList,
+    ROOM_LIST: ScreenList.RoomList,
     OVERVIEW: ScreenList.OverView,
     INVOICE: ScreenList.Invoice,
     CASH_FLOW: ScreenList.CashFlow,
@@ -69,9 +69,9 @@ const LIST_FUNCITION = [
         title: 'quan_ly_don_hang'
     },
     {
-        func: KEY_FUNC.ROOM_CATALOG,
+        func: KEY_FUNC.ROOM_LIST,
         icon: Images.icon_room_table,
-        title: "danh_muc_phong_ban"
+        title: "danh_sach_phong_ban"
     },
     {
         func: KEY_FUNC.PRODUCT,
@@ -81,13 +81,8 @@ const LIST_FUNCITION = [
     {
         func: KEY_FUNC.CUSTOMER_MANAGER,
         icon: Images.icon_customer,
-        title: "khach_hang"
+        title: "quan_ly_doi_tac"
     },
-    // {
-    //     func: KEY_FUNC.EMPLOYEE_MANAGER,
-    //     icon: Images.ic_quanlynhanvien,
-    //     title: "quan_ly_nhan_vien"
-    // },
     {
         func: KEY_FUNC.REPORT_MANAGER,
         icon: Images.ic_baocao,
@@ -119,6 +114,8 @@ export default (props) => {
 
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
+
+
 
 
     const handlerToast = (text) => {
@@ -234,6 +231,7 @@ const HeaderComponent = (props) => {
                 setBranch(selectBranch)
                 dispatch({ type: 'IS_FNB', isFNB: null })
                 signalRManager.killSignalR();
+                getPrivileges(selectBranch)
                 getRetailerInfoAndNavigate();
                 dialogManager.hiddenLoading();
             } else {
@@ -245,6 +243,17 @@ const HeaderComponent = (props) => {
             dialogManager.hiddenLoading()
         })
         setShowModal(false)
+    }
+
+    const getPrivileges = branchId => {
+        let params = {
+            ShowAll: true,
+            BranchId: branchId
+        }
+        let apiPath = ApiPath.PRIVILEGES.replace('{userId}', branchId)
+        new HTTPService().setPath(apiPath).GET(params, getHeaders()).then(res => {
+            setFileLuuDuLieu(Constant.PRIVILEGES, JSON.stringify(res));
+        })
     }
 
     const navigateToHome = () => {
@@ -301,6 +310,7 @@ const HeaderComponent = (props) => {
         dispatch(saveDeviceInfoToStore({ SessionId: "" }))
         setFileLuuDuLieu(Constant.CURRENT_ACCOUNT, "");
         setFileLuuDuLieu(Constant.CURRENT_BRANCH, "");
+        setFileLuuDuLieu(Constant.PRIVILEGES, "");
         signalRManager.killSignalR();
         navigate('Login', {}, true);
     }
@@ -416,6 +426,19 @@ const ContentComponent = (props) => {
         console.log("queryOrdersOffline orderOffline ", orderOffline.length);
         setNumberOrderOffline(orderOffline.length)
     })
+    const Privileges = useRef()
+
+    useEffect(() => {
+        const getPrivileges = async () => {
+            let privileges = await getFileDuLieuString(Constant.PRIVILEGES, true)
+            console.log('privileges menu', privileges);
+            if (privileges) {
+                privileges = JSON.parse(privileges)
+                Privileges.current = privileges
+            }
+        }
+        getPrivileges()
+    }, [])
 
     useEffect(() => {
         const getCurrentIP = async () => {
@@ -472,7 +495,9 @@ const ContentComponent = (props) => {
     }
 
     const onClickItem = (chucnang, index) => {
-        console.log("onClickItem props ", props);
+        console.log("onClickItem props ", props, Privileges.current);
+        if (chucnang.func == KEY_FUNC.OVERVIEW || KEY_FUNC.ORDER_MANAGEMENT || KEY_FUNC.ROOM_LIST || KEY_FUNC.PRODUCT || KEY_FUNC.CUSTOMER_MANAGER || KEY_FUNC.REPORT_MANAGER || KEY_FUNC.SETTING_FUNC) {
+        }
         if (chucnang.func == KEY_FUNC.VERSION) return;
         if (chucnang.func == KEY_FUNC.SYNCHRONIZE) {
             if (isFNB == true) {
@@ -483,13 +508,61 @@ const ContentComponent = (props) => {
             props.navigation.closeDrawer();
             return;
         }
-        let params = {};
-        if (chucnang.func == ScreenList.OrderManagement || chucnang.func == ScreenList.Home || chucnang.func == ScreenList.Customer || chucnang.func == ScreenList.Settings || chucnang.func == ScreenList.Invoice || chucnang.func == ScreenList.OverView || chucnang.func == ScreenList.RoomHistory || chucnang.func == ScreenList.Vouchers) {
-            setCurrentItemMenu(index)
+        if (chucnang.func == KEY_FUNC.HOME) {
+            getPermission(chucnang.func, index, 'Order')
         }
-        props.navigation.navigate(chucnang.func, params)
+        if (chucnang.func == KEY_FUNC.OVERVIEW) {
+            getPermission(chucnang.func, index, 'DashBoard')
+        }
+        if (chucnang.func == KEY_FUNC.ORDER_MANAGEMENT) {
+            getPermission(chucnang.func, index, 'Order')
+        }
+        if (chucnang.func == KEY_FUNC.ROOM_LIST) {
+            getPermission(chucnang.func, index, 'Room')
+        }
+        if (chucnang.func == KEY_FUNC.PRODUCT) {
+            // getPermission(chucnang.func, index, 'Product')
+            // PurchaseOrder
+            let perProduct = Privileges.current.filter(itm => itm.id == 'Product')
+            let perImport = Privileges.current.filter(itm => itm.id == 'PurchaseOrder')
+            if (perProduct[0].expanded || perImport[0].expanded) {
+                setCurrentItemMenu(index)
+                props.navigation.navigate(chucnang.func, { perProduct: perProduct[0], perImport: perImport[0] })
+            } else {
+                dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                    dialogManager.destroy();
+                }, null, null, I18n.t('dong'))
+                return
+            }
+
+        }
+        if (chucnang.func == KEY_FUNC.CUSTOMER_MANAGER) {
+            getPermission(chucnang.func, index, 'Partner')
+        }
+        if (chucnang.func == KEY_FUNC.REPORT_MANAGER) {
+            getPermission(chucnang.func, index, 'Report')
+        }
+        if (chucnang.func == KEY_FUNC.SETTING_FUNC) {
+            getPermission(chucnang.func, index, 'PosParameter')
+        }
+
         props.navigation.closeDrawer();
     }
+
+    const getPermission = (func, index, Id) => {
+        let permission = Privileges.current.filter(itm => itm.id == Id)
+        console.log('permission', permission);
+        if (permission[0].expanded) {
+            setCurrentItemMenu(index)
+            props.navigation.navigate(func, { permission: permission[0] })
+        } else {
+            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
+            return
+        }
+    }
+
     const clickRightIcon = async () => {
         let state = await NetInfo.fetch()
         if (state.isConnected == true && state.isInternetReachable == true) {
@@ -560,7 +633,7 @@ const ContentComponent = (props) => {
         <View style={{ flex: 1 }}>
             <ScrollView style={{ flex: 1, width: "100%", }} keyboardShouldPersistTaps={'handled'}>
                 {LIST_FUNCITION.map((item, index) => {
-                    if (isFNB || (!isFNB && item.func != KEY_FUNC.ROOM_CATALOG))
+                    if (isFNB || (!isFNB && item.func != KEY_FUNC.ROOM_LIST))
                         return (
                             _renderItem(item, index)
                         )

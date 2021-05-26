@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useLayoutEffect, useRef,useCallback } from 'react';
-import { Animated, Image, View, StyleSheet, Text, TouchableOpacity, ScrollView, ActivityIndicator, Modal, TouchableWithoutFeedback,Keyboard } from "react-native";
+import React, { useEffect, useState, useLayoutEffect, useRef, useCallback } from 'react';
+import { Animated, Image, View, StyleSheet, Text, TouchableOpacity, ScrollView, ActivityIndicator, Modal, TouchableWithoutFeedback, Keyboard } from "react-native";
 import MainToolBar from '../../main/MainToolBar';
 import I18n from '../../../common/language/i18n';
 import realmStore from '../../../data/realm/RealmStore';
@@ -28,6 +28,7 @@ export default (props) => {
     const [listPr, setListPr] = useState([])
     const [dataView, setDataView] = useState([])
     const productTmp = useRef([])
+    const [allPer, setPer] = useState(props.route.params.permission ? props.route.params.permission : {})
     const categoryTmp = useRef([])
     const dataTmp = useRef([])
     const [textSearch, setTextSearch] = useState()
@@ -49,12 +50,12 @@ export default (props) => {
     useEffect(() => {
         dialogManager.showLoading()
         getDataFromRealm()
-        if(isFNB){
+        if (isFNB) {
             getBranch()
         }
     }, [])
     const getBranch = async () => {
-       
+
         let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
         if (branch) {
             currentBranch.current = JSON.parse(branch)
@@ -142,20 +143,20 @@ export default (props) => {
             }, null, null, I18n.t('dong'))
         }
     }
-    const handleSuccess = async (type1,stt,data) => {
+    const handleSuccess = async (type1, stt, data) => {
         console.log("type", type1);
         dialogManager.showLoading()
         try {
             if (type1 != 'them') {
-                if(deviceType == Constant.TABLET){   
-                    if(data){
+                if (deviceType == Constant.TABLET) {
+                    if (data) {
                         setCategory(data)
-                    }else{
+                    } else {
                         setCategory({})
                     }
                 }
                 await realmStore.deleteCategory()
-                setDataView({}) 
+                setDataView({})
             }
             await dataManager.syncCategories()
             getDataFromRealm()
@@ -166,12 +167,12 @@ export default (props) => {
             dialogManager.hiddenLoading()
         }
     }
-    const onClickItemCate = (item) =>{
+    const onClickItemCate = (item) => {
         console.log(item);
         if (deviceType == Constant.PHONE) {
-            props.navigation.navigate(ScreenList.GroupProductDetail, { data: item, onCallBack:handleSuccess })
+            props.navigation.navigate(ScreenList.GroupProductDetail, { data: item, onCallBack: handleSuccess })
         } else {
-           setCategory(item)
+            setCategory(item)
         }
     }
     useFocusEffect(useCallback(() => {
@@ -195,57 +196,62 @@ export default (props) => {
         setMargin(0)
     }
     return (
-        <View style={{ flex: 1, backgroundColor: '#f2f2f2',flexDirection:'row' }}>
-            <View style={{flex:1}}>
-            <CustomerToolBar
-                {...props}
-                navigation={props.navigation}
-                title={I18n.t('nhom_hang_hoa')}
-                outputTextSearch={outputTextSearch}
-                size={30}
-            />
+        <View style={{ flex: 1, backgroundColor: '#f2f2f2', flexDirection: 'row' }}>
             <View style={{ flex: 1 }}>
-                {
-                    dataView.length > 0 ?
-                        <ScrollView style={{ flex: 1 }}>{
-                            dataView.map((item, index) => {
-                                return (
-                                    <TouchableOpacity key={index.toString()} onPress={()=>onClickItemCate(item)}>
-                                    <View style={{ paddingVertical: 15, paddingHorizontal: 10, marginVertical: 2, marginHorizontal: 5, backgroundColor: '#fff', borderRadius: 10 }}>
-                                        <Text style={{ fontWeight: 'bold', color: colors.colorLightBlue, fontSize: 16 }}>{item.Name}</Text>
-                                        <Text style={{ color: '#bbbbbb', marginTop: 10 }}>{item.Sum} {I18n.t('hang_hoa')}</Text>
-                                    </View>
-                                    </TouchableOpacity>
-                                )
-                            })}
-                        </ScrollView>
-                        :
-                        <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
-                            <Image source={Images.logo_365_long_color} />
-                        </View>
-                }
-            </View>
+                <CustomerToolBar
+                    {...props}
+                    navigation={props.navigation}
+                    title={I18n.t('nhom_hang_hoa')}
+                    outputTextSearch={outputTextSearch}
+                    size={30}
+                />
+                <View style={{ flex: 1 }}>
+                    {
+                        dataView.length > 0 ?
+                            <ScrollView style={{ flex: 1 }}>{
+                                dataView.map((item, index) => {
+                                    return (
+                                        <TouchableOpacity key={index.toString()} onPress={() => onClickItemCate(item)}>
+                                            <View style={{ paddingVertical: 15, paddingHorizontal: 10, marginVertical: 2, marginHorizontal: 5, backgroundColor: '#fff', borderRadius: 10 }}>
+                                                <Text style={{ fontWeight: 'bold', color: colors.colorLightBlue, fontSize: 16 }}>{item.Name}</Text>
+                                                <Text style={{ color: '#bbbbbb', marginTop: 10 }}>{item.Sum} {I18n.t('hang_hoa')}</Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                    )
+                                })}
+                            </ScrollView>
+                            :
+                            <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
+                                <Image source={Images.logo_365_long_color} />
+                            </View>
+                    }
+                </View>
 
-            <FAB
-                style={styles.fab}
-                icon='plus'
-                color="#fff"
-                onPress={() => {
-                    onClickAddItem()
-                }}
-            />
+                {
+                    allPer.create ?
+                        <FAB
+                            style={styles.fab}
+                            icon='plus'
+                            color="#fff"
+                            onPress={() => {
+                                onClickAddItem()
+                            }}
+                        />
+                        :
+                        null
+                }
             </View>
             {
                 deviceType == Constant.TABLET ?
-                <View style={{flex:1}}>
-                    {
-                        category.Id ? 
-                        <GroupProductDetail categoryItem={category} handleSuccessTab={handleSuccess} /> :
-                        <View style={{alignItems:'center',justifyContent:'center',flex:1}} >
-                        <Image source={Images.logo_365_long_color} />
-                        </View>
-                    }
-                </View>:null
+                    <View style={{ flex: 1 }}>
+                        {
+                            category.Id ?
+                                <GroupProductDetail allPer={allPer} categoryItem={category} handleSuccessTab={handleSuccess} /> :
+                                <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }} >
+                                    <Image source={Images.logo_365_long_color} />
+                                </View>
+                        }
+                    </View> : null
             }
             <Modal
                 animationType="fade"

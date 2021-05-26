@@ -27,6 +27,12 @@ export default (props) => {
     const clickAdd = useRef(false);
     const [roomGroups, setRoomGroups] = useState([])
     const [titleAddEdit, setTitleAddEdit] = useState(I18n.t('them_phong_ban'))
+    const [permission, setPermission] = useState({
+        read: true,
+        create: true,
+        update: true,
+        delete: true
+    })
 
     const dispatch = useDispatch()
 
@@ -38,6 +44,19 @@ export default (props) => {
         console.log("orientaition", state);
         return state.Common.orientaition
     });
+
+    useEffect(() => {
+        console.log('props room table', props);
+        let item = props.route.params.permission.items
+        let allPer = {}
+        item.forEach(element => {
+            if (element.id == "Room_Read") allPer.read = element.Checked
+            if (element.id == "Room_Create") allPer.create = element.Checked
+            if (element.id == "Room_Update") allPer.update = element.Checked
+            if (element.id == "Room_Delete") allPer.delete = element.Checked
+        });
+        setPermission(allPer)
+    }, [])
 
     useEffect(() => {
 
@@ -155,15 +174,16 @@ export default (props) => {
 
     return (
         <View style={styles.fill}>
-            <ToolBarDefault
-                clickLeftIcon={() => {
+
+            <MainToolBar
+                onClickLeft={() => {
                     if (isReLoad.current == true) {
                         dispatch({ type: 'ALREADY', already: true })
                     }
-                    props.navigation.goBack()
                 }}
                 navigation={props.navigation}
                 title={I18n.t('danh_sach_phong_ban')}
+                outPutTextSearch={() => { }}
             />
 
             <View style={{ flexDirection: "row", flex: 1 }}>
@@ -187,28 +207,33 @@ export default (props) => {
                         </View>
                     </View>
                     {_renderScrollViewContent()}
-                    <FAB
-                        style={styles.fab}
-                        big
-                        icon="plus"
-                        color="#fff"
-                        onPress={() => {
-                            clickAdd.current = true;
-                            if (deviceType == Constant.PHONE)
-                                props.navigation.navigate(ScreenList.RoomDetail, { _onSelect: onCallBack })
-                            else {
-                                setTitleAddEdit(I18n.t('them_phong_ban'))
-                                setDataParams({})
-                            }
-                        }}
-                    />
+                    {
+                        permission.create ?
+                            <FAB
+                                style={styles.fab}
+                                big
+                                icon="plus"
+                                color="#fff"
+                                onPress={() => {
+                                    clickAdd.current = true;
+                                    if (deviceType == Constant.PHONE)
+                                        props.navigation.navigate(ScreenList.RoomDetail, { _onSelect: onCallBack })
+                                    else {
+                                        setTitleAddEdit(I18n.t('them_phong_ban'))
+                                        setDataParams({})
+                                    }
+                                }}
+                            />
+                            :
+                            null
+                    }
                 </View>
                 {deviceType == Constant.TABLET ?
                     <View style={{ flex: 1, borderLeftWidth: 0.5, borderLeftColor: "#ccc" }}>
-                        <View style={{height: 45,backgroundColor: '#fff', justifyContent: "center", alignItems: "center"}}>
-                            <Text style={{color: colors.colorchinh , textTransform: "uppercase"}}>{titleAddEdit}</Text>
+                        <View style={{ height: 45, backgroundColor: '#fff', justifyContent: "center", alignItems: "center" }}>
+                            <Text style={{ color: colors.colorchinh, textTransform: "uppercase" }}>{titleAddEdit}</Text>
                         </View>
-                        <RoomDetail params={dataParams} _onSelect={(data) => onCallBack(data)} />
+                        <RoomDetail permission={permission} params={dataParams} _onSelect={(data) => onCallBack(data)} />
                     </View>
                     : null}
             </View>
