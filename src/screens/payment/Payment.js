@@ -871,11 +871,12 @@ export default (props) => {
 
     const onTouchInput = (value) => {
         console.log("onTouchInput value ", value);
-        setListSuggestions([5,10,15,20,50,100])
+        
         setChoosePoint(0);
         if (value != sendMethod) {
             setSendMethod(value)
-            if (value.name == METHOD.pay.name) {
+            if (value.name == METHOD.pay.name) { 
+                setListSuggestions([])
                 listMethod.forEach(element => {
                     if (value.Id == element.Id && element.UUID == value.UUID) {
                         element.Value = 0;
@@ -883,9 +884,15 @@ export default (props) => {
                     }
                 });
             } else {
+                setListSuggestions([5,10,15,20,50,100])
                 onChangeTextInput("0", value == METHOD.vat ? 2 : 1)
             }
         }
+    }
+    const listSuggestTotal = (total) =>{
+        let list = [total]
+        
+
     }
 
     const calculatorPrice = (jsonContent, totalPrice, update = true) => {

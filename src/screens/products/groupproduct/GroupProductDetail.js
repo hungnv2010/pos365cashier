@@ -183,28 +183,28 @@ export default (props) => {
                         <Text style={{ color: colors.colorLightBlue, marginTop: 10, fontWeight: 'bold' }}>{data.Name}</Text>
                     </View>
                     <View style={{ flexDirection: 'row', paddingHorizontal: 50 }}>
-                        {
-                            props.allPer.update ?
+                        {/* {
+                            props.allPer.update ? */}
                                 <View style={{ flex: 1, marginRight: 10, paddingVertical: 10, alignItems: 'center', justifyContent: 'center' }}>
                                     <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }} onPress={() => onClickEditCate()}>
                                         <Image source={Images.icon_edit} style={{ width: 16, height: 16 }} />
                                         <Text style={{ marginLeft: 8, color: '#f6871e', fontSize: 16 }}>{I18n.t('chinh_sua')}</Text>
                                     </TouchableOpacity>
                                 </View>
-                                :
+                                {/* :
                                 null
                         }
                         {
-                            props.allPer.delete ?
+                            props.allPer.delete ? */}
                                 <View style={{ flex: 1, marginLeft: 10, paddingVertical: 10, alignItems: 'center', justifyContent: 'center' }}>
                                     <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }} onPress={() => onCLickDelCate()}>
                                         <Ionicons name={'trash'} size={17} color={'#f21e3c'} />
                                         <Text style={{ marginLeft: 8, color: '#f21e3c', fontSize: 16 }}>{I18n.t('xoa')}</Text>
                                     </TouchableOpacity>
                                 </View>
-                                :
+                                {/* :
                                 null
-                        }
+                        } */}
                     </View>
                 </View>
                 <View>
