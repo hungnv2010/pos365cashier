@@ -406,7 +406,8 @@ export default (props) => {
         if (changeMethodQRPay.current == true) {
             setListMethod([itemMethod])
         } else {
-            onChangeTextPaymentPaid(jsonContent.Total, itemAccountRef.current)
+            // onChangeTextPaymentPaid(jsonContent.Total, itemAccountRef.current)
+            onChangeTextPaymentPaid("0", itemAccountRef.current)
             let list = [];
             listMethod.forEach(element => {
                 if (itemAccountRef.current.Id == element.Id && itemAccountRef.current.UUID == element.UUID) {
@@ -481,9 +482,9 @@ export default (props) => {
         listMethod.forEach(element => {
             if (item.Id == element.Id && item.UUID == element.UUID) {
                 element.Value = text
-                total += text;
+                total += +text;
             } else {
-                total += element.Value;
+                total += +element.Value;
             }
         });
         setListMethod([...listMethod])

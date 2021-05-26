@@ -51,34 +51,24 @@ export const handerDataPrintTempProduct = async (data = ProductDefault, size = "
     let sizeArray = size.split("x")
     let width = sizeArray.length > 0 ? sizeArray[0] : 40
     let height = sizeArray.length > 1 ? sizeArray[1] : 30
+    let textSize = (width > 40) ? 3 : 2
+    let heightTextPrice = 5 * height + 50
     let vendorSession = JSON.parse(await getFileDuLieuString(Constant.VENDOR_SESSION, true));
-    let TempList = "";
+    let tempList = "";
     data.forEach((element, index) => {
-        TempList += (index == 0 ? "" : "|||") + `SIZE ${width} mm, ${height} mm
-    COUNTRY 061
-    CLS
-    TEXT 10,20,"3",0,1,1,"${change_alias(vendorSession.CurrentRetailer.Name).toUpperCase()}"
-    TEXT 0,45,"3",0,1,1,"------------------------------"
-    TEXT 10,70,"3",0,1,1,"${change_alias(element.Name).toUpperCase()}"
-    TEXT 10,95,"3",0,1,1,""
-    BARCODE 10,110,"128",60,1,0,2,2,"${element.Code}"
-    TEXT 10,200,"3",0,1,1,"${currencyToString(element.Price)} [${change_alias(element.IsLargeUnit ? (element.LargeUnit ? element.LargeUnit : "") : (element.Unit ? element.Unit : "")).toUpperCase()}]"
-    PRINT 1,1
-    CLS
-    END`
+        tempList += (index == 0 ? "" : "|||") + `SIZE ${width} mm, ${height} mm
+                    COUNTRY 061
+                    CLS
+                    TEXT 10,20,"${textSize}",0,1,1,"${change_alias(vendorSession.CurrentRetailer.Name).toUpperCase()}"
+                    TEXT 0,45,"${textSize}",0,1,1,"------------------------------"
+                    TEXT 10,70,"${textSize}",0,1,1,"${change_alias(element.Name).toUpperCase()}"
+                    TEXT 10,95,"${textSize}",0,1,1,""
+                    BARCODE 10,110,"128",60,1,0,2,2,"${element.Code}"
+                    TEXT 10,${heightTextPrice},"${textSize}",0,1,1,"${currencyToString(element.Price)} [${change_alias(element.IsLargeUnit ? (element.LargeUnit ? element.LargeUnit : "") : (element.Unit ? element.Unit : "")).toUpperCase()}]"
+                    PRINT 1,1
+                    CLS
+                    END`
     });
-    // let TempList = `SIZE ${width} mm, ${height} mm
-    // COUNTRY 061
-    // CLS
-    // TEXT 10,20,"3",0,1,1,"${change_alias(vendorSession.CurrentRetailer.Name).toUpperCase()}"
-    // TEXT 0,45,"3",0,1,1,"------------------------------"
-    // TEXT 10,70,"3",0,1,1,"${change_alias(element.Name).toUpperCase()}"
-    // TEXT 10,95,"3",0,1,1,""
-    // BARCODE 10,110,"128",60,1,0,2,2,"${element.Code}"
-    // TEXT 10,200,"3",0,1,1,"${currencyToString(element.Price)} [${change_alias(element.IsLargeUnit ? (element.LargeUnit ? element.LargeUnit : "") : (element.Unit ? element.Unit : "")).toUpperCase()}]"
-    // PRINT 1,1
-    // CLS
-    // END`
-    console.log("handerDataPrintTempProduct TempList ", TempList)
-    return TempList;
+    console.log("handerDataPrintTempProduct tempList ", tempList)
+    return tempList;
 }
