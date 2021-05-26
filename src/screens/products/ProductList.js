@@ -281,8 +281,8 @@ export default (props) => {
                         </View>
                     }
 
-                    {
-                        allPer.create ?
+                    {/* {
+                        allPer.create ? */}
                             <FAB
                                 style={styles.fab}
                                 icon='plus'
@@ -291,9 +291,9 @@ export default (props) => {
                                     onClickItem({})
                                 }}
                             />
-                            :
+                            {/* :
                             null
-                    }
+                    } */}
 
                 </View>
 
