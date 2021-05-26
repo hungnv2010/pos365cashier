@@ -62,6 +62,7 @@ export default (props) => {
     const [imageUrl, setImageUrl] = useState()
     const [onHand, setOnHand] = useState()
     const token = useRef()
+    const cateTmp = useRef()
     const addCate = useRef([{
         Name: 'ten_nhom',
         Hint: 'nhap_ten_nhom_hang_hoa',
@@ -149,10 +150,10 @@ export default (props) => {
             setProduct({ ...JSON.parse(JSON.stringify(props.iproduct)) })
             console.log({ ...JSON.parse(JSON.stringify(props.iproduct)) });
             setPrinterPr(props.iproduct.Printer ? props.iproduct.Printer : '')
-            getCategory()
+            getCategory(props.iproduct.CategoryId ? props.iproduct.CategoryId :'' )
             getProduct({ ...JSON.parse(JSON.stringify(props.iproduct)) })
             console.log("CompositeItemProducts", props.compositeItemProducts);
-            setNameCategory()
+            //setNameCategory()
             setCost(props.iproduct.Cost)
             if (props.iproduct.Code) {
                 setCodeProduct(props.iproduct.Code)
@@ -296,17 +297,23 @@ export default (props) => {
             setType('them')
         }
     }
-    const getCategory = async () => {
+    const getCategory = async (id) => {
         setCategory([])
         let state = await NetInfo.fetch()
         if (state.isConnected == true && state.isInternetReachable == true) {
             await dataManager.syncCategories()
         }
         let categoryTmp = await realmStore.queryCategories()
-        setCategory([...categoryTmp])
-        if (product.CategoryId) {
-            let cate = categoryTmp.filter(item => item.Id == product.CategoryId)
-            setNameCategory(cate.Name)
+        setCategory(categoryTmp)
+        if (id != '') {
+            let cate = categoryTmp.filter(item => item.Id == id)
+            console.log("acfkasf",cate);
+            if(cate.length > 0){
+            setNameCategory(cate[0].Name)
+            cateTmp.current = cate[0].Name
+            }
+        }else{
+            setNameCategory()
         }
     }
 
@@ -428,7 +435,6 @@ export default (props) => {
             new HTTPService().setPath(ApiPath.CATEGORIES_PRODUCT).POST(param).then(res => {
                 if (res) {
                     if (res.ResponseStatus && res.ResponseStatus.Message) {
-                        dialogManager.showLoading()
                         dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
                             dialogManager.destroy();
                             dialogManager.hiddenLoading()
@@ -437,9 +443,11 @@ export default (props) => {
                         if (deviceType == Constant.PHONE) {
                             props.route.params.onCallBack('them', 1)
                             handleSuccess('them')
-                        } else
+                            setCategory(cateTmp.current)
+                        } else {
                             props.handleSuccessTab('them', 1, product)
-                        //setProduct({...product})
+                            setNameCategory(cateTmp.current)  
+                        }
                         getCategory()
                     }
                 }
@@ -1100,7 +1108,7 @@ export default (props) => {
                                 <View style={{ flexDirection: 'row' }}>
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.title}>{I18n.t('gia_von')}</Text>
-                                        <TextInput editable={props.allPer.updateCost} style={[styles.textInput, { color: colors.colorLightBlue, fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={cost && props.allPer.viewCost ? currencyToString(cost) : '--'} onChangeText={(text) => setCost(onChangeTextInput(text))}></TextInput>
+                                        <TextInput  style={[styles.textInput, { color: colors.colorLightBlue, fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={cost && props.allPer.viewCost ? currencyToString(cost) : '--'} onChangeText={(text) => setCost(onChangeTextInput(text))}></TextInput>
                                     </View>
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.title} >{I18n.t('gia')}</Text>
@@ -1135,7 +1143,7 @@ export default (props) => {
                     </View>
                     <View style={{ backgroundColor: '#f2f2f2', padding: 10 }}>
                         <View style={{ flexDirection: 'row' }}>
-                            {product.Id && props.allPer.delete ?
+                            {product.Id  ?
                                 <View style={{ flex: 1 }}>
                                     <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 7, paddingVertical: 10, justifyContent: 'center', margin: 2, alignItems: 'center', borderRadius: 10 }} onPress={() => { onClickDelete() }}>
                                         <Icon name={'trash-can'} size={24} color={'#fff'} />
