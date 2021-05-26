@@ -62,11 +62,9 @@ export default (props) => {
         }
     }
     const getDataFromRealm = async () => {
-        
         productTmp.current = (await realmStore.queryProducts())
         productTmp.current = productTmp.current.filtered(`TRUEPREDICATE SORT(Id DESC) DISTINCT(Id)`)
         console.log("productTmp", productTmp.current);
-        setListPr([...productTmp.current])
         categoryTmp.current = await realmStore.queryCategories()
         getSum(categoryTmp.current, productTmp.current)
 

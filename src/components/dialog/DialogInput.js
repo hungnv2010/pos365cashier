@@ -17,7 +17,7 @@ export default (props) => {
 
     const onClickButton = () => {
         props.outputValue(value)
-        console.log("value", value);
+        console.log("value",JSON.stringify(value));
 
 
     }
@@ -30,7 +30,8 @@ export default (props) => {
         list.forEach(element => {
             value[element.Key] = element.Value
         });
-    }, [])
+        console.log("object",JSON.stringify(value));
+    }, [props.listItem])
     useEffect(() => {
         let obj = value
         let k = `${key}`
