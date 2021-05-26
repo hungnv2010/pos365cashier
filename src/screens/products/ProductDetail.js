@@ -150,7 +150,7 @@ export default (props) => {
             setProduct({ ...JSON.parse(JSON.stringify(props.iproduct)) })
             console.log({ ...JSON.parse(JSON.stringify(props.iproduct)) });
             setPrinterPr(props.iproduct.Printer ? props.iproduct.Printer : '')
-            getCategory(props.iproduct.CategoryId ? props.iproduct.CategoryId :'' )
+            getCategory(props.iproduct.CategoryId ? props.iproduct.CategoryId : '')
             getProduct({ ...JSON.parse(JSON.stringify(props.iproduct)) })
             console.log("CompositeItemProducts", props.compositeItemProducts);
             //setNameCategory()
@@ -307,12 +307,12 @@ export default (props) => {
         setCategory(categoryTmp)
         if (id != '') {
             let cate = categoryTmp.filter(item => item.Id == id)
-            console.log("acfkasf",cate);
-            if(cate.length > 0){
-            setNameCategory(cate[0].Name)
-            cateTmp.current = cate[0].Name
+            console.log("acfkasf", cate);
+            if (cate.length > 0) {
+                setNameCategory(cate[0].Name)
+                cateTmp.current = cate[0].Name
             }
-        }else{
+        } else {
             setNameCategory()
         }
     }
@@ -446,7 +446,7 @@ export default (props) => {
                             setCategory(cateTmp.current)
                         } else {
                             props.handleSuccessTab('them', 1, product)
-                            setNameCategory(cateTmp.current)  
+                            setNameCategory(cateTmp.current)
                         }
                         getCategory()
                     }
@@ -877,24 +877,29 @@ export default (props) => {
     const onClickPrintTemp = async (data) => {
         console.log("temp", data);
         console.log("onClickPrintTemp product ", product);
-        let listProduct = []
-        for (let index = 0; index < data.quantity; index++) {
-            listProduct.push({ ...product, Price: data.price })
+        if (data.quantity && data.quantity > 0) {
+            let listProduct = []
+            for (let index = 0; index < data.quantity; index++) {
+                listProduct.push({ ...product, Price: data.price ? data.price : product.Price })
+            }
+            console.log("onClickPrintTemp listProduct ", listProduct);
+            let settingObject = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
+            if (settingObject && settingObject != "") {
+                settingObject = JSON.parse(settingObject)
+                console.log("onClickPrintTemp settingObject ", settingObject);
+                settingObject.Printer.forEach(async element => {
+                    if (element.key == Constant.KEY_PRINTER.StampPrintKey && element.ip != "") {
+                        let value = await handerDataPrintTempProduct(listProduct)
+                        console.log("handerDataPrintTempProduct value  ", value);
+                        Print.PrintTemp(value, element.ip, "40x30")
+                    }
+                });
+            }
+            setOnShowModal(false)
+        } else {
+            setOnShowModal(false)
+            dialogManager.showPopupOneButton(I18n.t("vui_long_nhap_so_luong_ma_vach_can_in"));
         }
-        console.log("onClickPrintTemp listProduct ", listProduct);
-        let settingObject = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
-        if (settingObject && settingObject != "") {
-            settingObject = JSON.parse(settingObject)
-            console.log("onClickPrintTemp settingObject ", settingObject);
-            settingObject.Printer.forEach(async element => {
-                if (element.key == Constant.KEY_PRINTER.StampPrintKey && element.ip != "") {
-                    let value = await handerDataPrintTempProduct(listProduct)
-                    console.log("handerDataPrintTempProduct value  ", value);
-                    Print.PrintTemp(value, element.ip, "40x30")
-                }
-            });
-        }
-        setOnShowModal(false)
     }
 
     const renderModal = () => {
@@ -1108,7 +1113,7 @@ export default (props) => {
                                 <View style={{ flexDirection: 'row' }}>
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.title}>{I18n.t('gia_von')}</Text>
-                                        <TextInput  style={[styles.textInput, { color: colors.colorLightBlue, fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={cost  ? currencyToString(cost) : ''} onChangeText={(text) => setCost(onChangeTextInput(text))}></TextInput>
+                                        <TextInput style={[styles.textInput, { color: colors.colorLightBlue, fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={cost ? currencyToString(cost) : ''} onChangeText={(text) => setCost(onChangeTextInput(text))}></TextInput>
                                     </View>
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.title} >{I18n.t('gia')}</Text>
@@ -1143,7 +1148,7 @@ export default (props) => {
                     </View>
                     <View style={{ backgroundColor: '#f2f2f2', padding: 10 }}>
                         <View style={{ flexDirection: 'row' }}>
-                            {product.Id  ?
+                            {product.Id ?
                                 <View style={{ flex: 1 }}>
                                     <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 7, paddingVertical: 10, justifyContent: 'center', margin: 2, alignItems: 'center', borderRadius: 10 }} onPress={() => { onClickDelete() }}>
                                         <Icon name={'trash-can'} size={24} color={'#fff'} />
@@ -1151,7 +1156,22 @@ export default (props) => {
                                 </View> : null
                             }
                             <View style={{ flex: product.Id ? 1 : 0.9 }}>
-                                <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 7, paddingVertical: 10, justifyContent: 'center', margin: 2, alignItems: 'center', borderRadius: 10 }} onPress={() => { typeModal.current = 7, setOnShowModal(true) }}>
+                                <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 7, paddingVertical: 10, justifyContent: 'center', margin: 2, alignItems: 'center', borderRadius: 10 }} onPress={() => {
+                                printStamp.current = [{
+                                    Name: 'so_luong_ma_vach_can_in',
+                                    Hint: '',
+                                    Key: 'quantity',
+                                    Value: 1,
+                                    isNum: true
+                                },
+                                {
+                                    Name: 'gia_ban',
+                                    Hint: '',
+                                    Key: 'price',
+                                    Value: product.Price,
+                                    isNum: true
+                                }], typeModal.current = 7, setOnShowModal(true)
+                                }}>
                                     <Icon name={'barcode-scan'} size={24} color={'#fff'} />
                                 </TouchableOpacity>
                             </View>

@@ -52,7 +52,7 @@ export default (props) => {
         return (
             <View style={{paddingHorizontal:Metrics.screenWidth*0.03}} >
                 <Text style={styles.styleContent}>{I18n.t(item.Name)}</Text>
-                <TextInput style={styles.styleTextInput} keyboardType={typeof(item.Value) == 'number' ? 'numbers-and-punctuation' : 'default'} value={item.Value ? typeof (item.Value) == 'string' ? item.Value : currencyToString(item.Value) : null} placeholder={item.Hint != '' ? I18n.t(item.Hint) : item.Hint} placeholderTextColor="#bbbbbb" onChangeText={(text) => { setInput(item.isNum == true ? onChangeTextInput(text):text); item.Value = item.isNum== true? onChangeTextInput(text) : text ; setKey(item.Key); setList([...list]); }}></TextInput>
+                <TextInput style={styles.styleTextInput} keyboardType={typeof(item.Value) == 'number' ? 'number-pad' : 'default'} value={item.Value ? typeof (item.Value) == 'string' ? item.Value : currencyToString(item.Value) : null} placeholder={item.Hint != '' ? I18n.t(item.Hint) : item.Hint} placeholderTextColor="#bbbbbb" onChangeText={(text) => { setInput(item.isNum == true ? onChangeTextInput(text):text); item.Value = item.isNum== true? onChangeTextInput(text) : text ; setKey(item.Key); setList([...list]); }}></TextInput>
             </View>
         )
     }
