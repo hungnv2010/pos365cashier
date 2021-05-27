@@ -597,6 +597,7 @@ export default {
   vat: "VAT",
   vui_long_kiem_tra_ket_noi_internet:'Please check internet connection.',
   vui_long_nhap_ten_nhom_hang_hoa:'Please enter name group',
+  vui_long_nhap_so_luong_ma_vach_can_in: "Please enter the number of barcodes to print",
 
   // TODO: X
 
