@@ -548,7 +548,7 @@ export default (props) => {
 
     const onClickSaveAndCopy = () => {
         // if (props.allPer.update) {
-        //     isCoppy.current = true
+            isCoppy.current = true
             onSave()
         // } else {
         //     dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
@@ -559,7 +559,7 @@ export default (props) => {
 
     const onClickSave = () => {
         // if (props.allPer.update) {
-        //     isCoppy.current = false
+         isCoppy.current = false
             onSave()
         // } else {
         //     dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
