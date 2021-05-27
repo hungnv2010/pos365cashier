@@ -461,16 +461,6 @@ const ContentComponent = (props) => {
         getCurrentIP()
     }, [])
 
-    const onClickLogOut = () => {
-        dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_dang_xuat'), I18n.t("thong_bao"), res => {
-            if (res == 1) {
-                setFileLuuDuLieu(Constant.CURRENT_ACCOUNT, "");
-                setFileLuuDuLieu(Constant.CURRENT_BRANCH, "");
-                navigate('Login', {}, true);
-            }
-        })
-    }
-
     const onClickSaveIP = () => {
         if (ipInput.length > 11) {
             setIp(ipInput)

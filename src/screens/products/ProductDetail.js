@@ -225,14 +225,14 @@ export default (props) => {
             Hint: '',
             Key: 'quantity',
             Value: 1,
-            isNum: 'numeric'
+            isNum: 'number-pad'
         },
         {
             Name: 'gia_ban',
             Hint: '',
             Key: 'price',
             Value: product.Price,
-            isNum: 'numeric'
+            isNum: 'number-pad'
         }]
     }, [product])
 
@@ -395,14 +395,14 @@ export default (props) => {
             Hint: 'gia_ban_don_vi_tinh_lon',
             Key: 'PriceLargeUnit',
             Value: product.PriceLargeUnit ? product.PriceLargeUnit : 0,
-            isNum: 'numeric'
+            isNum: 'number-pad'
         },
         {
             Name: 'gia_tri_quy_doi',
             Hint: 'gia_tri_quy_doi',
             Key: 'ConversionValue',
             Value: product.ConversionValue ? product.ConversionValue : 1,
-            isNum: 'numeric'
+            isNum: 'number-pad'
         }])
     }, [productOl])
 
@@ -1158,14 +1158,14 @@ export default (props) => {
                                     Hint: '',
                                     Key: 'quantity',
                                     Value: 1,
-                                    isNum: true
+                                    isNum: "number-pad"
                                 },
                                 {
                                     Name: 'gia_ban',
                                     Hint: '',
                                     Key: 'price',
                                     Value: product.Price,
-                                    isNum: true
+                                    isNum: "number-pad"
                                 }], typeModal.current = 7, setOnShowModal(true)
                                 }}>
                                     <Icon name={'barcode-scan'} size={24} color={'#fff'} />
