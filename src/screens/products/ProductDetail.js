@@ -132,7 +132,7 @@ export default (props) => {
     }
 
     useEffect(() => {
-        console.log('props.allPer', props.allPer);
+        // console.log('props.allPer', props.allPer);
     }, [])
 
     useEffect(() => {
@@ -547,25 +547,25 @@ export default (props) => {
     }
 
     const onClickSaveAndCopy = () => {
-        if (props.allPer.update) {
-            isCoppy.current = true
+        // if (props.allPer.update) {
+        //     isCoppy.current = true
             onSave()
-        } else {
-            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
-                dialogManager.destroy();
-            }, null, null, I18n.t('dong'))
-        }
+        // } else {
+        //     dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+        //         dialogManager.destroy();
+        //     }, null, null, I18n.t('dong'))
+        // }
     }
 
     const onClickSave = () => {
-        if (props.allPer.update) {
-            isCoppy.current = false
+        // if (props.allPer.update) {
+        //     isCoppy.current = false
             onSave()
-        } else {
-            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
-                dialogManager.destroy();
-            }, null, null, I18n.t('dong'))
-        }
+        // } else {
+        //     dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+        //         dialogManager.destroy();
+        //     }, null, null, I18n.t('dong'))
+        // }
     }
 
     const syncData = async () => {
