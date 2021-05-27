@@ -31,7 +31,6 @@ export default (props) => {
         Hint: 'nhap_ten_nhom_hang_hoa',
         Key: 'CategoryName',
         Value: data.Name ? data.Name : '',
-        isNum: false
     }]
     const deviceType = useSelector(state => {
         return state.Common.deviceType

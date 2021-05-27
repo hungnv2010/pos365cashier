@@ -99,7 +99,7 @@ export default (props) => {
     const imageQr = useRef(0);
     const debounceTimeInput = useRef(new Subject());
     const qrCodeRealm = useRef()
-    const [listSuggestions,setListSuggestions] = useState([])
+    const [listSuggestions, setListSuggestions] = useState([])
     let row_key = "";
 
     const { deviceType, isFNB } = useSelector(state => {
@@ -870,12 +870,12 @@ export default (props) => {
 
     const onTouchInput = (value) => {
         console.log("onTouchInput value ", value);
-        
+
         setChoosePoint(0);
         if (value != sendMethod) {
             setSendMethod(value)
-            if (value.name == METHOD.pay.name) { 
-                setListSuggestions(listSuggestTotal(totalPrice))
+            if (value.name == METHOD.pay.name) {
+                setListSuggestions(listSuggestTotal(jsonContent.Total))
                 listMethod.forEach(element => {
                     if (value.Id == element.Id && element.UUID == value.UUID) {
                         element.Value = 0;
@@ -883,14 +883,82 @@ export default (props) => {
                     }
                 });
             } else {
-                setListSuggestions([5,10,15,20,50,100])
+                if (value == METHOD.discount) {
+                    setListSuggestions([5, 10, 15, 20, 25, 50, 100])
+                } else
+                    setListSuggestions([])
                 onChangeTextInput("0", value == METHOD.vat ? 2 : 1)
             }
         }
     }
-    const listSuggestTotal = (total) =>{
-        let list = [total]
-        
+    const listSuggestTotal = (total) => {
+        let list = [(total % 1000) == 0 ? total : Math.floor(total / 1000) * 1000 + 1000]
+        if (total % 1000000 == 0) {
+            return list
+        } else {
+            if (total % 100000 == 0) {
+                if (Math.floor(total / 100000) > 5) {
+                    list.push(100000)
+                } else if (Math.floor(total / 100000) > 2 && Math.floor(total / 100000) < 5) {
+                    list.push(500000)
+                } else if(Math.floor(total / 100000) < 2)
+                    list.push(200000)
+            } else {
+                if (total % 10000 == 0) {
+                    let sum = (Math.floor(total / 100000) * 100000)
+                    if ((total - sum) / 10000 == 1) {
+                        list.push(sum + 20000)
+                        list.push(sum + 50000)
+                    } else if ((total - sum) / 10000 == 2) {
+                        list.push(sum + 50000)
+                    } else if ((total - sum) / 10000 == 3) {
+                        list.push(sum + 40000)
+                        list.push(sum + 50000)
+                    }
+                    else if ((total - sum) / 10000 >= 4) {
+                        list.push(sum + ((total - sum) / 10000 + 1) * 10000)
+
+                    }
+                    list.push(sum + 100000)
+                } else {
+                    if (total % 1000 == 0) {
+                        let sum = (Math.floor(total / 10000) * 10000)
+                        if ((total - sum) / 1000 == 1) {
+                            list.push(sum + 2000)
+                            list.push(sum + 5000)
+                        } else if ((total - sum) / 1000 == 2) {
+                            list.push(sum + 5000)
+                        } else if ((total - sum) / 10000 == 3) {
+                            list.push(sum + 4000)
+                            list.push(sum + 5000)
+                        } else if ((total - sum) / 1000 >= 4) {
+                            list.push(sum + ((total - sum) / 1000 + 1) * 1000)
+                        }
+                        list.push(sum + 10000)
+                    } else {
+                        let sum = (Math.floor((Math.floor(total / 1000) * 1000 + 1000) / 10000) * 10000)
+                        if (((Math.floor(total / 1000) * 1000 + 1000) - sum) / 1000 == 1) {
+                            list.push(sum + 2000)
+                            list.push(sum + 5000)
+                        } else if (((Math.floor(total / 1000) * 1000 + 1000) - sum) / 1000 == 2) {
+                            list.push(sum + 5000)
+                        } else if (((Math.floor(total / 1000) * 1000 + 1000) - sum) / 1000 == 3) {
+                            list.push(sum + 4000)
+                            list.push(sum + 5000)
+                        } else if (((Math.floor(total / 1000) * 1000 + 1000) - sum) / 1000 >= 4) {
+                            list.push(sum + (((Math.floor(total / 1000) * 1000 + 1000) - sum) / 1000 + 1) * 1000)
+                        }
+                        list.push(sum + 10000)
+                    }
+                    list.push(Math.floor(total / 100000) * 100000 + 100000)
+                    
+                }
+
+            }
+        }
+        if (Math.floor(total / 100000) > 5) {
+            list.push(1000000)
+        }
         return list
 
     }
@@ -1084,8 +1152,13 @@ export default (props) => {
         }
         indexPayment.current++;
     }
-    const getOutputPercent = (value) =>{
-        onChangeTextInput(value.toString(),1)
+    const getOutputPercent = (value) => {
+        if (value.Type == 'discount') {
+            onChangeTextInput(value.Value.toString(), 1)
+        }
+        else {
+            onChangeTextInput(value.Value.toString())
+        }
     }
 
     const renderFilter = () => {

@@ -106,8 +106,7 @@ export default (props) => {
             Name: 'ten_nhom',
             Hint: 'nhap_ten_nhom_hang_hoa',
             Key: 'CategoryName',
-            Value: '',
-            isNum: false
+            Value: ''
         }]
         console.log(data);
         let param = {

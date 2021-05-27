@@ -68,7 +68,6 @@ export default (props) => {
         Hint: 'nhap_ten_nhom_hang_hoa',
         Key: 'CategoryName',
         Value: '',
-        isNum: false
     }])
     const printStamp = useRef([])
     const [addDVT, setAddDVT] = useState([])
@@ -226,14 +225,14 @@ export default (props) => {
             Hint: '',
             Key: 'quantity',
             Value: 1,
-            isNum: true
+            isNum: 'numeric'
         },
         {
             Name: 'gia_ban',
             Hint: '',
             Key: 'price',
             Value: product.Price,
-            isNum: true
+            isNum: 'numeric'
         }]
     }, [product])
 
@@ -384,28 +383,26 @@ export default (props) => {
             Hint: 'nhap_don_vi_tinh_lon',
             Key: 'LargeUnit',
             Value: product.LargeUnit ? product.LargeUnit : '',
-            isNum: false
         },
         {
             Name: 'ma_dvt_lon',
             Hint: 'ma_don_vi_tinh_lon',
             Key: 'LargeUnitId',
             Value: productOl.LargeUnitCode ? productOl.LargeUnitCode : null,
-            isNum: false
         },
         {
             Name: 'gia_ban_dvt_lon',
             Hint: 'gia_ban_don_vi_tinh_lon',
             Key: 'PriceLargeUnit',
             Value: product.PriceLargeUnit ? product.PriceLargeUnit : 0,
-            isNum: true
+            isNum: 'numeric'
         },
         {
             Name: 'gia_tri_quy_doi',
             Hint: 'gia_tri_quy_doi',
             Key: 'ConversionValue',
             Value: product.ConversionValue ? product.ConversionValue : 1,
-            isNum: true
+            isNum: 'numeric'
         }])
     }, [productOl])
 
@@ -420,7 +417,6 @@ export default (props) => {
             Hint: 'nhap_ten_nhom_hang_hoa',
             Key: 'CategoryName',
             Value: '',
-            isNum: false
         }]
         console.log(data);
         let param = {
