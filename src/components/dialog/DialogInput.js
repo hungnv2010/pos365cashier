@@ -48,6 +48,9 @@ export default (props) => {
         }
         return text
     }
+    const onClickHuy = () =>{
+        props.outPutHuy()
+    }
     const renderItem = (item, index) => {
         return (
             <View style={{ paddingHorizontal: Metrics.screenWidth * 0.03 }} >
@@ -66,9 +69,16 @@ export default (props) => {
                 keyExtractor={(item, index) => index.toString()}
             />
             <Text style={[styles.styleContent]}>{props.content}</Text>
-            <TouchableOpacity style={styles.styleButton} onPress={onClickButton}>
-                <Text style={[styles.styleTitle, { color: 'white' }]}>{props.titleButton}</Text>
-            </TouchableOpacity>
+            <View style={{flexDirection:'row',marginHorizontal: Metrics.screenWidth * 0.03 + 10,marginBottom:20}}>
+                {props.clickHuy ?
+                    <TouchableOpacity style={[styles.styleButton,{flex:1,marginRight:5,backgroundColor:'#f21e3c'}]} onPress={onClickHuy}>
+                        <Text style={[styles.styleTitle, { color: 'white' }]}>{I18n.t('huy')}</Text>
+                    </TouchableOpacity> : null
+                }
+                <TouchableOpacity style={[styles.styleButton,{flex:3,marginLeft:5}]} onPress={onClickButton}>
+                    <Text style={[styles.styleTitle, { color: 'white' }]}>{props.titleButton}</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     )
 }
@@ -82,7 +92,7 @@ const styles = StyleSheet.create({
     },
     styleButton: {
         backgroundColor: colors.colorLightBlue,
-        borderRadius: 10, marginBottom: 20, marginHorizontal: Metrics.screenWidth * 0.03 + 10
+        borderRadius: 10, marginBottom: 5, 
     },
     styleTextInput: {
         borderRadius: 10, padding: 12, marginRight: 10, marginLeft: 10, fontSize: 14, color: "#4a4a4a", backgroundColor: '#f2f2f2', borderColor: '#bbbbbb', borderWidth: 0.5

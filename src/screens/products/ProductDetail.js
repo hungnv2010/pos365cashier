@@ -960,7 +960,7 @@ export default (props) => {
                                         </View> */}
                                     </View>
                                     : typeModal.current == 7 ?
-                                        <DialogInput listItem={printStamp.current} title={product.Name} titleButton={I18n.t('in_tem')} outputValue={onClickPrintTemp} /> :
+                                        <DialogInput listItem={printStamp.current} title={product.Name} titleButton={I18n.t('in_tem')} outputValue={onClickPrintTemp} clickHuy={true} outPutHuy={()=>setOnShowModal(false)} /> :
                                         null
             }
             </View>
