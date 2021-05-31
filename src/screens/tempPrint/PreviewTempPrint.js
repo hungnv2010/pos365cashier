@@ -90,6 +90,20 @@ export default forwardRef((props, ref) => {
         console.log("clickPrint data ", data)
         let value = isFNB ? await handerDataPrintTemp() : await handerDataPrintTempProduct()
         Print.PrintTemp(value, "192.168.100.238", "50x30")
+
+        // let settingObject = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
+        // if (settingObject && settingObject != "") {
+        //     settingObject = JSON.parse(settingObject)
+        //     console.log("clickPrint settingObject ", settingObject);
+        //     settingObject.Printer.forEach(async element => {
+        //         if (element.key == Constant.KEY_PRINTER.StampPrintKey && element.ip != "") {
+        //             let value = await handerDataPrintTemp();
+        //             console.log("handerDataPrintTemp value  ", value);
+        //             console.log("handerDataPrintTemp element  ", element);
+        //             Print.PrintTemp(value, element.ip, element.size)
+        //         }
+        //     });
+        // }
     }
 
     return (

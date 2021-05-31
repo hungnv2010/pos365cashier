@@ -146,7 +146,7 @@ export default (props) => {
     }
     const clickItemSuggest = (value) =>{
         setResults(value.toString())
-        props.outputPercent(value)
+        props.outputPercent({Value:value, Type:value <= 100?'discount':'total'})
     }
 
     return (
@@ -184,8 +184,8 @@ export default (props) => {
                                     suggestions && suggestions.length > 0 ?
                                     suggestions.map((item,index)=>{
                                         return(
-                                            <TouchableOpacity style={[styles.button,{paddingHorizontal:20,paddingVertical:10}]} onPress={()=>clickItemSuggest(item)}>
-                                                <Text>{item} %</Text>
+                                            <TouchableOpacity key={index.toString()} style={[styles.button,{paddingHorizontal:20,paddingVertical:10}]} onPress={()=>clickItemSuggest(item)}>
+                                                <Text>{currencyToString(item)} {item <= 100 ? '%' :''}</Text>
                                             </TouchableOpacity>
                                         )
                                     }):null

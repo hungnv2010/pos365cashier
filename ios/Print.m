@@ -162,11 +162,20 @@ RCT_EXPORT_METHOD(PrintTemp:(NSString *)param ip:(NSString *)ip size:(NSString *
       [self EscPrint:[arrayOfComponents objectAtIndex:i]];
     }
     [_printerManager.CurrentPrinter Close];
+    
+//    double delayInSeconds = 1;
+//    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+//    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+//      NSLog(@"printImageFromClient isCopies disconnect close");
+//      [_printerManager.CurrentPrinter Close];
+//    });
 //    [self EscPrint:param ];
   });
 }
 //end:(NSString *)end
 -(void)EscPrint: (NSString *)txt {
+  PrintClose = NO;
+  isLocalNetwork = NO;
   Printer * currentprinter = _printerManager.CurrentPrinter;
   NSLog(@"inputStr=1");
   if (currentprinter.IsOpen){
@@ -206,6 +215,7 @@ RCT_EXPORT_METHOD(PrintTemp:(NSString *)param ip:(NSString *)ip size:(NSString *
     //
     
     if ([currentprinter IsOpen]){
+      PrintClose = YES;
       NSData *data=[cmd GetCmd];
       NSString *aString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
       
@@ -216,7 +226,6 @@ RCT_EXPORT_METHOD(PrintTemp:(NSString *)param ip:(NSString *)ip size:(NSString *
 //            [_printerManager.CurrentPrinter Close];
       }];
     }
-//    [_printerManager.CurrentPrinter Close];
   }
 }
 

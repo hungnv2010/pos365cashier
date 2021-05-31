@@ -17,7 +17,7 @@ export default (props) => {
 
     const onClickButton = () => {
         props.outputValue(value)
-        console.log("value", value);
+        console.log("value", JSON.stringify(value));
 
 
     }
@@ -30,7 +30,8 @@ export default (props) => {
         list.forEach(element => {
             value[element.Key] = element.Value
         });
-    }, [])
+        console.log("object", JSON.stringify(value));
+    }, [props.listItem])
     useEffect(() => {
         let obj = value
         let k = `${key}`
@@ -47,27 +48,37 @@ export default (props) => {
         }
         return text
     }
+    const onClickHuy = () =>{
+        props.outPutHuy()
+    }
     const renderItem = (item, index) => {
         return (
-            <View style={{paddingHorizontal:Metrics.screenWidth*0.03}} >
+            <View style={{ paddingHorizontal: Metrics.screenWidth * 0.03 }} >
                 <Text style={styles.styleContent}>{I18n.t(item.Name)}</Text>
-                <TextInput style={styles.styleTextInput} keyboardType={typeof(item.Value) == 'number' ? 'numbers-and-punctuation' : 'default'} value={item.Value ? typeof (item.Value) == 'string' ? item.Value : currencyToString(item.Value) : null} placeholder={item.Hint != '' ? I18n.t(item.Hint) : item.Hint} placeholderTextColor="#bbbbbb" onChangeText={(text) => { setInput(item.isNum == true ? onChangeTextInput(text):text); item.Value = item.isNum== true? onChangeTextInput(text) : text ; setKey(item.Key); setList([...list]); }}></TextInput>
+                <TextInput style={styles.styleTextInput} keyboardType={item.isNum ? item.isNum : 'default'} value={item.Value ? item.isNum ? currencyToString(item.Value) : item.Value : null} placeholder={item.Hint != '' ? I18n.t(item.Hint) : item.Hint} placeholderTextColor="#bbbbbb" onChangeText={(text) => { setInput(item.isNum ? onChangeTextInput(text) : text); item.Value = item.isNum ? onChangeTextInput(text) : text; setKey(item.Key); setList([...list]); }}></TextInput>
             </View>
         )
     }
     return (
-        <View style={{ backgroundColor: 'white', borderRadius: 5, width:deviceType == Constant.PHONE ? Metrics.screenWidth*0.8 : Metrics.screenWidth*0.65, marginLeft:deviceType == Constant.TABLET ? Metrics.screenWidth*0.075 :0 }}>
+        <View style={{ backgroundColor: 'white', borderRadius: 5, width: deviceType == Constant.PHONE ? Metrics.screenWidth * 0.8 : Metrics.screenWidth * 0.65, marginLeft: deviceType == Constant.TABLET ? Metrics.screenWidth * 0.075 : 0 }}>
             <Text style={[styles.styleTitle, { marginTop: 10 }]}>{props.title}</Text>
             <View style={styles.styleLine}></View>
-                <FlatList
-                    data={list}
-                    renderItem={({ item, index }) => renderItem(item, index)}
-                    keyExtractor={(item, index) => index.toString()}
-                />
+            <FlatList
+                data={list}
+                renderItem={({ item, index }) => renderItem(item, index)}
+                keyExtractor={(item, index) => index.toString()}
+            />
             <Text style={[styles.styleContent]}>{props.content}</Text>
-            <TouchableOpacity style={styles.styleButton} onPress={onClickButton}>
-                <Text style={[styles.styleTitle, { color: 'white' }]}>{props.titleButton}</Text>
-            </TouchableOpacity>
+            <View style={{flexDirection:'row',marginHorizontal: Metrics.screenWidth * 0.03 + 10,marginBottom:20}}>
+                {props.clickHuy ?
+                    <TouchableOpacity style={[styles.styleButton,{flex:1,marginRight:5,backgroundColor:'#f21e3c'}]} onPress={onClickHuy}>
+                        <Text style={[styles.styleTitle, { color: 'white' }]}>{I18n.t('huy')}</Text>
+                    </TouchableOpacity> : null
+                }
+                <TouchableOpacity style={[styles.styleButton,{flex:3,marginLeft:5}]} onPress={onClickButton}>
+                    <Text style={[styles.styleTitle, { color: 'white' }]}>{props.titleButton}</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     )
 }
@@ -81,10 +92,10 @@ const styles = StyleSheet.create({
     },
     styleButton: {
         backgroundColor: colors.colorLightBlue,
-        borderRadius: 10,  marginBottom: 20,marginHorizontal:Metrics.screenWidth*0.03+10
+        borderRadius: 10, marginBottom: 5, 
     },
     styleTextInput: {
-        borderRadius: 10, padding: 12, marginRight: 10, marginLeft: 10, fontSize: 14, color: "#4a4a4a",backgroundColor:'#f2f2f2', borderColor:'#bbbbbb',borderWidth:0.5
+        borderRadius: 10, padding: 12, marginRight: 10, marginLeft: 10, fontSize: 14, color: "#4a4a4a", backgroundColor: '#f2f2f2', borderColor: '#bbbbbb', borderWidth: 0.5
     },
     styleLine: {
         height: 1, marginLeft: 10, marginRight: 10, backgroundColor: '#DCDCDC'

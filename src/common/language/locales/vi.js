@@ -596,6 +596,7 @@ export default {
   vat: "VAT",
   vui_long_kiem_tra_ket_noi_internet:'Vui lòng kiểm tra kết nối internet.',
   vui_long_nhap_ten_nhom_hang_hoa:'Vui lòng nhập tên nhóm hàng hoá',
+  vui_long_nhap_so_luong_ma_vach_can_in: "Vui lòng nhập số lượng mã vạch cần in",
 
   // TODO: X
 

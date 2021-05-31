@@ -63,11 +63,9 @@ export default (props) => {
         }
     }
     const getDataFromRealm = async () => {
-
         productTmp.current = (await realmStore.queryProducts())
         productTmp.current = productTmp.current.filtered(`TRUEPREDICATE SORT(Id DESC) DISTINCT(Id)`)
         console.log("productTmp", productTmp.current);
-        setListPr([...productTmp.current])
         categoryTmp.current = await realmStore.queryCategories()
         getSum(categoryTmp.current, productTmp.current)
 
@@ -108,8 +106,7 @@ export default (props) => {
             Name: 'ten_nhom',
             Hint: 'nhap_ten_nhom_hang_hoa',
             Key: 'CategoryName',
-            Value: '',
-            isNum: false
+            Value: ''
         }]
         console.log(data);
         let param = {
@@ -229,8 +226,8 @@ export default (props) => {
                     }
                 </View>
 
-                {
-                    allPer.create ?
+                {/* {
+                    allPer.create ? */}
                         <FAB
                             style={styles.fab}
                             icon='plus'
@@ -239,9 +236,9 @@ export default (props) => {
                                 onClickAddItem()
                             }}
                         />
-                        :
+                        {/* :
                         null
-                }
+                } */}
             </View>
             {
                 deviceType == Constant.TABLET ?

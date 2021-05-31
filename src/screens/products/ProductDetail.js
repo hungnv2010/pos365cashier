@@ -62,12 +62,12 @@ export default (props) => {
     const [imageUrl, setImageUrl] = useState()
     const [onHand, setOnHand] = useState()
     const token = useRef()
+    const cateTmp = useRef()
     const addCate = useRef([{
         Name: 'ten_nhom',
         Hint: 'nhap_ten_nhom_hang_hoa',
         Key: 'CategoryName',
         Value: '',
-        isNum: false
     }])
     const printStamp = useRef([])
     const [addDVT, setAddDVT] = useState([])
@@ -132,7 +132,7 @@ export default (props) => {
     }
 
     useEffect(() => {
-        console.log('props.allPer', props.allPer);
+        // console.log('props.allPer', props.allPer);
     }, [])
 
     useEffect(() => {
@@ -149,10 +149,10 @@ export default (props) => {
             setProduct({ ...JSON.parse(JSON.stringify(props.iproduct)) })
             console.log({ ...JSON.parse(JSON.stringify(props.iproduct)) });
             setPrinterPr(props.iproduct.Printer ? props.iproduct.Printer : '')
-            getCategory()
+            getCategory(props.iproduct.CategoryId ? props.iproduct.CategoryId : '')
             getProduct({ ...JSON.parse(JSON.stringify(props.iproduct)) })
             console.log("CompositeItemProducts", props.compositeItemProducts);
-            setNameCategory()
+            //setNameCategory()
             setCost(props.iproduct.Cost)
             if (props.iproduct.Code) {
                 setCodeProduct(props.iproduct.Code)
@@ -225,14 +225,14 @@ export default (props) => {
             Hint: '',
             Key: 'quantity',
             Value: 1,
-            isNum: true
+            isNum: 'number-pad'
         },
         {
             Name: 'gia_ban',
             Hint: '',
             Key: 'price',
             Value: product.Price,
-            isNum: true
+            isNum: 'number-pad'
         }]
     }, [product])
 
@@ -296,17 +296,23 @@ export default (props) => {
             setType('them')
         }
     }
-    const getCategory = async () => {
+    const getCategory = async (id) => {
         setCategory([])
         let state = await NetInfo.fetch()
         if (state.isConnected == true && state.isInternetReachable == true) {
             await dataManager.syncCategories()
         }
         let categoryTmp = await realmStore.queryCategories()
-        setCategory([...categoryTmp])
-        if (product.CategoryId) {
-            let cate = categoryTmp.filter(item => item.Id == product.CategoryId)
-            setNameCategory(cate.Name)
+        setCategory(categoryTmp)
+        if (id != '') {
+            let cate = categoryTmp.filter(item => item.Id == id)
+            console.log("acfkasf", cate);
+            if (cate.length > 0) {
+                setNameCategory(cate[0].Name)
+                cateTmp.current = cate[0].Name
+            }
+        } else {
+            setNameCategory()
         }
     }
 
@@ -377,28 +383,26 @@ export default (props) => {
             Hint: 'nhap_don_vi_tinh_lon',
             Key: 'LargeUnit',
             Value: product.LargeUnit ? product.LargeUnit : '',
-            isNum: false
         },
         {
             Name: 'ma_dvt_lon',
             Hint: 'ma_don_vi_tinh_lon',
             Key: 'LargeUnitId',
             Value: productOl.LargeUnitCode ? productOl.LargeUnitCode : null,
-            isNum: false
         },
         {
             Name: 'gia_ban_dvt_lon',
             Hint: 'gia_ban_don_vi_tinh_lon',
             Key: 'PriceLargeUnit',
             Value: product.PriceLargeUnit ? product.PriceLargeUnit : 0,
-            isNum: true
+            isNum: 'number-pad'
         },
         {
             Name: 'gia_tri_quy_doi',
             Hint: 'gia_tri_quy_doi',
             Key: 'ConversionValue',
             Value: product.ConversionValue ? product.ConversionValue : 1,
-            isNum: true
+            isNum: 'number-pad'
         }])
     }, [productOl])
 
@@ -413,7 +417,6 @@ export default (props) => {
             Hint: 'nhap_ten_nhom_hang_hoa',
             Key: 'CategoryName',
             Value: '',
-            isNum: false
         }]
         console.log(data);
         let param = {
@@ -428,7 +431,6 @@ export default (props) => {
             new HTTPService().setPath(ApiPath.CATEGORIES_PRODUCT).POST(param).then(res => {
                 if (res) {
                     if (res.ResponseStatus && res.ResponseStatus.Message) {
-                        dialogManager.showLoading()
                         dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
                             dialogManager.destroy();
                             dialogManager.hiddenLoading()
@@ -437,9 +439,11 @@ export default (props) => {
                         if (deviceType == Constant.PHONE) {
                             props.route.params.onCallBack('them', 1)
                             handleSuccess('them')
-                        } else
+                            setCategory(cateTmp.current)
+                        } else {
                             props.handleSuccessTab('them', 1, product)
-                        //setProduct({...product})
+                            setNameCategory(cateTmp.current)
+                        }
                         getCategory()
                     }
                 }
@@ -543,25 +547,25 @@ export default (props) => {
     }
 
     const onClickSaveAndCopy = () => {
-        if (props.allPer.update) {
+        // if (props.allPer.update) {
             isCoppy.current = true
             onSave()
-        } else {
-            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
-                dialogManager.destroy();
-            }, null, null, I18n.t('dong'))
-        }
+        // } else {
+        //     dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+        //         dialogManager.destroy();
+        //     }, null, null, I18n.t('dong'))
+        // }
     }
 
     const onClickSave = () => {
-        if (props.allPer.update) {
-            isCoppy.current = false
+        // if (props.allPer.update) {
+         isCoppy.current = false
             onSave()
-        } else {
-            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
-                dialogManager.destroy();
-            }, null, null, I18n.t('dong'))
-        }
+        // } else {
+        //     dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+        //         dialogManager.destroy();
+        //     }, null, null, I18n.t('dong'))
+        // }
     }
 
     const syncData = async () => {
@@ -869,24 +873,29 @@ export default (props) => {
     const onClickPrintTemp = async (data) => {
         console.log("temp", data);
         console.log("onClickPrintTemp product ", product);
-        let listProduct = []
-        for (let index = 0; index < data.quantity; index++) {
-            listProduct.push({ ...product, Price: data.price })
+        if (data.quantity && data.quantity > 0) {
+            let listProduct = []
+            for (let index = 0; index < data.quantity; index++) {
+                listProduct.push({ ...product, Price: data.price ? data.price : product.Price })
+            }
+            console.log("onClickPrintTemp listProduct ", listProduct);
+            let settingObject = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
+            if (settingObject && settingObject != "") {
+                settingObject = JSON.parse(settingObject)
+                console.log("onClickPrintTemp settingObject ", settingObject);
+                settingObject.Printer.forEach(async element => {
+                    if (element.key == Constant.KEY_PRINTER.StampPrintKey && element.ip != "") {
+                        let value = await handerDataPrintTempProduct(listProduct)
+                        console.log("handerDataPrintTempProduct value  ", value);
+                        Print.PrintTemp(value, element.ip, "40x30")
+                    }
+                });
+            }
+            setOnShowModal(false)
+        } else {
+            setOnShowModal(false)
+            dialogManager.showPopupOneButton(I18n.t("vui_long_nhap_so_luong_ma_vach_can_in"));
         }
-        console.log("onClickPrintTemp listProduct ", listProduct);
-        let settingObject = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
-        if (settingObject && settingObject != "") {
-            settingObject = JSON.parse(settingObject)
-            console.log("onClickPrintTemp settingObject ", settingObject);
-            settingObject.Printer.forEach(async element => {
-                if (element.key == Constant.KEY_PRINTER.StampPrintKey && element.ip != "") {
-                    let value = await handerDataPrintTempProduct(listProduct)
-                    console.log("handerDataPrintTempProduct value  ", value);
-                    Print.PrintTemp(value, element.ip, "40x30")
-                }
-            });
-        }
-        setOnShowModal(false)
     }
 
     const renderModal = () => {
@@ -951,7 +960,7 @@ export default (props) => {
                                         </View> */}
                                     </View>
                                     : typeModal.current == 7 ?
-                                        <DialogInput listItem={printStamp.current} title={product.Name} titleButton={I18n.t('in_tem')} outputValue={onClickPrintTemp} /> :
+                                        <DialogInput listItem={printStamp.current} title={product.Name} titleButton={I18n.t('in_tem')} outputValue={onClickPrintTemp} clickHuy={true} outPutHuy={()=>setOnShowModal(false)} /> :
                                         null
             }
             </View>
@@ -1100,7 +1109,7 @@ export default (props) => {
                                 <View style={{ flexDirection: 'row' }}>
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.title}>{I18n.t('gia_von')}</Text>
-                                        <TextInput editable={props.allPer.updateCost} style={[styles.textInput, { color: colors.colorLightBlue, fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={cost && props.allPer.viewCost ? currencyToString(cost) : '--'} onChangeText={(text) => setCost(onChangeTextInput(text))}></TextInput>
+                                        <TextInput style={[styles.textInput, { color: colors.colorLightBlue, fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={cost ? currencyToString(cost) : ''} onChangeText={(text) => setCost(onChangeTextInput(text))}></TextInput>
                                     </View>
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.title} >{I18n.t('gia')}</Text>
@@ -1135,7 +1144,7 @@ export default (props) => {
                     </View>
                     <View style={{ backgroundColor: '#f2f2f2', padding: 10 }}>
                         <View style={{ flexDirection: 'row' }}>
-                            {product.Id && props.allPer.delete ?
+                            {product.Id ?
                                 <View style={{ flex: 1 }}>
                                     <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 7, paddingVertical: 10, justifyContent: 'center', margin: 2, alignItems: 'center', borderRadius: 10 }} onPress={() => { onClickDelete() }}>
                                         <Icon name={'trash-can'} size={24} color={'#fff'} />
@@ -1143,7 +1152,22 @@ export default (props) => {
                                 </View> : null
                             }
                             <View style={{ flex: product.Id ? 1 : 0.9 }}>
-                                <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 7, paddingVertical: 10, justifyContent: 'center', margin: 2, alignItems: 'center', borderRadius: 10 }} onPress={() => { typeModal.current = 7, setOnShowModal(true) }}>
+                                <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 7, paddingVertical: 10, justifyContent: 'center', margin: 2, alignItems: 'center', borderRadius: 10 }} onPress={() => {
+                                printStamp.current = [{
+                                    Name: 'so_luong_ma_vach_can_in',
+                                    Hint: '',
+                                    Key: 'quantity',
+                                    Value: 1,
+                                    isNum: "number-pad"
+                                },
+                                {
+                                    Name: 'gia_ban',
+                                    Hint: '',
+                                    Key: 'price',
+                                    Value: product.Price,
+                                    isNum: "number-pad"
+                                }], typeModal.current = 7, setOnShowModal(true)
+                                }}>
                                     <Icon name={'barcode-scan'} size={24} color={'#fff'} />
                                 </TouchableOpacity>
                             </View>
