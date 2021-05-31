@@ -44,6 +44,7 @@ export default (props) => {
 
     useEffect(() => {
         console.log('props product', props);
+        setPer(props.route.params.permission)
     }, [])
 
     useEffect(() => {
@@ -121,7 +122,7 @@ export default (props) => {
     const onClickItem = (el) => {
         itemProduct.current = el
         if (deviceType == Constant.PHONE) {
-            props.navigation.navigate(ScreenList.ProductDetail, { product: itemProduct.current, onCallBack: handleSuccess, })
+            props.navigation.navigate(ScreenList.ProductDetail, { product: itemProduct.current, onCallBack: handleSuccess, permission: allPer })
         } else {
             setItProduct(el)
         }
@@ -281,8 +282,8 @@ export default (props) => {
                         </View>
                     }
 
-                    {/* {
-                        allPer.create ? */}
+                    {
+                        allPer.create ?
                             <FAB
                                 style={styles.fab}
                                 icon='plus'
@@ -291,9 +292,9 @@ export default (props) => {
                                     onClickItem({})
                                 }}
                             />
-                            {/* :
+                            :
                             null
-                    } */}
+                    }
 
                 </View>
 

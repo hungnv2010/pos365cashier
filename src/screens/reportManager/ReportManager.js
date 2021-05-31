@@ -21,9 +21,11 @@ export default (props) => {
 
     useEffect(() => {
         console.log('props report', props);
+        if(props.route.params.permission){
         let item = props.route.params.permission.items
         let per = item.filter(elm => elm.id == "EndOfDay_Read")
         setPermission(per[0].Checked)
+        }
     }, [])
 
     const onClickEndOfDay = (screen) => {

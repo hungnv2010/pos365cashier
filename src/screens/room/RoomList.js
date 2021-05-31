@@ -47,6 +47,7 @@ export default (props) => {
 
     useEffect(() => {
         console.log('props room table', props);
+        if(props.route.params.permission){
         let item = props.route.params.permission.items
         let allPer = {}
         item.forEach(element => {
@@ -56,6 +57,7 @@ export default (props) => {
             if (element.id == "Room_Delete") allPer.delete = element.Checked
         });
         setPermission(allPer)
+    }
     }, [])
 
     useEffect(() => {
@@ -65,7 +67,7 @@ export default (props) => {
     }, [])
 
     const getDataInRealm = async () => {
-
+        let roomsTmp = []
         roomsTmp = await realmStore.queryRooms()
         roomsTmp = roomsTmp.sorted('Position')
         roomGroupsTmp = await realmStore.queryRoomGroups()

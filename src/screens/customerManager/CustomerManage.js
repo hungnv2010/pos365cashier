@@ -26,15 +26,17 @@ export default (props) => {
 
     useEffect(() => {
         console.log('propssss', props);
-        let item = props.route.params.permission.items
-        let allPer = {}
-        item.forEach(element => {
-            if (element.id == "Partner_Read") allPer.read = element.Checked
-            if (element.id == "Partner_Create") allPer.create = element.Checked
-            if (element.id == "Partner_Update") allPer.update = element.Checked
-            if (element.id == "Partner_Delete") allPer.delete = element.Checked
-        });
-        setPermission(allPer)
+        if (props.route.params.permission) {
+            let item = props.route.params.permission.items
+            let allPer = {}
+            item.forEach(element => {
+                if (element.id == "Partner_Read") allPer.read = element.Checked
+                if (element.id == "Partner_Create") allPer.create = element.Checked
+                if (element.id == "Partner_Update") allPer.update = element.Checked
+                if (element.id == "Partner_Delete") allPer.delete = element.Checked
+            });
+            setPermission(allPer)
+        }
     }, [])
 
     const onClickNavigation = (screen) => {

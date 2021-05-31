@@ -61,6 +61,8 @@ export default (props) => {
     const [isTakePhoto, setIsTakePhoto] = useState(true)
     const [imageUrl, setImageUrl] = useState()
     const [onHand, setOnHand] = useState()
+    const [allPer, setAllPer] = useState()
+    const permissionMapTmp = useRef()
     const token = useRef()
     const cateTmp = useRef()
     const addCate = useRef([{
@@ -132,11 +134,18 @@ export default (props) => {
     }
 
     useEffect(() => {
-        // console.log('props.allPer', props.allPer);
+        getPermissionMap()
     }, [])
+    const getPermissionMap = async() =>{
+        let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION,true)
+        vendorSession = JSON.parse(vendorSession)
+        permissionMapTmp.current = vendorSession.PermissionMap
+        console.log("abc",vendorSession.PermissionMap);
+    }
 
     useEffect(() => {
         if (deviceType == Constant.PHONE) {
+            setAllPer(props.route.params.permission)
             getData(props.route.params)
             setDefaultType(product.ProductType)
             setPriceConfig({})
@@ -152,6 +161,7 @@ export default (props) => {
             getCategory(props.iproduct.CategoryId ? props.iproduct.CategoryId : '')
             getProduct({ ...JSON.parse(JSON.stringify(props.iproduct)) })
             console.log("CompositeItemProducts", props.compositeItemProducts);
+            
             //setNameCategory()
             setCost(props.iproduct.Cost)
             if (props.iproduct.Code) {
@@ -180,6 +190,9 @@ export default (props) => {
         console.log("type", type);
         console.log("prodcut", product);
     }, [type])
+    useEffect(() => {  
+        setAllPer(props.allPer) 
+    }, [props.allPer])
 
     useEffect(() => {
         if (deviceType == Constant.TABLET) {
@@ -206,6 +219,9 @@ export default (props) => {
         console.log("cost.....", compositeItemProducts);
         setCost(t)
     }, [compositeItemProducts])
+    useEffect(() => {
+        console.log("allPer", allPer);
+    }, [allPer])
 
     useEffect(() => {
         //setPriceConfig({})
@@ -547,25 +563,25 @@ export default (props) => {
     }
 
     const onClickSaveAndCopy = () => {
-        // if (props.allPer.update) {
+        if (deviceType == Constant.PHONE ? props.route.params.permission.update : props.allPer.update) {
             isCoppy.current = true
             onSave()
-        // } else {
-        //     dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
-        //         dialogManager.destroy();
-        //     }, null, null, I18n.t('dong'))
-        // }
+        } else {
+            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
+        }
     }
 
     const onClickSave = () => {
-        // if (props.allPer.update) {
-         isCoppy.current = false
+        if (deviceType == Constant.PHONE ? props.route.params.permission.update : props.allPer.update) {
+            isCoppy.current = false
             onSave()
-        // } else {
-        //     dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
-        //         dialogManager.destroy();
-        //     }, null, null, I18n.t('dong'))
-        // }
+        } else {
+            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
+        }
     }
 
     const syncData = async () => {
@@ -960,7 +976,7 @@ export default (props) => {
                                         </View> */}
                                     </View>
                                     : typeModal.current == 7 ?
-                                        <DialogInput listItem={printStamp.current} title={product.Name} titleButton={I18n.t('in_tem')} outputValue={onClickPrintTemp} clickHuy={true} outPutHuy={()=>setOnShowModal(false)} /> :
+                                        <DialogInput listItem={printStamp.current} title={product.Name} titleButton={I18n.t('in_tem')} outputValue={onClickPrintTemp} clickHuy={true} outPutHuy={() => setOnShowModal(false)} /> :
                                         null
             }
             </View>
@@ -1109,7 +1125,8 @@ export default (props) => {
                                 <View style={{ flexDirection: 'row' }}>
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.title}>{I18n.t('gia_von')}</Text>
-                                        <TextInput style={[styles.textInput, { color: colors.colorLightBlue, fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={cost ? currencyToString(cost) : ''} onChangeText={(text) => setCost(onChangeTextInput(text))}></TextInput>
+                                        {/* <TextInput style={[styles.textInput, { color: colors.colorLightBlue, fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={cost ? currencyToString(cost) : ''} onChangeText={(text) => setCost(onChangeTextInput(text))}></TextInput> */}
+                                        <TextInput editable={deviceType == Constant.PHONE ? props.route.params.permission.updateCost : props.allPer.updateCost} style={[styles.textInput, { color: colors.colorLightBlue, fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={(deviceType == Constant.PHONE ? props.route.params.permission.viewCost == true : props.allPer.viewCost == true) ? cost ? currencyToString(cost) : 0 + '' : '--'} onChangeText={(text) => setCost(onChangeTextInput(text))}></TextInput>
                                     </View>
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.title} >{I18n.t('gia')}</Text>
@@ -1144,7 +1161,7 @@ export default (props) => {
                     </View>
                     <View style={{ backgroundColor: '#f2f2f2', padding: 10 }}>
                         <View style={{ flexDirection: 'row' }}>
-                            {product.Id ?
+                            {product.Id && (deviceType == Constant.PHONE ? props.route.params.permission.delete == true : props.allPer.delete) ?
                                 <View style={{ flex: 1 }}>
                                     <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 7, paddingVertical: 10, justifyContent: 'center', margin: 2, alignItems: 'center', borderRadius: 10 }} onPress={() => { onClickDelete() }}>
                                         <Icon name={'trash-can'} size={24} color={'#fff'} />
@@ -1153,20 +1170,20 @@ export default (props) => {
                             }
                             <View style={{ flex: product.Id ? 1 : 0.9 }}>
                                 <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 7, paddingVertical: 10, justifyContent: 'center', margin: 2, alignItems: 'center', borderRadius: 10 }} onPress={() => {
-                                printStamp.current = [{
-                                    Name: 'so_luong_ma_vach_can_in',
-                                    Hint: '',
-                                    Key: 'quantity',
-                                    Value: 1,
-                                    isNum: "number-pad"
-                                },
-                                {
-                                    Name: 'gia_ban',
-                                    Hint: '',
-                                    Key: 'price',
-                                    Value: product.Price,
-                                    isNum: "number-pad"
-                                }], typeModal.current = 7, setOnShowModal(true)
+                                    printStamp.current = [{
+                                        Name: 'so_luong_ma_vach_can_in',
+                                        Hint: '',
+                                        Key: 'quantity',
+                                        Value: 1,
+                                        isNum: "number-pad"
+                                    },
+                                    {
+                                        Name: 'gia_ban',
+                                        Hint: '',
+                                        Key: 'price',
+                                        Value: product.Price,
+                                        isNum: "number-pad"
+                                    }], typeModal.current = 7, setOnShowModal(true)
                                 }}>
                                     <Icon name={'barcode-scan'} size={24} color={'#fff'} />
                                 </TouchableOpacity>
