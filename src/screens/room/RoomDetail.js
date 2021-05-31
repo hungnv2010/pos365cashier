@@ -270,14 +270,14 @@ export default (props) => {
 
     const onClickDone = () => {
         if (isEditRoom) {
-            if (props.permission.update) onClickApply()
+            if (props.permission.update || (props.route.params && props.route.params.permission && props.route.params.permission.update)) onClickApply()
             else {
                 dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
                     dialogManager.destroy();
                 }, null, null, I18n.t('dong'))
             }
         } else {
-            if (props.permission.create) onClickApply()
+            if (props.permission.create || (props.route.params && props.route.params.permission && props.route.params.permission.create)) onClickApply()
             else {
                 dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
                     dialogManager.destroy();
@@ -454,7 +454,7 @@ export default (props) => {
                     </View>
                 </View>
                 <View style={{ flexDirection: "row", margin: 10, marginHorizontal: 0, marginTop: 50 }}>
-                    {isEditRoom && props.permission.delete ?
+                    {isEditRoom && (props.permission && props.permission.delete || (props.route.params && props.route.params.permission && props.route.params.permission.delete)) ?
                         <TouchableOpacity onPress={onClickDelete} style={{ flex: 1, flexDirection: "row", marginTop: 0, borderRadius: 5, backgroundColor: "#f2f2f2", justifyContent: "center", alignItems: "center", padding: 10 }}>
                             <IconAntDesign name={"delete"} size={25} color="black" />
                         </TouchableOpacity>

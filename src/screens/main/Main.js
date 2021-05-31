@@ -251,7 +251,7 @@ export default (props) => {
                   <Order {...props} textSearch={textSearch} />
                   :
                   <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-                    <Text style={{ fontSize: 20 }}>{I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay')}</Text>
+                    <Text style={deviceType == Constant.TABLET ? { fontSize: 20 } : {}}>{I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay')}</Text>
                   </View>
               }
             </>
