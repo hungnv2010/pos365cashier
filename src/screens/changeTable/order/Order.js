@@ -66,11 +66,12 @@ export default (props) => {
     const widthRoom = Dimensions.get('screen').width / numberColumn;
     // const RoomAll = { Name: "Tất cả", Id: "All" }
     const [listRoom, setListRoom] = useState([])
-
+    
 
     useEffect(() => {
         init()
     }, [])
+    
 
     const init = async () => {
         rooms = await realmStore.queryRooms()

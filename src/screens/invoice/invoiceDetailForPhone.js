@@ -127,21 +127,27 @@ const InvoiceDetail = (props) => {
     }
 
     const onDeleteOrder = () => {
-        dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_huy_hoa_don'), I18n.t("thong_bao"), res => {
-            if (res == 1) {
-                let id = invoiceDetail.Id && invoiceDetail.Id != -1 ? invoiceDetail.Id : ""
-                new HTTPService().setPath(ApiPath.DELETE_ORDER.replace("{orderId}", id)).DELETE()
-                    .then(result => {
-                        console.log('onDeleteOrder result', result);
-                        if (result) {
-                            props.route.params.onCallBack()
-                            props.navigation.pop()
-                        }
-                    }).catch(err => {
-                        console.log("onDeleteOrder err ", err);
-                    })
-            }
-        })
+        if (props.route.params.allPer.delete) {
+            dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_huy_hoa_don'), I18n.t("thong_bao"), res => {
+                if (res == 1) {
+                    let id = invoiceDetail.Id && invoiceDetail.Id != -1 ? invoiceDetail.Id : ""
+                    new HTTPService().setPath(ApiPath.DELETE_ORDER.replace("{orderId}", id)).DELETE()
+                        .then(result => {
+                            console.log('onDeleteOrder result', result);
+                            if (result) {
+                                props.route.params.onCallBack()
+                                props.navigation.pop()
+                            }
+                        }).catch(err => {
+                            console.log("onDeleteOrder err ", err);
+                        })
+                }
+            })
+        } else {
+            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
+        }
     }
 
     const renderItemList = (item) => {

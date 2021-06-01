@@ -48,6 +48,7 @@ const Invoice = (props) => {
         skip: 0
     })
     const debounceTextSearch = useDebounce(textSearch)
+    
 
 
     // useFocusEffect(
@@ -257,7 +258,7 @@ const Invoice = (props) => {
             setCurrentItem({ ...item })
         } else {
             console.log('onClickInvoiceItem', item, props);
-            props.navigation.navigate(ScreenList.InvoiceDetailForPhone, { item, onCallBack: onCallBack })
+            props.navigation.navigate(ScreenList.InvoiceDetailForPhone, { item, onCallBack: onCallBack ,allPer:props.route.params.allPer})
 
         }
     }
@@ -493,7 +494,9 @@ const Invoice = (props) => {
                         <View style={{ flex: 1 }}>
                             <InvoiceDetail
                                 onCallBack={onCallBack}
-                                currentItem={currentItem} />
+                                currentItem={currentItem}
+                                allPer={props.route.params.allPer}
+                                />
                         </View>
                         :
                         null

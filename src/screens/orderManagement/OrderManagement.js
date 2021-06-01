@@ -16,16 +16,41 @@ export default (props) => {
         return state.Common
     })
 
+    const [perOrder, setPerOrder] = useState({
+        read: true,
+        create: true,
+        update: true,
+        delete: true,
+        import: true,
+        export: true
+    })
     useEffect(() => {
+        console.log('props room table', props);
+        if (props.route.params.permission) {
+            let item = props.route.params.permission.items
+            let allPer = {}
+            item.forEach(element => {
+                if (element.id == "Order_Read") allPer.read = element.Checked
+                if (element.id == "Order_Create") allPer.create = element.Checked
+                if (element.id == "Order_Update") allPer.update = element.Checked
+                if (element.id == "Order_Delete") allPer.delete = element.Checked
+                if (element.id == "Order_Import") allPer.import = element.Checked
+                if (element.id == "Order_Export") allPer.export = element.Checked
+            });
+            setPerOrder(allPer)
+        }
 
-    }, [])
+    }, [props.itemPer])
+    useEffect(() => {
+        console.log("per", perOrder);
+    }, [perOrder])
 
     const onClickPaymentVNPAYQR = () => {
         props.navigation.navigate(ScreenList.PaymentPendingList)
     }
 
-    const onClickNavigation = (screen) => {
-        props.navigation.navigate(screen)
+    const onClickNavigation = (screen,param) => {
+        props.navigation.navigate(screen,param)
     }
 
     return (
@@ -37,7 +62,7 @@ export default (props) => {
             />
 
             <View style={styles.viewContent}>
-                <TouchableOpacity style={styles.button} onPress={() => onClickNavigation(ScreenList.Invoice)}>
+                <TouchableOpacity style={styles.button} onPress={() => onClickNavigation(ScreenList.Invoice,{allPer:perOrder})}>
                     <Image style={styles.iconButton} source={Images.ic_danhsachdonhang} />
                     <Text style={styles.textButton}>{I18n.t('danh_sach_don_hang')}</Text>
                 </TouchableOpacity>
