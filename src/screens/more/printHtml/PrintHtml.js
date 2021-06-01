@@ -163,7 +163,7 @@ export default (props) => {
                         }
                     </View>
                     <View style={{ flex: 1, borderLeftWidth: 0.5, borderLeftColor: "gray" }}>
-                        <PrintWebview ref={childRef} data={dataHtml} />
+                        <PrintWebview {...props} ref={childRef} data={dataHtml} />
                     </View>
                 </View>
             }

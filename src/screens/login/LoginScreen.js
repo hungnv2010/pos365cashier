@@ -48,6 +48,10 @@ const LoginScreen = (props) => {
                 currentAccount = JSON.parse(currentAccount);
                 URL.link = "https://" + currentAccount.Link + ".pos365.vn/";
                 dispatch(saveDeviceInfoToStore({ SessionId: currentAccount.SessionId }))
+
+                let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
+                console.log('Login data====', JSON.parse(data));
+
                 navigateToHome();
             } else {
                 let rememberAccount = await getFileDuLieuString(Constant.REMEMBER_ACCOUNT, true);

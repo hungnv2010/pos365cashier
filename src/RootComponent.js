@@ -51,24 +51,56 @@ export default () => {
 
     const checkVersionApplication = async () => {
         return new Promise((resolve) => {
-            new HTTPService().setLinkFileTinh("https://api.pos365.vn/appversion.json").GET({}).then((res) => {
-                console.log("checkVersionApplication res ", JSON.stringify(res));
-                let res1 = { "Android": "1.41", "iOS": "1.4.10" }
+
+            new HTTPService().setLinkFileTinh("https://60a6046dc0c1fd00175f4f2b.mockapi.io/version").GET({}).then((res) => {
+            // new HTTPService().setLinkFileTinh("https://api.pos365.vn/appversion.json").GET({}).then((res1) => {
+                console.log("checkVersionApplication res ", res);
+                // console.log("checkVersionApplication res ", typeof (res1));
+                // console.log("checkVersionApplication res ", JSON.parse(res));
+                // let res1 = { "Android": "1.41", "iOS": "1.4.10" }
+                // let res = JSON.parse(res1);
                 if (res && res.iOS && res.iOS != "") {
-                    DeviceInfo.getVersion().then(res => {
-                        console.log("DeviceInfo.getVersion() ===  ", res);
-                        let clientVersion = res.replace(/\./g, "");
-                        let strVersion = (typeof (res1.iOS) === "string") ? res1.iOS : JSON.stringify(res1.iOS);
-                        let serverVersion = strVersion.replace(/\./g, "");
-                        console.log("clientVersion  ", clientVersion, typeof (clientVersion));
-                        console.log("serverVersion  ", serverVersion, typeof (serverVersion));
-                        if (parseInt(clientVersion) < parseInt(serverVersion)) {
-                            console.log("Phiên bản hiện tại chưa phải là mới nhất");
+                    DeviceInfo.getVersion().then(value => {
+                        console.log("DeviceInfo.getVersion() ===  ", value);
+                        console.log("DeviceInfo.getVersion() === typeof (res.iOS)  ", typeof (res.iOS));
+
+                        let arrayClientVersion = value.split(".")
+                        let clientVersionNumber = arrayClientVersion.length > 0 ? arrayClientVersion[0] : 0;
+                        let clientVersionDecimal = arrayClientVersion.length > 1 ? arrayClientVersion[1] : 0;
+
+                        let arrayServerVersion = (typeof (res.iOS) === "string") ? res.iOS.split(".") : JSON.stringify(res.iOS).split(".")
+                        let serverVersionNumber = arrayServerVersion.length > 0 ? arrayServerVersion[0] : 0;
+                        let serverVersionDecimal = arrayServerVersion.length > 1 ? arrayServerVersion[1] : 0;
+
+                        console.log("serverVersionNumber  ", serverVersionNumber, typeof (serverVersionNumber));
+                        console.log("serverVersionDecimal  ", serverVersionDecimal, typeof (serverVersionDecimal));
+                        console.log("clientVersionNumber  ", clientVersionNumber, typeof (clientVersionNumber));
+                        console.log("clientVersionDecimal  ", clientVersionDecimal, typeof (clientVersionDecimal));
+
+                        if (parseInt(clientVersionNumber) < parseInt(serverVersionNumber)) {
+                            console.log("update now");
+                            resolve(true);
+                        } else if (parseInt(clientVersionNumber) == parseInt(serverVersionNumber) && parseInt(clientVersionDecimal) < parseInt(serverVersionDecimal)) {
+                            console.log("update now");
                             resolve(true);
                         } else {
-                            console.log("Phiên bản hiện tại là mới nhất");
+                            console.log("is new application");
                             resolve(false);
                         }
+
+
+                        // let clientVersion = res.replace(/\./g, "");
+                        // let strVersion = (typeof (res1.iOS) === "string") ? res1.iOS : JSON.stringify(res1.iOS);
+                        // let serverVersion = strVersion.replace(/\./g, "");
+                        // console.log("clientVersion  ", clientVersion, typeof (clientVersion));
+                        // console.log("serverVersion  ", serverVersion, typeof (serverVersion));
+                        // if (parseInt(clientVersion) < parseInt(serverVersion)) {
+                        //     console.log("Phiên bản hiện tại chưa phải là mới nhất");
+                        //     resolve(true);
+                        // } else {
+                        //     console.log("Phiên bản hiện tại là mới nhất");
+                        //     resolve(false);
+                        // }
                     });
                 } else {
                     resolve(false);
@@ -96,7 +128,7 @@ export default () => {
                 })
             }
         }
-        // updateVersionApplication()
+        updateVersionApplication()
         const savePrinter = async () => {
             let setting = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
             if (setting && setting != "") {

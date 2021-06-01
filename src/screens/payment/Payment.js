@@ -140,6 +140,7 @@ export default (props) => {
             provisional.current = await getFileDuLieuString(Constant.PROVISIONAL_PRINT, true);
             console.log('provisional ', provisional.current);
             let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
+            console.log('setVendorSession ', data);
             setVendorSession(JSON.parse(data));
         }
 
@@ -370,10 +371,10 @@ export default (props) => {
         setShowModal(true)
     }
 
-    const onClickShowListMethod = (item) => {
+    const onClickShowListMethod = (item, index) => {
         console.log("onClickShowListMethod ", item);
-        itemAccountRef.current = item;
-        setItemMethod(item)
+        itemAccountRef.current = { ...item, index: index };
+        setItemMethod({ ...item, index: index })
         typeModal.current = TYPE_MODAL.FILTER_ACCOUNT
         setShowModal(true)
     }
@@ -407,9 +408,9 @@ export default (props) => {
             setListMethod([itemMethod])
         } else {
             // onChangeTextPaymentPaid(jsonContent.Total, itemAccountRef.current)
-            onChangeTextPaymentPaid("0", itemAccountRef.current)
+            onChangeTextPaymentPaid((itemAccountRef.current.index == 0) ? jsonContent.Total : "0", itemAccountRef.current)
             let list = [];
-            listMethod.forEach(element => {
+            listMethod.forEach((element, index) => {
                 if (itemAccountRef.current.Id == element.Id && itemAccountRef.current.UUID == element.UUID) {
                     list.push({ ...itemAccountRef.current, ...itemMethod, Value: element.Value })
                 } else
@@ -479,6 +480,7 @@ export default (props) => {
                 }
             }
         }
+        console.log("onChangeTextPaymentPaid text==:: ", text);
         listMethod.forEach(element => {
             if (item.Id == element.Id && item.UUID == element.UUID) {
                 element.Value = text
@@ -487,6 +489,7 @@ export default (props) => {
                 total += +element.Value;
             }
         });
+        console.log("onChangeTextPaymentPaid listMethod==:: ", listMethod);
         setListMethod([...listMethod])
         json.ExcessCash = total - jsonContent.Total;
         setJsonContent(json)
@@ -675,60 +678,43 @@ export default (props) => {
         }
         params.Order = json;
         console.log("onClickPay params== ", params);
-        // if (net.isConnected == true && net.isInternetReachable == true) {
-        dialogManager.showLoading();
-        new HTTPService().setPath(ApiPath.ORDERS).POST(params).then(async order => {
-            console.log("onClickPay order== ", order);
-            dialogManager.hiddenLoading()
-            if (order) {
-                resPayment.current = order;
-                dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
-                if (order.QRCode && order.QRCode != "") {
-                    qrCode.current = order.QRCode
-                    typeModal.current = TYPE_MODAL.QRCODE
-                    setShowModal(true)
-                    handlerQRCode(order, json)
-                } else {
-                    await printAfterPayment(order.Code)
-                    updateServerEvent(true)
+        if (net.isConnected == true && net.isInternetReachable == true) {
+            dialogManager.showLoading();
+            new HTTPService().setPath(ApiPath.ORDERS).POST(params).then(async order => {
+                console.log("onClickPay order== ", order);
+                dialogManager.hiddenLoading()
+                if (order) {
+                    resPayment.current = order;
+                    dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
+                    if (order.QRCode && order.QRCode != "") {
+                        qrCode.current = order.QRCode
+                        typeModal.current = TYPE_MODAL.QRCODE
+                        setShowModal(true)
+                        handlerQRCode(order, json)
+                    } else {
+                        await printAfterPayment(order.Code)
+                        updateServerEvent(true)
+                    }
+                    if (!isFNB) {
+                        jsonContentPayment.current["RoomName"] = I18n.t('don_hang');
+                        jsonContentPayment.current["Pos"] = "A"
+                    }
                 }
-                if (!isFNB) {
-                    jsonContentPayment.current["RoomName"] = I18n.t('don_hang');
-                    jsonContentPayment.current["Pos"] = "A"
-                }
-            }
-        }, err => {
-            if (err && err.config && err.config.timeoutErrorMessage && err.config.timeoutErrorMessage == "TIMEOUT")
+            }, err => {
+                if (err && err.config && err.config.timeoutErrorMessage && err.config.timeoutErrorMessage == "TIMEOUT")
+                    onError(json)
+                dialogManager.hiddenLoading()
+                console.log("onClickPay err== " + JSON.stringify(err.config.timeoutErrorMessage));
+            })
+        } else {
+            let isCheckStockControlWhenSelling = await dataManager.checkStockControlWhenSelling(json.OrderDetails)
+            if (isCheckStockControlWhenSelling) {
+                return;
+            } else {
                 onError(json)
-            dialogManager.hiddenLoading()
-            console.log("onClickPay err== " + JSON.stringify(err.config.timeoutErrorMessage));
-        })
-        // } else {
-        //     let isCheckStockControlWhenSelling = await dataManager.checkStockControlWhenSelling(json.OrderDetails)
-        //     if (isCheckStockControlWhenSelling) {
-        //         return;
-        //     } else {
-        //         onError(json)
-        //     }
-        // }
+            }
+        }
     }
-
-    // const checkStockControlWhenSelling = async (OrderDetails = []) => {
-    //     let listProduct = await realmStore.queryProducts();
-    //     if (OrderDetails.length > 0) {
-    //         OrderDetails.forEach(element => {
-    //             let product = listProduct.filtered(`Id == ${element.ProductId}`)
-    //             if (JSON.stringify(product) != '{}') {
-    //                 product = product[0]
-    //                 if (product.OnHand <= 0) {
-    //                     dialogManager.showPopupOneButton(element.Name + " " + I18n.t("khong_du_ton_kho"))
-    //                     return true;
-    //                 }
-    //             }
-    //         });
-    //     }
-    //     return false;
-    // }
 
     const onError = (json) => {
         dialogManager.showPopupOneButton(I18n.t("khong_co_ket_noi_internet_don_hang_cua_quy_khach_duoc_luu_vao_offline"))
@@ -792,11 +778,14 @@ export default (props) => {
                 if (element.key == Constant.KEY_PRINTER.StampPrintKey && element.ip != "") {
                     let value = await handerDataPrintTemp(jsonContent)
                     console.log("printAfterPayment value  ", value);
+                    console.log("printAfterPayment element  ", element);
                     Print.PrintTemp(value, element.ip, "30x40")
                 }
             });
         }
-        dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
+        setTimeout(() => {
+            dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
+        }, 500);
     }
 
     const handlerQRCode = async (order, jsonContent) => {
@@ -902,7 +891,7 @@ export default (props) => {
                     list.push(100000)
                 } else if (Math.floor(total / 100000) > 2 && Math.floor(total / 100000) < 5) {
                     list.push(500000)
-                } else if(Math.floor(total / 100000) < 2)
+                } else if (Math.floor(total / 100000) < 2)
                     list.push(200000)
             } else {
                 if (total % 10000 == 0) {
@@ -952,7 +941,7 @@ export default (props) => {
                         list.push(sum + 10000)
                     }
                     list.push(Math.floor(total / 100000) * 100000 + 100000)
-                    
+
                 }
 
             }
@@ -1164,7 +1153,7 @@ export default (props) => {
 
     const renderFilter = () => {
         if (typeModal.current == TYPE_MODAL.FILTER_ACCOUNT) {
-            let listAccount = vendorSession.Accounts; //.filter(item => item.Id != Constant.ID_VNPAY_QR)
+            let listAccount = changeMethodQRPay.current == false ? vendorSession.Accounts : vendorSession.Accounts.filter(item => item.Id != Constant.ID_VNPAY_QR); //.filter(item => item.Id != Constant.ID_VNPAY_QR)
             return (
                 <View style={styles.viewFilter}>
                     <Text style={styles.titleFilter}>{I18n.t('loai_hinh_thanh_toan')}</Text>
@@ -1307,7 +1296,7 @@ export default (props) => {
                             <View style={styles.viewIconEmpty}>
                             </View>
                     }
-                    <TouchableOpacity onPress={() => onClickShowListMethod(item)} style={styles.viewNameMethod}>
+                    <TouchableOpacity onPress={() => onClickShowListMethod(item, index)} style={styles.viewNameMethod}>
                         <Text style={styles.textNameMethod}>{item.Name}</Text>
                         <Image source={Images.arrow_down} style={styles.iconArrowDown} />
                     </TouchableOpacity>
@@ -1318,7 +1307,7 @@ export default (props) => {
                     </View>
                     {
                         item.Id == Constant.ID_VNPAY_QR ?
-                            <Text style={[styles.inputListMethod, { opacity: 0.2 }]}>{item.Value == "" ? "" : "" + currencyToString(item.Value, true)}</Text>
+                            <Text style={[styles.inputListMethod, { opacity: 0.2 }]}>{item.Value == "" ? "0" : "" + currencyToString(item.Value, true)}</Text>
                             :
                             <TextInput
                                 returnKeyType='done'

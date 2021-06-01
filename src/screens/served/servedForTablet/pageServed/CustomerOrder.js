@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, Text, Keyboard, TouchableWithoutFeedback, TouchableOpacity, Modal, ImageBackground, FlatList, StyleSheet, Image } from 'react-native';
+import { NativeModules, View, Text, Keyboard, TouchableWithoutFeedback, TouchableOpacity, Modal, ImageBackground, FlatList, StyleSheet, Image } from 'react-native';
 import { Colors, Images, Metrics } from '../../../../theme';
 import Menu from 'react-native-material-menu';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -26,8 +26,9 @@ import colors from '../../../../theme/Colors';
 import realmStore from '../../../../data/realm/RealmStore';
 import moment from 'moment';
 import NetInfo from "@react-native-community/netinfo";
+import { handerDataPrintTemp } from '../../../tempPrint/ServicePrintTemp';
 var Sound = require('react-native-sound');
-
+const { Print } = NativeModules;
 
 
 const TYPE_MODAL = {
@@ -633,7 +634,23 @@ const CustomerOrder = (props) => {
         //     jsonContent.PurchaseDate = "" + date;
         // }
         console.log("printAfterPayment jsonContent 2 ", jsonContent);
-        dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
+        // dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
+
+        if (isFNB) {
+            console.log("printAfterPayment settingObject.current ", settingObject.current);
+            settingObject.current.Printer.forEach(async element => {
+                if (element.key == Constant.KEY_PRINTER.StampPrintKey && element.ip != "") {
+                    let value = await handerDataPrintTemp(jsonContent)
+                    console.log("printAfterPayment value  ", value);
+                    console.log("printAfterPayment element  ", element);
+                    Print.PrintTemp(value, element.ip, "30x40")
+                }
+            });
+        }
+        setTimeout(() => {
+            dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
+        }, 500);
+
     }
 
     const updateServerEvent = async () => {

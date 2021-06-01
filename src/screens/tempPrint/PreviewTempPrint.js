@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useImperativeHandle, forwardRef, useRef } from 'react';
-import { Image, View, StyleSheet, Button, Text, TouchableOpacity, ScrollView, NativeEventEmitter, NativeModules, Dimensions } from 'react-native';
+import { Platform, View, StyleSheet, Button, Text, TouchableOpacity, ScrollView, NativeEventEmitter, NativeModules, Dimensions } from 'react-native';
 import { Images, Colors, Metrics } from '../../theme';
 import { WebView } from 'react-native-webview';
 import useDidMountEffect from '../../customHook/useDidMountEffect';
@@ -14,27 +14,19 @@ import { Constant } from '../../common/Constant';
 import { useSelector } from 'react-redux';
 import printService from '../../data/html/PrintService';
 const { Print } = NativeModules;
-import HtmlDefault from '../../data/html/htmlDefault';
 import ViewShot, { takeSnapshot, captureRef } from "react-native-view-shot";
 import AutoHeightWebView from 'react-native-autoheight-webview/autoHeightWebView'
 import I18n from '../../common/language/i18n'
 import colors from '../../theme/Colors';
 import { handerDataPrintTemp, handerDataPrintTempProduct } from './ServicePrintTemp';
-
-const FOOTER_HEIGHT = 21;
-const PADDING = 16;
-const BOTTOM_MARGIN_FOR_WATERMARK = FOOTER_HEIGHT * PADDING;
-
-
+import htmlDefault from "../../data/html/htmlDefault"
 
 export default forwardRef((props, ref) => {
 
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
-
     const [data, setData] = useState("");
     const [vendorSession, setVendorSession] = useState({});
-
     const { deviceType, isFNB } = useSelector(state => {
         return state.Common
     });
@@ -42,7 +34,11 @@ export default forwardRef((props, ref) => {
     useEffect(() => {
         console.log("Preview props", props);
         const getVendorSession = async () => {
-            setData(props.route.params.data)
+            if (Platform.isPad) {
+                setData(props.data)
+            } else {
+                setData(props.route.params.data)
+            }
             let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
             console.log('data', JSON.parse(data));
             setVendorSession(JSON.parse(data))
@@ -50,13 +46,17 @@ export default forwardRef((props, ref) => {
         getVendorSession()
     }, [])
 
-    useImperativeHandle(ref, () => ({
-        clickCheckInRef() {
-            clickCheck()
-        },
-        clickPrintInRef() {
-            clickPrint()
+    useEffect(() => {
+        console.log("Preview props", props);
+        if (Platform.isPad) {
+            setData(props.data)
+        } else {
+            setData(props.route.params.data)
         }
+    }, [props.data])
+
+    useImperativeHandle(ref, () => ({
+
     }));
 
     function clickCheck() {
@@ -74,7 +74,7 @@ export default forwardRef((props, ref) => {
         new HTTPService().setPath(ApiPath.PRINT_TEMPLATES).POST(params).then((res) => {
             console.log("clickCheck res ", res);
             if (res) {
-                setFileLuuDuLieu(Constant.HTML_PRINT, "" + params.printTemplate.Content);
+                setFileLuuDuLieu(Constant.TEMP_DEFAULT, "" + params.printTemplate.Content);
             }
             dialogManager.hiddenLoading()
             props.navigation.pop();
@@ -88,22 +88,19 @@ export default forwardRef((props, ref) => {
 
     async function clickPrint() {
         console.log("clickPrint data ", data)
-        let value = isFNB ? await handerDataPrintTemp() : await handerDataPrintTempProduct()
-        Print.PrintTemp(value, "192.168.100.238", "50x30")
-
-        // let settingObject = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
-        // if (settingObject && settingObject != "") {
-        //     settingObject = JSON.parse(settingObject)
-        //     console.log("clickPrint settingObject ", settingObject);
-        //     settingObject.Printer.forEach(async element => {
-        //         if (element.key == Constant.KEY_PRINTER.StampPrintKey && element.ip != "") {
-        //             let value = await handerDataPrintTemp();
-        //             console.log("handerDataPrintTemp value  ", value);
-        //             console.log("handerDataPrintTemp element  ", element);
-        //             Print.PrintTemp(value, element.ip, element.size)
-        //         }
-        //     });
-        // }
+        let settingObject = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
+        if (settingObject && settingObject != "") {
+            settingObject = JSON.parse(settingObject)
+            console.log("clickPrint settingObject ", settingObject);
+            settingObject.Printer.forEach(async element => {
+                if (element.key == Constant.KEY_PRINTER.StampPrintKey && element.ip != "") {
+                    let value = await handerDataPrintTemp();
+                    console.log("handerDataPrintTemp value  ", value);
+                    console.log("handerDataPrintTemp element  ", element);
+                    Print.PrintTemp(value, element.ip, element.size)
+                }
+            });
+        }
     }
 
     return (
@@ -124,7 +121,7 @@ export default forwardRef((props, ref) => {
                 </TouchableOpacity>
             </View>
             <View style={{ padding: 10 }}>
-                <Text>{data.replace(/\n/g, " ")}</Text>
+                <Text>{data ? data.replace(/\n/g, " ") : ""}</Text>
             </View>
             {/* <AutoHeightWebView
                 // scrollEnabled={false}

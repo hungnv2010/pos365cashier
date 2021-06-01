@@ -1,10 +1,6 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import {NativeModules, Image, View, StyleSheet, Button, Text, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
-import ToolBarPrintHtml from '../../components/toolbar/ToolBarPrintHtml';
+import { NativeModules, Image, View, StyleSheet, Button, Text, TouchableOpacity, ScrollView, TextInput, KeyboardAvoidingView, Platform } from 'react-native';
 import { Images, Colors, Metrics } from '../../theme';
-import { WebView } from 'react-native-webview';
-import htmlDefault from '../../data/html/htmlDefault';
-import HtmlKitchen from '../../data/html/htmlKitchen';
 import useDidMountEffect from '../../customHook/useDidMountEffect';
 import dialogManager from '../../components/dialog/DialogManager';
 import { HTTPService } from '../../data/services/HttpService';
@@ -19,22 +15,28 @@ import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
 import { ScreenList } from '../../common/ScreenList';
 import tempDefault from './tempDefault';
 import { handerDataPrintTemp } from './ServicePrintTemp';
-const { PrintTemp } = NativeModules;
 
 const Code = {
     Ten_Cua_Hang: "{Ten_Cua_Hang}",
     Dia_chi_Cua_Hang: "{Dia_chi_Cua_Hang}",
     Dien_Thoai_Cua_Hang: "{Dien_Thoai_Cua_Hang}",
     Ma_Chung_Tu: "{Ma_Chung_Tu}",
-
+    Product_Name: "{Product_Name}",
+    Product_Name_Downline: "{Product_Name_Downline}",
+    Product_Topping: "{Product_Topping}",
+    Product_Price: "{Product_Price}",
+    Table_Infor: "{Table_Infor}",
+    Number_Invoice: "{Number_Invoice}",
+    Current_time: "{Current_time}",
+    Text_Size: "{Text_Size}",
+    Height_FOOTER_60: "{Height_FOOTER_60}",
+    Height_FOOTER_35: "{Height_FOOTER_35}"
 }
 
 export default (props) => {
 
     const [tabType, setTabType] = useState(1);
-    const [dataHtml, setDataHtml] = useState(htmlDefault);
-    const [dataDefault, setDataDefault] = useState("");
-    const [dataOnline, setDataOnline] = useState("");
+    const [dataHtml, setDataHtml] = useState(tempDefault);
 
     const deviceType = useSelector(state => {
         return state.Common.deviceType
@@ -58,54 +60,30 @@ export default (props) => {
         getDataHtml();
     }, [])
 
-    let preview = null;
-    clickCheck = () => {
-        childRef.current.clickCheckInRef()
-    }
-
-    clickPrint = () => {
-        childRef.current.clickPrintInRef()
-    }
-
-    const onClickTab = (number) => {
-        setTabType(number)
-        // if (number == 1)
-        //     setFileLuuDuLieu(Constant.HTML_PRINT, htmlDefault);
-    }
-
-    const onChangeDataDefault = (text) => {
-        console.log("onChangeDataDefault ", text);
-
-        // setFileLuuDuLieu(Constant.HTML_PRINT, htmlDefault);
-        setDataDefault(text)
-    }
-
-    const onChangeDataOnline = (text) => {
-        setDataOnline(text)
-    }
-
-    const onClickBack = () => {
-        console.log("onClickBack ", tabType);
-        // setFileLuuDuLieu(Constant.HTML_PRINT, dataHtml);
-        props.navigation.pop();
-    }
-
     const onSelectTab = (number) => {
-        // PrintTemp.registerPrint("Hung")
         if (number == 1) {
             setDataHtml(tempDefault)
-            // setFileLuuDuLieu(Constant.HTML_PRINT, tempDefault);
+            setFileLuuDuLieu(Constant.TEMP_DEFAULT, tempDefault);
         } else {
             dialogManager.showLoading();
             let params = {};
             new HTTPService().setPath(ApiPath.PRINT_TEMPLATES + "/12").GET(params).then((res) => {
                 console.log("onClickLoadOnline res ", res);
                 if (res && res.Content) {
-                    setDataHtml(res.Content)
-                    // setFileLuuDuLieu(Constant.HTML_PRINT, "" + res.Content);
+
+                    let regex = /<[a-z][\s\S]*>/;
+                    console.log("onClickLoadOnline regex ", regex.test(res.Content))
+                    if (regex.test(res.Content)) {
+                        dialogManager.showPopupOneButton(I18n.t("ung_dung_hien_tai_chua_ho_tro_in_co_dau"));
+                        setDataHtml(tempDefault)
+                        setFileLuuDuLieu(Constant.TEMP_DEFAULT, tempDefault);
+                    } else {
+                        setDataHtml(res.Content)
+                        setFileLuuDuLieu(Constant.TEMP_DEFAULT, "" + res.Content);
+                    }
                 } else {
                     setDataHtml(tempDefault)
-                    // setFileLuuDuLieu(Constant.HTML_PRINT, tempDefault);
+                    setFileLuuDuLieu(Constant.TEMP_DEFAULT, tempDefault);
                 }
                 dialogManager.hiddenLoading()
             }).catch((e) => {
@@ -114,8 +92,6 @@ export default (props) => {
             })
         }
     }
-
-    const childRef = useRef();
 
     const ViewInputHtml = () => {
         return (
@@ -144,11 +120,16 @@ export default (props) => {
                         }} value={dataHtml} />
 
                     <ScrollView style={{ flex: 1, padding: 10, borderTopColor: "gray", borderTopWidth: 0.5 }}>
-                        <Text style={{ textTransform: "uppercase", color: "orange" }}>Mã nhúng</Text>
-                        <Text><Text style={styles.noteCode}>{Code.Ten_Cua_Hang} :</Text> Tên cửa hàng</Text>
-                        <Text><Text style={styles.noteCode}>{Code.Dia_chi_Cua_Hang} :</Text> Tên cửa hàng</Text>
-                        <Text><Text style={styles.noteCode}>{Code.Dien_Thoai_Cua_Hang} :</Text> Tên cửa hàng</Text>
-                        <Text><Text style={styles.noteCode}>{Code.Ma_Chung_Tu} :</Text> Tên cửa hàng</Text>
+                        <Text style={{ textTransform: "uppercase", color: "orange" }}>{I18n.t("ma_nhung")}</Text>
+                        <Text><Text style={styles.noteCode}>{Code.Ten_Cua_Hang} :</Text> {I18n.t("ten_cua_hang")}</Text>
+                        <Text><Text style={styles.noteCode}>{Code.Product_Name} :</Text> {I18n.t("ten_san_pham")}</Text>
+                        <Text><Text style={styles.noteCode}>{Code.Product_Name_Downline} :</Text> {I18n.t("hien_thi_dong_thu_hai_ten_sp")}</Text>
+                        <Text><Text style={styles.noteCode}>{Code.Product_Topping} :</Text> Topping</Text>
+                        <Text><Text style={styles.noteCode}>{Code.Product_Price} :</Text> {I18n.t("gia")}</Text>
+                        <Text><Text style={styles.noteCode}>{Code.Table_Infor} :</Text> {I18n.t("ban")}</Text>
+                        <Text><Text style={styles.noteCode}>{Code.Number_Invoice} :</Text> {I18n.t("so_thu_tu_sp")}</Text>
+                        <Text><Text style={styles.noteCode}>{Code.Current_time} :</Text> {I18n.t("thoi_gian")}</Text>
+                        <Text><Text style={styles.noteCode}>{Code.Text_Size} :</Text> {I18n.t("co_chu")}</Text>
                     </ScrollView>
                 </KeyboardAvoidingView>
             </View>
@@ -173,7 +154,7 @@ export default (props) => {
                         }
                     </View>
                     <View style={{ flex: 1, borderLeftWidth: 0.5, borderLeftColor: "gray" }}>
-                        <PreviewTempPrint ref={childRef} data={dataHtml} />
+                        <PreviewTempPrint {...props} data={dataHtml} />
                     </View>
                 </View>
             }

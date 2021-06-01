@@ -25,7 +25,7 @@ export default (props) => {
     const [printInvoice, setPrintInvoice] = useState(false)
     const [paymentPosMachine, setPaymentPosMachine] = useState(false)
     const [marginModal, setMargin] = useState(0)
-    const [placeholder,setPlaceHolder] = useState("")
+    const [placeholder, setPlaceHolder] = useState("")
     const isPost = useRef(false)
 
     useFocusEffect(useCallback(() => {
@@ -34,11 +34,14 @@ export default (props) => {
             let objectSetting = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
             setSettingObject(JSON.parse(objectSetting))
             setPrintInvoice(JSON.parse(objectSetting).PrintInvoiceBeforePaymentVNPayQR ? JSON.parse(objectSetting).PrintInvoiceBeforePaymentVNPayQR : false)
-            console.log("QR", setting.Settings.QrCodeEnable);
-            setQRCodeEnable(setting.Settings.QrCodeEnable)
-            setMerchantCode(setting.Settings.MerchantCode)
-            setMerchantName(setting.Settings.MerchantName)
-            setMerchantCategory(setting.Settings.SmartPOS_MCC)
+            console.log("setting", setting);
+            if (setting) {
+                setFileLuuDuLieu(Constant.VENDOR_SESSION, JSON.stringify(setting))
+                setQRCodeEnable(setting.Settings.QrCodeEnable)
+                setMerchantCode(setting.Settings.MerchantCode)
+                setMerchantName(setting.Settings.MerchantName)
+                setMerchantCategory(setting.Settings.SmartPOS_MCC)
+            }
             console.log("props params", props.params);
         }
         getQrCodeEnable()
@@ -70,7 +73,7 @@ export default (props) => {
         setPaymentPosMachine(data.status)
     }
     const setInfoModal = (value) => {
-        console.log("value ",value);
+        console.log("value ", value);
         if (titileModal == 'Merchant Code') {
             setMerchantCode(value)
             updateSetting('MerchantCode', value)
