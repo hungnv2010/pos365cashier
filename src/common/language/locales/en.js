@@ -46,9 +46,9 @@ export default {
   ban_co_chac_chan_muon_khoa_nhan_vien: 'Are you sure you want to lock out the staff ?',
   ban_co_chac_chan_muon_mo_khoa_nhan_vien: 'Are you sure you want to unlock the employee ?',
   block_dau_tien: 'first block',
-  ban_co_chac_chan_muon_xoa_phieu_nhap_hang_nay:'Do you want to delete this order stock ?',
+  ban_co_chac_chan_muon_xoa_phieu_nhap_hang_nay: 'Do you want to delete this order stock ?',
   ban_co_chac_chan_muon_huy_hoa_don: "Are you sure you want to cancel this order?",
-  ban_co_chac_chan_muon_xoa_nhom_hang_hoa:'Are you sure you want to delete this group ?',
+  ban_co_chac_chan_muon_xoa_nhom_hang_hoa: 'Are you sure you want to delete this group ?',
 
   // TODO: C 
 
@@ -112,14 +112,15 @@ export default {
   cap_nhat_extra_topping: "Update Extra/ Topping",
   chi_tiet_nhap_hang: 'Orderstock details',
   chinh_sua_nhap_hang: 'Edit orderstock',
-  chon_nha_cung_cap:'Choose suplier',
-  chup_moi:'New picture',
-  chon_tu_thu_vien:'Choose libs',
-  chon_anh:'Choose image',
-  chieu_dai_x_chieu_rong:"Width x Height",
-  chi_tiet_nhom_hang_hoa:'Group product detail',
-  cap_nhat:'Update',
-  cap_nhat_nhom_hang_hoa:'Update group product',
+  chon_nha_cung_cap: 'Choose suplier',
+  chup_moi: 'New picture',
+  chon_tu_thu_vien: 'Choose libs',
+  chon_anh: 'Choose image',
+  chieu_dai_x_chieu_rong: "Width x Height",
+  chi_tiet_nhom_hang_hoa: 'Group product detail',
+  cap_nhat: 'Update',
+  cap_nhat_nhom_hang_hoa: 'Update group product',
+  co_chu: "Text size",
 
   // TODO: D 
 
@@ -212,6 +213,7 @@ export default {
   huy: 'Cancel',
   hang_muc: "Categories",
   ho_tro: "Support",
+  hien_thi_dong_thu_hai_ten_sp: "Display 2 line of product name",
 
   // TODO: I
 
@@ -264,7 +266,7 @@ export default {
   kieu_thay_doi_gia: 'Price change type',
   khung_gio_dac_biet: 'Special time slot',
   khoa: 'Locked',
-  kich_thuoc_kho_temp:'Temp size',
+  kich_thuoc_kho_temp: 'Temp size',
 
   // TODO: H
 
@@ -284,7 +286,7 @@ export default {
   hien_thi_san_pham_tren_man_hinh_thu_ngan: "Display product on the list of the cashier screen",
   hoac: 'or',
   hoat_dong: 'Action',
-  hang_hoa_trong_nhom:'Product in category',
+  hang_hoa_trong_nhom: 'Product in category',
 
   // TODO: L
 
@@ -393,8 +395,8 @@ export default {
   nhap_ten_hang_hoa: 'Enter product name',
   ngay_giao: 'Delivery date',
 
-  nhom_hang_hoa:'Group product',
-  
+  nhom_hang_hoa: 'Group product',
+
   // TODO: O
 
   // TODO: P
@@ -458,7 +460,8 @@ export default {
   so_luong_tru_kho_khi_ban: 'Quantity in warehouse decrease when selling',
   so_luong_don_vi_tinh_lon: 'Quantity of large unit',
   so_tien_thanh_toan: 'Payment amount',
-  so_luong_ma_vach_can_in:'Number of barcodes to print',
+  so_luong_ma_vach_can_in: 'Number of barcodes to print',
+  so_thu_tu_sp: "Product number",
 
   // TODO: T
 
@@ -580,8 +583,10 @@ export default {
   tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay: "Account does not have permission to use this function năng",
 
   thong_bao_cap_nhat_phien_ban_moi: 'There was a new version, please update to experience better application.',
-  
+  ten_san_pham: "Product name",
+
   // TODO: U
+  ung_dung_hien_tai_chua_ho_tro_in_co_dau: "The application currently does not support printing with accents",
 
   // TODO: V
 
@@ -595,8 +600,8 @@ export default {
   vui_long_nhap_dung_so_tien_khach_tra: "Please enter the correct amount of payment.",
   vi_tri: 'Position',
   vat: "VAT",
-  vui_long_kiem_tra_ket_noi_internet:'Please check internet connection.',
-  vui_long_nhap_ten_nhom_hang_hoa:'Please enter name group',
+  vui_long_kiem_tra_ket_noi_internet: 'Please check internet connection.',
+  vui_long_nhap_ten_nhom_hang_hoa: 'Please enter name group',
   vui_long_nhap_so_luong_ma_vach_can_in: "Please enter the number of barcodes to print",
 
   // TODO: X

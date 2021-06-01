@@ -139,7 +139,7 @@ RCT_EXPORT_METHOD(keepTheScreenOff:(NSString *)param) {
 }
 
 RCT_EXPORT_METHOD(PrintTemp:(NSString *)param ip:(NSString *)ip size:(NSString *)size ) {
-  NSLog(@"PrintTemp param %@ ip %@", param, ip);
+  NSLog(@"PrintTemp ip %@ ", ip);
   isLocalNetwork = NO;
   PrintImageClient = YES;
   isConnectAndPrint = YES;

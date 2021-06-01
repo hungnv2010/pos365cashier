@@ -120,6 +120,7 @@ export default {
   chi_tiet_nhom_hang_hoa:'Chi tiết nhóm hàng hoá',
   cap_nhat:'Cập nhật',
   cap_nhat_nhom_hang_hoa:'Cập nhật nhóm hàng hoá',
+  co_chu: "Cỡ chữ",
 
   // TODO: D
 
@@ -212,6 +213,7 @@ export default {
   huy: 'Hủy',
   hang_muc: "Hạng mục",
   ho_tro: "Hỗ trợ",
+  hien_thi_dong_thu_hai_ten_sp: "Hiển thị dòng thứ 2 của tên sản phẩm",
 
   // TODO: I
 
@@ -350,6 +352,7 @@ export default {
   ma_nhap_hang: 'Mã nhập hàng',
   moi_nhap: 'Mời nhập',
   ma_hang_hoa: 'Mã hàng hoá',
+  ma_nhung: "Mã nhúng",
 
   // TODO: N
 
@@ -457,6 +460,7 @@ export default {
   so_luong_don_vi_tinh_lon:'Số lượng đơn vị tính lớn',
   so_tien_thanh_toan:'Số tiền thanh toán',
   so_luong_ma_vach_can_in:'Số lượng mã vạch cần in',
+  so_thu_tu_sp: "Số thứ tự sản phẩm",
 
   // TODO: T
 
@@ -577,10 +581,11 @@ export default {
   toi_da: 'Tối đa',
   tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay: "Tài khoản không có quyền sử dụng chức năng này",
   thong_bao_cap_nhat_phien_ban_moi: 'Đã có phiên bản mới Quý khách vui lòng cập nhật để trải nghiệm ứng dụng được tốt hơn.',
-
+  ten_san_pham: "Tên sản phẩm",
 
 
   // TODO: U
+  ung_dung_hien_tai_chua_ho_tro_in_co_dau: "Ứng dụng hiện tại chưa hỗ trợ in có dấu",
 
   // TODO: V
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { StyleSheet, View, Text, FlatList, TouchableWithoutFeedback, TouchableOpacity, Modal, ImageBackground, Platform, Keyboard, Image } from 'react-native';
+import { StyleSheet, NativeModules, View, Text, FlatList, TouchableWithoutFeedback, TouchableOpacity, Modal, ImageBackground, Platform, Keyboard, Image } from 'react-native';
 import { Colors, Images, Metrics } from '../../../../theme';
 import Menu from 'react-native-material-menu';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -26,6 +26,8 @@ var Sound = require('react-native-sound');
 import moment from 'moment';
 import realmStore from '../../../../data/realm/RealmStore';
 import NetInfo from "@react-native-community/netinfo";
+import { handerDataPrintTemp } from '../../../tempPrint/ServicePrintTemp';
+const { Print } = NativeModules;
 
 const TYPE_MODAL = {
     DETAIL: 0,
@@ -259,7 +261,22 @@ export default (props) => {
         }
         jsonContent.PaymentCode = Code;
         console.log("printAfterPayment jsonContent 2 ", jsonContent);
-        dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
+        // dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
+
+        if (isFNB) {
+            console.log("printAfterPayment settingObject.current ", settingObject.current);
+            settingObject.current.Printer.forEach(async element => {
+                if (element.key == Constant.KEY_PRINTER.StampPrintKey && element.ip != "") {
+                    let value = await handerDataPrintTemp(jsonContent)
+                    console.log("printAfterPayment value  ", value);
+                    console.log("printAfterPayment element  ", element);
+                    Print.PrintTemp(value, element.ip, "30x40")
+                }
+            });
+        }
+        setTimeout(() => {
+            dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
+        }, 500);
     }
 
     const updateServerEvent = async () => {
