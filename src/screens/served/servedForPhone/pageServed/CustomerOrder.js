@@ -142,6 +142,7 @@ export default (props) => {
         //         dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
         //     }
         // }
+        if(props.allPer.create){
         if (!props.jsonContent.OrderDetails || props.jsonContent.OrderDetails.length == 0) {
             dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
         } else {
@@ -151,6 +152,11 @@ export default (props) => {
                 props.navigation.navigate(ScreenList.Payment, { RoomId: props.route.params.room.Id, Name: props.route.params.room.Name, Position: props.Position });
             }
         }
+    }else {
+        dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+            dialogManager.destroy();
+        }, null, null, I18n.t('dong'))
+    }
     }
 
     const onClickQuickPayment = async () => {

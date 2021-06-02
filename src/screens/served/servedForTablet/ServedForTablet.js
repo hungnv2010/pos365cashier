@@ -77,7 +77,7 @@ const Served = (props) => {
     };
 
     useEffect(() => {
-
+        console.log("param Per",props.route.params.allPer);
         const getDataRealm = async () => {
             let promotions = await realmStore.querryPromotion();
             console.log("promotions === ", promotions);
@@ -645,7 +645,8 @@ const Served = (props) => {
                     Position={position}
                     updateServerEvent={updateServerEvent}
                     handlerProcessedProduct={(jsonContent) => handlerProcessedProduct(jsonContent)}
-                    outPutSetNewOrderDetail={setNewOrderDetails} />
+                    outPutSetNewOrderDetail={setNewOrderDetails}
+                    allPer={props.route.params.allPer} />
             </View>
         </View>
     );

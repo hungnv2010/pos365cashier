@@ -556,7 +556,15 @@ const ContentComponent = (props) => {
             getPermission(chucnang.func, index, 'Report')
         }
         if (chucnang.func == KEY_FUNC.SETTING_FUNC) {
-            getPermission(chucnang.func, index, 'PosParameter')
+            if (isAdmin.current) {
+                console.log("isAdminnnn", isAdmin.current);
+                let param = {}
+                props.navigation.navigate(chucnang.func, param)
+            }else {
+                dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                    dialogManager.destroy();
+                }, null, null, I18n.t('dong'))
+            }
         }
 
         props.navigation.closeDrawer();

@@ -28,6 +28,7 @@ export default (props) => {
   const [textSearch, setTextSearch] = useState('')
   const [autoPrintKitchen, setAutoPrintKitchen] = useState(false)
   const [permission, setPermission] = useState(true)
+  const [itemPer, setItemPer] = useState()
   const { listPrint, isFNB, printProvisional, printReturnProduct, appState, deviceType } = useSelector(state => {
     return state.Common
   })
@@ -124,7 +125,10 @@ export default (props) => {
       }
 
       let permission = privileges.filter(itm => itm.id == 'Order')
-      if (permission.length > 0) setPermission(permission[0].expanded)
+      if (permission.length > 0){
+       setPermission(permission[0].expanded)
+       setItemPer(permission[0])
+      }
     }
     getStoreInfo()
   }, [])
@@ -248,7 +252,7 @@ export default (props) => {
               />
               {
                 permission ?
-                  <Order {...props} textSearch={textSearch} />
+                  <Order {...props} textSearch={textSearch} itemPer={itemPer} />
                   :
                   <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
                     <Text style={deviceType == Constant.TABLET ? { fontSize: 20 } : {}}>{I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay')}</Text>
