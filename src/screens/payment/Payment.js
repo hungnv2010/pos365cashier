@@ -1205,18 +1205,18 @@ export default (props) => {
                     </View>
                     <View style={[{ marginTop: 20, justifyContent: "center", flexDirection: "row" }]}>
                         <TouchableOpacity style={[styles.viewButtonCancel, { height: 50 }]} onPress={onClickCancelOrder}>
-                            <Text style={[styles.textButtonCancel, , { textTransform: "uppercase", color: colors.colorchinh, fontWeight: "bold" }]}>{I18n.t("huy_don_hang")}</Text>
+                            <Text style={[styles.textButtonCancel, { textTransform: "uppercase", color: colors.colorchinh, fontWeight: "bold" }]}>{I18n.t("huy_don_hang")}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.viewButtonCancel, { backgroundColor: colors.colorchinh, height: 50, marginLeft: 10 }]} onPress={onClickChangeMethod}>
-                            <Text style={[styles.textButtonCancel, , { textTransform: "uppercase", color: "#fff", fontWeight: "bold" }]}>{I18n.t("doi_phuong_thuc")}</Text>
+                            <Text style={[styles.textButtonCancel, { textTransform: "uppercase", color: "#fff", fontWeight: "bold" }]}>{I18n.t("doi_phuong_thuc")}</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={[{ marginTop: 10, justifyContent: "center", flexDirection: "row" }]}>
                         <TouchableOpacity style={[styles.viewButtonCancel, { height: 50 }]} onPress={onClickBackOrder}>
-                            <Text style={[styles.textButtonCancel, , { textTransform: "uppercase", color: colors.colorchinh, fontWeight: "bold" }]}>{I18n.t("quay_lai")}</Text>
+                            <Text style={[styles.textButtonCancel, { textTransform: "uppercase", color: colors.colorchinh, fontWeight: "bold" }]}>{I18n.t("quay_lai")}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.viewButtonCancel, { backgroundColor: "#fff", height: 50, marginLeft: 10 }]} onPress={onClickRePrint}>
-                            <Text style={[styles.textButtonCancel, , { textTransform: "uppercase", color: colors.colorchinh, fontWeight: "bold" }]}>{I18n.t("in_lai")}</Text>
+                            <Text style={[styles.textButtonCancel, { textTransform: "uppercase", color: colors.colorchinh, fontWeight: "bold" }]}>{I18n.t("in_lai")}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

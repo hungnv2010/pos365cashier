@@ -18,9 +18,9 @@ import { handerDataPrintTemp } from './ServicePrintTemp';
 
 const Code = {
     Ten_Cua_Hang: "{Ten_Cua_Hang}",
-    Dia_chi_Cua_Hang: "{Dia_chi_Cua_Hang}",
-    Dien_Thoai_Cua_Hang: "{Dien_Thoai_Cua_Hang}",
-    Ma_Chung_Tu: "{Ma_Chung_Tu}",
+    // Dia_chi_Cua_Hang: "{Dia_chi_Cua_Hang}",
+    // Dien_Thoai_Cua_Hang: "{Dien_Thoai_Cua_Hang}",
+    // Ma_Chung_Tu: "{Ma_Chung_Tu}",
     Product_Name: "{Product_Name}",
     Product_Name_Downline: "{Product_Name_Downline}",
     Product_Topping: "{Product_Topping}",

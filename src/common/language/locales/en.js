@@ -352,6 +352,7 @@ export default {
   ma_nhap_hnag: 'Code',
   moi_nhap: 'Input',
   ma_hang_hoa: 'Product code',
+  ma_nhung: "Embed Code",
 
   // TODO: N
 
@@ -584,6 +585,8 @@ export default {
 
   thong_bao_cap_nhat_phien_ban_moi: 'There was a new version, please update to experience better application.',
   ten_san_pham: "Product name",
+  thiet_lap_mau_tem: "Temp template settings",
+  thiet_lap_mau_in: "Print template settings",
 
   // TODO: U
   ung_dung_hien_tai_chua_ho_tro_in_co_dau: "The application currently does not support printing with accents",

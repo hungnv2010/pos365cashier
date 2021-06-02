@@ -582,7 +582,8 @@ export default {
   tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay: "Tài khoản không có quyền sử dụng chức năng này",
   thong_bao_cap_nhat_phien_ban_moi: 'Đã có phiên bản mới Quý khách vui lòng cập nhật để trải nghiệm ứng dụng được tốt hơn.',
   ten_san_pham: "Tên sản phẩm",
-
+  thiet_lap_mau_tem: "Thiết lập mẫu tem",
+  thiet_lap_mau_in: "Thiết lập mẫu in",
 
   // TODO: U
   ung_dung_hien_tai_chua_ho_tro_in_co_dau: "Ứng dụng hiện tại chưa hỗ trợ in có dấu",

@@ -605,10 +605,10 @@ export default (props) => {
                             <Text style={styles.textTitleItem}>{I18n.t("thong_tin_cua_hang")}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => screenSwitch(ScreenList.PrintHtml)}>
-                            <Text style={styles.textTitleItem}>HTML print</Text>
+                            <Text style={styles.textTitleItem}>{I18n.t("thiet_lap_mau_in")}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => screenSwitch(ScreenList.SetupTemp)}>
-                            <Text style={styles.textTitleItem}>Temp print</Text>
+                            <Text style={styles.textTitleItem}>{I18n.t("thiet_lap_mau_tem")}</Text>
                         </TouchableOpacity>
                         {isFNB ?
                             <SettingSwitch title={"tu_dong_in_bao_bep"} output={onSwitchTone} isStatus={settingObject.tu_dong_in_bao_bep} />
