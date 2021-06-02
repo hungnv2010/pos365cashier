@@ -291,7 +291,7 @@ const InvoiceDetail = (props) => {
                         : null
                     }
                     <View style={{ margin: 5, alignItems: "center", }}>
-                        <Text style={{ fontWeight: 'bold' }}>{I18n.t("trang_thai")}: 
+                        <Text style={{ fontWeight: 'bold' }}>{I18n.t("trang_thai")}:{' '}   
                         {"Status" in invoiceDetail ? getStatus(invoiceDetail.Status) : null}
                             {/* <Text style={{ color: colors.colorchinh }}>{invoiceDetail.Status ? I18n.t(getStatus(invoiceDetail.Status)) : ""}</Text> */}
                         </Text>
