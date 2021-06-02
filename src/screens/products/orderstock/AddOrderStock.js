@@ -46,10 +46,15 @@ export default (props) => {
     const isFinish = useRef(false)
     const totalCurrent = useRef()
     const currentBranch = useRef()
+    const deviceType = useSelector(state => {
+        return state.Common.deviceType
+    });
 
     useEffect(() => {
-        getData(props.route.params)
-        getCurrentBranch()
+        if (deviceType == Constant.PHONE) {
+            getData(props.route.params)
+            getCurrentBranch()
+        }
     }, [])
     const getCurrentBranch = async () => {
         let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
@@ -60,7 +65,7 @@ export default (props) => {
     let paramAdd = {
         ChangeSellingPrice: false,
         PurchaseOrder: {
-            AccountId:orderStock.AccountId ? orderStock.AccountId : undefined,
+            AccountId: orderStock.AccountId ? orderStock.AccountId : undefined,
             BranchId: currentBranch.current,
             Code: orderStock.Code,
             CreatedBy: orderStock.CreatedBy,
@@ -349,10 +354,11 @@ export default (props) => {
 
     return (
         <View style={{ flex: 1 }}>
-            <ToolBarDefault
-                {...props}
-                title={orderStock != {} ? I18n.t('chinh_sua_nhap_hang') : I18n.t('them_moi_nhap_hang')}
-            />
+            {deviceType == Constant.PHONE ?
+                <ToolBarDefault
+                    {...props}
+                    title={orderStock != {} ? I18n.t('chinh_sua_nhap_hang') : I18n.t('them_moi_nhap_hang')}
+                /> : null}
             <View style={{ flex: 1, paddingVertical: 10 }}>
                 <Text style={{ paddingHorizontal: 10, fontWeight: 'bold', textTransform: 'uppercase' }}>{I18n.t('danh_sach_hang_hoa')}</Text>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, paddingVertical: 5 }}>

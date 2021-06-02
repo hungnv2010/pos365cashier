@@ -112,7 +112,7 @@ export default (props) => {
     const onClickItem = (el) => {
         roomItem.current = el;
         if (deviceType == Constant.PHONE)
-            props.navigation.navigate(ScreenList.RoomDetail, { room: roomItem.current, listRoom: rooms, roomGroups: roomGroups, _onSelect: onCallBack })
+            props.navigation.navigate(ScreenList.RoomDetail, { room: roomItem.current, listRoom: rooms, roomGroups: roomGroups, _onSelect: onCallBack ,permission: permission})
         else {
             setTitleAddEdit(I18n.t('cap_nhat_phong_ban'))
             setDataParams({ ...{ room: roomItem.current, listRoom: rooms, roomGroups: roomGroups } })

@@ -22,6 +22,7 @@ import { ApiPath } from '../../../data/services/ApiPath';
 import CustomerToolBar from '../../../screens/customerManager/customer/CustomerToolBar';
 import { getFileDuLieuString, setFileLuuDuLieu } from '../../../data/fileStore/FileStorage';
 import DialogFilterOrderStock from '../../../components/dialog/DialogFilterOrderStock'
+import AddOrderStock from './AddOrderStock';
 
 export default (props) => {
     const orderStock = useRef([])
@@ -34,6 +35,7 @@ export default (props) => {
     const [allPer, setPer] = useState(props.route.params.permission ? props.route.params.permission : {})
     const defauTitle = useRef()
     const currentBranch = useRef()
+    const [additemTab, setAddItemTab] = useState(false)
     let arrDate = []
     const deviceType = useSelector(state => {
         return state.Common.deviceType
@@ -84,6 +86,7 @@ export default (props) => {
         })
     }
     const onClickItem = (item) => {
+        setAddItemTab(false)
         setDefaultItem(item)
         if (deviceType == Constant.PHONE) {
             props.navigation.navigate(ScreenList.OrderStockDetails, { orderstock: item, onCallBack: CallBack })
@@ -185,7 +188,11 @@ export default (props) => {
                             icon='plus'
                             color="#fff"
                             onPress={() => {
+                                if(deviceType == Constant.PHONE){
                                 props.navigation.navigate(ScreenList.AddOrderStock, { orderstock: {}, listPr: [], paymentMethod: "" })
+                                }else{
+                                    setAddItemTab(true)
+                                }
                             }}
                         />
                         :
@@ -194,7 +201,11 @@ export default (props) => {
 
             </View>
             {
-                deviceType == Constant.TABLET ? defaultItem.Id ?
+                deviceType == Constant.TABLET ?additemTab ? 
+                <View style={{ flex: 1, marginLeft: 0.5 }}>
+                        <AddOrderStock  />
+                    </View>
+                : defaultItem.Id ?
                     <View style={{ flex: 1, marginLeft: 0.5 }}>
                         <OrderStockDetails allPer={allPer} iOrderStock={defaultItem} />
                     </View> :
