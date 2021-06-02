@@ -219,10 +219,10 @@ export default (props) => {
                                 onPress={() => {
                                     clickAdd.current = true;
                                     if (deviceType == Constant.PHONE)
-                                        props.navigation.navigate(ScreenList.RoomDetail, { _onSelect: onCallBack })
+                                        props.navigation.navigate(ScreenList.RoomDetail, { _onSelect: onCallBack, permission: permission })
                                     else {
                                         setTitleAddEdit(I18n.t('them_phong_ban'))
-                                        setDataParams({})
+                                        setDataParams({ permission: permission})
                                     }
                                 }}
                             />

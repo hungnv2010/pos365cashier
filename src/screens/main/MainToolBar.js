@@ -41,7 +41,7 @@ export default function MainToolBar(props) {
                         style={{ width: 172, height: 40, resizeMode: 'contain' }} /> */}
                     <Image source={Images.icon_menu} style={{ width: 48, height: 48 }} />
                 </TouchableOpacity>
-                <View style={{ flex: isSearch ? 3 : 8, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
+                <View style={{ flex: isSearch ? 3 : 10, justifyContent: 'center', alignItems: 'center', flexDirection: 'row' }}>
                     <Subheading
                         numberOfLines={1}
                         style={{
