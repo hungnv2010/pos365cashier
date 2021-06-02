@@ -269,23 +269,29 @@ export default (props) => {
                     <>
                         <View style={{ flex: 2, backgroundColor: "white", }}>
                             <View style={{ flex: 1, backgroundColor: "#f2f2f2", borderRadius: 30, marginHorizontal: 30, marginVertical: 20, alignItems: "center", justifyContent: "center" }}>
-                                <View style={{padding: 15}}>
-                                    <Image style={{ width: 40, height: 40,}} source={Images.ic_khachhang} />
+                                <View style={{ padding: 15 }}>
+                                    <Image style={{ width: 40, height: 40, }} source={Images.ic_khachhang} />
                                 </View>
                                 <Text style={{ fontSize: 20, color: colors.colorLightBlue, fontWeight: "bold" }}>{detailGroup.Name}</Text>
                             </View>
                             <View style={{ flexDirection: "row", margin: 20, alignSelf: "center" }}>
-                                <TouchableOpacity
-                                    style={{ flexDirection: "row", marginRight: 15, backgroundColor: "#fde7d2", borderRadius: 10 }}
-                                    onPress={() => { setShowModal(true) }}>
-                                    <Text style={{ color: colors.colorchinh, padding: 15, fontWeight: "bold" }}>{I18n.t('chinh_sua')}</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={{ flexDirection: "row", marginLeft: 15, backgroundColor: "#F7DCDC", borderRadius: 10 }}
-                                    onPress={onClickDelete}
-                                >
-                                    <Text style={{ color: "#f21e3c", paddingVertical: 15, paddingHorizontal: 30, fontWeight: "bold" }}>{I18n.t('xoa')}</Text>
-                                </TouchableOpacity>
+                                {props.route.params.permission.update ?
+                                    <TouchableOpacity
+                                        style={{ flexDirection: "row", marginRight: 15, backgroundColor: "#fde7d2", borderRadius: 10 }}
+                                        onPress={() => { setShowModal(true) }}>
+                                        <Text style={{ color: colors.colorchinh, padding: 15, fontWeight: "bold" }}>{I18n.t('chinh_sua')}</Text>
+                                    </TouchableOpacity>
+                                    : null
+                                }
+                                {props.route.params.permission.delete ?
+                                    <TouchableOpacity
+                                        style={{ flexDirection: "row", marginLeft: 15, backgroundColor: "#F7DCDC", borderRadius: 10 }}
+                                        onPress={onClickDelete}
+                                    >
+                                        <Text style={{ color: "#f21e3c", paddingVertical: 15, paddingHorizontal: 30, fontWeight: "bold" }}>{I18n.t('xoa')}</Text>
+                                    </TouchableOpacity>
+                                    : null
+                                }
                             </View>
                         </View>
                         <View style={{ flex: 3, }}>

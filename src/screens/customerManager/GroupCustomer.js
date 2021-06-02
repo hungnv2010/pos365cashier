@@ -73,7 +73,7 @@ export default (props) => {
         if (deviceType == Constant.TABLET) {
             setDetailGroup(item)
         } else {
-            props.navigation.navigate(ScreenList.DetailGroupCustomerForPhone, { detailGroup: item, _onSelect: onClickDone })
+            props.navigation.navigate(ScreenList.DetailGroupCustomerForPhone, { detailGroup: item, _onSelect: onClickDone, permission:allPer })
         }
     }
 

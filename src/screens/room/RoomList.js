@@ -115,7 +115,7 @@ export default (props) => {
             props.navigation.navigate(ScreenList.RoomDetail, { room: roomItem.current, listRoom: rooms, roomGroups: roomGroups, _onSelect: onCallBack ,permission: permission})
         else {
             setTitleAddEdit(I18n.t('cap_nhat_phong_ban'))
-            setDataParams({ ...{ room: roomItem.current, listRoom: rooms, roomGroups: roomGroups } })
+            setDataParams({ ...{ room: roomItem.current, listRoom: rooms, roomGroups: roomGroups,permission: permission } })
         }
     }
 
@@ -235,7 +235,7 @@ export default (props) => {
                         <View style={{ height: 45, backgroundColor: '#fff', justifyContent: "center", alignItems: "center" }}>
                             <Text style={{ color: colors.colorchinh, textTransform: "uppercase" }}>{titleAddEdit}</Text>
                         </View>
-                        <RoomDetail permission={permission} params={dataParams} _onSelect={(data) => onCallBack(data)} />
+                        <RoomDetail params={dataParams} _onSelect={(data) => onCallBack(data)} />
                     </View>
                     : null}
             </View>

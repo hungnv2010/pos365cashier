@@ -68,6 +68,7 @@ export default (props) => {
         setOnShowModal(true)
     }
     const onCLickDelCate = () => {
+        if(deviceType == Constant.TABLET ? props.allPer.delete : props.route.params.permission.delete){
         dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_xoa_nhom_hang_hoa'), I18n.t("thong_bao"), res => {
             if (res == 1) {
                 new HTTPService().setPath(`${ApiPath.CATEGORIES_PRODUCT}/${data.Id}`).DELETE()
@@ -90,9 +91,15 @@ export default (props) => {
                     .catch(err => console.log('ClickDelete err', err))
             }
         })
+    }else{
+        dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+            dialogManager.destroy();
+        }, null, null, I18n.t('dong'))
+    }
     }
     const editCategory = async (value) => {
         setOnShowModal(false)
+        if(deviceType == Constant.TABLET ? props.allPer.delete : props.route.params.permission.delete){
         console.log(value.CategoryName);
         let param = {
             Category: {
@@ -137,6 +144,11 @@ export default (props) => {
                 dialogManager.destroy();
             }, null, null, I18n.t('dong'))
         }
+    }else{
+        dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+            dialogManager.destroy();
+        }, null, null, I18n.t('dong'))
+    }
 
     }
     const handleSuccess = (type, name) => {

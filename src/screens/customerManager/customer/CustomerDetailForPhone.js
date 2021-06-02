@@ -363,22 +363,28 @@ export default (props) => {
                     console.log('onClickDone err', err);
                 })
         } else {
-            console.log('update');
-            params.Partner.Id = customerDetail.Id
-            dialogManager.showLoading()
-            new HTTPService().setPath(ApiPath.CUSTOMER).POST(params)
-                .then(res => {
-                    console.log('onClickDone res', res);
-                    if (res) {
-                        props.route.params.onCallBack('them')
-                        props.navigation.pop()
-                    }
-                    dialogManager.hiddenLoading()
-                })
-                .catch(err => {
-                    dialogManager.hiddenLoading()
-                    console.log('onClickDone err', err);
-                })
+            if (props.route.params.permission.update) {
+                console.log('update');
+                params.Partner.Id = customerDetail.Id
+                dialogManager.showLoading()
+                new HTTPService().setPath(ApiPath.CUSTOMER).POST(params)
+                    .then(res => {
+                        console.log('onClickDone res', res);
+                        if (res) {
+                            props.route.params.onCallBack('sua')
+                            props.navigation.pop()
+                        }
+                        dialogManager.hiddenLoading()
+                    })
+                    .catch(err => {
+                        dialogManager.hiddenLoading()
+                        console.log('onClickDone err', err);
+                    })
+            } else {
+                dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                    dialogManager.destroy();
+                }, null, null, I18n.t('dong'))
+            }
         }
     }
 
@@ -590,10 +596,12 @@ export default (props) => {
                     props.route.params.item.Id == 0 ?
                         null
                         :
-                        <>
-                            <TouchableOpacity onPress={onClickDelete} style={{ flex: 1, flexDirection: "row", marginTop: 0, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 10 }}>
-                                <IconAntDesign name={"delete"} size={25} color="white" />
-                            </TouchableOpacity>
+                        <>{
+                            props.route.params.permission.delete ?
+                                <TouchableOpacity onPress={onClickDelete} style={{ flex: 1, flexDirection: "row", marginTop: 0, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 10 }}>
+                                    <IconAntDesign name={"delete"} size={25} color="white" />
+                                </TouchableOpacity>
+                                : null}
                             <TouchableOpacity onPress={onClickPrint} style={{ flex: 1, flexDirection: "row", marginLeft: 10, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 10 }}>
                                 <IconAntDesign name={"printer"} size={25} color="white" />
                             </TouchableOpacity>
