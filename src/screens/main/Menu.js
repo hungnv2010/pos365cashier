@@ -71,7 +71,7 @@ const LIST_FUNCITION = [
     {
         func: KEY_FUNC.ROOM_LIST,
         icon: Images.icon_room_table,
-        title: "danh_sach_phong_ban"
+        title: "phong_ban_"
     },
     {
         func: KEY_FUNC.PRODUCT,

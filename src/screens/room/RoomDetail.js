@@ -424,9 +424,9 @@ export default (props) => {
                             <Text style={{ padding: 11.5, flex: 1, color: "#000" }} >{itemRoomGroup.Name}</Text>
                             <IconAntDesign name={"down"} size={20} color="gray" style={{ marginRight: 10 }} />
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={onClickAddGroup} style={{ marginTop: 10, marginLeft: 10, backgroundColor: colors.colorLightBlue, padding: 5.5, borderRadius: 4 }}>
+                        {/* <TouchableOpacity onPress={onClickAddGroup} style={{ marginTop: 10, marginLeft: 10, backgroundColor: colors.colorLightBlue, padding: 5.5, borderRadius: 4 }}>
                             <Ionicons name={"plus"} size={25} color="white" />
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                     </View>
                 </View>
                 <View style={{ marginTop: 20 }}>
