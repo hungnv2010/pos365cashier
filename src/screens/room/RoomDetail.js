@@ -44,8 +44,8 @@ export default (props) => {
     const [vendorSession, setVendorSession] = useState({});
     const [branch, setBranch] = useState({});
 
-    const deviceType = useSelector(state => {
-        return state.Common.deviceType
+    const {deviceType, allPer} = useSelector(state => {
+        return state.Common
     });
 
     useEffect(() => {
@@ -272,14 +272,14 @@ export default (props) => {
 
     const onClickDone = () => {
         if (isEditRoom) {
-            if (deviceType == Constant.TABLET ? props.params.permission.update :  props.route.params.permission.update) onClickApply()
+            if (allPer.Room_Update || allPer.IsAdmin) onClickApply()
             else {
                 dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
                     dialogManager.destroy();
                 }, null, null, I18n.t('dong'))
             }
         } else {
-            if (deviceType == Constant.TABLET ? props.params.permission.create : props.route.params.permission.create) onClickApply()
+            if (allPer.Room_Create || allPer.IsAdmin) onClickApply()
             else {
                 dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
                     dialogManager.destroy();
@@ -456,7 +456,7 @@ export default (props) => {
                     </View>
                 </View>
                 <View style={{ flexDirection: "row", margin: 10, marginHorizontal: 0, marginTop: 50 }}>
-                    {isEditRoom && (deviceType == Constant.TABLET ? props.params.permission.delete : props.route.params.permission.delete) ?
+                    {isEditRoom && (allPer.Room_Delete || allPer.IsAdmin) ?
                         <TouchableOpacity onPress={onClickDelete} style={{ flex: 1, flexDirection: "row", marginTop: 0, borderRadius: 5, backgroundColor: "#f2f2f2", justifyContent: "center", alignItems: "center", padding: 10 }}>
                             <IconAntDesign name={"delete"} size={25} color="black" />
                         </TouchableOpacity>

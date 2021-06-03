@@ -50,7 +50,7 @@ export default (props) => {
     const reloadTime = () => {
         // alert("ok")
     }
-    
+
     useEffect(() => {
         let listener = async (collection, changes) => {
             if ((changes.insertions.length || changes.modifications.length) && serverEvent[0].FromServer) {
@@ -645,8 +645,7 @@ export default (props) => {
                     outputListProducts={outputListProducts}
                     handlerProcessedProduct={(jsonContent) => handlerProcessedProduct(jsonContent)}
                     outPutSetNewOrderDetail={setNewOrderDetails}
-                    updateServerEvent={updateServerEvent}
-                    allPer={props.route.params.allPer} />
+                    updateServerEvent={updateServerEvent} />
                 <Snackbar
                     duration={1500}
                     visible={showToast}

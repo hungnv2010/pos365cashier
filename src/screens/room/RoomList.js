@@ -36,8 +36,8 @@ export default (props) => {
 
     const dispatch = useDispatch()
 
-    const deviceType = useSelector(state => {
-        return state.Common.deviceType
+    const {deviceType, allPer} = useSelector(state => {
+        return state.Common
     });
 
     const orientaition = useSelector(state => {
@@ -112,10 +112,10 @@ export default (props) => {
     const onClickItem = (el) => {
         roomItem.current = el;
         if (deviceType == Constant.PHONE)
-            props.navigation.navigate(ScreenList.RoomDetail, { room: roomItem.current, listRoom: rooms, roomGroups: roomGroups, _onSelect: onCallBack ,permission: permission})
+            props.navigation.navigate(ScreenList.RoomDetail, { room: roomItem.current, listRoom: rooms, roomGroups: roomGroups, _onSelect: onCallBack })
         else {
             setTitleAddEdit(I18n.t('cap_nhat_phong_ban'))
-            setDataParams({ ...{ room: roomItem.current, listRoom: rooms, roomGroups: roomGroups,permission: permission } })
+            setDataParams({ ...{ room: roomItem.current, listRoom: rooms, roomGroups: roomGroups } })
         }
     }
 
@@ -210,7 +210,7 @@ export default (props) => {
                     </View>
                     {_renderScrollViewContent()}
                     {
-                        permission.create ?
+                        allPer.Room_Create || allPer.IsAdmin ?
                             <FAB
                                 style={styles.fab}
                                 big
@@ -219,10 +219,10 @@ export default (props) => {
                                 onPress={() => {
                                     clickAdd.current = true;
                                     if (deviceType == Constant.PHONE)
-                                        props.navigation.navigate(ScreenList.RoomDetail, { _onSelect: onCallBack, permission: permission })
+                                        props.navigation.navigate(ScreenList.RoomDetail, { _onSelect: onCallBack })
                                     else {
                                         setTitleAddEdit(I18n.t('them_phong_ban'))
-                                        setDataParams({ permission: permission})
+                                        setDataParams({ })
                                     }
                                 }}
                             />

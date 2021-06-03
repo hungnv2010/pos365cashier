@@ -52,7 +52,7 @@ export default (props) => {
     const [promotions, setPromotions] = useState([])
     const [listProducts, setListProducts] = useState([])
     const [totalQuantity, setTotalQuantity] = useState(0)
-    const { already, syncRetail } = useSelector(state => {
+    const { already, syncRetail, allPer } = useSelector(state => {
         return state.Common
     });
 
@@ -669,15 +669,21 @@ export default (props) => {
     }
 
     const onClickPayment = () => {
-        if (listProducts && listProducts.length > 0) {
-            if (isQuickPayment) {
-                onClickQuickPayment()
+        if (allPer.Order_Create || allPer.IsAdmin) {
+            if (listProducts && listProducts.length > 0) {
+                if (isQuickPayment) {
+                    onClickQuickPayment()
+                } else {
+                    props.navigation.navigate(ScreenList.Payment, { onCallBack: onCallBackPayment, Screen: ScreenList.MainRetail, RoomId: jsonContent.RoomId, Name: jsonContent.RoomName ? jsonContent.RoomName : I18n.t('don_hang'), Position: jsonContent.Pos });
+                }
             } else {
-                props.navigation.navigate(ScreenList.Payment, { onCallBack: onCallBackPayment, Screen: ScreenList.MainRetail, RoomId: jsonContent.RoomId, Name: jsonContent.RoomName ? jsonContent.RoomName : I18n.t('don_hang'), Position: jsonContent.Pos });
+                console.log('ban_hay_chon_mon_an_truoc');
+                dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
             }
         } else {
-            console.log('ban_hay_chon_mon_an_truoc');
-            dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
+            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
         }
     }
 

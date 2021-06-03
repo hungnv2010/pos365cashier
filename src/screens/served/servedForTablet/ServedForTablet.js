@@ -646,7 +646,7 @@ const Served = (props) => {
                     updateServerEvent={updateServerEvent}
                     handlerProcessedProduct={(jsonContent) => handlerProcessedProduct(jsonContent)}
                     outPutSetNewOrderDetail={setNewOrderDetails}
-                    allPer={props.route.params.allPer} />
+                     />
             </View>
         </View>
     );

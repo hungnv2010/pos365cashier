@@ -65,7 +65,7 @@ const CustomerOrder = (props) => {
     const [QuantitySubtract, setQuantitySubtract] = useState(0)
     const [quickPay, setQuickPay] = useState(false)
     const [totalQuantity, setTotalQuantity] = useState(0)
-    const { isFNB, orientaition } = useSelector(state => {
+    const { isFNB, orientaition, allPer } = useSelector(state => {
         return state.Common
     });
     const settingObject = useRef()
@@ -79,7 +79,7 @@ const CustomerOrder = (props) => {
     }, delay * 1000)
 
     useEffect(() => {
-        console.log("per create",props.allPer);
+        console.log("per create",props);
         const getVendorSession = async () => {
             let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
             console.log('ReturnProduct data', JSON.parse(data));
@@ -692,7 +692,7 @@ const CustomerOrder = (props) => {
     }
 
     const onClickPayment = () => {
-        if (props.allPer.create) {
+        if (allPer.Order_Create || allPer.IsAdmin) {
             if (!props.jsonContent.OrderDetails || props.jsonContent.OrderDetails.length == 0) {
                 dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
             } else {

@@ -32,19 +32,17 @@ export default (props) => {
     const [qrScan, setQrScan] = useState()
     const onEndReachedCalledDuringMomentum = useRef(false)
     const currentProduct = useRef(0)
-    const [allPer, setPer] = useState(props.route.params.permission ? props.route.params.permission : {})
     const [loadMore, setLoadMore] = useState(false)
     const [viewData, setViewData] = useState([])
     const productTmp = useRef([])
     const [idCategory, setIdCategory] = useState(-1)
-    const deviceType = useSelector(state => {
-        return state.Common.deviceType
+    const {deviceType, allPer} = useSelector(state => {
+        return state.Common
     });
 
 
     useEffect(() => {
         console.log('props product', props);
-        setPer(props.route.params.permission)
     }, [])
 
     useEffect(() => {
@@ -122,7 +120,7 @@ export default (props) => {
     const onClickItem = (el) => {
         itemProduct.current = el
         if (deviceType == Constant.PHONE) {
-            props.navigation.navigate(ScreenList.ProductDetail, { product: itemProduct.current, onCallBack: handleSuccess, permission: allPer })
+            props.navigation.navigate(ScreenList.ProductDetail, { product: itemProduct.current, onCallBack: handleSuccess })
         } else {
             setItProduct(el)
         }
@@ -283,7 +281,7 @@ export default (props) => {
                     }
 
                     {
-                        allPer.create ?
+                        allPer.Product_Create || allPer.IsAdmin ?
                             <FAB
                                 style={styles.fab}
                                 icon='plus'
@@ -306,7 +304,6 @@ export default (props) => {
                             handleSuccessTab={handleSuccess}
                             compositeItemProducts={compositeItemProducts}
                             scanQr={qrScan}
-                            allPer={allPer}
                         />
                     </View>
                     :

@@ -31,8 +31,8 @@ export default (props) => {
     const [showModal, setOnShowModal] = useState(false)
     const [iExtra, setIExtra] = useState({})
     const [iCate, setICate] = useState([])
-    const deviceType = useSelector(state => {
-        return state.Common.deviceType
+    const { deviceType, allPer } = useSelector(state => {
+        return state.Common
     });
 
     useEffect(() => {
@@ -106,15 +106,15 @@ export default (props) => {
         setOnShowModal(false)
         let state = await NetInfo.fetch()
         if (state.isConnected == true && state.isInternetReachable == true) {
-        await dataManager.syncTopping()
-        dialogManager.showPopupOneButton(`${data.Message}`, I18n.t('thong_bao'))
-        getExtraTopping()
-        }else{
+            await dataManager.syncTopping()
+            dialogManager.showPopupOneButton(`${data.Message}`, I18n.t('thong_bao'))
+            getExtraTopping()
+        } else {
             dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_internet'), I18n.t('thong_bao'), () => {
                 dialogManager.destroy();
             }, null, null, I18n.t('dong'))
         }
-        
+
     }
     const renderExtra = (item, index) => {
         return (
@@ -124,7 +124,7 @@ export default (props) => {
                         <Icon name={'extension'} size={30} color={colors.colorchinh} />
                         <Text style={{ marginLeft: 10, textTransform: 'uppercase' }}>{item.Name}</Text>
                     </View>
-                    <View style={{ flex: 1.6, marginLeft: 15,alignItems:'flex-end' }}>
+                    <View style={{ flex: 1.6, marginLeft: 15, alignItems: 'flex-end' }}>
                         <Text>{currencyToString(item.Price)}</Text>
                     </View>
                 </View>
@@ -166,14 +166,16 @@ export default (props) => {
                             <Image source={Images.logo_365_long_color} style={{ alignItems: 'center', justifyContent: 'center' }}></Image>
                         </View>
                     }
-                    <FAB
-                        style={styles.fab}
-                        icon='plus'
-                        color="#fff"
-                        onPress={() => {
-                            onClickAdd({})
-                        }}
-                    />
+                    {allPer.Product_Create || allPer.Product_Update || allPer.IsAdmin ?
+                        <FAB
+                            style={styles.fab}
+                            icon='plus'
+                            color="#fff"
+                            onPress={() => {
+                                onClickAdd({})
+                            }}
+                        /> : null
+                    }
                 </View>
 
                 <Modal
@@ -204,7 +206,7 @@ export default (props) => {
                             }}></View>
 
                         </TouchableWithoutFeedback>
-                        <View style={{ width: Metrics.screenWidth * 0.8, height: Metrics.screenHeight * 0.6, alignItems: 'center',justifyContent:'center' }}>
+                        <View style={{ width: Metrics.screenWidth * 0.8, height: Metrics.screenHeight * 0.6, alignItems: 'center', justifyContent: 'center' }}>
                             <DialogSelectProduct outPut={outputAddExtra} />
                         </View>
                     </View>
@@ -213,7 +215,7 @@ export default (props) => {
             </View>{
                 deviceType == Constant.TABLET ?
                     <View style={{ flex: 1 }}>
-                        {listExtra.length > 0 && iExtra.Id?
+                        {listExtra.length > 0 && iExtra.Id ?
                             <ExtraDetails data={iExtra} handleSuccessTab={handleSuccess} cate={iCate} />
                             :
                             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', borderLeftWidth: 0.3 }}>

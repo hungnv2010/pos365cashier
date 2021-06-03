@@ -273,9 +273,9 @@ export default (props) => {
         const { Id, Name, ProductId, IsActive } = item
         if (perOrder.create || perOrder.update) {
             deviceType == Constant.TABLET ?
-            props.navigation.navigate('ServedForTablet', { room: { Id: Id, Name: Name, ProductId: ProductId, IsActive: IsActive  } , allPer: perOrder})
+            props.navigation.navigate('ServedForTablet', { room: { Id: Id, Name: Name, ProductId: ProductId, IsActive: IsActive  } })
             :
-            props.navigation.navigate('PageServed', { room: { Id: Id, Name: Name, ProductId: ProductId, IsActive: IsActive }, allPer: perOrder })
+            props.navigation.navigate('PageServed', { room: { Id: Id, Name: Name, ProductId: ProductId, IsActive: IsActive } })
         } else {
             dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
                 dialogManager.destroy();

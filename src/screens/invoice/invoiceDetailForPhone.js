@@ -16,7 +16,7 @@ const InvoiceDetail = (props) => {
     const [invoiceDetail, setInvoiceDetail] = useState({})
     const [dataDetail, setDataDetail] = useState([])
     const moreAttributes = useRef(null)
-    const { deviceType, isFNB } = useSelector(state => {
+    const { deviceType, isFNB, allPer } = useSelector(state => {
         return state.Common
     });
 
@@ -127,7 +127,7 @@ const InvoiceDetail = (props) => {
     }
 
     const onDeleteOrder = () => {
-        if (props.route.params.allPer.delete) {
+        if (allPer.Order_Delete || allPer.IsAdmin) {
             dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_huy_hoa_don'), I18n.t("thong_bao"), res => {
                 if (res == 1) {
                     let id = invoiceDetail.Id && invoiceDetail.Id != -1 ? invoiceDetail.Id : ""

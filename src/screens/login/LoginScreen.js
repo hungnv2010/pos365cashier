@@ -145,14 +145,24 @@ const LoginScreen = (props) => {
                         ShowAll: true,
                         BranchId: res.Branchs[0].Id
                     }
+                    let arr = {}
+                    res.PermissionMap.forEach(item => {
+                        if (item.Branches.indexOf(res.CurrentBranchId) > -1)
+                            arr[item.Key] = true
+                        else
+                            arr[item.Key] = false
+                    })
+                    console.log("arr", arr);
+                    dispatch({ type: 'PERMISSION', allPer: arr })
                     let apiPath = ApiPath.PRIVILEGES.replace('{userId}', res.CurrentUser.Id)
                     let privileges = await new HTTPService().setPath(apiPath).GET(params, getHeaders())
-                    console.log('privileges', privileges);
+                    console.log('privileges login', res.PermissionMap);
                     setFileLuuDuLieu(Constant.PRIVILEGES, JSON.stringify(privileges));
 
 
                 }
                 setFileLuuDuLieu(Constant.HTML_PRINT, htmlDefault);
+                dispatch({ type: 'PERMISSION', allPer: { IsAdmin: true } })
                 navigateToHome()
             } else {
                 dialogManager.showPopupOneButton(I18n.t('ban_khong_co_quyen_truy_cap'), I18n.t('thong_bao'));

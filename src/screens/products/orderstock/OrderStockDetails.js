@@ -27,8 +27,8 @@ export default (props) => {
     const [totalprovisional, setTotalProvisional] = useState(0)
     const [methodPay, setMethodPay] = useState(I18n.t('tien_mat'))
 
-    const deviceType = useSelector(state => {
-        return state.Common.deviceType
+    const {deviceType, allPer} = useSelector(state => {
+        return state.Common
     });
 
     useEffect(() => {
@@ -247,7 +247,7 @@ export default (props) => {
                     <Icon name={'printer'} size={24} color={'#fff'} />
                 </TouchableOpacity>
                 {
-                    props.allPer.delete ?
+                    allPer.PurchaseOrder_Delete || allPer.IsAdmin ?
                         <TouchableOpacity style={styles.styleBtn} onPress={() => onClickDel()}>
                             <Text style={styles.styleTittleBtn}>{orderStock.Status != 3 ? I18n.t('huy') : I18n.t('xoa')}</Text>
                         </TouchableOpacity>
@@ -255,7 +255,7 @@ export default (props) => {
                         null
                 }
                 {
-                    props.allPer.update ?
+                    allPer.PurchaseOrder_Update || allPer.IsAdmin ?
                         <TouchableOpacity style={[styles.styleBtn, { marginLeft: 10 }]} onPress={() => { props.navigation.navigate(ScreenList.AddOrderStock, { orderstock: orderStock, listPr: listItem, paymentMethod: methodPay }) }}>
                             <Text style={styles.styleTittleBtn}>{I18n.t('chinh_sua')}</Text>
                         </TouchableOpacity>
