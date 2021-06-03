@@ -349,6 +349,7 @@ export default (props) => {
     }
 
     const onClickReturn = (item) => {
+        if(allPer.OtherTransaction_Create || allPer.IsAdmin){
         console.log('onClickReturn ', item.Name, item.index);
         setItemOrder(item)
         // typeModal.current = TYPE_MODAL.DELETE
@@ -364,6 +365,11 @@ export default (props) => {
             }
             saveOrder(data, item);
         }
+    }else {
+        dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+            dialogManager.destroy();
+        }, null, null, I18n.t('dong'))
+    }
     }
 
     const onClickTopping = (item, index) => {

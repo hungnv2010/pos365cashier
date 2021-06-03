@@ -212,10 +212,16 @@ export default (props) => {
 
 
     const removeItem = (item, index) => {
+        if(allPer.IsAdmin || allPer.Return_Create){
         console.log('removeItem ', item.Name, item.index);
         listProducts.splice(index, 1)
         jsonContent.OrderDetails = [...listProducts]
         updateServerEvent({ ...jsonContent })
+        }else {
+            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
+        }
     }
 
 

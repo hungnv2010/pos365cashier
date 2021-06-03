@@ -161,9 +161,15 @@ const RetailCustomerOrder = (props) => {
     }
 
     const removeItem = (product, index) => {
-        console.log('removeItem', index, product);
-        listOrder.splice(index, 1)
-        syncListProducts(listOrder)
+        if (allPer.IsAdmin || allPer.Return_Create) {
+            console.log('removeItem', index, product);
+            listOrder.splice(index, 1)
+            syncListProducts(listOrder)
+        } else {
+            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
+        }
     }
 
     const onClickNewOrder = async () => {
