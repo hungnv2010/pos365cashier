@@ -805,15 +805,18 @@ class DataManager {
                 let result = await new HTTPService().setPath(ApiPath.MULTI_PAYMENT_STATUS, false).POST(param)
                 if (result) {
                     console.log("ApiPath.MULTI_PAYMENT_STATUS result ", result);
+                    let checkChange = false;
                     QRcode.forEach(element => {
                         result.forEach(item => {
                             if (item.Status == true && item.OrderId == element.Id) {
                                 element.Status = true;
+                                checkChange = true;
                             }
                         });
                     });
                     console.log("getPaymentStatus QRcode ", QRcode);
-                    dataManager.syncQRCode(QRcode);
+                    if (checkChange)
+                        dataManager.syncQRCode(QRcode);
                     return Promise.resolve(result)
                 }
                 else return Promise.resolve(null)
