@@ -160,9 +160,10 @@ const LoginScreen = (props) => {
                     setFileLuuDuLieu(Constant.PRIVILEGES, JSON.stringify(privileges));
 
 
+                }else{
+                    dispatch({ type: 'PERMISSION', allPer: { IsAdmin: true } })
                 }
                 setFileLuuDuLieu(Constant.HTML_PRINT, htmlDefault);
-                dispatch({ type: 'PERMISSION', allPer: { IsAdmin: true } })
                 navigateToHome()
             } else {
                 dialogManager.showPopupOneButton(I18n.t('ban_khong_co_quyen_truy_cap'), I18n.t('thong_bao'));

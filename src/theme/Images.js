@@ -124,6 +124,7 @@ const images = {
     ic_default_orderstock : require ('../../assets/icons/icon_default_orderstock.png'),
     printer: require ('../../assets/icons/printer.png'),
     ic_default_group: require ('../../assets/icons/diet.png'),
+    ic_room_group: require ('../../assets/icons/ic_grouproom.png'),
 
 }
 

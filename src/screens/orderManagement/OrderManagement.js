@@ -7,12 +7,13 @@ import { useSelector } from 'react-redux';
 import MainToolBar from '../main/MainToolBar';
 import colors from '../../theme/Colors';
 import { ScreenList } from '../../common/ScreenList';
+import dialogManager from '../../components/dialog/DialogManager'
 
 export default (props) => {
 
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
-    const { isFNB } = useSelector(state => {
+    const { isFNB, allPer } = useSelector(state => {
         return state.Common
     })
 
@@ -52,6 +53,15 @@ export default (props) => {
     const onClickNavigation = (screen,param) => {
         props.navigation.navigate(screen,param)
     }
+    const onClickNavigationRoomHistory = () =>{
+        if(allPer.OtherTransaction_Read || allPer.IsAdmin){
+            props.navigation.navigate(ScreenList.RoomHistory)
+        }else{
+            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
+        }
+    }
 
     return (
         <View style={{ flex: 1 }}>
@@ -75,7 +85,7 @@ export default (props) => {
                     <Text style={styles.textButton}>{I18n.t('don_hang_cho_thanh_toan_vnpay_qr')}</Text>
                 </TouchableOpacity>
                 {isFNB ?
-                    <TouchableOpacity style={styles.button} onPress={() => onClickNavigation(ScreenList.RoomHistory)}>
+                    <TouchableOpacity style={styles.button} onPress={() => onClickNavigationRoomHistory()}>
                         <Image style={styles.iconButton} source={Images.ic_lichsuhuytrahang} />
                         <Text style={styles.textButton}>{I18n.t('lich_su_huy_tra_do')}</Text>
                     </TouchableOpacity>
