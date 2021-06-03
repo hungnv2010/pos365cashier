@@ -46,7 +46,9 @@ export default (props) => {
         console.log('customer props ', props);
         getCurrentBranch()
     }, [])
-
+    useEffect(()=>{
+        setPer(props.route.params.permission)
+    },[])
 
     const getCurrentBranch = async () => {
         let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
@@ -130,7 +132,7 @@ export default (props) => {
                             setCustomerItem(res)
                         } else {
                             console.log('onClickCustomerItem for PHONE');
-                            props.navigation.navigate(ScreenList.CustomerDetailForPhone, { item: res, onCallBack: handleSuccess })
+                            props.navigation.navigate(ScreenList.CustomerDetailForPhone, { item: res, onCallBack: handleSuccess ,permission: props.route.params.permission })
                         }
                     }
                 })

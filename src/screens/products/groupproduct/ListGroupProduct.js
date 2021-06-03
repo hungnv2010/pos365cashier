@@ -49,6 +49,7 @@ export default (props) => {
     })
     useEffect(() => {
         dialogManager.showLoading()
+        setPer(props.route.params.permission)
         getDataFromRealm()
         if (isFNB) {
             getBranch()
@@ -169,7 +170,7 @@ export default (props) => {
     const onClickItemCate = (item) => {
         console.log(item);
         if (deviceType == Constant.PHONE) {
-            props.navigation.navigate(ScreenList.GroupProductDetail, { data: item, onCallBack: handleSuccess })
+            props.navigation.navigate(ScreenList.GroupProductDetail, { data: item, onCallBack: handleSuccess,permission:allPer})
         } else {
             setCategory(item)
         }
