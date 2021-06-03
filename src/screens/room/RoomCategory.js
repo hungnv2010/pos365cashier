@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useLayoutEffect } from 'react';
+import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
 import { Image, View, StyleSheet, Text, TouchableOpacity, ScrollView, TextInput, Modal, TouchableWithoutFeedback, Keyboard } from "react-native";
 import { Snackbar, FAB } from 'react-native-paper';
 import I18n from '../../common/language/i18n';
@@ -20,16 +20,37 @@ export default (props) => {
     const [showModal, setShowModal] = useState(false);
     const [itemRoomGroupAdd, setRoomGroupAdd] = useState("");
     const dispatch = useDispatch()
+    const groupsBackup = useRef([]);
 
     useEffect(() => {
         console.log("Room props.route.params ", JSON.stringify(props.route.params));
-        setRoomGroups(props.route.params.roomGroups)
-
+        let groups = [];
+        if (props.route.params.roomGroups.length > 0) {
+            props.route.params.roomGroups.forEach(element => {
+                let number = 0;
+                props.route.params.rooms.forEach(item => {
+                    if (element.Id === item.RoomGroupId) {
+                        console.log("check ", element.Id === item.RoomGroupId, element.Id, item.RoomGroupId)
+                        number++;
+                    }
+                });
+                groups.push({ ...JSON.parse(JSON.stringify(element)), numberRoom: number })
+            });
+        }
+        console.log("roomGroups ====  ", JSON.stringify(groups));
+        groupsBackup.current = groups;
+        setRoomGroups(groups)
     }, [])
 
-    // const setRoomGroupAdd = (text) =>{
-
-    // }
+    const onChangeTextSearch = (text) => {
+        if (text != "") {
+            let groups = groupsBackup.current.filter(item => item.Name.indexOf(text) > -1)
+            console.log("onChangeTextSearch groups", groups);
+            setRoomGroups(groups)
+        } else {
+            setRoomGroups(groupsBackup.current)
+        }
+    }
 
     const onClickOk = () => {
         let params = { RoomGroup: { Id: 0, Type: null, Discount: 0, DiscountRatio: 0, Name: itemRoomGroupAdd } }
@@ -56,8 +77,6 @@ export default (props) => {
         dispatch({ type: 'ALREADY', already: false })
         await dataManager.syncRoomsReInsert()
         dispatch({ type: 'ALREADY', already: true })
-        // getDataInRealm();
-        // isReLoad.current = true;
     }
 
     const renderContentModal = () => {
@@ -91,7 +110,7 @@ export default (props) => {
 
             <View style={{ margin: 15, backgroundColor: "#fff", borderRadius: 5, flexDirection: "row", alignItems: "center" }}>
                 <Ionicons name={"md-search"} size={25} color="black" style={{ marginLeft: 10 }} />
-                <TextInput style={{ padding: 10, flex: 1, color: "#000" }} />
+                <TextInput style={{ padding: 10, flex: 1, color: "#000" }} onChangeText={(text) => onChangeTextSearch(text)} />
             </View>
 
             <ScrollView>
@@ -100,7 +119,7 @@ export default (props) => {
                         return (
                             <View style={{ margin: 15, marginTop: 0, backgroundColor: "#fff", padding: 10, borderRadius: 5, flexDirection: "column" }}>
                                 <Text style={{ fontWeight: "bold" }}>{item.Name}</Text>
-                                <Text style={{ marginTop: 5 }}>{I18n.t('so_luong_ban')}: 0</Text>
+                                <Text style={{ marginTop: 5 }}>{I18n.t('so_luong_ban')}: {item.numberRoom ? item.numberRoom : 0}</Text>
                             </View>
                         )
                     })
