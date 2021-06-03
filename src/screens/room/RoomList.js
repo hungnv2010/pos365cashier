@@ -47,17 +47,17 @@ export default (props) => {
 
     useEffect(() => {
         console.log('props room table', props);
-        if(props.route.params.permission){
-        let item = props.route.params.permission.items
-        let allPer = {}
-        item.forEach(element => {
-            if (element.id == "Room_Read") allPer.read = element.Checked
-            if (element.id == "Room_Create") allPer.create = element.Checked
-            if (element.id == "Room_Update") allPer.update = element.Checked
-            if (element.id == "Room_Delete") allPer.delete = element.Checked
-        });
-        setPermission(allPer)
-    }
+        if (props.route.params.permission) {
+            let item = props.route.params.permission.items
+            let allPer = {}
+            item.forEach(element => {
+                if (element.id == "Room_Read") allPer.read = element.Checked
+                if (element.id == "Room_Create") allPer.create = element.Checked
+                if (element.id == "Room_Update") allPer.update = element.Checked
+                if (element.id == "Room_Delete") allPer.delete = element.Checked
+            });
+            setPermission(allPer)
+        }
     }, [])
 
     useEffect(() => {
@@ -177,15 +177,20 @@ export default (props) => {
     return (
         <View style={styles.fill}>
 
-            <MainToolBar
+            {/* <MainToolBar
                 onClickLeft={() => {
                     if (isReLoad.current == true) {
                         dispatch({ type: 'ALREADY', already: true })
                     }
                 }}
                 navigation={props.navigation}
-                title={I18n.t('danh_sach_phong_ban')}
+                title={I18n.t('phong_ban_')}
                 outPutTextSearch={() => { }}
+            /> */}
+
+            <ToolBarDefault
+                navigation={props.navigation}
+                title={I18n.t('phong_ban_')}
             />
 
             <View style={{ flexDirection: "row", flex: 1 }}>

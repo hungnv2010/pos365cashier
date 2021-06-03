@@ -32,7 +32,7 @@ const KEY_FUNC = {
     VERSION: "VERSION",
     MORE: ScreenList.More,
     HISTORY: ScreenList.History,
-    ROOM_LIST: ScreenList.RoomList,
+    ROOM_LIST: ScreenList.RoomCatalog,
     OVERVIEW: ScreenList.OverView,
     INVOICE: ScreenList.Invoice,
     CASH_FLOW: ScreenList.CashFlow,

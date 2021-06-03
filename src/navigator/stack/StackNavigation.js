@@ -15,6 +15,7 @@ import PrintWebview from '../../screens/more/PrintWebview';
 import DetailHistory from '../../screens/history/DetailHistory'
 import ChangeTable from '../../screens/changeTable/Main';
 import RoomList from '../../screens/room/RoomList'
+import RoomCatalog from '../../screens/room/RoomCatalog'
 import RoomCategory from '../../screens/room/RoomCategory'
 import RoomDetail from '../../screens/room/RoomDetail'
 import CashFlow from '../../screens/cashflow/CashFlow'
@@ -151,6 +152,8 @@ export default (props) => {
                 <MainStack.Screen name={ScreenList.DetailOrderOffline}>{props=><DetailOrderOffline {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.SetupTemp}>{props=><SetupTemp {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.PreviewTempPrint}>{props=><PreviewTempPrint {...props}/>}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.RoomCatalog}>{props=><RoomCatalog {...props}/>}</MainStack.Screen>
+                
                 
                 <MainStack.Screen name={ScreenList.ListGroupProduct}>{props => <ListGroupProduct {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.GroupProductDetail}>{props=><GroupProductDetail {...props}/>}</MainStack.Screen>
