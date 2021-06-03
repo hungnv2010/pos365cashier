@@ -6,6 +6,11 @@ import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import colors from '../../theme/Colors';
 import { Metrics } from '../../theme';
+import { HTTPService } from '../../data/services/HttpService';
+import { ApiPath } from '../../data/services/ApiPath';
+import dataManager from '../../data/DataManager';
+import { useDispatch } from 'react-redux';
+import dialogManager from '../../components/dialog/DialogManager';
 
 export default (props) => {
 
@@ -13,19 +18,46 @@ export default (props) => {
     const [toastDescription, setToastDescription] = useState("")
     const [roomGroups, setRoomGroups] = useState([])
     const [showModal, setShowModal] = useState(false);
+    const [itemRoomGroupAdd, setRoomGroupAdd] = useState("");
+    const dispatch = useDispatch()
 
     useEffect(() => {
-        console.log("Room props ", props);
-        setRoomGroups(props.route.params)
+        console.log("Room props.route.params ", JSON.stringify(props.route.params));
+        setRoomGroups(props.route.params.roomGroups)
 
     }, [])
 
-    const setRoomGroupAdd = (text) =>{
+    // const setRoomGroupAdd = (text) =>{
 
+    // }
+
+    const onClickOk = () => {
+        let params = { RoomGroup: { Id: 0, Type: null, Discount: 0, DiscountRatio: 0, Name: itemRoomGroupAdd } }
+        new HTTPService().setPath(ApiPath.ROOM_GROUPS).POST(params).then(async (res) => {
+            console.log("onClickOk ADD_GROUP res ", res);
+            if (res) {
+                let list = [...roomGroups, res]
+                console.log("onClickOk list ", list);
+                setRoomGroups(list);
+                onCallBack()
+            }
+            dialogManager.hiddenLoading();
+            setShowModal(false)
+        }).catch((e) => {
+            dialogManager.hiddenLoading();
+            setShowModal(false)
+            console.log("onClickOk err ", e);
+        })
+        setRoomGroupAdd("")
     }
 
-    const onClickOk =()=> {
-
+    const onCallBack = async () => {
+        console.log("onCallBack ");
+        dispatch({ type: 'ALREADY', already: false })
+        await dataManager.syncRoomsReInsert()
+        dispatch({ type: 'ALREADY', already: true })
+        // getDataInRealm();
+        // isReLoad.current = true;
     }
 
     const renderContentModal = () => {
@@ -33,7 +65,7 @@ export default (props) => {
             <View style={{ padding: 10 }}>
                 <Text style={{ marginBottom: 15, fontSize: 18, fontWeight: 'bold' }}>{I18n.t('them_moi_nhom')}</Text>
                 <View style={styles.view_border_input}>
-                    <TextInput style={{ padding: 10, flex: 1, color: "#000", backgroundColor:"red" }} value={"itemRoomGroupAdd"} onChangeText={(text) => setRoomGroupAdd(text)} placeholder={I18n.t('ten_nhom')} placeholderTextColor="gray" />
+                    <TextInput style={{ height: 40, paddingLeft: 10, color: "#000", borderWidth: 0.5, borderColor: "gray" }} value={itemRoomGroupAdd} onChangeText={(text) => setRoomGroupAdd(text)} placeholder={I18n.t('ten_nhom')} placeholderTextColor="gray" />
                 </View>
 
                 <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>

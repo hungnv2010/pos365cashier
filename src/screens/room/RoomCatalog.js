@@ -29,12 +29,12 @@ export default (props) => {
         setRoomGroups(roomGroupsTmp)
     }
 
-    const onCallBack = ()=> {
+    const onCallBack = () => {
         getDataInRealm();
     }
 
     const onClickRoomCategori = () => {
-        props.navigation.navigate(ScreenList.RoomCategory, roomGroups)
+        props.navigation.navigate(ScreenList.RoomCategory, { rooms: rooms, roomGroups: roomGroups })
     }
 
     const onClickRoomList = () => {
@@ -46,7 +46,7 @@ export default (props) => {
             <MainToolBar
                 navigation={props.navigation}
                 title={I18n.t('phong_ban_')}
-                outPutTextSearch={()=>{}}
+                outPutTextSearch={() => { }}
             />
 
             <TouchableOpacity onPress={() => onClickRoomCategori()} style={styles.view_item}>

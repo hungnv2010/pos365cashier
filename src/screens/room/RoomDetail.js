@@ -148,12 +148,9 @@ export default (props) => {
             new HTTPService().setPath(ApiPath.ROOM_GROUPS).POST(params).then(async (res) => {
                 console.log("onClickOk ADD_GROUP res ", res);
                 if (res) {
-                    if (res.ResponseStatus) {
-                        dialogManager.showPopupOneButton(`${res.ResponseStatus.Message}`, I18n.t('thong_bao'))
-                    } else {
-                        props._onSelect('Add')
+                        props.route.params._onSelect('Add')
                         roomGroups.current.push(res)
-                    }
+                        setRoomGroup(res)
                 }
                 dialogManager.hiddenLoading();
                 setShowModal(false)
@@ -426,9 +423,9 @@ export default (props) => {
                             <Text style={{ padding: 11.5, flex: 1, color: "#000" }} >{itemRoomGroup.Name}</Text>
                             <IconAntDesign name={"down"} size={20} color="gray" style={{ marginRight: 10 }} />
                         </TouchableOpacity>
-                        {/* <TouchableOpacity onPress={onClickAddGroup} style={{ marginTop: 10, marginLeft: 10, backgroundColor: colors.colorLightBlue, padding: 5.5, borderRadius: 4 }}>
+                        <TouchableOpacity onPress={onClickAddGroup} style={{ marginTop: 10, marginLeft: 10, backgroundColor: colors.colorLightBlue, padding: 5.5, borderRadius: 4 }}>
                             <Ionicons name={"plus"} size={25} color="white" />
-                        </TouchableOpacity> */}
+                        </TouchableOpacity>
                     </View>
                 </View>
                 <View style={{ marginTop: 20 }}>

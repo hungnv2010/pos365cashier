@@ -52,8 +52,11 @@ export default (propsFunc) => {
           {props => <OverView {...props} />}
         </Drawer.Screen>
 
-        <Drawer.Screen name={ScreenList.RoomList} options={{ title: ScreenList.RoomList }}>
+        {/* <Drawer.Screen name={ScreenList.RoomList} options={{ title: ScreenList.RoomList }}>
           {props => <RoomList {...props} />}
+        </Drawer.Screen> */}
+        <Drawer.Screen name={ScreenList.RoomCatalog} options={{ title: ScreenList.RoomCatalog }}>
+          {props => <RoomCatalog {...props} />}
         </Drawer.Screen>
         <Drawer.Screen name={ScreenList.CustomerManager} options={{ title: ScreenList.CustomerManager }}>
           {props => <CustomerManage {...props} />}
