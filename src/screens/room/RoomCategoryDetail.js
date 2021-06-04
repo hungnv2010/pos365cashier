@@ -5,63 +5,37 @@ import I18n from '../../common/language/i18n';
 import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import colors from '../../theme/Colors';
-import { Metrics } from '../../theme';
+import { Metrics, Images } from '../../theme';
 import { HTTPService } from '../../data/services/HttpService';
 import { ApiPath } from '../../data/services/ApiPath';
 import dataManager from '../../data/DataManager';
 import { useDispatch } from 'react-redux';
 import dialogManager from '../../components/dialog/DialogManager';
-import { ScreenList } from '../../common/ScreenList';
 
 export default (props) => {
 
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
-    const [roomGroups, setRoomGroups] = useState([])
+    const [roomGroup, setRoomGroup] = useState({})
     const [showModal, setShowModal] = useState(false);
     const [itemRoomGroupAdd, setRoomGroupAdd] = useState("");
     const dispatch = useDispatch()
     const groupsBackup = useRef([]);
 
     useEffect(() => {
-        console.log("Room props.route.params ", JSON.stringify(props.route.params));
-        let groups = [];
-        if (props.route.params.roomGroups.length > 0) {
-            props.route.params.roomGroups.forEach(element => {
-                let rooms = [];
-                props.route.params.rooms.forEach(item => {
-                    if (element.Id === item.RoomGroupId) {
-                        console.log("check ", element.Id === item.RoomGroupId, element.Id, item.RoomGroupId)
-                        rooms.push(JSON.parse(JSON.stringify(item)))
-                    }
-                });
-                groups.push({ ...JSON.parse(JSON.stringify(element)), rooms: rooms })
-            });
-        }
-        console.log("roomGroups ====  ", JSON.stringify(groups));
-        groupsBackup.current = groups;
-        setRoomGroups(groups)
+        console.log("Room props.route.params ", props.route.params);
+        setRoomGroupAdd(props.route.params.Name)
+        setRoomGroup(props.route.params)
     }, [])
 
-    const onChangeTextSearch = (text) => {
-        if (text != "") {
-            let groups = groupsBackup.current.filter(item => item.Name.indexOf(text) > -1)
-            console.log("onChangeTextSearch groups", groups);
-            setRoomGroups(groups)
-        } else {
-            setRoomGroups(groupsBackup.current)
-        }
-    }
-
     const onClickOk = () => {
-        let params = { RoomGroup: { Id: 0, Type: null, Discount: 0, DiscountRatio: 0, Name: itemRoomGroupAdd } }
+        let params = { RoomGroup: { Id: props.route.params.Id, Type: null, Discount: 0, DiscountRatio: 0, Name: itemRoomGroupAdd } }
         new HTTPService().setPath(ApiPath.ROOM_GROUPS).POST(params).then(async (res) => {
             console.log("onClickOk ADD_GROUP res ", res);
             if (res) {
-                let list = [...roomGroups, res]
-                console.log("onClickOk list ", list);
-                setRoomGroups(list);
-                onCallBack()
+                setRoomGroupAdd(res.Name)
+                setRoomGroup(res)
+                groupsBackup.current = { type: "Edit", res: res }
             }
             dialogManager.hiddenLoading();
             setShowModal(false)
@@ -70,45 +44,36 @@ export default (props) => {
             setShowModal(false)
             console.log("onClickOk err ", e);
         })
-        setRoomGroupAdd("")
     }
 
-    const onCallBack = async (data = "") => {
-        console.log("onCallBack data ", data, typeof (data));
+    const onCallBack = async () => {
+        console.log("onCallBack ");
         dispatch({ type: 'ALREADY', already: false })
         await dataManager.syncRoomsReInsert()
         dispatch({ type: 'ALREADY', already: true })
-        if (data != "") {
-            console.log("onCallBack roomGroups ::: ", data.type, data.type == "Edit");
-            if (data.type == "Edit") {
-                console.log("onCallBack roomGroups ::1: ");
-                let groups = []
-                roomGroups.forEach(element => {
-                    let object = element;
-                    if (element.Id == data.res.Id) {
-                        object = { ...element, ...data.res }
-                    }
-                    groups.push(object)
-                });
-                console.log("onCallBack edit groups ", groups);
-                setRoomGroups(groups)
-            } else if (data.type == "Delete") {
-                let groups = []
-                roomGroups.forEach(element => {
-                    if (element.Id != data.res.Id) {
-                        groups.push(element)
-                    }
-
-                });
-                console.log("onCallBac del groups ", groups);
-                setRoomGroups(groups)
-            }
-        }
     }
 
-    const onClickRoomGroups = (item) => {
-        console.log("onClickRoomGroups item ", JSON.stringify(item));
-        props.navigation.navigate(ScreenList.RoomCategoryDetail, { ...item, _onSelect: onCallBack })
+    const onClickDelete = () => {
+        dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_xoa_nhom_phong_ban'), I18n.t("thong_bao"), res => {
+            if (res == 1) {
+                new HTTPService().setPath(ApiPath.ROOM_GROUPS + "/" + roomGroup.Id).DELETE({}).then(async (res) => {
+                    console.log("onClickDelete res ", res);
+                    if (res) {
+                        // groupsBackup.current = { type: "Delete", data: res }
+                        props.route.params._onSelect({ type: "Delete", res: roomGroup })
+                        props.navigation.pop()
+                    }
+                    dialogManager.hiddenLoading();
+                }).catch((e) => {
+                    dialogManager.hiddenLoading();
+                    console.log("onClickDelete err ", e);
+                })
+            }
+        })
+    }
+
+    const onClickEdit = () => {
+        setShowModal(true)
     }
 
     const renderContentModal = () => {
@@ -136,37 +101,44 @@ export default (props) => {
     return (
         <View style={styles.conatiner}>
             <ToolBarDefault
+                clickLeftIcon={() => {
+                    props.route.params._onSelect(groupsBackup.current)
+                    props.navigation.pop()
+                }}
                 navigation={props.navigation}
-                title={I18n.t('nhom_phong_ban')}
+                title={I18n.t('chi_tiet_nhom_phong_ban')}
             />
 
-            <View style={{ margin: 15, backgroundColor: "#fff", borderRadius: 5, flexDirection: "row", alignItems: "center" }}>
-                <Ionicons name={"md-search"} size={25} color="black" style={{ marginLeft: 10 }} />
-                <TextInput style={{ padding: 10, flex: 1, color: "#000" }} onChangeText={(text) => onChangeTextSearch(text)} />
+            <View style={{ margin: 15, padding: 20, backgroundColor: "#fff", borderRadius: 10, flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                <Image style={{ height: 50, marginBottom: 15 }} resizeMode={"contain"} source={Images.icon_phong_ban} />
+                <Text>{roomGroup.Name}</Text>
             </View>
 
-            <ScrollView>
+            <View style={{ flexDirection: "row", justifyContent: "space-around", alignItems: "center" }}>
+                <TouchableOpacity onPress={() => onClickEdit()} style={{ justifyContent: "center", flexDirection: "row", borderRadius: 20, padding: 12, width: (Metrics.screenWidth / 2) - 25, backgroundColor: "#f6871e1a" }}>
+                    <Image style={{ width: 20, height: 20, marginRight: 7 }} source={Images.icon_edit} />
+                    <Text>{I18n.t('chinh_sua')}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => onClickDelete()} style={{ justifyContent: "center", flexDirection: "row", borderRadius: 20, padding: 12, width: (Metrics.screenWidth / 2) - 25, backgroundColor: "#f21e3c1a" }}>
+                    <Image style={{ width: 20, height: 20, marginRight: 7 }} source={Images.trash} />
+                    <Text>{I18n.t('xoa')}</Text>
+                </TouchableOpacity>
+            </View>
+
+            <ScrollView style={{ margin: 10 }}>
                 {
-                    roomGroups.map((item, index) => {
-                        return (
-                            <TouchableOpacity onPress={() => onClickRoomGroups(item)} style={{ margin: 15, marginTop: 0, backgroundColor: "#fff", padding: 10, borderRadius: 5, flexDirection: "column" }}>
-                                <Text style={{ fontWeight: "bold" }}>{item.Name}</Text>
-                                <Text style={{ marginTop: 5 }}>{I18n.t('so_luong_ban')}: {item.rooms && item.rooms.length > 0 ? item.rooms.length : 0}</Text>
-                            </TouchableOpacity>
-                        )
-                    })
+                    props.route.params.rooms && props.route.params.rooms.length > 0 ?
+                        props.route.params.rooms.map((item, index) => {
+                            return (
+                                <View style={{ margin: 0, marginTop: 0, backgroundColor: "#fff", padding: 10, paddingLeft: 0, borderRadius: 5, flexDirection: "row", alignItems: "center" }}>
+                                    <Image style={{ height: 40 }} resizeMode={"contain"} source={Images.icon_phong_ban} />
+                                    <Text style={{ fontWeight: "bold" }}>{item.Name}</Text>
+                                </View>
+                            )
+                        })
+                        : null
                 }
             </ScrollView>
-
-            <FAB
-                style={styles.fab}
-                big
-                icon="plus"
-                color="#fff"
-                onPress={() => {
-                    setShowModal(true)
-                }}
-            />
 
             <Modal
                 animationType="fade"

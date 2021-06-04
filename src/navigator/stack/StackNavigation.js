@@ -18,6 +18,7 @@ import RoomList from '../../screens/room/RoomList'
 import RoomCatalog from '../../screens/room/RoomCatalog'
 import RoomCategory from '../../screens/room/RoomCategory'
 import RoomDetail from '../../screens/room/RoomDetail'
+import RoomCategoryDetail from '../../screens/room/RoomCategoryDetail'
 import CashFlow from '../../screens/cashflow/CashFlow'
 import InvoiceDetail from '../../screens/invoice/invoiceDetail';
 import Payment from '../../screens/payment/Payment'
@@ -153,8 +154,7 @@ export default (props) => {
                 <MainStack.Screen name={ScreenList.SetupTemp}>{props=><SetupTemp {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.PreviewTempPrint}>{props=><PreviewTempPrint {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.RoomCatalog}>{props=><RoomCatalog {...props}/>}</MainStack.Screen>
-                
-                
+                <MainStack.Screen name={ScreenList.RoomCategoryDetail}>{props=><RoomCategoryDetail {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.ListGroupProduct}>{props => <ListGroupProduct {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.GroupProductDetail}>{props=><GroupProductDetail {...props}/>}</MainStack.Screen>
             </MainStack.Navigator>
