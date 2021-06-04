@@ -181,6 +181,7 @@ export default (props) => {
             <View style={{ flex: 3, }}>
                 <ToolBarCombo
                     {...props}
+                    title={I18n.t('thanh_phan_combo')}
                     //outputClickProductService={outputClickProductService}
                     navigation={props.navigation}
                     outputTextSearch={outputTextSearch}

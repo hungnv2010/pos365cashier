@@ -23,6 +23,7 @@ import ItemPrOrderStock from './ItemPrOrderStock';
 import { getFileDuLieuString, setFileLuuDuLieu } from '../../../data/fileStore/FileStorage';
 import DialogSelectSupplier from '../../../components/dialog/DialogSelectSupplier'
 import SelectProduct from '../../served/servedForTablet/selectProduct/SelectProduct'
+import ToolBarCombo from '../../../components/toolbar/ToolBarCombo'
 
 export default (props) => {
     const [orderStock, setOrderStock] = useState({})
@@ -117,7 +118,7 @@ export default (props) => {
         let os = JSON.parse(JSON.stringify(param.orderstock))
         setOrderStock({ ...os })
         totalCurrent.current = os.Total
-        setDiscount(os.Discount)
+        setDiscount(os.Discount ? os.Discount : 0)
         let arrPr = JSON.parse(JSON.stringify(param.listPr))
         getTotal(arrPr)
         setListPr([...arrPr])
@@ -126,7 +127,7 @@ export default (props) => {
     useEffect(() => {
         getTotal(listPr)
     }, [listPr])
-    const getTotal = (list) =>{
+    const getTotal = (list) => {
         setSumPr(listPr.length)
         let sum = 0
         let total1 = 0
@@ -134,17 +135,18 @@ export default (props) => {
             sum = sum + item.Quantity
             total1 += (item.Price * item.Quantity)
         })
-        
+
         setSumQuantity(sum)
         totalCurrent.current = total1
         setTotal(total1)
-        console.log("total",total1);
+        console.log("total", total1);
     }
-    useEffect(()=>{
-        console.log("totalllllllll",total);
-    },[total])
     useEffect(() => {
-        setTotal(totalCurrent.current + (isPercent == true ? -(totalCurrent.current * discount / 100) : -discount) + orderStock.VAT)
+        console.log("totalllllllll", total);
+    }, [total])
+    useEffect(() => {
+        let t = totalCurrent.current - (isPercent == true ? (totalCurrent.current * discount / 100) : discount) + orderStock.VAT
+        setTotal(t)
         //setOrderStock({ ...orderStock, Discount: isPercent == true ? totalCurrent.current * discount / 100 : discount })
     }, [discount, orderStock.VAT, isPercent])
     useEffect(() => {
@@ -293,6 +295,20 @@ export default (props) => {
         setListPr([...listPr])
     }
     const onClickSave = (st) => {
+        let param = {
+            ChangeSellingPrice: false,
+            PurchaseOrder: {
+                Discount: 0,
+                ExchangeRate: 0,
+                Id: 0,
+                PurchaseOrderDetails: listPurchase,
+                Status: 2,
+                Total: total,
+                TotalPayment: 0,
+                VAT: 0,
+                VATRates: 0,
+            }
+        }
         dialogManager.showLoading()
         // if (isFinish.current == true) {
         //     setOrderStock({ ...orderStock, Status: 2 })
@@ -300,7 +316,7 @@ export default (props) => {
         if (orderStock.Status != 2) {
             paramAdd.PurchaseOrder.Status = st
         }
-        new HTTPService().setPath(ApiPath.ORDERSTOCK).POST(paramAdd).then(res => {
+        new HTTPService().setPath(ApiPath.ORDERSTOCK).POST(orderStock.Id ? paramAdd : param).then(res => {
             if (res != null) {
                 console.log("res", res.Message);
                 dialogManager.showPopupOneButton(res.Message, I18n.t('thong_bao'), () => {
@@ -311,8 +327,51 @@ export default (props) => {
             }
         })
     }
-    const outputSelectedProduct = () => {
+    const outputSelectedProduct = (product) => {
+        console.log("outputfor Tab", product);
+        let isExist = false
+        if (listPr.length > 0) {
+            listPr.forEach(item => {
+                if (item.ProductId == product.Id) {
+                    isExist = true
+                    item.Quantity += 1
+                    setListPr([...listPr])
+                    return
+                }
+            })
+        }
+        if (isExist == false) {
+            let paramFilter = `(substringof('${product.Code}',Code) or substringof('${product.Code}',Name) or substringof('${product.Code}',Code2) or substringof('${product.Code}',Code3) or substringof('${product.Code}',Code4) or substringof('${product.Code}',Code5))`
+            new HTTPService().setPath(ApiPath.PRODUCT).GET({ IncludeSummary: true, Inlinecount: 'allpages', CategoryId: -1, PartnerId: 0, top: 20, filter: paramFilter }).then((res) => {
+                if (res != null) {
+                    let itemPr = {
+                        AttributesName: res.results[0].AttributesName,
+                        Code: res.results[0].Code,
+                        ConversionValue: res.results[0].ConversionValue,
+                        IsLargeUnit: false,
+                        IsSerialNumberTracking: res.results[0].IsSerialNumberTracking,
+                        LargeUnit: res.results[0].LargeUnit,
+                        Name: res.results[0].Name,
+                        OnHand: res.results[0].OnHand,
+                        Price: res.results[0].Cost,
+                        PriceLargeUnit: res.results[0].PriceLargeUnit,
+                        PriceUnit: res.results[0].Price,
+                        ProductId: res.results[0].Id,
+                        Quantity: 1,
+                        SellingPrice: res.results[0].Price,
+                        Unit: res.results[0].Unit,
+                    }
+                    setListPr([...listPr, itemPr])
+                }
 
+            }).catch((e) => {
+                console.log("error", e);
+            })
+        }
+
+    }
+    const outputTextSearch = (text) => {
+        setValue(text)
     }
     const renderModal = () => {
         return (
@@ -323,8 +382,8 @@ export default (props) => {
                         :
                         typeModal.current == 2 ?
                             <View style={{ paddingVertical: 15, paddingHorizontal: 10, maxHeight: Metrics.screenHeight * 0.6 }}>
-                                <Text style={{ textAlign: 'center', fontWeight: 'bold' }}>{I18n.t('chon_nha_phuong_thuc')}</Text>
-                                <ScrollView style={{}}>
+                                <Text style={{ textAlign: 'center', fontWeight: 'bold', paddingVertical: 15 }}>{I18n.t('chon_phuong_thuc_thanh_toan')}</Text>
+                                <ScrollView style={{ paddingHorizontal: 20 }}>
                                     {
                                         listMethod.map((item, index) => {
                                             return (
@@ -376,10 +435,12 @@ export default (props) => {
                     title={orderStock != {} ? I18n.t('chinh_sua_nhap_hang') : I18n.t('them_moi_nhap_hang')}
                 /> :
                 <View style={{ flex: 3, }}>
-                    <ToolBarDefault
+                    <ToolBarCombo
                         {...props}
-                        title={orderStock != {} ? I18n.t('chinh_sua_nhap_hang') : I18n.t('them_moi_nhap_hang')}
-                    />
+                        title={orderStock.Id ? I18n.t('chinh_sua_nhap_hang') : I18n.t('them_moi_nhap_hang')}
+                        //outputClickProductService={outputClickProductService}
+                        navigation={props.navigation}
+                        outputTextSearch={outputTextSearch} />
                     <View style={{ flex: 1, }}>
                         <SelectProduct listProducts={listProduct.length > 0 ? listProduct : []} valueSearch={value}
                             numColumns={orientaition == Constant.LANDSCAPE ? 3 : 3}

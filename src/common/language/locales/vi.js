@@ -50,6 +50,7 @@ export default {
   ban_co_chac_chan_muon_huy_hoa_don: "Bạn có chắc chắn muốn huỷ đơn hàng này?",
   ban_co_chac_chan_muon_xoa_nhom_hang_hoa:'Bạn có chắc chắn muốn xoá nhóm hàng hoá?',
   ban_co_chac_chan_muon_xoa_nhom_phong_ban: "Bạn có chắc chắn muốn xoá nhóm phòng bàn này?",
+  ban_co_chac_chan_muon_huy_phieu_nhap_hang_nay: "Bạn có chắc chắn muốn huỷ phiếu nhập hàng này ?",
 
   // TODO: C
 
@@ -123,6 +124,7 @@ export default {
   cap_nhat_nhom_hang_hoa:'Cập nhật nhóm hàng hoá',
   co_chu: "Cỡ chữ",
   chi_tiet_nhom_phong_ban: "Chi tiết nhóm phòng bàn",
+  chon_phuong_thuc_thanh_toan:'Chọn phương thức thanh toán',
 
   // TODO: D
 
@@ -586,6 +588,7 @@ export default {
   ten_san_pham: "Tên sản phẩm",
   thiet_lap_mau_tem: "Thiết lập mẫu tem",
   thiet_lap_mau_in: "Thiết lập mẫu in",
+  them_moi_nhap_hang:"Thêm mới phiếu nhập",
 
   // TODO: U
   ung_dung_hien_tai_chua_ho_tro_in_co_dau: "Ứng dụng hiện tại chưa hỗ trợ in có dấu",

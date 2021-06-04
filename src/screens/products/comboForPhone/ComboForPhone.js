@@ -14,6 +14,7 @@ import colors from '../../../theme/Colors';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { ApiPath } from "../../../data/services/ApiPath";
 import { HTTPService } from "../../../data/services/HttpService";
+import { Title } from 'react-native-paper';
 
 export default (props) => {
     const [product, setProduct] = useState({})
@@ -162,6 +163,7 @@ export default (props) => {
         <View style={{ flex: 1 }}>
             <ToolBarCombo
                 {...props}
+                title={I18n.t('thanh_phan_combo')}
                 //outputClickProductService={outputClickProductService}
                 navigation={props.navigation}
                 outputTextSearch={outputTextSearch}

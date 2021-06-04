@@ -65,7 +65,6 @@ export default (props) => {
                         arrDate.push({ Title: dateToString(el.CreatedDate) })
                         defauTitle.current = dateToString(el.CreatedDate)
                     }
-
                 })
                 console.log("arrr", arrDate);
                 let arrdata = []
@@ -76,7 +75,6 @@ export default (props) => {
                     arrItem.forEach(item => {
                         arrdata.push(item)
                     })
-
                 })
                 console.log("arr dataaaaa", arrdata);
                 setViewData([...arrdata])
@@ -201,7 +199,7 @@ export default (props) => {
             {
                 deviceType == Constant.TABLET ? defaultItem.Id ?
                     <View style={{ flex: 1, marginLeft: 0.5 }}>
-                        <OrderStockDetails allPer={allPer} iOrderStock={defaultItem} outEdit={outEdit}/>
+                        <OrderStockDetails allPer={allPer} iOrderStock={defaultItem} outEdit={outEdit} handleSuccessTab={CallBack}/>
                     </View> :
                     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                         <Image source={Images.logo_365_long_color} />

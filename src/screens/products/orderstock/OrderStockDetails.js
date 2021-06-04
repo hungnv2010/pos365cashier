@@ -88,7 +88,7 @@ export default (props) => {
     const onClickDel = () => {
         console.log("delete", orderStock.Id);
         if (orderStock.Status != 3) {
-            dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_xoa_phieu_nhap_hang_nay'), I18n.t("thong_bao"), res => {
+            dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_huy_phieu_nhap_hang_nay'), I18n.t("thong_bao"), res => {
                 if (res == 1) {
                     new HTTPService().setPath(`${ApiPath.ORDERSTOCK}/${orderStock.Id}/void`).DELETE()
                         .then(res => {

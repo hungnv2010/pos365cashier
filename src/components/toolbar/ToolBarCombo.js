@@ -67,10 +67,10 @@ export default forwardRef((props, ref) => {
                 </View>
                 <View style={{ flex: 4, justifyContent: 'center', alignItems: 'flex-start', }}>
                     <Subheading numberOfLines={1} style={{ fontSize: 18, fontWeight: "bold" }} >
-                        {I18n.t('thanh_phan_combo')}
+                        {props.title}
                     </Subheading>
                 </View>
-                <View style={{ flex: deviceType == Constant.TABLET ? 7 : 1, marginRight: 10 }}>
+                <View style={{ flex: deviceType == Constant.TABLET ? 5 : 1, marginRight: 10 }}>
                     {isSearch ?
                         <View style={{ borderRadius: 3, borderColor: "#fff", borderWidth: 1, backgroundColor: "#fff", flexDirection: "row", marginRight: 2, height: "80%" }}>
                             <TextInput

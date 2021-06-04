@@ -22,6 +22,9 @@ import DatePicker from 'react-native-date-picker';
 
 const ItemPrOrderStock = ({item, index,onChangeText, onClickDelItem}) =>{
     const [value, setValue] = useState(item.Quantity)
+    useEffect(()=>{
+        setValue(item.Quantity)
+    },[item.Quantity])
 
     return (
         <View style={{ backgroundColor: '#fff', paddingVertical: 10, marginVertical: 2, paddingHorizontal: 10, borderRadius: 10 }}>

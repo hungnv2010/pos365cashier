@@ -231,7 +231,7 @@ const HeaderComponent = (props) => {
                 setBranch(selectBranch)
                 dispatch({ type: 'IS_FNB', isFNB: null })
                 signalRManager.killSignalR();
-                getPrivileges(selectBranch)
+                getPrivileges(selectBranch.Id)
                 getRetailerInfoAndNavigate();
                 dialogManager.hiddenLoading();
             } else {
@@ -245,7 +245,7 @@ const HeaderComponent = (props) => {
         setShowModal(false)
     }
 
-    const getPrivileges = branchId => {
+    const getPrivileges = (branchId) => {
         let params = {
             ShowAll: true,
             BranchId: branchId

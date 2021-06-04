@@ -49,7 +49,8 @@ export default {
   ban_co_chac_chan_muon_xoa_phieu_nhap_hang_nay: 'Do you want to delete this order stock ?',
   ban_co_chac_chan_muon_huy_hoa_don: "Are you sure you want to cancel this order?",
   ban_co_chac_chan_muon_xoa_nhom_hang_hoa: 'Are you sure you want to delete this group ?',
-  ban_co_chac_chan_muon_xoa_nhom_phong_ban: "Are you sure you want to delete this group room table?",
+  ban_co_chac_chan_muon_xoa_nhom_phong_ban: "Are you sure you want to delete this group room table ?",
+  ban_co_chac_chan_muon_huy_phieu_nhap_hang_nay: "Are you sure you want to cancel this voucher ?",
 
   // TODO: C 
 
@@ -123,6 +124,7 @@ export default {
   cap_nhat_nhom_hang_hoa: 'Update group product',
   co_chu: "Text size",
   chi_tiet_nhom_phong_ban: "Group room/table detail",
+  chon_phuong_thuc_thanh_toan:'Select a payment method',
 
   // TODO: D 
 
@@ -589,6 +591,7 @@ export default {
   ten_san_pham: "Product name",
   thiet_lap_mau_tem: "Temp template settings",
   thiet_lap_mau_in: "Print template settings",
+  them_moi_nhap_hang: "Add new orderstock",
 
   // TODO: U
   ung_dung_hien_tai_chua_ho_tro_in_co_dau: "The application currently does not support printing with accents",
