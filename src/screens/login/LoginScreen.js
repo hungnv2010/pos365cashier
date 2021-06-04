@@ -51,7 +51,7 @@ const LoginScreen = (props) => {
 
                 let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
                 console.log('Login data====', JSON.parse(data));
-
+                getRetailerInfoAndNavigate()
                 navigateToHome();
             } else {
                 let rememberAccount = await getFileDuLieuString(Constant.REMEMBER_ACCOUNT, true);

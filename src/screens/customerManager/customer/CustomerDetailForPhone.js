@@ -25,7 +25,7 @@ export default (props) => {
     const typeModal = useRef(null)
     const toastDescription = useRef('')
     const dateTmp = useRef()
-    const allPer = useSelector(state =>{
+    const allPer = useSelector(state => {
         return state.Common.allPer
     })
 
@@ -350,31 +350,14 @@ export default (props) => {
                 selectedPartnerGroups: selectedPartnerGroups
             }
         }
-        if (allPer.Partner_Create || allPer.IsAdmin) {
-            dialogManager.showLoading()
-            new HTTPService().setPath(ApiPath.CUSTOMER).POST(params)
-                .then(res => {
-                    console.log('onClickDone res', res);
-                    if (res) {
-                        props.route.params.onCallBack('them')
-                        props.navigation.pop()
-                    }
-                    dialogManager.hiddenLoading()
-                })
-                .catch(err => {
-                    dialogManager.hiddenLoading()
-                    console.log('onClickDone err', err);
-                })
-        } else {
-            if (allPer.Partner_Update || allPer.IsAdmin) {
-                console.log('update');
-                params.Partner.Id = customerDetail.Id
+        if (props.route.params.item.Id == 0) {
+            if (allPer.Partner_Create || allPer.IsAdmin) {
                 dialogManager.showLoading()
                 new HTTPService().setPath(ApiPath.CUSTOMER).POST(params)
                     .then(res => {
                         console.log('onClickDone res', res);
                         if (res) {
-                            props.route.params.onCallBack('sua')
+                            props.route.params.onCallBack('them')
                             props.navigation.pop()
                         }
                         dialogManager.hiddenLoading()
@@ -387,6 +370,31 @@ export default (props) => {
                 dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
                     dialogManager.destroy();
                 }, null, null, I18n.t('dong'))
+            }
+        } else {
+            if (props.route.params.permission.update) {
+                if (allPer.Partner_Update || allPer.IsAdmin) {
+                    console.log('update');
+                    params.Partner.Id = customerDetail.Id
+                    dialogManager.showLoading()
+                    new HTTPService().setPath(ApiPath.CUSTOMER).POST(params)
+                        .then(res => {
+                            console.log('onClickDone res', res);
+                            if (res) {
+                                props.route.params.onCallBack('sua')
+                                props.navigation.pop()
+                            }
+                            dialogManager.hiddenLoading()
+                        })
+                        .catch(err => {
+                            dialogManager.hiddenLoading()
+                            console.log('onClickDone err', err);
+                        })
+                } else {
+                    dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                        dialogManager.destroy();
+                    }, null, null, I18n.t('dong'))
+                }
             }
         }
     }
@@ -464,7 +472,7 @@ export default (props) => {
                             placeholder={I18n.t('ten')}
                             placeholderTextColor="#808080"
                             value={customerDetail.Name}
-                            style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, color:'#000' }}
+                            style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, color: '#000' }}
                             onChangeText={(text) => { onChangeText(text, 1) }}
                         />
                     </View>

@@ -102,6 +102,9 @@ export default (props) => {
             dialogManager.hiddenLoading()
         }
     }
+    const outEdit = (data) =>{
+        props.navigation.navigate(ScreenList.AddOrderStock, data)
+    }
 
     const renderItemOrderStock = (item, index) => {
         return (
@@ -187,11 +190,7 @@ export default (props) => {
                             icon='plus'
                             color="#fff"
                             onPress={() => {
-                                if(deviceType == Constant.PHONE){
                                 props.navigation.navigate(ScreenList.AddOrderStock, { orderstock: {}, listPr: [], paymentMethod: "" })
-                                }else{
-                                    setAddItemTab(true)
-                                }
                             }}
                         />
                         :
@@ -200,13 +199,9 @@ export default (props) => {
 
             </View>
             {
-                deviceType == Constant.TABLET ?additemTab ? 
-                <View style={{ flex: 1, marginLeft: 0.5 }}>
-                        <AddOrderStock  />
-                    </View>
-                : defaultItem.Id ?
+                deviceType == Constant.TABLET ? defaultItem.Id ?
                     <View style={{ flex: 1, marginLeft: 0.5 }}>
-                        <OrderStockDetails allPer={allPer} iOrderStock={defaultItem} />
+                        <OrderStockDetails allPer={allPer} iOrderStock={defaultItem} outEdit={outEdit}/>
                     </View> :
                     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                         <Image source={Images.logo_365_long_color} />

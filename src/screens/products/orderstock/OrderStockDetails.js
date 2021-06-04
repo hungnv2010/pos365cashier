@@ -137,6 +137,13 @@ export default (props) => {
             })
         }
     }
+    const onClickEdit = () =>{
+        if(deviceType == Constant.PHONE){
+            props.navigation.navigate(ScreenList.AddOrderStock, { orderstock: orderStock, listPr: listItem, paymentMethod: methodPay })
+        }else{
+            props.outEdit({ orderstock: orderStock, listPr: listItem, paymentMethod: methodPay })
+        }
+    }
 
     return (
         <View style={{ flex: 1 }}>
@@ -256,7 +263,7 @@ export default (props) => {
                 }
                 {
                     allPer.PurchaseOrder_Update || allPer.IsAdmin ?
-                        <TouchableOpacity style={[styles.styleBtn, { marginLeft: 10 }]} onPress={() => { props.navigation.navigate(ScreenList.AddOrderStock, { orderstock: orderStock, listPr: listItem, paymentMethod: methodPay }) }}>
+                        <TouchableOpacity style={[styles.styleBtn, { marginLeft: 10 }]} onPress={() =>  onClickEdit()}>
                             <Text style={styles.styleTittleBtn}>{I18n.t('chinh_sua')}</Text>
                         </TouchableOpacity>
                         :
