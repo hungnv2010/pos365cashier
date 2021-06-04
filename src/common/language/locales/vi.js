@@ -48,7 +48,8 @@ export default {
   block_dau_tien:'block đầu tiên',
   ban_co_chac_chan_muon_xoa_phieu_nhap_hang_nay:'Bạn có chắc chắn muốn xoá phiếu nhập hàng này ?',
   ban_co_chac_chan_muon_huy_hoa_don: "Bạn có chắc chắn muốn huỷ đơn hàng này?",
-  ban_co_chac_chan_muon_xoa_nhom_hang_hoa:'Bạn có chắc chắn muốn xoá nhóm hàng hoá ?',
+  ban_co_chac_chan_muon_xoa_nhom_hang_hoa:'Bạn có chắc chắn muốn xoá nhóm hàng hoá?',
+  ban_co_chac_chan_muon_xoa_nhom_phong_ban: "Bạn có chắc chắn muốn xoá nhóm phòng bàn này?",
 
   // TODO: C
 
@@ -121,6 +122,7 @@ export default {
   cap_nhat:'Cập nhật',
   cap_nhat_nhom_hang_hoa:'Cập nhật nhóm hàng hoá',
   co_chu: "Cỡ chữ",
+  chi_tiet_nhom_phong_ban: "Chi tiết nhóm phòng bàn",
 
   // TODO: D
 

@@ -101,5 +101,6 @@ export const ScreenList = {
   PreviewTempPrint: "PreviewTempPrint",
   ListGroupProduct:"ListGroupProduct",
   GroupProductDetail: "GroupProductDetail",
+  RoomCategoryDetail: "RoomCategoryDetail",
 }
 

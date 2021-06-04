@@ -124,7 +124,8 @@ const images = {
     ic_default_orderstock : require ('../../assets/icons/icon_default_orderstock.png'),
     printer: require ('../../assets/icons/printer.png'),
     ic_default_group: require ('../../assets/icons/diet.png'),
-
+    icon_phong_ban: require ('../../assets/icons/icon_phong_ban.png'),
+    trash: require ('../../assets/icons/trash.png'),
 }
 
 export default images

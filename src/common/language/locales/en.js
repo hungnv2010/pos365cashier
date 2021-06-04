@@ -49,6 +49,7 @@ export default {
   ban_co_chac_chan_muon_xoa_phieu_nhap_hang_nay: 'Do you want to delete this order stock ?',
   ban_co_chac_chan_muon_huy_hoa_don: "Are you sure you want to cancel this order?",
   ban_co_chac_chan_muon_xoa_nhom_hang_hoa: 'Are you sure you want to delete this group ?',
+  ban_co_chac_chan_muon_xoa_nhom_phong_ban: "Are you sure you want to delete this group room table?",
 
   // TODO: C 
 
@@ -121,6 +122,7 @@ export default {
   cap_nhat: 'Update',
   cap_nhat_nhom_hang_hoa: 'Update group product',
   co_chu: "Text size",
+  chi_tiet_nhom_phong_ban: "Group room/table detail",
 
   // TODO: D 
 
