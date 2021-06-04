@@ -15,6 +15,7 @@ import { HTTPService } from '../../data/services/HttpService';
 import dialogManager from '../../components/dialog/DialogManager';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import TextTicker from 'react-native-text-ticker';
+import { useSelector } from 'react-redux';
 
 
 
@@ -26,6 +27,9 @@ export default (props) => {
     const [marginModal, setMargin] = useState(0)
     const ModifiedBy = useRef()
     const backupDetailGroup = useRef()
+    const allPer = useSelector(state =>{
+        return state.Common.allPer
+    })
 
 
     useEffect(() => {
@@ -275,7 +279,7 @@ export default (props) => {
                                 <Text style={{ fontSize: 20, color: colors.colorLightBlue, fontWeight: "bold" }}>{detailGroup.Name}</Text>
                             </View>
                             <View style={{ flexDirection: "row", margin: 20, alignSelf: "center" }}>
-                                {props.route.params.permission.update ?
+                                {allPer.Partner_Update || allPer.IsAdmin ?
                                     <TouchableOpacity
                                         style={{ flexDirection: "row", marginRight: 15, backgroundColor: "#fde7d2", borderRadius: 10 }}
                                         onPress={() => { setShowModal(true) }}>
@@ -283,7 +287,7 @@ export default (props) => {
                                     </TouchableOpacity>
                                     : null
                                 }
-                                {props.route.params.permission.delete ?
+                                {allPer.Partner_Delete || allPer.IsAdmin ?
                                     <TouchableOpacity
                                         style={{ flexDirection: "row", marginLeft: 15, backgroundColor: "#F7DCDC", borderRadius: 10 }}
                                         onPress={onClickDelete}

@@ -65,7 +65,7 @@ const CustomerOrder = (props) => {
     const [QuantitySubtract, setQuantitySubtract] = useState(0)
     const [quickPay, setQuickPay] = useState(false)
     const [totalQuantity, setTotalQuantity] = useState(0)
-    const { isFNB, orientaition } = useSelector(state => {
+    const { isFNB, orientaition, allPer } = useSelector(state => {
         return state.Common
     });
     const settingObject = useRef()
@@ -79,7 +79,7 @@ const CustomerOrder = (props) => {
     }, delay * 1000)
 
     useEffect(() => {
-        console.log("per create",props.allPer);
+        console.log("per create", props);
         const getVendorSession = async () => {
             let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
             console.log('ReturnProduct data', JSON.parse(data));
@@ -103,7 +103,7 @@ const CustomerOrder = (props) => {
             keyboardDidShowListener.remove();
             keyboardDidHideListener.remove();
         }
-        
+
     }, [])
 
     const _keyboardDidShow = () => {
@@ -235,18 +235,24 @@ const CustomerOrder = (props) => {
     }
 
     const onClickReturn = (product, type = 1) => {
-        setQuantitySubtract(type != 1 ? 1 : product.Quantity)
-        setItemOrder(product)
-        if (vendorSession.Settings.ReturnHistory) {
+        if (allPer.IsAdmin || allPer.OtherTransaction_Create) {
             setQuantitySubtract(type != 1 ? 1 : product.Quantity)
-            typeModal.current = TYPE_MODAL.DELETE
-            setShowModal(true)
-        } else {
-            let data = {
-                QuantityChange: type == 1 ? product.Quantity : 1,
-                Description: "",
+            setItemOrder(product)
+            if (vendorSession.Settings.ReturnHistory) {
+                setQuantitySubtract(type != 1 ? 1 : product.Quantity)
+                typeModal.current = TYPE_MODAL.DELETE
+                setShowModal(true)
+            } else {
+                let data = {
+                    QuantityChange: type == 1 ? product.Quantity : 1,
+                    Description: "",
+                }
+                saveOrder(data, product);
             }
-            saveOrder(data, product);
+        } else {
+            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
         }
     }
 
@@ -692,7 +698,7 @@ const CustomerOrder = (props) => {
     }
 
     const onClickPayment = () => {
-        if (props.allPer.create) {
+        if (allPer.Order_Create || allPer.IsAdmin) {
             if (!props.jsonContent.OrderDetails || props.jsonContent.OrderDetails.length == 0) {
                 dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
             } else {

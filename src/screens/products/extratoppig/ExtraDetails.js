@@ -28,8 +28,8 @@ export default (props) => {
     const [textInput, setTextInput] = useState('')
     const [defaultGroup, setDefaultGroup] = useState()
     const [marginModal, setMargin] = useState(0)
-    const deviceType = useSelector(state => {
-        return state.Common.deviceType
+    const { deviceType, allPer } = useSelector(state => {
+        return state.Common
     });
     useEffect(() => {
         if (deviceType == Constant.PHONE) {
@@ -38,7 +38,7 @@ export default (props) => {
     }, [])
     useEffect(() => {
         if (deviceType == Constant.TABLET) {
-            setExtraTopping({...JSON.parse(JSON.stringify(props.data))})
+            setExtraTopping({ ...JSON.parse(JSON.stringify(props.data)) })
             setCategory([...JSON.parse(JSON.stringify(props.cate))])
         }
     }, [props.data, props.cate])
@@ -50,14 +50,14 @@ export default (props) => {
         console.log("category", category);
     }
     const onClickAdd = () => {
-        if(textInput!=''){
-        setCategory([...category, textInput])
-        setExtraTopping({...extraTopping,ExtraGroup:textInput})
-        setTextInput()
-        setOnShowModal(false)
-        setTextInput('')
+        if (textInput != '') {
+            setCategory([...category, textInput])
+            setExtraTopping({ ...extraTopping, ExtraGroup: textInput })
+            setTextInput()
+            setOnShowModal(false)
+            setTextInput('')
         }
-        
+
     }
     useEffect(() => {
         setDefaultGroup(extraTopping.ExtraGroup)
@@ -123,7 +123,8 @@ export default (props) => {
         })
 
     }
-    const onClickSubmitUpdate = async() => {
+    const onClickSubmitUpdate = async () => {
+        if(allPer.Product_Create || allPer.Product_Update || allPer.IsAdmin){
         let param = {
             ExtraId: extraTopping.Id,
             Price: extraTopping.Price,
@@ -132,18 +133,23 @@ export default (props) => {
         }
         let state = await NetInfo.fetch()
         if (state.isConnected == true && state.isInternetReachable == true) {
-        new HTTPService().setPath(`api/products/extra/updateall`).POST(param).then(res => {
-            console.log("res...", res.Message);
-            if (deviceType == Constant.PHONE) {
-                props.route.params.onCallBack('sua')
-                props.navigation.pop()
-            } else {
-                props.handleSuccessTab('sua')
+            new HTTPService().setPath(`api/products/extra/updateall`).POST(param).then(res => {
+                console.log("res...", res.Message);
+                if (deviceType == Constant.PHONE) {
+                    props.route.params.onCallBack('sua')
+                    props.navigation.pop()
+                } else {
+                    props.handleSuccessTab('sua')
 
-            }
-        })
+                }
+            })
+        } else {
+            dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_internet'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
+        }
     }else{
-        dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_internet'), I18n.t('thong_bao'), () => {
+        dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
             dialogManager.destroy();
         }, null, null, I18n.t('dong'))
     }
@@ -155,16 +161,16 @@ export default (props) => {
             <View style={{ backgroundColor: '#fff', borderRadius: 5 }}>
                 {modalType.current == 1 ?
                     <View style={{ flexDirection: 'column', padding: 10 }}>
-                        <Text style={{ fontSize: 16, fontWeight: 'bold', textAlign: 'center' ,paddingVertical:10}}>{I18n.t('them_moi_nhom')}</Text>
-                        <TextInput style={{ paddingVertical: 15, fontSize: 14, paddingHorizontal: 10,color:'#000',backgroundColor:'#f2f2f2',borderRadius:10 }} value={textInput} placeholder={I18n.t('nhap_ten_nhom')} onChangeText={(text) => setTextInput(text)}></TextInput>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', textAlign: 'center', paddingVertical: 10 }}>{I18n.t('them_moi_nhom')}</Text>
+                        <TextInput style={{ paddingVertical: 15, fontSize: 14, paddingHorizontal: 10, color: '#000', backgroundColor: '#f2f2f2', borderRadius: 10 }} value={textInput} placeholder={I18n.t('nhap_ten_nhom')} onChangeText={(text) => setTextInput(text)}></TextInput>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10 }}>
                             <View style={{ flex: 1 }}></View>
                             <View style={{ flexDirection: 'row', flex: 1, paddingVertical: 10 }}>
                                 <TouchableOpacity style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} onPress={() => { setOnShowModal(false) }}>
-                                    <Text style={{ fontSize: 14,color:colors.colorchinh }}>{I18n.t('huy')}</Text>
+                                    <Text style={{ fontSize: 14, color: colors.colorchinh }}>{I18n.t('huy')}</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }} onPress={() => onClickAdd()}>
-                                    <Text style={{ fontSize: 14, color:textInput!='' ? colors.colorLightBlue : '#bbbbbb' }}>{I18n.t('dong_y')}</Text>
+                                    <Text style={{ fontSize: 14, color: textInput != '' ? colors.colorLightBlue : '#bbbbbb' }}>{I18n.t('dong_y')}</Text>
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -228,11 +234,12 @@ export default (props) => {
                 <Text style={styles.styleTitle}>{I18n.t('gia_ban')}</Text>
                 <TextInput style={styles.styleTextInput} value={currencyToString(extraTopping.Price)} keyboardType={'numbers-and-punctuation'} onChangeText={(text) => setExtraTopping({ ...extraTopping, Price: onChangeTextInput(text) })} />
             </View>
-            <View style={{ flexDirection: 'row', alignItems: 'flex-end',paddingHorizontal:2,marginBottom:5 }}>
-                <TouchableOpacity style={{ backgroundColor: '#f21e3c',borderRadius:5, paddingHorizontal:5,paddingVertical:8, flex: 1, marginRight: 1, alignItems: 'center', justifyContent: 'center' }} onPress={() => onClickDel()}>
-                    <IconMaterial name={'delete'} color={'#fff'} size={24} />
-                </TouchableOpacity>
-                <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, padding: 10, flex: 9, marginLeft: 1, justifyContent: 'center', alignItems: 'center',borderRadius:5 }} onPress={() => onClickSubmitUpdate()}>
+            <View style={{ flexDirection: 'row', alignItems: 'flex-end', paddingHorizontal: 2, marginBottom: 5 }}>
+                {allPer.Product_Delete || allPer.IsAdmin ?
+                    <TouchableOpacity style={{ backgroundColor: '#f21e3c', borderRadius: 5, paddingHorizontal: 5, paddingVertical: 8, flex: 1, marginRight: 1, alignItems: 'center', justifyContent: 'center' }} onPress={() => onClickDel()}>
+                        <IconMaterial name={'delete'} color={'#fff'} size={24} />
+                    </TouchableOpacity> : null}
+                <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, padding: 10, flex: 9, marginLeft: 1, justifyContent: 'center', alignItems: 'center', borderRadius: 5 }} onPress={() => onClickSubmitUpdate()}>
                     <Text style={{ fontWeight: 'bold', color: '#fff', fontSize: 16 }}>{I18n.t('xong')}</Text>
                 </TouchableOpacity>
             </View>
@@ -264,7 +271,7 @@ export default (props) => {
                         }}></View>
 
                     </TouchableWithoutFeedback>
-                    <View style={{ width: Metrics.screenWidth * 0.8 ,marginBottom: Platform.OS == 'ios' ? marginModal : 0 }}>
+                    <View style={{ width: Metrics.screenWidth * 0.8, marginBottom: Platform.OS == 'ios' ? marginModal : 0 }}>
                         {renderModal()}
                     </View>
                 </View>

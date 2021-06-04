@@ -32,13 +32,12 @@ export default (props) => {
     const debouncedVal = useDebounce(textSearch)
     const [showModal, setOnShowModal] = useState(false)
     const [marginModal, setMargin] = useState(0)
-    const [allPer, setPer] = useState(props.route.params.permission ? props.route.params.permission : {})
     const defauTitle = useRef()
     const currentBranch = useRef()
     const [additemTab, setAddItemTab] = useState(false)
     let arrDate = []
-    const deviceType = useSelector(state => {
-        return state.Common.deviceType
+    const {deviceType, allPer} = useSelector(state => {
+        return state.Common
     });
 
     useEffect(() => {
@@ -182,7 +181,7 @@ export default (props) => {
                 </View>
 
                 {
-                    allPer.create ?
+                    allPer.PurchaseOrder_Create || allPer.IsAdmin ?
                         <FAB
                             style={styles.fab}
                             icon='plus'

@@ -25,6 +25,9 @@ export default (props) => {
     const typeModal = useRef(null)
     const toastDescription = useRef('')
     const dateTmp = useRef()
+    const allPer = useSelector(state =>{
+        return state.Common.allPer
+    })
 
 
     useEffect(() => {
@@ -347,7 +350,7 @@ export default (props) => {
                 selectedPartnerGroups: selectedPartnerGroups
             }
         }
-        if (props.route.params.item.Id == 0) {
+        if (allPer.Partner_Create || allPer.IsAdmin) {
             dialogManager.showLoading()
             new HTTPService().setPath(ApiPath.CUSTOMER).POST(params)
                 .then(res => {
@@ -363,7 +366,7 @@ export default (props) => {
                     console.log('onClickDone err', err);
                 })
         } else {
-            if (props.route.params.permission.update) {
+            if (allPer.Partner_Update || allPer.IsAdmin) {
                 console.log('update');
                 params.Partner.Id = customerDetail.Id
                 dialogManager.showLoading()
@@ -461,7 +464,7 @@ export default (props) => {
                             placeholder={I18n.t('ten')}
                             placeholderTextColor="#808080"
                             value={customerDetail.Name}
-                            style={{ borderWidth: 0.5, padding: 10, borderRadius: 5 }}
+                            style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, color:'#000' }}
                             onChangeText={(text) => { onChangeText(text, 1) }}
                         />
                     </View>
@@ -597,7 +600,7 @@ export default (props) => {
                         null
                         :
                         <>{
-                            props.route.params.permission.delete ?
+                            allPer.Partner_Delete || allPer.IsAdmin ?
                                 <TouchableOpacity onPress={onClickDelete} style={{ flex: 1, flexDirection: "row", marginTop: 0, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 10 }}>
                                     <IconAntDesign name={"delete"} size={25} color="white" />
                                 </TouchableOpacity>

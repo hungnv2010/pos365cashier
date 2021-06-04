@@ -23,9 +23,12 @@ export default (props) => {
     const { isFNB } = useSelector(state => {
         return state.Common
     })
+    const allPer = useSelector(state =>{
+        return state.Common.allPer
+    })
 
     useEffect(() => {
-        console.log('propssss', props);
+        console.log('propssss', allPer);
         if (props.route.params.permission) {
             let item = props.route.params.permission.items
             let allPer = {}

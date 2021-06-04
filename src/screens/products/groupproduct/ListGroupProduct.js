@@ -28,7 +28,6 @@ export default (props) => {
     const [listPr, setListPr] = useState([])
     const [dataView, setDataView] = useState([])
     const productTmp = useRef([])
-    const [allPer, setPer] = useState(props.route.params.permission ? props.route.params.permission : {})
     const categoryTmp = useRef([])
     const dataTmp = useRef([])
     const [textSearch, setTextSearch] = useState()
@@ -44,12 +43,11 @@ export default (props) => {
         isNum: false
     }])
 
-    const { deviceType, isFNB } = useSelector(state => {
+    const { deviceType, isFNB, allPer } = useSelector(state => {
         return state.Common
     })
     useEffect(() => {
         dialogManager.showLoading()
-        setPer(props.route.params.permission)
         getDataFromRealm()
         if (isFNB) {
             getBranch()
@@ -170,7 +168,7 @@ export default (props) => {
     const onClickItemCate = (item) => {
         console.log(item);
         if (deviceType == Constant.PHONE) {
-            props.navigation.navigate(ScreenList.GroupProductDetail, { data: item, onCallBack: handleSuccess,permission:allPer})
+            props.navigation.navigate(ScreenList.GroupProductDetail, { data: item, onCallBack: handleSuccess})
         } else {
             setCategory(item)
         }
@@ -227,8 +225,8 @@ export default (props) => {
                     }
                 </View>
 
-                {/* {
-                    allPer.create ? */}
+                {
+                    allPer.Product_Create || allPer.IsAdmin ?
                         <FAB
                             style={styles.fab}
                             icon='plus'
@@ -237,9 +235,9 @@ export default (props) => {
                                 onClickAddItem()
                             }}
                         />
-                        {/* :
+                        :
                         null
-                } */}
+                }
             </View>
             {
                 deviceType == Constant.TABLET ?

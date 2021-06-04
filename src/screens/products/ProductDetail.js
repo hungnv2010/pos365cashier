@@ -61,7 +61,6 @@ export default (props) => {
     const [isTakePhoto, setIsTakePhoto] = useState(true)
     const [imageUrl, setImageUrl] = useState()
     const [onHand, setOnHand] = useState()
-    const [allPer, setAllPer] = useState()
     const permissionMapTmp = useRef()
     const token = useRef()
     const cateTmp = useRef()
@@ -74,10 +73,7 @@ export default (props) => {
     const printStamp = useRef([])
     const [addDVT, setAddDVT] = useState([])
 
-    const deviceType = useSelector(state => {
-        return state.Common.deviceType
-    });
-    const { isFNB } = useSelector(state => {
+    const { isFNB, allPer, deviceType } = useSelector(state => {
         return state.Common
     });
 
@@ -136,16 +132,15 @@ export default (props) => {
     useEffect(() => {
         getPermissionMap()
     }, [])
-    const getPermissionMap = async() =>{
-        let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION,true)
+    const getPermissionMap = async () => {
+        let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true)
         vendorSession = JSON.parse(vendorSession)
         permissionMapTmp.current = vendorSession.PermissionMap
-        console.log("abc",vendorSession.PermissionMap);
+        console.log("abc", vendorSession.PermissionMap);
     }
 
     useEffect(() => {
         if (deviceType == Constant.PHONE) {
-            setAllPer(props.route.params.permission)
             getData(props.route.params)
             setDefaultType(product.ProductType)
             setPriceConfig({})
@@ -161,7 +156,7 @@ export default (props) => {
             getCategory(props.iproduct.CategoryId ? props.iproduct.CategoryId : '')
             getProduct({ ...JSON.parse(JSON.stringify(props.iproduct)) })
             console.log("CompositeItemProducts", props.compositeItemProducts);
-            
+
             //setNameCategory()
             setCost(props.iproduct.Cost)
             if (props.iproduct.Code) {
@@ -190,9 +185,6 @@ export default (props) => {
         console.log("type", type);
         console.log("prodcut", product);
     }, [type])
-    useEffect(() => {  
-        setAllPer(props.allPer) 
-    }, [props.allPer])
 
     useEffect(() => {
         if (deviceType == Constant.TABLET) {
@@ -219,9 +211,6 @@ export default (props) => {
         console.log("cost.....", compositeItemProducts);
         setCost(t)
     }, [compositeItemProducts])
-    useEffect(() => {
-        console.log("allPer", allPer);
-    }, [allPer])
 
     useEffect(() => {
         //setPriceConfig({})
@@ -428,48 +417,54 @@ export default (props) => {
     }
 
     const addCategory = async (data) => {
-        addCate.current = [{
-            Name: 'ten_nhom',
-            Hint: 'nhap_ten_nhom_hang_hoa',
-            Key: 'CategoryName',
-            Value: '',
-        }]
-        console.log(data);
-        let param = {
-            Category: {
-                Id: 0,
-                Name: data.CategoryName,
-                ShowOnBranchId: 21883
-            }
-        }
-        setOnShowModal(false)
-        if (param.Category.Name && param.Category.Name != '') {
-            new HTTPService().setPath(ApiPath.CATEGORIES_PRODUCT).POST(param).then(res => {
-                if (res) {
-                    if (res.ResponseStatus && res.ResponseStatus.Message) {
-                        dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
-                            dialogManager.destroy();
-                            dialogManager.hiddenLoading()
-                        }, null, null, I18n.t('dong'))
-                    } else {
-                        if (deviceType == Constant.PHONE) {
-                            props.route.params.onCallBack('them', 1)
-                            handleSuccess('them')
-                            setCategory(cateTmp.current)
-                        } else {
-                            props.handleSuccessTab('them', 1, product)
-                            setNameCategory(cateTmp.current)
-                        }
-                        getCategory()
-                    }
+        if (allPer.Product_Create || allPer.Product_Update || allPer.IsAdmin) {
+            addCate.current = [{
+                Name: 'ten_nhom',
+                Hint: 'nhap_ten_nhom_hang_hoa',
+                Key: 'CategoryName',
+                Value: '',
+            }]
+            console.log(data);
+            let param = {
+                Category: {
+                    Id: 0,
+                    Name: data.CategoryName,
+                    ShowOnBranchId: 21883
                 }
-            })
-            //await dataManager.syncCategories()
+            }
+            setOnShowModal(false)
+            if (param.Category.Name && param.Category.Name != '') {
+                new HTTPService().setPath(ApiPath.CATEGORIES_PRODUCT).POST(param).then(res => {
+                    if (res) {
+                        if (res.ResponseStatus && res.ResponseStatus.Message) {
+                            dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
+                                dialogManager.destroy();
+                                dialogManager.hiddenLoading()
+                            }, null, null, I18n.t('dong'))
+                        } else {
+                            if (deviceType == Constant.PHONE) {
+                                props.route.params.onCallBack('them', 1)
+                                handleSuccess('them')
+                                setCategory(cateTmp.current)
+                            } else {
+                                props.handleSuccessTab('them', 1, product)
+                                setNameCategory(cateTmp.current)
+                            }
+                            getCategory()
+                        }
+                    }
+                })
+                //await dataManager.syncCategories()
+            } else {
+                dialogManager.showLoading()
+                dialogManager.showPopupOneButton(I18n.t('vui_long_nhap_day_du_thong_tin_truoc_khi_luu'), I18n.t('thong_bao'), () => {
+                    dialogManager.destroy();
+                    dialogManager.hiddenLoading()
+                }, null, null, I18n.t('dong'))
+            }
         } else {
-            dialogManager.showLoading()
-            dialogManager.showPopupOneButton(I18n.t('vui_long_nhap_day_du_thong_tin_truoc_khi_luu'), I18n.t('thong_bao'), () => {
+            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
                 dialogManager.destroy();
-                dialogManager.hiddenLoading()
             }, null, null, I18n.t('dong'))
         }
 
@@ -563,7 +558,7 @@ export default (props) => {
     }
 
     const onClickSaveAndCopy = () => {
-        if (deviceType == Constant.PHONE ? props.route.params.permission.update : props.allPer.update) {
+        if (allPer.Product_Create || allPer.Product_Update || allPer.IsAdmin) {
             isCoppy.current = true
             onSave()
         } else {
@@ -574,7 +569,7 @@ export default (props) => {
     }
 
     const onClickSave = () => {
-        if (deviceType == Constant.PHONE ? props.route.params.permission.update : props.allPer.update) {
+        if (allPer.Product_Create || allPer.Product_Update || allPer.IsAdmin) {
             isCoppy.current = false
             onSave()
         } else {
@@ -1126,7 +1121,7 @@ export default (props) => {
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.title}>{I18n.t('gia_von')}</Text>
                                         {/* <TextInput style={[styles.textInput, { color: colors.colorLightBlue, fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={cost ? currencyToString(cost) : ''} onChangeText={(text) => setCost(onChangeTextInput(text))}></TextInput> */}
-                                        <TextInput editable={deviceType == Constant.PHONE ? props.route.params.permission.updateCost : props.allPer.updateCost} style={[styles.textInput, { color: colors.colorLightBlue, fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={(deviceType == Constant.PHONE ? props.route.params.permission.viewCost == true : props.allPer.viewCost == true) ? cost ? currencyToString(cost) : 0 + '' : '--'} onChangeText={(text) => setCost(onChangeTextInput(text))}></TextInput>
+                                        <TextInput editable={allPer.Product_UpdateCost || allPer.IsAdmin} style={[styles.textInput, { color: colors.colorLightBlue, fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={(allPer.Product_ViewCost || allPer.IsAdmin) ? cost ? currencyToString(cost) : 0 + '' : '--'} onChangeText={(text) => setCost(onChangeTextInput(text))}></TextInput>
                                     </View>
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.title} >{I18n.t('gia')}</Text>
@@ -1161,7 +1156,7 @@ export default (props) => {
                     </View>
                     <View style={{ backgroundColor: '#f2f2f2', padding: 10 }}>
                         <View style={{ flexDirection: 'row' }}>
-                            {product.Id && (deviceType == Constant.PHONE ? props.route.params.permission.delete == true : props.allPer.delete) ?
+                            {product.Id && (allPer.Product_Delete || allPer.IsAdmin) ?
                                 <View style={{ flex: 1 }}>
                                     <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 7, paddingVertical: 10, justifyContent: 'center', margin: 2, alignItems: 'center', borderRadius: 10 }} onPress={() => { onClickDelete() }}>
                                         <Icon name={'trash-can'} size={24} color={'#fff'} />

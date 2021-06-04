@@ -62,7 +62,7 @@ export default (props) => {
     const [totalQuantity, setTotalQuantity] = useState(0)
     const isStartPrint = useRef(-1)
     const settingObject = useRef()
-    const { deviceType, isFNB } = useSelector(state => {
+    const { deviceType, isFNB, allPer } = useSelector(state => {
         return state.Common
     });
 
@@ -142,21 +142,21 @@ export default (props) => {
         //         dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
         //     }
         // }
-        if(props.allPer.create){
-        if (!props.jsonContent.OrderDetails || props.jsonContent.OrderDetails.length == 0) {
-            dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
-        } else {
-            if (quickPay) {
-                onClickQuickPayment()
+        if (allPer.Order_Create || allPer.IsAdmin) {
+            if (!props.jsonContent.OrderDetails || props.jsonContent.OrderDetails.length == 0) {
+                dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
             } else {
-                props.navigation.navigate(ScreenList.Payment, { RoomId: props.route.params.room.Id, Name: props.route.params.room.Name, Position: props.Position });
+                if (quickPay) {
+                    onClickQuickPayment()
+                } else {
+                    props.navigation.navigate(ScreenList.Payment, { RoomId: props.route.params.room.Id, Name: props.route.params.room.Name, Position: props.Position });
+                }
             }
+        } else {
+            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
         }
-    }else {
-        dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
-            dialogManager.destroy();
-        }, null, null, I18n.t('dong'))
-    }
     }
 
     const onClickQuickPayment = async () => {
@@ -349,6 +349,7 @@ export default (props) => {
     }
 
     const onClickReturn = (item) => {
+        if(allPer.OtherTransaction_Create || allPer.IsAdmin){
         console.log('onClickReturn ', item.Name, item.index);
         setItemOrder(item)
         // typeModal.current = TYPE_MODAL.DELETE
@@ -364,6 +365,11 @@ export default (props) => {
             }
             saveOrder(data, item);
         }
+    }else {
+        dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+            dialogManager.destroy();
+        }, null, null, I18n.t('dong'))
+    }
     }
 
     const onClickTopping = (item, index) => {

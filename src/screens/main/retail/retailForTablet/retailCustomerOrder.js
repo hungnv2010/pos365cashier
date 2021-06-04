@@ -57,9 +57,9 @@ const RetailCustomerOrder = (props) => {
     const [isQuickPayment, setIsQuickPayment] = useState(false)
     const [promotions, setPromotions] = useState([])
 
-    const orientaition = useSelector(state => {
+    const { orientaition, allPer } = useSelector(state => {
         console.log("orientaition", state);
-        return state.Common.orientaition
+        return state.Common
     });
 
 
@@ -161,9 +161,15 @@ const RetailCustomerOrder = (props) => {
     }
 
     const removeItem = (product, index) => {
-        console.log('removeItem', index, product);
-        listOrder.splice(index, 1)
-        syncListProducts(listOrder)
+        if (allPer.IsAdmin || allPer.Return_Create) {
+            console.log('removeItem', index, product);
+            listOrder.splice(index, 1)
+            syncListProducts(listOrder)
+        } else {
+            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
+        }
     }
 
     const onClickNewOrder = async () => {
@@ -436,16 +442,21 @@ const RetailCustomerOrder = (props) => {
     // }
 
     const onClickPayment = () => {
-
-        if (listOrder && listOrder.length > 0) {
-            if (isQuickPayment) {
-                onClickQuickPayment()
+        if (allPer.Order_Create || allPer.IsAdmin) {
+            if (listOrder && listOrder.length > 0) {
+                if (isQuickPayment) {
+                    onClickQuickPayment()
+                } else {
+                    props.navigation.navigate(ScreenList.Payment, { onCallBack: onCallBackPayment, Screen: ScreenList.MainRetail, RoomId: props.jsonContent.RoomId, Name: props.jsonContent.RoomName ? props.jsonContent.RoomName : I18n.t('don_hang'), Position: props.jsonContent.Pos });
+                }
             } else {
-                props.navigation.navigate(ScreenList.Payment, { onCallBack: onCallBackPayment, Screen: ScreenList.MainRetail, RoomId: props.jsonContent.RoomId, Name: props.jsonContent.RoomName ? props.jsonContent.RoomName : I18n.t('don_hang'), Position: props.jsonContent.Pos });
+                console.log('ban_hay_chon_mon_an_truoc');
+                dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
             }
         } else {
-            console.log('ban_hay_chon_mon_an_truoc');
-            dialogManager.showPopupOneButton(I18n.t("ban_hay_chon_mon_an_truoc"))
+            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
         }
     }
 

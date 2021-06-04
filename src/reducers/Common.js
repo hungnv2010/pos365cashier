@@ -27,7 +27,8 @@ const initState = {
 	listPrint: "",
 	printProvisional: "",
 	printReturnProduct: "",
-	syncRetail: false
+	syncRetail: false,
+	allPer:{},
 }
 
 const commonReducer = (state = initState, action = {}) => {
@@ -125,6 +126,11 @@ const commonReducer = (state = initState, action = {}) => {
 			return {
 				...state,
 				printReturnProduct: action.printReturnProduct
+			}
+		case "PERMISSION":
+			return{
+				...state,
+				allPer: action.allPer
 			}
 		default:
 			return state

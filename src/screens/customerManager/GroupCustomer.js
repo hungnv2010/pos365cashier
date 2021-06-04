@@ -20,8 +20,7 @@ export default (props) => {
 
     const [listGroup, setListGroup] = useState([])
     const [detailGroup, setDetailGroup] = useState({})
-    const [allPer, setPer] = useState(props.route.params.permission ? props.route.params.permission : {})
-    const { deviceType } = useSelector(state => {
+    const { deviceType , allPer} = useSelector(state => {
         return state.Common
     });
 
@@ -73,7 +72,7 @@ export default (props) => {
         if (deviceType == Constant.TABLET) {
             setDetailGroup(item)
         } else {
-            props.navigation.navigate(ScreenList.DetailGroupCustomerForPhone, { detailGroup: item, _onSelect: onClickDone, permission:allPer })
+            props.navigation.navigate(ScreenList.DetailGroupCustomerForPhone, { detailGroup: item, _onSelect: onClickDone })
         }
     }
 
@@ -126,7 +125,7 @@ export default (props) => {
                         keyExtractor={(item, index) => index.toString()}
                     />
                     {
-                        allPer.create ?
+                        allPer.Partner_Create || allPer.IsAdmin ?
                             <FAB
                                 style={styles.fab}
                                 big

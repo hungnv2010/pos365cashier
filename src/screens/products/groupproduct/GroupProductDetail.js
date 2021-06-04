@@ -32,8 +32,8 @@ export default (props) => {
         Key: 'CategoryName',
         Value: data.Name ? data.Name : '',
     }]
-    const deviceType = useSelector(state => {
-        return state.Common.deviceType
+    const {deviceType, allPer} = useSelector(state => {
+        return state.Common
     });
 
     useEffect(() => {
@@ -68,7 +68,7 @@ export default (props) => {
         setOnShowModal(true)
     }
     const onCLickDelCate = () => {
-        if(deviceType == Constant.TABLET ? props.allPer.delete : props.route.params.permission.delete){
+        if(allPer.Product_Delete || allPer.IsAdmin){
         dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_xoa_nhom_hang_hoa'), I18n.t("thong_bao"), res => {
             if (res == 1) {
                 new HTTPService().setPath(`${ApiPath.CATEGORIES_PRODUCT}/${data.Id}`).DELETE()
@@ -99,7 +99,7 @@ export default (props) => {
     }
     const editCategory = async (value) => {
         setOnShowModal(false)
-        if(deviceType == Constant.TABLET ? props.allPer.delete : props.route.params.permission.delete){
+        if(allPer.Product_Update || allPer.IsAdmin){
         console.log(value.CategoryName);
         let param = {
             Category: {
@@ -194,28 +194,28 @@ export default (props) => {
                         <Text style={{ color: colors.colorLightBlue, marginTop: 10, fontWeight: 'bold' }}>{data.Name}</Text>
                     </View>
                     <View style={{ flexDirection: 'row', paddingHorizontal: 50 }}>
-                        {/* {
-                            props.allPer.update ? */}
+                        {
+                            allPer.Product_Update || allPer.IsAdmin?
                                 <View style={{ flex: 1, marginRight: 10, paddingVertical: 10, alignItems: 'center', justifyContent: 'center' }}>
                                     <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }} onPress={() => onClickEditCate()}>
                                         <Image source={Images.icon_edit} style={{ width: 16, height: 16 }} />
                                         <Text style={{ marginLeft: 8, color: '#f6871e', fontSize: 16 }}>{I18n.t('chinh_sua')}</Text>
                                     </TouchableOpacity>
                                 </View>
-                                {/* :
+                                 :
                                 null
                         }
                         {
-                            props.allPer.delete ? */}
+                            allPer.Product_Delete || allPer.IsAdmin ? 
                                 <View style={{ flex: 1, marginLeft: 10, paddingVertical: 10, alignItems: 'center', justifyContent: 'center' }}>
                                     <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }} onPress={() => onCLickDelCate()}>
                                         <Ionicons name={'trash'} size={17} color={'#f21e3c'} />
                                         <Text style={{ marginLeft: 8, color: '#f21e3c', fontSize: 16 }}>{I18n.t('xoa')}</Text>
                                     </TouchableOpacity>
                                 </View>
-                                {/* :
+                                :
                                 null
-                        } */}
+                        }
                     </View>
                 </View>
                 <View>
