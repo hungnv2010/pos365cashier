@@ -57,7 +57,7 @@ export default (props) => {
     }, [props.params])
 
     useEffect(() => {
-        console.log("Room detail data ====== ", props);
+        console.log("Room detail allPer ====== ", allPer);
         if (deviceType == Constant.PHONE)
             getData(props.route.params);
         getRoomGroup()

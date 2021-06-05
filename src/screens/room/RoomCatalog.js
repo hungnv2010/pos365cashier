@@ -34,7 +34,7 @@ export default (props) => {
     }
 
     const onClickRoomCategori = () => {
-        props.navigation.navigate(ScreenList.RoomCategory, { rooms: rooms, roomGroups: roomGroups })
+        props.navigation.navigate(ScreenList.RoomCategory, { rooms: rooms, roomGroups: roomGroups, _onSelect: onCallBack })
     }
 
     const onClickRoomList = () => {
