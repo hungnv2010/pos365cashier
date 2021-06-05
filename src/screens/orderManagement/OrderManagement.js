@@ -25,23 +25,23 @@ export default (props) => {
         import: true,
         export: true
     })
-    useEffect(() => {
-        console.log('props room table', props);
-        if (props.route.params.permission) {
-            let item = props.route.params.permission.items
-            let allPer = {}
-            item.forEach(element => {
-                if (element.id == "Order_Read") allPer.read = element.Checked
-                if (element.id == "Order_Create") allPer.create = element.Checked
-                if (element.id == "Order_Update") allPer.update = element.Checked
-                if (element.id == "Order_Delete") allPer.delete = element.Checked
-                if (element.id == "Order_Import") allPer.import = element.Checked
-                if (element.id == "Order_Export") allPer.export = element.Checked
-            });
-            setPerOrder(allPer)
-        }
+    // useEffect(() => {
+    //     console.log('props room table', props);
+    //     if (props.route.params.permission) {
+    //         let item = props.route.params.permission.items
+    //         let allPer = {}
+    //         item.forEach(element => {
+    //             if (element.id == "Order_Read") allPer.read = element.Checked
+    //             if (element.id == "Order_Create") allPer.create = element.Checked
+    //             if (element.id == "Order_Update") allPer.update = element.Checked
+    //             if (element.id == "Order_Delete") allPer.delete = element.Checked
+    //             if (element.id == "Order_Import") allPer.import = element.Checked
+    //             if (element.id == "Order_Export") allPer.export = element.Checked
+    //         });
+    //         setPerOrder(allPer)
+    //     }
 
-    }, [props.itemPer])
+    // }, [props.itemPer])
     useEffect(() => {
         console.log("per", perOrder);
     }, [perOrder])

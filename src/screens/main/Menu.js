@@ -231,7 +231,8 @@ const HeaderComponent = (props) => {
                 setBranch(selectBranch)
                 dispatch({ type: 'IS_FNB', isFNB: null })
                 signalRManager.killSignalR();
-                getPrivileges(selectBranch.Id)
+                getPrivileges(vendorSession.CurrentUser.Id,selectBranch.Id)
+                savePrivileges(selectBranch.Id)
                 getRetailerInfoAndNavigate();
                 dialogManager.hiddenLoading();
             } else {
@@ -245,16 +246,37 @@ const HeaderComponent = (props) => {
         setShowModal(false)
     }
 
-    const getPrivileges = (branchId) => {
+    const getPrivileges = (userId, branchId) => {
         let params = {
             ShowAll: true,
             BranchId: branchId
         }
-        let apiPath = ApiPath.PRIVILEGES.replace('{userId}', branchId)
+        let apiPath = ApiPath.PRIVILEGES.replace('{userId}', userId)
         new HTTPService().setPath(apiPath).GET(params, getHeaders()).then(res => {
+            console.log("onClickItem props 1",res);
             setFileLuuDuLieu(Constant.PRIVILEGES, JSON.stringify(res));
         })
     }
+    const savePrivileges = async(branchId) =>{
+        let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
+            console.log('HeaderComponent data', data);
+            data = JSON.parse(data) 
+        if (data && data.CurrentUser && data.CurrentUser.IsActive) {
+            if (!data.CurrentUser.IsAdmin) {
+                let arr = {}
+                data.PermissionMap.forEach(item => {
+                    if (item.Branches.indexOf(branchId) > -1)
+                        arr[item.Key] = true
+                    else
+                        arr[item.Key] = false
+                })
+                console.log("arr", arr);
+                dispatch({ type: 'PERMISSION', allPer: arr })
+            }else{
+                dispatch({ type: 'PERMISSION', allPer: { IsAdmin: true } })
+            }
+    }
+}
 
     const navigateToHome = () => {
         props.navigation.dispatch(
@@ -496,7 +518,13 @@ const ContentComponent = (props) => {
         )
     }
 
-    const onClickItem = (chucnang, index) => {
+    const onClickItem = async(chucnang, index) => {
+        let privileges = await getFileDuLieuString(Constant.PRIVILEGES, true)
+            console.log('privileges menu', privileges);
+            if (privileges) {
+                privileges = JSON.parse(privileges)
+                Privileges.current = privileges
+            }
         console.log("onClickItem props ", props, Privileges.current);
         if (chucnang.func == KEY_FUNC.OVERVIEW || KEY_FUNC.ORDER_MANAGEMENT || KEY_FUNC.ROOM_LIST || KEY_FUNC.PRODUCT || KEY_FUNC.CUSTOMER_MANAGER || KEY_FUNC.REPORT_MANAGER || KEY_FUNC.SETTING_FUNC) {
         }
@@ -580,7 +608,7 @@ const ContentComponent = (props) => {
             console.log('permission', permission);
             if (permission[0].expanded) {
                 setCurrentItemMenu(index)
-                props.navigation.navigate(func, { permission: permission[0] })
+                props.navigation.navigate(func, { })
             } else {
                 dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
                     dialogManager.destroy();

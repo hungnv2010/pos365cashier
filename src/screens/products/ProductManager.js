@@ -35,33 +35,33 @@ export default (props) => {
         return state.Common
     })
 
-    useEffect(() => {
-        if(props.route.params.perProduct && props.route.params.perImport){
-        console.log('props product manager', props);
-        let itemProduct = props.route.params.perProduct.items
-        let itemImport = props.route.params.perImport.items
-        let allPerProduct = {}
-        let allPerImport = {}
-        itemProduct.forEach(element => {
-            if (element.id == "Product_Read") allPerProduct.read = element.Checked
-            if (element.id == "Product_Create") allPerProduct.create = element.Checked
-            if (element.id == "Product_Update") allPerProduct.update = element.Checked
-            if (element.id == "Product_Delete") allPerProduct.delete = element.Checked
-            if (element.id == "Product_ViewCost") allPerProduct.viewCost = element.Checked
-            if (element.id == "Product_UpdateCost") allPerProduct.updateCost = element.Checked
-        });
-        itemImport.forEach(element => {
-            if (element.id == "PurchaseOrder_Read") allPerImport.read = element.Checked
-            if (element.id == "PurchaseOrder_Create") allPerImport.create = element.Checked
-            if (element.id == "PurchaseOrder_Update") allPerImport.update = element.Checked
-            if (element.id == "PurchaseOrder_Delete") allPerImport.delete = element.Checked
-            if (element.id == "PurchaseOrder_ViewCost") allPerImport.viewCost = element.Checked
-            if (element.id == "PurchaseOrder_UpdateCost") allPerImport.updateCost = element.Checked
-        })
-        setPerProduct(allPerProduct)
-        setPerImport(allPerImport)
-    }
-    }, [])
+    // useEffect(() => {
+    //     if(props.route.params.perProduct && props.route.params.perImport){
+    //     console.log('props product manager', props);
+    //     let itemProduct = props.route.params.perProduct.items
+    //     let itemImport = props.route.params.perImport.items
+    //     let allPerProduct = {}
+    //     let allPerImport = {}
+    //     itemProduct.forEach(element => {
+    //         if (element.id == "Product_Read") allPerProduct.read = element.Checked
+    //         if (element.id == "Product_Create") allPerProduct.create = element.Checked
+    //         if (element.id == "Product_Update") allPerProduct.update = element.Checked
+    //         if (element.id == "Product_Delete") allPerProduct.delete = element.Checked
+    //         if (element.id == "Product_ViewCost") allPerProduct.viewCost = element.Checked
+    //         if (element.id == "Product_UpdateCost") allPerProduct.updateCost = element.Checked
+    //     });
+    //     itemImport.forEach(element => {
+    //         if (element.id == "PurchaseOrder_Read") allPerImport.read = element.Checked
+    //         if (element.id == "PurchaseOrder_Create") allPerImport.create = element.Checked
+    //         if (element.id == "PurchaseOrder_Update") allPerImport.update = element.Checked
+    //         if (element.id == "PurchaseOrder_Delete") allPerImport.delete = element.Checked
+    //         if (element.id == "PurchaseOrder_ViewCost") allPerImport.viewCost = element.Checked
+    //         if (element.id == "PurchaseOrder_UpdateCost") allPerImport.updateCost = element.Checked
+    //     })
+    //     setPerProduct(allPerProduct)
+    //     setPerImport(allPerImport)
+    // }
+    // }, [])
 
     const onClickNavigationProduct = () => {
         if (perProduct.read) 

@@ -27,24 +27,24 @@ export default (props) => {
         return state.Common.allPer
     })
 
-    useEffect(() => {
-        console.log('propssss', allPer);
-        if (props.route.params.permission) {
-            let item = props.route.params.permission.items
-            let allPer = {}
-            item.forEach(element => {
-                if (element.id == "Partner_Read") allPer.read = element.Checked
-                if (element.id == "Partner_Create") allPer.create = element.Checked
-                if (element.id == "Partner_Update") allPer.update = element.Checked
-                if (element.id == "Partner_Delete") allPer.delete = element.Checked
-            });
-            setPermission(allPer)
-        }
-    }, [])
+    // useEffect(() => {
+    //     console.log('propssss', allPer);
+    //     if (props.route.params.permission) {
+    //         let item = props.route.params.permission.items
+    //         let allPer = {}
+    //         item.forEach(element => {
+    //             if (element.id == "Partner_Read") allPer.read = element.Checked
+    //             if (element.id == "Partner_Create") allPer.create = element.Checked
+    //             if (element.id == "Partner_Update") allPer.update = element.Checked
+    //             if (element.id == "Partner_Delete") allPer.delete = element.Checked
+    //         });
+    //         setPermission(allPer)
+    //     }
+    // }, [])
 
     const onClickNavigation = (screen) => {
-        if (permission.read) {
-            props.navigation.navigate(screen, { permission: permission })
+        if (allPer.Partner_Read || allPer.IsAdmin) {
+            props.navigation.navigate(screen, { })
         } else {
             dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
                 dialogManager.destroy();

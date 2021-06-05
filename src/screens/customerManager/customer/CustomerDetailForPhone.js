@@ -372,7 +372,6 @@ export default (props) => {
                 }, null, null, I18n.t('dong'))
             }
         } else {
-            if (props.route.params.permission.update) {
                 if (allPer.Partner_Update || allPer.IsAdmin) {
                     console.log('update');
                     params.Partner.Id = customerDetail.Id
@@ -396,7 +395,6 @@ export default (props) => {
                     }, null, null, I18n.t('dong'))
                 }
             }
-        }
     }
 
 
