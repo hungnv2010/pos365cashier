@@ -34,10 +34,9 @@ export default (props) => {
     const [customerData, setCustomerData] = useState([])
     const [customerItem, setCustomerItem] = useState(GUEST)
     const [textSearch, setTextSearch] = useState('')
-    const [allPer, setPer] = useState(props.route.params.permission ? props.route.params.permission : {})
     const debouncedVal = useDebounce(textSearch)
     const backUpCustomer = useRef([])
-    const { deviceType } = useSelector(state => {
+    const { deviceType,allPer } = useSelector(state => {
         return state.Common
     });
     const currentBranch = useRef()
@@ -46,9 +45,6 @@ export default (props) => {
         console.log('customer props ', props);
         getCurrentBranch()
     }, [])
-    useEffect(()=>{
-        setPer(props.route.params.permission)
-    },[])
 
     const getCurrentBranch = async () => {
         let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
@@ -132,7 +128,7 @@ export default (props) => {
                             setCustomerItem(res)
                         } else {
                             console.log('onClickCustomerItem for PHONE');
-                            props.navigation.navigate(ScreenList.CustomerDetailForPhone, { item: res, onCallBack: handleSuccess ,permission: props.route.params.permission })
+                            props.navigation.navigate(ScreenList.CustomerDetailForPhone, { item: res, onCallBack: handleSuccess  })
                         }
                     }
                 })
@@ -174,6 +170,7 @@ export default (props) => {
     const handleSuccess = async (type) => {
         dialogManager.showLoading()
         try {
+            setCustomerItem(GUEST)
             await realmStore.deletePartner()
             await dataManager.syncPartner()
             getCustomer()
@@ -207,7 +204,7 @@ export default (props) => {
                         keyExtractor={(item, index) => index.toString()}
                     />
                     {
-                        allPer.create ?
+                        allPer.Partner_Create || allPer.IsAdmin?
                             <FAB
                                 style={styles.fab}
                                 big
@@ -223,7 +220,6 @@ export default (props) => {
                     deviceType == Constant.TABLET ?
                         <View style={{ flex: 1 }}>
                             <CustomerDetail
-                                allPer={allPer}
                                 customerDetail={customerItem}
                                 handleSuccess={handleSuccess} />
                         </View>

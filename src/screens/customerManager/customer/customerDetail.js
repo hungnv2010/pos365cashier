@@ -287,7 +287,7 @@ export default (props) => {
     }
 
     const onClickCancelGroupName = () => {
-        getListGroupByCustomer()
+        //getListGroupByCustomer()
         setShowModal(false)
     }
 
@@ -349,6 +349,7 @@ export default (props) => {
             }
         }
         if (customerDetail.Id == 0) {
+            if(allPer.Partner_Create || allPer.IsAdmin){
             console.log('add');
             dialogManager.showLoading()
             new HTTPService().setPath(ApiPath.CUSTOMER).POST(params)
@@ -364,7 +365,13 @@ export default (props) => {
                     dialogManager.hiddenLoading()
                     console.log('onClickApply err', err);
                 })
+            }else {
+                dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                    dialogManager.destroy();
+                }, null, null, I18n.t('dong'))
+            }
         } else {
+            if(allPer.Partner_Update || allPer.IsAdmin){
             console.log('update');
             params.Partner.Id = customerDetail.Id
             dialogManager.showLoading()
@@ -372,7 +379,7 @@ export default (props) => {
                 .then(res => {
                     console.log('onClickApply res', res);
                     if (res) {
-                        props.handleSuccess('them')
+                        props.handleSuccess('sua')
                         // resetCustomer()
                     }
                     dialogManager.hiddenLoading()
@@ -381,6 +388,11 @@ export default (props) => {
                     dialogManager.hiddenLoading()
                     console.log('onClickApply err', err);
                 })
+            }else {
+                dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                    dialogManager.destroy();
+                }, null, null, I18n.t('dong'))
+            }
         }
     }
 
