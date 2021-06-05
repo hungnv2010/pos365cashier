@@ -379,9 +379,9 @@ class DataManager {
     }
 
     syncRoomsReInsert = async () => {
-        console.log("syncAllDatas");
-        await this.syncData(ApiPath.SYNC_ROOMS, SchemaName.ROOM),
-            await this.syncData(ApiPath.SYNC_ROOM_GROUPS, SchemaName.ROOM_GROUP)
+        console.log("syncRoomsReInsert");
+        await this.syncData(ApiPath.SYNC_ROOM_GROUPS, SchemaName.ROOM_GROUP),
+        await this.syncData(ApiPath.SYNC_ROOMS, SchemaName.ROOM)
     }
 
     syncRooms = async () => {

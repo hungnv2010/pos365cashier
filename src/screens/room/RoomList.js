@@ -36,7 +36,7 @@ export default (props) => {
 
     const dispatch = useDispatch()
 
-    const {deviceType, allPer} = useSelector(state => {
+    const { deviceType, allPer } = useSelector(state => {
         return state.Common
     });
 
@@ -100,9 +100,11 @@ export default (props) => {
             await realmStore.deleteRoom()
         }
         await dataManager.syncRoomsReInsert()
-        dispatch({ type: 'ALREADY', already: true })
         getDataInRealm();
         isReLoad.current = true;
+        setTimeout(() => {
+            dispatch({ type: 'ALREADY', already: true })
+        }, 500);
     }
 
     useEffect(() => {
@@ -189,8 +191,12 @@ export default (props) => {
             /> */}
 
             <ToolBarDefault
+                clickLeftIcon={() => {
+                    props.route.params._onSelect();
+                    props.navigation.pop()
+                }}
                 navigation={props.navigation}
-                title={I18n.t('phong_ban_')}
+                title={I18n.t('danh_sach_phong_ban')}
             />
 
             <View style={{ flexDirection: "row", flex: 1 }}>
@@ -227,7 +233,7 @@ export default (props) => {
                                         props.navigation.navigate(ScreenList.RoomDetail, { _onSelect: onCallBack })
                                     else {
                                         setTitleAddEdit(I18n.t('them_phong_ban'))
-                                        setDataParams({ })
+                                        setDataParams({})
                                     }
                                 }}
                             />

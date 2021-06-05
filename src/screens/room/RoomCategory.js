@@ -136,6 +136,10 @@ export default (props) => {
     return (
         <View style={styles.conatiner}>
             <ToolBarDefault
+                clickLeftIcon={() => {
+                    props.route.params._onSelect();
+                    props.navigation.pop()
+                }}
                 navigation={props.navigation}
                 title={I18n.t('nhom_phong_ban')}
             />
