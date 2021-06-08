@@ -3,7 +3,7 @@ import { Image, View, StyleSheet, Text, TouchableOpacity, TextInput, ScrollView 
 import { Snackbar, Surface } from 'react-native-paper';
 import I18n from '../../common/language/i18n';
 import realmStore from '../../data/realm/RealmStore';
-import { Images } from '../../theme';
+import { Images, Metrics } from '../../theme';
 import IconFeather from 'react-native-vector-icons/Feather';
 import { ScreenList } from '../../common/ScreenList';
 import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
@@ -18,16 +18,16 @@ let specialChar = ['/', '*', '-', '+', '.']
 export default (props) => {
 
     const [method, setMethod] = useState(props.method)
-    const [suggestions,setSuggestions] = useState(props.listSuggest)
+    const [suggestions, setSuggestions] = useState(props.listSuggest)
     const [results, setResults] = useState("")
 
     useEffect(() => {
         setMethod(props.method)
         setResults("")
     }, [props.method])
-    useEffect(()=>{
+    useEffect(() => {
         setSuggestions(props.listSuggest)
-    },[props.listSuggest])
+    }, [props.listSuggest])
 
     useEffect(() => {
         console.log("results === ", results);
@@ -144,9 +144,9 @@ export default (props) => {
             setResults("" + res)
         }
     }
-    const clickItemSuggest = (value) =>{
+    const clickItemSuggest = (value) => {
         setResults(value.toString())
-        props.outputPercent({Value:value, Type:value <= 100?'discount':'total'})
+        props.outputPercent({ Value: value, Type: value <= 100 ? 'discount' : 'total' })
     }
 
     return (
@@ -179,17 +179,17 @@ export default (props) => {
                             <Text style={{ color: colors.colorchinh, textAlign: "center", paddingVertical: 30, fontWeight: "bold", fontSize: 18 }}>{method && method.name ? I18n.t(method.name) : ""}</Text>
                             <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
                                 <Text style={[styles.textButton, { fontSize: 35 }]}>{results != '' || results == '0' ? results : '0'}</Text>
-                                <View style={{flexDirection:'row',justifyContent:'flex-end',marginTop:70}}>
-                                {
-                                    suggestions && suggestions.length > 0 ?
-                                    suggestions.map((item,index)=>{
-                                        return(
-                                            <TouchableOpacity key={index.toString()} style={[styles.button,{paddingHorizontal:20,paddingVertical:10}]} onPress={()=>clickItemSuggest(item)}>
-                                                <Text>{currencyToString(item)} {item <= 100 ? '%' :''}</Text>
-                                            </TouchableOpacity>
-                                        )
-                                    }):null
-                                }
+                                <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 70,flexWrap:'wrap' }}>
+                                        {
+                                            suggestions && suggestions.length > 0 ?
+                                                suggestions.map((item, index) => {
+                                                    return (
+                                                        <TouchableOpacity key={index.toString()} style={[styles.button, { paddingHorizontal: 20, paddingVertical: 10 }]} onPress={() => clickItemSuggest(item)}>
+                                                            <Text>{currencyToString(item)} {item <= 100 ? '%' : ''}</Text>
+                                                        </TouchableOpacity>
+                                                    )
+                                                }) : null
+                                        }
                                 </View>
                             </View>
                         </View>
