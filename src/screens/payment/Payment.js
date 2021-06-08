@@ -71,7 +71,7 @@ export default (props) => {
     const [showModal, setShowModal] = useState(false);
     const [giveMoneyBack, setGiveMoneyBack] = useState(true);
     const [itemMethod, setItemMethod] = useState(CASH);
-    const [sendMethod, setSendMethod] = useState(METHOD.discount)
+    const [sendMethod, setSendMethod] = useState({ ...CASH, ...METHOD.pay })
     const [date, setDate] = useState(new Date());
     const [noteInfo, setNoteInfo] = useState("");
     const [showDateTime, setShowDateTime] = useState(false);
@@ -120,6 +120,7 @@ export default (props) => {
                 setCustomer(jsonContentTmp.Partner)
             }
             setJsonContent(jsonContentTmp)
+            setListSuggestions(listSuggestTotal(jsonContentTmp.Total))
             let total = getTotalOrder(orderDetails);
             setTotalPrice(total);
             CASH.Value = jsonContentTmp.Total;
@@ -891,69 +892,107 @@ export default (props) => {
         } else {
             if (total % 100000 == 0) {
                 if (Math.floor(total / 100000) > 5) {
-                    list.push(100000)
-                } else if (Math.floor(total / 100000) > 2 && Math.floor(total / 100000) < 5) {
-                    list.push(500000)
+                    list.push((Math.floor(total / 1000000) * 1000000) + 100000)
+                } else if (Math.floor(total / 100000) == 5) {
+                    list.push((Math.floor(total / 1000000) * 1000000) + 600000)
+                }
+                else if (Math.floor(total / 100000) > 2 && Math.floor(total / 100000) < 5) {
+                    list.push((Math.floor(total / 1000000) * 1000000) + 500000)
                 } else if (Math.floor(total / 100000) < 2)
-                    list.push(200000)
+                    list.push((Math.floor(total / 1000000) * 1000000) + 200000)
             } else {
                 if (total % 10000 == 0) {
                     let sum = (Math.floor(total / 100000) * 100000)
-                    if ((total - sum) / 10000 == 1) {
-                        list.push(sum + 20000)
-                        list.push(sum + 50000)
-                    } else if ((total - sum) / 10000 == 2) {
-                        list.push(sum + 50000)
-                    } else if ((total - sum) / 10000 == 3) {
-                        list.push(sum + 40000)
-                        list.push(sum + 50000)
-                    }
-                    else if ((total - sum) / 10000 >= 4) {
-                        list.push(sum + ((total - sum) / 10000 + 1) * 10000)
-
-                    }
-                    list.push(sum + 100000)
+                    setListSuggest(list, total, sum, 10000)
                 } else {
                     if (total % 1000 == 0) {
                         let sum = (Math.floor(total / 10000) * 10000)
-                        if ((total - sum) / 1000 == 1) {
-                            list.push(sum + 2000)
-                            list.push(sum + 5000)
-                        } else if ((total - sum) / 1000 == 2) {
-                            list.push(sum + 5000)
-                        } else if ((total - sum) / 10000 == 3) {
-                            list.push(sum + 4000)
-                            list.push(sum + 5000)
-                        } else if ((total - sum) / 1000 >= 4) {
-                            list.push(sum + ((total - sum) / 1000 + 1) * 1000)
-                        }
-                        list.push(sum + 10000)
+                        setListSuggest(list, total, sum, 1000)
                     } else {
                         let sum = (Math.floor((Math.floor(total / 1000) * 1000 + 1000) / 10000) * 10000)
-                        if (((Math.floor(total / 1000) * 1000 + 1000) - sum) / 1000 == 1) {
-                            list.push(sum + 2000)
-                            list.push(sum + 5000)
-                        } else if (((Math.floor(total / 1000) * 1000 + 1000) - sum) / 1000 == 2) {
-                            list.push(sum + 5000)
-                        } else if (((Math.floor(total / 1000) * 1000 + 1000) - sum) / 1000 == 3) {
-                            list.push(sum + 4000)
-                            list.push(sum + 5000)
-                        } else if (((Math.floor(total / 1000) * 1000 + 1000) - sum) / 1000 >= 4) {
-                            list.push(sum + (((Math.floor(total / 1000) * 1000 + 1000) - sum) / 1000 + 1) * 1000)
-                        }
-                        list.push(sum + 10000)
+                        setListSuggest(list, (Math.floor(total / 1000) * 1000 + 1000), sum, 1000)
                     }
-                    list.push(Math.floor(total / 100000) * 100000 + 100000)
-
+                    if(total % 100000 < 10000){
+                        list.push(Math.floor(total / 100000) * 100000 + 10000)
+                    }
+                    if ((total % 100000) < 20000 ) {
+                        list.push(Math.floor(total / 100000) * 100000 + 20000)
+                    }
+                    if ((total % 100000) > 20000 && (total % 100000) < 30000 ) {
+                        list.push(Math.floor(total / 100000) * 100000+ 30000)
+                    }
+                    if ((total % 100000) / 10000 < 4 && (total % 100000) / 10000 > 2 ) {
+                        list.push(Math.floor(total / 100000) * 100000 + 40000)
+                    }
+                    if ((total % 100000) / 10000 < 5  ) {
+                        list.push(Math.floor(total / 100000) * 100000 + 50000)
+                    }
+                    if ((total % 100000) > 40000 && (total % 100000) < 50000) {
+                        //list.push((Math.floor(total / 100000) * 100000) + 50000)
+                        list.push((Math.floor(total / 100000) * 100000) + 60000)
+                    }
+                    if (total % 100000 > 50000 && (total % 100000) / 10000 < 7 ) {
+                        list.push((Math.floor(total / 100000) * 100000) + 70000)
+                    }
+                    if ((total % (100000)) > (6 * 10000) && total % (100000) < (80000) ) {
+                        list.push(Math.floor(total / (100000)) * 100000 + (80000))
+                    }
+                    if ((total % 100000) > (7 * 10000) && total % 100000 < 90000 ) {
+                        list.push(Math.floor(total / 100000) * 100000 + 90000)
+                    }
                 }
-
+                if(total % 1000000 < 100000){
+                    list.push(Math.floor(total / 1000000) * 1000000 + 100000)
+                }
+                if ((total % 1000000) < 200000) {
+                    list.push(Math.floor(total / 1000000) * 1000000 + 200000)
+                }
+                if ((total % 1000000) > 200000 && (total % 1000000) < 300000 ) {
+                    list.push(Math.floor(total / 1000000) * 1000000 + 300000)
+                }
+                if ((total % 1000000) > 200000 && total % 1000000 < 400000 ) {
+                    list.push(Math.floor(total / 1000000) * 1000000 + 400000)
+                }
+                if ((total % 1000000) < 500000) {
+                    list.push(Math.floor(total / 1000000) * 1000000 + 500000)
+                }
+                if ((total % 1000000) > 400000 && (total % 1000000) < 500000) {
+                    //list.push((Math.floor(total / 1000000) * 1000000) + 500000)
+                    list.push((Math.floor(total / 1000000) * 1000000) + 600000)
+                }
+                if ((total % 1000000) > 500000 && (total % 1000000) < 700000) {
+                    list.push((Math.floor(total / 1000000) * 1000000) + 700000)
+                }
+                if ((total % (1000000)) > (6 * 100000) && total % (1000000) < (800000)) {
+                    list.push(Math.floor(total / (1000000)) * 1000000 + (800000))
+                }
+                if ((total % 1000000) > (7 * 100000) && total % 1000000 < 900000 ) {
+                    list.push(Math.floor(total / 1000000) * 1000000 + 900000)
+                }
+                
             }
-        }
-        if (Math.floor(total / 100000) > 5) {
-            list.push(1000000)
+            
+            
         }
         return list
+    }
 
+    const setListSuggest = (list, total, sum, value) => {
+        if ((total - sum) / value == 1) {
+            list.push(sum + (value * 2))
+            list.push(sum + (value * 5))
+        } else if ((total - sum) / value == 2) {
+            list.push(sum + (value * 5))
+        } else if ((total - sum) / value == 3) {
+            list.push(sum + (value * 4))
+            list.push(sum + (value * 5))
+        }
+        else if ((total - sum) / value >= 4) {
+            list.push(sum + ((total - sum) / value + 1) * value)
+        }
+        // if ((total - sum) / value < 9)
+        //     list.push(sum + (value * 10))
+        return list
     }
 
     const calculatorPrice = (jsonContent, totalPrice, update = true) => {
@@ -1322,7 +1361,7 @@ export default (props) => {
                                 onTouchStart={() => onTouchInput({ ...item, ...METHOD.pay })}
                                 editable={deviceType == Constant.TABLET ? false : true}
                                 onChangeText={(text) => onChangeTextPaymentPaid(text, item, index)}
-                                style={[styles.inputListMethod, { borderColor: (sendMethod.Id == item.Id && item.UUID == sendMethod.UUID) ? colors.colorchinh : "gray" }]} />
+                                style={[styles.inputListMethod, { borderColor: (sendMethod.Id == item.Id && item.UUID == sendMethod.UUID || sendMethod) ? colors.colorchinh : "gray" }]} />
                     }
                 </View>
             )
