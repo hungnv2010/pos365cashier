@@ -145,6 +145,7 @@ export default {
   danh_muc_phong_ban: "Table/Room group",
   danh_sach_phong_ban: "List room table",
   dich_vu_tinh_gio: "Timed service",
+  dung_tinh: "Stop timer",
   dat_hang: "On order",
   doi_tac: 'Partner',
   dang_cap_nhat: "Updating",
@@ -187,6 +188,7 @@ export default {
   gia_tri: "Value",
   gia_von: "Cost",
   gio_vao: "Time in",
+  gio_ra: "Time out",
   gui_thong_bao_cho_thu_ngan: "Send notify to cashier",
   ghi_chu: "Note",
   gioi_tinh: "Sex",
@@ -592,6 +594,7 @@ export default {
   thiet_lap_mau_tem: "Temp template settings",
   thiet_lap_mau_in: "Print template settings",
   them_moi_nhap_hang: "Add new orderstock",
+  tinh_gio:"Start timer",
 
   // TODO: U
   ung_dung_hien_tai_chua_ho_tro_in_co_dau: "The application currently does not support printing with accents",
