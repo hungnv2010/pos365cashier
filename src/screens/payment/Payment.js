@@ -610,6 +610,7 @@ export default (props) => {
             return;
         }
         let json = { ...jsonContent }
+        let duplicate = randomUUID()
         let amountReceived = listMethod.reduce(getSumValue, 0);
         let paramMethod = []
         console.log("onClickPay amountReceived ", amountReceived);
@@ -678,6 +679,7 @@ export default (props) => {
             delete json.RoomId;
         }
         params.Order = json;
+        params.Duplicate = duplicate;
         console.log("onClickPay params== ", params);
         if (net.isConnected == true && net.isInternetReachable == true) {
             dialogManager.showLoading();
@@ -703,7 +705,7 @@ export default (props) => {
                 }
             }, err => {
                 if (err && err.config && err.config.timeoutErrorMessage && err.config.timeoutErrorMessage == "TIMEOUT")
-                    onError(json)
+                    onError(json, duplicate)
                 dialogManager.hiddenLoading()
                 console.log("onClickPay err== " + JSON.stringify(err.config.timeoutErrorMessage));
             })
@@ -712,18 +714,18 @@ export default (props) => {
             if (isCheckStockControlWhenSelling) {
                 return;
             } else {
-                onError(json)
+                onError(json, duplicate)
             }
         }
     }
 
-    const onError = (json) => {
+    const onError = (json, duplicate) => {
         dialogManager.showPopupOneButton(I18n.t("khong_co_ket_noi_internet_don_hang_cua_quy_khach_duoc_luu_vao_offline"))
         if (!isFNB) {
             json["RoomName"] = I18n.t('don_hang');
             json["Pos"] = "A"
         }
-        handlerError({ JsonContent: json, RowKey: row_key })
+        handlerError({ JsonContent: json, Duplicate: duplicate, RowKey: row_key })
         updateServerEvent(true)
         // props.navigation.pop()
     }
@@ -827,6 +829,7 @@ export default (props) => {
         dialogManager.hiddenLoading()
         let params = {
             Id: "OFFLINEIOS" + Math.floor(Math.random() * 9999999),
+            Duplicate: data.Duplicate,
             Orders: JSON.stringify(data.JsonContent),
             ExcessCash: data.JsonContent.ExcessCash,
             DontSetTime: 0,

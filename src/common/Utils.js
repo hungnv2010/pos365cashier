@@ -108,6 +108,14 @@ export const getTimeFromNow = (roomMoment) => {
   return displayTimeSeconds(timeFromNow / 1000)
 }
 
+export const getTimeFromTo = (fromMoment, toMoment) => {
+  let timeFromTo = ((toMoment instanceof moment) ? toMoment.valueOf() : moment(toMoment).valueOf())
+                     - ((fromMoment instanceof moment) ? fromMoment.valueOf() : moment(fromMoment).valueOf())
+  if (timeFromTo < 0) timeFromTo = 0
+
+  return displayTimeSeconds(timeFromTo / 1000)
+}
+
 export const displayTimeSeconds = (seconds) => {
   let [day, hour, minute] = [0, 0, 0]
   let secondsClone = seconds

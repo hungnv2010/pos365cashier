@@ -443,6 +443,11 @@ export default (props) => {
                     elm.Name = product.Name
                     elm.Price = +product.Price
                     elm.IsLargeUnit = product.IsLargeUnit
+                    if(elm.IsTimer) {
+                        elm.Checkin = product.Checkin
+                        elm.Checkout = product.Checkout
+                        elm.StopTimer = product.StopTimer
+                    }
 
                 }
             })
@@ -530,8 +535,9 @@ export default (props) => {
                 <TouchableOpacity key={index} onPress={() => {
                     if (isPromotion) return;
                     if (item.ProductType == 2 && item.IsTimer) {
-                        setToastDescription(I18n.t("ban_khong_co_quyen_dieu_chinh_mat_hang_thoi_gian"))
-                        setShowToast(true)
+                        typeModal.current = TYPE_MODAL.DETAIL;
+                        setItemOrder({ ...item })
+                        setShowModal(!showModal)
                         return
                     }
                     setItemOrder({ ...item })

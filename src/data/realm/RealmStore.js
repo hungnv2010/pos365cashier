@@ -339,6 +339,7 @@ const OrdersOffline = {
     primaryKey: "Id",
     properties: {
         Id: 'string',
+        Duplicate: 'string',
         Orders: 'string',
         ExcessCash: { type: 'int', default: 0 },
         DontSetTime: { type: 'int', default: 0 },
@@ -517,7 +518,7 @@ const PromotionSchema = {
 const databaseOption = {
     path: 'Pos365Boss.realm',
     schema: [ServerEventSchema, RoomSchema, RoomGroupSchema, ProductSchema, CategoriesSchema, ToppingsSchema, CustomerSchema, PromotionSchema, OrdersOffline, QRCode, PriceBook],
-    schemaVersion: 42
+    schemaVersion: 43
 }
 
 const realm = new Realm(databaseOption);

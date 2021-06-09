@@ -145,6 +145,7 @@ export default {
   danh_muc_phong_ban: "Danh mục phòng bàn",
   danh_sach_phong_ban: "Danh sách phòng bàn",
   dich_vu_tinh_gio: "Dịch vụ tính giờ",
+  dung_tinh: "Dừng tính",
   dat_hang: "Đặt hàng",
   doi_tac: "Đối tác",
   dang_cap_nhat: "Đang cập nhật",
@@ -187,6 +188,7 @@ export default {
   gia_tri: "Giá trị",
   gia_von: "Giá vốn",
   gio_vao: "Giờ vào",
+  gio_ra: "Giờ ra",
   gui_thong_bao_cho_thu_ngan: "Gửi thông báo cho thu ngân",
   ghi_chu: "Ghi chú",
   gioi_tinh: "Giới tính",
@@ -589,6 +591,7 @@ export default {
   thiet_lap_mau_tem: "Thiết lập mẫu tem",
   thiet_lap_mau_in: "Thiết lập mẫu in",
   them_moi_nhap_hang:"Thêm mới phiếu nhập",
+  tinh_gio:"Tính giờ",
 
   // TODO: U
   ung_dung_hien_tai_chua_ho_tro_in_co_dau: "Ứng dụng hiện tại chưa hỗ trợ in có dấu",

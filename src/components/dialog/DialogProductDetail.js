@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Image, View, Text, TouchableOpacity, TextInput } from 'react-native';
 import { Colors, Images } from '../../theme';
-import { currencyToString, dateToString } from '../../common/Utils';
+import { currencyToString, dateToString, momentToDateUTC, momentToDate } from '../../common/Utils';
 import I18n from "../../common/language/i18n";
 import { Checkbox, RadioButton } from 'react-native-paper';
 import colors from '../../theme/Colors';
@@ -14,6 +14,8 @@ import { ApiPath } from '../../data/services/ApiPath';
 import { HTTPService } from '../../data/services/HttpService';
 import { getFileDuLieuString } from '../../data/fileStore/FileStorage';
 import { Constant } from '../../common/Constant';
+import ProductManager from '../../data/objectManager/ProductManager'
+import moment from "moment";
 
 const TYPE_MODAL = {
     DEFAULT: 1,
@@ -38,7 +40,9 @@ export default (props) => {
     })
     const [price, setPrice] = useState(props.item.Price)
     const [typeModal, setTypeModal] = useState(TYPE_MODAL.DEFAULT);
-    const [date, setDate] = useState(new Date());
+    const [date, setDate] = useState( props.item.Checkin? moment.utc(props.item.Checkin).toDate() : new Date());
+    const [dateOut, setDateOut] = useState(props.item.Checkout? moment.utc(props.item.Checkout).toDate() : new Date());
+    const [isDateIn, setIsDateIn] = useState(true);
     const LargePrice = useRef(props.item.PriceLargeUnit)
     const UnitPrice = useRef(props.item.UnitPrice)
     const [productName, setProductName] = useState(props.item.Name)
@@ -113,9 +117,17 @@ export default (props) => {
     }
 
     const onClickTopping = () => {
-        onClickOk()
-        props.onClickTopping()
-        props.setShowModal(false)
+        if (itemOrder.ProductType == 2 && itemOrder.IsTimer){
+            let newValue = !itemOrder.StopTimer
+
+            itemOrder.StopTimer = newValue
+            itemOrder.Checkout = momentToDate(moment().utc())
+            setItemOrder({...itemOrder})
+        } else {
+            onClickOk()
+            props.onClickTopping()
+            props.setShowModal(false)
+        }
     }
 
     const selectRadioButton = (status) => {
@@ -154,9 +166,25 @@ export default (props) => {
     };
 
     const selectDateTime = () => {
-        console.log("selectDateTime dateTmp.current ", dateTmp.current);
-        setDate(dateTmp.current)
+        if(isDateIn) {
+            setDate(dateTmp.current)
+            itemOrder.Checkin = momentToDateUTC(dateTmp.current, "YYYY-MM-DD[T]HH:mm:ss.SS[Z]")
+            ProductManager.setProductTimeQuantityNormal(itemOrder)
+            ProductManager.getProductTimePrice(itemOrder, true)
+        
+        } else {
+            setDateOut(dateTmp.current)
+            itemOrder.Checkout = momentToDateUTC(dateTmp.current, "YYYY-MM-DD[T]HH:mm:ss.SS[Z]")
+            ProductManager.setProductTimeQuantityNormal(itemOrder)
+            ProductManager.getProductTimePrice(itemOrder, true)
+        }
+        setItemOrder({ ...itemOrder })
         setTypeModal(TYPE_MODAL.DEFAULT)
+    }
+
+    const openDateTimeModal = (typeModal, fromDateIn) => {
+        setIsDateIn(fromDateIn) 
+        setTypeModal(typeModal)
     }
 
     return (
@@ -174,7 +202,7 @@ export default (props) => {
             {
                 typeModal == TYPE_MODAL.OPEN_DATE || typeModal == TYPE_MODAL.OPEN_TIME ?
                     <View>
-                        <DatePicker date={date}
+                        <DatePicker date={isDateIn? date : dateOut}
                             onDateChange={onChangeDate}
                             mode={typeModal == TYPE_MODAL.OPEN_DATE ? 'date' : 'time'}
                             display="default"
@@ -188,7 +216,7 @@ export default (props) => {
                             </TouchableOpacity>
                         </View>
                     </View>
-                    :
+                    : // TYPE_MODAL.DEFAULT
                     showQuickNote && listQuickNote.length > 0 ?
                         <View style={{ padding: 20 }}>
                             <View style={{ paddingBottom: 20 }}>
@@ -363,20 +391,39 @@ export default (props) => {
                                     </View>
                                 </View>
                                 :
-                                <View style={{ marginTop: 20, flexDirection: "row", justifyContent: "center", alignItems: "center" }} onPress={() => setShowModal(false)}>
-                                    <Text style={{ fontSize: 14, flex: 3 }}>{I18n.t('gio_vao')}</Text>
-                                    <View style={{ flex: 7, flexDirection: "row" }} >
-                                        <View style={{ alignItems: "center", flexDirection: "row", flex: 7, backgroundColor: "#D5D8DC" }}>
-                                            <Text style={{ padding: 7, flex: 1, fontSize: 14, borderWidth: 0.5, borderRadius: 4 }}>{dateToString(date, "DD/MM/YYYY HH:mm")}</Text>
+                                <>
+                                    <View style={{ marginTop: 20, flexDirection: "row", justifyContent: "center", alignItems: "center" }} onPress={() => setShowModal(false)}>
+                                        <Text style={{ fontSize: 14, flex: 3 }}>{I18n.t('gio_vao')}</Text>
+                                        <View style={{ flex: 7, flexDirection: "row" }} >
+                                            <View style={{ alignItems: "center", flexDirection: "row", flex: 7, backgroundColor: "#D5D8DC" }}>
+                                                <Text style={{ padding: 7, flex: 1, fontSize: 14, borderWidth: 0.5, borderRadius: 4 }}>{dateToString(date, "DD/MM/YYYY HH:mm")}</Text>
+                                            </View>
+                                            <TouchableOpacity onPress={() => { openDateTimeModal(TYPE_MODAL.OPEN_DATE, true) }} style={{ marginLeft: 5, borderColor: colors.colorchinh, borderRadius: 5, borderWidth: 1, padding: 5, justifyContent: "center" }}>
+                                                <Fontisto name="date" size={20} color={colors.colorchinh} />
+                                            </TouchableOpacity>
+                                            <TouchableOpacity onPress={() => { openDateTimeModal(TYPE_MODAL.OPEN_TIME, true) }} style={{ marginLeft: 5, borderColor: colors.colorchinh, borderRadius: 5, borderWidth: 1, padding: 5, justifyContent: "center" }}>
+                                                <AntDesign name="clockcircleo" size={20} color={colors.colorchinh} />
+                                            </TouchableOpacity>
                                         </View>
-                                        <TouchableOpacity onPress={() => { setTypeModal(TYPE_MODAL.OPEN_DATE) }} style={{ marginLeft: 5, borderColor: colors.colorchinh, borderRadius: 5, borderWidth: 1, padding: 5, justifyContent: "center" }}>
-                                            <Fontisto name="date" size={20} color={colors.colorchinh} />
-                                        </TouchableOpacity>
-                                        <TouchableOpacity onPress={() => { setTypeModal(TYPE_MODAL.OPEN_TIME) }} style={{ marginLeft: 5, borderColor: colors.colorchinh, borderRadius: 5, borderWidth: 1, padding: 5, justifyContent: "center" }}>
-                                            <AntDesign name="clockcircleo" size={20} color={colors.colorchinh} />
-                                        </TouchableOpacity>
                                     </View>
-                                </View>
+
+                                    {itemOrder.StopTimer ?
+                                        <View style={{ marginTop: 20, flexDirection: "row", justifyContent: "center", alignItems: "center" }} onPress={() => setShowModal(false)}>
+                                            <Text style={{ fontSize: 14, flex: 3 }}>{I18n.t('gio_ra')}</Text>
+                                            <View style={{ flex: 7, flexDirection: "row" }} >
+                                                <View style={{ alignItems: "center", flexDirection: "row", flex: 7, backgroundColor: "#D5D8DC" }}>
+                                                    <Text style={{ padding: 7, flex: 1, fontSize: 14, borderWidth: 0.5, borderRadius: 4 }}>{dateToString(dateOut, "DD/MM/YYYY HH:mm")}</Text>
+                                                </View>
+                                                <TouchableOpacity onPress={() => { openDateTimeModal(TYPE_MODAL.OPEN_DATE, false) }} style={{ marginLeft: 5, borderColor: colors.colorchinh, borderRadius: 5, borderWidth: 1, padding: 5, justifyContent: "center" }}>
+                                                    <Fontisto name="date" size={20} color={colors.colorchinh} />
+                                                </TouchableOpacity>
+                                                <TouchableOpacity onPress={() => { openDateTimeModal(TYPE_MODAL.OPEN_TIME, false) }} style={{ marginLeft: 5, borderColor: colors.colorchinh, borderRadius: 5, borderWidth: 1, padding: 5, justifyContent: "center" }}>
+                                                    <AntDesign name="clockcircleo" size={20} color={colors.colorchinh} />
+                                                </TouchableOpacity>
+                                            </View>
+                                        </View>
+                                    : null}
+                                </>
                             }
                             {
                                 itemOrder.OrderQuickNotes != undefined && itemOrder.OrderQuickNotes != "" ?
@@ -406,7 +453,8 @@ export default (props) => {
                                         null
                                         :
                                         <TouchableOpacity onPress={() => onClickTopping()} style={{ alignItems: "center", margin: 2, flex: 1, borderWidth: 1, borderColor: Colors.colorchinh, padding: 10, borderRadius: 4, backgroundColor: "#fff" }} >
-                                            <Text style={{ color: Colors.colorchinh, textTransform: "uppercase" }}>Topping</Text>
+                                            <Text style={{ color: Colors.colorchinh, textTransform: "uppercase" }}>
+                                                {(itemOrder.ProductType == 2 && itemOrder.IsTimer) ? (itemOrder.StopTimer ? I18n.t('tinh_gio') : I18n.t('dung_tinh') ) :Topping}</Text>
                                         </TouchableOpacity>
                                 }
                                 <TouchableOpacity onPress={() => onClickOk()} style={{ alignItems: "center", margin: 2, marginRight: 0, flex: 1, borderWidth: 1, borderColor: Colors.colorchinh, padding: 10, borderRadius: 4, backgroundColor: Colors.colorchinh }} >

@@ -543,6 +543,7 @@ class DataManager {
                 if (product.IsTimer && !product.StopTimer) {
                     let momentNow = moment().utc()
                     product.Checkout = momentToDate(momentNow)
+                    productManager.setProductTimeQuantityNormal(product)
                     productManager.getProductTimePrice(product)
                 }
             })

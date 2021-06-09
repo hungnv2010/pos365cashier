@@ -1,5 +1,5 @@
 import { first } from "underscore"
-import { dateToDate, currencyToString, displayTimeSeconds, getTimeFromNow, momentToDate, dateUTCToDate } from "../../common/Utils"
+import { dateToDate, currencyToString, displayTimeSeconds, getTimeFromTo, momentToDate, dateUTCToDate } from "../../common/Utils"
 import moment from "moment";
 import I18n from '../../common/language/i18n'
 
@@ -54,8 +54,17 @@ class ProductManager {
         return qty
     }
 
-    getProductTimePrice = (product) => {
-        if( product.IsTimer && !product.StopTimer) {
+    setProductTimeQuantityNormal = (product) => {
+        let checkinDate = moment.utc(product.Checkin)
+        let checkoutDate = moment.utc(product.Checkout)
+        let allTimeSeconds = checkoutDate.diff(checkinDate) / 1000
+        let allTimeMinutes = Math.ceil(allTimeSeconds / 60)
+
+        product.Quantity = this.getProductTimeQuantity(product, allTimeMinutes)
+    }
+
+    getProductTimePrice = (product, isStop) => {
+        if( product.IsTimer && (!product.StopTimer || isStop)) {
 
             if (!product.Checkin || !product.Checkout) {
                 let momentNow = moment().utc()
@@ -75,7 +84,7 @@ class ProductManager {
 
             this.descriptionOff = dateUTCToDate(product.Checkin, "YYYY-MM-DD[T]HH:mm:ss.SS[Z]", "DD/MM HH:mm") + "=>" + 
             dateUTCToDate(product.Checkout, "YYYY-MM-DD[T]HH:mm:ss.SS[Z]", "DD/MM HH:mm") + 
-            " (" + `${getTimeFromNow(product.Checkin)}` + ") "
+            " (" + `${getTimeFromTo(product.Checkin, product.Checkout)}` + ") "
 
             let allTimeSeconds = checkoutDate.diff(checkinDate) / 1000
             let allTimeMinutes = allTimeSeconds / 60

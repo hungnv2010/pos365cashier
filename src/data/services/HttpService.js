@@ -148,7 +148,7 @@ export class HTTPService {
         else {
             if (e && e.response && e.response.data) {
                 let mes = e.response.data.ResponseStatus && e.response.data.ResponseStatus.Message ? e.response.data.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, "") : "";
-                this.error(mes);
+                if (mes != "Conflict") this.error(mes);
                 reject(mes)
             } else {
                 if (!(e && e.config && e.config.timeoutErrorMessage && e.config.timeoutErrorMessage == "TIMEOUT"))

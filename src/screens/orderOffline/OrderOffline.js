@@ -87,7 +87,7 @@ export default (props) => {
                     MerchantName: vendorSession.Settings.MerchantName,
                     DontSetTime: true,
                     ExcessCashType: 0,
-
+                    Duplicate: element.Duplicate,
                     Order: jsonContent,
                 };
 
@@ -116,6 +116,10 @@ export default (props) => {
                     getData();
                 })
                     .catch(err => {
+                        if(err = "Conflict") {
+                            dataManager.deleteRow(SchemaName.ORDERS_OFFLINE, element.Id);
+                            getData();
+                        }
                         console.log("clickUpload err ", err);
                         dialogManager.hiddenLoading()
                     });

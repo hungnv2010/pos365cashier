@@ -189,7 +189,7 @@ export default (props) => {
 
   const getQuantity = (item) => {
     let Quantity = 1
-    if (item.IsPriceForBlock || (item.ProductType == 2 && item.IsTimer)) {
+    if (!item.IsPriceForBlock && (item.ProductType == 2 && item.IsTimer)) {
       Quantity = item.BlockOfTimeToUseService / 60
     }
     return Quantity
