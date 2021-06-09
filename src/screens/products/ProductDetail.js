@@ -714,44 +714,51 @@ export default (props) => {
                 if (res != null) {
                     token.current = res.Tocken
                     console.log("Token", res.Tocken);
-                }
-            })
-            GDrive.setAccessToken(token.current)
-            GDrive.init()
-            //if (source.fileName && source.fileName != '') {
-            GDrive.files.createFileMultipart(
-                source.base64,
-                "'image/jpg'", {
-                parents: ["1uNWm1G_BusweTf7x8g1O1wC3z9ET-2n_"],
-                name: source.fileName
-            },
-                true)
-                .then(
-                    (response) => response.json()
-                ).then((res) => {
-                    // result data
-                    console.log(res.id);
-                    let url = "https://docs.google.com/uc?id=" + `${res.id}` + "&export=view"
-                    let item = {
-                        ImageURL: url,
-                        IsDefault: true,
-                        ThumbnailUrl: url
-                    }
-                    let image = []
-                    // if (productOl.ProductImages) {
-                    //     image = JSON.parse(JSON.stringify(productOl.ProductImages))
-                    // }
-                    image = [...image, item]
-                    setProductOl({ ...productOl, ProductImages: image })
-                    setImageUrl(url)
-                    console.log(image);
-                    dialogManager.hiddenLoading()
+                    GDrive.setAccessToken(token.current)
+                    GDrive.init()
+                    //if (source.fileName && source.fileName != '') {
+                    GDrive.files.createFileMultipart(
+                        source.base64,
+                        "'image/jpg'", {
+                        parents: ["1uNWm1G_BusweTf7x8g1O1wC3z9ET-2n_"],
+                        name: source.fileName
+                    },
+                        true)
+                        .then(
+                            (response) => response.json()
+                        ).then((res) => {
+                            // result data
+                            console.log(res.id);
+                            let url = "https://docs.google.com/uc?id=" + `${res.id}` + "&export=view"
+                            let item = {
+                                ImageURL: url,
+                                IsDefault: true,
+                                ThumbnailUrl: url
+                            }
+                            let image = []
+                            // if (productOl.ProductImages) {
+                            //     image = JSON.parse(JSON.stringify(productOl.ProductImages))
+                            // }
+                            image = [...image, item]
+                            setProductOl({ ...productOl, ProductImages: image })
+                            setImageUrl(url)
+                            console.log(image);
+                            dialogManager.hiddenLoading()
 
-                })
-            // }
-            // else
-            //     dialogManager.hiddenLoading()
-            setOnShowModal(false)
+                        }).catch(err => {
+                            console.log(err);
+                            dialogManager.hiddenLoading()
+                        })
+                    // }
+                    // else
+                    //     dialogManager.hiddenLoading()
+                    setOnShowModal(false)
+                }
+            }).catch(err => {
+                console.log(err);
+                dialogManager.hiddenLoading()
+            })
+
         } else {
             dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_internet'), I18n.t('thong_bao'), () => {
                 dialogManager.destroy();
@@ -1013,7 +1020,7 @@ export default (props) => {
                             <Text style={styles.title}>{I18n.t('ten_hang_hoa')}</Text>
                             <Text style={{ color: '#f21e3c', marginLeft: 5, fontSize: 18 }}>*</Text>
                         </View>
-                        <TextInput style={[styles.textInput, { fontWeight: 'bold', color: colors.colorLightBlue }]} onBlur={false} placeholderTextColor={'#bbbbbb'} placeholder={I18n.t('ten_hang_hoa')} value={product ? product.Name : null} onChangeText={(text) => setProduct({ ...product, Name: text })} ></TextInput>
+                        <TextInput style={[styles.textInput, { fontWeight: 'bold', color: colors.colorLightBlue }]} placeholderTextColor={'#bbbbbb'} placeholder={I18n.t('ten_hang_hoa')} value={product ? product.Name : null} onChangeText={(text) => setProduct({ ...product, Name: text })} ></TextInput>
                     </View>
                     <View>
                         <Text style={styles.title}>{I18n.t('loai_hang')}</Text>
