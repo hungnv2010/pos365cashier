@@ -14,6 +14,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import I18n from "../../../common/language/i18n";
 import dataManager from '../../../data/DataManager';
 import { ScreenList } from '../../../common/ScreenList';
+import dialogManager from '../../../components/dialog/DialogManager';
 
 
 const MainRetail = (props) => {
@@ -158,8 +159,10 @@ const MainRetail = (props) => {
 
     const onClickSync = async () => {
         console.log('onClickSync');
+        dialogManager.showLoading()
         setIsDone(false)
         await props.syncForRetail()
+        dialogManager.hiddenLoading()
         setIsDone(true)
     }
 

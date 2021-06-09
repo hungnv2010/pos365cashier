@@ -621,7 +621,7 @@ const ContentComponent = (props) => {
     const clickRightIcon = async () => {
         let state = await NetInfo.fetch()
         if (state.isConnected == true && state.isInternetReachable == true) {
-            // dialogManager.showLoading()
+            dialogManager.showLoading()
             dispatch({ type: 'ALREADY', already: false })
             await dataManager.syncServerEvent()
             await realmStore.deleteAllForFnb(false)

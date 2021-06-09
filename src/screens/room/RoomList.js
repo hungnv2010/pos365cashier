@@ -12,6 +12,7 @@ import dataManager from '../../data/DataManager';
 import { useSelector, useDispatch } from 'react-redux';
 import { Constant } from '../../common/Constant';
 import RoomDetail from './RoomDetail'
+import dialogManager from '../../components/dialog/DialogManager';
 
 export default (props) => {
 
@@ -61,9 +62,10 @@ export default (props) => {
     }, [])
 
     useEffect(() => {
-
-        getDataInRealm();
-
+        dialogManager.showLoading()
+        setTimeout(() => {
+            getDataInRealm();
+        }, 100);
     }, [])
 
     const getDataInRealm = async () => {
@@ -89,6 +91,7 @@ export default (props) => {
         outputList.push({ Id: "", Name: I18n.t('khac'), list: roomsTmp.filter(item => item.RoomGroupId == 0) })
         console.log("getDataInRealm outputList test ", JSON.parse(JSON.stringify(outputList))[outputList.length - 1].list);
         setRooms([...outputList])
+        dialogManager.hiddenLoading()
     }
 
     const onCallBack = async (data) => {
