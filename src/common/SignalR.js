@@ -181,7 +181,7 @@ class SignalRManager {
     }
 
     async onReceiveServerEvent(serverEvent) {
-        console.log("onReceiveServerEvent ", serverEvent);
+        console.log("onReceiveServerEvent ");
         // if (serverEvent.Version == version) return
         // version = serverEvent.Version
         if (serverEvent && serverEvent.Compress) {

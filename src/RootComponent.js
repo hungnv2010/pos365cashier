@@ -84,7 +84,7 @@ export default () => {
                             console.log("update now");
                             resolve(true);
                         } else {
-                            console.log("is new application");
+                            console.log("new application");
                             resolve(false);
                         }
 

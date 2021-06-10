@@ -51,7 +51,6 @@ export default (props) => {
 
 
     useEffect(() => {
-        console.log('itemOrderitemOrder', props.item, props.priceBookId);
         const getListQuickNote = () => {
             let listOrder = itemOrder.OrderQuickNotes ? itemOrder.OrderQuickNotes.split(',') : [];
             let listQuickNote = []
@@ -81,7 +80,6 @@ export default (props) => {
         }
         const getSetting = async () => {
             let data = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
-            console.log("setting data", JSON.parse(data));
             data = JSON.parse(data)
             if (data) {
                 setAllowChangeNameProduct(data.cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang)
@@ -103,7 +101,7 @@ export default (props) => {
 
     useDidMountEffect(() => {
         let price = (itemOrder.IsLargeUnit == true ? LargePrice.current : UnitPrice.current)
-        let newDiscount = percent ? discount / price * 100 : discount * price / 100
+        let newDiscount = percent ? discount||0 / price * 100 : discount||0 * price / 100
         setDiscount(newDiscount)
     }, [percent])
 
@@ -454,7 +452,7 @@ export default (props) => {
                                         :
                                         <TouchableOpacity onPress={() => onClickTopping()} style={{ alignItems: "center", margin: 2, flex: 1, borderWidth: 1, borderColor: Colors.colorchinh, padding: 10, borderRadius: 4, backgroundColor: "#fff" }} >
                                             <Text style={{ color: Colors.colorchinh, textTransform: "uppercase" }}>
-                                                {(itemOrder.ProductType == 2 && itemOrder.IsTimer) ? (itemOrder.StopTimer ? I18n.t('tinh_gio') : I18n.t('dung_tinh') ) :Topping}</Text>
+                                                {(itemOrder.ProductType == 2 && itemOrder.IsTimer) ? (itemOrder.StopTimer ? I18n.t('tinh_gio') : I18n.t('dung_tinh') ) :"Topping"}</Text>
                                         </TouchableOpacity>
                                 }
                                 <TouchableOpacity onPress={() => onClickOk()} style={{ alignItems: "center", margin: 2, marginRight: 0, flex: 1, borderWidth: 1, borderColor: Colors.colorchinh, padding: 10, borderRadius: 4, backgroundColor: Colors.colorchinh }} >

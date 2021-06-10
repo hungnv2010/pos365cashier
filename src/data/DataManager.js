@@ -57,7 +57,6 @@ class DataManager {
     }
 
     async addPromotion(list = []) {
-        console.log("addPromotion list ", list);
         let promotion = await realmStore.querryPromotion();
         let promotionTmp = promotion
         let listProduct = await realmStore.queryProducts()
@@ -102,7 +101,6 @@ class DataManager {
         }());
 
         DataGrouper.register("sum", function (item) {
-            console.log("register item ", item);
             return _.extend({ ...item.vals[0] }, item.key, {
                 Quantity: _.reduce(item.vals, function (memo, node) {
                     return memo + Number(node.Quantity);
@@ -142,9 +140,7 @@ class DataManager {
                 }
             });
         });
-        console.log("addPromotion listPromotion:: ", listPromotion);
         listNewOrder = listNewOrder.concat(listPromotion);
-        console.log("addPromotion listNewOrder::::: ", listNewOrder);
         return listNewOrder;
     }
 
@@ -562,7 +558,6 @@ class DataManager {
     }
 
     totalProducts = (products) => {
-        console.log('totalProducts', products);
         return products.reduce((total, product) => total + (product.Price * product.Quantity), 0)
     }
 

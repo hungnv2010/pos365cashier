@@ -12,6 +12,7 @@ import dataManager from '../../data/DataManager';
 import { useDispatch } from 'react-redux';
 import dialogManager from '../../components/dialog/DialogManager';
 import { ScreenList } from '../../common/ScreenList';
+import realmStore, { SchemaName } from '../../data/realm/RealmStore';
 
 export default (props) => {
 
@@ -40,7 +41,7 @@ export default (props) => {
         }
         console.log("roomGroups ====  ", JSON.stringify(groups));
         groupsBackup.current = groups;
-        setRoomGroups(groups)
+        setRoomGroups(groups.reverse())
     }, [])
 
     const onChangeTextSearch = (text) => {
@@ -58,7 +59,7 @@ export default (props) => {
         new HTTPService().setPath(ApiPath.ROOM_GROUPS).POST(params).then(async (res) => {
             console.log("onClickOk ADD_GROUP res ", res);
             if (res) {
-                let list = [...roomGroups, res]
+                let list = [res, ...roomGroups]
                 console.log("onClickOk list ", list);
                 setRoomGroups(list);
                 onCallBack()
@@ -76,6 +77,7 @@ export default (props) => {
     const onCallBack = async (data = "") => {
         console.log("onCallBack data ", data, typeof (data));
         dispatch({ type: 'ALREADY', already: false })
+        await realmStore.deleteSchema([SchemaName.ROOM_GROUP])
         await dataManager.syncRoomsReInsert()
         dispatch({ type: 'ALREADY', already: true })
         if (data != "") {
@@ -121,6 +123,7 @@ export default (props) => {
 
                 <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
                     <TouchableOpacity style={{ alignItems: "flex-end", marginTop: 15 }} onPress={() => {
+                        setRoomGroupAdd("");
                         setShowModal(false)
                     }}>
                         <Text style={{ margin: 5, fontSize: 16, fontWeight: "500", marginRight: 15, color: "red" }}>{I18n.t('huy')}</Text>

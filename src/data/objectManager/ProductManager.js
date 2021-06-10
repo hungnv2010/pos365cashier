@@ -102,6 +102,9 @@ class ProductManager {
 
                 isShowOtherDescription = true
                 this.descriptionOff += `;\n${displayTimeSeconds(firstSeconds)} ${I18n.t('dau_tien')} = ${currencyToString(firstValues)}`
+            } else {
+                firstMinutes = 0.0
+                firstSeconds = 0.0
             }
 
             if(allTimeSeconds >  firstSeconds) { // Tinh tien va hien thi tang giam gia gio dac biet.
