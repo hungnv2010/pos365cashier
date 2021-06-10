@@ -120,15 +120,12 @@ export default (props) => {
             serverEvents = await realmStore.queryServerEvents()
             isSendServer = serverEvents.filtered(`isSend == true`)
             // console.log('isSendServer==', isSendServer);
-            console.log("init: ", JSON.parse(JSON.stringify(rooms)), JSON.parse(JSON.stringify(roomGroups)), JSON.parse(JSON.stringify(serverEvents)));
 
             let newDatas = insertServerEvent(getDatas(rooms, roomGroups), serverEvents)
             dataRef.current = newDatas
             setData(newDatas)
             let list = newDatas.filter(item => item.isGroup)
-            console.log("init: list ", list);
             list.unshift(RoomAll)
-            console.log("init: list=== ", list);
             setListRoom(list)
 
             serverEvents.addListener((collection, changes) => {
