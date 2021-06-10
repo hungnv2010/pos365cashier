@@ -209,6 +209,9 @@ export default (props) => {
             }
 
         } else {
+            list.forEach(item => {
+                if (item.ProductType == 2 && item.IsTimer) ProductManager.getProductTimePrice(item)
+            })
             let title = props.route.params.room.Name ? props.route.params.room.Name : ""
             let body = I18n.t('gio_khach_vao') + moment().format('HH:mm DD/MM')
             let { RoomId, Position } = currentServerEvent.current
