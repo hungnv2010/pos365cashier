@@ -101,7 +101,6 @@ class DataManager {
         }());
 
         DataGrouper.register("sum", function (item) {
-            console.log("register item ", item);
             return _.extend({ ...item.vals[0] }, item.key, {
                 Quantity: _.reduce(item.vals, function (memo, node) {
                     return memo + Number(node.Quantity);

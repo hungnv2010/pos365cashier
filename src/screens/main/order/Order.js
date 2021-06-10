@@ -186,7 +186,6 @@ export default (props) => {
     }
 
     const getDatas = (rooms, roomGroups) => {
-        console.log('getDatas', rooms, 'getdata', roomGroups);
         let newDatas = []
         //newDatas.push(RoomAll)
         if (rooms && rooms.length > 1) rooms.sorted('Position')
@@ -400,7 +399,6 @@ export default (props) => {
         } else {
             listRoom = dataRef.current.filter(item => item.isGroup == true)
             sumTable = dataRef.current.length - listRoom.length
-            console.log("list room", listRoom);
             data = dataRef.current.filter(item => item.IsActive == true && item.RoomGroupId != idFilter && item.Id != 0)
             uses = data.length;
         }

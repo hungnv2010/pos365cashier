@@ -119,8 +119,6 @@ export default (props) => {
         else
             newDatas = rooms
 
-        console.log("getDatas", newDatas);
-
         return newDatas
     }
 
