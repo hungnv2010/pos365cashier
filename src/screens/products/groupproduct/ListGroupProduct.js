@@ -46,32 +46,37 @@ export default (props) => {
     const { deviceType, isFNB, allPer } = useSelector(state => {
         return state.Common
     })
-    useEffect(() => {
-        dialogManager.showLoading()
+    useEffect(() => { 
+        const getDataFromRealm = async () => {
+            dialogManager.showLoading()
+            productTmp.current = (await realmStore.queryProducts())
+            productTmp.current = productTmp.current.filtered(`TRUEPREDICATE SORT(Id DESC) DISTINCT(Id)`)
+            console.log("productTmp", productTmp.current);
+            categoryTmp.current = await realmStore.queryCategories()
+            setTimeout(()=>{
+                getSum(categoryTmp.current, productTmp.current)
+            },100)
+            
+        }
         getDataFromRealm()
         if (isFNB) {
             getBranch()
         }
+        
     }, [])
     const getBranch = async () => {
-
+        console.log("2");
         let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
         if (branch) {
             currentBranch.current = JSON.parse(branch)
             console.log("abc", branch);
         }
     }
-    const getDataFromRealm = async () => {
-        productTmp.current = (await realmStore.queryProducts())
-        productTmp.current = productTmp.current.filtered(`TRUEPREDICATE SORT(Id DESC) DISTINCT(Id)`)
-        console.log("productTmp", productTmp.current);
-        categoryTmp.current = await realmStore.queryCategories()
-        getSum(categoryTmp.current, productTmp.current)
 
-    }
     const getSum = (cate, pr) => {
         let data = []
         cate.forEach(item => {
+            dialogManager.showLoading()
             let list = pr
             console.log(list);
             list = list.filter(el => el.CategoryId == item.Id)
@@ -84,6 +89,7 @@ export default (props) => {
         dialogManager.hiddenLoading()
     }
     useEffect(() => {
+        //dialogManager.hiddenLoading()
         console.log(dataView);
     }, [dataView])
     const outputTextSearch = (value) => {
@@ -168,7 +174,7 @@ export default (props) => {
     const onClickItemCate = (item) => {
         console.log(item);
         if (deviceType == Constant.PHONE) {
-            props.navigation.navigate(ScreenList.GroupProductDetail, { data: item, onCallBack: handleSuccess})
+            props.navigation.navigate(ScreenList.GroupProductDetail, { data: item, onCallBack: handleSuccess })
         } else {
             setCategory(item)
         }
