@@ -108,6 +108,9 @@ export default (props) => {
         props.route.params._onSelect(listFomular, 1);
         props.navigation.goBack()
     }
+    const outputListProducts = (data, type) =>{
+        console.log(data);
+    }
 
     const renderItem = (item, index) => {
         return (
@@ -168,6 +171,7 @@ export default (props) => {
                 navigation={props.navigation}
                 outputTextSearch={outputTextSearch}
                 clickRightIcon={clickSelectProduct}
+                outputListProducts={outputListProducts}
             />
             {
                 listFomular.length > 0 ?

@@ -50,12 +50,12 @@ export default (props) => {
     const getCurrentBranch = async () => {
         let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
         currentBranch.current = JSON.parse(branch)
-        getOrderStock()
+        getOrderStock(currentBranch.current.Id)
         console.log("branh", currentBranch.current.Id);
     }
-    const getOrderStock = async (params = { Includes: 'Partner', inlinecount: 'allpages', filter: `(substringof('${debouncedVal}',Code) and BranchId eq ${currentBranch.current.Id})` }) => {
+    const getOrderStock = async (idBranch) => {
         dialogManager.showLoading()
-        let param = { Includes: 'Partner', inlinecount: 'allpages', filter: `(substringof('${debouncedVal}',Code) and BranchId eq ${currentBranch.current.Id})` }
+        let params = { Includes: 'Partner', inlinecount: 'allpages', filter: `(substringof('${debouncedVal}',Code) and BranchId eq ${idBranch})` }
         await new HTTPService().setPath(ApiPath.ORDERSTOCK).GET(params).then(res => {
             if (res != null) {
                 orderStock.current = res.results

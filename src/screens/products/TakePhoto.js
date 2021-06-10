@@ -18,40 +18,44 @@ export default (props) => {
         if (res != null) {
           token.current = res.Tocken
           console.log("Token", res.Tocken);
+          GDrive.setAccessToken(token.current)
+          GDrive.init()
+          GDrive.files.createFileMultipart(
+            source.base64,
+            "'image/jpg'", {
+            parents: ["0B0kuvBxLBrKiflFvTW5EUkRkZEg1UEZpSXZaVGIwTjFFeGlJSV9vTG5kbm9NUW5sQ2tiSGc"],
+            name: source.fileName
+          },
+            true)
+            .then(
+              (response) => response.json()
+            ).then((res) => {
+              // result data
+              console.log(res.id);
+              let url = "https://docs.google.com/uc?id=" + `${res.id}` + "&export=view"
+              let item = {
+                ImageURL: url,
+                IsDefault: true,
+                ThumbnailUrl: url
+              }
+              let image = []
+              // if (productOl.ProductImages) {
+              //     image = JSON.parse(JSON.stringify(productOl.ProductImages))
+              // }
+              image = [...image, item]
+              //setProductOl({ ...productOl, ProductImages: image })
+              //setImageUrl(url)
+              console.log(image);
+              dialogManager.hiddenLoading()
+
+            }).catch(err => {
+              console.log(err);
+            })
         }
+      }).catch(err => {
+        console.log(err);
       })
-      GDrive.setAccessToken(token.current)
-      GDrive.init()
 
-      GDrive.files.createFileMultipart(
-        source.base64,
-        "'image/jpg'", {
-        parents: ["0B0kuvBxLBrKiflFvTW5EUkRkZEg1UEZpSXZaVGIwTjFFeGlJSV9vTG5kbm9NUW5sQ2tiSGc"],
-        name: source.fileName
-      },
-        true)
-        .then(
-          (response) => response.json()
-        ).then((res) => {
-          // result data
-          console.log(res.id);
-          let url = "https://docs.google.com/uc?id=" + `${res.id}` + "&export=view"
-          let item = {
-            ImageURL: url,
-            IsDefault: true,
-            ThumbnailUrl: url
-          }
-          let image = []
-          // if (productOl.ProductImages) {
-          //     image = JSON.parse(JSON.stringify(productOl.ProductImages))
-          // }
-          image = [...image, item]
-          //setProductOl({ ...productOl, ProductImages: image })
-          //setImageUrl(url)
-          console.log(image);
-          dialogManager.hiddenLoading()
-
-        })
       //setOnShowModal(false)
     } else {
       dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_internet'), I18n.t('thong_bao'), () => {
