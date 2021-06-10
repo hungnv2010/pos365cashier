@@ -15,21 +15,21 @@ export default (props) => {
     const [showToast, setShowToast] = useState(false);
     const [toastDescription, setToastDescription] = useState("")
     const [permissionEndDay, setPermission] = useState(true)
-    const { isFNB } = useSelector(state => {
+    const { isFNB, allPer } = useSelector(state => {
         return state.Common
     })
 
-    useEffect(() => {
-        console.log('props report', props);
-        if(props.route.params.permission){
-        let item = props.route.params.permission.items
-        let per = item.filter(elm => elm.id == "EndOfDay_Read")
-        setPermission(per[0].Checked)
-        }
-    }, [])
+    // useEffect(() => {
+    //     console.log('props report', props);
+    //     if(props.route.params.permission){
+    //     let item = props.route.params.permission.items
+    //     let per = item.filter(elm => elm.id == "EndOfDay_Read")
+    //     setPermission(per[0].Checked)
+    //     }
+    // }, [])
 
     const onClickEndOfDay = (screen) => {
-        if (permissionEndDay) {
+        if (allPer.EndOfDay_Read || allPer.IsAdmin) {
             props.navigation.navigate(screen)
         } else {
             dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {

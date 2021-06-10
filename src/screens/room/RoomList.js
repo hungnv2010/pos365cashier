@@ -28,12 +28,12 @@ export default (props) => {
     const clickAdd = useRef(false);
     const [roomGroups, setRoomGroups] = useState([])
     const [titleAddEdit, setTitleAddEdit] = useState(I18n.t('them_phong_ban'))
-    const [permission, setPermission] = useState({
-        read: true,
-        create: true,
-        update: true,
-        delete: true
-    })
+    // const [permission, setPermission] = useState({
+    //     read: true,
+    //     create: true,
+    //     update: true,
+    //     delete: true
+    // })
 
     const dispatch = useDispatch()
 
@@ -46,20 +46,20 @@ export default (props) => {
         return state.Common.orientaition
     });
 
-    useEffect(() => {
-        console.log('props room table', props);
-        if (props.route.params.permission) {
-            let item = props.route.params.permission.items
-            let allPer = {}
-            item.forEach(element => {
-                if (element.id == "Room_Read") allPer.read = element.Checked
-                if (element.id == "Room_Create") allPer.create = element.Checked
-                if (element.id == "Room_Update") allPer.update = element.Checked
-                if (element.id == "Room_Delete") allPer.delete = element.Checked
-            });
-            setPermission(allPer)
-        }
-    }, [])
+    // useEffect(() => {
+    //     console.log('props room table', props);
+    //     if (props.route.params.permission) {
+    //         let item = props.route.params.permission.items
+    //         let allPer = {}
+    //         item.forEach(element => {
+    //             if (element.id == "Room_Read") allPer.read = element.Checked
+    //             if (element.id == "Room_Create") allPer.create = element.Checked
+    //             if (element.id == "Room_Update") allPer.update = element.Checked
+    //             if (element.id == "Room_Delete") allPer.delete = element.Checked
+    //         });
+    //         setPermission(allPer)
+    //     }
+    // }, [])
 
     useEffect(() => {
         dialogManager.showLoading()

@@ -20,8 +20,8 @@ export default (props) => {
 
     const [listGroup, setListGroup] = useState([])
     const [detailGroup, setDetailGroup] = useState({})
-    const [allPer, setPer] = useState(props.route.params.permission ? props.route.params.permission : {})
-    const { deviceType } = useSelector(state => {
+    //const [allPer, setPer] = useState(props.route.params.permission ? props.route.params.permission : {})
+    const { deviceType,allPer } = useSelector(state => {
         return state.Common
     });
 
@@ -131,7 +131,7 @@ export default (props) => {
                         keyExtractor={(item, index) => index.toString()}
                     />
                     {
-                        allPer.create ?
+                        allPer.IsAdmin ?
                             <FAB
                                 style={styles.fab}
                                 big
