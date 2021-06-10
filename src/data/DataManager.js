@@ -57,7 +57,6 @@ class DataManager {
     }
 
     async addPromotion(list = []) {
-        console.log("addPromotion list ", list);
         let promotion = await realmStore.querryPromotion();
         let promotionTmp = promotion
         let listProduct = await realmStore.queryProducts()
@@ -142,9 +141,7 @@ class DataManager {
                 }
             });
         });
-        console.log("addPromotion listPromotion:: ", listPromotion);
         listNewOrder = listNewOrder.concat(listPromotion);
-        console.log("addPromotion listNewOrder::::: ", listNewOrder);
         return listNewOrder;
     }
 
@@ -562,7 +559,6 @@ class DataManager {
     }
 
     totalProducts = (products) => {
-        console.log('totalProducts', products);
         return products.reduce((total, product) => total + (product.Price * product.Quantity), 0)
     }
 

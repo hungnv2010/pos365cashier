@@ -82,7 +82,6 @@ export default (props) => {
         console.log("init: ", JSON.parse(JSON.stringify(rooms, roomGroups, serverEvents)));
 
         let newDatas = insertServerEvent(getDatas(rooms, roomGroups), serverEvents)
-        console.log("init: newDatas ", newDatas);
 
         setData(newDatas)
 
@@ -159,7 +158,6 @@ export default (props) => {
                 }
             }
         })
-        console.log("insertServerEvent: ", newDatas);
 
         setValueAll({ cash: totalCash, use: totalUse, room: rooms.length })
 

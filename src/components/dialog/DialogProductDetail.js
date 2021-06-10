@@ -51,7 +51,6 @@ export default (props) => {
 
 
     useEffect(() => {
-        console.log('itemOrderitemOrder', props.item, props.priceBookId);
         const getListQuickNote = () => {
             let listOrder = itemOrder.OrderQuickNotes ? itemOrder.OrderQuickNotes.split(',') : [];
             let listQuickNote = []

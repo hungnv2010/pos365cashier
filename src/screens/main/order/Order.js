@@ -120,11 +120,9 @@ export default (props) => {
             serverEvents = await realmStore.queryServerEvents()
             isSendServer = serverEvents.filtered(`isSend == true`)
             // console.log('isSendServer==', isSendServer);
-            console.log('1serverEvents1', JSON.parse(JSON.stringify(serverEvents)));
             console.log("init: ", JSON.parse(JSON.stringify(rooms)), JSON.parse(JSON.stringify(roomGroups)), JSON.parse(JSON.stringify(serverEvents)));
 
             let newDatas = insertServerEvent(getDatas(rooms, roomGroups), serverEvents)
-            console.log("init: newDatas ", newDatas);
             dataRef.current = newDatas
             setData(newDatas)
             let list = newDatas.filter(item => item.isGroup)
@@ -216,9 +214,6 @@ export default (props) => {
         else
             newDatas = rooms
 
-        console.log("getDatas", newDatas);
-        console.log("roomRef", roomRef.current);
-        console.log("dataRef.current", dataRef.current);
         return newDatas
     }
 
@@ -258,7 +253,6 @@ export default (props) => {
                 }
             }
         })
-        console.log("insertServerEvent: ", newDatas);
 
         setValueAll({ cash: totalCash, use: totalUse, room: rooms.length })
 
@@ -291,7 +285,6 @@ export default (props) => {
 
     }
     useEffect(() => {
-        console.log("rooom", datas);
         console.log("textsearch", props.textSearch);
         setValueCategory()
     }, [datas])
@@ -410,7 +403,6 @@ export default (props) => {
             console.log("list room", listRoom);
             data = dataRef.current.filter(item => item.IsActive == true && item.RoomGroupId != idFilter && item.Id != 0)
             uses = data.length;
-            console.log("data true", data);
         }
         if (data && data.length > 0) {
             data.forEach(item => {
