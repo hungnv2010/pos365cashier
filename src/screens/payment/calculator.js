@@ -145,7 +145,7 @@ export default (props) => {
         }
     }
     const clickItemSuggest = (value) => {
-        setResults(value.toString())
+        setResults("" + value.toString().replace(/(\d)(?=(\d{3})+\b)/g, '$&,'))
         props.outputPercent({ Value: value, Type: value <= 100 ? 'discount' : 'total' })
     }
 
@@ -179,17 +179,17 @@ export default (props) => {
                             <Text style={{ color: colors.colorchinh, textAlign: "center", paddingVertical: 30, fontWeight: "bold", fontSize: 18 }}>{method && method.name ? I18n.t(method.name) : ""}</Text>
                             <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
                                 <Text style={[styles.textButton, { fontSize: 35 }]}>{results != '' || results == '0' ? results : '0'}</Text>
-                                <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 70,flexWrap:'wrap' }}>
-                                        {
-                                            suggestions && suggestions.length > 0 ?
-                                                suggestions.map((item, index) => {
-                                                    return (
-                                                        <TouchableOpacity key={index.toString()} style={[styles.button, { paddingHorizontal: 20, paddingVertical: 10 }]} onPress={() => clickItemSuggest(item)}>
-                                                            <Text>{currencyToString(item)} {item <= 100 ? '%' : ''}</Text>
-                                                        </TouchableOpacity>
-                                                    )
-                                                }) : null
-                                        }
+                                <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: 70, flexWrap: 'wrap' }}>
+                                    {
+                                        suggestions && suggestions.length > 0 ?
+                                            suggestions.map((item, index) => {
+                                                return (
+                                                    <TouchableOpacity key={index.toString()} style={[styles.button, { paddingHorizontal: 20, paddingVertical: 10 }]} onPress={() => clickItemSuggest(item)}>
+                                                        <Text>{currencyToString(item)} {item <= 100 ? '%' : ''}</Text>
+                                                    </TouchableOpacity>
+                                                )
+                                            }) : null
+                                    }
                                 </View>
                             </View>
                         </View>

@@ -110,6 +110,22 @@ export default (props) => {
     }
     const outputListProducts = (data, type) =>{
         console.log(data);
+        listFomular.forEach(el =>{
+            if(el.ItemId == data[0].Id){
+                el.Quantity += 1;
+                setListFormular([...listFomular])
+            }else{
+                let itemCombo = {
+                    Cost: data[0].Cost ? data[0].Cost : 0,
+                    ItemId: data[0].Id,
+                    Product: { Code: data[0].Code, Cost: data[0].Cost ? data[0].Cost : 0, Name: data[0].Name, Unit: data[0].Unit },
+                    Quantity: 1,
+                    QuantityLargeUnit: 0
+                }
+                setListFormular([...listFomular,itemCombo])
+            }
+        })
+        
     }
 
     const renderItem = (item, index) => {
