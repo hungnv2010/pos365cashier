@@ -29,7 +29,7 @@ export default (props) => {
   const [autoPrintKitchen, setAutoPrintKitchen] = useState(false)
   const [permission, setPermission] = useState(true)
   const [itemPer, setItemPer] = useState()
-  const { listPrint, isFNB, printProvisional, printReturnProduct, appState, deviceType } = useSelector(state => {
+  const { listPrint, isFNB, printProvisional, printReturnProduct, appState, deviceType, allPer } = useSelector(state => {
     return state.Common
   })
 
@@ -251,7 +251,7 @@ export default (props) => {
                 outPutTextSearch={onClickSearch}
               />
               {
-                permission ?
+                permission || allPer.IsAdmin ?
                   <Order {...props} textSearch={textSearch} itemPer={itemPer} />
                   :
                   <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>

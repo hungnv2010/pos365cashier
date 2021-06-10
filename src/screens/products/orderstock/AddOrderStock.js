@@ -524,7 +524,7 @@ export default (props) => {
                                 <View style={{ flex: 4 }}>
                                     <Text>{I18n.t('ngay_nhap')}</Text>
                                     <TouchableOpacity style={styles.styleTextInput} onPress={() => clickDocumentDate()}>
-                                        <Text style={{ fontWeight: 'bold' }}>{dateUTCToDate2(orderStock.DocumentDate)}</Text>
+                                        <Text style={{ fontWeight: 'bold',color: orderStock.DocumentDate ? '#000':'#4a4a4a' }}>{orderStock.DocumentDate ? dateUTCToDate2(orderStock.DocumentDate) :'DD/MM/YYYY'}</Text>
                                     </TouchableOpacity>
                                 </View>
                                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-end' }}>
@@ -533,7 +533,7 @@ export default (props) => {
                                 <View style={{ flex: 4 }}>
                                     <Text>{I18n.t('ngay_giao')}</Text>
                                     <TouchableOpacity style={styles.styleTextInput} onPress={() => clickDeliveryDate()}>
-                                        <Text style={{ fontWeight: 'bold' }}>{dateUTCToDate2(orderStock.DeliveryDate)}</Text>
+                                        <Text style={{ fontWeight: 'bold',color: orderStock.DeliveryDate ? '#000':'#4a4a4a' }}>{orderStock.DeliveryDate ? dateUTCToDate2(orderStock.DeliveryDate) :'DD/MM/YYYY'}</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>

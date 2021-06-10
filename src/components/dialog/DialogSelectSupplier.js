@@ -39,7 +39,7 @@ export default (props) =>{
                             <Text style={{ textAlign: 'center', fontWeight: 'bold' }}>{I18n.t('chon_nha_cung_cap')}</Text>
                             <View style={{ flexDirection: 'row', paddingVertical: 10, paddingHorizontal: 15, marginVertical: 5, borderRadius: 10, borderColor: colors.colorLightBlue, borderWidth: 0.5 }}>
                                 <Ionicons name={'ios-search'} size={20} />
-                                <TextInput style={{ flex: 1, paddingHorizontal: 10 }} onChangeText={(text) => setTextSearch(text)}></TextInput>
+                                <TextInput style={{ flex: 1, paddingHorizontal: 10, color:'#4a4a4a' }} onChangeText={(text) => setTextSearch(text)}></TextInput>
                             </View>
                             <ScrollView style={{}}>
                                 {

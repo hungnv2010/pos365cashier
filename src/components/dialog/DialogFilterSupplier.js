@@ -188,7 +188,7 @@ export default (props) =>{
 }
 const styles = StyleSheet.create({
     styleTextInput:{
-        backgroundColor:'#fff',paddingVertical:10,borderRadius:10,marginTop:7,paddingHorizontal:5
+        backgroundColor:'#fff',paddingVertical:10,borderRadius:10,marginTop:7,paddingHorizontal:5,color:'#000'
     },
     styleButton:{backgroundColor:'#fff',justifyContent:'space-between',alignItems:'flex-end',paddingVertical:5,borderRadius:10,flexDirection:'row',paddingHorizontal:10,marginTop:7}
 })
