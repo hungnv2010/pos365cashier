@@ -454,7 +454,7 @@ export default (props) => {
                                         :
                                         <TouchableOpacity onPress={() => onClickTopping()} style={{ alignItems: "center", margin: 2, flex: 1, borderWidth: 1, borderColor: Colors.colorchinh, padding: 10, borderRadius: 4, backgroundColor: "#fff" }} >
                                             <Text style={{ color: Colors.colorchinh, textTransform: "uppercase" }}>
-                                                {(itemOrder.ProductType == 2 && itemOrder.IsTimer) ? (itemOrder.StopTimer ? I18n.t('tinh_gio') : I18n.t('dung_tinh') ) :Topping}</Text>
+                                                {(itemOrder.ProductType == 2 && itemOrder.IsTimer) ? (itemOrder.StopTimer ? I18n.t('tinh_gio') : I18n.t('dung_tinh') ) :"Topping"}</Text>
                                         </TouchableOpacity>
                                 }
                                 <TouchableOpacity onPress={() => onClickOk()} style={{ alignItems: "center", margin: 2, marginRight: 0, flex: 1, borderWidth: 1, borderColor: Colors.colorchinh, padding: 10, borderRadius: 4, backgroundColor: Colors.colorchinh }} >
