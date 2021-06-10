@@ -81,7 +81,7 @@ export default (props) => {
     return (
         <View style={{ paddingVertical: 10, paddingHorizontal: 20, backgroundColor: '#fff', borderRadius: 5, width: Metrics.screenWidth * 0.8 }}>
             <Text style={{ paddingVertical: 10, fontWeight: 'bold', fontSize: 16, color: colors.colorLightBlue }}>{I18n.t('chon_hang_hoa')}</Text>
-            <TextInput style={{ backgroundColor: '#f2f2f2', paddingVertical: 10, paddingHorizontal: 5, borderRadius: 10 }} placeholder={I18n.t('nhap_ten_hang_hoa')} onChangeText={(text) => setTextSearch(text)}></TextInput>
+            <TextInput style={{ backgroundColor: '#f2f2f2', paddingVertical: 10, paddingHorizontal: 5, borderRadius: 10, color:'#4a4a4a' }} placeholder={I18n.t('nhap_ten_hang_hoa')} onChangeText={(text) => setTextSearch(text)}></TextInput>
             <ScrollView style={{ paddingVertical: 10 }} showsVerticalScrollIndicator={false}>
                 {
                     listProduct.map((item, index) => {

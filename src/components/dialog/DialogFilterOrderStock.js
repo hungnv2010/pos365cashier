@@ -141,11 +141,11 @@ export default (props) => {
                 </View>
                 <View style={{ paddingHorizontal: 10, paddingVertical: 10 }}>
                     <Text>{I18n.t('ma_nhap_hang')}</Text>
-                    <TextInput style={styles.background} onChangeText={(text)=> setObject({...object, OrderStockCode : text})}></TextInput>
+                    <TextInput style={[styles.background,,{color:'#000'}]} onChangeText={(text)=> setObject({...object, OrderStockCode : text})}></TextInput>
                 </View>
                 <View style={{ paddingHorizontal: 10, paddingVertical: 10 }}>
                     <Text>{I18n.t('ma_hang_hoa')}</Text>
-                    <TextInput style={styles.background} onChangeText={(text)=> setObject({...object, ProductCode : text})}></TextInput>
+                    <TextInput style={[styles.background,{color:'#000'}]} onChangeText={(text)=> setObject({...object, ProductCode : text})}></TextInput>
                 </View>
                 <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, alignItems: 'center', justifyContent: 'center', paddingVertical: 15, borderRadius: 10, marginHorizontal: 10, marginVertical: 10 }} onPress={()=>onCLickDone()}>
                     <Text style={{ color: '#fff', fontWeight: 'bold' }}>{I18n.t('ap_dung')}</Text>

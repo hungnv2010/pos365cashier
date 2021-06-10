@@ -40,7 +40,7 @@ export default (props) => {
         return state.Common
     });
 
-    const { deviceType } = useSelector(state => {
+    const { deviceType, allPer } = useSelector(state => {
         return state.Common
     });
 
@@ -65,14 +65,14 @@ export default (props) => {
     const [filterStatus, setFilterStatus] = useState('tat_ca')
     const [status, setStatus] = useState()
     const [idFilter, setIdFilter] = useState(-1)
-    const [perOrder, setPerOrder] = useState({
-        read: true,
-        create: true,
-        update: true,
-        delete: true,
-        import: true,
-        export: true
-    })
+    // const [perOrder, setPerOrder] = useState({
+    //     read: true,
+    //     create: true,
+    //     update: true,
+    //     delete: true,
+    //     import: true,
+    //     export: true
+    // })
 
 
 
@@ -86,26 +86,26 @@ export default (props) => {
             }
         }, [])
     );
-    useEffect(() => {
-        console.log('props room table', props.itemPer);
-        if (props.itemPer) {
-            let item = props.itemPer.items
-            let allPer = {}
-            item.forEach(element => {
-                if (element.id == "Order_Read") allPer.read = element.Checked
-                if (element.id == "Order_Create") allPer.create = element.Checked
-                if (element.id == "Order_Update") allPer.update = element.Checked
-                if (element.id == "Order_Delete") allPer.delete = element.Checked
-                if (element.id == "Order_Import") allPer.import = element.Checked
-                if (element.id == "Order_Export") allPer.export = element.Checked
-            });
-            setPerOrder(allPer)
-        }
+    // useEffect(() => {
+    //     console.log('props room table', props.itemPer);
+    //     if (props.itemPer) {
+    //         let item = props.itemPer.items
+    //         let allPer = {}
+    //         item.forEach(element => {
+    //             if (element.id == "Order_Read") allPer.read = element.Checked
+    //             if (element.id == "Order_Create") allPer.create = element.Checked
+    //             if (element.id == "Order_Update") allPer.update = element.Checked
+    //             if (element.id == "Order_Delete") allPer.delete = element.Checked
+    //             if (element.id == "Order_Import") allPer.import = element.Checked
+    //             if (element.id == "Order_Export") allPer.export = element.Checked
+    //         });
+    //         setPerOrder(allPer)
+    //     }
 
-    }, [props.itemPer])
-    useEffect(() => {
-        console.log("per", perOrder);
-    }, [perOrder])
+    // }, [props.itemPer])
+    // useEffect(() => {
+    //     console.log("per", perOrder);
+    // }, [perOrder])
 
 
     useEffect(() => {
@@ -271,7 +271,7 @@ export default (props) => {
     }
     const onItemPress = (item) => {
         const { Id, Name, ProductId, IsActive } = item
-        if (perOrder.create || perOrder.update) {
+        if (allPer.IsAdmin || allPer.Order_Create) {
             deviceType == Constant.TABLET ?
             props.navigation.navigate('ServedForTablet', { room: { Id: Id, Name: Name, ProductId: ProductId, IsActive: IsActive  } })
             :

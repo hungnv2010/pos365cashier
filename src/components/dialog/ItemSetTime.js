@@ -186,6 +186,6 @@ export default (props) => {
 }
 const styles = StyleSheet.create({
     textInput:{
-        textAlign:'center', fontWeight:'bold',color:'#36a3f7'
+        textAlign:'center', fontWeight:'bold',color:colors.colorLightBlue
     }
 })
