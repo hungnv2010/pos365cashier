@@ -97,9 +97,13 @@ export default (props) => {
             case '100000':
             case '50000':
                 var lastChar = results.slice(results.length - 1)
-                if (specialChar.includes(lastChar) || results == 0) {
+                console.log(lastChar);
+                if (specialChar.includes(lastChar) ) {
                     setDataResult((results + button))
-                } else {
+                }else if(results == 0){
+                    setDataResult(button)
+                }
+                 else {
                     let newResult = (results).toString().replace(/,/g, '');
                     let oldResult = eval(newResult)
                     newResult = +button + oldResult
@@ -145,7 +149,7 @@ export default (props) => {
         }
     }
     const clickItemSuggest = (value) => {
-        setResults("" + value.toString().replace(/(\d)(?=(\d{3})+\b)/g, '$&,'))
+        setDataResult(value)
         props.outputPercent({ Value: value, Type: value <= 100 ? 'discount' : 'total' })
     }
 
