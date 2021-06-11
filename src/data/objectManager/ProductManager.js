@@ -78,9 +78,9 @@ class ProductManager {
             let sumAllMoney = 0.0
             this.sumSecondsNormal = 0
             this.descriptionOff = ""
-            let checkinDate = moment.utc(product.Checkin)
-            let checkoutDate = moment.utc(product.Checkout)
-            let isShowOtherDescription = false // Set gia tri ban dau check hien thi description other.
+            this.isShowOtherDescription = false // Set gia tri ban dau check hien thi description other.
+            let checkinDate = moment(product.Checkin)
+            let checkoutDate = moment(product.Checkout)
 
             this.descriptionOff = dateUTCToDate(product.Checkin, "YYYY-MM-DD[T]HH:mm:ss.SS[Z]", "DD/MM HH:mm") + "=>" + 
             dateUTCToDate(product.Checkout, "YYYY-MM-DD[T]HH:mm:ss.SS[Z]", "DD/MM HH:mm") + 
@@ -100,7 +100,7 @@ class ProductManager {
                 let firstValues = this.getPriceConfig(product).Value ? this.getPriceConfig(product).Value : 0
                 sumAllMoney += firstValues
 
-                isShowOtherDescription = true
+                this.isShowOtherDescription = true
                 this.descriptionOff += `;\n${displayTimeSeconds(firstSeconds)} ${I18n.t('dau_tien')} = ${currencyToString(firstValues)}`
             } else {
                 firstMinutes = 0.0
@@ -110,17 +110,19 @@ class ProductManager {
             if(allTimeSeconds >  firstSeconds) { // Tinh tien va hien thi tang giam gia gio dac biet.
                 let sumPriceHoursFromTo = 0
 
-                let countDate = checkinDate.diff(checkoutDate, 'days')
+                let countDate = checkoutDate.diff(checkinDate, 'days')
                 if (countDate <= 0) {
                     sumPriceHoursFromTo += this.getPriceHoursFromToInOneDay(product, this.getPriceConfig(product), checkinDate, checkoutDate)
                 } else {
-                    let start = checkinDate
-                    let end = checkinDate.endOf('day')
-                    for (i = 0; i < countDate; i++) {
+                    let start = checkinDate.clone()
+                    let end = checkinDate.clone()
+                    for (i = 0; i <= countDate; i++) {
                         if (i == countDate) end = checkoutDate 
-                        else end = start.endOf('day')
+                        else if(i == 0) end.endOf('day')
+                        else end.subtract(-1, 'day')
                         sumPriceHoursFromTo += this.getPriceHoursFromToInOneDay(product, this.getPriceConfig(product), start, end)
-                        start = end
+                        start.subtract(-1, 'day')
+                        start.startOf('day')
                     }
                 }
 
@@ -135,7 +137,7 @@ class ProductManager {
                     let totalPriceNormal = qtyNormal * product.BasePrice
                     let totalPriceNormalDisplay = currencyToString(totalPriceNormal)
 
-                    if (isShowOtherDescription) {
+                    if (this.isShowOtherDescription) {
                         this.descriptionOff += `;\n${displayTimeSeconds(this.sumSecondsNormal)} ${I18n.t('khac')} = ${totalPriceNormalDisplay}.`
                     }
                     sumAllMoney += totalPriceNormal
@@ -144,7 +146,7 @@ class ProductManager {
 
             product.Description = this.descriptionOff
 
-            if (sumAllMoney == 0.0 || !isShowOtherDescription) {
+            if (sumAllMoney == 0.0 || ! this.isShowOtherDescription) {
                 return product.Price * product.Quantity
             } else {
                 product.Price = sumAllMoney
@@ -172,12 +174,12 @@ class ProductManager {
         // Time 01
 
         if (priceConfig.TimeTo && priceConfig.TimeFrom) {
-            let timeTo1   = moment.utc(priceConfig.TimeTo)
-            let timeFrom1 = moment.utc(priceConfig.TimeFrom)
+            let timeTo1   = moment(priceConfig.TimeTo)
+            let timeFrom1 = moment(priceConfig.TimeFrom)
             this.setSameDate(timeTo1, startDate)
             this.setSameDate(timeFrom1, startDate)
 
-            console.log("getPriceHoursFromToInOneDay:", startDate, " -> ", endDate, "\n",  timeFrom1, " -> ", timeTo1);
+            console.log("getPriceHoursFromToInOneDay:", startDate.toString(), " -> ", endDate.toString(), "\n",  timeFrom1.toString(), " -> ", timeTo1.toString());
 
             if (timeTo1.isAfter(timeFrom1)) {
                 time01Seconds = this.calculatorDiffTime(startDate, endDate, timeFrom1, timeTo1)
@@ -192,7 +194,7 @@ class ProductManager {
                     totalPriceInTime01 = qty01 * time01Price
                     let totalPriceInTime01Display = currencyToString(totalPriceInTime01)
 
-                    isShowOtherDescription = true
+                    this.isShowOtherDescription = true
                     this.descriptionOff += `[${displayTimeSeconds(time01Seconds)} ${(this.getPrice1(product) < 0) ? "↓" : "↑"}${Math.round(qty01 *100) / 100}x${time01PriceDisplay}] = ${totalPriceInTime01Display}`
                 }
 
@@ -220,7 +222,7 @@ class ProductManager {
                     totalPriceInTime02 = qty02 * time02Price
                     let totalPriceInTime02Display = currencyToString(totalPriceInTime02)
 
-                    isShowOtherDescription = true
+                    this.isShowOtherDescription = true
                     this.descriptionOff += `[${displayTimeSeconds(time02Seconds)} ${(this.getPrice2(product) < 0) ? "↓" : "↑"}${Math.round(qty02 *100) / 100}x${time02PriceDisplay}] = ${totalPriceInTime02Display}`
                 }
 

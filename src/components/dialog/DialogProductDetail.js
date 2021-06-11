@@ -122,6 +122,17 @@ export default (props) => {
 
             itemOrder.StopTimer = newValue
             itemOrder.Checkout = momentToDate(moment().utc())
+
+            if (newValue) {
+                itemOrder.UnitPrice = itemOrder.Price
+                itemOrder.PriceLargeUnit = itemOrder.Price
+            } else {
+                itemOrder.UnitPrice = itemOrder.BasePrice
+                itemOrder.PriceLargeUnit = itemOrder.BasePrice
+            }
+            ProductManager.setProductTimeQuantityNormal(itemOrder)
+            ProductManager.getProductTimePrice(itemOrder, newValue)
+            setPrice(itemOrder.Price)
             setItemOrder({...itemOrder})
         } else {
             onClickOk()
@@ -142,9 +153,10 @@ export default (props) => {
     }
 
     const dateTmp = useRef(new Date())
+    const dateOutTmp = useRef(new Date())
     const onChangeDate = (selectedDate) => {
         console.log("onChangeTime Date ", selectedDate);
-        const currentDate = dateTmp.current;
+        const currentDate = isDateIn? dateTmp.current : dateOutTmp.current
         if (typeModal == TYPE_MODAL.OPEN_DATE) {
             let date = selectedDate.getDate();
             let month = selectedDate.getMonth();
@@ -153,16 +165,16 @@ export default (props) => {
             currentDate.setMonth(month)
             currentDate.setFullYear(year)
             console.log("onChangeTime Date ", currentDate);
-            dateTmp.current = currentDate;
         } else {
-            // const currentDate = dateTmp.current;
             let hours = selectedDate.getHours();
             let minutes = selectedDate.getMinutes();
             currentDate.setHours(hours)
             currentDate.setMinutes(minutes)
             console.log("onChangeTime Date ", currentDate);
-            dateTmp.current = currentDate;
         }
+        if (isDateIn) dateTmp.current = currentDate
+        else  dateOutTmp.current = currentDate;
+
     };
 
     const selectDateTime = () => {
@@ -173,12 +185,13 @@ export default (props) => {
             ProductManager.getProductTimePrice(itemOrder, true)
         
         } else {
-            setDateOut(dateTmp.current)
-            itemOrder.Checkout = momentToDateUTC(dateTmp.current, "YYYY-MM-DD[T]HH:mm:ss.SS[Z]")
+            setDateOut(dateOutTmp.current)
+            itemOrder.Checkout = momentToDateUTC(dateOutTmp.current, "YYYY-MM-DD[T]HH:mm:ss.SS[Z]")
             ProductManager.setProductTimeQuantityNormal(itemOrder)
             ProductManager.getProductTimePrice(itemOrder, true)
         }
         setItemOrder({ ...itemOrder })
+        setPrice(itemOrder.Price)
         setTypeModal(TYPE_MODAL.DEFAULT)
     }
 
