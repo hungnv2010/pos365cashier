@@ -93,7 +93,6 @@ const Served = (props) => {
                 let jsonTmp = JSON.parse(serverEvent[0].JsonContent)
                 jsonTmp.OrderDetails = await dataManager.addPromotion(jsonTmp.OrderDetails);
                 jsonTmp.RoomName = jsonTmp.RoomName ? jsonTmp.RoomName : props.route.params.room.Name
-                console.log('jsonTmpjsonTmp', jsonTmp);
                 setJsonContent(jsonTmp)
             }
         }

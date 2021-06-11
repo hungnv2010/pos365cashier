@@ -123,6 +123,9 @@ export default (props) => {
         props.route.params._onSelect(listProduct, 2);
         props.navigation.goBack()
     }
+    const outputListProducts = (data, type) =>{
+        outputSelectedProduct(data[0])
+    }
 
     const renderItemCombo = (item, index) => {
         return (
@@ -185,11 +188,13 @@ export default (props) => {
                     //outputClickProductService={outputClickProductService}
                     navigation={props.navigation}
                     outputTextSearch={outputTextSearch}
+                    outputListProducts={outputListProducts}
                 />
                 <View style={{ flex: 1, }}>
                     <SelectProduct listProducts={listProduct.length > 0 ? listProduct : []} valueSearch={value}
                         numColumns={orientaition == Constant.LANDSCAPE ? 3 : 3}
                         outputSelectedProduct={outputSelectedProduct}
+                        
                     />
                 </View>
 

@@ -79,10 +79,8 @@ export default (props) => {
         roomGroups = await realmStore.queryRoomGroups()
         roomGroups = roomGroups.sorted('Id')
         serverEvents = await realmStore.queryServerEvents()
-        console.log("init: ", JSON.parse(JSON.stringify(rooms, roomGroups, serverEvents)));
 
         let newDatas = insertServerEvent(getDatas(rooms, roomGroups), serverEvents)
-        console.log("init: newDatas ", newDatas);
 
         setData(newDatas)
 
@@ -119,8 +117,6 @@ export default (props) => {
         }
         else
             newDatas = rooms
-
-        console.log("getDatas", newDatas);
 
         return newDatas
     }
@@ -159,7 +155,6 @@ export default (props) => {
                 }
             }
         })
-        console.log("insertServerEvent: ", newDatas);
 
         setValueAll({ cash: totalCash, use: totalUse, room: rooms.length })
 

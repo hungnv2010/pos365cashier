@@ -66,7 +66,6 @@ export default (props) => {
 
 
   useEffect(() => {
-    console.log(props.listProducts, 'selectProds props.listProducts');
     setListProducts(props.listProducts)
   }, [props.listProducts])
 
@@ -100,7 +99,6 @@ export default (props) => {
           }
           let productsRes = results.slice(skip, skip + Constant.LOAD_LIMIT)
           productsRes = JSON.parse(JSON.stringify(productsRes))
-          console.log('getProductsproductsRes', productsRes);
           count.current = productsRes.length
           setProduct([...product, ...productsRes])
           setHasProducts(true)
@@ -123,7 +121,6 @@ export default (props) => {
     }
     let productsRes = results.slice(skip, skip + Constant.LOAD_LIMIT)
     productsRes = JSON.parse(JSON.stringify(productsRes))
-    console.log('getProductsproductsRes', productsRes);
     count.current = productsRes.length
     setProduct([...product, ...productsRes])
     setHasProducts(true)

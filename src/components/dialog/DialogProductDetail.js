@@ -51,7 +51,6 @@ export default (props) => {
 
 
     useEffect(() => {
-        console.log('itemOrderitemOrder', props.item, props.priceBookId);
         const getListQuickNote = () => {
             let listOrder = itemOrder.OrderQuickNotes ? itemOrder.OrderQuickNotes.split(',') : [];
             let listQuickNote = []
@@ -81,7 +80,6 @@ export default (props) => {
         }
         const getSetting = async () => {
             let data = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
-            console.log("setting data", JSON.parse(data));
             data = JSON.parse(data)
             if (data) {
                 setAllowChangeNameProduct(data.cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang)

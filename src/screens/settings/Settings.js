@@ -154,10 +154,7 @@ export default (props) => {
     useFocusEffect(useCallback(() => {
         const getSetting = async () => {
 
-
-
             let data = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
-            console.log("setting data", JSON.parse(data));
             if (data != "") {
                 data = JSON.parse(data);
                 
