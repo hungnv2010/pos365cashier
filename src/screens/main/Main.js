@@ -63,6 +63,7 @@ export default (props) => {
       const getSettingObj = async () => {
         let settingObject = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
         settingObject = JSON.parse(settingObject)
+        console.log('settingObject == ', settingObject);
         if (settingObject) {
           console.log('settingObject', settingObject);
           setAutoPrintKitchen(settingObject.tu_dong_in_bao_bep)
@@ -114,12 +115,7 @@ export default (props) => {
       }
     }
     getStoreInfo()
-  }, [])
-
-  useEffect(() => {
-
     Print.registerPrint("")
-
   }, [])
 
   useEffect(() => {
