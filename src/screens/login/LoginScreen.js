@@ -51,8 +51,24 @@ const LoginScreen = (props) => {
 
                 let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
                 console.log('Login data====', JSON.parse(data));
-                getRetailerInfoAndNavigate()
-                navigateToHome();
+                let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
+                branch = JSON.parse(branch)
+                console.log("getDataRetailerInfo branch ", branch);
+                if (data != '')
+                    data = JSON.parse(data)
+                if (data.Branchs[0].Id != branch.Id) {
+                    let params = { branchId: data.Branchs[0].Id }
+                    new HTTPService().setPath(ApiPath.CHANGE_BRANCH).GET(params).then(async (res) => {
+                        console.log("onClickItemBranch res ", res);
+                        getRetailerInfoAndNavigate()
+                    }).catch((e) => {
+                        getRetailerInfoAndNavigate()
+                    })
+                    
+                }else{
+                    getRetailerInfoAndNavigate()
+                }
+
             } else {
                 let rememberAccount = await getFileDuLieuString(Constant.REMEMBER_ACCOUNT, true);
                 console.log('rememberAccount', rememberAccount);
@@ -160,7 +176,7 @@ const LoginScreen = (props) => {
                     setFileLuuDuLieu(Constant.PRIVILEGES, JSON.stringify(privileges));
 
 
-                }else{
+                } else {
                     dispatch({ type: 'PERMISSION', allPer: { IsAdmin: true } })
                 }
                 setFileLuuDuLieu(Constant.HTML_PRINT, htmlDefault);
@@ -172,6 +188,7 @@ const LoginScreen = (props) => {
         }).catch((e) => {
             dialogManager.hiddenLoading();
             console.log("getDataRetailerInfo err ", e);
+            navigateToHome();
         })
     }
 

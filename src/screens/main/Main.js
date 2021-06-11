@@ -72,7 +72,7 @@ export default (props) => {
     }, [])
   );
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     console.log('mainScreen props', props);
     const getStoreInfo = async () => {
       dialogManager.showLoading()
@@ -88,6 +88,7 @@ export default (props) => {
 
       if (vendorSession) {
         if (currentBranch && currentBranch.FieldId) {
+          console.log("current Branch",currentBranch);
           if (currentBranch.FieldId == 3 || currentBranch.FieldId == 11) {
             let state = store.getState()
             signalRManager.init({ ...vendorSession, SessionId: state.Common.info.SessionId })
@@ -125,6 +126,7 @@ export default (props) => {
     const syncDatas = async () => {
       if (isFNB === null) return
       dispatch({ type: 'ALREADY', already: false })
+      console.log("isFNBBBBBB");
       let state = await NetInfo.fetch()
       if (state.isConnected == true && state.isInternetReachable == true) {
         if (isFNB === true) {
