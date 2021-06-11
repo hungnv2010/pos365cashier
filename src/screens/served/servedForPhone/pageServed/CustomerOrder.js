@@ -417,7 +417,7 @@ export default (props) => {
     const mapDataToList = (product) => {
         console.log("mapDataToList itemOrder ", itemOrder);
         console.log("mapDataToList data ", product);
-        if (itemOrder.Quantity > product.Quantity) {
+        if (itemOrder.Quantity > product.Quantity && !(product.ProductType == 2 && product.IsTimer)) {
             setTimeout(() => {
                 setQuantitySubtract(itemOrder.Quantity - product.Quantity)
                 typeModal.current = TYPE_MODAL.DELETE

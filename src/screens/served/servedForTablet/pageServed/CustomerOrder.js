@@ -184,7 +184,7 @@ const CustomerOrder = (props) => {
     const applyDialogDetail = (product) => {
         console.log('applyDialogDetail product ', product);
 
-        if (itemOrder.Quantity > product.Quantity) {
+        if (itemOrder.Quantity > product.Quantity && !(product.ProductType == 2 && product.IsTimer)) {
             setTimeout(() => {
                 setQuantitySubtract(Math.round((itemOrder.Quantity - product.Quantity) * 1000) / 1000)
                 typeModal.current = TYPE_MODAL.RETURN
