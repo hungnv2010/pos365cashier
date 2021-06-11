@@ -460,19 +460,19 @@ export default (props) => {
                                     null
                             }
                             <View style={{ alignItems: "center", justifyContent: "space-between", flexDirection: "row", marginTop: 20 }}>
-                                <TouchableOpacity onPress={() => props.setShowModal(false)} style={{ alignItems: "center", margin: 2, marginLeft: 0, flex: 1, borderWidth: 1, borderColor: Colors.colorchinh, padding: 10, borderRadius: 4, backgroundColor: "#fff" }} >
+                                <TouchableOpacity onPress={() => props.setShowModal(false)} style={{ alignItems: "center", margin: 4, marginLeft: 0, flex: 1, borderWidth: 1, borderColor: Colors.colorchinh, padding: 10, borderRadius: 4, backgroundColor: "#fff" }} >
                                     <Text style={{ color: Colors.colorchinh, textTransform: "uppercase" }}>{I18n.t('huy')}</Text>
                                 </TouchableOpacity>
                                 {
                                     props.fromRetail ?
                                         null
                                         :
-                                        <TouchableOpacity onPress={() => onClickTopping()} style={{ alignItems: "center", margin: 2, flex: 1, borderWidth: 1, borderColor: Colors.colorchinh, padding: 10, borderRadius: 4, backgroundColor: "#fff" }} >
+                                        <TouchableOpacity onPress={() => onClickTopping()} style={{ alignItems: "center", margin: 4, flex: 1.2, borderWidth: 1, borderColor: Colors.colorchinh, paddingVertical:10,paddingHorizontal:2, borderRadius: 4, backgroundColor: "#fff" }} >
                                             <Text style={{ color: Colors.colorchinh, textTransform: "uppercase" }}>
                                                 {(itemOrder.ProductType == 2 && itemOrder.IsTimer) ? (itemOrder.StopTimer ? I18n.t('tinh_gio') : I18n.t('dung_tinh') ) :"Topping"}</Text>
                                         </TouchableOpacity>
                                 }
-                                <TouchableOpacity onPress={() => onClickOk()} style={{ alignItems: "center", margin: 2, marginRight: 0, flex: 1, borderWidth: 1, borderColor: Colors.colorchinh, padding: 10, borderRadius: 4, backgroundColor: Colors.colorchinh }} >
+                                <TouchableOpacity onPress={() => onClickOk()} style={{ alignItems: "center", margin: 4, marginRight: 0, flex: 1, borderWidth: 1, borderColor: Colors.colorchinh, padding: 10, borderRadius: 4, backgroundColor: Colors.colorchinh }} >
                                     <Text style={{ color: "#fff", textTransform: "uppercase", }}>{I18n.t('dong_y')}</Text>
                                 </TouchableOpacity>
                             </View>
