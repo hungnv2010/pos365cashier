@@ -81,6 +81,8 @@ class ProductManager {
             this.isShowOtherDescription = false // Set gia tri ban dau check hien thi description other.
             let checkinDate = moment(product.Checkin)
             let checkoutDate = moment(product.Checkout)
+            checkinDate.add(1, 'minute').startOf('minute')
+            checkoutDate.add(1, 'minute').startOf('minute')
 
             this.descriptionOff = dateUTCToDate(product.Checkin, "YYYY-MM-DD[T]HH:mm:ss.SS[Z]", "DD/MM HH:mm") + "=>" + 
             dateUTCToDate(product.Checkout, "YYYY-MM-DD[T]HH:mm:ss.SS[Z]", "DD/MM HH:mm") + 

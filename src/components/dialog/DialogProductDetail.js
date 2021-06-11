@@ -172,6 +172,8 @@ export default (props) => {
             currentDate.setMinutes(minutes)
             console.log("onChangeTime Date ", currentDate);
         }
+        currentDate.setSeconds(0)
+        currentDate.setMilliseconds(0)
         if (isDateIn) dateTmp.current = currentDate
         else  dateOutTmp.current = currentDate;
 
