@@ -129,6 +129,7 @@ class ProductManager {
                 sumAllMoney += sumPriceHoursFromTo
 
                 // Tinh tien va hien thi gio binh thuong.
+                this.sumSecondsNormal = Math.floor(this.sumSecondsNormal)
                 if (this.sumSecondsNormal > 0) {
 
                     let sumMinutesNormal = Math.ceil(this.sumSecondsNormal / 60)
@@ -204,8 +205,8 @@ class ProductManager {
         // Time 02
 
         if (priceConfig.TimeTo2 && priceConfig.TimeFrom2) {
-            let timeTo2   = moment.utc(priceConfig.TimeTo2)
-            let timeFrom2 = moment.utc(priceConfig.TimeFrom2)
+            let timeTo2   = moment(priceConfig.TimeTo2)
+            let timeFrom2 = moment(priceConfig.TimeFrom2)
             this.setSameDate(timeTo2, startDate)
             this.setSameDate(timeFrom2, startDate)
 
