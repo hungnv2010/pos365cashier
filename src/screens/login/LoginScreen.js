@@ -51,24 +51,25 @@ const LoginScreen = (props) => {
 
                 let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
                 console.log('Login data====', JSON.parse(data));
-                let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
-                branch = JSON.parse(branch)
-                console.log("getDataRetailerInfo branch ", branch);
-                if (data != '')
-                    data = JSON.parse(data)
-                if (data.Branchs[0].Id != branch.Id) {
-                    let params = { branchId: data.Branchs[0].Id }
-                    new HTTPService().setPath(ApiPath.CHANGE_BRANCH).GET(params).then(async (res) => {
-                        console.log("onClickItemBranch res ", res);
-                        getRetailerInfoAndNavigate()
-                    }).catch((e) => {
-                        getRetailerInfoAndNavigate()
-                    })
-                    
-                }else{
-                    getRetailerInfoAndNavigate()
-                }
+                // let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
+                // branch = JSON.parse(branch)
+                // console.log("getDataRetailerInfo branch ", branch);
+                // if (data != '')
+                //     data = JSON.parse(data)
+                // if (data.Branchs[0].Id != branch.Id) {
+                //     let params = { branchId: data.Branchs[0].Id }
+                //     new HTTPService().setPath(ApiPath.CHANGE_BRANCH).GET(params).then(async (res) => {
+                //         console.log("onClickItemBranch res ", res);
+                //         getRetailerInfoAndNavigate()
+                //     }).catch((e) => {
+                //         getRetailerInfoAndNavigate()
+                //     })
 
+                // }else{
+                //     getRetailerInfoAndNavigate()
+                // }
+                getRetailerInfoAndNavigate()
+                // navigateToHome()
             } else {
                 let rememberAccount = await getFileDuLieuString(Constant.REMEMBER_ACCOUNT, true);
                 console.log('rememberAccount', rememberAccount);
@@ -144,7 +145,7 @@ const LoginScreen = (props) => {
 
             let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
             console.log("getDataRetailerInfo branch ", branch);
-            if (branch != undefined || branch != '') {
+            if (branch == undefined || branch == '') {
                 if (res && res.Branchs.length > 0) {
                     console.log("getDataRetailerInfo branch done ");
                     setFileLuuDuLieu(Constant.CURRENT_BRANCH, JSON.stringify(res.Branchs[0]))
@@ -174,10 +175,10 @@ const LoginScreen = (props) => {
                     let privileges = await new HTTPService().setPath(apiPath).GET(params, getHeaders())
                     console.log('privileges login', res.PermissionMap);
                     setFileLuuDuLieu(Constant.PRIVILEGES, JSON.stringify(privileges));
-
-
+                    setFileLuuDuLieu(Constant.ALLPER, JSON.stringify(arr));
                 } else {
                     dispatch({ type: 'PERMISSION', allPer: { IsAdmin: true } })
+                    setFileLuuDuLieu(Constant.ALLPER, JSON.stringify({ IsAdmin: true }));
                 }
                 setFileLuuDuLieu(Constant.HTML_PRINT, htmlDefault);
                 navigateToHome()
@@ -185,9 +186,13 @@ const LoginScreen = (props) => {
                 dialogManager.showPopupOneButton(I18n.t('ban_khong_co_quyen_truy_cap'), I18n.t('thong_bao'));
             }
             dialogManager.hiddenLoading();
-        }).catch((e) => {
+        }).catch(async(e) => {
             dialogManager.hiddenLoading();
             console.log("getDataRetailerInfo err ", e);
+            let per = await getFileDuLieuString(Constant.ALLPER, true)
+            if (per != undefined || per != '') {
+                dispatch({ type: 'PERMISSION', allPer: JSON.parse(per) })
+            }
             navigateToHome();
         })
     }

@@ -102,6 +102,8 @@ export default (props) => {
     useDidMountEffect(() => {
         let price = (itemOrder.IsLargeUnit == true ? LargePrice.current : UnitPrice.current)
         let newDiscount = percent ? discount||0 / price * 100 : discount||0 * price / 100
+        console.log("useDidMountEffect newDiscount", newDiscount, typeof(newDiscount));
+        
         setDiscount(newDiscount)
     }, [percent])
 
