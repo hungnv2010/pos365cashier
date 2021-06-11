@@ -59,6 +59,7 @@ export default (props) => {
         productTmp.current = productTmp.current.filtered(`TRUEPREDICATE SORT(Id DESC) DISTINCT(Id)`)
         console.log("productTmp", productTmp.current);
         categoryTmp.current = await realmStore.queryCategories()
+        categoryTmp.current = categoryTmp.current.filtered(`TRUEPREDICATE SORT(Id DESC) DISTINCT(Id)`)
         setTimeout(()=>{
             getSum(categoryTmp.current, productTmp.current)
         },100)
