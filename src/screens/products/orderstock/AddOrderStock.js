@@ -24,6 +24,7 @@ import { getFileDuLieuString, setFileLuuDuLieu } from '../../../data/fileStore/F
 import DialogSelectSupplier from '../../../components/dialog/DialogSelectSupplier'
 import SelectProduct from '../../served/servedForTablet/selectProduct/SelectProduct'
 import ToolBarCombo from '../../../components/toolbar/ToolBarCombo'
+import ToolBarOrderStock from '../../../components/toolbar/ToolBarOrderStock'
 
 export default (props) => {
     const [orderStock, setOrderStock] = useState({})
@@ -373,6 +374,10 @@ export default (props) => {
     const outputTextSearch = (text) => {
         setValue(text)
     }
+    const outputListProducts = (data,type) =>{
+        console.log("dataaaaa",data);
+        outputSelectedProduct(data[0])
+    }
     const renderModal = () => {
         return (
             <View style={{ backgroundColor: '#fff', borderRadius: 5, }}>
@@ -430,9 +435,10 @@ export default (props) => {
     return (
         <View style={{ flex: 1, flexDirection: deviceType == Constant.PHONE ? 'column' : 'row' }}>
             {deviceType == Constant.PHONE ?
-                <ToolBarDefault
+                <ToolBarOrderStock
                     {...props}
                     title={orderStock != {} ? I18n.t('chinh_sua_nhap_hang') : I18n.t('them_moi_nhap_hang')}
+                    outputListProducts={outputListProducts}
                 /> :
                 <View style={{ flex: 3, }}>
                     <ToolBarCombo
@@ -440,7 +446,8 @@ export default (props) => {
                         title={orderStock.Id ? I18n.t('chinh_sua_nhap_hang') : I18n.t('them_moi_nhap_hang')}
                         //outputClickProductService={outputClickProductService}
                         navigation={props.navigation}
-                        outputTextSearch={outputTextSearch} />
+                        outputTextSearch={outputTextSearch}
+                        outputListProducts={outputListProducts} />
                     <View style={{ flex: 1, }}>
                         <SelectProduct listProducts={listProduct.length > 0 ? listProduct : []} valueSearch={value}
                             numColumns={orientaition == Constant.LANDSCAPE ? 3 : 3}

@@ -46,24 +46,24 @@ export default (props) => {
     const { deviceType, isFNB, allPer } = useSelector(state => {
         return state.Common
     })
-    useEffect(() => { 
-        const getDataFromRealm = async () => {
-            dialogManager.showLoading()
-            productTmp.current = (await realmStore.queryProducts())
-            productTmp.current = productTmp.current.filtered(`TRUEPREDICATE SORT(Id DESC) DISTINCT(Id)`)
-            console.log("productTmp", productTmp.current);
-            categoryTmp.current = await realmStore.queryCategories()
-            setTimeout(()=>{
-                getSum(categoryTmp.current, productTmp.current)
-            },100)
-            
-        }
+    useEffect(() => {
         getDataFromRealm()
         if (isFNB) {
             getBranch()
         }
         
     }, [])
+    const getDataFromRealm = async () => {
+        dialogManager.showLoading()
+        productTmp.current = (await realmStore.queryProducts())
+        productTmp.current = productTmp.current.filtered(`TRUEPREDICATE SORT(Id DESC) DISTINCT(Id)`)
+        console.log("productTmp", productTmp.current);
+        categoryTmp.current = await realmStore.queryCategories()
+        setTimeout(()=>{
+            getSum(categoryTmp.current, productTmp.current)
+        },100)
+        
+    }
     const getBranch = async () => {
         console.log("2");
         let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);

@@ -218,13 +218,13 @@ export default (props) => {
                         }
                     </View>
                 </View>
-                <View>
+                <View style={{flex:1}}>
                     <View style={{ paddingVertical: 15, paddingHorizontal: 10, justifyContent: 'space-between', flexDirection: 'row' }}>
                         <Text style={{ fontWeight: 'bold', textTransform: 'uppercase' }}>{I18n.t('hang_hoa_trong_nhom')}</Text>
                         <Text style={{ fontWeight: 'bold' }}>{data.Sum}</Text>
                     </View>
                     {data.ListPr && data.ListPr.length > 0 ?
-                        <ScrollView style={{}}>
+                        <ScrollView style={{flex:1}}>
                             {
                                 data.ListPr.map((item, index) => {
                                     return (
