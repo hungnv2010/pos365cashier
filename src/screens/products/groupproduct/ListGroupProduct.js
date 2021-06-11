@@ -22,6 +22,7 @@ import { getFileDuLieuString, setFileLuuDuLieu } from '../../../data/fileStore/F
 import DialogInput from '../../../components/dialog/DialogInput'
 import GroupProductDetail from '../../products/groupproduct/GroupProductDetail'
 import { useFocusEffect } from '@react-navigation/native';
+import NetInfo from "@react-native-community/netinfo";
 
 export default (props) => {
     const [category, setCategory] = useState({})
@@ -107,7 +108,10 @@ export default (props) => {
     const onClickAddItem = () => {
         setOnShowModal(true)
     }
-    const addCategory = (data) => {
+    const addCategory = async(data) => {
+        setOnShowModal(false)
+        let state = await NetInfo.fetch()
+        if (state.isConnected == true && state.isInternetReachable == true) {
         addCate.current = [{
             Name: 'ten_nhom',
             Hint: 'nhap_ten_nhom_hang_hoa',
@@ -122,7 +126,7 @@ export default (props) => {
                 //ShowOnBranchId: 21883
             }
         }
-        setOnShowModal(false)
+        
         if (param.Category.Name && param.Category.Name != '') {
             new HTTPService().setPath(ApiPath.CATEGORIES_PRODUCT).POST(param).then(res => {
                 if (res) {
@@ -147,6 +151,11 @@ export default (props) => {
                 dialogManager.hiddenLoading()
             }, null, null, I18n.t('dong'))
         }
+    } else {
+        dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_internet'), I18n.t('thong_bao'), () => {
+            dialogManager.destroy();
+        }, null, null, I18n.t('dong'))
+    }
     }
     const handleSuccess = async (type1, stt, data) => {
         console.log("type", type1);
