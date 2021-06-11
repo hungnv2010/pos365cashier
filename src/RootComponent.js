@@ -51,18 +51,13 @@ export default () => {
 
     const checkVersionApplication = async () => {
         return new Promise((resolve) => {
-
-            new HTTPService().setLinkFileTinh("https://60a6046dc0c1fd00175f4f2b.mockapi.io/version").GET({}).then((res) => {
-            // new HTTPService().setLinkFileTinh("https://api.pos365.vn/appversion.json").GET({}).then((res1) => {
+            // new HTTPService().setLinkFileTinh("https://60a6046dc0c1fd00175f4f2b.mockapi.io/version").GET({}).then((res) => {
+            new HTTPService().setLinkFileTinh("https://api.pos365.vn/appversion.json").GET({}).then((res) => {
                 console.log("checkVersionApplication res ", res);
-                // console.log("checkVersionApplication res ", typeof (res1));
-                // console.log("checkVersionApplication res ", JSON.parse(res));
-                // let res1 = { "Android": "1.41", "iOS": "1.4.10" }
-                // let res = JSON.parse(res1);
                 if (res && res.iOS && res.iOS != "") {
                     DeviceInfo.getVersion().then(value => {
-                        console.log("DeviceInfo.getVersion() ===  ", value);
-                        console.log("DeviceInfo.getVersion() === typeof (res.iOS)  ", typeof (res.iOS));
+                        console.log("checkVersionApplication DeviceInfo.getVersion ", value);
+                        console.log("checkVersionApplication res.iOS  ", res.iOS);
 
                         let arrayClientVersion = value.split(".")
                         let clientVersionNumber = arrayClientVersion.length > 0 ? arrayClientVersion[0] : 0;
@@ -87,20 +82,6 @@ export default () => {
                             console.log("new application");
                             resolve(false);
                         }
-
-
-                        // let clientVersion = res.replace(/\./g, "");
-                        // let strVersion = (typeof (res1.iOS) === "string") ? res1.iOS : JSON.stringify(res1.iOS);
-                        // let serverVersion = strVersion.replace(/\./g, "");
-                        // console.log("clientVersion  ", clientVersion, typeof (clientVersion));
-                        // console.log("serverVersion  ", serverVersion, typeof (serverVersion));
-                        // if (parseInt(clientVersion) < parseInt(serverVersion)) {
-                        //     console.log("Phiên bản hiện tại chưa phải là mới nhất");
-                        //     resolve(true);
-                        // } else {
-                        //     console.log("Phiên bản hiện tại là mới nhất");
-                        //     resolve(false);
-                        // }
                     });
                 } else {
                     resolve(false);
