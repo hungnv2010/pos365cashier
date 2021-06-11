@@ -64,7 +64,7 @@ const LoginScreen = (props) => {
                 //     }).catch((e) => {
                 //         getRetailerInfoAndNavigate()
                 //     })
-                    
+
                 // }else{
                 //     getRetailerInfoAndNavigate()
                 // }
@@ -175,10 +175,10 @@ const LoginScreen = (props) => {
                     let privileges = await new HTTPService().setPath(apiPath).GET(params, getHeaders())
                     console.log('privileges login', res.PermissionMap);
                     setFileLuuDuLieu(Constant.PRIVILEGES, JSON.stringify(privileges));
-
-
+                    setFileLuuDuLieu(Constant.ALLPER, JSON.stringify(arr));
                 } else {
                     dispatch({ type: 'PERMISSION', allPer: { IsAdmin: true } })
+                    setFileLuuDuLieu(Constant.ALLPER, JSON.stringify({ IsAdmin: true }));
                 }
                 setFileLuuDuLieu(Constant.HTML_PRINT, htmlDefault);
                 navigateToHome()
@@ -186,9 +186,13 @@ const LoginScreen = (props) => {
                 dialogManager.showPopupOneButton(I18n.t('ban_khong_co_quyen_truy_cap'), I18n.t('thong_bao'));
             }
             dialogManager.hiddenLoading();
-        }).catch((e) => {
+        }).catch(async(e) => {
             dialogManager.hiddenLoading();
             console.log("getDataRetailerInfo err ", e);
+            let per = await getFileDuLieuString(Constant.ALLPER, true)
+            if (per != undefined || per != '') {
+                dispatch({ type: 'PERMISSION', allPer: JSON.parse(per) })
+            }
             navigateToHome();
         })
     }

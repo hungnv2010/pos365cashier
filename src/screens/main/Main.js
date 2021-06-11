@@ -60,6 +60,7 @@ export default (props) => {
 
   useFocusEffect(
     React.useCallback(() => {
+      console.log("allllPer",allPer);
       const getSettingObj = async () => {
         let settingObject = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
         settingObject = JSON.parse(settingObject)
