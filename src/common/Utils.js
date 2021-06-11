@@ -7,7 +7,7 @@ export const DATE_FORMAT = "YYYY-MM-DD'T'HH:mm:ss.SSFFFFF'Z'";
 
 //Convert number, currency format
 export const currencyToString = (value, decimal = false) => {
-  if (value == 0 && value == '0') return 0;
+  if (value == 0 && value == '0') return "0";
   if (!value || (value && value == "")) {
     value = "0";
   }
