@@ -88,7 +88,7 @@ export default (props) => {
         PriceByBranchLargeUnit: productOl.PriceByBranchLargeUnit ? productOl.PriceByBranchLargeUnit : 0,
         Product: {
             AttributesName: product.AttributesName,
-            BlockOfTimeToUseService: product.BlockOfTimeToUseService,
+            BlockOfTimeToUseService: product.BlockOfTimeToUseService ? product.BlockOfTimeToUseService : 6,
             BonusPoint: product.BonusPoint ? product.BonusPoint : 0,
             BonusPointForAssistant: product.BonusPointForAssistant ? product.BonusPointForAssistant : 0,
             BonusPointForAssistant2: product.BonusPointForAssistant2 ? product.BonusPointForAssistant2 : 0,
