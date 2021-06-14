@@ -2,29 +2,32 @@ import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
 import { Animated, Image, View, StyleSheet, Text, TouchableOpacity, ScrollView, ActivityIndicator, Modal, TouchableWithoutFeedback } from "react-native";
 import MainToolBar from '../../main/MainToolBar';
 import I18n from '../../../common/language/i18n';
-import realmStore from '../../../data/realm/RealmStore';
 import { Images, Metrics } from '../../../theme';
-import ToolBarDefault from '../../../components/toolbar/ToolBarDefault';
-import { Chip, Snackbar, FAB } from 'react-native-paper';
 import colors from '../../../theme/Colors';
-import { ScreenList } from '../../../common/ScreenList';
-import dataManager from '../../../data/DataManager';
-import { useSelector } from 'react-redux';
-import { Constant } from '../../../common/Constant';
 import { FlatList, TextInput } from 'react-native-gesture-handler';
 import { currencyToString, dateToString, momentToStringDateLocal, dateUTCToMoment2, momentToDate, change_alias, change_search, dateUTCToMoment, dateUTCToDate2, timeToString } from '../../../common/Utils';
-import dialogManager from '../../../components/dialog/DialogManager';
-import { HTTPService } from '../../../data/services/HttpService';
-import { ApiPath } from '../../../data/services/ApiPath';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import DatePicker from 'react-native-date-picker';
+
 
 const ItemPrOrderStock = ({item, index,onChangeText, onClickDelItem}) =>{
     const [value, setValue] = useState(item.Quantity)
+    const [price,setPrice] = useState(item.Price)
     useEffect(()=>{
         setValue(item.Quantity)
     },[item.Quantity])
+
+    useEffect(()=>{
+        setPrice(item.Price)
+    },[item.Price])
+
+    const onChangeTextInput = (text) => {
+        if (text == "") {
+            text = 0;
+        } else {
+            text = text.replace(/,/g, "");
+            text = Number(text);
+        }
+        return text
+    }
 
     return (
         <View style={{ backgroundColor: '#fff', paddingVertical: 10, marginVertical: 2, paddingHorizontal: 10, borderRadius: 10 }}>
@@ -44,7 +47,7 @@ const ItemPrOrderStock = ({item, index,onChangeText, onClickDelItem}) =>{
             <View style={{ flexDirection: 'row', paddingVertical: 10 }}>
                 <View style={{ flex: 1 }}>
                     <Text>{I18n.t('gia_nhap')}</Text>
-                    <TextInput style={styles.styleTextInput} value={item.Price > 0 ? currencyToString(item.Price) : 0 + ''}></TextInput>
+                    <TextInput style={styles.styleTextInput} value={price > 0 ? currencyToString(price) : 0 + ''} onChangeText={(text)=>{setPrice(onChangeTextInput(text))}}></TextInput>
                 </View>
                 <View style={{ flex: 1, marginLeft: 10 }}>
                     <Text>

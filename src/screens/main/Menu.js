@@ -229,7 +229,7 @@ const HeaderComponent = (props) => {
                 await realmStore.deleteAllForFnb()
                 setFileLuuDuLieu(Constant.CURRENT_BRANCH, JSON.stringify(selectBranch));
                 setBranch(selectBranch)
-                dispatch({ type: 'IS_FNB', isFNB: null })
+                dispatch({ type: 'IS_FNB', isFNB: (selectBranch.FieldId == 3 || selectBranch.FieldId == 11 ? true : false) })
                 signalRManager.killSignalR();
                 getPrivileges(vendorSession.CurrentUser.Id,selectBranch.Id)
                 savePrivileges(selectBranch.Id)

@@ -303,7 +303,7 @@ export default (props) => {
                 ExchangeRate: 0,
                 Id: 0,
                 PurchaseOrderDetails: listPurchase,
-                Status: 2,
+                Status: st,
                 Total: total,
                 TotalPayment: 0,
                 VAT: 0,
@@ -324,8 +324,14 @@ export default (props) => {
                     dialogManager.destroy();
                 }, null, null, I18n.t('dong'))
                 dialogManager.hiddenLoading()
-                props.navigation.goBack()
+                if (deviceType == Constant.TABLET) {
+                    props.route.params.callBack(orderStock.Id ? "sua" : "them")
+                    props.navigation.pop()
+                } else
+                    props.navigation.goBack()
             }
+        }).catch(err => {
+            dialogManager.hiddenLoading()
         })
     }
     const outputSelectedProduct = (product) => {
@@ -374,8 +380,8 @@ export default (props) => {
     const outputTextSearch = (text) => {
         setValue(text)
     }
-    const outputListProducts = (data,type) =>{
-        console.log("dataaaaa",data);
+    const outputListProducts = (data, type) => {
+        console.log("dataaaaa", data);
         outputSelectedProduct(data[0])
     }
     const renderModal = () => {
@@ -531,7 +537,7 @@ export default (props) => {
                                 <View style={{ flex: 4 }}>
                                     <Text>{I18n.t('ngay_nhap')}</Text>
                                     <TouchableOpacity style={styles.styleTextInput} onPress={() => clickDocumentDate()}>
-                                        <Text style={{ fontWeight: 'bold',color: orderStock.DocumentDate ? '#000':'#4a4a4a' }}>{orderStock.DocumentDate ? dateUTCToDate2(orderStock.DocumentDate) :'DD/MM/YYYY'}</Text>
+                                        <Text style={{ fontWeight: 'bold', color: orderStock.DocumentDate ? '#000' : '#4a4a4a' }}>{orderStock.DocumentDate ? dateUTCToDate2(orderStock.DocumentDate) : 'DD/MM/YYYY'}</Text>
                                     </TouchableOpacity>
                                 </View>
                                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-end' }}>
@@ -540,7 +546,7 @@ export default (props) => {
                                 <View style={{ flex: 4 }}>
                                     <Text>{I18n.t('ngay_giao')}</Text>
                                     <TouchableOpacity style={styles.styleTextInput} onPress={() => clickDeliveryDate()}>
-                                        <Text style={{ fontWeight: 'bold',color: orderStock.DeliveryDate ? '#000':'#4a4a4a' }}>{orderStock.DeliveryDate ? dateUTCToDate2(orderStock.DeliveryDate) :'DD/MM/YYYY'}</Text>
+                                        <Text style={{ fontWeight: 'bold', color: orderStock.DeliveryDate ? '#000' : '#4a4a4a' }}>{orderStock.DeliveryDate ? dateUTCToDate2(orderStock.DeliveryDate) : 'DD/MM/YYYY'}</Text>
                                     </TouchableOpacity>
                                 </View>
                             </View>

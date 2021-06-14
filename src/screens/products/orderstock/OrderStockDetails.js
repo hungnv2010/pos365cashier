@@ -146,7 +146,7 @@ export default (props) => {
     }
 
     return (
-        <View style={{ flex: 1 }}>
+        <View style={{ flex: 1,borderLeftWidth:0.3,borderColor:'#4a4a4a' }}>
             {
                 deviceType == Constant.PHONE ?
                     <ToolBarDefault
@@ -165,7 +165,7 @@ export default (props) => {
                             <Text style={{ color: orderStock.Status == 1 ? '#f6871e' : orderStock.Status == 2 ? '#00c75f' : orderStock.Status == 3 ? '#f21e3c' : null, fontWeight: 'bold' }}>{orderStock.Status == 2 ? I18n.t('hoan_thanh') : orderStock.Status == 1 ? I18n.t('dang_xu_ly') : orderStock.Status == 3 ? I18n.t('loai_bo') : null}</Text>
                         </View>
                     </View>
-                    <View style={{ backgroundColor: '#fff', marginTop: 2, paddingVertical: 15, paddingHorizontal: 10 }}>
+                    <View style={{ backgroundColor: '#fff', paddingVertical: 15, paddingHorizontal: 10, borderTopWidth:0.3,borderColor:'#4a4a4a'}}>
                         <View style={styles.styleView}>
                             <Text style={styles.styleTitle}>{I18n.t('ngay_tao')}</Text>
                             <Text> {dateUTCToDate2(orderStock.CreatedDate)}</Text>
@@ -183,7 +183,7 @@ export default (props) => {
                             <Text>{orderStock.Description}</Text>
                         </View>
                     </View>
-                    <View style={{ paddingVertical: 15, paddingHorizontal: 10 }}>
+                    <View style={{ paddingVertical: 15, paddingHorizontal: 10, borderTopWidth:0.3,borderBottomWidth:0.3,borderColor:'#4a4a4a' }}>
                         <Text style={{ fontWeight: 'bold', textTransform: 'uppercase' }}>{I18n.t('thanh_toan')}</Text>
                     </View>
                     <View style={{ backgroundColor: '#fff', paddingHorizontal: 10, paddingVertical: 15 }}>
@@ -216,14 +216,14 @@ export default (props) => {
                             <Text style={{ textTransform: 'uppercase' }}>{methodPay}</Text>
                         </View>
                     </View>
-                    <View style={{ paddingVertical: 15, paddingHorizontal: 10 }}>
+                    <View style={{ paddingVertical: 15, paddingHorizontal: 10, borderTopWidth:0.3,borderBottomWidth:0.3,borderColor:'#4a4a4a' }}>
                         <Text style={{ fontWeight: 'bold', textTransform: 'uppercase' }}>{I18n.t('danh_sach_hang_hoa')} ({listItem.length})</Text>
                     </View>
                     <ScrollView>
                         {
                             listItem.map((item, index) => {
                                 return (
-                                    <View style={{ backgroundColor: '#fff', paddingVertical: 15, paddingHorizontal: 10, marginBottom: 10 }} key={index.toString()}>
+                                    <View style={{ backgroundColor: '#fff', paddingVertical: 15, paddingHorizontal: 10, marginBottom: 5 }} key={index.toString()}>
                                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                             <Text>{item.Name}</Text>
                                             <Text>{item.Code}</Text>

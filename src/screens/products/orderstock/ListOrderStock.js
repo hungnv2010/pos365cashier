@@ -36,7 +36,7 @@ export default (props) => {
     const currentBranch = useRef()
     const [additemTab, setAddItemTab] = useState(false)
     let arrDate = []
-    const {deviceType, allPer} = useSelector(state => {
+    const { deviceType, allPer } = useSelector(state => {
         return state.Common
     });
 
@@ -44,18 +44,19 @@ export default (props) => {
         getCurrentBranch()
         console.log("arrr", arrDate);
     }, [])
-    useEffect(() => {
-        getOrderStock()
-    }, [debouncedVal])
     const getCurrentBranch = async () => {
         let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
         currentBranch.current = JSON.parse(branch)
         getOrderStock(currentBranch.current.Id)
         console.log("branh", currentBranch.current.Id);
     }
-    const getOrderStock = async (idBranch) => {
+    useEffect(() => {
+        getCurrentBranch()
+    }, [debouncedVal])
+    
+    const getOrderStock = async (idBranch,param) => {
         dialogManager.showLoading()
-        let params = { Includes: 'Partner', inlinecount: 'allpages', filter: `(substringof('${debouncedVal}',Code) and BranchId eq ${idBranch})` }
+        let params = param ? param : { Includes: 'Partner', inlinecount: 'allpages', filter: `(substringof('${debouncedVal}',Code) and BranchId eq ${idBranch})` }
         await new HTTPService().setPath(ApiPath.ORDERSTOCK).GET(params).then(res => {
             if (res != null) {
                 orderStock.current = res.results
@@ -100,14 +101,14 @@ export default (props) => {
             dialogManager.hiddenLoading()
         }
     }
-    const outEdit = (data) =>{
-        props.navigation.navigate(ScreenList.AddOrderStock, data)
+    const outEdit = (data) => {
+        props.navigation.navigate(ScreenList.AddOrderStock, { ...data, callBack: CallBack })
     }
 
     const renderItemOrderStock = (item, index) => {
         return (
             <TouchableOpacity style={{ backgroundColor: '#fff' }} onPress={() => { onClickItem(item) }}>
-                <View style={{ flexDirection: 'row' }}>
+                <View style={{ flexDirection: 'row', borderBottomWidth: 0.3, borderBottomColor: '#4a4a4a' }}>
                     <View style={{ alignItems: 'center', justifyContent: 'center', paddingHorizontal: 10 }}>
                         <Image source={Images.ic_default_orderstock} style={{ alignItems: 'center', width: 24, height: 24 }} />
                     </View>
@@ -119,9 +120,9 @@ export default (props) => {
                             </View>
                         </View>
                         <View style={{ flexDirection: 'column', alignItems: 'flex-end' }}>
-                            <Text style={{ color: item.Status == 2 ? '#00c75f' : item.Status == 1 ? '#f6871e' : item.Status == 3 ? '#f21e3c' : null, fontWeight: 'bold' }}>{item.Status == 2 ? I18n.t('hoan_thanh') : item.Status == 1 ? I18n.t('dang_xu_ly') : item.Status == 3 ? I18n.t('loai_bo') : null}</Text>
+                            <Text style={{ color: item.Status == 2 ? '#00c75f' : item.Status == 1 ? '#f6871e' : item.Status == 3 ? '#f21e3c' : null, fontWeight: 'bold', marginBottom: 10 }}>{item.Status == 2 ? I18n.t('hoan_thanh') : item.Status == 1 ? I18n.t('dang_xu_ly') : item.Status == 3 ? I18n.t('loai_bo') : null}</Text>
                             <Text>{item.Partner ? item.Partner.Name : ''}</Text>
-                            <Text style={{ fontWeight: 'bold', color: '#36a3f7' }}>{currencyToString(item.Total)}</Text>
+                            <Text style={{ fontWeight: 'bold', color: '#36a3f7', marginTop: 10 }}>{currencyToString(item.TotalPayment)}</Text>
                         </View>
                     </View>
                 </View>
@@ -151,13 +152,13 @@ export default (props) => {
             else
                 param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', top: 20, filter: `(substringof('${data.OrderStockCode ? data.OrderStockCode : ''}',Code) and PartnerId eq ${data.Supplier ? data.Supplier.Id : ''} and BranchId eq ${currentBranch.current.Id}  )` }
         }
-        getOrderStock(param)
+        getOrderStock(currentBranch.current.Id,param)
         console.log(param);
         console.log(data);
     }
     const renderTitle = (item, index) => {
         return (
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, paddingVertical: 15 }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, paddingVertical: 15, borderBottomColor: '#4a4a4a', borderBottomWidth: 0.3 }}>
                 <Text style={{ fontWeight: 'bold', color: '#4a4a4a' }}>{item.Title}</Text>
                 <Text>{item.Sum} {I18n.t('ma_nhap_hang')}</Text>
             </View>
@@ -188,7 +189,7 @@ export default (props) => {
                             icon='plus'
                             color="#fff"
                             onPress={() => {
-                                props.navigation.navigate(ScreenList.AddOrderStock, { orderstock: {}, listPr: [], paymentMethod: "" })
+                                props.navigation.navigate(ScreenList.AddOrderStock, { orderstock: {}, listPr: [], paymentMethod: "", callBack: CallBack })
                             }}
                         />
                         :
@@ -199,7 +200,7 @@ export default (props) => {
             {
                 deviceType == Constant.TABLET ? defaultItem.Id ?
                     <View style={{ flex: 1, marginLeft: 0.5 }}>
-                        <OrderStockDetails allPer={allPer} iOrderStock={defaultItem} outEdit={outEdit} handleSuccessTab={CallBack}/>
+                        <OrderStockDetails allPer={allPer} iOrderStock={defaultItem} outEdit={outEdit} handleSuccessTab={CallBack} />
                     </View> :
                     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                         <Image source={Images.logo_365_long_color} />
