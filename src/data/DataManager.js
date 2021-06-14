@@ -47,6 +47,10 @@ class DataManager {
     }
 
     checkEndDate(date) {
+        console.log("checkEndDate date",date);
+        if(date== undefined || date==''){
+            return false
+        }
         let endDate = new Date(date)
         let currentDate = new Date();
         console.log("currentDate endDate ", currentDate, endDate);
