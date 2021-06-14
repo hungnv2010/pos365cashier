@@ -315,9 +315,9 @@ export default (props) => {
             //     break
             case 'giu_man_hinh_luon_sang':
                 if (data.stt == true)
-                    Print.keepTheScreenOn("ok")
+                    Print.keepTheScreenOn("")
                 else
-                    Print.keepTheScreenOff("ok")
+                    Print.keepTheScreenOff("")
                 saveState({ ...settingObject, giu_man_hinh_luon_sang: data.stt })
                 break
         }

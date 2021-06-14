@@ -121,6 +121,12 @@ export default () => {
                 });
                 console.log("savePrinter objectPrint ", objectPrint);
                 dispatch({ type: 'PRINT_OBJECT', printerObject: objectPrint })
+
+                if (setting.giu_man_hinh_luon_sang == true)
+                    Print.keepTheScreenOn("")
+                else
+                    Print.keepTheScreenOff("")
+
             } else {
                 setFileLuuDuLieu(Constant.OBJECT_SETTING, JSON.stringify(DefaultSetting))
             }
