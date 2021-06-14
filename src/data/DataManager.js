@@ -163,8 +163,6 @@ class DataManager {
                     listOrdersReturn = []
                     let listRoom = []
                     let listOrders = []
-                    console.log('newOrders', newOrders);
-
                     for (const newOrder of newOrders) {
                         let exist = false
                         let rowKey = `${newOrder.RoomId}_${newOrder.Position}`;
@@ -173,6 +171,7 @@ class DataManager {
                         productItem = JSON.parse(JSON.stringify(productItem))[0];
                         let Price = (newOrder.IsLargeUnit ? productItem.PriceLargeUnit : productItem.UnitPrice) + newOrder.TotalTopping
                         productItem = { ...productItem, ...newOrder, Price: Price }
+                        productItem.Position = -1; // fix Position product not Position room;
                         listOrders.push({ ...productItem })
                         for (const item of listRoom) {
                             if (item.rowKey == rowKey) {
@@ -183,12 +182,12 @@ class DataManager {
                         if (!exist) {
                             listRoom.push({ rowKey, products: [{ ...productItem }], RoomId: newOrder.RoomId, Position: newOrder.Position, RoomName: newOrder.RoomName })
                         }
+
+
                     }
                     let listOrdersReturn = listOrders.filter(item => item.Quantity < 0)
                     listOrders = listOrders.filter(item => item.Quantity > 0)
-                    console.log('listRoomlistRoomlistRoom', listRoom);
-
-
+                    console.log('listRoomlistRoomlistRoom', JSON.stringify(listRoom));
                     return Promise.resolve({ newOrders: this.getDataPrintCook(listOrders), listOrdersReturn: this.getDataPrintCook(listOrdersReturn), listRoom: listRoom })
                 }
                 return Promise.resolve(null)
@@ -377,7 +376,7 @@ class DataManager {
     syncRoomsReInsert = async () => {
         console.log("syncRoomsReInsert");
         await this.syncData(ApiPath.SYNC_ROOM_GROUPS, SchemaName.ROOM_GROUP),
-        await this.syncData(ApiPath.SYNC_ROOMS, SchemaName.ROOM)
+            await this.syncData(ApiPath.SYNC_ROOMS, SchemaName.ROOM)
     }
 
     syncRooms = async () => {

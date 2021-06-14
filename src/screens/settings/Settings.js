@@ -157,7 +157,7 @@ export default (props) => {
             let data = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
             if (data != "") {
                 data = JSON.parse(data);
-                
+                console.log("getSetting isFNB ", isFNB);
                 data.Printer.forEach(element => {
                     if (isFNB || element.key == Constant.KEY_PRINTER.CashierKey || element.key == Constant.KEY_PRINTER.StampPrintKey) {
                         element.show = true;
@@ -165,6 +165,8 @@ export default (props) => {
                         element.show = false;
                     }
                 });
+                console.log("getSetting data.Printer ", data.Printer);
+                
                 if(data.Printer.filter(item =>item.key == Constant.KEY_PRINTER.StampPrintKey).length < 1){
                     setSettingObject({...data,Printer:[...data.Printer,{
                         key: Constant.KEY_PRINTER.StampPrintKey,
@@ -376,7 +378,6 @@ export default (props) => {
     const outputSetPrinter = (data) => {
         setShowModal(false)
         console.log("outputSetPrinter data ", data);
-
         DeviceInfo.getSystemVersion().then(systemVersion => {
             console.log("systemVersion ", systemVersion);
             console.log("systemVersion compare = ", compare(systemVersion, "14"));
@@ -384,24 +385,6 @@ export default (props) => {
                 Print.requestLocalNetwork(data.ip)
             }
         });
-
-        // Permissions.check('localNetwork').then((r) => {
-        //     console.log("Permissions.check('localNetwork') r ", r);
-
-        //     if (r === 'granted') {
-        //         // Do something
-        //     } else {
-        //         Permissions.request('localNetwork').then((response) => {
-        //             // if (response === 'authorized') {
-        //             //     // Do something
-        //             // }
-        //             // if (response === 'denied') {
-        //             //     // Notify user about Local Network permission denied, advice user to turn on permission
-        //             // }
-        //         });
-        //     }
-        // });
-
         settingObject.Printer[positionPrint] = data
         savePrint({ ...settingObject })
         savePrintRedux(settingObject.Printer)
