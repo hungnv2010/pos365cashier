@@ -110,14 +110,14 @@ export default (props) => {
     }
     const addCategory = async(data) => {
         setOnShowModal(false)
-        let state = await NetInfo.fetch()
-        if (state.isConnected == true && state.isInternetReachable == true) {
         addCate.current = [{
             Name: 'ten_nhom',
             Hint: 'nhap_ten_nhom_hang_hoa',
             Key: 'CategoryName',
             Value: ''
         }]
+        let state = await NetInfo.fetch()
+        if (state.isConnected == true && state.isInternetReachable == true) {
         console.log(data);
         let param = {
             Category: {
