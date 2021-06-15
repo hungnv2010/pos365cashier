@@ -238,6 +238,8 @@ export default {
   in_may_in_thu_ngan: "Print cashier printer",
   in_may_in_tem: "Print stamp printer",
   in_lai: "Print again",
+  in_phieu_nhap_hang:"Print import receipt",
+  in_phieu_nhan_hang:"Print receipt",
 
   // TODO: K
 

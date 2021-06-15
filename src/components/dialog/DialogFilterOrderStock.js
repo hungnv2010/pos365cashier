@@ -57,7 +57,7 @@ export default (props) => {
         return (
             <View style={{ backgroundColor: '#fff',borderRadius:10 }}>
                 {typeModal.current == 1 ?
-                <View style={{borderRadius:10}}>
+                <View style={{borderRadius:10,alignItems:'center',justifyContent:'center'}}>
                     <Text style={{textAlign:'center',paddingVertical:10,fontWeight:'bold',fontSize:16,color:colors.colorchinh}}>{I18n.t('chon_ngay')}</Text>
                     <DatePicker date={new Date()}
                         onDateChange={onChange}

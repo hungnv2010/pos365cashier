@@ -238,6 +238,8 @@ export default {
   in_may_in_thu_ngan: "In máy in thu ngân",
   in_may_in_tem: "In máy in tem",
   in_lai: "In lại",
+  in_phieu_nhap_hang:'In phiếu nhập hàng',
+  in_phieu_nhan_hang:"In phiếu nhận hàng",
 
   // TODO: K
 
