@@ -204,14 +204,14 @@ export default (props) => {
         )
     }
     return (
-        <View style={{ flex: 1, borderLeftWidth: deviceType == Constant.TABLET ? 0.5 : 0 }}>
+        <View style={{ flex: 1, borderLeftWidth: deviceType == Constant.TABLET ? 0.3 : 0, borderColor:'#4a4a4a' }}>
             {deviceType == Constant.PHONE ?
                 <ToolBarExtraTopping
                     {...props}
                     title={extraTopping ? extraTopping.Name : null}
                 /> :
                 <View style={{ backgroundColor: '#fff', height: 44, alignItems: 'center', justifyContent: 'center', borderBottomWidth: 0.3, borderColor: '#4a4a4a' }}>
-                    <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: 'bold', color: colors.colorLightBlue }}>{I18n.t('cap_nhat_extra_topping')}</Text>
+                    <Text style={{ textAlign: 'center', fontSize: 16, fontWeight: 'bold'}}>{I18n.t('cap_nhat_extra_topping')}</Text>
                 </View>
             }
             <View style={{ backgroundColor: '#fff', flexDirection: 'column', flex: 1 }}>
