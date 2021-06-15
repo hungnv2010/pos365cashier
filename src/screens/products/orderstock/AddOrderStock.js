@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
-import { Animated, Image, View, StyleSheet, Text, TouchableOpacity, ScrollView, ActivityIndicator, Modal, TouchableWithoutFeedback } from "react-native";
+import React, { useEffect, useState, useLayoutEffect, useRef,useCallback } from 'react';
+import { Animated, Image, View, StyleSheet, Text, TouchableOpacity, ScrollView, ActivityIndicator, Modal, TouchableWithoutFeedback ,Keyboard} from "react-native";
 import MainToolBar from '../../main/MainToolBar';
 import I18n from '../../../common/language/i18n';
 import realmStore from '../../../data/realm/RealmStore';
@@ -25,6 +25,8 @@ import DialogSelectSupplier from '../../../components/dialog/DialogSelectSupplie
 import SelectProduct from '../../served/servedForTablet/selectProduct/SelectProduct'
 import ToolBarCombo from '../../../components/toolbar/ToolBarCombo'
 import ToolBarOrderStock from '../../../components/toolbar/ToolBarOrderStock'
+import { useFocusEffect } from '@react-navigation/native';
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default (props) => {
     const [orderStock, setOrderStock] = useState({})
@@ -56,6 +58,25 @@ export default (props) => {
     const orientaition = useSelector(state => {
         return state.Common.orientaition
     });
+    useFocusEffect(useCallback(() => {
+
+        var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
+        var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        }
+
+
+    }, []))
+    const _keyboardDidShow = () => {
+        setMargin(Metrics.screenWidth / 2)
+    }
+
+    const _keyboardDidHide = () => {
+        setMargin(0)
+    }
 
     useEffect(() => {
         getData(props.route.params)
@@ -473,6 +494,7 @@ export default (props) => {
                             : null}
                     </View>
                     <View style={{ flex: 1 }}>
+                        <KeyboardAwareScrollView>
                         <FlatList
                             data={listPr}
                             renderItem={({ item, index }) => <ItemPrOrderStock
@@ -483,6 +505,7 @@ export default (props) => {
                             />}
                             keyExtractor={(item, index) => index.toString()}
                         />
+                        </KeyboardAwareScrollView>
                     </View>
                 </View>
                 <View style={{ justifyContent: 'flex-end' }}>

@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useLayoutEffect, useRef } from 'react';
-import { Animated, Image, View, StyleSheet, Text, TouchableOpacity, ScrollView, ActivityIndicator, Modal, TouchableWithoutFeedback } from "react-native";
+import React, { useEffect, useState, useLayoutEffect, useRef,useCallback } from 'react';
+import { Animated, Image, View, StyleSheet, Text, TouchableOpacity,Keyboard, ScrollView, ActivityIndicator, Modal, TouchableWithoutFeedback } from "react-native";
 import MainToolBar from '../../main/MainToolBar';
 import I18n from '../../../common/language/i18n';
 import realmStore from '../../../data/realm/RealmStore';
@@ -23,6 +23,7 @@ import CustomerToolBar from '../../../screens/customerManager/customer/CustomerT
 import { getFileDuLieuString, setFileLuuDuLieu } from '../../../data/fileStore/FileStorage';
 import DialogFilterOrderStock from '../../../components/dialog/DialogFilterOrderStock'
 import AddOrderStock from './AddOrderStock';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default (props) => {
     const orderStock = useRef([])
@@ -53,8 +54,27 @@ export default (props) => {
     useEffect(() => {
         getCurrentBranch()
     }, [debouncedVal])
-    
-    const getOrderStock = async (idBranch,param) => {
+    useFocusEffect(useCallback(() => {
+
+        var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
+        var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        }
+
+
+    }, []))
+    const _keyboardDidShow = () => {
+        setMargin(Metrics.screenWidth / 2)
+    }
+
+    const _keyboardDidHide = () => {
+        setMargin(0)
+    }
+
+    const getOrderStock = async (idBranch, param) => {
         dialogManager.showLoading()
         let params = param ? param : { Includes: 'Partner', inlinecount: 'allpages', filter: `(substringof('${debouncedVal}',Code) and BranchId eq ${idBranch})` }
         await new HTTPService().setPath(ApiPath.ORDERSTOCK).GET(params).then(res => {
@@ -142,17 +162,17 @@ export default (props) => {
         let param
         if (data.dateFrom && data.dateTo) {
             if (data.Status)
-                param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', top: 20, filter: `(substringof('${data.OrderStockCode ? data.OrderStockCode : ''}',Code) and PartnerId eq ${data.Supplier ? data.Supplier.Id : ''} and BranchId eq ${currentBranch.current.Id} and Status eq ${data.Status} and DocumentDate ge 'datetime''${momentToStringDateLocal(data.dateFrom)}''' and DocumentDate lt 'datetime''${momentToStringDateLocal(data.dateTo)}''')` }
+                param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', top: 20, filter: `(${data.OrderStockCode ? `substringof('${data.OrderStockCode}',Code) and ` : ''} ${data.Supplier ? `PartnerId eq ${data.Supplier.Id} and` : ''} BranchId eq ${currentBranch.current.Id} and Status eq ${data.Status} and DocumentDate ge 'datetime''${momentToStringDateLocal(data.dateFrom)}''' and DocumentDate lt 'datetime''${momentToStringDateLocal(data.dateTo)}''')` }
             else
-                param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', top: 20, filter: `(substringof('${data.OrderStockCode ? data.OrderStockCode : ''}',Code) and PartnerId eq ${data.Supplier ? data.Supplier.Id : ''} and BranchId eq ${currentBranch.current.Id}  and DocumentDate ge 'datetime''${momentToStringDateLocal(data.dateFrom)}''' and DocumentDate lt 'datetime''${momentToStringDateLocal(data.dateTo)}''')` }
+                param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', top: 20, filter: `(${data.OrderStockCode ? `substringof('${data.OrderStockCode}',Code) and ` : ''} ${data.Supplier ? `PartnerId eq ${data.Supplier.Id} and` : ''} BranchId eq ${currentBranch.current.Id}  and DocumentDate ge 'datetime''${momentToStringDateLocal(data.dateFrom)}''' and DocumentDate lt 'datetime''${momentToStringDateLocal(data.dateTo)}''')` }
         }
         else {
             if (data.Status)
-                param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', top: 20, filter: `(substringof('${data.OrderStockCode ? data.OrderStockCode : ''}',Code) and PartnerId eq ${data.Supplier ? data.Supplier.Id : ''} and BranchId eq ${currentBranch.current.Id} and Status eq ${data.Status} )` }
+                param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', top: 20, filter: `(${data.OrderStockCode ? `substringof('${data.OrderStockCode}',Code) and ` : ''} ${data.Supplier ? `PartnerId eq ${data.Supplier.Id} and` : ''} BranchId eq ${currentBranch.current.Id} and Status eq ${data.Status})` }
             else
-                param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', top: 20, filter: `(substringof('${data.OrderStockCode ? data.OrderStockCode : ''}',Code) and PartnerId eq ${data.Supplier ? data.Supplier.Id : ''} and BranchId eq ${currentBranch.current.Id}  )` }
+                param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', top: 20, filter: `(${data.OrderStockCode ? `substringof('${data.OrderStockCode}',Code) and ` : ''} ${data.Supplier ? `PartnerId eq ${data.Supplier.Id} and` : ''} BranchId eq ${currentBranch.current.Id}  )` }
         }
-        getOrderStock(currentBranch.current.Id,param)
+        getOrderStock(currentBranch.current.Id, param)
         console.log(param);
         console.log(data);
     }
