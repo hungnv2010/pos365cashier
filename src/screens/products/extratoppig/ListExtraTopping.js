@@ -162,7 +162,7 @@ export default (props) => {
                             renderItem={({ item, index }) => renderExtra(item, index)}
                             keyExtractor={(item, index) => index.toString()}
                         /> :
-                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', borderLeftWidth: 0.3 }}>
+                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                             <Image source={Images.logo_365_long_color} style={{ alignItems: 'center', justifyContent: 'center' }}></Image>
                         </View>
                     }
