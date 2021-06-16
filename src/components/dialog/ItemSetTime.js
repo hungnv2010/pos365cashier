@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Image, View, Text, TouchableOpacity, TextInput, StyleSheet, FlatList, Modal, TouchableWithoutFeedback } from 'react-native';
-import { currencyToString, dateToString, timeToString, momentToDate } from '../../common/Utils';
+import { currencyToString, dateToString, timeToString, momentToDate,dateUTCToMoment3, dateUTCToMoment } from '../../common/Utils';
 import I18n from "../../common/language/i18n";
 import { Checkbox, RadioButton } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -24,6 +24,7 @@ export default (props) => {
         setTimeFrom(props.timeFrom)
         setTimeTo(props.timeTo)
         setTimeValue(props.timeValue)
+        console.log("number",Number("-10000"));
     }, [])
     useEffect(() => {
 
@@ -46,16 +47,16 @@ export default (props) => {
         let minutes = selectedDate.getMinutes();
         currentDate.setHours(hours)
         currentDate.setMinutes(minutes)
-        console.log("onChangeTime Date ", momentToDate(currentDate));
+        console.log("onChangeTime Date ", dateUTCToMoment3(currentDate));
         setDateTmp(currentDate);
 
     };
     const onClickOk = () => {
         if (pos == 1) {
-            setTimeFrom(momentToDate(dateTmp))
+            setTimeFrom(dateUTCToMoment3(dateTmp))
             console.log("setTimeFrom", timeFrom);
         } else if (pos == 2) {
-            setTimeTo(momentToDate(dateTmp))
+            setTimeTo(dateUTCToMoment3(dateTmp))
             console.log("setTimeTo", timeTo);
         }
         setShowModal(false)
@@ -79,16 +80,16 @@ export default (props) => {
         return text
 
     }
-     const onClickDel = () =>{
-         setTimeFrom()
-         setTimeTo()
-     }
+    const onClickDel = () => {
+        setTimeFrom()
+        setTimeTo()
+    }
     return (
         <View style={{ marginHorizontal: 10, backgroundColor: '#fff', borderRadius: 10, marginVertical: 10, paddingHorizontal: 10, paddingVertical: 10 }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Text>{I18n.t('khung_gio')}</Text>
-                <TouchableOpacity onPress={()=>onClickDel()}>
-                <Image source={Images.icon_trash} style={{ width: 24, height: 24 }} />
+                <TouchableOpacity onPress={() => onClickDel()}>
+                    <Image source={Images.icon_trash} style={{ width: 24, height: 24 }} />
                 </TouchableOpacity>
             </View>
             <View style={{ flexDirection: 'row', justifyContent: 'flex-start', paddingVertical: 10 }}>
@@ -102,7 +103,7 @@ export default (props) => {
             <View style={{ flexDirection: 'row', justifyContent: 'flex-start' }}>
                 <View style={{ flex: 3 }}>
                     <TouchableOpacity style={{ backgroundColor: '#f2f2f2', paddingVertical: 10, borderRadius: 10 }} onPress={() => { setShowModal(true), setPos(1) }}>
-                        <Text style={ styles.textInput }>{timeFrom ? timeToString(timeFrom) : ' HH:mm'}</Text>
+                        <Text style={styles.textInput}>{timeFrom ? timeToString(dateUTCToMoment(timeFrom)) : ' HH:mm'}</Text>
                     </TouchableOpacity>
                 </View>
                 <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -110,7 +111,7 @@ export default (props) => {
                 </View>
                 <View style={{ flex: 3 }}>
                     <TouchableOpacity style={{ backgroundColor: '#f2f2f2', paddingVertical: 10, borderRadius: 10 }} onPress={() => { setShowModal(true), setPos(2) }}>
-                        <Text style={styles.textInput }>{timeTo ? timeToString(timeTo) : ' HH:mm'}</Text>
+                        <Text style={styles.textInput}>{timeTo ? timeToString(dateUTCToMoment(timeTo)) : ' HH:mm'}</Text>
                     </TouchableOpacity>
                 </View>
             </View>
@@ -132,7 +133,7 @@ export default (props) => {
                     <Text style={{ flex: 1 }}>(+ {I18n.t('hoac')} -)</Text>
                 </View>
                 <View style={{ borderRadius: 10, borderColor: '#36a3f7', flex: 1 }}>
-                    <TextInput style={{ backgroundColor: '#f2f2f2', borderRadius: 10, paddingVertical: 10, textAlign: 'right', paddingHorizontal: 5,color:'#36a3f7', fontWeight:'bold' }} value={timeValue ? currencyToString(timeValue) : 0+''} onChangeText={(text) => setTimeValue(onChangeTextInput(text))} />
+                    <TextInput style={{ backgroundColor: '#f2f2f2', borderRadius: 10, paddingVertical: 10, textAlign: 'right', paddingHorizontal: 5, color: '#36a3f7', fontWeight: 'bold' }} value={timeValue ? currencyToString(timeValue) : 0} onChangeText={(text) => {setTimeValue(onChangeTextInput(text))} } />
                 </View>
             </View>
             <Modal
@@ -185,7 +186,7 @@ export default (props) => {
     )
 }
 const styles = StyleSheet.create({
-    textInput:{
-        textAlign:'center', fontWeight:'bold',color:colors.colorLightBlue
+    textInput: {
+        textAlign: 'center', fontWeight: 'bold', color: colors.colorLightBlue
     }
 })

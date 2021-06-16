@@ -1082,11 +1082,11 @@ export default (props) => {
                                                     <Switch style={{ transform: [{ scaleX: 1 }, { scaleY: 1 }] }} value={product.IsPriceForBlock} onValueChange={() => setProduct({ ...product, IsPriceForBlock: !product.IsPriceForBlock })} trackColor={{ false: "silver", true: colors.colorchinh }}></Switch>
                                                 </View>
                                                 <Text style={{ marginLeft: 15 }}>{I18n.t("block_theo_phut")}</Text>
-                                                <TextInput style={{ color:  colors.colorLightBlue , marginHorizontal: 15, fontWeight: 'bold', padding: 10, }} keyboardType={'numbers-and-punctuation'}  value={product.BlockOfTimeToUseService ? currencyToString(product.BlockOfTimeToUseService) : null} onChangeText={(text) => { setProduct({ ...product, BlockOfTimeToUseService: onChangeTextInput(text) }) }}></TextInput>
+                                                <TextInput style={styles.styleInputBlock} keyboardType={'numbers-and-punctuation'} value={product.BlockOfTimeToUseService ? currencyToString(product.BlockOfTimeToUseService) : null} onChangeText={(text) => { setProduct({ ...product, BlockOfTimeToUseService: onChangeTextInput(text) }) }}></TextInput>
                                                 <Text style={{ marginLeft: 15 }}>{I18n.t('so_block_gio_dau_tien')}</Text>
-                                                <TextInput style={{ color:  colors.colorLightBlue , marginHorizontal: 15, fontWeight: 'bold', padding: 10, }} keyboardType={'numbers-and-punctuation'}  value={priceConfig && priceConfig.Block ? priceConfig.Block + '' : null} onChangeText={(text) => setPriceConfig({ ...priceConfig, Block: onChangeTextInput(text) })}></TextInput>
+                                                <TextInput style={styles.styleInputBlock} keyboardType={'numbers-and-punctuation'} value={priceConfig && priceConfig.Block ? priceConfig.Block + '' : null} onChangeText={(text) => setPriceConfig({ ...priceConfig, Block: onChangeTextInput(text) })}></TextInput>
                                                 <Text style={{ marginLeft: 15 }}>{I18n.t('gia')} {priceConfig && priceConfig.Block ? priceConfig.Block : 0} {I18n.t('block_dau_tien')}</Text>
-                                                <TextInput style={{ color:  colors.colorLightBlue , marginHorizontal: 15, fontWeight: 'bold', padding: 10, }} keyboardType={'numbers-and-punctuation'}  value={priceConfig && priceConfig.Value ? currencyToString(priceConfig.Value) : null} onChangeText={(text) => { setPriceConfig({ ...priceConfig, Value: onChangeTextInput(text) }) }}></TextInput>
+                                                <TextInput style={styles.styleInputBlock} keyboardType={'numbers-and-punctuation'} value={priceConfig && priceConfig.Value ? currencyToString(priceConfig.Value) : null} onChangeText={(text) => { setPriceConfig({ ...priceConfig, Value: onChangeTextInput(text) }) }}></TextInput>
                                             </View> : null}
                                     </View>
                                     : product ? product.ProductType == 3 ?
@@ -1285,5 +1285,6 @@ const styles = StyleSheet.create({
     },
     styleBtn: {
         backgroundColor: '#f2f2f2', paddingHorizontal: Metrics.screenWidth * 0.2, borderRadius: 10, paddingVertical: 15, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 5, borderWidth: 0.5, borderColor: '#bbbbbb'
-    }
+    },
+    styleInputBlock: { color: colors.colorLightBlue, marginHorizontal: 15, fontWeight: 'bold', padding: 15, borderWidth: 1, borderColor: 'silver', borderRadius: 10, marginVertical: 5, backgroundColor: "#f2f2f2" }
 })
