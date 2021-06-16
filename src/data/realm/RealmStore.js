@@ -54,6 +54,7 @@ class RealmStore extends RealmBase {
 
     deleteAllForRetail = async (islogin = true) => {
         let newSchemaName = { ...SchemaName }
+        delete newSchemaName.SERVER_EVENT
         delete newSchemaName.ORDERS_OFFLINE
         delete newSchemaName.QR_CODE
         await this.deleteSchema(newSchemaName)

@@ -49,7 +49,7 @@ class DataManager {
     checkEndDate(date) {
         console.log("checkEndDate date",date);
         if(date== undefined || date==''){
-            return false
+            return true
         }
         let endDate = new Date(date)
         let currentDate = new Date();
@@ -175,6 +175,7 @@ class DataManager {
                         productItem = JSON.parse(JSON.stringify(productItem))[0];
                         let Price = (newOrder.IsLargeUnit ? productItem.PriceLargeUnit : productItem.UnitPrice) + newOrder.TotalTopping
                         productItem = { ...productItem, ...newOrder, Price: Price }
+                        productItem.Pos = productItem.Position;
                         productItem.Position = -1; // fix Position product not Position room;
                         listOrders.push({ ...productItem })
                         for (const item of listRoom) {
@@ -437,7 +438,7 @@ class DataManager {
     syncAllDatasForRetail = async () => {
         await this.syncProduct(),
             // await this.syncTopping(),
-            await this.syncServerEvent(),
+            // await this.syncServerEvent(),
             // await this.syncRooms(),
             await this.syncPartner(),
             await this.syncCategories()
