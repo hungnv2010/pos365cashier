@@ -21,6 +21,9 @@ export default (props) => {
     const [itemRoomGroupAdd, setRoomGroupAdd] = useState("");
     const dispatch = useDispatch()
     const groupsBackup = useRef([]);
+    const { deviceType, allPer } = useSelector(state => {
+        return state.Common
+    });
 
     useEffect(() => {
         console.log("Room props.route.params ", props.route.params);
@@ -29,21 +32,27 @@ export default (props) => {
     }, [])
 
     const onClickOk = () => {
-        let params = { RoomGroup: { Id: props.route.params.Id, Type: null, Discount: 0, DiscountRatio: 0, Name: itemRoomGroupAdd } }
-        new HTTPService().setPath(ApiPath.ROOM_GROUPS).POST(params).then(async (res) => {
-            console.log("onClickOk ADD_GROUP res ", res);
-            if (res) {
-                setRoomGroupAdd(res.Name)
-                setRoomGroup(res)
-                groupsBackup.current = { type: "Edit", res: res }
-            }
-            dialogManager.hiddenLoading();
-            setShowModal(false)
-        }).catch((e) => {
-            dialogManager.hiddenLoading();
-            setShowModal(false)
-            console.log("onClickOk err ", e);
-        })
+        if (allPer.Room_Update || allPer.IsAdmin) {
+            let params = { RoomGroup: { Id: props.route.params.Id, Type: null, Discount: 0, DiscountRatio: 0, Name: itemRoomGroupAdd } }
+            new HTTPService().setPath(ApiPath.ROOM_GROUPS).POST(params).then(async (res) => {
+                console.log("onClickOk ADD_GROUP res ", res);
+                if (res) {
+                    setRoomGroupAdd(res.Name)
+                    setRoomGroup(res)
+                    groupsBackup.current = { type: "Edit", res: res }
+                }
+                dialogManager.hiddenLoading();
+                setShowModal(false)
+            }).catch((e) => {
+                dialogManager.hiddenLoading();
+                setShowModal(false)
+                console.log("onClickOk err ", e);
+            })
+        } else {
+            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
+        }
     }
 
     const onCallBack = async () => {
@@ -54,22 +63,28 @@ export default (props) => {
     }
 
     const onClickDelete = () => {
-        dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_xoa_nhom_phong_ban'), I18n.t("thong_bao"), res => {
-            if (res == 1) {
-                new HTTPService().setPath(ApiPath.ROOM_GROUPS + "/" + roomGroup.Id).DELETE({}).then(async (res) => {
-                    console.log("onClickDelete res ", res);
-                    if (res) {
-                        // groupsBackup.current = { type: "Delete", data: res }
-                        props.route.params._onSelect({ type: "Delete", res: roomGroup })
-                        props.navigation.pop()
-                    }
-                    dialogManager.hiddenLoading();
-                }).catch((e) => {
-                    dialogManager.hiddenLoading();
-                    console.log("onClickDelete err ", e);
-                })
-            }
-        })
+        if (allPer.Room_Delete || allPer.IsAdmin) {
+            dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_xoa_nhom_phong_ban'), I18n.t("thong_bao"), res => {
+                if (res == 1) {
+                    new HTTPService().setPath(ApiPath.ROOM_GROUPS + "/" + roomGroup.Id).DELETE({}).then(async (res) => {
+                        console.log("onClickDelete res ", res);
+                        if (res) {
+                            // groupsBackup.current = { type: "Delete", data: res }
+                            props.route.params._onSelect({ type: "Delete", res: roomGroup })
+                            props.navigation.pop()
+                        }
+                        dialogManager.hiddenLoading();
+                    }).catch((e) => {
+                        dialogManager.hiddenLoading();
+                        console.log("onClickDelete err ", e);
+                    })
+                }
+            })
+        } else {
+            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
+        }
     }
 
     const onClickEdit = () => {
@@ -119,10 +134,14 @@ export default (props) => {
                     <Image style={{ width: 20, height: 20, marginRight: 7 }} source={Images.icon_edit} />
                     <Text>{I18n.t('chinh_sua')}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => onClickDelete()} style={{ justifyContent: "center", flexDirection: "row", borderRadius: 20, padding: 12, width: (Metrics.screenWidth / 2) - 25, backgroundColor: "#f21e3c1a" }}>
-                    <Image style={{ width: 20, height: 20, marginRight: 7 }} source={Images.trash} />
-                    <Text>{I18n.t('xoa')}</Text>
-                </TouchableOpacity>
+                {
+                    allPer.Room_Delete || allPer.IsAdmin ?
+                        <TouchableOpacity onPress={() => onClickDelete()} style={{ justifyContent: "center", flexDirection: "row", borderRadius: 20, padding: 12, width: (Metrics.screenWidth / 2) - 25, backgroundColor: "#f21e3c1a" }}>
+                            <Image style={{ width: 20, height: 20, marginRight: 7 }} source={Images.trash} />
+                            <Text>{I18n.t('xoa')}</Text>
+                        </TouchableOpacity>
+                        : null
+                }
             </View>
 
             <ScrollView style={{ margin: 10 }}>

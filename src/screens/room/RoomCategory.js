@@ -9,7 +9,7 @@ import { Metrics } from '../../theme';
 import { HTTPService } from '../../data/services/HttpService';
 import { ApiPath } from '../../data/services/ApiPath';
 import dataManager from '../../data/DataManager';
-import { useDispatch } from 'react-redux';
+import {useSelector, useDispatch } from 'react-redux';
 import dialogManager from '../../components/dialog/DialogManager';
 import { ScreenList } from '../../common/ScreenList';
 import realmStore, { SchemaName } from '../../data/realm/RealmStore';
@@ -23,6 +23,9 @@ export default (props) => {
     const [itemRoomGroupAdd, setRoomGroupAdd] = useState("");
     const dispatch = useDispatch()
     const groupsBackup = useRef([]);
+    const { deviceType, allPer } = useSelector(state => {
+        return state.Common
+    });
 
     useEffect(() => {
         console.log("Room props.route.params ", JSON.stringify(props.route.params));
@@ -164,16 +167,17 @@ export default (props) => {
                     })
                 }
             </ScrollView>
-
-            <FAB
-                style={styles.fab}
-                big
-                icon="plus"
-                color="#fff"
-                onPress={() => {
-                    setShowModal(true)
-                }}
-            />
+            { allPer.Room_Create || allPer.IsAdmin ?
+                <FAB
+                    style={styles.fab}
+                    big
+                    icon="plus"
+                    color="#fff"
+                    onPress={() => {
+                        setShowModal(true)
+                    }}
+                /> : null
+            }
 
             <Modal
                 animationType="fade"
