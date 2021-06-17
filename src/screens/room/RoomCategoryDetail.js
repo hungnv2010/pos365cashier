@@ -9,7 +9,7 @@ import { Metrics, Images } from '../../theme';
 import { HTTPService } from '../../data/services/HttpService';
 import { ApiPath } from '../../data/services/ApiPath';
 import dataManager from '../../data/DataManager';
-import { useDispatch } from 'react-redux';
+import {useSelector, useDispatch } from 'react-redux';
 import dialogManager from '../../components/dialog/DialogManager';
 
 export default (props) => {
@@ -49,6 +49,7 @@ export default (props) => {
                 console.log("onClickOk err ", e);
             })
         } else {
+            setShowModal(false)
             dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
                 dialogManager.destroy();
             }, null, null, I18n.t('dong'))
