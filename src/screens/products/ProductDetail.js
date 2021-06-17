@@ -839,7 +839,7 @@ export default (props) => {
 
     }, []))
     const _keyboardDidShow = () => {
-        setMargin(Metrics.screenWidth / 2)
+        setMargin(Metrics.screenWidth / 1.5)
     }
 
     const _keyboardDidHide = () => {

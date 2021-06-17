@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Image, View, Text, TouchableOpacity, TextInput, StyleSheet, FlatList, Modal, TouchableWithoutFeedback } from 'react-native';
+import React, { useEffect, useState, useRef,useCallback } from 'react';
+import { Image, View, Text, TouchableOpacity, TextInput, StyleSheet, FlatList, Modal, TouchableWithoutFeedback,Keyboard } from 'react-native';
 import { currencyToString, dateToString, timeToString, momentToDate,dateUTCToMoment3, dateUTCToMoment } from '../../common/Utils';
 import I18n from "../../common/language/i18n";
 import { Checkbox, RadioButton } from 'react-native-paper';
@@ -8,6 +8,7 @@ import { Colors, Images, Metrics } from '../../theme';
 import { set } from 'react-native-reanimated';
 import DatePicker from 'react-native-date-picker';
 import colors from '../../theme/Colors';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default (props) => {
 
@@ -19,6 +20,7 @@ export default (props) => {
     const [date, setDate] = useState(new Date());
     const [dateTmp, setDateTmp] = useState(new Date())
     const [pos, setPos] = useState(0)
+    const [marginModal, setMargin] = useState(0)
     useEffect(() => {
         setType(props.type)
         setTimeFrom(props.timeFrom)
@@ -84,6 +86,25 @@ export default (props) => {
         setTimeFrom()
         setTimeTo()
     }
+    useFocusEffect(useCallback(() => {
+
+        var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
+        var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        }
+
+
+    }, []))
+    const _keyboardDidShow = () => {
+        setMargin(Metrics.screenWidth / 1)
+    }
+
+    const _keyboardDidHide = () => {
+        setMargin(0)
+    }
     return (
         <View style={{ marginHorizontal: 10, backgroundColor: '#fff', borderRadius: 10, marginVertical: 10, paddingHorizontal: 10, paddingVertical: 10 }}>
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -133,7 +154,7 @@ export default (props) => {
                     <Text style={{ flex: 1 }}>(+ {I18n.t('hoac')} -)</Text>
                 </View>
                 <View style={{ borderRadius: 10, borderColor: '#36a3f7', flex: 1 }}>
-                    <TextInput style={{ backgroundColor: '#f2f2f2', borderRadius: 10, paddingVertical: 10, textAlign: 'right', paddingHorizontal: 5, color: '#36a3f7', fontWeight: 'bold' }} value={timeValue ? currencyToString(timeValue) : 0} onChangeText={(text) => {setTimeValue(onChangeTextInput(text))} } />
+                    <TextInput style={{ backgroundColor: '#f2f2f2', borderRadius: 10, paddingVertical: 10, textAlign: 'right', paddingHorizontal: 5, color: '#36a3f7', fontWeight: 'bold' }} keyboardType={'numbers-and-punctuation'} value={timeValue ? currencyToString(timeValue) : 0} onChangeText={(text) => {setTimeValue(onChangeTextInput(text))} } />
                 </View>
             </View>
             <Modal

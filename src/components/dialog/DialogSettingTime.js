@@ -1,12 +1,13 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Image, View, Text, TouchableOpacity, TextInput, StyleSheet, FlatList } from 'react-native';
+import React, { useEffect, useState, useRef,useCallback } from 'react';
+import { Image, View, Text, TouchableOpacity, TextInput, StyleSheet, FlatList,Keyboard } from 'react-native';
 import { currencyToString, dateToString } from '../../common/Utils';
 import I18n from "../../common/language/i18n";
 import { Checkbox, RadioButton } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Colors, Images } from '../../theme';
+import { Colors, Images,Metrics } from '../../theme';
 import { set } from 'react-native-reanimated';
 import ItemSetTime from '../../components/dialog/ItemSetTime'
+import { useFocusEffect } from '@react-navigation/native';
 
 export default (props) => {
     const [type1, setType1] = useState(props.type1 ? props.type1 : '')
@@ -14,6 +15,7 @@ export default (props) => {
     const [priceConfig, setPriceConfig] = useState(props.priceConfig ? props.priceConfig : '')
     const [isPercent1, setIsPercent1] = useState(false)
     const [isPercent2, setIsPercent2] = useState(false)
+    const [marginModal, setMargin] = useState(0)
     useEffect(() => {
         setType1(props.type1)
         setType2(props.type2)
@@ -33,6 +35,24 @@ export default (props) => {
     },[priceConfig])
     const onClickOk = ()=>{
         props.putData(priceConfig)
+    }
+    useFocusEffect(useCallback(() => {
+
+        var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
+        var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        }
+
+    }, []))
+    const _keyboardDidShow = () => {
+        setMargin(Metrics.screenWidth / 2)
+    }
+
+    const _keyboardDidHide = () => {
+        setMargin(0)
     }
     return (
         <View style={{ backgroundColor: 'white', borderRadius: 5 }}>
