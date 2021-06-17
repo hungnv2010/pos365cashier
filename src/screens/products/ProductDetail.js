@@ -839,7 +839,7 @@ export default (props) => {
 
     }, []))
     const _keyboardDidShow = () => {
-        setMargin(Metrics.screenWidth / 1.5)
+        setMargin(Metrics.screenWidth / 1.3)
     }
 
     const _keyboardDidHide = () => {
@@ -923,15 +923,15 @@ export default (props) => {
                     <Text style={[styles.titleButtonOff, { padding: 15 }]}>{I18n.t('chon_loai_hang_hoa')}</Text>
                     <View>
                         <View style={{ flexDirection: 'row', padding: 10 }}>
-                            <TouchableOpacity style={[styles.styleButton, { marginLeft: 10, borderColor: defaultType == 1 ? colors.colorLightBlue : null, borderWidth: 1, backgroundColor: defaultType == 1 ? 'white' : '#f2f2f2' }]} onPress={() => { setDefaultType(1), console.log("click", defaultType); }}>
+                            <TouchableOpacity style={[styles.styleButton, { marginLeft: 10, borderColor: defaultType == 1 ? colors.colorLightBlue : "#f2f2f2", borderWidth: 1, backgroundColor: defaultType == 1 ? 'white' : '#f2f2f2' }]} onPress={() => { setDefaultType(1), console.log("click", defaultType); }}>
                                 <Text style={[styles.titleButtonOff, { color: defaultType == 1 ? colors.colorLightBlue : null }]}>{I18n.t('hang_hoa')}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={[styles.styleButton, { borderColor: defaultType == 2 ? colors.colorLightBlue : null, borderWidth: 1, backgroundColor: defaultType == 2 ? 'white' : '#f2f2f2' }]} onPress={() => { setDefaultType(2), console.log("click", defaultType); }}>
+                            <TouchableOpacity style={[styles.styleButton, { borderColor: defaultType == 2 ? colors.colorLightBlue :"#f2f2f2", borderWidth: 1, backgroundColor: defaultType == 2 ? 'white' : '#f2f2f2' }]} onPress={() => { setDefaultType(2), console.log("click", defaultType); }}>
                                 <Text style={[styles.titleButtonOff, { color: defaultType == 2 ? colors.colorLightBlue : null }]}>{I18n.t('dich_vu')}</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={{ flexDirection: 'row', padding: 10 }}>
-                            <TouchableOpacity style={{ flex: 1, marginRight: 10, marginLeft: 10, justifyContent: 'center', borderWidth: 1, alignItems: 'center', borderRadius: 16, padding: 15, backgroundColor: '#f2f2f2', borderColor: defaultType == 3 ? colors.colorLightBlue : null, backgroundColor: defaultType == 3 ? 'white' : '#f2f2f2' }}
+                            <TouchableOpacity style={{ flex: 1, marginRight: 10, marginLeft: 10, justifyContent: 'center', borderWidth: 1, alignItems: 'center', borderRadius: 16, padding: 15, backgroundColor: '#f2f2f2', borderColor: defaultType == 3 ? colors.colorLightBlue : "#f2f2f2", backgroundColor: defaultType == 3 ? 'white' : '#f2f2f2' }}
                                 onPress={() => { setDefaultType(3) }}>
                                 <Text style={[styles.titleButtonOff, { color: defaultType == 3 ? colors.colorLightBlue : null }]}>Combo</Text>
                             </TouchableOpacity>

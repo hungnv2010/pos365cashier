@@ -141,7 +141,7 @@ export default (props) => {
                 <Text style={{ flex: 2 }}>{I18n.t('kieu_thay_doi_gia')}</Text>
                 <View style={{ flexDirection: 'row', borderRadius: 10, borderColor: '#36a3f7', flex: 1 }}>
                     <TouchableOpacity style={{ flex: 1, borderWidth: 1, borderColor: '#36a3f7', paddingVertical: 10, alignItems: 'center', borderTopLeftRadius: 10, borderBottomLeftRadius: 10, backgroundColor: type == 'vnd' ? '#36a3f7' : null }} onPress={() => setType('vnd')}>
-                        <Text style={{ color: type == 'vnd' ? '#fff' : '#36a3f7' }}>$</Text>
+                        <Text style={{ color: type == 'vnd' ? '#fff' : '#36a3f7' }}>VND</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={{ flex: 1, borderWidth: 1, borderColor: '#36a3f7', paddingVertical: 10, alignItems: 'center', borderTopRightRadius: 10, borderBottomRightRadius: 10, backgroundColor: type == 'percent' ? '#36a3f7' : null }} onPress={() => setType('percent')}>
                         <Text style={{ color: type == 'percent' ? '#fff' : '#36a3f7' }}>%</Text>

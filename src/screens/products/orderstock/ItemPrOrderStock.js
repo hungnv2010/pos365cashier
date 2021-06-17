@@ -47,7 +47,7 @@ const ItemPrOrderStock = ({item, index,onChangeText, onClickDelItem}) =>{
             <View style={{ flexDirection: 'row', paddingVertical: 10 }}>
                 <View style={{ flex: 1 }}>
                     <Text>{I18n.t('gia_nhap')}</Text>
-                    <TextInput style={styles.styleTextInput} value={price > 0 ? currencyToString(price) : 0 + ''} onChangeText={(text)=>{setPrice(onChangeTextInput(text))}}></TextInput>
+                    <TextInput style={styles.styleTextInput} keyboardType={'numbers-and-punctuation'} value={price > 0 ? currencyToString(price) : 0 + ''} onChangeText={(text)=>{setPrice(onChangeTextInput(text))}}></TextInput>
                 </View>
                 <View style={{ flex: 1, marginLeft: 10 }}>
                     <Text>
