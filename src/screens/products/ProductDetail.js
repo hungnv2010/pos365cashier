@@ -558,7 +558,7 @@ export default (props) => {
     }
 
     const onClickSaveAndCopy = () => {
-        if (allPer.Product_Create || allPer.Product_Update || allPer.IsAdmin) {
+        if (allPer.Product_Create && product.Id == undefined || allPer.Product_Update || allPer.IsAdmin) {
             isCoppy.current = true
             onSave()
         } else {
