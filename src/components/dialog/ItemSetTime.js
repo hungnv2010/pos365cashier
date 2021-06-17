@@ -85,6 +85,7 @@ export default (props) => {
     const onClickDel = () => {
         setTimeFrom()
         setTimeTo()
+        setTimeValue(0)
     }
     useFocusEffect(useCallback(() => {
 

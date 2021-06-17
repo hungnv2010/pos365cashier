@@ -110,6 +110,7 @@ export default (props) => {
       }
 
       let permission = privileges.filter(itm => itm.id == 'Order')
+      console.log("perrrrrrr",permission);
       if (permission.length > 0){
        setPermission(permission[0].expanded)
        setItemPer(permission[0])
@@ -232,7 +233,7 @@ export default (props) => {
                 outPutTextSearch={onClickSearch}
               />
               {
-                permission || allPer.IsAdmin ?
+                allPer.Order_Create || allPer.IsAdmin ?
                   <Order {...props} textSearch={textSearch} itemPer={itemPer} />
                   :
                   <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
