@@ -52,7 +52,7 @@ export default (props) => {
     const [promotions, setPromotions] = useState([])
     const [listProducts, setListProducts] = useState([])
     const [totalQuantity, setTotalQuantity] = useState(0)
-    const { already, syncRetail, allPer } = useSelector(state => {
+    const { already, syncRetail, allPer, deviceType } = useSelector(state => {
         return state.Common
     });
 
@@ -212,12 +212,12 @@ export default (props) => {
 
 
     const removeItem = (item, index) => {
-        if(allPer.IsAdmin || allPer.Return_Create){
-        console.log('removeItem ', item.Name, item.index);
-        listProducts.splice(index, 1)
-        jsonContent.OrderDetails = [...listProducts]
-        updateServerEvent({ ...jsonContent })
-        }else {
+        if (allPer.IsAdmin || allPer.Return_Create) {
+            console.log('removeItem ', item.Name, item.index);
+            listProducts.splice(index, 1)
+            jsonContent.OrderDetails = [...listProducts]
+            updateServerEvent({ ...jsonContent })
+        } else {
             dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
                 dialogManager.destroy();
             }, null, null, I18n.t('dong'))
@@ -864,181 +864,188 @@ export default (props) => {
                 onCLickNoteBook={onCLickNoteBook}
                 onClickSync={onClickSync}
                 outputTextSearch={outputTextSearch} />
-            <View style={{ flexDirection: "row", justifyContent: "space-between", paddingHorizontal: 10, paddingVertical: 5 }}>
-                <Surface style={{ marginRight: 5, elevation: 4, flex: 1, borderRadius: 5 }}>
-                    <TouchableOpacity
-                        style={{ flexDirection: 'column', alignItems: "center", backgroundColor: 'white', paddingTop: 5, borderRadius: 5 }}
-                        onPress={onClickListedPrice}>
-                        <Entypo style={{ paddingHorizontal: 5 }} name="price-ribbon" size={25} />
-                        <Text ellipsizeMode="tail" numberOfLines={1} style={{ padding: 5 }}>{currentPriceBook.Id == 0 ? I18n.t(currentPriceBook.Name) : currentPriceBook.Name}</Text>
-                    </TouchableOpacity>
-                </Surface>
-                <Surface style={{ marginLeft: 5, elevation: 4, flex: 1, borderRadius: 5 }}>
-                    <TouchableOpacity
-                        style={{ flexDirection: 'column', alignItems: "center", backgroundColor: 'white', paddingTop: 5, borderRadius: 5 }}
-                        onPress={onClickRetailCustomer}>
-                        <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} />
-                        <Text ellipsizeMode="tail" numberOfLines={1} style={{ textAlign: "right", padding: 5 }}>{currentCustomer.Id == 0 ? I18n.t(currentCustomer.Name) : currentCustomer.Name}</Text>
+            {allPer.Order_Create || allPer.IsAdmin ? <>
+                <View style={{ flexDirection: "row", justifyContent: "space-between", paddingHorizontal: 10, paddingVertical: 5 }}>
+                    <Surface style={{ marginRight: 5, elevation: 4, flex: 1, borderRadius: 5 }}>
+                        <TouchableOpacity
+                            style={{ flexDirection: 'column', alignItems: "center", backgroundColor: 'white', paddingTop: 5, borderRadius: 5 }}
+                            onPress={onClickListedPrice}>
+                            <Entypo style={{ paddingHorizontal: 5 }} name="price-ribbon" size={25} />
+                            <Text ellipsizeMode="tail" numberOfLines={1} style={{ padding: 5 }}>{currentPriceBook.Id == 0 ? I18n.t(currentPriceBook.Name) : currentPriceBook.Name}</Text>
+                        </TouchableOpacity>
+                    </Surface>
+                    <Surface style={{ marginLeft: 5, elevation: 4, flex: 1, borderRadius: 5 }}>
+                        <TouchableOpacity
+                            style={{ flexDirection: 'column', alignItems: "center", backgroundColor: 'white', paddingTop: 5, borderRadius: 5 }}
+                            onPress={onClickRetailCustomer}>
+                            <Icon style={{ paddingHorizontal: 5 }} name="account-plus-outline" size={25} />
+                            <Text ellipsizeMode="tail" numberOfLines={1} style={{ textAlign: "right", padding: 5 }}>{currentCustomer.Id == 0 ? I18n.t(currentCustomer.Name) : currentCustomer.Name}</Text>
 
-                    </TouchableOpacity>
-                </Surface>
-            </View>
-            <View style={{ flex: 1, paddingVertical: 5 }}>
-                {listProducts != undefined && listProducts.length > 0 ?
-                    <FlatList
-                        data={listProducts}
-                        extraData={listProducts}
-                        renderItem={({ item, index }) => renderProduct(item, index)}
-                        keyExtractor={(item, index) => '' + index}
-                    />
-                    :
-                    <View style={{ alignItems: "center", flex: 1 }}>
-                        <ImageBackground resizeMode="contain" source={Images.logo_365_long_color} style={{ flex: 1, opacity: 0.7, margin: 20, width: Metrics.screenWidth / 2 }}>
-                        </ImageBackground>
-                    </View>
-                }
-            </View>
-            <View>
-
-                <TouchableOpacity
-                    onPress={() => { setExpand(!expand) }}
-                    style={{ borderTopWidth: .5, borderTopColor: "red", paddingVertical: 3, backgroundColor: "#FFE9CC", marginLeft: 0 }}>
-                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginLeft: 10 }}>
-                        <View style={{ flexDirection: "row", alignItems: "center" }}>
-                            <Text style={{ fontWeight: "bold", marginRight: 10 }}>{I18n.t('tong_thanh_tien')}</Text>
-                            {totalQuantity > 0 ?
-                                <View style={{ paddingVertical: 3, paddingHorizontal: 7, borderWidth: 1, borderColor: "#bbbbbb", borderRadius: 9, backgroundColor: "white", }}>
-                                    <Text style={{ fontWeight: "bold", }}>{totalQuantity}</Text>
-                                </View>
-                                : null}
-                        </View>
-                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                            <Text style={{ fontWeight: "bold", fontSize: 16, color: Colors.colorchinh }}>{currencyToString(jsonContent.Total + jsonContent.Discount - jsonContent.VAT)} đ</Text>
-                            {expand ?
-                                <Icon style={{}} name="chevron-up" size={30} color="black" />
-                                :
-                                <Icon style={{}} name="chevron-down" size={30} color="black" />
-                            }
-                        </View>
-                    </View>
-                    {expand ?
-                        <View style={{ marginLeft: 10 }}>
-                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
-                                <Text>{I18n.t('tong_chiet_khau')}</Text>
-                                <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>- {currencyToString(jsonContent.Discount)} đ</Text>
-                            </View>
-                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
-                                <Text>VAT ({jsonContent.VATRates}%)</Text>
-                                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                                    <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(jsonContent.VAT ? jsonContent.VAT : 0)} đ</Text>
-                                </View>
-                            </View>
-                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
-                                <Text style={{ fontWeight: "bold" }}>{I18n.t('khach_phai_tra')}</Text>
-                                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
-                                    <Text style={{ fontWeight: "bold", fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(jsonContent.Total)} đ</Text>
-                                </View>
-                            </View>
-                        </View>
-                        :
-                        null
-                    }
-                </TouchableOpacity>
-            </View>
-            <View style={{ height: 40, flexDirection: "row", backgroundColor: colors.colorchinh, alignItems: "center" }}>
-                <TouchableOpacity
-                    onPress={showMenu}>
-                    <Menu
-                        style={{ width: 220 }}
-                        ref={setMenuRef}
-                        button={<Icon style={{ paddingHorizontal: 5 }} name="menu" size={30} color="white" />}
-                    >
-                        <View style={{
-                            backgroundColor: "#fff", borderRadius: 4, marginHorizontal: 5
-                        }}>
-                            <TouchableOpacity onPress={() => onClickPrint()} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
-                                <Icon style={{ paddingHorizontal: 10 }} name="printer" size={26} color={Colors.colorchinh} />
-                                <Text style={{ padding: 15, fontSize: 16, flex: 1 }}>{I18n.t('in_tam_tinh')}</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={() => onClickOptionQuickPayment()} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
-                                <Icon style={{ paddingHorizontal: 10 }} name={isQuickPayment ? "checkbox-marked" : "close-box-outline"} size={26} color={isQuickPayment ? Colors.colorLightBlue : "grey"} />
-                                <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('thanh_toan_nhanh')}</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </Menu>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => {
-                    props.navigation.navigate(ScreenList.CommodityWaiting, { _onSelect: onCallBack })
-                }} style={{ flex: .5, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%", flexDirection: 'row' }}>
-                    <Icon name="file-document-edit-outline" size={30} color="white" />
-                    {numberNewOrder > 0 ?
-                        <View style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 3.5, borderRadius: 40, position: "absolute", right: 3, top: -5 }}>
-                            <Text style={{ fontWeight: "bold", padding: 4, color: 'white', fontSize: 14 }}>{numberNewOrder}</Text>
-                        </View> : null}
-                </TouchableOpacity>
-                <TouchableOpacity onPress={onClickNewOrder} style={{ flex: .8, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
-                    <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('don_hang_moi')}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={onClickPayment} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
-                    <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase", textAlign: "center" }}>{isQuickPayment ? I18n.t('thanh_toan_nhanh') : I18n.t('thanh_toan')}</Text>
-                </TouchableOpacity>
-            </View>
-            <Modal
-                animationType="fade"
-                transparent={true}
-                visible={showModal}
-                supportedOrientations={['portrait', 'landscape']}
-                onRequestClose={() => {
-                }}>
-                <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
-                    <TouchableWithoutFeedback
-                        onPress={() => { setShowModal(false) }}
-                        style={{
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0
-                        }}>
-                        <View style={[{
-                            position: 'absolute',
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0
-                        }, { backgroundColor: 'rgba(0,0,0,0.5)' }]}></View>
-
-                    </TouchableWithoutFeedback>
-                    <View style={{ justifyContent: 'center', alignItems: 'center', }}>
-                        <View style={{
-                            padding: 0,
-                            backgroundColor: "#fff", borderRadius: 4, marginHorizontal: 20,
-                            width: Metrics.screenWidth * 0.8,
-                            // marginBottom: Platform.OS == 'ios' ? Metrics.screenHeight / 2.5 : 0
-                            marginBottom: Platform.OS == 'ios' ? marginModal : 0
-                        }}>
-                            <DialogProductDetail
-                                fromRetail={true}
-                                priceBookId={jsonContent.PriceBookId ? jsonContent.PriceBookId : null}
-                                item={itemOrder}
-                                onClickSubmit={data => { applyDialogDetail(data) }}
-                                setShowModal={() => {
-                                    setShowModal(false)
-                                }}
-                            />
-                        </View>
-                    </View>
+                        </TouchableOpacity>
+                    </Surface>
                 </View>
-            </Modal>
-            <Snackbar
-                duration={1500}
-                visible={showToast}
-                onDismiss={() =>
-                    setShowToast(false)
-                }
-            >
-                {toastDescription}
-            </Snackbar>
+                <View style={{ flex: 1, paddingVertical: 5 }}>
+                    {listProducts != undefined && listProducts.length > 0 ?
+                        <FlatList
+                            data={listProducts}
+                            extraData={listProducts}
+                            renderItem={({ item, index }) => renderProduct(item, index)}
+                            keyExtractor={(item, index) => '' + index}
+                        />
+                        :
+                        <View style={{ alignItems: "center", flex: 1 }}>
+                            <ImageBackground resizeMode="contain" source={Images.logo_365_long_color} style={{ flex: 1, opacity: 0.7, margin: 20, width: Metrics.screenWidth / 2 }}>
+                            </ImageBackground>
+                        </View>
+                    }
+                </View>
+                <View>
+
+                    <TouchableOpacity
+                        onPress={() => { setExpand(!expand) }}
+                        style={{ borderTopWidth: .5, borderTopColor: "red", paddingVertical: 3, backgroundColor: "#FFE9CC", marginLeft: 0 }}>
+                        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginLeft: 10 }}>
+                            <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                <Text style={{ fontWeight: "bold", marginRight: 10 }}>{I18n.t('tong_thanh_tien')}</Text>
+                                {totalQuantity > 0 ?
+                                    <View style={{ paddingVertical: 3, paddingHorizontal: 7, borderWidth: 1, borderColor: "#bbbbbb", borderRadius: 9, backgroundColor: "white", }}>
+                                        <Text style={{ fontWeight: "bold", }}>{totalQuantity}</Text>
+                                    </View>
+                                    : null}
+                            </View>
+                            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
+                                <Text style={{ fontWeight: "bold", fontSize: 16, color: Colors.colorchinh }}>{currencyToString(jsonContent.Total + jsonContent.Discount - jsonContent.VAT)} đ</Text>
+                                {expand ?
+                                    <Icon style={{}} name="chevron-up" size={30} color="black" />
+                                    :
+                                    <Icon style={{}} name="chevron-down" size={30} color="black" />
+                                }
+                            </View>
+                        </View>
+                        {expand ?
+                            <View style={{ marginLeft: 10 }}>
+                                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+                                    <Text>{I18n.t('tong_chiet_khau')}</Text>
+                                    <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>- {currencyToString(jsonContent.Discount)} đ</Text>
+                                </View>
+                                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+                                    <Text>VAT ({jsonContent.VATRates}%)</Text>
+                                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
+                                        <Text style={{ fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(jsonContent.VAT ? jsonContent.VAT : 0)} đ</Text>
+                                    </View>
+                                </View>
+                                <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", }}>
+                                    <Text style={{ fontWeight: "bold" }}>{I18n.t('khach_phai_tra')}</Text>
+                                    <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-around" }}>
+                                        <Text style={{ fontWeight: "bold", fontSize: 16, color: "#0072bc", marginRight: 30 }}>{currencyToString(jsonContent.Total)} đ</Text>
+                                    </View>
+                                </View>
+                            </View>
+                            :
+                            null
+                        }
+                    </TouchableOpacity>
+                </View>
+                <View style={{ height: 40, flexDirection: "row", backgroundColor: colors.colorchinh, alignItems: "center" }}>
+                    <TouchableOpacity
+                        onPress={showMenu}>
+                        <Menu
+                            style={{ width: 220 }}
+                            ref={setMenuRef}
+                            button={<Icon style={{ paddingHorizontal: 5 }} name="menu" size={30} color="white" />}
+                        >
+                            <View style={{
+                                backgroundColor: "#fff", borderRadius: 4, marginHorizontal: 5
+                            }}>
+                                <TouchableOpacity onPress={() => onClickPrint()} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
+                                    <Icon style={{ paddingHorizontal: 10 }} name="printer" size={26} color={Colors.colorchinh} />
+                                    <Text style={{ padding: 15, fontSize: 16, flex: 1 }}>{I18n.t('in_tam_tinh')}</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={() => onClickOptionQuickPayment()} style={{ flexDirection: "row", alignItems: "center", borderBottomWidth: .5 }}>
+                                    <Icon style={{ paddingHorizontal: 10 }} name={isQuickPayment ? "checkbox-marked" : "close-box-outline"} size={26} color={isQuickPayment ? Colors.colorLightBlue : "grey"} />
+                                    <Text style={{ padding: 15, fontSize: 16 }}>{I18n.t('thanh_toan_nhanh')}</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </Menu>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => {
+                        props.navigation.navigate(ScreenList.CommodityWaiting, { _onSelect: onCallBack })
+                    }} style={{ flex: .5, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%", flexDirection: 'row' }}>
+                        <Icon name="file-document-edit-outline" size={30} color="white" />
+                        {numberNewOrder > 0 ?
+                            <View style={{ backgroundColor: colors.colorLightBlue, paddingHorizontal: 3.5, borderRadius: 40, position: "absolute", right: 3, top: -5 }}>
+                                <Text style={{ fontWeight: "bold", padding: 4, color: 'white', fontSize: 14 }}>{numberNewOrder}</Text>
+                            </View> : null}
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={onClickNewOrder} style={{ flex: .8, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
+                        <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase" }}>{I18n.t('don_hang_moi')}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={onClickPayment} style={{ flex: 1, justifyContent: "center", alignItems: "center", borderLeftColor: "#fff", borderLeftWidth: 2, height: "100%" }}>
+                        <Text style={{ color: "#fff", fontWeight: "bold", textTransform: "uppercase", textAlign: "center" }}>{isQuickPayment ? I18n.t('thanh_toan_nhanh') : I18n.t('thanh_toan')}</Text>
+                    </TouchableOpacity>
+                </View>
+                <Modal
+                    animationType="fade"
+                    transparent={true}
+                    visible={showModal}
+                    supportedOrientations={['portrait', 'landscape']}
+                    onRequestClose={() => {
+                    }}>
+                    <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+                        <TouchableWithoutFeedback
+                            onPress={() => { setShowModal(false) }}
+                            style={{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                bottom: 0
+                            }}>
+                            <View style={[{
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                bottom: 0
+                            }, { backgroundColor: 'rgba(0,0,0,0.5)' }]}></View>
+
+                        </TouchableWithoutFeedback>
+                        <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+                            <View style={{
+                                padding: 0,
+                                backgroundColor: "#fff", borderRadius: 4, marginHorizontal: 20,
+                                width: Metrics.screenWidth * 0.8,
+                                // marginBottom: Platform.OS == 'ios' ? Metrics.screenHeight / 2.5 : 0
+                                marginBottom: Platform.OS == 'ios' ? marginModal : 0
+                            }}>
+                                <DialogProductDetail
+                                    fromRetail={true}
+                                    priceBookId={jsonContent.PriceBookId ? jsonContent.PriceBookId : null}
+                                    item={itemOrder}
+                                    onClickSubmit={data => { applyDialogDetail(data) }}
+                                    setShowModal={() => {
+                                        setShowModal(false)
+                                    }}
+                                />
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
+                <Snackbar
+                    duration={1500}
+                    visible={showToast}
+                    onDismiss={() =>
+                        setShowToast(false)
+                    }
+                >
+                    {toastDescription}
+                </Snackbar>
+            </>
+                :
+                <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                    <Text style={{}}>{I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay')}</Text>
+                </View>
+            }
         </View>
     )
 }

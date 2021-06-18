@@ -24,7 +24,7 @@ const MainRetail = (props) => {
     const [currentCustomer, setCurrentCustomer] = useState({ Name: "khach_le", Id: 0 })
     const [numberCommodity, setNumberCommodity] = useState(1)
     const [jsonContent, setJsonContent] = useState({})
-    const { orientaition, deviceType, syncRetail, already } = useSelector(state => {
+    const { orientaition, deviceType, syncRetail, already, allPer } = useSelector(state => {
         return state.Common
     });
     const currentCommodity = useRef()
@@ -347,7 +347,7 @@ const MainRetail = (props) => {
                     onCLickNoteBook={onCLickNoteBook}
                     onClickSync={onClickSync}
                     outputTextSearch={outputTextSearch} />
-                {
+                {allPer.Order_Create || allPer.IsAdmin ?
                     isDone ?
                         <View style={{ flex: 1, flexDirection: "row" }}>
                             <View style={{ flex: 6 }}>
@@ -387,6 +387,10 @@ const MainRetail = (props) => {
                         <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
                             <ActivityIndicator size="large" style={{}} color={Colors.colorchinh} />
                         </View>
+                    :
+                    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                        <Text style={deviceType == Constant.TABLET ? { fontSize: 20 } : {}}>{I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay')}</Text>
+                    </View>
                 }
             </View>
 

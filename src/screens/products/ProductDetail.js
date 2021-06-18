@@ -569,7 +569,7 @@ export default (props) => {
     }
 
     const onClickSave = () => {
-        if (allPer.Product_Create || allPer.Product_Update || allPer.IsAdmin) {
+        if (allPer.Product_Create && product.Id == undefined || allPer.Product_Update || allPer.IsAdmin) {
             isCoppy.current = false
             onSave()
         } else {
@@ -926,7 +926,7 @@ export default (props) => {
                             <TouchableOpacity style={[styles.styleButton, { marginLeft: 10, borderColor: defaultType == 1 ? colors.colorLightBlue : "#f2f2f2", borderWidth: 1, backgroundColor: defaultType == 1 ? 'white' : '#f2f2f2' }]} onPress={() => { setDefaultType(1), console.log("click", defaultType); }}>
                                 <Text style={[styles.titleButtonOff, { color: defaultType == 1 ? colors.colorLightBlue : null }]}>{I18n.t('hang_hoa')}</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={[styles.styleButton, { borderColor: defaultType == 2 ? colors.colorLightBlue :"#f2f2f2", borderWidth: 1, backgroundColor: defaultType == 2 ? 'white' : '#f2f2f2' }]} onPress={() => { setDefaultType(2), console.log("click", defaultType); }}>
+                            <TouchableOpacity style={[styles.styleButton, { borderColor: defaultType == 2 ? colors.colorLightBlue : "#f2f2f2", borderWidth: 1, backgroundColor: defaultType == 2 ? 'white' : '#f2f2f2' }]} onPress={() => { setDefaultType(2), console.log("click", defaultType); }}>
                                 <Text style={[styles.titleButtonOff, { color: defaultType == 2 ? colors.colorLightBlue : null }]}>{I18n.t('dich_vu')}</Text>
                             </TouchableOpacity>
                         </View>
@@ -1128,7 +1128,7 @@ export default (props) => {
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.title}>{I18n.t('gia_von')}</Text>
                                         {/* <TextInput style={[styles.textInput, { color: colors.colorLightBlue, fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={cost ? currencyToString(cost) : ''} onChangeText={(text) => setCost(onChangeTextInput(text))}></TextInput> */}
-                                        <TextInput editable={allPer.Product_UpdateCost || allPer.IsAdmin} style={[styles.textInput, { color: colors.colorLightBlue, fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={(allPer.Product_ViewCost || allPer.IsAdmin) ? cost ? currencyToString(cost) : 0 + '' : '--'} onChangeText={(text) => setCost(onChangeTextInput(text))}></TextInput>
+                                        <TextInput editable={allPer.Product_UpdateCost || allPer.IsAdmin ? true : false} style={[styles.textInput, { color: colors.colorLightBlue, fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={(allPer.Product_ViewCost || allPer.IsAdmin) ? cost ? currencyToString(cost) : 0 + '' : '--'} onChangeText={(text) => setCost(onChangeTextInput(text))}></TextInput>
                                     </View>
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.title} >{I18n.t('gia')}</Text>
