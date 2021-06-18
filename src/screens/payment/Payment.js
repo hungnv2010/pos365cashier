@@ -395,10 +395,34 @@ export default (props) => {
             console.log("onClickOkFilter onClickPay ");
             realmStore.deleteQRCode(resPayment.current.Id);
             qrCodeRealm.current.removeAllListeners()
-            onClickPay();
+            // onClickPay();
+            sendServerChangePayment();
             changeMethodQRPay.current = false;
         }
     }, [listMethod])
+
+    const sendServerChangePayment = () => {
+        // {AccountId: "", Id: 118194382}
+        let params = { Id: resPayment.current.Id, AccountId: itemMethod.Id == 0 ? "" : itemMethod.Id }
+        console.log("sendServerChangePayment params ", params);
+        dialogManager.showLoading();
+        new HTTPService().setPath(ApiPath.CHANGE_PAYMENT.replace("{Id}", resPayment.current.Id)).POST(params).then(async res => {
+            console.log("sendServerChangePayment res ", res);
+            dialogManager.hiddenLoading()
+            if (res) {
+                dataManager.sentNotification((isFNB ? jsonContent.RoomName : I18n.t('don_hang')), I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
+                await printAfterPayment(res.Code)
+                updateServerEvent(true)
+                if (!isFNB) {
+                    jsonContentPayment.current["RoomName"] = I18n.t('don_hang');
+                    jsonContentPayment.current["Pos"] = "A"
+                }
+            }
+        }, err => {
+            dialogManager.hiddenLoading()
+            console.log("sendServerChangePayment err== " + JSON.stringify(err));
+        })
+    }
 
     const onClickOkFilter = () => {
         console.log("onClickOkFilter 1 ", listMethod);
@@ -912,41 +936,41 @@ export default (props) => {
                         let sum = (Math.floor((Math.floor(total / 1000) * 1000 + 1000) / 10000) * 10000)
                         setListSuggest(list, (Math.floor(total / 1000) * 1000 + 1000), sum, 1000)
                     }
-                    setItemSuggest(list,total,100000)
+                    setItemSuggest(list, total, 100000)
                 }
-                setItemSuggest(list,total,1000000)
-                
-            }  
+                setItemSuggest(list, total, 1000000)
+
+            }
         }
         return list
     }
-    const setItemSuggest = (list, total, value) =>{
-        if(total % value < (value/10)){
-            list.push(Math.floor(total / value) * value + (value/10))
+    const setItemSuggest = (list, total, value) => {
+        if (total % value < (value / 10)) {
+            list.push(Math.floor(total / value) * value + (value / 10))
         }
-        if ((total % value) < 2*(value/10) ) {
-            list.push(Math.floor(total / value) * value + 2*(value/10))
+        if ((total % value) < 2 * (value / 10)) {
+            list.push(Math.floor(total / value) * value + 2 * (value / 10))
         }
-        if ((total % value) > 2*(value/10) && (total % value) < 3*(value/10) ) {
-            list.push(Math.floor(total / value) * value+ 3*(value/10))
+        if ((total % value) > 2 * (value / 10) && (total % value) < 3 * (value / 10)) {
+            list.push(Math.floor(total / value) * value + 3 * (value / 10))
         }
-        if ((total % value) / (value/10) < 4 && (total % value) / (value/10) > 2 ) {
-            list.push(Math.floor(total / value) * value + 4*(value/10))
+        if ((total % value) / (value / 10) < 4 && (total % value) / (value / 10) > 2) {
+            list.push(Math.floor(total / value) * value + 4 * (value / 10))
         }
-        if ((total % value) / (value/10) < 5  ) {
-            list.push(Math.floor(total / value) * value + 5*(value/10))
+        if ((total % value) / (value / 10) < 5) {
+            list.push(Math.floor(total / value) * value + 5 * (value / 10))
         }
-        if ((total % value) > 4*(value/10) && (total % value) < 5*(value/10)) {
-            list.push((Math.floor(total / value) * value) + 6*(value/10))
+        if ((total % value) > 4 * (value / 10) && (total % value) < 5 * (value / 10)) {
+            list.push((Math.floor(total / value) * value) + 6 * (value / 10))
         }
-        if (total % value > 5*(value/10) && (total % value) / (value/10) < 7 ) {
-            list.push((Math.floor(total / value) * value) + 7*(value/10))
+        if (total % value > 5 * (value / 10) && (total % value) / (value / 10) < 7) {
+            list.push((Math.floor(total / value) * value) + 7 * (value / 10))
         }
-        if ((total % (value)) > (6 * (value/10)) && total % (value) < (8*(value/10)) ) {
-            list.push(Math.floor(total / (value)) * value + (8*(value/10)))
+        if ((total % (value)) > (6 * (value / 10)) && total % (value) < (8 * (value / 10))) {
+            list.push(Math.floor(total / (value)) * value + (8 * (value / 10)))
         }
-        if ((total % value) > (7 * (value/10)) && total % value < 9*(value/10) ) {
-            list.push(Math.floor(total / value) * value + 9*(value/10))
+        if ((total % value) > (7 * (value / 10)) && total % value < 9 * (value / 10)) {
+            list.push(Math.floor(total / value) * value + 9 * (value / 10))
         }
         return list
     }
