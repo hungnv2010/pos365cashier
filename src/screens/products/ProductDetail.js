@@ -1129,7 +1129,7 @@ export default (props) => {
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.title}>{I18n.t('gia_von')}</Text>
                                         {/* <TextInput style={[styles.textInput, { color: colors.colorLightBlue, fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={cost ? currencyToString(cost) : ''} onChangeText={(text) => setCost(onChangeTextInput(text))}></TextInput> */}
-                                        <TextInput editable={allPer.Product_UpdateCost || allPer.IsAdmin ? true : false} style={[styles.textInput, { color: colors.colorLightBlue, fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={(allPer.Product_ViewCost || allPer.IsAdmin) ? cost ? currencyToString(cost) : 0 + '' : '--'} onChangeText={(text) => setCost(onChangeTextInput(text))}></TextInput>
+                                        <TextInput editable={allPer.IsAdmin ? true : false} style={[styles.textInput, { color: colors.colorLightBlue, fontWeight: 'bold', textAlign: 'center' }]} keyboardType={'numbers-and-punctuation'} value={(allPer.Product_ViewCost || allPer.IsAdmin) ? cost ? currencyToString(cost) : 0 + '' : '--'} onChangeText={(text) => setCost(onChangeTextInput(text))}></TextInput>
                                     </View>
                                     <View style={{ flex: 1 }}>
                                         <Text style={styles.title} >{I18n.t('gia')}</Text>
