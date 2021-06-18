@@ -16,6 +16,7 @@ import dialogManager from '../../components/dialog/DialogManager';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import TextTicker from 'react-native-text-ticker';
 import { useSelector } from 'react-redux';
+import Ionicons from 'react-native-vector-icons/Fontisto';
 
 
 
@@ -281,17 +282,19 @@ export default (props) => {
                             <View style={{ flexDirection: "row", margin: 20, alignSelf: "center" }}>
                                 {allPer.Partner_Update || allPer.IsAdmin ?
                                     <TouchableOpacity
-                                        style={{ flexDirection: "row", marginRight: 15, backgroundColor: "#fde7d2", borderRadius: 10 }}
+                                        style={{ flexDirection: "row", marginRight: 15, backgroundColor: "#fde7d2", borderRadius: 10,alignItems:'center',paddingHorizontal:10 }}
                                         onPress={() => { setShowModal(true) }}>
+                                            <Image source={Images.icon_edit} style={{ width: 16, height: 16 }} />
                                         <Text style={{ color: colors.colorchinh, padding: 15, fontWeight: "bold" }}>{I18n.t('chinh_sua')}</Text>
                                     </TouchableOpacity>
                                     : null
                                 }
                                 {allPer.Partner_Delete || allPer.IsAdmin ?
                                     <TouchableOpacity
-                                        style={{ flexDirection: "row", marginLeft: 15, backgroundColor: "#F7DCDC", borderRadius: 10 }}
+                                        style={{ flexDirection: "row", marginLeft: 15, backgroundColor: "#F7DCDC", borderRadius: 10,alignItems:'center', paddingHorizontal:10 }}
                                         onPress={onClickDelete}
                                     >
+                                        <Ionicons name={'trash'} size={17} color={'#f21e3c'} />
                                         <Text style={{ color: "#f21e3c", paddingVertical: 15, paddingHorizontal: 30, fontWeight: "bold" }}>{I18n.t('xoa')}</Text>
                                     </TouchableOpacity>
                                     : null
