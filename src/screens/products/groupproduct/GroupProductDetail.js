@@ -197,7 +197,7 @@ export default (props) => {
                         {
                             allPer.Product_Update || allPer.IsAdmin?
                                 <View style={{ flex: 1, marginRight: 10, paddingVertical: 10, alignItems: 'center', justifyContent: 'center' }}>
-                                    <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }} onPress={() => onClickEditCate()}>
+                                    <TouchableOpacity style={{ justifyContent: "center", flexDirection: "row", borderRadius: 10, padding: 12, backgroundColor: "#f6871e1a" }} onPress={() => onClickEditCate()}>
                                         <Image source={Images.icon_edit} style={{ width: 16, height: 16 }} />
                                         <Text style={{ marginLeft: 8, color: '#f6871e', fontSize: 16 }}>{I18n.t('chinh_sua')}</Text>
                                     </TouchableOpacity>
@@ -208,7 +208,7 @@ export default (props) => {
                         {
                             allPer.Product_Delete || allPer.IsAdmin ? 
                                 <View style={{ flex: 1, marginLeft: 10, paddingVertical: 10, alignItems: 'center', justifyContent: 'center' }}>
-                                    <TouchableOpacity style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }} onPress={() => onCLickDelCate()}>
+                                    <TouchableOpacity style={{ justifyContent: "center", flexDirection: "row", borderRadius: 10, padding: 12, backgroundColor: "#f21e3c1a" }} onPress={() => onCLickDelCate()}>
                                         <Ionicons name={'trash'} size={17} color={'#f21e3c'} />
                                         <Text style={{ marginLeft: 8, color: '#f21e3c', fontSize: 16 }}>{I18n.t('xoa')}</Text>
                                     </TouchableOpacity>
