@@ -336,8 +336,7 @@ export default (props) => {
                     }
 
                     console.log("add dvt", addDVT.current);
-                    compareCost.current = productOl.Cost
-                    compareOnHand.current = productOl.OnHand
+
 
                 }
             }).catch((e) => {
@@ -373,6 +372,8 @@ export default (props) => {
     }, [product])
     useEffect(() => {
         console.log('product Ol', productOl);
+        compareCost.current = productOl.Cost
+        compareOnHand.current = productOl.OnHand
         if (productOl.ProductImages && productOl.ProductImages.length > 0) {
             let img = productOl.ProductImages.filter(el => el.IsDefault == true)
             console.log("img", img);
