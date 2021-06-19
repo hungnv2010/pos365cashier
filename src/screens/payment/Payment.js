@@ -207,10 +207,9 @@ export default (props) => {
         setSendMethod("")
         if (currentServerEvent.current) {
             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
-            dataManager.calculatateJsonContent(jsonContent)
             serverEvent.JsonContent = JSON.stringify(jsonContent)
             serverEvent.Version += 1
-            dataManager.updateServerEventNow(serverEvent, false, isFNB);
+            dataManager.updateServerEventNow(serverEvent, true, isFNB);
         }
     }
 
@@ -580,7 +579,7 @@ export default (props) => {
             jsonContent.MoreAttributes = JSON.stringify(MoreAttributes);
             if (currentServerEvent.current) {
                 let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
-                dataManager.calculatateJsonContent(jsonContent)
+                // dataManager.calculatateJsonContent(jsonContent)
                 serverEvent.JsonContent = JSON.stringify(jsonContent)
                 serverEvent.Version += 1
                 dataManager.updateServerEventNow(serverEvent, true, isFNB);
@@ -1030,7 +1029,7 @@ export default (props) => {
         console.log("jsonContent ============== ", jsonContent);
         if (currentServerEvent.current && update == true) {
             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
-            dataManager.calculatateJsonContent(jsonContent)
+            // dataManager.calculatateJsonContent(jsonContent)
             serverEvent.JsonContent = JSON.stringify(jsonContent)
             serverEvent.Version += 1
             dataManager.updateServerEventNow(serverEvent, true, isFNB);
@@ -1101,7 +1100,7 @@ export default (props) => {
                 number += element.Quantity;
             });
         }
-        return number;
+        return (Math.round(number * 1000) / 1000);
     }
 
     const onFocusVAT = () => {
@@ -1123,7 +1122,6 @@ export default (props) => {
     }
 
     const onClickRePrint = () => {
-        // xử lý rồi update
         console.log("onClickRePrint resPayment ", resPayment.current);
         jsonContentPayment.current.PaymentCode = resPayment.current.Code;
         dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContentPayment.current, provisional: false, imgQr: imageQr.current } })
@@ -1447,8 +1445,8 @@ export default (props) => {
                                 : null}
                         </Surface>
                         <Surface style={styles.surface}>
-                            <View style={styles.viewTextExcessCash}>
-                                <Text style={{ flex: 3 }}>{I18n.t('tong_thanh_tien')}</Text>
+                            <View style={[styles.viewTextExcessCash]}>
+                                <Text style={{ flex: 3.5 }}>{I18n.t('tong_thanh_tien')}</Text>
                                 <Text style={styles.textQuantity}>{totalNumberProduct()}</Text>
                                 <Text style={{ flex: 5.3, textAlign: "right" }}>{currencyToString(totalPrice)}</Text>
                             </View>
