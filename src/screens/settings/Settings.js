@@ -600,7 +600,7 @@ export default (props) => {
                             <SettingSwitch title={"in_hai_lien_cho_che_bien"} output={onSwitchTone} isStatus={settingObject.in_hai_lien_cho_che_bien} />
                             : null}
                         <SettingSwitch title={"in_tam_tinh"} output={onSwitchTone} isStatus={settingObject.in_tam_tinh} />
-                        {/* <SettingSwitch title={"in_tem_truoc_thanh_toan"} output={onSwitchTone} isStatus={settingObject.in_tem_truoc_thanh_toan} /> */}
+                        <SettingSwitch title={"in_tem_truoc_thanh_toan"} output={onSwitchTone} isStatus={settingObject.in_tem_truoc_thanh_toan} />
                         {/* <SettingSwitch title={"bao_che_bien_sau_thanh_toan"} output={onSwitchTone} isStatus={settingObject.bao_che_bien_sau_thanh_toan} /> */}
                     </View>
                     <View style={styles.viewLine}></View>
