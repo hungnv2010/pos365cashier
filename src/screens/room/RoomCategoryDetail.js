@@ -133,13 +133,13 @@ export default (props) => {
             <View style={{ flexDirection: "row", justifyContent: "space-around", alignItems: "center" }}>
                 <TouchableOpacity onPress={() => onClickEdit()} style={{ justifyContent: "center", flexDirection: "row", borderRadius: 20, padding: 12, width: (Metrics.screenWidth / 2) - 25, backgroundColor: "#f6871e1a" }}>
                     <Image style={{ width: 20, height: 20, marginRight: 7 }} source={Images.icon_edit} />
-                    <Text>{I18n.t('chinh_sua')}</Text>
+                    <Text style={{ marginLeft: 8, color: '#f6871e', fontSize: 16, fontWeight: 'bold' }}>{I18n.t('chinh_sua')}</Text>
                 </TouchableOpacity>
                 {
                     allPer.Room_Delete || allPer.IsAdmin ?
                         <TouchableOpacity onPress={() => onClickDelete()} style={{ justifyContent: "center", flexDirection: "row", borderRadius: 20, padding: 12, width: (Metrics.screenWidth / 2) - 25, backgroundColor: "#f21e3c1a" }}>
                             <Image style={{ width: 20, height: 20, marginRight: 7 }} source={Images.trash} />
-                            <Text>{I18n.t('xoa')}</Text>
+                            <Text style={{ marginLeft: 8, color: '#f21e3c', fontSize: 16, fontWeight: 'bold' }}>{I18n.t('xoa')}</Text>
                         </TouchableOpacity>
                         : null
                 }

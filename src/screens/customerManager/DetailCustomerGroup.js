@@ -28,7 +28,7 @@ export default (props) => {
     const [marginModal, setMargin] = useState(0)
     const ModifiedBy = useRef()
     const backupDetailGroup = useRef()
-    const allPer = useSelector(state =>{
+    const allPer = useSelector(state => {
         return state.Common.allPer
     })
 
@@ -278,9 +278,9 @@ export default (props) => {
                                 {
                                     allPer.Partner_Update || allPer.IsAdmin ?
                                         <TouchableOpacity
-                                            style={{ flexDirection: "row", marginRight: 15, backgroundColor: "#fde7d2", borderRadius: 10,alignItems:'center',paddingHorizontal:10 }}
+                                            style={{ flexDirection: "row", marginRight: 15, backgroundColor: "#fde7d2", borderRadius: 20, alignItems: 'center', paddingHorizontal: 10, width: (Metrics.screenWidth / 4) - 25, justifyContent: 'center' }}
                                             onPress={() => { setShowModal(true) }}>
-                                                <Image source={Images.icon_edit} style={{ width: 16, height: 16 }} />
+                                            <Image source={Images.icon_edit} style={{ width: 16, height: 16 }} />
                                             <Text style={{ color: colors.colorchinh, padding: 15, fontWeight: "bold" }}>{I18n.t('chinh_sua')}</Text>
                                         </TouchableOpacity>
                                         :
@@ -289,7 +289,7 @@ export default (props) => {
                                 {
                                     allPer.Partner_Delete || allPer.IsAdmin ?
                                         <TouchableOpacity
-                                            style={{ flexDirection: "row", marginLeft: 15, backgroundColor: "#F7DCDC", borderRadius: 10,alignItems:'center',paddingHorizontal:10 }}
+                                            style={{ flexDirection: "row", marginLeft: 15, backgroundColor: "#F7DCDC", borderRadius: 20, alignItems: 'center', paddingHorizontal: 10, width: (Metrics.screenWidth / 4) - 25, justifyContent: 'center' }}
                                             onPress={onClickDelete}
                                         >
                                             <Ionicons name={'trash'} size={17} color={'#f21e3c'} />

@@ -32,7 +32,7 @@ export default (props) => {
         Key: 'CategoryName',
         Value: data.Name ? data.Name : '',
     }]
-    const {deviceType, allPer} = useSelector(state => {
+    const { deviceType, allPer } = useSelector(state => {
         return state.Common
     });
 
@@ -68,87 +68,87 @@ export default (props) => {
         setOnShowModal(true)
     }
     const onCLickDelCate = () => {
-        if(allPer.Product_Delete || allPer.IsAdmin){
-        dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_xoa_nhom_hang_hoa'), I18n.t("thong_bao"), res => {
-            if (res == 1) {
-                new HTTPService().setPath(`${ApiPath.CATEGORIES_PRODUCT}/${data.Id}`).DELETE()
-                    .then(res => {
-                        console.log('onClickDelete', res)
+        if (allPer.Product_Delete || allPer.IsAdmin) {
+            dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_xoa_nhom_hang_hoa'), I18n.t("thong_bao"), res => {
+                if (res == 1) {
+                    new HTTPService().setPath(`${ApiPath.CATEGORIES_PRODUCT}/${data.Id}`).DELETE()
+                        .then(res => {
+                            console.log('onClickDelete', res)
+                            if (res) {
+                                if (res.ResponseStatus && res.ResponseStatus.Message) {
+                                    dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
+                                        dialogManager.destroy();
+                                    }, null, null, I18n.t('dong'))
+                                } else {
+                                    if (deviceType == Constant.PHONE) {
+                                        props.route.params.onCallBack('xoa', 1)
+                                        props.navigation.pop()
+                                    } else
+                                        props.handleSuccessTab('xoa', 1)
+                                }
+                            }
+                        })
+                        .catch(err => console.log('ClickDelete err', err))
+                }
+            })
+        } else {
+            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
+        }
+    }
+    const editCategory = async (value) => {
+        setOnShowModal(false)
+        if (allPer.Product_Update || allPer.IsAdmin) {
+            console.log(value.CategoryName);
+            let param = {
+                Category: {
+                    CreatedBy: inforGr.CreatedBy,
+                    CreatedDate: inforGr.CreatedDate,
+                    Id: inforGr.Id,
+                    Name: value.CategoryName,
+                    Position: inforGr.Position,
+                    RetailerId: inforGr.RetailerId
+                }
+            }
+            let state = await NetInfo.fetch()
+            if (state.isConnected == true && state.isInternetReachable == true) {
+                if (value.CategoryName != '') {
+                    //dialogManager.showLoading()
+                    new HTTPService().setPath(ApiPath.CATEGORIES_PRODUCT).POST(param).then(res => {
                         if (res) {
                             if (res.ResponseStatus && res.ResponseStatus.Message) {
                                 dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
                                     dialogManager.destroy();
+                                    dialogManager.hiddenLoading()
                                 }, null, null, I18n.t('dong'))
                             } else {
                                 if (deviceType == Constant.PHONE) {
-                                    props.route.params.onCallBack('xoa', 1)
-                                    props.navigation.pop()
-                                } else
-                                    props.handleSuccessTab('xoa', 1)
+                                    props.route.params.onCallBack('them', 1)
+                                    handleSuccess('sua', value.CategoryName)
+                                } else {
+                                    setData({ ...data, Name: value.CategoryName })
+                                    props.handleSuccessTab('sua', 1, { ...data, Name: value.CategoryName })
+                                }
                             }
+                            //dialogManager.hiddenLoading()
                         }
                     })
-                    .catch(err => console.log('ClickDelete err', err))
-            }
-        })
-    }else{
-        dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
-            dialogManager.destroy();
-        }, null, null, I18n.t('dong'))
-    }
-    }
-    const editCategory = async (value) => {
-        setOnShowModal(false)
-        if(allPer.Product_Update || allPer.IsAdmin){
-        console.log(value.CategoryName);
-        let param = {
-            Category: {
-                CreatedBy: inforGr.CreatedBy,
-                CreatedDate: inforGr.CreatedDate,
-                Id: inforGr.Id,
-                Name: value.CategoryName,
-                Position: inforGr.Position,
-                RetailerId: inforGr.RetailerId
-            }
-        }
-        let state = await NetInfo.fetch()
-        if (state.isConnected == true && state.isInternetReachable == true) {
-            if (value.CategoryName != '') {
-                //dialogManager.showLoading()
-                new HTTPService().setPath(ApiPath.CATEGORIES_PRODUCT).POST(param).then(res => {
-                    if (res) {
-                        if (res.ResponseStatus && res.ResponseStatus.Message) {
-                            dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
-                                dialogManager.destroy();
-                                dialogManager.hiddenLoading()
-                            }, null, null, I18n.t('dong'))
-                        } else {
-                            if (deviceType == Constant.PHONE) {
-                                props.route.params.onCallBack('them', 1)
-                                handleSuccess('sua', value.CategoryName)
-                            } else {
-                                setData({ ...data, Name: value.CategoryName })
-                                props.handleSuccessTab('sua', 1, { ...data, Name: value.CategoryName })
-                            }
-                        }
-                        //dialogManager.hiddenLoading()
-                    }
-                })
+                } else {
+                    dialogManager.showPopupOneButton(I18n.t('vui_long_nhap_ten_nhom_hang_hoa'), I18n.t('thong_bao'), () => {
+                        dialogManager.destroy();
+                    }, null, null, I18n.t('dong'))
+                }
             } else {
-                dialogManager.showPopupOneButton(I18n.t('vui_long_nhap_ten_nhom_hang_hoa'), I18n.t('thong_bao'), () => {
+                dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_internet'), I18n.t('thong_bao'), () => {
                     dialogManager.destroy();
                 }, null, null, I18n.t('dong'))
             }
         } else {
-            dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_internet'), I18n.t('thong_bao'), () => {
+            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
                 dialogManager.destroy();
             }, null, null, I18n.t('dong'))
         }
-    }else{
-        dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
-            dialogManager.destroy();
-        }, null, null, I18n.t('dong'))
-    }
 
     }
     const handleSuccess = (type, name) => {
@@ -193,24 +193,24 @@ export default (props) => {
                         <Image source={Images.ic_default_group} />
                         <Text style={{ color: colors.colorLightBlue, marginTop: 10, fontWeight: 'bold' }}>{data.Name}</Text>
                     </View>
-                    <View style={{ flexDirection: 'row', paddingHorizontal: 50 }}>
+                    <View style={{ flexDirection: 'row', paddingHorizontal: 10 }}>
                         {
-                            allPer.Product_Update || allPer.IsAdmin?
-                                <View style={{ flex: 1, marginRight: 10, paddingVertical: 10, alignItems: 'center', justifyContent: 'center' }}>
-                                    <TouchableOpacity style={{ justifyContent: "center", flexDirection: "row", borderRadius: 10, padding: 12, backgroundColor: "#f6871e1a" }} onPress={() => onClickEditCate()}>
+                            allPer.Product_Update || allPer.IsAdmin ?
+                                <View style={{ flex: 1, marginRight: 10, paddingVertical: 15, alignItems: 'center', justifyContent: 'center' }}>
+                                    <TouchableOpacity style={{ justifyContent: "center", flexDirection: "row", borderRadius: 20, padding: 15, backgroundColor: "#f6871e1a", width: deviceType == Constant.TABLET ? (Metrics.screenWidth / 4) - 25 : (Metrics.screenWidth / 2) - 25 }} onPress={() => onClickEditCate()}>
                                         <Image source={Images.icon_edit} style={{ width: 16, height: 16 }} />
-                                        <Text style={{ marginLeft: 8, color: '#f6871e', fontSize: 16 }}>{I18n.t('chinh_sua')}</Text>
+                                        <Text style={{ marginLeft: 8, color: '#f6871e', fontSize: 16, fontWeight: 'bold' }}>{I18n.t('chinh_sua')}</Text>
                                     </TouchableOpacity>
                                 </View>
-                                 :
+                                :
                                 null
                         }
                         {
-                            allPer.Product_Delete || allPer.IsAdmin ? 
-                                <View style={{ flex: 1, marginLeft: 10, paddingVertical: 10, alignItems: 'center', justifyContent: 'center' }}>
-                                    <TouchableOpacity style={{ justifyContent: "center", flexDirection: "row", borderRadius: 10, padding: 12, backgroundColor: "#f21e3c1a" }} onPress={() => onCLickDelCate()}>
+                            allPer.Product_Delete || allPer.IsAdmin ?
+                                <View style={{ flex: 1, marginLeft: 10, paddingVertical: 15, alignItems: 'center', justifyContent: 'center' }}>
+                                    <TouchableOpacity style={{ justifyContent: "center", flexDirection: "row", borderRadius: 20, padding: 15, backgroundColor: "#f21e3c1a", width: deviceType == Constant.TABLET ? (Metrics.screenWidth / 4) - 25 : (Metrics.screenWidth / 2) - 25 }} onPress={() => onCLickDelCate()}>
                                         <Ionicons name={'trash'} size={17} color={'#f21e3c'} />
-                                        <Text style={{ marginLeft: 8, color: '#f21e3c', fontSize: 16 }}>{I18n.t('xoa')}</Text>
+                                        <Text style={{ marginLeft: 8, color: '#f21e3c', fontSize: 16, fontWeight: 'bold' }}>{I18n.t('xoa')}</Text>
                                     </TouchableOpacity>
                                 </View>
                                 :
@@ -218,13 +218,13 @@ export default (props) => {
                         }
                     </View>
                 </View>
-                <View style={{flex:1}}>
+                <View style={{ flex: 1 }}>
                     <View style={{ paddingVertical: 15, paddingHorizontal: 10, justifyContent: 'space-between', flexDirection: 'row' }}>
                         <Text style={{ fontWeight: 'bold', textTransform: 'uppercase' }}>{I18n.t('hang_hoa_trong_nhom')}</Text>
                         <Text style={{ fontWeight: 'bold' }}>{data.Sum}</Text>
                     </View>
                     {data.ListPr && data.ListPr.length > 0 ?
-                        <ScrollView style={{flex:1}}>
+                        <ScrollView style={{ flex: 1 }}>
                             {
                                 data.ListPr.map((item, index) => {
                                     return (
