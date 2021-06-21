@@ -798,14 +798,14 @@ export default (props) => {
             jsonContent.PurchaseDate = date.toString();
         }
         console.log("printAfterPayment jsonContent 2 ", jsonContent);
-        if (isFNB) {
+        if (isFNB && settingObject.current.in_tem_truoc_thanh_toan && settingObject.current.in_tem_truoc_thanh_toan == true && settingObject.PrintInvoiceBeforePaymentVNPayQR != true) {
             console.log("printAfterPayment settingObject.current ", settingObject.current);
             settingObject.current.Printer.forEach(async element => {
                 if (element.key == Constant.KEY_PRINTER.StampPrintKey && element.ip != "") {
                     let value = await handerDataPrintTemp(jsonContent)
                     console.log("printAfterPayment value  ", value);
                     console.log("printAfterPayment element  ", element);
-                    Print.PrintTemp(value, element.ip, "30x40")
+                    Print.PrintTemp(value, element.ip, element.size)
                 }
             });
         }
@@ -827,6 +827,18 @@ export default (props) => {
         }
         console.log("handlerQRCode params ", params);
         dataManager.syncQRCode([params]);
+
+        if (isFNB && settingObject.current.in_tem_truoc_thanh_toan && settingObject.current.in_tem_truoc_thanh_toan == true) {
+            console.log("printAfterPayment settingObject.current ", settingObject.current);
+            settingObject.current.Printer.forEach(async element => {
+                if (element.key == Constant.KEY_PRINTER.StampPrintKey && element.ip != "") {
+                    let value = await handerDataPrintTemp(jsonContent)
+                    console.log("printAfterPayment value  ", value);
+                    console.log("printAfterPayment element  ", element);
+                    Print.PrintTemp(value, element.ip, element.size)
+                }
+            });
+        }
 
         qrCodeRealm.current = await realmStore.queryQRCode()
         qrCodeRealm.current.addListener((collection, changes) => {
@@ -1174,9 +1186,14 @@ export default (props) => {
             height="150" />`
             console.log("Data getRef QrCode  ============  image ", indexPayment.current, imageQr.current);
             jsonContentPayment.current.PaymentCode = resPayment.current.Code;
-            dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContentPayment.current, provisional: false, imgQr: imageQr.current } })
+
+            // setTimeout(() => {
+                dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContentPayment.current, provisional: false, imgQr: imageQr.current } })
+            // }, 500);
         }
         indexPayment.current++;
+
+
     }
     const getOutputPercent = (value) => {
         if (value.Type == 'discount') {

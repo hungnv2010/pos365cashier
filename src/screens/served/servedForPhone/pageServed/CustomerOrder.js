@@ -269,14 +269,14 @@ export default (props) => {
         console.log("printAfterPayment jsonContent 2 ", jsonContent);
         // dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
 
-        if (isFNB) {
+        if (isFNB && settingObject.current.in_tem_truoc_thanh_toan && settingObject.current.in_tem_truoc_thanh_toan == true) {
             console.log("printAfterPayment settingObject.current ", settingObject.current);
             settingObject.current.Printer.forEach(async element => {
                 if (element.key == Constant.KEY_PRINTER.StampPrintKey && element.ip != "") {
                     let value = await handerDataPrintTemp(jsonContent)
                     console.log("printAfterPayment value  ", value);
                     console.log("printAfterPayment element  ", element);
-                    Print.PrintTemp(value, element.ip, "30x40")
+                    Print.PrintTemp(value, element.ip, element.size)
                 }
             });
         }
