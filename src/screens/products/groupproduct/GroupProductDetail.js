@@ -189,14 +189,14 @@ export default (props) => {
             }
             <View style={{ flex: 1 }}>
                 <View style={{ backgroundColor: '#fff' }}>
-                    <View style={{ marginHorizontal: 30, marginVertical: 15, alignItems: 'center', justifyContent: 'center', backgroundColor: '#f2f2f2', paddingVertical: 10, borderRadius: 10 }}>
+                    <View style={{ marginHorizontal: 20, marginTop: 15,marginBottom:0, alignItems: 'center', justifyContent: 'center', backgroundColor: '#f2f2f2', paddingVertical: 10, borderRadius: 10 }}>
                         <Image source={Images.ic_default_group} />
                         <Text style={{ color: colors.colorLightBlue, marginTop: 10, fontWeight: 'bold' }}>{data.Name}</Text>
                     </View>
                     <View style={{ flexDirection: 'row', paddingHorizontal: 10 }}>
                         {
                             allPer.Product_Update || allPer.IsAdmin ?
-                                <View style={{ flex: 1, marginRight: 10, paddingVertical: 15, alignItems: 'center', justifyContent: 'center' }}>
+                                <View style={{ flex: 1, marginRight: 5, paddingVertical: 15, alignItems: 'center', justifyContent: 'center' }}>
                                     <TouchableOpacity style={{ justifyContent: "center", flexDirection: "row", borderRadius: 20, padding: 15, backgroundColor: "#f6871e1a", width: deviceType == Constant.TABLET ? (Metrics.screenWidth / 4) - 25 : (Metrics.screenWidth / 2) - 25 }} onPress={() => onClickEditCate()}>
                                         <Image source={Images.icon_edit} style={{ width: 16, height: 16 }} />
                                         <Text style={{ marginLeft: 8, color: '#f6871e', fontSize: 16, fontWeight: 'bold' }}>{I18n.t('chinh_sua')}</Text>
@@ -207,7 +207,7 @@ export default (props) => {
                         }
                         {
                             allPer.Product_Delete || allPer.IsAdmin ?
-                                <View style={{ flex: 1, marginLeft: 10, paddingVertical: 15, alignItems: 'center', justifyContent: 'center' }}>
+                                <View style={{ flex: 1, marginLeft: 5, paddingVertical: 15, alignItems: 'center', justifyContent: 'center' }}>
                                     <TouchableOpacity style={{ justifyContent: "center", flexDirection: "row", borderRadius: 20, padding: 15, backgroundColor: "#f21e3c1a", width: deviceType == Constant.TABLET ? (Metrics.screenWidth / 4) - 25 : (Metrics.screenWidth / 2) - 25 }} onPress={() => onCLickDelCate()}>
                                         <Ionicons name={'trash'} size={17} color={'#f21e3c'} />
                                         <Text style={{ marginLeft: 8, color: '#f21e3c', fontSize: 16, fontWeight: 'bold' }}>{I18n.t('xoa')}</Text>

@@ -273,16 +273,16 @@ export default (props) => {
                     :
                     <>
                         <View style={{ flex: 2, backgroundColor: "white", }}>
-                            <View style={{ flex: 1, backgroundColor: "#f2f2f2", borderRadius: 30, marginHorizontal: 30, marginVertical: 20, alignItems: "center", justifyContent: "center" }}>
+                            <View style={{ flex: 1, backgroundColor: "#f2f2f2", borderRadius: 30, marginHorizontal: 20, marginVertical: 20, alignItems: "center", justifyContent: "center" }}>
                                 <View style={{ padding: 15 }}>
                                     <Image style={{ width: 40, height: 40, }} source={Images.ic_khachhang} />
                                 </View>
                                 <Text style={{ fontSize: 20, color: colors.colorLightBlue, fontWeight: "bold" }}>{detailGroup.Name}</Text>
                             </View>
-                            <View style={{ flexDirection: "row", margin: 20, alignSelf: "center" }}>
+                            <View style={{ flexDirection: "row", marginHorizontal: 20, alignItems: "center",marginBottom:20 }}>
                                 {allPer.Partner_Update || allPer.IsAdmin ?
                                     <TouchableOpacity
-                                        style={{ flexDirection: "row", marginRight: 15, backgroundColor: "#fde7d2", borderRadius: 20, alignItems: 'center', paddingHorizontal: 10, width: (Metrics.screenWidth / 2) - 25,justifyContent:'center' }}
+                                        style={{ flexDirection: "row", marginRight: 5, backgroundColor: "#fde7d2", borderRadius: 20, alignItems: 'center', paddingHorizontal: 10, width: (Metrics.screenWidth / 2) - 25,justifyContent:'center' }}
                                         onPress={() => { setShowModal(true) }}>
                                         <Image source={Images.icon_edit} style={{ width: 16, height: 16 }} />
                                         <Text style={{ color: colors.colorchinh, padding: 15, fontWeight: "bold" }}>{I18n.t('chinh_sua')}</Text>
@@ -291,7 +291,7 @@ export default (props) => {
                                 }
                                 {allPer.Partner_Delete || allPer.IsAdmin ?
                                     <TouchableOpacity
-                                        style={{ flexDirection: "row", marginLeft: 15, backgroundColor: "#F7DCDC", borderRadius: 20, alignItems: 'center', paddingHorizontal: 10, width: (Metrics.screenWidth / 2) - 25,justifyContent:'center' }}
+                                        style={{ flexDirection: "row", marginLeft: 5, backgroundColor: "#F7DCDC", borderRadius: 20, alignItems: 'center', paddingHorizontal: 10, width: (Metrics.screenWidth / 2) - 25,justifyContent:'center' }}
                                         onPress={onClickDelete}
                                     >
                                         <Ionicons name={'trash'} size={17} color={'#f21e3c'} />

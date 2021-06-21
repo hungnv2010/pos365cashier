@@ -274,7 +274,7 @@ export default (props) => {
                                 <Image style={{ width: 60, height: 60, marginBottom: 20 }} source={Images.ic_nhomkhachhang} />
                                 <Text style={{ fontSize: 20, color: colors.colorLightBlue, fontWeight: "bold" }}>{detailGroup.Name}</Text>
                             </View>
-                            <View style={{ flexDirection: "row", margin: 20, alignSelf: "center" }}>
+                            <View style={{ flexDirection: "row",marginHorizontal:20, alignSelf: "center",marginBottom:20 }}>
                                 {
                                     allPer.Partner_Update || allPer.IsAdmin ?
                                         <TouchableOpacity
