@@ -159,7 +159,36 @@ export default (props) => {
     const onClickOkFilter = () => {
         console.log("onClickOkFilter ", itemMethod);
         setShowModal(false)
-        onClickPay();
+        // onClickPay();
+        sendServerChangePayment();
+    }
+
+    const sendServerChangePayment = async () => {
+        let net = await NetInfo.fetch();
+        if (net.isConnected == true && net.isInternetReachable == true) {
+            let params = { Id: dataPaymentPending.Id, AccountId: itemMethod.Id == 0 ? "" : itemMethod.Id }
+            console.log("sendServerChangePayment params ", params);
+            dialogManager.showLoading();
+            new HTTPService().setPath(ApiPath.CHANGE_PAYMENT.replace("{Id}", dataPaymentPending.Id)).POST(params).then(async res => {
+                console.log("sendServerChangePayment res ", res);
+                dialogManager.hiddenLoading()
+                if (res) {
+                    dataManager.sentNotification((isFNB ? dataJsonContent.RoomName : I18n.t('don_hang')), I18n.t('khach_thanh_toan') + " " + currencyToString(dataJsonContent.Total))
+                    await printAfterPayment({ ...dataJsonContent }, dataPaymentPending.Code)
+                    realmStore.deleteQRCode(dataPaymentPending.Id);
+                    if (settingObject.current.am_bao_thanh_toan == true)
+                        playSound()
+                    setTimeout(() => {
+                        props.navigation.pop()
+                    }, 500);
+                }
+            }, err => {
+                dialogManager.hiddenLoading()
+                console.log("sendServerChangePayment err== " + JSON.stringify(err));
+            })
+        } else {
+            dialogManager.showPopupOneButton(I18n.t("vui_long_kiem_tra_ket_noi_internet"))
+        }
     }
 
     const onClickPay = async () => {

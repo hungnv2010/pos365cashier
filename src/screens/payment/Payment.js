@@ -207,10 +207,9 @@ export default (props) => {
         setSendMethod("")
         if (currentServerEvent.current) {
             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
-            dataManager.calculatateJsonContent(jsonContent)
             serverEvent.JsonContent = JSON.stringify(jsonContent)
             serverEvent.Version += 1
-            dataManager.updateServerEventNow(serverEvent, false, isFNB);
+            dataManager.updateServerEventNow(serverEvent, true, isFNB);
         }
     }
 
@@ -395,10 +394,34 @@ export default (props) => {
             console.log("onClickOkFilter onClickPay ");
             realmStore.deleteQRCode(resPayment.current.Id);
             qrCodeRealm.current.removeAllListeners()
-            onClickPay();
+            // onClickPay();
+            sendServerChangePayment();
             changeMethodQRPay.current = false;
         }
     }, [listMethod])
+
+    const sendServerChangePayment = () => {
+        // {AccountId: "", Id: 118194382}
+        let params = { Id: resPayment.current.Id, AccountId: itemMethod.Id == 0 ? "" : itemMethod.Id }
+        console.log("sendServerChangePayment params ", params);
+        dialogManager.showLoading();
+        new HTTPService().setPath(ApiPath.CHANGE_PAYMENT.replace("{Id}", resPayment.current.Id)).POST(params).then(async res => {
+            console.log("sendServerChangePayment res ", res);
+            dialogManager.hiddenLoading()
+            if (res) {
+                dataManager.sentNotification((isFNB ? jsonContent.RoomName : I18n.t('don_hang')), I18n.t('khach_thanh_toan') + " " + currencyToString(jsonContent.Total))
+                await printAfterPayment(res.Code)
+                updateServerEvent(true)
+                if (!isFNB) {
+                    jsonContentPayment.current["RoomName"] = I18n.t('don_hang');
+                    jsonContentPayment.current["Pos"] = "A"
+                }
+            }
+        }, err => {
+            dialogManager.hiddenLoading()
+            console.log("sendServerChangePayment err== " + JSON.stringify(err));
+        })
+    }
 
     const onClickOkFilter = () => {
         console.log("onClickOkFilter 1 ", listMethod);
@@ -556,7 +579,7 @@ export default (props) => {
             jsonContent.MoreAttributes = JSON.stringify(MoreAttributes);
             if (currentServerEvent.current) {
                 let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
-                dataManager.calculatateJsonContent(jsonContent)
+                // dataManager.calculatateJsonContent(jsonContent)
                 serverEvent.JsonContent = JSON.stringify(jsonContent)
                 serverEvent.Version += 1
                 dataManager.updateServerEventNow(serverEvent, true, isFNB);
@@ -912,41 +935,41 @@ export default (props) => {
                         let sum = (Math.floor((Math.floor(total / 1000) * 1000 + 1000) / 10000) * 10000)
                         setListSuggest(list, (Math.floor(total / 1000) * 1000 + 1000), sum, 1000)
                     }
-                    setItemSuggest(list,total,100000)
+                    setItemSuggest(list, total, 100000)
                 }
-                setItemSuggest(list,total,1000000)
-                
-            }  
+                setItemSuggest(list, total, 1000000)
+
+            }
         }
         return list
     }
-    const setItemSuggest = (list, total, value) =>{
-        if(total % value < (value/10)){
-            list.push(Math.floor(total / value) * value + (value/10))
+    const setItemSuggest = (list, total, value) => {
+        if (total % value < (value / 10)) {
+            list.push(Math.floor(total / value) * value + (value / 10))
         }
-        if ((total % value) < 2*(value/10) ) {
-            list.push(Math.floor(total / value) * value + 2*(value/10))
+        if ((total % value) < 2 * (value / 10)) {
+            list.push(Math.floor(total / value) * value + 2 * (value / 10))
         }
-        if ((total % value) > 2*(value/10) && (total % value) < 3*(value/10) ) {
-            list.push(Math.floor(total / value) * value+ 3*(value/10))
+        if ((total % value) > 2 * (value / 10) && (total % value) < 3 * (value / 10)) {
+            list.push(Math.floor(total / value) * value + 3 * (value / 10))
         }
-        if ((total % value) / (value/10) < 4 && (total % value) / (value/10) > 2 ) {
-            list.push(Math.floor(total / value) * value + 4*(value/10))
+        if ((total % value) / (value / 10) < 4 && (total % value) / (value / 10) > 2) {
+            list.push(Math.floor(total / value) * value + 4 * (value / 10))
         }
-        if ((total % value) / (value/10) < 5  ) {
-            list.push(Math.floor(total / value) * value + 5*(value/10))
+        if ((total % value) / (value / 10) < 5) {
+            list.push(Math.floor(total / value) * value + 5 * (value / 10))
         }
-        if ((total % value) > 4*(value/10) && (total % value) < 5*(value/10)) {
-            list.push((Math.floor(total / value) * value) + 6*(value/10))
+        if ((total % value) > 4 * (value / 10) && (total % value) < 5 * (value / 10)) {
+            list.push((Math.floor(total / value) * value) + 6 * (value / 10))
         }
-        if (total % value > 5*(value/10) && (total % value) / (value/10) < 7 ) {
-            list.push((Math.floor(total / value) * value) + 7*(value/10))
+        if (total % value > 5 * (value / 10) && (total % value) / (value / 10) < 7) {
+            list.push((Math.floor(total / value) * value) + 7 * (value / 10))
         }
-        if ((total % (value)) > (6 * (value/10)) && total % (value) < (8*(value/10)) ) {
-            list.push(Math.floor(total / (value)) * value + (8*(value/10)))
+        if ((total % (value)) > (6 * (value / 10)) && total % (value) < (8 * (value / 10))) {
+            list.push(Math.floor(total / (value)) * value + (8 * (value / 10)))
         }
-        if ((total % value) > (7 * (value/10)) && total % value < 9*(value/10) ) {
-            list.push(Math.floor(total / value) * value + 9*(value/10))
+        if ((total % value) > (7 * (value / 10)) && total % value < 9 * (value / 10)) {
+            list.push(Math.floor(total / value) * value + 9 * (value / 10))
         }
         return list
     }
@@ -1006,7 +1029,7 @@ export default (props) => {
         console.log("jsonContent ============== ", jsonContent);
         if (currentServerEvent.current && update == true) {
             let serverEvent = JSON.parse(JSON.stringify(currentServerEvent.current));
-            dataManager.calculatateJsonContent(jsonContent)
+            // dataManager.calculatateJsonContent(jsonContent)
             serverEvent.JsonContent = JSON.stringify(jsonContent)
             serverEvent.Version += 1
             dataManager.updateServerEventNow(serverEvent, true, isFNB);
@@ -1077,7 +1100,7 @@ export default (props) => {
                 number += element.Quantity;
             });
         }
-        return number;
+        return (Math.round(number * 1000) / 1000);
     }
 
     const onFocusVAT = () => {
@@ -1099,7 +1122,6 @@ export default (props) => {
     }
 
     const onClickRePrint = () => {
-        // xử lý rồi update
         console.log("onClickRePrint resPayment ", resPayment.current);
         jsonContentPayment.current.PaymentCode = resPayment.current.Code;
         dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContentPayment.current, provisional: false, imgQr: imageQr.current } })
@@ -1423,8 +1445,8 @@ export default (props) => {
                                 : null}
                         </Surface>
                         <Surface style={styles.surface}>
-                            <View style={styles.viewTextExcessCash}>
-                                <Text style={{ flex: 3 }}>{I18n.t('tong_thanh_tien')}</Text>
+                            <View style={[styles.viewTextExcessCash]}>
+                                <Text style={{ flex: 3.5 }}>{I18n.t('tong_thanh_tien')}</Text>
                                 <Text style={styles.textQuantity}>{totalNumberProduct()}</Text>
                                 <Text style={{ flex: 5.3, textAlign: "right" }}>{currencyToString(totalPrice)}</Text>
                             </View>

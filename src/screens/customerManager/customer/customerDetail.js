@@ -661,9 +661,9 @@ export default (props) => {
                                     :
                                     null
                             }
-                            <TouchableOpacity onPress={onClickPrint} style={{ flex: 1, flexDirection: "row", marginLeft: 10, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 10 }}>
+                            {/* <TouchableOpacity onPress={onClickPrint} style={{ flex: 1, flexDirection: "row", marginLeft: 10, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 10 }}>
                                 <IconAntDesign name={"printer"} size={25} color="white" />
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
                         </>
                 }
                 <TouchableOpacity onPress={onClickDone} style={{ flex: 8, flexDirection: "row", marginLeft: 10, marginTop: 0, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 15 }}>
