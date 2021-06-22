@@ -798,7 +798,7 @@ export default (props) => {
             jsonContent.PurchaseDate = date.toString();
         }
         console.log("printAfterPayment jsonContent 2 ", jsonContent);
-        if (isFNB && settingObject.current.in_tem_truoc_thanh_toan && settingObject.current.in_tem_truoc_thanh_toan == true && settingObject.PrintInvoiceBeforePaymentVNPayQR != true) {
+        if (isFNB && settingObject.current.in_tem_truoc_thanh_toan && settingObject.current.in_tem_truoc_thanh_toan == true && !(resPayment.current.QRCode && resPayment.current.QRCode != "")) {
             console.log("printAfterPayment settingObject.current ", settingObject.current);
             settingObject.current.Printer.forEach(async element => {
                 if (element.key == Constant.KEY_PRINTER.StampPrintKey && element.ip != "") {
@@ -808,6 +808,7 @@ export default (props) => {
                     Print.PrintTemp(value, element.ip, element.size)
                 }
             });
+            resPayment.current = {};
         }
         setTimeout(() => {
             dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
@@ -1188,7 +1189,7 @@ export default (props) => {
             jsonContentPayment.current.PaymentCode = resPayment.current.Code;
 
             // setTimeout(() => {
-                dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContentPayment.current, provisional: false, imgQr: imageQr.current } })
+            dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContentPayment.current, provisional: false, imgQr: imageQr.current } })
             // }, 500);
         }
         indexPayment.current++;
