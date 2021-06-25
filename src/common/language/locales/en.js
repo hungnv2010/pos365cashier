@@ -434,7 +434,7 @@ export default {
   quan_ly_don_hang: "Order management",
   quan_ly: 'Manager',
   quan_ly_hang_hoa: 'Product management',
-  quan_ly_doi_tac: "Quản lý đối tác",
+  quan_ly_doi_tac: "Partner management",
 
 
   // TODO: R

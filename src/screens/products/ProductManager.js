@@ -121,10 +121,10 @@ export default (props) => {
                     </View>
                     <Text style={styles.textButton}>{I18n.t('thiet_lap_extra_topping')}</Text>
                 </TouchableOpacity>
-                {/* <TouchableOpacity style={styles.button} onPress={() => { onClickListOrderStock() }}>
+                <TouchableOpacity style={styles.button} onPress={() => { onClickListOrderStock() }}>
                     <Image style={styles.iconButton} source={Images.ic_nhaphang} />
                     <Text style={styles.textButton}>{I18n.t('nhap_hang')}</Text>
-                </TouchableOpacity> */}
+                </TouchableOpacity>
             </View>
             <Snackbar
                 duration={1500}
