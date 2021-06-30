@@ -126,6 +126,7 @@ export default {
   chi_tiet_nhom_phong_ban: "Group room/table detail",
   chon_phuong_thuc_thanh_toan: 'Select a payment method',
   chon_mau_in: "Select print template",
+  cai_dat_man_hinh_thu_ngan: "Setting cashier screen",
 
   // TODO: D 
 
@@ -320,6 +321,7 @@ export default {
   luu_va_sao_chep: "Save & Coppy ",
   loc: 'Filter',
   loai_bo: 'Removed',
+  lon: "Large",
 
   // TODO: M
 
@@ -407,6 +409,7 @@ export default {
   ngay_giao: 'Delivery date',
 
   nhom_hang_hoa: 'Group product',
+  nho: "Small",
 
   // TODO: O
 
@@ -619,6 +622,7 @@ export default {
   vui_long_kiem_tra_ket_noi_internet: 'Please check internet connection.',
   vui_long_nhap_ten_nhom_hang_hoa: 'Please enter name group',
   vui_long_nhap_so_luong_ma_vach_can_in: "Please enter the number of barcodes to print",
+  vui_long_xoay_ngang_man_hinh_de_thuc_hien_chuc_nang: "Please rotate the screen to use.",
 
   // TODO: X
 
@@ -631,6 +635,8 @@ export default {
   xin_cam_on: "Thank you, see you again!",
   xoa: "Delete",
   xin_cam_on_va_hen_gap_lai: "Thank you, see you again!",
+  xoay_ngang: "Horizontal rotation",
+  xoay_doc: 'Vertical rotation',
 
   // TODO: Y
 

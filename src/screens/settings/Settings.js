@@ -143,7 +143,7 @@ export default (props) => {
         name: 'VND',
         value: 'đ'
     }
-    const { printerObject, isFNB } = useSelector(state => {
+    const { printerObject, isFNB, orientaition, deviceType } = useSelector(state => {
         return state.Common
     });
     const [settingObject, setSettingObject] = useState(DefaultSetting)
@@ -166,19 +166,21 @@ export default (props) => {
                     }
                 });
                 console.log("getSetting data.Printer ", data.Printer);
-                
-                if(data.Printer.filter(item =>item.key == Constant.KEY_PRINTER.StampPrintKey).length < 1){
-                    setSettingObject({...data,Printer:[...data.Printer,{
-                        key: Constant.KEY_PRINTER.StampPrintKey,
-                        title: 'may_in_tem',
-                        type: '',
-                        size: '',
-                        ip: '',
-                        show: true
-                    }]})
-                }else
-                setSettingObject({ ...data })
-                
+
+                if (data.Printer.filter(item => item.key == Constant.KEY_PRINTER.StampPrintKey).length < 1) {
+                    setSettingObject({
+                        ...data, Printer: [...data.Printer, {
+                            key: Constant.KEY_PRINTER.StampPrintKey,
+                            title: 'may_in_tem',
+                            type: '',
+                            size: '',
+                            ip: '',
+                            show: true
+                        }]
+                    })
+                } else
+                    setSettingObject({ ...data })
+
 
             } else {
                 DefaultSetting.Printer.forEach(element => {
@@ -608,6 +610,12 @@ export default (props) => {
                         <Text style={styles.textTitle}>{I18n.t("thiet_lap_tinh_nang")}</Text>
                         <SettingSwitch title={"cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang"} output={onSwitchTone} isStatus={settingObject.cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang} />
                         <SettingSwitch title={"cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang"} output={onSwitchTone} isStatus={settingObject.cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang} />
+                        {
+                            deviceType == Constant.TABLET ?
+                                <TouchableOpacity style={{marginBottom:10}} onPress={() => { props.navigation.navigate(ScreenList.SettingCashierScreen, {}) }}>
+                                    <Text style={styles.textTitleItem}>{I18n.t("cai_dat_man_hinh_thu_ngan")}</Text>
+                                </TouchableOpacity> : null
+                        }
                         {/* <SettingSwitch title={"khong_cho_phep_ban_hang_khi_het_ton_kho"} output={onSwitchTone} isStatus={settingObject.khong_cho_phep_ban_hang_khi_het_ton_kho} />
                         <SettingSwitch title={"mo_cashbox_sau_khi_thanh_toan"} output={onSwitchTone} isStatus={settingObject.mo_cashbox_sau_khi_thanh_toan} />
                         <SettingSwitch title={"nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly"} output={onSwitchTone} isStatus={settingObject.nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly} /> */}

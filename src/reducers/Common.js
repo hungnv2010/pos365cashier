@@ -31,6 +31,7 @@ const initState = {
 	printChangeTable: "",
 	syncRetail: false,
 	allPer: {},
+	orderScreen: {},
 }
 
 const commonReducer = (state = initState, action = {}) => {
@@ -143,6 +144,11 @@ const commonReducer = (state = initState, action = {}) => {
 			return {
 				...state,
 				allPer: action.allPer
+			}
+		case "SETTING_ORDER_SCREEN":
+			return {
+				...state,
+				orderScreen: action.orderScreen
 			}
 		default:
 			return state

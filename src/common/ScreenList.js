@@ -102,5 +102,6 @@ export const ScreenList = {
   ListGroupProduct:"ListGroupProduct",
   GroupProductDetail: "GroupProductDetail",
   RoomCategoryDetail: "RoomCategoryDetail",
+  SettingCashierScreen: "SettingCashierScreen",
 }
 
