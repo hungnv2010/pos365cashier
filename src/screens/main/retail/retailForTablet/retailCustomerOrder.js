@@ -491,6 +491,7 @@ const RetailCustomerOrder = (props) => {
             ExcessCashType: 0,
             Order: {},
         };
+        let duplicate = randomUUID()
         let tilteNotification = json.RoomName ? json.RoomName : I18n.t('don_hang');
         // if (props.route.params.Screen != undefined && props.route.params.Screen == ScreenList.MainRetail) {
         params.DeliveryBy = null;//by retain
@@ -501,7 +502,7 @@ const RetailCustomerOrder = (props) => {
         delete json.RoomId;
         // }
         params.Order = json;
-
+        params.Duplicate = duplicate;
         console.log("onClickPay params ", params);
         let net = await NetInfo.fetch();
         if (net.isConnected == true && net.isInternetReachable == true) {
@@ -518,7 +519,7 @@ const RetailCustomerOrder = (props) => {
                     updateServerEventForPayment()
                     dataManager.sentNotification(tilteNotification, I18n.t('khach_thanh_toan') + " " + currencyToString(json.Total))
                 } else {
-                    onError(json, vendorSession)
+                    onError(json, vendorSession, duplicate)
                 }
             }, err => {
                 dialogManager.hiddenLoading()
@@ -529,25 +530,26 @@ const RetailCustomerOrder = (props) => {
             if (isCheckStockControlWhenSelling) {
                 return;
             } else {
-                onError(json, vendorSession)
+                onError(json, vendorSession, duplicate)
             }
         }
     }
 
 
-    const onError = (json, vendorSession) => {
+    const onError = (json, vendorSession, duplicate) => {
         dialogManager.showPopupOneButton(I18n.t("khong_co_ket_noi_internet_don_hang_cua_quy_khach_duoc_luu_vao_offline"))
         json["RoomName"] = I18n.t('don_hang');
         json["Pos"] = "A"
         updateServerEventForPayment()
-        handlerError({ JsonContent: json }, vendorSession)
+        handlerError({ JsonContent: json }, vendorSession, duplicate)
     }
 
-    const handlerError = (data, vendorSession) => {
+    const handlerError = (data, vendorSession, duplicate) => {
         console.log("handlerError data ", data);
         dialogManager.hiddenLoading()
         let params = {
             Id: "OFFLINEIOS" + Math.floor(Math.random() * 9999999),
+            Duplicate: duplicate,
             Orders: JSON.stringify(data.JsonContent),
             ExcessCash: data.JsonContent.ExcessCash,
             DontSetTime: 0,

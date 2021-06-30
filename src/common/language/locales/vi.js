@@ -241,6 +241,7 @@ export default {
   in_lai: "In lại",
   in_phieu_nhap_hang: 'In phiếu nhập hàng',
   in_phieu_nhan_hang: "In phiếu nhận hàng",
+  in_bao_cao: "In báo cáo",
 
   // TODO: K
 
@@ -597,6 +598,7 @@ export default {
   thiet_lap_mau_in: "Thiết lập mẫu in",
   them_moi_nhap_hang: "Thêm mới phiếu nhập",
   tinh_gio: "Tính giờ",
+  thiet_lap: "Thiết lập",
 
   // TODO: U
   ung_dung_hien_tai_chua_ho_tro_in_co_dau: "Ứng dụng hiện tại chưa hỗ trợ in có dấu",
@@ -616,7 +618,7 @@ export default {
   vui_long_kiem_tra_ket_noi_internet: 'Vui lòng kiểm tra kết nối internet.',
   vui_long_nhap_ten_nhom_hang_hoa: 'Vui lòng nhập tên nhóm hàng hoá',
   vui_long_nhap_so_luong_ma_vach_can_in: "Vui lòng nhập số lượng mã vạch cần in",
-  vui_long_xoay_ngang_man_hinh_de_thuc_hien_chuc_nang:'Vui lòng xoay ngang màn hình để thực hiện chức năng.',
+  vui_long_xoay_ngang_man_hinh_de_thuc_hien_chuc_nang: 'Vui lòng xoay ngang màn hình để thực hiện chức năng.',
 
   // TODO: X
 

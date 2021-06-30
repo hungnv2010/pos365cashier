@@ -241,6 +241,7 @@ export default {
   in_lai: "Print again",
   in_phieu_nhap_hang: "Print import receipt",
   in_phieu_nhan_hang: "Print receipt",
+  in_bao_cao: "Print report",
 
   // TODO: K
 
@@ -437,7 +438,7 @@ export default {
   quan_ly_don_hang: "Order management",
   quan_ly: 'Manager',
   quan_ly_hang_hoa: 'Product management',
-  quan_ly_doi_tac: "Quản lý đối tác",
+  quan_ly_doi_tac: "Partner management",
 
 
   // TODO: R
@@ -600,6 +601,7 @@ export default {
   thiet_lap_mau_in: "Print template settings",
   them_moi_nhap_hang: "Add new orderstock",
   tinh_gio: "Start timer",
+  thiet_lap: "Settings",
 
   // TODO: U
   ung_dung_hien_tai_chua_ho_tro_in_co_dau: "The application currently does not support printing with accents",
@@ -619,7 +621,7 @@ export default {
   vui_long_kiem_tra_ket_noi_internet: 'Please check internet connection.',
   vui_long_nhap_ten_nhom_hang_hoa: 'Please enter name group',
   vui_long_nhap_so_luong_ma_vach_can_in: "Please enter the number of barcodes to print",
-  vui_long_xoay_ngang_man_hinh_de_thuc_hien_chuc_nang:"Please rotate the screen to use.",
+  vui_long_xoay_ngang_man_hinh_de_thuc_hien_chuc_nang: "Please rotate the screen to use.",
 
   // TODO: X
 

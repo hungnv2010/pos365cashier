@@ -27,9 +27,11 @@ const initState = {
 	listPrint: "",
 	printProvisional: "",
 	printReturnProduct: "",
+	printReport: "",
+	printChangeTable: "",
 	syncRetail: false,
-	allPer:{},
-	orderScreen:{},
+	allPer: {},
+	orderScreen: {},
 }
 
 const commonReducer = (state = initState, action = {}) => {
@@ -128,13 +130,23 @@ const commonReducer = (state = initState, action = {}) => {
 				...state,
 				printReturnProduct: action.printReturnProduct
 			}
+		case "PRINT_REPORT":
+			return {
+				...state,
+				printReport: action.printReport
+			}
+		case "PRINT_CHANGE_TABLE":
+			return {
+				...state,
+				printChangeTable: action.printChangeTable
+			}
 		case "PERMISSION":
-			return{
+			return {
 				...state,
 				allPer: action.allPer
 			}
 		case "SETTING_ORDER_SCREEN":
-			return{
+			return {
 				...state,
 				orderScreen: action.orderScreen
 			}

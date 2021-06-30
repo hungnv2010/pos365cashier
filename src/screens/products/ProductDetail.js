@@ -906,7 +906,7 @@ export default (props) => {
                     if (element.key == Constant.KEY_PRINTER.StampPrintKey && element.ip != "") {
                         let value = await handerDataPrintTempProduct(listProduct)
                         console.log("handerDataPrintTempProduct value  ", value);
-                        Print.PrintTemp(value, element.ip, "40x30")
+                        Print.PrintTemp(value, element.ip, element.size)
                     }
                 });
             }

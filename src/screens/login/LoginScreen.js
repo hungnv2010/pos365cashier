@@ -190,7 +190,9 @@ const LoginScreen = (props) => {
             dialogManager.hiddenLoading();
             console.log("getDataRetailerInfo err ", e);
             let per = await getFileDuLieuString(Constant.ALLPER, true)
-            if (per != undefined || per != '') {
+            console.log("getDataRetailerInfo per ", per, typeof(per));
+            if (per && per != '') {
+                console.log("getDataRetailerInfo per ok ");
                 dispatch({ type: 'PERMISSION', allPer: JSON.parse(per) })
             }
             navigateToHome();

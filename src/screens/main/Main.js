@@ -29,7 +29,7 @@ export default (props) => {
   const [autoPrintKitchen, setAutoPrintKitchen] = useState(false)
   const [permission, setPermission] = useState(true)
   const [itemPer, setItemPer] = useState()
-  const { listPrint, isFNB, printProvisional, printReturnProduct, appState, deviceType, allPer } = useSelector(state => {
+  const { listPrint, isFNB, printProvisional, printReturnProduct, printReport, printChangeTable, appState, deviceType, allPer } = useSelector(state => {
     return state.Common
   })
 
@@ -51,6 +51,22 @@ export default (props) => {
   }, [printReturnProduct])
 
   useEffect(() => {
+    if (printReport != "") {
+      console.log("useEffect ===== printReport ", printReport);
+      viewPrintRef.current.printReportRef(printReport)
+      dispatch({ type: 'PRINT_REPORT', printReport: "" })
+    }
+  }, [printReport])
+
+  useEffect(() => {
+    if (printChangeTable != "") {
+      console.log("useEffect ===== printChangeTable ", printChangeTable);
+      viewPrintRef.current.printChangeTableRef(printChangeTable)
+      dispatch({ type: 'PRINT_CHANGE_TABLE', printChangeTable: "" })
+    }
+  }, [printChangeTable])
+
+  useEffect(() => {
     if (printProvisional != "") {
       console.log("useEffect ===== printProvisional ", printProvisional);
       viewPrintRef.current.printProvisionalRef(printProvisional.jsonContent, printProvisional.provisional, printProvisional.imgQr && printProvisional.imgQr != '' ? printProvisional.imgQr : "")
@@ -60,7 +76,7 @@ export default (props) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      console.log("allllPer",allPer);
+      console.log("allllPer", allPer);
       const getSettingObj = async () => {
         let settingObject = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
         settingObject = JSON.parse(settingObject)
@@ -90,7 +106,7 @@ export default (props) => {
 
       if (vendorSession) {
         if (currentBranch && currentBranch.FieldId) {
-          console.log("current Branch",currentBranch);
+          console.log("current Branch", currentBranch);
           if (currentBranch.FieldId == 3 || currentBranch.FieldId == 11) {
             let state = store.getState()
             signalRManager.init({ ...vendorSession, SessionId: state.Common.info.SessionId })
@@ -110,10 +126,10 @@ export default (props) => {
       }
 
       let permission = privileges.filter(itm => itm.id == 'Order')
-      console.log("perrrrrrr",permission);
-      if (permission.length > 0){
-       setPermission(permission[0].expanded)
-       setItemPer(permission[0])
+      console.log("perrrrrrr", permission);
+      if (permission.length > 0) {
+        setPermission(permission[0].expanded)
+        setItemPer(permission[0])
       }
     }
     getStoreInfo()

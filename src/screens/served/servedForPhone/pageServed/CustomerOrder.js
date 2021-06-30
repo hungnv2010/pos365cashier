@@ -188,6 +188,7 @@ export default (props) => {
             ExcessCashType: 0,
             Order: {},
         };
+        let duplicate = randomUUID()
         let tilteNotification = json.RoomName ? json.RoomName : "";
         if (props.route.params.Screen != undefined && props.route.params.Screen == ScreenList.MainRetail) {
             params.DeliveryBy = null;//by retain
@@ -197,6 +198,7 @@ export default (props) => {
             delete json.RoomName;
             delete json.RoomId;
         }
+        params.Duplicate = duplicate;
         params.Order = json;
 
         console.log("onClickPay params ", params);
@@ -216,7 +218,7 @@ export default (props) => {
                         dialogManager.showPopupOneButton(order.ResponseStatus.Message.replace(/<strong>/g, "").replace(/<\/strong>/g, ""))
                     }
                 } else {
-                    onError(json)
+                    onError(json, duplicate)
                 }
             }, err => {
                 dialogManager.hiddenLoading()
@@ -227,12 +229,12 @@ export default (props) => {
             if (isCheckStockControlWhenSelling) {
                 return;
             } else {
-                onError(json)
+                onError(json, duplicate)
             }
         }
     }
 
-    const onError = (json) => {
+    const onError = (json, duplicate) => {
         let row_key = `${props.route.params.room.Id}_${props.Position}`
         dialogManager.showPopupOneButton(I18n.t("khong_co_ket_noi_internet_don_hang_cua_quy_khach_duoc_luu_vao_offline"))
         if (!isFNB) {
@@ -240,7 +242,7 @@ export default (props) => {
             json["Pos"] = "A"
         }
         updateServerEvent()
-        handlerError({ JsonContent: json, RowKey: row_key })
+        handlerError({ JsonContent: json, Duplicate: duplicate, RowKey: row_key })
     }
 
     const handlerError = (data) => {
@@ -248,6 +250,7 @@ export default (props) => {
         dialogManager.hiddenLoading()
         let params = {
             Id: "OFFLINEIOS" + Math.floor(Math.random() * 9999999),
+            Duplicate: data.Duplicate,
             Orders: JSON.stringify(data.JsonContent),
             ExcessCash: data.JsonContent.ExcessCash,
             DontSetTime: 0,
@@ -269,14 +272,14 @@ export default (props) => {
         console.log("printAfterPayment jsonContent 2 ", jsonContent);
         // dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContent, provisional: false } })
 
-        if (isFNB) {
+        if (isFNB && settingObject.current.in_tem_truoc_thanh_toan && settingObject.current.in_tem_truoc_thanh_toan == true) {
             console.log("printAfterPayment settingObject.current ", settingObject.current);
             settingObject.current.Printer.forEach(async element => {
                 if (element.key == Constant.KEY_PRINTER.StampPrintKey && element.ip != "") {
                     let value = await handerDataPrintTemp(jsonContent)
                     console.log("printAfterPayment value  ", value);
                     console.log("printAfterPayment element  ", element);
-                    Print.PrintTemp(value, element.ip, "30x40")
+                    Print.PrintTemp(value, element.ip, element.size)
                 }
             });
         }
@@ -349,27 +352,27 @@ export default (props) => {
     }
 
     const onClickReturn = (item) => {
-        if(allPer.OtherTransaction_Create || allPer.IsAdmin){
-        console.log('onClickReturn ', item.Name, item.index);
-        setItemOrder(item)
-        // typeModal.current = TYPE_MODAL.DELETE
-        // setShowModal(true)
-        if (vendorSession.Settings.ReturnHistory) {
-            setQuantitySubtract(item.Quantity)
-            typeModal.current = TYPE_MODAL.DELETE
-            setShowModal(true)
-        } else {
-            let data = {
-                QuantityChange: item.Quantity,
-                Description: "",
+        if (allPer.OtherTransaction_Create || allPer.IsAdmin) {
+            console.log('onClickReturn ', item.Name, item.index);
+            setItemOrder(item)
+            // typeModal.current = TYPE_MODAL.DELETE
+            // setShowModal(true)
+            if (vendorSession.Settings.ReturnHistory) {
+                setQuantitySubtract(item.Quantity)
+                typeModal.current = TYPE_MODAL.DELETE
+                setShowModal(true)
+            } else {
+                let data = {
+                    QuantityChange: item.Quantity,
+                    Description: "",
+                }
+                saveOrder(data, item);
             }
-            saveOrder(data, item);
+        } else {
+            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
         }
-    }else {
-        dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
-            dialogManager.destroy();
-        }, null, null, I18n.t('dong'))
-    }
     }
 
     const onClickTopping = (item, index) => {
@@ -443,7 +446,7 @@ export default (props) => {
                     elm.Name = product.Name
                     elm.Price = +product.Price
                     elm.IsLargeUnit = product.IsLargeUnit
-                    if(elm.IsTimer) {
+                    if (elm.IsTimer) {
                         elm.Checkin = product.Checkin
                         elm.Checkout = product.Checkout
                         elm.StopTimer = product.StopTimer

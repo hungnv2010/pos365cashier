@@ -183,6 +183,19 @@ class PrintService {
         return HTMLBase;
     }
 
+    GenHtmlChangeTable = (html, JsonContent, vendorSession, data) => {
+        console.log('GenHtmlChangeTable JsonContent ', JsonContent);
+        let HTMLBase = html;
+        HTMLBase = HTMLBase.replace("{Ten_Phong_Ban}", I18n.t('chuyen_ban').toUpperCase())
+        HTMLBase = HTMLBase.replace("{Gio_Hien_Tai}", moment(new Date()).format('DD/MM/YYYY - HH:mm'))
+        if (vendorSession.CurrentRetailer) {
+            HTMLBase = HTMLBase.replace("{Nhan_Vien}", vendorSession.CurrentUser.Name)
+        }
+        HTMLBase = HTMLBase.replace("{Noi_Dung_Phong_Ban}", `${data.FromRoomName}[${data.FromPosition}] => ${data.ToRoomName}[${data.ToPosition}]`)
+        console.log("html ", JSON.stringify(HTMLBase));
+        return HTMLBase;
+    }
+
 }
 const printService = new PrintService();
 export default printService;
