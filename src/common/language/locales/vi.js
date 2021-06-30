@@ -240,6 +240,7 @@ export default {
   in_lai: "In lại",
   in_phieu_nhap_hang:'In phiếu nhập hàng',
   in_phieu_nhan_hang:"In phiếu nhận hàng",
+  in_bao_cao: "In báo cáo",
 
   // TODO: K
 
@@ -594,6 +595,7 @@ export default {
   thiet_lap_mau_in: "Thiết lập mẫu in",
   them_moi_nhap_hang:"Thêm mới phiếu nhập",
   tinh_gio:"Tính giờ",
+  thiet_lap: "Thiết lập",
 
   // TODO: U
   ung_dung_hien_tai_chua_ho_tro_in_co_dau: "Ứng dụng hiện tại chưa hỗ trợ in có dấu",

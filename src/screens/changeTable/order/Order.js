@@ -66,12 +66,12 @@ export default (props) => {
     const widthRoom = Dimensions.get('screen').width / numberColumn;
     // const RoomAll = { Name: "Tất cả", Id: "All" }
     const [listRoom, setListRoom] = useState([])
-    
+
 
     useEffect(() => {
         init()
     }, [])
-    
+
 
     const init = async () => {
         rooms = await realmStore.queryRooms()
@@ -132,7 +132,7 @@ export default (props) => {
                     let RoomMoment = ""
                     let IsActive = false
                     listFiters.forEach(elm => {
-                           let JsonContentJS = {}
+                        let JsonContentJS = {}
                         try {
                             JsonContentJS = elm.JsonContent ? JSON.parse(elm.JsonContent) : {}
                         } catch (error) {
@@ -164,7 +164,7 @@ export default (props) => {
 
     const onChangeTable = async () => {
         setShowModal(false)
-        const { FromRoomId, FromPos } = props.route.params
+        const { FromRoomId, FromPos, Name } = props.route.params
         let toPos = listPosition.filter(item => item.checked === true)[0].position
         console.log('params', { FromRoomId: FromRoomId, FromPos: FromPos, ToRoomId: toRoomId.current.Id, toPos: toPos });
         if (toRoomId.current.Id == FromRoomId && toPos == FromPos) {
@@ -176,11 +176,14 @@ export default (props) => {
         if (props.route.params.fromScreen && props.route.params.fromScreen == ScreenList.SplitTable) {
             let { listNew, listOld } = props.route.params
             // console.log('akshdkajshdkjad', listNew, listOld);
-            dataManager.splitTable(FromRoomId, FromPos, toRoomId.current.Id, toPos, listOld, listNew)
+            dataManager.splitTable(FromRoomId, FromPos, toRoomId.current.Id, toPos, listOld, listNew, Name, toRoomId.current.Name)
             props.navigation.goBack()
         } else {
-            dataManager.changeTable(FromRoomId, FromPos, toRoomId.current.Id, toPos)
+            let data = await dataManager.changeTable(FromRoomId, FromPos, toRoomId.current.Id, toPos, Name, toRoomId.current.Name)
+            console.log("onChangeTable data ", data);
+            dispatch({ type: 'PRINT_CHANGE_TABLE', printChangeTable: data })
         }
+
         props.navigation.goBack()
         dialogManager.hiddenLoading()
     }

@@ -14,6 +14,8 @@ import { dateToStringFormatUTC } from '../../common/Utils';
 import useDidMountEffect from '../../customHook/useDidMountEffect';
 import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
 import dialogManager from '../../components/dialog/DialogManager';
+import colors from '../../theme/Colors';
+import { useDispatch } from 'react-redux';
 
 
 export default (props) => {
@@ -27,9 +29,11 @@ export default (props) => {
         allProduct: false
     })
     const [showModal, setShowModal] = useState(false)
-
+    const dispatch = useDispatch();
 
     useEffect(() => {
+        console.log("with ==== ", Metrics.screenWidth);
+
         dialogManager.showLoading()
         setUri(mainUri)
     }, [])
@@ -80,6 +84,14 @@ export default (props) => {
         setFilter({ ...filter, allProduct: !filter.allProduct })
     }
 
+    const printReport = () => {
+        dispatch({ type: 'PRINT_REPORT', printReport: uri != "" ? uri : "" })
+    }
+
+    const onSetting = () => {
+
+    }
+
     const renderFilter = () => {
         return (
             <DateTime
@@ -113,6 +125,15 @@ export default (props) => {
                     />
                 </TouchableOpacity>
             </View>
+            <View style={{ width: "100%", padding: 5, justifyContent: "space-between", flexDirection: "row" }}>
+                <TouchableOpacity style={styles.button} onPress={() => { onSetting() }}>
+                    <Text style={styles.textButton}>{I18n.t('thiet_lap')}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={() => { printReport() }}>
+                    <Text style={styles.textButton}>{I18n.t('in_bao_cao')}</Text>
+                </TouchableOpacity>
+            </View>
+
             <WebView
                 source={{ uri: uri, headers: { 'COOKIE': "ss-id=" + store.getState().Common.info.SessionId } }}
                 onError={syntheticEvent => {
@@ -159,4 +180,8 @@ export default (props) => {
     )
 }
 
+const styles = StyleSheet.create({
+    button: { flex: 1, padding: 12, justifyContent: "center", alignItems: "center", margin: 5, paddingHorizontal: 10, borderRadius: 20, backgroundColor: colors.colorLightBlue },
+    textButton: { color: "#fff", textTransform: "uppercase" },
+})
 

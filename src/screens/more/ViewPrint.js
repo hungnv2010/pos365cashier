@@ -12,6 +12,9 @@ import I18n from '../../common/language/i18n'
 import htmlKitchen from '../../data/html/htmlKitchen';
 import htmlDefault from '../../data/html/htmlDefault';
 import { Metrics } from '../../theme';
+import store from '../../store/configureStore';
+import moment from 'moment';
+import htmlChangeTable from '../../data/html/htmlChangeTable';
 
 export const TYPE_PRINT = {
     KITCHEN: "KITCHEN",
@@ -22,7 +25,9 @@ export default forwardRef((props, ref) => {
 
     const [uriImg, setUriImg] = useState("")
     const [dataHtml, setDataHtml] = useState("");
+    // const [typeHtml, setTypeHtml] = useState(true);
     const currentHtml = useRef({})
+    const typeHtml = useRef(true)
     const isProvisional = useRef(true)
 
     useEffect(() => {
@@ -42,7 +47,6 @@ export default forwardRef((props, ref) => {
     });
 
     useEffect(() => {
-        console.log("ViewPrint props Dimensions.get('window').width ", Dimensions.get('window').width);
     }, [])
 
     useImperativeHandle(ref, () => ({
@@ -60,6 +64,24 @@ export default forwardRef((props, ref) => {
         printDataNewOrdersRef(listKitchen, listReturnProduct) {
             console.log('printDataNewOrdersRef listKitchen, listReturnProduct : ', listKitchen, listReturnProduct);
             printDataNewOrders(listKitchen, listReturnProduct)
+        },
+        printChangeTableRef(data) {
+            console.log('printChangeTableRef data : ', data);
+            printChangeTable(data)
+        },
+        async printReportRef(link) {
+            console.log('printReportRef link ', link);
+            let url = link + "?" + (new Date().getTime());
+            let ipObject = await checkIP();
+            currentHtml.current = {
+                ip: ipObject.ip,
+                size: ipObject.size,
+                isCopies: false,
+                html: url
+            }
+            console.log('printReportRef currentHtml.current ', currentHtml.current);
+            typeHtml.current = false;
+            setDataHtml(url)
         }
     }));
 
@@ -81,7 +103,7 @@ export default forwardRef((props, ref) => {
                 setTimeout(() => {
                     setDataHtmlPrint()
                 }, 1000);
-                // setDataHtmlPrint()
+                typeHtml.current = true;
             },
             error => console.error('Oops, snapshot failed', error)
         );
@@ -213,6 +235,45 @@ export default forwardRef((props, ref) => {
             setDataHtmlPrint()
     }
 
+    const printChangeTable = async (object) => {
+        console.log("printChangeTable object ", object);
+        console.log("printChangeTable printObject ", printObject);
+        let setting = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
+        if (setting && setting != "") {
+            setting = JSON.parse(setting);
+        }
+        isProvisional.current = false;
+        let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
+        if (vendorSession && vendorSession != "")
+            vendorSession = JSON.parse(vendorSession);
+        let data = object.ListOrderDetails
+        let i = 1;
+        for (const value in data) {
+            if (data.hasOwnProperty(value)) {
+                if (printObject[value] != "") {
+                    const item = data[value];
+                    for (const key in item) {
+                        if (item.hasOwnProperty(key)) {
+                            const element = item[key];
+                            console.log('element == ', element, Metrics.screenWidth);
+
+                            let res = printService.GenHtmlChangeTable(htmlChangeTable, element, vendorSession, object)
+                            if (res && res != "") {
+                                res = res.replace("</body>", "<p style='display: none;'>" + Math.floor((Math.random() * 1000000000) + 1) + i + "</p> </body>");
+                                printService.listWaiting.push({ html: res, ip: printObject[value].ip, size: printObject[value].size, isCopies: false })
+                            }
+                        }
+                        i++;
+                    }
+                } else {
+                    dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_may_in'), I18n.t('thong_bao'))
+                }
+            }
+        }
+        console.log("printService.listWaiting ", printService.listWaiting);
+        setDataHtmlPrint()
+    }
+
     const checkIP = async () => {
         return new Promise(async (resolve, reject) => {
             let objectSetting = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
@@ -239,6 +300,8 @@ export default forwardRef((props, ref) => {
     }
 
     const checkHtmlPrint = (e) => {
+        console.log("checkHtmlPrint currentHtml.current ", currentHtml.current);
+
         if (currentHtml.current && currentHtml.current.html && currentHtml.current.html != "") {
             setTimeout(() => {
                 clickCapture()
@@ -294,7 +357,7 @@ export default forwardRef((props, ref) => {
                                 type: 'text/css',
                                 rel: 'stylesheet'
                             }]}
-                            source={{ html: dataHtml }}
+                            source={typeHtml.current ? { html: dataHtml } : { uri: dataHtml, headers: { 'COOKIE': "ss-id=" + store.getState().Common.info.SessionId } }}
                             scalesPageToFit={true}
                             startInLoadingState
                             onLoadEnd={e => checkHtmlPrint(e)}
