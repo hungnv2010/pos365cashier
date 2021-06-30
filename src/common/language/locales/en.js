@@ -124,7 +124,8 @@ export default {
   cap_nhat_nhom_hang_hoa: 'Update group product',
   co_chu: "Text size",
   chi_tiet_nhom_phong_ban: "Group room/table detail",
-  chon_phuong_thuc_thanh_toan:'Select a payment method',
+  chon_phuong_thuc_thanh_toan: 'Select a payment method',
+  chon_mau_in: "Select print template",
 
   // TODO: D 
 
@@ -238,8 +239,8 @@ export default {
   in_may_in_thu_ngan: "Print cashier printer",
   in_may_in_tem: "Print stamp printer",
   in_lai: "Print again",
-  in_phieu_nhap_hang:"Print import receipt",
-  in_phieu_nhan_hang:"Print receipt",
+  in_phieu_nhap_hang: "Print import receipt",
+  in_phieu_nhan_hang: "Print receipt",
   in_bao_cao: "Print report",
 
   // TODO: K
@@ -597,7 +598,7 @@ export default {
   thiet_lap_mau_tem: "Temp template settings",
   thiet_lap_mau_in: "Print template settings",
   them_moi_nhap_hang: "Add new orderstock",
-  tinh_gio:"Start timer",
+  tinh_gio: "Start timer",
   thiet_lap: "Settings",
 
   // TODO: U

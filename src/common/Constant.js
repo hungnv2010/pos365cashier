@@ -21,6 +21,7 @@ export const Constant = {
     OBJECT_SETTING: 'OBJECT_SETTING',
     LANGUAGE: "LANGUAGE",
     HTML_PRINT: "HTML_PRINT",
+    PRINT_KITCHEN: "PRINT_KITCHEN",
     TEMP_DEFAULT: "TEMP_DEFAULT",
     KEY_PRINTER: {
         CashierKey: 'CashierPrint',

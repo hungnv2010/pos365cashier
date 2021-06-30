@@ -125,6 +125,7 @@ export default {
   co_chu: "Cỡ chữ",
   chi_tiet_nhom_phong_ban: "Chi tiết nhóm phòng bàn",
   chon_phuong_thuc_thanh_toan:'Chọn phương thức thanh toán',
+  chon_mau_in: "Chọn mẫu in",
 
   // TODO: D
 
