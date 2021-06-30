@@ -22,6 +22,7 @@ import { HTTPService } from '../../../data/services/HttpService';
 import { ScreenList } from '../../../common/ScreenList';
 import _, { map } from 'underscore';
 import ProductManager from '../../../data/objectManager/ProductManager'
+import { getFileDuLieuString, setFileLuuDuLieu } from "../../../data/fileStore/FileStorage";
 
 const Served = (props) => {
     let serverEvent = null;
@@ -44,10 +45,11 @@ const Served = (props) => {
     const [currentCustomer, setCurrentCustomer] = useState({ Name: "khach_le", Id: 0 })
     const meMoItemOrder = useMemo(() => itemOrder, [itemOrder])
     const [promotions, setPromotions] = useState([])
+    const [objSetting, setObjSetting] = useState({})
     const toolBarTabletServedRef = useRef();
     const listPriceBookRef = useRef({})
-    const orientaition = useSelector(state => {
-        return state.Common.orientaition
+    const {orientaition, orderScreen} = useSelector(state => {
+        return state.Common
     });
 
     let _menu = null;
@@ -82,6 +84,9 @@ const Served = (props) => {
             let promotions = await realmStore.querryPromotion();
             console.log("promotions === ", promotions);
             setPromotions(promotions)
+             let obj = await getFileDuLieuString(Constant.OBJECT_SETTING,true)
+             obj = JSON.parse(obj)
+             setObjSetting(obj)
         }
         getDataRealm();
     }, [])
@@ -584,7 +589,7 @@ const Served = (props) => {
                         <View style={!itemOrder.ProductId ? { flex: 1 } : { width: 0, height: 0 }}>
                             <SelectProduct
                                 valueSearch={value}
-                                numColumns={orientaition == Constant.LANDSCAPE ? 3 : 2}
+                                numColumns={orientaition == Constant.LANDSCAPE ? (orderScreen.size ? orderScreen.size : 3) : 2}
                                 listProducts={jsonContent.OrderDetails ? [...jsonContent.OrderDetails] : []}
                                 outputSelectedProduct={outputSelectedProduct} />
                         </View>

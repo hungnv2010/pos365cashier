@@ -20,8 +20,8 @@ export default (props) => {
     const [value, setValue] = useState('')
     const [product, setProduct] = useState({})
     const cost = useRef(0)
-    const orientaition = useSelector(state => {
-        return state.Common.orientaition
+    const {orientaition,orderScreen} = useSelector(state => {
+        return state.Common
     });
     useEffect(() => {
         getData(props.route.params)
@@ -192,7 +192,7 @@ export default (props) => {
                 />
                 <View style={{ flex: 1, }}>
                     <SelectProduct listProducts={listProduct.length > 0 ? listProduct : []} valueSearch={value}
-                        numColumns={orientaition == Constant.LANDSCAPE ? 3 : 3}
+                        numColumns={orientaition == Constant.LANDSCAPE ? (orderScreen.size ? orderScreen.size : 3) : 2}
                         outputSelectedProduct={outputSelectedProduct}
                         
                     />

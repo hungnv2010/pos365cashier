@@ -124,7 +124,8 @@ export default {
   cap_nhat_nhom_hang_hoa: 'Update group product',
   co_chu: "Text size",
   chi_tiet_nhom_phong_ban: "Group room/table detail",
-  chon_phuong_thuc_thanh_toan:'Select a payment method',
+  chon_phuong_thuc_thanh_toan: 'Select a payment method',
+  cai_dat_man_hinh_thu_ngan: "Setting cashier screen",
 
   // TODO: D 
 
@@ -238,8 +239,8 @@ export default {
   in_may_in_thu_ngan: "Print cashier printer",
   in_may_in_tem: "Print stamp printer",
   in_lai: "Print again",
-  in_phieu_nhap_hang:"Print import receipt",
-  in_phieu_nhan_hang:"Print receipt",
+  in_phieu_nhap_hang: "Print import receipt",
+  in_phieu_nhan_hang: "Print receipt",
 
   // TODO: K
 
@@ -318,6 +319,7 @@ export default {
   luu_va_sao_chep: "Save & Coppy ",
   loc: 'Filter',
   loai_bo: 'Removed',
+  lon: "Large",
 
   // TODO: M
 
@@ -405,6 +407,7 @@ export default {
   ngay_giao: 'Delivery date',
 
   nhom_hang_hoa: 'Group product',
+  nho: "Small",
 
   // TODO: O
 
@@ -596,7 +599,7 @@ export default {
   thiet_lap_mau_tem: "Temp template settings",
   thiet_lap_mau_in: "Print template settings",
   them_moi_nhap_hang: "Add new orderstock",
-  tinh_gio:"Start timer",
+  tinh_gio: "Start timer",
 
   // TODO: U
   ung_dung_hien_tai_chua_ho_tro_in_co_dau: "The application currently does not support printing with accents",
@@ -616,6 +619,7 @@ export default {
   vui_long_kiem_tra_ket_noi_internet: 'Please check internet connection.',
   vui_long_nhap_ten_nhom_hang_hoa: 'Please enter name group',
   vui_long_nhap_so_luong_ma_vach_can_in: "Please enter the number of barcodes to print",
+  vui_long_xoay_ngang_man_hinh_de_thuc_hien_chuc_nang:"Please rotate the screen to use.",
 
   // TODO: X
 
@@ -628,6 +632,8 @@ export default {
   xin_cam_on: "Thank you, see you again!",
   xoa: "Delete",
   xin_cam_on_va_hen_gap_lai: "Thank you, see you again!",
+  xoay_ngang: "Horizontal rotation",
+  xoay_doc: 'Vertical rotation',
 
   // TODO: Y
 

@@ -52,8 +52,8 @@ export default (props) => {
     const totalCurrent = useRef(0)
     const currentBranch = useRef()
     const [value, setValue] = useState('')
-    const deviceType = useSelector(state => {
-        return state.Common.deviceType
+    const {deviceType, orderScreen} = useSelector(state => {
+        return state.Common
     });
     const orientaition = useSelector(state => {
         return state.Common.orientaition
@@ -477,7 +477,7 @@ export default (props) => {
                         outputListProducts={outputListProducts} />
                     <View style={{ flex: 1, }}>
                         <SelectProduct listProducts={listProduct.length > 0 ? listProduct : []} valueSearch={value}
-                            numColumns={orientaition == Constant.LANDSCAPE ? 3 : 3}
+                            numColumns={orientaition == Constant.LANDSCAPE ? (orderScreen.size ? orderScreen.size : 3) : 2}
                             outputSelectedProduct={outputSelectedProduct}
                         />
                     </View>

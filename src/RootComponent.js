@@ -23,6 +23,7 @@ import dataManager from './data/DataManager';
 import dialogManager from './components/dialog/DialogManager';
 import { HTTPService } from './data/services/HttpService';
 import DeviceInfo from 'react-native-device-info';
+import { set } from 'react-native-reanimated';
 
 var numberInternetReachable = 0;
 
@@ -121,6 +122,7 @@ export default () => {
                 });
                 console.log("savePrinter objectPrint ", objectPrint);
                 dispatch({ type: 'PRINT_OBJECT', printerObject: objectPrint })
+                dispatch({type:'SETTING_ORDER_SCREEN',orderScreen: setting.OrderScreen ? setting.OrderScreen : {}})
 
                 if (setting.giu_man_hinh_luon_sang == true)
                     Print.keepTheScreenOn("")

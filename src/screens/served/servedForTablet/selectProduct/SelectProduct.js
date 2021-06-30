@@ -25,7 +25,7 @@ export default (props) => {
   const count = useRef(0)
   const debouncedVal = useDebounce(valueSearch)
 
-  const { already } = useSelector(state => {
+  const { already, orderScreen } = useSelector(state => {
     return state.Common
   });
 
@@ -38,7 +38,9 @@ export default (props) => {
         count.current = 0
         let valueSearchLatin = change_alias(debouncedVal)
         let results = await realmStore.queryProducts()
+        results = results.sorted('Position')
         let searchResult = results.filtered(`NameLatin CONTAINS[c] "${valueSearchLatin}" OR Code CONTAINS[c] "${debouncedVal}"`)
+        console.log("search result",searchResult);
         searchResult = JSON.parse(JSON.stringify(searchResult))
         searchResult = Object.values(searchResult)
         searchResult.forEach(item => {
@@ -93,7 +95,7 @@ export default (props) => {
       const getProducts = async () => {
         if (already && props.isRetail) {
           onClickAll()
-          let results = await realmStore.queryProducts()
+          let results = await (await realmStore.queryProducts()).sorted('Position')
           if (listCateId[0] != -1) {
             results = results.filtered(`CategoryId == ${listCateId[0]}`)
           }
@@ -115,7 +117,7 @@ export default (props) => {
   const getProducts = useCallback(async () => {
     if (!already) return
 
-    let results = await realmStore.queryProducts()
+    let results = await (await realmStore.queryProducts()).sorted('Position')
     if (listCateId[0] != -1) {
       results = results.filtered(`CategoryId == ${listCateId[0]}`)
     }
@@ -203,14 +205,12 @@ export default (props) => {
 
   const renderCateItem = (item, index) => {
     return (
-      <View style={{}}>
-        <TouchableOpacity onPress={() => onClickCate(item, index)} key={index} style={[styles.renderCateItem, { flex: 1, backgroundColor: item.Id == listCateId[0] ? Colors.colorLightBlue : "white", borderBottomWidth: 0.5, paddingVertical: 20, borderColor: 'gray' }]}>
+        <TouchableOpacity onPress={() => onClickCate(item, index)} key={index} style={[styles.renderCateItem, { backgroundColor: item.Id == listCateId[0] ? Colors.colorLightBlue : "white", borderBottomWidth: 0.5, paddingVertical: 20, borderColor: 'gray', borderWidth: orderScreen.isHorizontal ? 0.5 : 0, marginRight: orderScreen.isHorizontal ? 5 : 0,paddingHorizontal:10 }]}>
           <View style={{ backgroundColor: item.Id != listCateId[0] ? Colors.colorLightBlue : "white", flex: 1, padding: 7, borderRadius: 50, marginHorizontal: 5 }}>
             <Text style={{ fontWeight: "bold", textAlign: "center", color: item.Id != listCateId[0] ? "white" : Colors.colorLightBlue, fontSize: 12 }}>{item.numberProduct}</Text>
           </View>
           <Text numberOfLines={2} style={[styles.textRenderCateItem, { flex: 6, color: item.Id == listCateId[0] ? "white" : Colors.colorLightBlue }]}>{item.Name}</Text>
         </TouchableOpacity>
-      </View>
 
     );
   }
@@ -222,27 +222,31 @@ export default (props) => {
   }
 
   return (
-    <View style={{ flex: 1, flexDirection: "row", }}>
+    <View style={{ flex: 1, flexDirection: orderScreen.isHorizontal ? "column" : 'row', }}>
       {
         isSearching ?
           null
           :
-          <View style={{ width: "24%", backgroundColor: 'white', paddingVertical: 5 }}>
-            <View style={{ flex: 1, marginHorizontal: 5, paddingBottom: 5 }}>
-              <TouchableOpacity onPress={() => onClickAll()} style={[styles.renderCateItem, { backgroundColor: "white", backgroundColor: -1 == listCateId[0] ? Colors.colorLightBlue : "white", borderBottomWidth: 0.5, paddingVertical: 20, borderColor: 'gray' }]}>
+          <View style={{ width: orderScreen.isHorizontal ? "100%" : "24%", backgroundColor: 'white', paddingVertical: 5, height: orderScreen.isHorizontal ? "12%" : "100%" }}>
+            <View style={{ flex: 1, marginHorizontal: 5, paddingBottom: 5, flexDirection: orderScreen.isHorizontal ? 'row' : 'column' }}>
+              <TouchableOpacity onPress={() => onClickAll()} style={[styles.renderCateItem, { width: orderScreen.isHorizontal ? '24%' : '100%', backgroundColor: "white", backgroundColor: -1 == listCateId[0] ? Colors.colorLightBlue : "white", borderBottomWidth: 0.5, paddingVertical: 20, borderColor: 'gray', marginRight: orderScreen.isHorizontal ? 5 : 0, borderWidth: orderScreen.isHorizontal ? 0.5 : 0 }]}>
                 <View style={{ backgroundColor: -1 == listCateId[0] ? Colors.colorLightBlue : "white", flex: 1, padding: 7, borderRadius: 50, marginHorizontal: 5 }}>
                   <Text style={{ fontWeight: "bold", textAlign: "center", color: -1 == listCateId[0] ? "white" : Colors.colorLightBlue, fontSize: 12 }}></Text>
                 </View>
                 <Text numberOfLines={2} style={[styles.textRenderCateItem, { flex: 6, color: -1 == listCateId[0] ? "white" : Colors.colorLightBlue }]}>ALL</Text>
               </TouchableOpacity>
+              <View style={{flex:1}}>
               <FlatList
                 extraData={listCateId}
                 showsVerticalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
+                horizontal={orderScreen.isHorizontal ? orderScreen.isHorizontal : false}
                 data={category}
                 renderItem={({ item, index }) => renderCateItem(item, index)}
                 keyExtractor={(item, index) => '' + index}
               // ItemSeparatorComponent={() => <View style={{ width: 14 }}></View>}
               />
+              </View>
             </View>
           </View>
       }

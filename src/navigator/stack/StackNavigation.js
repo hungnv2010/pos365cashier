@@ -73,6 +73,7 @@ import PreviewTempPrint from '../../screens/tempPrint/PreviewTempPrint'
 
 import ListGroupProduct from '../../screens/products/groupproduct/ListGroupProduct';
 import GroupProductDetail from '../../screens/products/groupproduct/GroupProductDetail'
+import SettingCashierScreen from '../../screens/settings/SettingCashierScreen'
 
 const MainStack = createStackNavigator();
 
@@ -157,6 +158,7 @@ export default (props) => {
                 <MainStack.Screen name={ScreenList.RoomCategoryDetail}>{props=><RoomCategoryDetail {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.ListGroupProduct}>{props => <ListGroupProduct {...props}/>}</MainStack.Screen>
                 <MainStack.Screen name={ScreenList.GroupProductDetail}>{props=><GroupProductDetail {...props}/>}</MainStack.Screen>
+                <MainStack.Screen name={ScreenList.SettingCashierScreen}>{props=><SettingCashierScreen {...props}/>}</MainStack.Screen>
             </MainStack.Navigator>
         </Animated.View>
     );

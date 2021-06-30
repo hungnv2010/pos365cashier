@@ -465,6 +465,7 @@ const ProductSchema = {
         StopTimer: { type: 'bool', default: false },
         Hidden: { type: 'bool', default: false },
         IsCheckPriceServer: { type: 'bool', default: true },
+        Position: { type : 'int', default: 0},
     }
 }
 
@@ -519,7 +520,7 @@ const PromotionSchema = {
 const databaseOption = {
     path: 'Pos365Boss.realm',
     schema: [ServerEventSchema, RoomSchema, RoomGroupSchema, ProductSchema, CategoriesSchema, ToppingsSchema, CustomerSchema, PromotionSchema, OrdersOffline, QRCode, PriceBook],
-    schemaVersion: 43
+    schemaVersion: 44
 }
 
 const realm = new Realm(databaseOption);

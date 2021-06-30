@@ -343,12 +343,33 @@ class DataManager {
         //     }
         // }
     }
-
     syncProduct = async () => {
         let res = await new HTTPService().setPath(ApiPath.SYNC_PRODUCTS, false).GET()
+        let setting = JSON.parse(await getFileDuLieuString(Constant.OBJECT_SETTING,true))
 
         if (res && res.Data && res.Data.length > 0)
-            await realmStore.insertProducts(res.Data)
+        {
+            let dataPr = []
+            let listPos = setting.SettingPosition ? setting.SettingPosition : []
+            console.log("listPost",listPos);
+            res.Data.forEach(item =>{
+                if(listPos.length > 0){
+                let pos = listPos.filter(el => el.key == item.Id )
+                if(pos.length > 0){
+                item.Position = pos[0].value
+                }else{
+                    item.Position = 0
+                }
+                dataPr.push(item)
+            }else{
+                item.Position = 0
+                dataPr.push(item)
+            }
+        })
+            await realmStore.insertProducts(dataPr)
+        }
+            
+            
     }
     syncAllProduct = async () => {
         let res = await new HTTPService().setPath(ApiPath.PRODUCT, false).GET()
