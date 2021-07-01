@@ -124,6 +124,7 @@ export default {
   cap_nhat_nhom_hang_hoa: 'Cập nhật nhóm hàng hoá',
   co_chu: "Cỡ chữ",
   chi_tiet_nhom_phong_ban: "Chi tiết nhóm phòng bàn",
+  chon_mau_in: "Chọn mẫu in",
   chon_phuong_thuc_thanh_toan: 'Chọn phương thức thanh toán',
   cai_dat_man_hinh_thu_ngan: 'Cài đặt màn hình thu ngân',
 

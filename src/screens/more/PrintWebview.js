@@ -107,7 +107,7 @@ export default forwardRef((props, ref) => {
                 Content: deviceType != Constant.PHONE ? props.data : props.route.params.data,
                 Id: 0,
                 RetailerId: vendorSession.CurrentRetailer.Id,
-                Type: 10,
+                Type: deviceType != Constant.PHONE ? props.type : props.route.params.type,
             }
         };
         dialogManager.showLoading();
@@ -181,7 +181,7 @@ export default forwardRef((props, ref) => {
             </View>
             <AutoHeightWebView
                 // scrollEnabled={false}
-                style={{  }}
+                style={{}}
                 files={[{
                     href: 'cssfileaddress',
                     type: 'text/css',

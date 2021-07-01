@@ -16,7 +16,7 @@ import { DragSortableView, AutoDragSortableView } from 'react-native-drag-sort'
 
 export default (props) => {
   const [widthParent, setWidthParent] = useState(props.widthParent)
-  const [numColumn, setNumColumn] = useState(props.numColumn)
+  const [numColumn, setNumColumn] = useState(props.numColumn ? props.numColumn : 3)
   const [listProduct, setListProduct] = useState(props.listProducts)
   const { already } = useSelector(state => {
     return state.Common
@@ -28,9 +28,9 @@ export default (props) => {
   useEffect(() => {
     setListProduct(props.listProducts)
   }, props.listProducts)
-  useEffect(()=>{
+  useEffect(() => {
     setWidthParent(props.widthParent)
-  },[props.widthParent])
+  }, [props.widthParent])
 
   const onClickProduct = () => {
     setIsDrag(true)
@@ -116,11 +116,10 @@ export default (props) => {
         marginChildrenRight={10}
         marginChildrenBottom={10}
         marginChildrenTop={10}
-        onDataChange={(data) =>
-          {
-            console.log(data);
-            props.outputDataChange(data)
-          }
+        onDataChange={(data) => {
+          console.log(data);
+          props.outputDataChange(data)
+        }
         }
         renderItem={(item, index) => {
           return (
@@ -130,8 +129,9 @@ export default (props) => {
                   style={{ height: 100, width: "100%", borderTopLeftRadius: 5, borderTopRightRadius: 5 }}
                   source={JSON.parse(item.ProductImages).length > 0 ? { uri: JSON.parse(item.ProductImages)[0].ImageURL } : Images.default_food_image}
                 />
-                <View style={{marginHorizontal:10,
-                   flexDirection: "row",
+                <View style={{
+                  marginHorizontal: 10,
+                  flexDirection: "row",
                   alignItems: "center"
                 }}>
                   <View style={{

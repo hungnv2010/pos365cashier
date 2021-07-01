@@ -129,7 +129,7 @@ export default (props) => {
                                 <View style={{ flex: 2 }}>
                                     {
                                         listProduct.length > 0 ?
-                                            <SelectProduct numColumn={size} listProducts={listProduct} widthParent={isHorizontal ? Metrics.screenHeight / 5 * 3 : Metrics.screenHeight / 5 * 2} outputDataChange={outputDataChange} />
+                                            <SelectProduct numColumn={size || 3} listProducts={listProduct} widthParent={isHorizontal ? Metrics.screenHeight / 5 * 3 : Metrics.screenHeight / 5 * 2} outputDataChange={outputDataChange} />
                                             :
                                             <Text style={{ textAlign: "center" }}>{I18n.t('khong_tim_thay_san_pham_nao_phu_hop')}</Text>
                                     }

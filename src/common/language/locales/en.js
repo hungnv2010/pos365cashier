@@ -125,6 +125,7 @@ export default {
   co_chu: "Text size",
   chi_tiet_nhom_phong_ban: "Group room/table detail",
   chon_phuong_thuc_thanh_toan: 'Select a payment method',
+  chon_mau_in: "Select print template",
   cai_dat_man_hinh_thu_ngan: "Setting cashier screen",
 
   // TODO: D 
