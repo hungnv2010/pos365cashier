@@ -297,6 +297,7 @@ export default {
   hoac: 'hoặc',
   hoat_dong: 'Hoạt động',
   hang_hoa_trong_nhom: 'Hàng hoá trong nhóm',
+  he_thong_se_cap_nhat_ton_kho_ngay_khi_hoan_thanh_chung_tu:"Hệ thống sẽ cập nhật tồn kho ngay khi hoàn thành chứng từ. Bạn có chắc chắn muốn hoàn thành chứng từ này?",
 
   // TODO: L
 
@@ -619,6 +620,7 @@ export default {
   vui_long_nhap_ten_nhom_hang_hoa: 'Vui lòng nhập tên nhóm hàng hoá',
   vui_long_nhap_so_luong_ma_vach_can_in: "Vui lòng nhập số lượng mã vạch cần in",
   vui_long_xoay_ngang_man_hinh_de_thuc_hien_chuc_nang: 'Vui lòng xoay ngang màn hình để thực hiện chức năng.',
+  vui_long_chon_hang_hoa_vao_phieu_nhap:'Vui lòng chọn hàng hoá vào phiếu nhập. ',
 
   // TODO: X
 

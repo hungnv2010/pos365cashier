@@ -114,7 +114,9 @@ export default (props) => {
         dialogManager.showLoading()
         try {
             getOrderStock()
+            if(type1){
             dialogManager.showPopupOneButton(`${I18n.t(type1)} ${I18n.t('thanh_cong')}`, I18n.t('thong_bao'))
+            }
             dialogManager.hiddenLoading()
         } catch (error) {
             console.log('handleSuccess err', error);
@@ -122,7 +124,7 @@ export default (props) => {
         }
     }
     const outEdit = (data) => {
-        props.navigation.navigate(ScreenList.AddOrderStock, { ...data, callBack: CallBack })
+        props.navigation.navigate(ScreenList.AddOrderStock, { ...data, callBack: CallBack,type:1 })
     }
 
     const renderItemOrderStock = (item, index) => {
@@ -209,7 +211,7 @@ export default (props) => {
                             icon='plus'
                             color="#fff"
                             onPress={() => {
-                                props.navigation.navigate(ScreenList.AddOrderStock, { orderstock: {}, listPr: [], paymentMethod: "", callBack: CallBack })
+                                props.navigation.navigate(ScreenList.AddOrderStock, { orderstock: {}, listPr: [], paymentMethod: "", onCallBack: CallBack })
                             }}
                         />
                         :

@@ -24,6 +24,7 @@ export default (props) => {
   const [valueSearch, setValueSearch] = useState(() => props.valueSearch)
   const count = useRef(0)
   const debouncedVal = useDebounce(valueSearch)
+  const type = useRef(props.type ? props.type : 0)
 
   const { already, orderScreen } = useSelector(state => {
     return state.Common
@@ -96,6 +97,9 @@ export default (props) => {
         if (already && props.isRetail) {
           onClickAll()
           let results = await (await realmStore.queryProducts()).sorted('Position')
+          if(type.current == 1){
+            results = results.filtered(`ProductType == 1`)
+          }
           if (listCateId[0] != -1) {
             results = results.filtered(`CategoryId == ${listCateId[0]}`)
           }
@@ -118,6 +122,9 @@ export default (props) => {
     if (!already) return
 
     let results = await (await realmStore.queryProducts()).sorted('Position')
+    if(type.current == 1){
+      results = results.filtered(`ProductType == 1`)
+    }
     if (listCateId[0] != -1) {
       results = results.filtered(`CategoryId == ${listCateId[0]}`)
     }

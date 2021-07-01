@@ -297,6 +297,7 @@ export default {
   hoac: 'or',
   hoat_dong: 'Action',
   hang_hoa_trong_nhom: 'Product in category',
+  he_thong_se_cap_nhat_ton_kho_ngay_khi_hoan_thanh_chung_tu:'The system will update the inventory as soon as the voucher is completed. Are you sure you want to complete this voucher?',
 
   // TODO: L
 
@@ -622,6 +623,7 @@ export default {
   vui_long_nhap_ten_nhom_hang_hoa: 'Please enter name group',
   vui_long_nhap_so_luong_ma_vach_can_in: "Please enter the number of barcodes to print",
   vui_long_xoay_ngang_man_hinh_de_thuc_hien_chuc_nang: "Please rotate the screen to use.",
+  vui_long_chon_hang_hoa_vao_phieu_nhap:'Please select the goods on the entry form. ',
 
   // TODO: X
 

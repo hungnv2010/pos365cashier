@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useLayoutEffect, useRef,useCallback } from 'react';
-import { Animated, Image, View, StyleSheet, Text, TouchableOpacity, ScrollView, ActivityIndicator, Modal, TouchableWithoutFeedback ,Keyboard} from "react-native";
+import React, { useEffect, useState, useLayoutEffect, useRef, useCallback } from 'react';
+import { Animated, Image, View, StyleSheet, Text, TouchableOpacity, ScrollView, ActivityIndicator, Modal, TouchableWithoutFeedback, Keyboard } from "react-native";
 import MainToolBar from '../../main/MainToolBar';
 import I18n from '../../../common/language/i18n';
 import realmStore from '../../../data/realm/RealmStore';
@@ -27,6 +27,7 @@ import ToolBarCombo from '../../../components/toolbar/ToolBarCombo'
 import ToolBarOrderStock from '../../../components/toolbar/ToolBarOrderStock'
 import { useFocusEffect } from '@react-navigation/native';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import NetInfo from "@react-native-community/netinfo";
 
 export default (props) => {
     const [orderStock, setOrderStock] = useState({})
@@ -39,7 +40,7 @@ export default (props) => {
     const typeModal = useRef()
     const [marginModal, setMargin] = useState(0)
     const [listSupplier, setListSuppiler] = useState([])
-    const [paymentMethod, setPaymentMethod] = useState()
+    const [paymentMethod, setPaymentMethod] = useState(I18n.t('tien_mat'))
     const [listMethod, setListMethod] = useState([])
     const [date, setDate] = useState(new Date());
     const [dateTmp, setDateTmp] = useState(new Date())
@@ -52,7 +53,7 @@ export default (props) => {
     const totalCurrent = useRef(0)
     const currentBranch = useRef()
     const [value, setValue] = useState('')
-    const {deviceType, orderScreen} = useSelector(state => {
+    const { deviceType, orderScreen } = useSelector(state => {
         return state.Common
     });
     const orientaition = useSelector(state => {
@@ -144,7 +145,7 @@ export default (props) => {
         let arrPr = JSON.parse(JSON.stringify(param.listPr))
         getTotal(arrPr)
         setListPr([...arrPr])
-        setPaymentMethod(param.paymentMethod)
+        setPaymentMethod(param.paymentMethod ? param.paymentMethod : I18n.t('tien_mat'))
     }
     useEffect(() => {
         getTotal(listPr)
@@ -316,18 +317,19 @@ export default (props) => {
         listPr.splice(index, 1)
         setListPr([...listPr])
     }
-    const onClickSave = (st) => {
+    const onClickSave = async (st) => {
         let param = {
             ChangeSellingPrice: false,
             PurchaseOrder: {
-                Discount: 0,
-                ExchangeRate: 0,
+                Discount: isPercent == true ? totalCurrent.current * discount / 100 : discount,
+                ExchangeRate: orderStock.ExchangeRate,
                 Id: 0,
+                Description: orderStock.Description,
                 PurchaseOrderDetails: listPurchase,
                 Status: st,
                 Total: total,
-                TotalPayment: 0,
-                VAT: 0,
+                TotalPayment: orderStock.TotalPayment ? orderStock.TotalPayment : 0,
+                VAT: orderStock.VAT ? orderStock.VAT : 0,
                 VATRates: 0,
             }
         }
@@ -338,22 +340,44 @@ export default (props) => {
         if (orderStock.Status != 2) {
             paramAdd.PurchaseOrder.Status = st
         }
-        new HTTPService().setPath(ApiPath.ORDERSTOCK).POST(orderStock.Id ? paramAdd : param).then(res => {
-            if (res != null) {
-                console.log("res", res.Message);
-                dialogManager.showPopupOneButton(res.Message, I18n.t('thong_bao'), () => {
+        let state = await NetInfo.fetch()
+        if (state.isConnected == true && state.isInternetReachable == true) {
+            if (listPurchase.length > 0) {
+                new HTTPService().setPath(ApiPath.ORDERSTOCK).POST(orderStock.Id ? paramAdd : param).then(res => {
+                    if (res != null) {
+                        console.log("res", res.Message);
+                        dialogManager.showPopupOneButton(res.Message, I18n.t('thong_bao'), () => {
+                            dialogManager.destroy();
+                        }, null, null, I18n.t('dong'))
+                        dialogManager.hiddenLoading()
+                        if (deviceType == Constant.TABLET) {
+                            props.route.params.callBack(orderStock.Id ? "sua" : "them")
+                            props.navigation.pop()
+                        } else {
+                            if (orderStock.Id) {
+                                props.navigation.goBack()
+                                props.route.params.onCallBack(orderStock,listPr,paymentMethod)
+                            } else {
+                                props.route.params.onCallBack()
+                                props.navigation.goBack()
+                            }
+                        }
+
+                    }
+                }).catch(err => {
+                    dialogManager.hiddenLoading()
+                })
+            } else {
+                dialogManager.showPopupOneButton(I18n.t('vui_long_chon_hang_hoa_vao_phieu_nhap'), I18n.t('thong_bao'), () => {
                     dialogManager.destroy();
                 }, null, null, I18n.t('dong'))
-                dialogManager.hiddenLoading()
-                if (deviceType == Constant.TABLET) {
-                    props.route.params.callBack(orderStock.Id ? "sua" : "them")
-                    props.navigation.pop()
-                } else
-                    props.navigation.goBack()
             }
-        }).catch(err => {
-            dialogManager.hiddenLoading()
-        })
+        } else {
+            dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_internet'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
+        }
+        dialogManager.hiddenLoading()
     }
     const outputSelectedProduct = (product) => {
         console.log("outputfor Tab", product);
@@ -405,6 +429,14 @@ export default (props) => {
         console.log("dataaaaa", data);
         outputSelectedProduct(data[0])
     }
+    const onClickFinish = () =>{
+        dialogManager.showPopupTwoButton(I18n.t('he_thong_se_cap_nhat_ton_kho_ngay_khi_hoan_thanh_chung_tu'), I18n.t("thong_bao"), res => {
+            if (res == 1) {
+                onClickSave(2)
+            }
+        })
+       
+    }
     const renderModal = () => {
         return (
             <View style={{ backgroundColor: '#fff', borderRadius: 5, }}>
@@ -420,9 +452,9 @@ export default (props) => {
                                         listMethod.map((item, index) => {
                                             return (
                                                 <TouchableOpacity onPress={() => onClickSelectMethod(item)} key={index.toString()}>
-                                                    <View key={index.toString()} style={{ paddingVertical: 10, borderWidth: 0.5, borderRadius: 10, paddingHorizontal: 20, flexDirection: 'row', borderColor: paymentMethod == item.text ? colors.colorLightBlue : '#4a4a4a', marginVertical: 2 }}>
+                                                    <View key={index.toString()} style={{ paddingVertical: 10, borderWidth: 0.5, borderRadius: 10, paddingHorizontal: 20, flexDirection: 'row', borderColor: change_alias(paymentMethod) == change_alias(item.text) ? colors.colorLightBlue : '#4a4a4a', marginVertical: 2 }}>
                                                         <View style={{ justifyContent: 'center' }}>
-                                                            <Text style={{ textAlign: 'center', color: paymentMethod == item.text ? colors.colorLightBlue : '#4a4a4a' }}>{item.text}</Text>
+                                                            <Text style={{ textAlign: 'center', color: change_alias(paymentMethod) == change_alias(item.text) ? colors.colorLightBlue : '#4a4a4a' }}>{item.text}</Text>
                                                         </View>
                                                     </View>
                                                 </TouchableOpacity>
@@ -464,7 +496,7 @@ export default (props) => {
             {deviceType == Constant.PHONE ?
                 <ToolBarOrderStock
                     {...props}
-                    title={orderStock != {} ? I18n.t('chinh_sua_nhap_hang') : I18n.t('them_moi_nhap_hang')}
+                    title={orderStock.Id ? I18n.t('chinh_sua_nhap_hang') : I18n.t('them_moi_nhap_hang')}
                     outputListProducts={outputListProducts}
                 /> :
                 <View style={{ flex: 3, }}>
@@ -478,7 +510,7 @@ export default (props) => {
                     <View style={{ flex: 1, }}>
                         <SelectProduct listProducts={listProduct.length > 0 ? listProduct : []} valueSearch={value}
                             numColumns={orientaition == Constant.LANDSCAPE ? (orderScreen.size ? orderScreen.size : 3) : 2}
-                            outputSelectedProduct={outputSelectedProduct}
+                            outputSelectedProduct={outputSelectedProduct} type={1}
                         />
                     </View>
 
@@ -495,16 +527,16 @@ export default (props) => {
                     </View>
                     <View style={{ flex: 1 }}>
                         <KeyboardAwareScrollView>
-                        <FlatList
-                            data={listPr}
-                            renderItem={({ item, index }) => <ItemPrOrderStock
-                                item={item}
-                                index={index}
-                                onChangeText={onChangeText}
-                                onClickDelItem={onClickDelItem}
-                            />}
-                            keyExtractor={(item, index) => index.toString()}
-                        />
+                            <FlatList
+                                data={listPr}
+                                renderItem={({ item, index }) => <ItemPrOrderStock
+                                    item={item}
+                                    index={index}
+                                    onChangeText={onChangeText}
+                                    onClickDelItem={onClickDelItem}
+                                />}
+                                keyExtractor={(item, index) => index.toString()}
+                            />
                         </KeyboardAwareScrollView>
                     </View>
                 </View>
@@ -542,7 +574,7 @@ export default (props) => {
                                     <Text>{I18n.t('ma_nhap_hang')}</Text>
                                 </View>
                                 <View style={{ flex: 3 }}>
-                                    <TextInput style={styles.styleTextInput} value={orderStock.Code ? orderStock.Code : null}></TextInput>
+                                    <TextInput style={styles.styleTextInput} value={orderStock.Code ? orderStock.Code : null} onChangeText={(text) => setOrderStock({ ...orderStock, Code: text })}></TextInput>
                                 </View>
                             </View>
                             <View style={{ flexDirection: 'row', paddingVertical: 5, paddingHorizontal: 10 }}>
@@ -550,9 +582,9 @@ export default (props) => {
                                     <Text>{I18n.t('nha_cung_cap')}</Text>
                                 </View>
                                 <View style={{ flex: 3 }}>
-                                    <TouchableOpacity style={[styles.styleTextInput, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]} onPress={() => onClickSupplier()}>
+                                    <TouchableOpacity style={[styles.styleTextInput, { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }]} onPress={() => orderStock.Partner ? setOrderStock({ ...orderStock, Partner: undefined }) : onClickSupplier()}>
                                         <Text>{orderStock.Partner ? orderStock.Partner.Name : null}</Text>
-                                        <Image source={Images.icon_arrow_down} style={{ width: 16, height: 16 }} />
+                                        <Image source={orderStock.Partner ? Images.icon_red_x : Images.icon_arrow_down} style={{ width: 16, height: 16 }} />
                                     </TouchableOpacity>
                                 </View>
                             </View>
@@ -578,7 +610,7 @@ export default (props) => {
                                     <Text>{I18n.t('ghi_chu')}</Text>
                                 </View>
                                 <View style={{ flex: 3 }}>
-                                    <TextInput style={styles.styleTextInput} value={orderStock.Description ? orderStock.Description : null}></TextInput>
+                                    <TextInput style={styles.styleTextInput} value={orderStock.Description ? orderStock.Description : null} onChangeText={(text) => setOrderStock({ ...orderStock, Description: text })}></TextInput>
                                 </View>
                             </View>
                             <View style={{ height: 0.3, marginHorizontal: 10, backgroundColor: '#4a4a4a' }}></View>
@@ -595,7 +627,7 @@ export default (props) => {
                                     </TouchableOpacity>
                                 </View>
                                 <View style={{ flex: 1 }}>
-                                    <TextInput style={{ backgroundColor: '#f2f2f2', paddingVertical: 10, paddingHorizontal: 5, borderRadius: 10, textAlign: 'right' }} value={currencyToString(discount)} onChangeText={(text) => setDiscount(onChangeTextInput(text))}></TextInput>
+                                    <TextInput style={{ backgroundColor: '#f2f2f2', color: '#000', paddingVertical: 10, paddingHorizontal: 5, borderRadius: 10, textAlign: 'right' }} value={currencyToString(discount)} onChangeText={(text) => setDiscount(onChangeTextInput(text))}></TextInput>
                                 </View>
                             </View>
                             <View style={{ flexDirection: 'row', paddingVertical: 5, paddingHorizontal: 10 }}>
@@ -613,7 +645,7 @@ export default (props) => {
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, paddingVertical: 5, alignItems: 'center' }}>
                                 <Text style={{ flex: 1 }}>{I18n.t('tong_thanh_toan')}</Text>
                                 <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
-                                    <TextInput style={[styles.styleTextInput, { flex: 3 }]} value={currencyToString(orderStock.TotalPayment)} ></TextInput>
+                                    <TextInput style={[styles.styleTextInput, { flex: 3 }]} value={orderStock.TotalPayment ? currencyToString(orderStock.TotalPayment) : null} onChangeText={(text) => setOrderStock({ ...orderStock, TotalPayment: onChangeTextInput(text) })} ></TextInput>
                                     <TouchableOpacity style={{ alignItems: 'center', marginLeft: 10, justifyContent: 'center', paddingVertical: 10, paddingHorizontal: 5, flex: 2, borderWidth: 1, borderColor: colors.colorLightBlue, borderRadius: 10, marginTop: 10 }} onPress={() => setOrderStock({ ...orderStock, TotalPayment: total })}>
                                         <Text style={{ color: colors.colorLightBlue }}>{I18n.t('toi_da')}</Text>
                                     </TouchableOpacity>
@@ -632,7 +664,7 @@ export default (props) => {
                         <TouchableOpacity style={{ flex: 1, backgroundColor: colors.colorLightBlue, borderRadius: 10, alignItems: 'center', justifyContent: 'center', paddingVertical: 15, marginHorizontal: 10 }} onPress={() => { onClickSave(1) }}>
                             <Text style={{ fontWeight: 'bold', color: '#fff' }}>{I18n.t('luu')}</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={{ flex: 1, backgroundColor: "#34bfa3", borderRadius: 10, alignItems: 'center', justifyContent: 'center', paddingVertical: 15, marginHorizontal: 10 }} onPress={() => { isFinish.current = true, setOrderStock({ ...orderStock, Status: 2 }), onClickSave(2) }}>
+                        <TouchableOpacity style={{ flex: 1, backgroundColor: "#34bfa3", borderRadius: 10, alignItems: 'center', justifyContent: 'center', paddingVertical: 15, marginHorizontal: 10 }} onPress={() => { isFinish.current = true, setOrderStock({ ...orderStock, Status: 2 }), onClickFinish() }}>
                             <Text style={{ fontWeight: 'bold', color: '#fff' }}>{I18n.t('hoan_thanh')}</Text>
                         </TouchableOpacity>
                     </View>

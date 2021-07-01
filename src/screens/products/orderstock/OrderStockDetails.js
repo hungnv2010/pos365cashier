@@ -138,9 +138,16 @@ export default (props) => {
             })
         }
     }
+    const clickBack =() =>{
+        if (deviceType == Constant.PHONE) {
+            props.route.params.onCallBack()
+            props.navigation.pop()
+        } else
+            props.handleSuccessTab()
+    }
     const onClickEdit = () => {
         if (deviceType == Constant.PHONE) {
-            props.navigation.navigate(ScreenList.AddOrderStock, { orderstock: orderStock, listPr: listItem, paymentMethod: methodPay })
+            props.navigation.navigate(ScreenList.AddOrderStock, { orderstock: orderStock, listPr: listItem, paymentMethod: methodPay, onCallBack: CallBackEdit })
         } else {
             props.outEdit({ orderstock: orderStock, listPr: listItem, paymentMethod: methodPay })
         }
@@ -158,6 +165,12 @@ export default (props) => {
     const showMenu = () => {
         _menu.show();
     };
+    const CallBackEdit = (os,list,method) =>{
+        console.log(os,list,method);
+        setOrderStock(os)
+        setListItem(list)
+        setMethodPay(method)
+    }
 
     return (
         <View style={{ flex: 1, borderLeftWidth: 0.3, borderColor: '#4a4a4a' }}>
@@ -165,6 +178,7 @@ export default (props) => {
                 deviceType == Constant.PHONE ?
                     <ToolBarDefault
                         {...props}
+                        clickLeftIcon={clickBack}
                         title={I18n.t('chi_tiet_nhap_hang')}
                     /> : null
             }
@@ -244,7 +258,7 @@ export default (props) => {
                                         </View>
                                         <View style={styles.styleView}>
                                             <Text style={styles.styleTitle}>{I18n.t('gia_nhap')}</Text>
-                                            <Text style={{ fontWeight: 'bold', color: colors.colorLightBlue }}>{item.Price}</Text>
+                                            <Text style={{ fontWeight: 'bold', color: colors.colorLightBlue }}>{currencyToString(item.Price)}</Text>
                                         </View>
                                         <View style={styles.styleView}>
                                             <Text style={styles.styleTitle}>{I18n.t('gia_ban')}</Text>
