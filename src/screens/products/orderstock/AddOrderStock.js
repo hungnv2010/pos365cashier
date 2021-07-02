@@ -572,6 +572,7 @@ export default (props) => {
                             </View>
                             <View style={{ height: 0.3, marginHorizontal: 10, backgroundColor: '#4a4a4a' }}></View>
                         </TouchableOpacity> :
+                        <KeyboardAwareScrollView>
                         <View style={{ marginBottom: 10, backgroundColor: '#fff', borderWidth: 1, borderColor: colors.colorchinh, borderRadius: 10 }}>
                             <TouchableOpacity onPress={() => setExpand(false)}>
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#fff', paddingHorizontal: 10, paddingVertical: 10, borderTopLeftRadius: 10, borderTopRightRadius: 10 }}>
@@ -676,6 +677,7 @@ export default (props) => {
                                 </TouchableOpacity>
                             </View>
                         </View>
+                        </KeyboardAwareScrollView>
                     }
                     <View style={{ paddingHorizontal: 10, flexDirection: 'row' }}>
                         <TouchableOpacity style={{ flex: 1, backgroundColor: colors.colorLightBlue, borderRadius: 10, alignItems: 'center', justifyContent: 'center', paddingVertical: 15, marginHorizontal: 10 }} onPress={() => { onClickSave(1) }}>
