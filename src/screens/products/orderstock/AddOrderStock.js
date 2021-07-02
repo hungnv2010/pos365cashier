@@ -296,6 +296,7 @@ export default (props) => {
         console.log(text);
     }
     const onClickSelectMethod = (item) => {
+        console.log("item",item);
         setOrderStock({ ...orderStock, AccountId: item.id })
         setPaymentMethod(item.text)
         setOnShowModal(false)
@@ -323,6 +324,7 @@ export default (props) => {
         let param = {
             ChangeSellingPrice: false,
             PurchaseOrder: {
+                AccountId: orderStock.AccountId ? orderStock.AccountId : undefined,
                 Discount: isPercent == true ? totalCurrent.current * discount / 100 : discount,
                 ExchangeRate: orderStock.ExchangeRate,
                 Id: 0,
