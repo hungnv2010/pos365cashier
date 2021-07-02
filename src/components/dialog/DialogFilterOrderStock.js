@@ -17,8 +17,8 @@ export default (props) => {
     const [object, setObject] = useState({})
     const [showModal, setOnShowModal] = useState(false)
     const [listSupplier, setListSuppiler] = useState([])
-    const typeModal = useRef()
-    const typeDate = useRef()
+    const typeModal = useRef(0)
+    const typeDate = useRef(0)
     const dateTmp = useRef(new Date())
     const statusTmp = useRef()
 
@@ -51,6 +51,11 @@ export default (props) => {
     }
     const onCLickDone = () =>{
         props.outPutFilter(object)
+    }
+    const onClickPickDate = (type) =>{
+        typeModal.current = 1,
+         setOnShowModal(true),
+         typeDate.current = type
     }
 
     const renderModalContent = () => {
@@ -110,13 +115,13 @@ export default (props) => {
                 <View style={{ flexDirection: 'row', paddingHorizontal: 10 }}>
                     <View style={{ flex: 1, paddingVertical: 10, marginRight: 5 }}>
                         <Text>{I18n.t('tu')}</Text>
-                        <TouchableOpacity style={styles.background} onPress={() => { typeModal.current = 1, typeDate.current = 1, setOnShowModal(true) }}>
+                        <TouchableOpacity style={styles.background} onPress={() => {onClickPickDate(1)}}>
                             <Text style={{textAlign:'center'}}>{object.dateFrom ? dateToDate(object.dateFrom) : 'DD/MM/YYYY'}</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={{ flex: 1, paddingVertical: 10, marginLeft: 5 }}>
                         <Text>{I18n.t('den')}</Text>
-                        <TouchableOpacity style={styles.background} onPress={() => { typeModal.current = 1, typeDate.current = 2, setOnShowModal(true) }}>
+                        <TouchableOpacity style={styles.background} onPress={() => { onClickPickDate(2)}}>
                             <Text style={{textAlign:'center'}}>{object.dateTo ? dateToDate(object.dateTo) : 'DD/MM/YYYY'}</Text>
                         </TouchableOpacity>
                     </View>

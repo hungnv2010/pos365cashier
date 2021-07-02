@@ -169,7 +169,7 @@ export default (props) => {
     }, [total])
     useEffect(() => {
         console.log(discount, totalCurrent.current);
-        let t = totalCurrent.current - (isPercent == true ? (totalCurrent.current * discount / 100) : discount) + (orderStock.VAT ? orderStock.VAT: 0)
+        let t = totalCurrent.current - (isPercent == true ? (totalCurrent.current * discount / 100) : discount) + (orderStock.VAT ? orderStock.VAT : 0)
         setTotal(t)
         //setOrderStock({ ...orderStock, Discount: isPercent == true ? totalCurrent.current * discount / 100 : discount })
     }, [discount, orderStock.VAT, isPercent])
@@ -319,6 +319,7 @@ export default (props) => {
         setListPr([...listPr])
     }
     const onClickSave = async (st) => {
+        
         let param = {
             ChangeSellingPrice: false,
             PurchaseOrder: {
@@ -326,6 +327,8 @@ export default (props) => {
                 ExchangeRate: orderStock.ExchangeRate,
                 Id: 0,
                 Description: orderStock.Description,
+                Partner: orderStock.Partner,
+                PartnerId: orderStock.Partner ? orderStock.Partner.Id : undefined,
                 PurchaseOrderDetails: listPurchase,
                 Status: st,
                 Total: total,
@@ -352,12 +355,14 @@ export default (props) => {
                         }, null, null, I18n.t('dong'))
                         dialogManager.hiddenLoading()
                         if (deviceType == Constant.TABLET) {
+                            
                             props.route.params.onCallBack(orderStock.Id ? "sua" : "them")
                             props.navigation.pop()
                         } else {
                             if (orderStock.Id) {
+                                console.log("os",orderStock);
+                                props.route.params.onCallBack((st == 2 ?{...orderStock,Status:2} :orderStock), listPr, paymentMethod)
                                 props.navigation.goBack()
-                                props.route.params.onCallBack(orderStock,listPr,paymentMethod)
                             } else {
                                 props.route.params.onCallBack()
                                 props.navigation.goBack()
@@ -427,18 +432,17 @@ export default (props) => {
         setValue(text)
     }
     const outputListProducts = (data, type) => {
-        console.log("dataaaaa", data);
         outputSelectedProduct(data[0])
     }
-    const onClickFinish = () =>{
+    const onClickFinish = () => {
         dialogManager.showPopupTwoButton(I18n.t('he_thong_se_cap_nhat_ton_kho_ngay_khi_hoan_thanh_chung_tu'), I18n.t("thong_bao"), res => {
             if (res == 1) {
                 onClickSave(2)
             }
         })
-       
+
     }
-    const onChangeData =(text, item)=>{
+    const onChangeData = (text, item) => {
         if (text < 0) text = 0
         listPr.forEach(el => {
             if (el.ProductId == item.ProductId) {
@@ -675,7 +679,7 @@ export default (props) => {
                         <TouchableOpacity style={{ flex: 1, backgroundColor: colors.colorLightBlue, borderRadius: 10, alignItems: 'center', justifyContent: 'center', paddingVertical: 15, marginHorizontal: 10 }} onPress={() => { onClickSave(1) }}>
                             <Text style={{ fontWeight: 'bold', color: '#fff' }}>{I18n.t('luu')}</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={{ flex: 1, backgroundColor: "#34bfa3", borderRadius: 10, alignItems: 'center', justifyContent: 'center', paddingVertical: 15, marginHorizontal: 10 }} onPress={() => { isFinish.current = true, setOrderStock({ ...orderStock, Status: 2 }), onClickFinish() }}>
+                        <TouchableOpacity style={{ flex: 1, backgroundColor: "#34bfa3", borderRadius: 10, alignItems: 'center', justifyContent: 'center', paddingVertical: 15, marginHorizontal: 10 }} onPress={() => { isFinish.current = true, onClickFinish() }}>
                             <Text style={{ fontWeight: 'bold', color: '#fff' }}>{I18n.t('hoan_thanh')}</Text>
                         </TouchableOpacity>
                     </View>
