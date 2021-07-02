@@ -217,7 +217,7 @@ export default (props) => {
                     <View style={{ backgroundColor: '#fff', paddingHorizontal: 10, paddingVertical: 15 }}>
                         <View style={styles.styleView}>
                             <Text style={styles.styleTitle}>{I18n.t('tong_so_luong_nhap')}</Text>
-                            <Text style={{ fontWeight: 'bold' }}>{quantity}</Text>
+                            <Text style={{ fontWeight: 'bold' }}>{currencyToString(quantity)}</Text>
                         </View>
                         <View style={styles.styleView}>
                             <Text style={styles.styleTitle}>{I18n.t('tong_tam_tinh')}</Text>
@@ -225,11 +225,11 @@ export default (props) => {
                         </View>
                         <View style={styles.styleView}>
                             <Text style={styles.styleTitle}>{I18n.t('chiet_khau')}</Text>
-                            <Text style={styles.styleValue}>{orderStock.Discount}</Text>
+                            <Text style={styles.styleValue}>{currencyToString(orderStock.Discount)}</Text>
                         </View>
                         <View style={styles.styleView}>
                             <Text style={styles.styleTitle}>{I18n.t('thue_vat')}</Text>
-                            <Text style={styles.styleValue}>{orderStock.VAT}</Text>
+                            <Text style={styles.styleValue}>{currencyToString(orderStock.VAT)}</Text>
                         </View>
                         <View style={styles.styleView}>
                             <Text style={styles.styleTitle}>{I18n.t('tong_cong')}</Text>
@@ -266,7 +266,7 @@ export default (props) => {
                                         </View>
                                         <View style={styles.styleView}>
                                             <Text style={styles.styleTitle}>{I18n.t('so_luong')}</Text>
-                                            <Text style={{ fontWeight: 'bold', color: colors.colorLightBlue }}>{item.Quantity}</Text>
+                                            <Text style={{ fontWeight: 'bold', color: colors.colorLightBlue }}>{currencyToString(item.Quantity)}</Text>
                                         </View>
 
 

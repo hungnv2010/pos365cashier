@@ -6,9 +6,10 @@ import { Images, Metrics } from '../../../theme';
 import colors from '../../../theme/Colors';
 import { FlatList, TextInput } from 'react-native-gesture-handler';
 import { currencyToString, dateToString, momentToStringDateLocal, dateUTCToMoment2, momentToDate, change_alias, change_search, dateUTCToMoment, dateUTCToDate2, timeToString } from '../../../common/Utils';
+import { useLinkProps } from '@react-navigation/native';
 
 
-const ItemPrOrderStock = ({item, index,onChangeText, onClickDelItem}) =>{
+const ItemPrOrderStock = ({item, index,onChangeText, onClickDelItem, onChangeData}) =>{
     const [value, setValue] = useState(item.Quantity)
     const [price,setPrice] = useState(item.Price)
     useEffect(()=>{
@@ -47,13 +48,13 @@ const ItemPrOrderStock = ({item, index,onChangeText, onClickDelItem}) =>{
             <View style={{ flexDirection: 'row', paddingVertical: 10 }}>
                 <View style={{ flex: 1 }}>
                     <Text>{I18n.t('gia_nhap')}</Text>
-                    <TextInput style={styles.styleTextInput} keyboardType={'numbers-and-punctuation'} value={price > 0 ? currencyToString(price) : 0 + ''} onChangeText={(text)=>{setPrice(onChangeTextInput(text))}}></TextInput>
+                    <TextInput style={styles.styleTextInput} keyboardType={'numbers-and-punctuation'} value={price > 0 ? currencyToString(price) : 0 + ''} onChangeText={(text)=>{setPrice(onChangeTextInput(text)) ,onChangeData(onChangeTextInput(text),item)}}></TextInput>
                 </View>
                 <View style={{ flex: 1, marginLeft: 10 }}>
                     <Text>
                         {I18n.t('so_luong')}
                     </Text>
-                    <TextInput style={styles.styleTextInput} keyboardType={'numbers-and-punctuation'} value={value+""} onChangeText={text => {setValue(text), onChangeText(text,item), console.log("number",+text);}}></TextInput>
+                    <TextInput style={styles.styleTextInput} keyboardType={'numbers-and-punctuation'} value={currencyToString(value)} onChangeText={text => {setValue(text), onChangeText(onChangeTextInput(text),item), console.log("number",+text);}}></TextInput>
                 </View>
             </View>
         </View>

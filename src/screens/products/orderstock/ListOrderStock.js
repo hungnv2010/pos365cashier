@@ -124,7 +124,7 @@ export default (props) => {
         }
     }
     const outEdit = (data) => {
-        props.navigation.navigate(ScreenList.AddOrderStock, { ...data, callBack: CallBack,type:1 })
+        props.navigation.navigate(ScreenList.AddOrderStock, { ...data, onCallBack: CallBack,type:1 })
     }
 
     const renderItemOrderStock = (item, index) => {

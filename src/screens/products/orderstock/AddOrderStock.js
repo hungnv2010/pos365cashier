@@ -168,7 +168,8 @@ export default (props) => {
         console.log("totalllllllll", total);
     }, [total])
     useEffect(() => {
-        let t = totalCurrent.current - (isPercent == true ? (totalCurrent.current * discount / 100) : discount) + orderStock.VAT
+        console.log(discount, totalCurrent.current);
+        let t = totalCurrent.current - (isPercent == true ? (totalCurrent.current * discount / 100) : discount) + (orderStock.VAT ? orderStock.VAT: 0)
         setTotal(t)
         //setOrderStock({ ...orderStock, Discount: isPercent == true ? totalCurrent.current * discount / 100 : discount })
     }, [discount, orderStock.VAT, isPercent])
@@ -351,7 +352,7 @@ export default (props) => {
                         }, null, null, I18n.t('dong'))
                         dialogManager.hiddenLoading()
                         if (deviceType == Constant.TABLET) {
-                            props.route.params.callBack(orderStock.Id ? "sua" : "them")
+                            props.route.params.onCallBack(orderStock.Id ? "sua" : "them")
                             props.navigation.pop()
                         } else {
                             if (orderStock.Id) {
@@ -436,6 +437,15 @@ export default (props) => {
             }
         })
        
+    }
+    const onChangeData =(text, item)=>{
+        if (text < 0) text = 0
+        listPr.forEach(el => {
+            if (el.ProductId == item.ProductId) {
+                el.Price = text
+            }
+        })
+        setListPr([...listPr])
     }
     const renderModal = () => {
         return (
@@ -534,6 +544,7 @@ export default (props) => {
                                     index={index}
                                     onChangeText={onChangeText}
                                     onClickDelItem={onClickDelItem}
+                                    onChangeData={onChangeData}
                                 />}
                                 keyExtractor={(item, index) => index.toString()}
                             />
