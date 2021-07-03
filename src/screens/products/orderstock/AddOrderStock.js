@@ -169,7 +169,7 @@ export default (props) => {
     }, [total])
     useEffect(() => {
         console.log(discount, totalCurrent.current);
-        let t = totalCurrent.current - (isPercent == true ? (totalCurrent.current * discount / 100) : discount) + (orderStock.VAT ? orderStock.VAT : 0)
+        let t = totalCurrent.current - (isPercent == true ? (totalCurrent.current * discount / 100) : discount) + (orderStock.VAT ? orderStock.VAT / 100 * totalCurrent.current : 0)
         setTotal(t)
         //setOrderStock({ ...orderStock, Discount: isPercent == true ? totalCurrent.current * discount / 100 : discount })
     }, [discount, orderStock.VAT, isPercent])
