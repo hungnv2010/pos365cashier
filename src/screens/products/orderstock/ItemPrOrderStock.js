@@ -9,16 +9,16 @@ import { currencyToString, dateToString, momentToStringDateLocal, dateUTCToMomen
 import { useLinkProps } from '@react-navigation/native';
 
 
-const ItemPrOrderStock = ({item, index,onChangeText, onClickDelItem, onChangeData}) =>{
+const ItemPrOrderStock = ({ item, index, onChangeText, onClickDelItem, onChangeData }) => {
     const [value, setValue] = useState(item.Quantity)
-    const [price,setPrice] = useState(item.Price)
-    useEffect(()=>{
+    const [price, setPrice] = useState(item.Price)
+    useEffect(() => {
         setValue(item.Quantity)
-    },[item.Quantity])
+    }, [item.Quantity])
 
-    useEffect(()=>{
+    useEffect(() => {
         setPrice(item.Price)
-    },[item.Price])
+    }, [item.Price])
 
     const onChangeTextInput = (text) => {
         if (text == "") {
@@ -40,21 +40,33 @@ const ItemPrOrderStock = ({item, index,onChangeText, onClickDelItem, onChangeDat
                         <Text style={{ color: colors.colorLightBlue, fontWeight: 'bold', marginLeft: 70 }}>{item.Unit || item.LargeUnit ? item.IsLargeUnit == false ? item.Unit : item.LargeUnit : null}</Text>
                     </View>
                 </View>
-                <TouchableOpacity onPress={()=>onClickDelItem(index)}>
-                <Image source={Images.icon_trash} style={{ width: 24, height: 24 }} />
+                <TouchableOpacity onPress={() => onClickDelItem(index)}>
+                    <Image source={Images.icon_trash} style={{ width: 24, height: 24 }} />
                 </TouchableOpacity>
             </View>
             <View style={{ height: 0.3, backgroundColor: '#4a4a4a' }}></View>
             <View style={{ flexDirection: 'row', paddingVertical: 10 }}>
                 <View style={{ flex: 1 }}>
                     <Text>{I18n.t('gia_nhap')}</Text>
-                    <TextInput style={styles.styleTextInput} keyboardType={'numbers-and-punctuation'} value={price > 0 ? currencyToString(price) : 0 + ''} onChangeText={(text)=>{setPrice(onChangeTextInput(text)) ,onChangeData(onChangeTextInput(text),item)}}></TextInput>
+                    <TextInput style={styles.styleTextInput} keyboardType={'numbers-and-punctuation'} value={price > 0 ? currencyToString(price) : 0 + ''} onChangeText={(text) => { setPrice(onChangeTextInput(text)), onChangeData(onChangeTextInput(text), item) }}></TextInput>
                 </View>
                 <View style={{ flex: 1, marginLeft: 10 }}>
                     <Text>
                         {I18n.t('so_luong')}
                     </Text>
-                    <TextInput style={styles.styleTextInput} keyboardType={'numbers-and-punctuation'} value={currencyToString(value)} onChangeText={text => {setValue(text), onChangeText(onChangeTextInput(text),item), console.log("number",+text);}}></TextInput>
+                    <View style={{
+                        flexDirection: 'row', backgroundColor: '#f2f2f2', paddingHorizontal: 5, marginTop: 10, borderRadius: 10,paddingVertical:5
+                    }}>
+                        <TouchableOpacity style={{flex:1,paddingVertical:5,paddingHorizontal:5,alignItems:'center',justifyContent:'center',borderWidth:0.5,borderRadius:5, borderColor:colors.colorLightBlue }} onPress={()=>{setValue(value-1),onChangeText(value-1,item)}}>
+                            <Text style={{color:colors.colorLightBlue, fontWeight:'bold'}}>-</Text>
+                        </TouchableOpacity>
+                        <View style={{flex:5,paddingVertical:5}}>
+                        <TextInput style={{color: colors.colorLightBlue, textAlign: 'center', fontWeight: 'bold'}} keyboardType={'numbers-and-punctuation'} value={currencyToString(value)} onChangeText={text => { setValue((onChangeTextInput(text) <= 100000000 ? text : '100000000')), onChangeText((onChangeTextInput(text) <= 100000000 ? onChangeTextInput(text) : onChangeTextInput('100,000,000')), item), console.log("number", +text); }}></TextInput>
+                        </View>
+                        <TouchableOpacity style={{flex:1,paddingVertical:5,paddingHorizontal:5,alignItems:'center',justifyContent:'center',borderWidth:0.5,borderRadius:5, borderColor:colors.colorLightBlue }} onPress={()=>{setValue(value+1),onChangeText(value+1,item)}}>
+                            <Text style={{color:colors.colorLightBlue, fontWeight:'bold'}}>+</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </View>
         </View>
@@ -66,4 +78,4 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15, paddingVertical: 10, marginTop: 10, borderRadius: 10, color: colors.colorLightBlue, textAlign: 'center', fontWeight: 'bold'
     }
 })
- export default React.memo(ItemPrOrderStock);
+export default React.memo(ItemPrOrderStock);
