@@ -191,6 +191,7 @@ export default (props) => {
   }, [appState])
 
   const getDataNewOrders = async () => {
+
     let result = await dataManager.initComfirmOrder()
     console.log('getDataNewOrders', result);
     if (result != null) {
@@ -198,7 +199,29 @@ export default (props) => {
       if (result.listRoom && result.listRoom != null)
         dataManager.updateFromOrder(result.listRoom)
     }
+
+    let res = await dataManager.initComfirmOrderChangeTable()
+    console.log('getDataNewOrders changeTableComfirm ', res);
+    if (res && res.changeTableComfirm && res.changeTableComfirm.length > 0) {
+      let listChange = [];
+      res.changeTableComfirm.forEach(async (item, index) => {
+        const { FromRoomId, FromPos, ToRoomId, ToPos } = item
+        let FromRoom = {};
+        let ToRoom = {};
+        let ListRoom = await realmStore.queryRooms();
+        FromRoom = ListRoom.filtered(`Id == '${FromRoomId}'`)
+        ToRoom = ListRoom.filtered(`Id == '${ToRoomId}'`)
+        let data = await dataManager.changeTable(FromRoomId, FromPos, ToRoomId, ToPos, FromRoom[0].Name, ToRoom[0].Name)
+        console.log("onChangeTable data ", data);
+        listChange.push(data);
+        if (index == res.changeTableComfirm.length - 1) {
+          console.log("onChangeTable listChange ", listChange);
+          dispatch({ type: 'PRINT_CHANGE_TABLE', printChangeTable: listChange })
+        }
+      })
+    }
   }
+  
   const getPaymentStatus = async () => {
     let result = await dataManager.getPaymentStatus()
     console.log('getPaymentStatus', result);

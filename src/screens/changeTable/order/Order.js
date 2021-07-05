@@ -181,7 +181,7 @@ export default (props) => {
         } else {
             let data = await dataManager.changeTable(FromRoomId, FromPos, toRoomId.current.Id, toPos, Name, toRoomId.current.Name)
             console.log("onChangeTable data ", data);
-            dispatch({ type: 'PRINT_CHANGE_TABLE', printChangeTable: data })
+            dispatch({ type: 'PRINT_CHANGE_TABLE', printChangeTable: [data] })
         }
 
         props.navigation.goBack()

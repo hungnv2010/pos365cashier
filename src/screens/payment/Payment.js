@@ -213,39 +213,50 @@ export default (props) => {
         }
     }
 
-    const onChangeTextInput = (text, type, update = false) => {
+    const handleNumber = () => {
 
+    }
+
+    const convertMoneyToNumber = (text) => {
+        text = text.replace(/,/g, "");
+        return text;
+    }
+
+    const onChangeTextInput = (text, type, update = false) => {
         // debounceTimeInput.current.next(text)
 
-        text = text.toString();
-        console.log("onChangeTextInput text type ", text, typeof (text), type);
-        if (text == "") {
-            text = "0";
-        }
-        console.log("onChangeTextInput text: ", text);
         text = text.replace(/,/g, "");
-        text = Number(text);
-        console.log("onChangeTextInput text ", text);
+        if (isNaN(text)) return;
+        let value = text;
+        if (value.indexOf(".") == (value.length - 1) && value.length != 0) {
+            value = currencyToString(value.split(".")[0]) + "."
+        } else {
+            value = currencyToString(value, true)
+        }
         let json = { ...jsonContent }
         switch (type) {
             case 2:
-                json['VATRates'] = text;
-                setInputVAT(text)
+                setInputVAT(value)
+                json['VATRates'] = convertMoneyToNumber(value);
                 calculatorPrice(json, totalPrice, update)
                 break;
             case 1:
                 if (!percent) {
-                    json['DiscountValue'] = text;
+                    json['DiscountValue'] = convertMoneyToNumber(value);
+                    if (json['DiscountValue'] < totalPrice) {
+                        setInputDiscount(value);
+                    }
                 } else {
-                    json['DiscountRatio'] = text;
+                    json['DiscountRatio'] = convertMoneyToNumber(value);
+                    if (json['DiscountRatio'] < 100) {
+                        setInputDiscount(value);
+                    }
                 }
-                // setInputDiscount(text);
                 calculatorPrice(json, totalPrice, update)
                 break;
             default:
                 break;
         }
-        setSelection({ start: currencyToString((!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio), true).length, end: currencyToString((!percent ? jsonContent.DiscountValue : jsonContent.DiscountRatio), true).length })
     }
 
     const addAccount = () => {
@@ -1011,10 +1022,16 @@ export default (props) => {
         if (!percent) {
             disCountValue = jsonContent.DiscountValue ? (jsonContent.DiscountValue > realPriceValue ? realPriceValue : jsonContent.DiscountValue) : 0;
             jsonContent.DiscountRatio = 0
-            setInputDiscount(jsonContent.DiscountValue > realPriceValue ? realPriceValue : jsonContent.DiscountValue)
+            if (jsonContent.DiscountValue >= realPriceValue) {
+                setInputDiscount(currencyToString(realPriceValue, true))
+            }
+            // setInputDiscount(jsonContent.DiscountValue > realPriceValue ? realPriceValue : jsonContent.DiscountValue)
         } else {
             jsonContent.DiscountRatio = jsonContent.DiscountRatio > 100 ? 100 : jsonContent.DiscountRatio
-            setInputDiscount(jsonContent.DiscountRatio)
+            if (jsonContent.DiscountRatio >= 100) {
+                setInputDiscount("100")
+            }
+            // setInputDiscount(jsonContent.DiscountRatio)
             disCountValue = realPriceValue / 100 * jsonContent.DiscountRatio
         }
         let MoreAttributes = jsonContent.MoreAttributes ? JSON.parse(jsonContent.MoreAttributes) : {};
@@ -1490,11 +1507,11 @@ export default (props) => {
                                 <TextInput
                                     onBlur={onBlurInput}
                                     returnKeyType='done'
-                                    keyboardType="number-pad"
+                                    keyboardType="numbers-and-punctuation"
                                     onFocus={() => onFocusDiscount()}
                                     placeholder="0"
                                     placeholderTextColor="#808080"
-                                    value={inputDiscount == "" ? "" : currencyToString(inputDiscount, true)}
+                                    value={inputDiscount == "" ? "" : (inputDiscount)}
                                     onTouchStart={() => onTouchInput(METHOD.discount)}
                                     editable={deviceType == Constant.TABLET ? false : true}
                                     onChangeText={(text) => onChangeTextInput(text, 1)}
@@ -1529,10 +1546,10 @@ export default (props) => {
                                 <TextInput
                                     onBlur={onBlurInput}
                                     returnKeyType='done'
-                                    keyboardType="number-pad"
+                                    keyboardType="numbers-and-punctuation"
                                     placeholder="0"
                                     placeholderTextColor="#808080"
-                                    value={inputVAT == "" ? "" : currencyToString(inputVAT)}
+                                    value={inputVAT == "" ? "" : inputVAT}
                                     onFocus={() => onFocusVAT()}
                                     onTouchStart={() => onTouchInput(METHOD.vat)}
                                     editable={deviceType == Constant.TABLET ? false : true}

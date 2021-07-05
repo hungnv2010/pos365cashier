@@ -82,10 +82,19 @@ export default (props) => {
                 console.log("onClickLoadOnline res ", res);
                 if (res && res.Content) {
                     setDataHtml(res.Content)
-                    setFileLuuDuLieu(Constant.HTML_PRINT, "" + res.Content);
+                    if (template.Id == 1) {
+                        setFileLuuDuLieu(Constant.HTML_PRINT, "" + res.Content);
+                    } else {
+                        setFileLuuDuLieu(Constant.PRINT_KITCHEN, "" + res.Content);
+                    }
                 } else {
-                    setDataHtml(htmlDefault)
-                    setFileLuuDuLieu(Constant.HTML_PRINT, htmlDefault);
+                    if (template.Id == 1) {
+                        setDataHtml(htmlDefault)
+                        setFileLuuDuLieu(Constant.HTML_PRINT, htmlDefault);
+                    } else {
+                        setDataHtml(htmlKitchen)
+                        setFileLuuDuLieu(Constant.PRINT_KITCHEN, htmlKitchen);
+                    }
                 }
                 dialogManager.hiddenLoading()
             }).catch((e) => {

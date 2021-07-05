@@ -178,6 +178,10 @@ export default forwardRef((props, ref) => {
     const printKitchen = async (data, type = TYPE_PRINT.KITCHEN, isPrint = true) => {
         console.log("printKitchen printObject ", printObject);
         let setting = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
+        let HtmlPrint = await getFileDuLieuString(Constant.PRINT_KITCHEN, true)
+        if (HtmlPrint == undefined) {
+            HtmlPrint = htmlKitchen
+        }
         if (setting && setting != "") {
             setting = JSON.parse(setting);
         }
@@ -203,8 +207,8 @@ export default forwardRef((props, ref) => {
                             });
                             if (checkPrint || type != TYPE_PRINT.KITCHEN) {
                                 if (setting && setting.in_hai_lien_cho_che_bien == true) {
-                                    let res1 = printService.GenHtmlKitchen(htmlKitchen, element, i, vendorSession, type, 1)
-                                    let res2 = printService.GenHtmlKitchen(htmlKitchen, element, i, vendorSession, type, 2)
+                                    let res1 = printService.GenHtmlKitchen(HtmlPrint, element, i, vendorSession, type, 1)
+                                    let res2 = printService.GenHtmlKitchen(HtmlPrint, element, i, vendorSession, type, 2)
                                     if (res1 && res1 != "") {
                                         res1 = res1.replace("</body>", "<p style='display: none;'>" + i + "</p> </body>");
                                         printService.listWaiting.push({ html: res1, ip: printObject[value].ip, size: printObject[value].size, isCopies: false })
@@ -215,7 +219,7 @@ export default forwardRef((props, ref) => {
                                     }
 
                                 } else {
-                                    let res = printService.GenHtmlKitchen(htmlKitchen, element, i, vendorSession, type)
+                                    let res = printService.GenHtmlKitchen(HtmlPrint, element, i, vendorSession, type)
                                     if (res && res != "") {
                                         res = res.replace("</body>", "<p style='display: none;'>" + Math.floor((Math.random() * 1000000000) + 1) + i + "</p> </body>");
                                         printService.listWaiting.push({ html: res, ip: printObject[value].ip, size: printObject[value].size, isCopies: false })
@@ -235,8 +239,8 @@ export default forwardRef((props, ref) => {
             setDataHtmlPrint()
     }
 
-    const printChangeTable = async (object) => {
-        console.log("printChangeTable object ", object);
+    const printChangeTable = async (listRoomChangeTable) => {
+        console.log("printChangeTable listRoomChangeTable ", listRoomChangeTable);
         console.log("printChangeTable printObject ", printObject);
         let setting = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
         if (setting && setting != "") {
@@ -246,30 +250,35 @@ export default forwardRef((props, ref) => {
         let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
         if (vendorSession && vendorSession != "")
             vendorSession = JSON.parse(vendorSession);
-        let data = object.ListOrderDetails
-        let i = 1;
-        for (const value in data) {
-            if (data.hasOwnProperty(value)) {
-                if (printObject[value] != "") {
-                    const item = data[value];
-                    for (const key in item) {
-                        if (item.hasOwnProperty(key)) {
-                            const element = item[key];
-                            console.log('element == ', element, Metrics.screenWidth);
 
-                            let res = printService.GenHtmlChangeTable(htmlChangeTable, element, vendorSession, object)
-                            if (res && res != "") {
-                                res = res.replace("</body>", "<p style='display: none;'>" + Math.floor((Math.random() * 1000000000) + 1) + i + "</p> </body>");
-                                printService.listWaiting.push({ html: res, ip: printObject[value].ip, size: printObject[value].size, isCopies: false })
+        let i = 1;
+        listRoomChangeTable.forEach(el => {
+
+            let data = el.ListOrderDetails
+
+            for (const value in data) {
+                if (data.hasOwnProperty(value)) {
+                    if (printObject[value] != "") {
+                        const item = data[value];
+                        for (const key in item) {
+                            if (item.hasOwnProperty(key)) {
+                                const element = item[key];
+                                console.log('element == ', element, Metrics.screenWidth);
+
+                                let res = printService.GenHtmlChangeTable(htmlChangeTable, element, vendorSession, el)
+                                if (res && res != "") {
+                                    res = res.replace("</body>", "<p style='display: none;'>" + Math.floor((Math.random() * 1000000000) + 1) + i + "</p> </body>");
+                                    printService.listWaiting.push({ html: res, ip: printObject[value].ip, size: printObject[value].size, isCopies: false })
+                                }
                             }
+                            i++;
                         }
-                        i++;
+                    } else {
+                        dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_may_in'), I18n.t('thong_bao'))
                     }
-                } else {
-                    dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_may_in'), I18n.t('thong_bao'))
                 }
             }
-        }
+        });
         console.log("printService.listWaiting ", printService.listWaiting);
         setDataHtmlPrint()
     }

@@ -148,25 +148,35 @@ class DataManager {
         return listNewOrder;
     }
 
+    initComfirmOrderChangeTable = async () => {
+        try {
+            let changeTableComfirm = await new HTTPService().setPath(ApiPath.CHANGE_TABLE_COMFIRM, false).GET()
+            if ((!changeTableComfirm || changeTableComfirm.length == 0)) {
+                return Promise.resolve(null)
+            } else {
+                if (changeTableComfirm.length > 0) {
+                    console.log("onChangeTable changeTableComfirm ", changeTableComfirm);
+                    return Promise.resolve({ changeTableComfirm: changeTableComfirm })
+                }
+            }
+        } catch (error) {
+            console.log('initComfirmOrder error', error);
+            return Promise.resolve(null)
+        }
+    }
+
     initComfirmOrder = async () => {
         try {
 
             let intNewOrder = await new HTTPService().setPath(ApiPath.WAIT_FOR_COMFIRMATION, false).GET()
-            let changeTableComfirm = await new HTTPService().setPath(ApiPath.CHANGE_TABLE_COMFIRM, false).GET()
-            if (intNewOrder == 0 && (!changeTableComfirm || changeTableComfirm.length == 0)) {
+            if (intNewOrder == 0) {
                 return Promise.resolve(null)
             } else {
-                if (changeTableComfirm.length > 0) {
-                    changeTableComfirm.forEach(item => {
-                        const { FromRoomId, FromPos, ToRoomId, ToPos } = item
-                        this.changeTable(FromRoomId, FromPos, ToRoomId, ToPos)
-                    })
-                }
+                let listOrders = []
+                let listOrdersReturn = []
+                let listRoom = []
                 if (intNewOrder > 0) {
                     let newOrders = await new HTTPService().setPath(ApiPath.WAIT_FOR_COMFIRMATION_ALL, false).GET()
-                    listOrdersReturn = []
-                    let listRoom = []
-                    let listOrders = []
                     for (const newOrder of newOrders) {
                         let exist = false
                         let rowKey = `${newOrder.RoomId}_${newOrder.Position}`;
@@ -190,13 +200,11 @@ class DataManager {
 
 
                     }
-                    let listOrdersReturn = listOrders.filter(item => item.Quantity < 0)
+                    listOrdersReturn = listOrders.filter(item => item.Quantity < 0)
                     listOrders = listOrders.filter(item => item.Quantity > 0)
                     console.log('listRoomlistRoomlistRoom', JSON.stringify(listRoom));
                     return Promise.resolve({ newOrders: this.getDataPrintCook(listOrders), listOrdersReturn: this.getDataPrintCook(listOrdersReturn), listRoom: listRoom })
                 }
-                return Promise.resolve(null)
-
 
             }
 
@@ -345,31 +353,30 @@ class DataManager {
     }
     syncProduct = async () => {
         let res = await new HTTPService().setPath(ApiPath.SYNC_PRODUCTS, false).GET()
-        let setting = JSON.parse(await getFileDuLieuString(Constant.OBJECT_SETTING,true))
+        let setting = JSON.parse(await getFileDuLieuString(Constant.OBJECT_SETTING, true))
 
-        if (res && res.Data && res.Data.length > 0)
-        {
+        if (res && res.Data && res.Data.length > 0) {
             let dataPr = []
             let listPos = setting.SettingPosition ? setting.SettingPosition : []
-            console.log("listPost",listPos);
-            res.Data.forEach(item =>{
-                if(listPos.length > 0){
-                let pos = listPos.filter(el => el.key == item.Id )
-                if(pos.length > 0){
-                item.Position = pos[0].value
-                }else{
+            console.log("listPost", listPos);
+            res.Data.forEach(item => {
+                if (listPos.length > 0) {
+                    let pos = listPos.filter(el => el.key == item.Id)
+                    if (pos.length > 0) {
+                        item.Position = pos[0].value
+                    } else {
+                        item.Position = 0
+                    }
+                    dataPr.push(item)
+                } else {
                     item.Position = 0
+                    dataPr.push(item)
                 }
-                dataPr.push(item)
-            }else{
-                item.Position = 0
-                dataPr.push(item)
-            }
-        })
+            })
             await realmStore.insertProducts(dataPr)
         }
-            
-            
+
+
     }
     syncAllProduct = async () => {
         let res = await new HTTPService().setPath(ApiPath.PRODUCT, false).GET()
@@ -613,17 +620,13 @@ class DataManager {
         realmStore.deleteRow(table, value)
     }
 
-    changeTable = async (oldRoomId, oldPosition, newRoomId, newPosition, oldRoomName, newRoomName) => {
+    changeTable = async (oldRoomId, oldPosition, newRoomId, newPosition, oldRoomName = "", newRoomName = "") => {
         console.log("changeTable ", oldRoomId, oldPosition, newRoomId, newPosition, oldRoomName, newRoomName);
         let serverEvents = await realmStore.queryServerEvents()
 
         let oldServerEvent = serverEvents.filtered(`RowKey == '${oldRoomId}_${oldPosition}'`)
         let newServerEvent = serverEvents.filtered(`RowKey == '${newRoomId}_${newPosition}'`)
-
-        console.log("oldServerEvent ", oldServerEvent);
-        console.log("newServerEvent ", newServerEvent);
         let objectReturn = {}
-
         oldServerEvent = (JSON.stringify(oldServerEvent) != '{}') ? JSON.parse(JSON.stringify(oldServerEvent))[0]
             : await this.createSeverEvent(oldRoomId, oldPosition, oldRoomName)
         oldServerEvent.JsonContent = oldServerEvent.JsonContent ? JSON.parse(oldServerEvent.JsonContent) : this.createJsonContent(oldRoomId, oldPosition, moment(), [], oldRoomName)
@@ -631,14 +634,15 @@ class DataManager {
 
         newServerEvent = (JSON.stringify(newServerEvent) != '{}') ? JSON.parse(JSON.stringify(newServerEvent))[0]
             : await this.createSeverEvent(newRoomId, newPosition, newRoomName)
-
-        console.log("oldServerEvent:: ", oldServerEvent);
-        console.log("newServerEvent:: ", newServerEvent);
-
         newServerEvent.JsonContent = newServerEvent.JsonContent ? JSON.parse(newServerEvent.JsonContent) : this.createJsonContent(newRoomId, newPosition, moment(), [], newRoomName)
         if (!newServerEvent.JsonContent.OrderDetails) newServerEvent.JsonContent.OrderDetails = []
-        let OrderDetails = newServerEvent.JsonContent.OrderDetails ? mergeTwoArray(newServerEvent.JsonContent.OrderDetails, oldServerEvent.JsonContent.OrderDetails) : oldServerEvent.JsonContent.OrderDetails
+        let OrderDetails = newServerEvent.JsonContent.OrderDetails && newServerEvent.JsonContent.OrderDetails.length > 0 ? mergeTwoArray(newServerEvent.JsonContent.OrderDetails, oldServerEvent.JsonContent.OrderDetails) : oldServerEvent.JsonContent.OrderDetails
+        OrderDetails.forEach(element => {
+            element["RoomName"] = newRoomName;
+        });
+
         newServerEvent.JsonContent.OrderDetails = [...OrderDetails]
+
         objectReturn.ListOrderDetails = this.getDataPrintCook([...OrderDetails])
         objectReturn.FromRoomName = oldRoomName
         objectReturn.ToRoomName = newRoomName
@@ -654,9 +658,6 @@ class DataManager {
         oldServerEvent.Version += 1
         oldServerEvent.JsonContent = this.createJsonContent(oldRoomId, oldPosition, moment(), [], oldRoomName)
         newServerEvent.Version += 1
-
-        console.log("oldServerEvent= ", oldServerEvent);
-        console.log("newServerEvent= ", newServerEvent);
 
         this.calculatateJsonContent(newServerEvent.JsonContent)
         await this.updateServerEventNow(oldServerEvent, true)
@@ -686,16 +687,12 @@ class DataManager {
         let OrderDetails = newServerEvent.JsonContent.OrderDetails ? mergeTwoArray(ListNewSplit, newServerEvent.JsonContent.OrderDetails) : ListNewSplit
         newServerEvent.JsonContent.OrderDetails = [...OrderDetails]
 
-
         oldServerEvent.Version += 1
         oldServerEvent.JsonContent.OrderDetails = ListOldSplit
         this.calculatateJsonContent(oldServerEvent.JsonContent)
 
         newServerEvent.Version += 1
         this.calculatateJsonContent(newServerEvent.JsonContent)
-        console.log("splitTable oldServerEvent:: ", oldServerEvent)
-        console.log("splitTable newServerEvent:: ", newServerEvent)
-
         await this.updateServerEventNow(oldServerEvent, true)
         await this.updateServerEventNow(newServerEvent, true)
     }

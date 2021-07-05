@@ -114,7 +114,11 @@ export default forwardRef((props, ref) => {
         new HTTPService().setPath(ApiPath.PRINT_TEMPLATES).POST(params).then((res) => {
             console.log("clickCheck res ", res);
             if (res) {
-                setFileLuuDuLieu(Constant.HTML_PRINT, "" + params.printTemplate.Content);
+                if ((deviceType != Constant.PHONE && props.type == 10) && (deviceType == Constant.PHONE && props.route.params.type == 10)) {
+                    setFileLuuDuLieu(Constant.HTML_PRINT, "" + params.printTemplate.Content);
+                } else {
+                    setFileLuuDuLieu(Constant.PRINT_KITCHEN, "" + params.printTemplate.Content);
+                }
             }
             dialogManager.hiddenLoading()
             props.navigation.pop();
@@ -182,6 +186,7 @@ export default forwardRef((props, ref) => {
             <AutoHeightWebView
                 // scrollEnabled={false}
                 style={{}}
+                customScript={`document.body.style.width = '76mm';document.body.rules = 'center'`}
                 files={[{
                     href: 'cssfileaddress',
                     type: 'text/css',
