@@ -97,6 +97,7 @@ export default (props) => {
     const changeMethodQRPay = useRef(false);
     const indexPayment = useRef(0);
     const imageQr = useRef(0);
+    const percentRef = useRef()
     const debounceTimeInput = useRef(new Subject());
     const qrCodeRealm = useRef()
     const [listSuggestions, setListSuggestions] = useState([])
@@ -182,6 +183,9 @@ export default (props) => {
 
     useEffect(() => {
         calculatorPrice(jsonContent, totalPrice)
+        if (percentRef.current != undefined){
+            onTouchInput(METHOD.discount)
+        }
     }, [percent])
 
     const _keyboardDidShow = () => {
@@ -913,7 +917,7 @@ export default (props) => {
         console.log("onTouchInput value ", value);
 
         setChoosePoint(0);
-        if (value != sendMethod) {
+        if (value != sendMethod || percentRef.current != undefined) {
             setSendMethod(value)
             if (value.name == METHOD.pay.name) {
                 setListSuggestions(listSuggestTotal(jsonContent.Total))
@@ -924,13 +928,15 @@ export default (props) => {
                     }
                 });
             } else {
-                if (value == METHOD.discount) {
+                if (value == METHOD.discount && percentRef.current == true) {
                     setListSuggestions([5, 10, 15, 20, 25, 50, 100])
-                } else
+                } else {
                     setListSuggestions([])
+                }
                 onChangeTextInput("0", value == METHOD.vat ? 2 : 1)
             }
         }
+        percentRef.current = undefined
     }
     const listSuggestTotal = (total) => {
         let list = [(total % 1000) == 0 ? total : Math.floor(total / 1000) * 1000 + 1000]
@@ -1494,11 +1500,11 @@ export default (props) => {
                             <View style={styles.viewDiscount}>
                                 <Text style={{ flex: 3 }}>{I18n.t('chiet_khau')}</Text>
                                 <View style={{ flexDirection: "row", flex: 3, marginLeft: 5 }}>
-                                    <TouchableOpacity onPress={() => selectPercent(false)} style={[styles.selectPecent, { backgroundColor: !percent ? colors.colorchinh : "#fff" }]}>
+                                    <TouchableOpacity onPress={() => { percentRef.current = false, selectPercent(false) }} style={[styles.selectPecent, { backgroundColor: !percent ? colors.colorchinh : "#fff" }]}>
                                         <Text style={{ color: !percent ? "#fff" : '#000' }}>VNĐ</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={() => {
-                                        jsonContent.DiscountRatio = jsonContent.Discount / totalPrice * 100
+                                        jsonContent.DiscountRatio = jsonContent.Discount / totalPrice * 100, percentRef.current = true
                                         selectPercent(true)
                                     }} style={[styles.viewSelectVAT, { backgroundColor: !percent ? "#fff" : colors.colorchinh }]}>
                                         <Text style={{ color: percent ? "#fff" : '#000' }}>%</Text>

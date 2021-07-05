@@ -41,7 +41,7 @@ export default (props) => {
     const [showModal, setOnShowModal] = useState(false)
     const backUpCustomer = useRef([])
     //const [allPer, setPer] = useState(props.route.params.permission ? props.route.params.permission : {})
-    const { deviceType } = useSelector(state => {
+    const { deviceType,allPer } = useSelector(state => {
         return state.Common
     });
     const currentBranch = useRef()

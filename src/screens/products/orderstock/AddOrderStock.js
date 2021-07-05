@@ -49,6 +49,7 @@ export default (props) => {
     const [total, setTotal] = useState(0)
     const [discount, setDiscount] = useState(0)
     const [listPurchase, setListPurchase] = useState([])
+    const [inputVat, setInputVat] = useState()
     const isFinish = useRef(false)
     const totalCurrent = useRef(0)
     const currentBranch = useRef()
@@ -306,6 +307,7 @@ export default (props) => {
         setOnShowModal(false)
     }
     const onChangeTextInput = (text) => {
+        text = text.toString()
         console.log("onChangeTextInput text ===== ", text, props.route);
         if (text == "") {
             text = 0;
@@ -452,6 +454,24 @@ export default (props) => {
             }
         })
         setListPr([...listPr])
+    }
+    const onChangeTextVAT = (text) => {
+        // debounceTimeInput.current.next(text)
+
+        text = text.replace(/,/g, "");
+        if (isNaN(text)) return;
+        let value = text;
+        if (value.indexOf(".") == (value.length - 1) && value.length != 0) {
+            value = currencyToString(value.split(".")[0]) + "."
+        } else {
+            value = currencyToString(value, true)
+        }
+        setInputVat(value)
+        setOrderStock({ ...orderStock, VAT: convertMoneyToNumber(value) })
+    }
+    const convertMoneyToNumber = (text) => {
+        text = text.replace(/,/g, "");
+        return text;
     }
     const renderModal = () => {
         return (
@@ -653,7 +673,7 @@ export default (props) => {
                                     <Text>{I18n.t('thue_vat')}</Text>
                                 </View>
                                 <View style={{ flex: 3 }}>
-                                    <TextInput style={[styles.styleTextInput, { textAlign: 'right' }]} value={orderStock.VAT ? currencyToString(orderStock.VAT) : null} onChangeText={(text) => setOrderStock({ ...orderStock, VAT: onChangeTextInput(text) })}></TextInput>
+                                    <TextInput style={[styles.styleTextInput, { textAlign: 'right' }]} value={inputVat ? (inputVat) : null} onChangeText={(text) => onChangeTextVAT(text)}></TextInput>
                                 </View>
                             </View>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, paddingVertical: 5 }}>

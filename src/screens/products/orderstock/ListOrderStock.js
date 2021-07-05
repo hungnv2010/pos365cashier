@@ -79,9 +79,10 @@ export default (props) => {
         let params = param ? param : { Includes: 'Partner', inlinecount: 'allpages', filter: `(substringof('${debouncedVal}',Code) and BranchId eq ${idBranch})` }
         await new HTTPService().setPath(ApiPath.ORDERSTOCK).GET(params).then(res => {
             if (res != null) {
-                orderStock.current = res.results
+                orderStock.current = Object.values(res.results)
                 console.log("orderstock", res.results);
-                res.results.forEach(el => {
+                if(orderStock.current.length > 0){
+                    orderStock.current.forEach(el => {
                     if (dateToString(el.CreatedDate) != defauTitle.current) {
                         arrDate.push({ Title: dateToString(el.CreatedDate) })
                         defauTitle.current = dateToString(el.CreatedDate)
@@ -101,6 +102,9 @@ export default (props) => {
                 setViewData([...arrdata])
                 dialogManager.hiddenLoading()
             }
+        }else{
+            dialogManager.hiddenLoading()
+        }
         })
     }
     const onClickItem = (item) => {
@@ -197,11 +201,15 @@ export default (props) => {
                     clickFilter={clickFilter}
                 />
                 <View style={{ flex: 1 }}>
+                    {viewData.length > 0 ?
                     <FlatList
                         data={viewData}
                         renderItem={({ item, index }) => item.Title ? renderTitle(item, index) : renderItemOrderStock(item, index)}
                         keyExtractor={(item, index) => index.toString()}
                     />
+                    :
+                    <Image source={Images.logo_365_long_color} />
+                    }
                 </View>
 
                 {
