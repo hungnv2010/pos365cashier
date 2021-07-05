@@ -19,7 +19,7 @@ export default (props) => {
     const [listSupplier, setListSuppiler] = useState([])
     const typeModal = useRef(0)
     const typeDate = useRef(0)
-    const dateTmp = useRef(new Date())
+    const dateTmp = useRef()
     const statusTmp = useRef()
 
     const onChange = (selectedDate) => {
@@ -53,14 +53,14 @@ export default (props) => {
         props.outPutFilter(object)
     }
     const onClickPickDateFrom = () => {
-        typeModal.current = 1,
-            setOnShowModal(true),
-            typeDate.current = 1
+        typeModal.current = 1
+        setOnShowModal(true)
+        typeDate.current = 1
     }
     const onClickPickDateTo = () => {
-        typeModal.current = 1,
-            setOnShowModal(true),
-            typeDate.current = 2
+        typeModal.current = 1
+        setOnShowModal(true)
+        typeDate.current = 2
     }
 
     const renderModalContent = () => {
