@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useLayoutEffect, useRef,useCallback } from 'react';
-import { Animated, Image, View, StyleSheet, Text, TouchableOpacity,Keyboard, ScrollView, ActivityIndicator, Modal, TouchableWithoutFeedback } from "react-native";
+import React, { useEffect, useState, useLayoutEffect, useRef, useCallback } from 'react';
+import { Animated, Image, View, StyleSheet, Text, TouchableOpacity, Keyboard, ScrollView, ActivityIndicator, Modal, TouchableWithoutFeedback } from "react-native";
 import MainToolBar from '../../main/MainToolBar';
 import I18n from '../../../common/language/i18n';
 import realmStore from '../../../data/realm/RealmStore';
@@ -79,32 +79,35 @@ export default (props) => {
         let params = param ? param : { Includes: 'Partner', inlinecount: 'allpages', filter: `(substringof('${debouncedVal}',Code) and BranchId eq ${idBranch})` }
         await new HTTPService().setPath(ApiPath.ORDERSTOCK).GET(params).then(res => {
             if (res != null) {
-                orderStock.current = Object.values(res.results)
+                orderStock.current = res.results
                 console.log("orderstock", res.results);
-                if(orderStock.current.length > 0){
-                    orderStock.current.forEach(el => {
-                    if (dateToString(el.CreatedDate) != defauTitle.current) {
-                        arrDate.push({ Title: dateToString(el.CreatedDate) })
-                        defauTitle.current = dateToString(el.CreatedDate)
-                    }
-                })
-                console.log("arrr", arrDate);
-                let arrdata = []
-                arrDate.forEach(el => {
-                    let arrItem = []
-                    arrItem = orderStock.current.filter(item => dateToString(item.CreatedDate) == (el.Title))
-                    arrdata.push({ ...el, Sum: arrItem.length })
-                    arrItem.forEach(item => {
-                        arrdata.push(item)
+                if (res.__count > 0) {
+                    res.results.forEach(el => {
+                        if (dateToString(el.CreatedDate) != defauTitle.current) {
+                            arrDate.push({ Title: dateToString(el.CreatedDate) })
+                            defauTitle.current = dateToString(el.CreatedDate)
+                        }
                     })
-                })
-                console.log("arr dataaaaa", arrdata);
-                setViewData([...arrdata])
+                    console.log("arrr", arrDate);
+                    let arrdata = []
+                    arrDate.forEach(el => {
+                        let arrItem = []
+                        arrItem = orderStock.current.filter(item => dateToString(item.CreatedDate) == (el.Title))
+                        arrdata.push({ ...el, Sum: arrItem.length })
+                        arrItem.forEach(item => {
+                            arrdata.push(item)
+                        })
+                    })
+                    console.log("arr dataaaaa", arrdata);
+                    setViewData([...arrdata])
+                    dialogManager.hiddenLoading()
+                } else {
+                    setViewData([])
+                    dialogManager.hiddenLoading()
+                }
+            } else {
                 dialogManager.hiddenLoading()
             }
-        }else{
-            dialogManager.hiddenLoading()
-        }
         })
     }
     const onClickItem = (item) => {
@@ -117,9 +120,10 @@ export default (props) => {
     const CallBack = (type1) => {
         dialogManager.showLoading()
         try {
+            setDefaultItem({})
             getOrderStock()
-            if(type1){
-            dialogManager.showPopupOneButton(`${I18n.t(type1)} ${I18n.t('thanh_cong')}`, I18n.t('thong_bao'))
+            if (type1) {
+                dialogManager.showPopupOneButton(`${I18n.t(type1)} ${I18n.t('thanh_cong')}`, I18n.t('thong_bao'))
             }
             dialogManager.hiddenLoading()
         } catch (error) {
@@ -128,7 +132,7 @@ export default (props) => {
         }
     }
     const outEdit = (data) => {
-        props.navigation.navigate(ScreenList.AddOrderStock, { ...data, onCallBack: CallBack,type:1 })
+        props.navigation.navigate(ScreenList.AddOrderStock, { ...data, onCallBack: CallBack, type: 1 })
     }
 
     const renderItemOrderStock = (item, index) => {
@@ -163,18 +167,35 @@ export default (props) => {
     const clickFilter = () => {
         setOnShowModal(true)
     }
+    const setParamStatus = (data) =>{
+        let param 
+        if (data.length == 1) {
+          param =  `Status eq ${data[0]}`
+          console.log(param);
+        }else if(data.length == 2){
+            param = `(Status eq ${data[0]} or Status eq ${data[1]})`
+            console.log(param);
+        }
+        else if(data.length == 3){
+            param = `(Status eq ${data[0]} or Status eq ${data[1]} or Status eq ${data[2]})`
+            console.log(param);
+        }
+        return param
+    }
     const getOutputFilter = async (data) => {
         setOnShowModal(false)
+        console.log(data.Status);
+        let paramSt = setParamStatus(data.Status)
         let param
         if (data.dateFrom && data.dateTo) {
-            if (data.Status)
-                param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', top: 20, filter: `(${data.OrderStockCode ? `substringof('${data.OrderStockCode}',Code) and ` : ''} ${data.Supplier ? `PartnerId eq ${data.Supplier.Id} and` : ''} BranchId eq ${currentBranch.current.Id} and Status eq ${data.Status} and DocumentDate ge 'datetime''${momentToStringDateLocal(data.dateFrom)}''' and DocumentDate lt 'datetime''${momentToStringDateLocal(data.dateTo)}''')` }
+            if (data.Status.length > 0)
+                param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', top: 20, filter: `(${data.OrderStockCode ? `substringof('${data.OrderStockCode}',Code) and ` : ''} ${data.Supplier ? `PartnerId eq ${data.Supplier.Id} and` : ''} BranchId eq ${currentBranch.current.Id} and ${paramSt} and DocumentDate ge 'datetime''${momentToStringDateLocal(data.dateFrom)}''' and DocumentDate lt 'datetime''${momentToStringDateLocal(data.dateTo)}''')` }
             else
                 param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', top: 20, filter: `(${data.OrderStockCode ? `substringof('${data.OrderStockCode}',Code) and ` : ''} ${data.Supplier ? `PartnerId eq ${data.Supplier.Id} and` : ''} BranchId eq ${currentBranch.current.Id}  and DocumentDate ge 'datetime''${momentToStringDateLocal(data.dateFrom)}''' and DocumentDate lt 'datetime''${momentToStringDateLocal(data.dateTo)}''')` }
         }
         else {
-            if (data.Status)
-                param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', top: 20, filter: `(${data.OrderStockCode ? `substringof('${data.OrderStockCode}',Code) and ` : ''} ${data.Supplier ? `PartnerId eq ${data.Supplier.Id} and` : ''} BranchId eq ${currentBranch.current.Id} and Status eq ${data.Status})` }
+            if (data.Status.length > 0)
+                param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', top: 20, filter: `(${data.OrderStockCode ? `substringof('${data.OrderStockCode}',Code) and ` : ''} ${data.Supplier ? `PartnerId eq ${data.Supplier.Id} and` : ''} BranchId eq ${currentBranch.current.Id} and ${paramSt})` }
             else
                 param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', top: 20, filter: `(${data.OrderStockCode ? `substringof('${data.OrderStockCode}',Code) and ` : ''} ${data.Supplier ? `PartnerId eq ${data.Supplier.Id} and` : ''} BranchId eq ${currentBranch.current.Id}  )` }
         }
@@ -202,13 +223,15 @@ export default (props) => {
                 />
                 <View style={{ flex: 1 }}>
                     {viewData.length > 0 ?
-                    <FlatList
-                        data={viewData}
-                        renderItem={({ item, index }) => item.Title ? renderTitle(item, index) : renderItemOrderStock(item, index)}
-                        keyExtractor={(item, index) => index.toString()}
-                    />
-                    :
-                    <Image source={Images.logo_365_long_color} />
+                        <FlatList
+                            data={viewData}
+                            renderItem={({ item, index }) => item.Title ? renderTitle(item, index) : renderItemOrderStock(item, index)}
+                            keyExtractor={(item, index) => index.toString()}
+                        />
+                        :
+                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                            <Image source={Images.logo_365_long_color} />
+                        </View>
                     }
                 </View>
 

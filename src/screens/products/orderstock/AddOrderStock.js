@@ -49,7 +49,7 @@ export default (props) => {
     const [total, setTotal] = useState(0)
     const [discount, setDiscount] = useState(0)
     const [listPurchase, setListPurchase] = useState([])
-    const [inputVat, setInputVat] = useState()
+    const [inputVat, setInputVat] = useState(0)
     const isFinish = useRef(false)
     const totalCurrent = useRef(0)
     const currentBranch = useRef()
@@ -144,6 +144,8 @@ export default (props) => {
         totalCurrent.current = os.Total
         setDiscount(os.Discount ? os.Discount : 0)
         let arrPr = JSON.parse(JSON.stringify(param.listPr))
+        console.log("os VAT",os.VAT);
+        setInputVat(os.VAT)
         getTotal(arrPr)
         setListPr([...arrPr])
         setPaymentMethod(param.paymentMethod ? param.paymentMethod : I18n.t('tien_mat'))
@@ -176,6 +178,8 @@ export default (props) => {
     }, [discount, orderStock.VAT, isPercent])
     useEffect(() => {
         let arrPr = []
+        let list = []
+        if(listPr.length > 0){
         listPr.forEach(el => {
             arrPr.push({ ...el, Id: el.ProductId })
             // let paramFilter = `(substringof('${el.Code}',Code) or substringof('${el.Code}',Name) or substringof('${el.Code}',Code2) or substringof('${el.Code}',Code3) or substringof('${el.Code}',Code4) or substringof('${el.Code}',Code5))`
@@ -184,13 +188,27 @@ export default (props) => {
             //         arrPr.push({ ...res.results[0], Quantity: el.Quantity })
             //     }
             // })
+            let itemPurchase = {
+                ConversionValue: el.ConversionValue,
+                IsLargeUnit: false,
+                Price: el.Price,
+                ProductId: el.ProductId,
+                Quantity: el.Quantity,
+                SellingPrice: el.Price
+            }
+            list.push(itemPurchase)
         })
+        setListPurchase(list)
+        console.log(orderStock)
         setListProduct(arrPr)
         console.log("listpr", listPr);
+    }
     }, [listPr])
     useEffect(() => {
-        console.log("orderstock", orderStock);
+        console.log("orderstock", orderStock.VAT);
+        setInputVat(orderStock.VAT)
     }, [orderStock])
+
     const onClickSupplier = () => {
         setOnShowModal(true)
         typeModal.current = 1
@@ -266,22 +284,6 @@ export default (props) => {
         console.log(arrItemPr);
         //setListPr([...arrItemPr])
     }
-    useEffect(() => {
-        let list = []
-        listPr.forEach(item => {
-            let itemPurchase = {
-                ConversionValue: item.ConversionValue,
-                IsLargeUnit: false,
-                Price: item.Price,
-                ProductId: item.ProductId,
-                Quantity: item.Quantity,
-                SellingPrice: item.Price
-            }
-            list.push(itemPurchase)
-        })
-        setListPurchase(list)
-        console.log(orderStock);
-    }, [listPr])
     useEffect(() => {
         console.log(listPurchase);
     }, [listPurchase])
@@ -586,7 +588,7 @@ export default (props) => {
                                     <Text style={{ marginLeft: 10 }}>{sumQuantity}</Text>
                                 </View>
                                 <View style={{ flexDirection: 'row' }}>
-                                    <Text style={{ fontWeight: 'bold' }}>{currencyToString(total)}</Text>
+                                    <Text style={{ fontWeight: 'bold' }}>{currencyToString(totalCurrent.current)}</Text>
                                     <Image source={Images.icon_arrow_down} style={{ width: 16, height: 16, marginLeft: 10 }} />
                                 </View>
                             </View>
@@ -601,7 +603,7 @@ export default (props) => {
                                         <Text style={{ marginLeft: 10 }}>{sumQuantity}</Text>
                                     </View>
                                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
-                                        <Text style={{ fontWeight: 'bold' }}>{currencyToString(total)}</Text>
+                                        <Text style={{ fontWeight: 'bold' }}>{currencyToString(totalCurrent.current)}</Text>
                                         <Image source={Images.icon_up} style={{ width: 16, height: 16, marginLeft: 10 }} />
                                     </View>
                                 </View>
@@ -673,7 +675,7 @@ export default (props) => {
                                     <Text>{I18n.t('thue_vat')}</Text>
                                 </View>
                                 <View style={{ flex: 3 }}>
-                                    <TextInput style={[styles.styleTextInput, { textAlign: 'right' }]} value={inputVat ? (inputVat) : null} onChangeText={(text) => onChangeTextVAT(text)}></TextInput>
+                                    <TextInput style={[styles.styleTextInput, { textAlign: 'right' }]} value={inputVat+''} onChangeText={(text) => onChangeTextVAT(text)}></TextInput>
                                 </View>
                             </View>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, paddingVertical: 5 }}>

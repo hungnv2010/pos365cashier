@@ -27,6 +27,7 @@ export default (props) => {
     }, [props.method])
     useEffect(() => {
         setSuggestions(props.listSuggest)
+        setResults("")
     }, [props.listSuggest])
 
     useEffect(() => {

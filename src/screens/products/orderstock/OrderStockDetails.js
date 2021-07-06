@@ -278,7 +278,7 @@ export default (props) => {
                 </View>
             </ScrollView>
             <View style={{ flexDirection: 'row', paddingHorizontal: 5, paddingVertical: 10 }}>
-                <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, borderRadius: 10, padding: 10, marginRight: 10 }}
+                {/* <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, borderRadius: 10, padding: 10, marginRight: 10 }}
                     onPress={showMenu}>
                     <Menu
                         ref={setMenuRef}
@@ -299,7 +299,7 @@ export default (props) => {
 
                         </View>
                     </Menu>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 {
                     allPer.PurchaseOrder_Delete || allPer.IsAdmin ?
                         <TouchableOpacity style={styles.styleBtn} onPress={() => onClickDel()}>
@@ -326,6 +326,6 @@ const styles = StyleSheet.create({
         color: '#bbbbbb'
     },
     styleView: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 5 },
-    styleBtn: { flex: 3, backgroundColor: colors.colorLightBlue, alignItems: 'center', justifyContent: 'center', borderRadius: 10 },
+    styleBtn: { flex: 3, backgroundColor: colors.colorLightBlue, alignItems: 'center', justifyContent: 'center', borderRadius: 10,paddingVertical:15 },
     styleValue: { fontWeight: 'bold', color: colors.colorLightBlue }
 })

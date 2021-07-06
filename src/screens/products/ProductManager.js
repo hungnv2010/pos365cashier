@@ -64,13 +64,7 @@ export default (props) => {
     // }, [])
 
     const onClickNavigationProduct = () => {
-        if (perProduct.read) 
-        props.navigation.navigate(ScreenList.Product, { permission: perProduct })
-        else {
-            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
-                dialogManager.destroy();
-            }, null, null, I18n.t('dong'))
-        }
+        props.navigation.navigate(ScreenList.Product, { })
     }
 
     const onClickNavigationExtra = () => {
@@ -78,23 +72,11 @@ export default (props) => {
     }
 
     const onClickToListGroup = () => {
-        if (perProduct.read)
-         props.navigation.navigate(ScreenList.ListGroupProduct, { permission: perProduct })
-        else {
-            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
-                dialogManager.destroy();
-            }, null, null, I18n.t('dong'))
-        }
+         props.navigation.navigate(ScreenList.ListGroupProduct, { })
     }
 
     const onClickListOrderStock = () => {
-        if (perImport.read)
-         props.navigation.navigate(ScreenList.ListOrderStock, { permission: perImport })
-        else {
-            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
-                dialogManager.destroy();
-            }, null, null, I18n.t('dong'))
-        }
+         props.navigation.navigate(ScreenList.ListOrderStock, { })
     }
 
 
@@ -115,13 +97,13 @@ export default (props) => {
                     <Image style={styles.iconButton} source={Images.ic_danhsachhanghoa} />
                     <Text style={styles.textButton}>{I18n.t('danh_sach_hang_hoa')}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => { onClickNavigationExtra() }}>
+                <TouchableOpacity style={styles.button} onPress={() =>  onClickNavigationExtra()}>
                     <View style={{ backgroundColor: '#36a3f7', borderRadius: 16, height: 42, width: 42, alignItems: 'center', justifyContent: 'center', marginRight: 10 }}>
                         <Icon name={'puzzle-outline'} size={21} color={'#fff'} />
                     </View>
                     <Text style={styles.textButton}>{I18n.t('thiet_lap_extra_topping')}</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => { onClickListOrderStock() }}>
+                <TouchableOpacity style={styles.button} onPress={() => onClickListOrderStock() }>
                     <Image style={styles.iconButton} source={Images.ic_nhaphang} />
                     <Text style={styles.textButton}>{I18n.t('nhap_hang')}</Text>
                 </TouchableOpacity>

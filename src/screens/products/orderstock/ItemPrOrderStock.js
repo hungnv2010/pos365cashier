@@ -44,7 +44,7 @@ const ItemPrOrderStock = ({ item, index, onChangeText, onClickDelItem, onChangeD
                     <Image source={Images.icon_trash} style={{ width: 24, height: 24 }} />
                 </TouchableOpacity>
             </View>
-            <View style={{ height: 0.3, backgroundColor: '#4a4a4a' }}></View>
+            <View style={{ height: 0.5, backgroundColor: '#bbbbbb' }}></View>
             <View style={{ flexDirection: 'row', paddingVertical: 10 }}>
                 <View style={{ flex: 1 }}>
                     <Text>{I18n.t('gia_nhap')}</Text>

@@ -17,6 +17,7 @@ export default (props) => {
     const [object, setObject] = useState({})
     const [showModal, setOnShowModal] = useState(false)
     const [listSupplier, setListSuppiler] = useState([])
+    const [status, setStatus] = useState([])
     const typeModal = useRef(0)
     const typeDate = useRef(0)
     const dateTmp = useRef()
@@ -36,6 +37,9 @@ export default (props) => {
         })
 
     }, [])
+    useEffect(() => {
+        setObject({ ...object, Status: status })
+    }, [status])
     const onDone = () => {
         if (typeDate.current == 1) {
             setObject({ ...object, dateFrom: dateTmp.current })
@@ -62,6 +66,14 @@ export default (props) => {
         setOnShowModal(true)
         typeDate.current = 2
     }
+    const setDataStatus = (value) => {
+        if (status.indexOf(value) > -1) {
+            let arr = []
+            arr = status.splice(status.indexOf(value), 1)
+            setStatus([...status])
+        } else
+            setStatus([...status, value])
+    }
 
     const renderModalContent = () => {
         return (
@@ -87,15 +99,15 @@ export default (props) => {
                         <View style={{ paddingHorizontal: 15, paddingVertical: 20 }}>
                             <Text style={{ textAlign: 'center', fontWeight: 'bold' }}>{I18n.t('trang_thai')}</Text>
                             <View style={{ flexDirection: 'row', marginTop: 15 }}>
-                                <TouchableOpacity style={{ flex: 1, paddingVertical: 15, marginRight: 5, borderRadius: 10, backgroundColor: object.Status == 1 ? '#fff' : '#f2f2f2', borderWidth: 1, borderColor: object.Status == 1 ? colors.colorLightBlue : null }} onPress={() => setObject({ ...object, Status: 1 })}>
-                                    <Text style={{ fontWeight: 'bold', textAlign: 'center', color: object.Status == 1 ? colors.colorLightBlue : '#000' }}>{I18n.t('dang_xu_ly')}</Text>
+                                <TouchableOpacity style={{ flex: 1, paddingVertical: 15, marginRight: 5, borderRadius: 10, backgroundColor: status.indexOf(1) > -1 ? '#fff' : '#f2f2f2', borderWidth: 1, borderColor: status.indexOf(1) > -1 ? colors.colorLightBlue : null }} onPress={() => setDataStatus(1)}>
+                                    <Text style={{ fontWeight: 'bold', textAlign: 'center', color: status.indexOf(1) > -1 ? colors.colorLightBlue : '#000' }}>{I18n.t('dang_xu_ly')}</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={{ flex: 1, paddingVertical: 15, marginLeft: 5, borderRadius: 10, backgroundColor: object.Status == 3 ? '#fff' : '#f2f2f2', borderWidth: 1, borderColor: object.Status == 3 ? colors.colorLightBlue : null }} onPress={() => setObject({ ...object, Status: 3 })}>
-                                    <Text style={{ fontWeight: 'bold', textAlign: 'center', color: object.Status == 3 ? colors.colorLightBlue : '#000' }}>{I18n.t('loai_bo')}</Text>
+                                <TouchableOpacity style={{ flex: 1, paddingVertical: 15, marginLeft: 5, borderRadius: 10, backgroundColor: status.indexOf(3) > -1 ? '#fff' : '#f2f2f2', borderWidth: 1, borderColor: status.indexOf(3) > -1 ? colors.colorLightBlue : null }} onPress={() => setDataStatus(3)}>
+                                    <Text style={{ fontWeight: 'bold', textAlign: 'center', color: status.indexOf(3) > -1 ? colors.colorLightBlue : '#000' }}>{I18n.t('loai_bo')}</Text>
                                 </TouchableOpacity>
                             </View>
-                            <TouchableOpacity style={{ paddingVertical: 15, borderRadius: 10, backgroundColor: object.Status == 2 ? '#fff' : '#f2f2f2', borderWidth: 1, borderColor: object.Status == 2 ? colors.colorLightBlue : null, marginTop: 10 }} onPress={() => setObject({ ...object, Status: 2 })}>
-                                <Text style={{ fontWeight: 'bold', textAlign: 'center', color: object.Status == 2 ? colors.colorLightBlue : '#000' }}>{I18n.t('hoan_thanh')}</Text>
+                            <TouchableOpacity style={{ paddingVertical: 15, borderRadius: 10, backgroundColor: status.indexOf(2) > -1 ? '#fff' : '#f2f2f2', borderWidth: 1, borderColor: status.indexOf(2) > -1 ? colors.colorLightBlue : null, marginTop: 10 }} onPress={() => setDataStatus(2)}>
+                                <Text style={{ fontWeight: 'bold', textAlign: 'center', color: status.indexOf(2) > -1 ? colors.colorLightBlue : '#000' }}>{I18n.t('hoan_thanh')}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={{ paddingVertical: 15, marginVertical: 10, backgroundColor: colors.colorLightBlue, borderRadius: 10 }} onPress={() => { setOnShowModal(false) }}>
                                 <Text style={{ fontWeight: 'bold', textAlign: 'center', color: '#fff' }}>{I18n.t('ap_dung')}</Text>
@@ -120,13 +132,13 @@ export default (props) => {
                 <View style={{ flexDirection: 'row', paddingHorizontal: 10 }}>
                     <View style={{ flex: 1, paddingVertical: 10, marginRight: 5 }}>
                         <Text>{I18n.t('tu')}</Text>
-                        <TouchableOpacity style={styles.background} onPress={() => onClickPickDateFrom()}>
+                        <TouchableOpacity style={styles.background} onPress={() => {onClickPickDateFrom()}}>
                             <Text style={{ textAlign: 'center' }}>{object.dateFrom ? dateToDate(object.dateFrom) : 'DD/MM/YYYY'}</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={{ flex: 1, paddingVertical: 10, marginLeft: 5 }}>
                         <Text>{I18n.t('den')}</Text>
-                        <TouchableOpacity style={styles.background} onPress={() => onClickPickDateTo()}>
+                        <TouchableOpacity style={styles.background} onPress={() => {onClickPickDateTo()}}>
                             <Text style={{ textAlign: 'center' }}>{object.dateTo ? dateToDate(object.dateTo) : 'DD/MM/YYYY'}</Text>
                         </TouchableOpacity>
                     </View>
@@ -135,7 +147,7 @@ export default (props) => {
                     <Text >{I18n.t('trang_thai')}</Text>
                     <TouchableOpacity style={styles.background} onPress={() => { typeModal.current = 2, setOnShowModal(true) }}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <Text>{object.Status == 1 ? I18n.t('dang_xu_ly') : object.Status == 2 ? I18n.t('hoan_thanh') : object.Status == 3 ? I18n.t('loai_bo') : I18n.t('tat_ca')}</Text>
+                            <Text>{status.length > 0 ? null : I18n.t('tat_ca')}{(status.indexOf(1) > -1 ? I18n.t('dang_xu_ly') : null)} {(status.indexOf(2) > -1 ? I18n.t('hoan_thanh') : null)} {(status.indexOf(3) > -1 ? I18n.t('loai_bo') : null)}</Text>
                             <Image source={Images.icon_arrow_down} style={{ width: 20, height: 20 }} />
                         </View>
                     </TouchableOpacity>
