@@ -21,13 +21,15 @@ export default (props) => {
     const typeModal = useRef(0)
     const typeDate = useRef(0)
     const dateTmp = useRef()
+    const [date, setDate] = useState(new Date());
     const statusTmp = useRef()
 
     const onChange = (selectedDate) => {
-        if (selectedDate)
+        if (selectedDate){
             dateTmp.current = selectedDate;
+        }
         else
-            dateTmp.current = new Date()
+            dateTmp.current = date
     }
     useEffect(() => {
         new HTTPService().setPath(ApiPath.CUSTOMER).GET({ Type: 2 }).then(res => {
@@ -42,9 +44,9 @@ export default (props) => {
     }, [status])
     const onDone = () => {
         if (typeDate.current == 1) {
-            setObject({ ...object, dateFrom: dateTmp.current })
+            setObject({ ...object, dateFrom: dateTmp.current != undefined ? dateTmp.current : date })
         } else {
-            setObject({ ...object, dateTo: dateTmp.current })
+            setObject({ ...object, dateTo:  dateTmp.current != undefined ? dateTmp.current : date })
         }
         setOnShowModal(false)
     }
@@ -81,7 +83,7 @@ export default (props) => {
                 {typeModal.current == 1 ?
                     <View style={{ borderRadius: 10, alignItems: 'center', justifyContent: 'center' }}>
                         <Text style={{ textAlign: 'center', paddingVertical: 10, fontWeight: 'bold', fontSize: 16, color: colors.colorchinh }}>{I18n.t('chon_ngay')}</Text>
-                        <DatePicker date={new Date()}
+                        <DatePicker date={date}
                             onDateChange={onChange}
                             mode={'date'}
                             display="default"
