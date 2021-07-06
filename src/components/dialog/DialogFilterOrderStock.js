@@ -17,12 +17,12 @@ export default (props) => {
     const [object, setObject] = useState({})
     const [showModal, setOnShowModal] = useState(false)
     const [listSupplier, setListSuppiler] = useState([])
-    const [status, setStatus] = useState([])
+    const [status, setStatus] = useState(props.stt ? props.stt : [])
     const typeModal = useRef(0)
     const typeDate = useRef(0)
     const dateTmp = useRef()
     const [date, setDate] = useState(new Date());
-    const statusTmp = useRef()
+    const statusTmp = useRef([])
 
     const onChange = (selectedDate) => {
         if (selectedDate){
@@ -37,16 +37,22 @@ export default (props) => {
                 setListSuppiler([...res.results])
             }
         })
+        setStatus(statusTmp.current)
 
     }, [])
+    useEffect(()=>{
+        setStatus(props.stt)
+    },[props.stt])
     useEffect(() => {
         setObject({ ...object, Status: status })
     }, [status])
     const onDone = () => {
         if (typeDate.current == 1) {
             setObject({ ...object, dateFrom: dateTmp.current != undefined ? dateTmp.current : date })
+            dateTmp.current = undefined
         } else {
             setObject({ ...object, dateTo:  dateTmp.current != undefined ? dateTmp.current : date })
+            dateTmp.current = undefined
         }
         setOnShowModal(false)
     }
@@ -149,7 +155,7 @@ export default (props) => {
                     <Text >{I18n.t('trang_thai')}</Text>
                     <TouchableOpacity style={styles.background} onPress={() => { typeModal.current = 2, setOnShowModal(true) }}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <Text>{status.length > 0 ? null : I18n.t('tat_ca')}{(status.indexOf(1) > -1 ? I18n.t('dang_xu_ly') : null)} {(status.indexOf(2) > -1 ? I18n.t('hoan_thanh') : null)} {(status.indexOf(3) > -1 ? I18n.t('loai_bo') : null)}</Text>
+                            <Text>{status.length > 0 ? null : I18n.t('tat_ca')}{(status.indexOf(1) > -1 ? I18n.t('dang_xu_ly')+(status.indexOf(2) > -1 || status.indexOf(3) > -1 ?', ' : '') : null)} {(status.indexOf(2) > -1 ? I18n.t('hoan_thanh')+(status.indexOf(3) > -1 ? ', ' :'') : null)} {(status.indexOf(3) > -1 ? I18n.t('loai_bo') : null)}</Text>
                             <Image source={Images.icon_arrow_down} style={{ width: 20, height: 20 }} />
                         </View>
                     </TouchableOpacity>

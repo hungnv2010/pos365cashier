@@ -35,6 +35,7 @@ export default (props) => {
     const [marginModal, setMargin] = useState(0)
     const defauTitle = useRef()
     const currentBranch = useRef()
+    const [status, setStatus] = useState([])
     const [additemTab, setAddItemTab] = useState(false)
     let arrDate = []
     const { deviceType, allPer } = useSelector(state => {
@@ -185,19 +186,20 @@ export default (props) => {
     const getOutputFilter = async (data) => {
         setOnShowModal(false)
         console.log(data.Status);
+        setStatus(data.Status)
         let paramSt = setParamStatus(data.Status)
         let param
         if (data.dateFrom && data.dateTo) {
             if (data.Status.length > 0)
-                param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', top: 20, filter: `(${data.OrderStockCode ? `substringof('${data.OrderStockCode}',Code) and ` : ''} ${data.Supplier ? `PartnerId eq ${data.Supplier.Id} and` : ''} BranchId eq ${currentBranch.current.Id} and ${paramSt} and DocumentDate ge 'datetime''${momentToStringDateLocal(data.dateFrom)}''' and DocumentDate lt 'datetime''${momentToStringDateLocal(data.dateTo)}''')` }
+                param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', filter: `(${data.OrderStockCode ? `substringof('${data.OrderStockCode}',Code) and ` : ''} ${data.Supplier ? `PartnerId eq ${data.Supplier.Id} and` : ''} BranchId eq ${currentBranch.current.Id} and ${paramSt} and DocumentDate ge 'datetime''${momentToStringDateLocal(data.dateFrom)}''' and DocumentDate lt 'datetime''${momentToStringDateLocal(data.dateTo)}''')` }
             else
-                param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', top: 20, filter: `(${data.OrderStockCode ? `substringof('${data.OrderStockCode}',Code) and ` : ''} ${data.Supplier ? `PartnerId eq ${data.Supplier.Id} and` : ''} BranchId eq ${currentBranch.current.Id}  and DocumentDate ge 'datetime''${momentToStringDateLocal(data.dateFrom)}''' and DocumentDate lt 'datetime''${momentToStringDateLocal(data.dateTo)}''')` }
+                param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', filter: `(${data.OrderStockCode ? `substringof('${data.OrderStockCode}',Code) and ` : ''} ${data.Supplier ? `PartnerId eq ${data.Supplier.Id} and` : ''} BranchId eq ${currentBranch.current.Id}  and DocumentDate ge 'datetime''${momentToStringDateLocal(data.dateFrom)}''' and DocumentDate lt 'datetime''${momentToStringDateLocal(data.dateTo)}''')` }
         }
         else {
             if (data.Status.length > 0)
-                param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', top: 20, filter: `(${data.OrderStockCode ? `substringof('${data.OrderStockCode}',Code) and ` : ''} ${data.Supplier ? `PartnerId eq ${data.Supplier.Id} and` : ''} BranchId eq ${currentBranch.current.Id} and ${paramSt})` }
+                param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', filter: `(${data.OrderStockCode ? `substringof('${data.OrderStockCode}',Code) and ` : ''} ${data.Supplier ? `PartnerId eq ${data.Supplier.Id} and` : ''} BranchId eq ${currentBranch.current.Id} and ${paramSt})` }
             else
-                param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', top: 20, filter: `(${data.OrderStockCode ? `substringof('${data.OrderStockCode}',Code) and ` : ''} ${data.Supplier ? `PartnerId eq ${data.Supplier.Id} and` : ''} BranchId eq ${currentBranch.current.Id}  )` }
+                param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', filter: `(${data.OrderStockCode ? `substringof('${data.OrderStockCode}',Code) and ` : ''} ${data.Supplier ? `PartnerId eq ${data.Supplier.Id} and` : ''} BranchId eq ${currentBranch.current.Id}  )` }
         }
         getOrderStock(currentBranch.current.Id, param)
         console.log(param);
@@ -288,7 +290,7 @@ export default (props) => {
 
                     </TouchableWithoutFeedback>
                     <View style={[{ width: Metrics.screenWidth * 0.8 }, { marginBottom: Platform.OS == 'ios' ? marginModal : 0 }]}>
-                        <DialogFilterOrderStock outPutFilter={getOutputFilter} />
+                        <DialogFilterOrderStock outPutFilter={getOutputFilter} stt={status} />
                     </View>
                 </View>
             </Modal>

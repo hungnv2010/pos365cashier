@@ -112,7 +112,8 @@ export default (props) => {
             Status: orderStock.Status ? orderStock.Status : 1,
             Total: total,
             TotalPayment: orderStock.TotalPayment,
-            VAT: orderStock.VAT
+            VAT: orderStock.VAT ? Number(orderStock.VAT) * totalCurrent.current / 100 : 0,
+            VATRates:orderStock.VAT ? Number(orderStock.VAT) : 0,
         }
     }
     const onChangeDate = (selectedDate) => {
@@ -339,8 +340,8 @@ export default (props) => {
                 Status: st,
                 Total: total,
                 TotalPayment: orderStock.TotalPayment ? orderStock.TotalPayment : 0,
-                VAT: orderStock.VAT ? orderStock.VAT : 0,
-                VATRates: 0,
+                VAT: orderStock.VAT ? Number(orderStock.VAT) * totalCurrent.current / 100 : 0,
+                VATRates:orderStock.VAT ? Number(orderStock.VAT) : 0,
             }
         }
         dialogManager.showLoading()
@@ -675,7 +676,7 @@ export default (props) => {
                                     <Text>{I18n.t('thue_vat')}</Text>
                                 </View>
                                 <View style={{ flex: 3 }}>
-                                    <TextInput style={[styles.styleTextInput, { textAlign: 'right' }]} value={inputVat+''} onChangeText={(text) => onChangeTextVAT(text)}></TextInput>
+                                    <TextInput style={[styles.styleTextInput, { textAlign: 'right' }]} value={inputVat ? inputVat+'' : null} onChangeText={(text) => onChangeTextVAT(text)}></TextInput>
                                 </View>
                             </View>
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, paddingVertical: 5 }}>

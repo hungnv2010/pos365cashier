@@ -171,6 +171,19 @@ export default (props) => {
         setListItem(list)
         setMethodPay(method)
     }
+    const onChangeTextVAT = (text) => {
+        // debounceTimeInput.current.next(text)
+
+        text = text.replace(/,/g, "");
+        if (isNaN(text)) return;
+        let value = text;
+        if (value.indexOf(".") == (value.length - 1) && value.length != 0) {
+            value = currencyToString(value.split(".")[0]) + "."
+        } else {
+            value = currencyToString(value, true)
+        }
+        return value
+    }
 
     return (
         <View style={{ flex: 1, borderLeftWidth: 0.3, borderColor: '#4a4a4a' }}>
