@@ -183,7 +183,7 @@ export default (props) => {
 
     useEffect(() => {
         calculatorPrice(jsonContent, totalPrice)
-        if (percentRef.current != undefined){
+        if (percentRef.current != undefined) {
             onTouchInput(METHOD.discount)
         }
     }, [percent])
@@ -228,7 +228,7 @@ export default (props) => {
 
     const onChangeTextInput = (text, type, update = false) => {
         // debounceTimeInput.current.next(text)
-
+        console.log("onChangeTextInput text ", text);
         text = text.replace(/,/g, "");
         if (isNaN(text)) return;
         let value = text;
@@ -238,6 +238,7 @@ export default (props) => {
             value = currencyToString(value, true)
         }
         let json = { ...jsonContent }
+        console.log("onChangeTextInput value ", value);
         switch (type) {
             case 2:
                 setInputVAT(value)
@@ -245,6 +246,7 @@ export default (props) => {
                 calculatorPrice(json, totalPrice, update)
                 break;
             case 1:
+                console.log("onChangeTextInput value: ", value);
                 if (!percent) {
                     json['DiscountValue'] = convertMoneyToNumber(value);
                     if (json['DiscountValue'] < totalPrice) {
@@ -904,9 +906,9 @@ export default (props) => {
             console.log("outputResult ::: ", value);
             if (sendMethod == METHOD.discount) {
                 console.log("outputResult discount :: ", value);
-                onChangeTextInput(currencyToString(value, true), 1, true)
+                onChangeTextInput(value, 1, true)
             } else if (sendMethod == METHOD.vat) {
-                onChangeTextInput(currencyToString(value, true), 2, true)
+                onChangeTextInput(value, 2, true)
             } else {
                 onChangeTextPaymentPaid(currencyToString(value, true), sendMethod)
             }
@@ -1396,7 +1398,7 @@ export default (props) => {
                                 onTouchStart={() => onTouchInput({ ...item, ...METHOD.pay })}
                                 editable={deviceType == Constant.TABLET ? false : true}
                                 onChangeText={(text) => onChangeTextPaymentPaid(text, item, index)}
-                                style={[styles.inputListMethod, { borderColor: (sendMethod.Id == item.Id && item.UUID == sendMethod.UUID || sendMethod) ? colors.colorchinh : "gray" }]} />
+                                style={[styles.inputListMethod, { borderColor: (sendMethod.Id == item.Id && item.UUID == sendMethod.UUID) ? colors.colorchinh : "gray" }]} />
                     }
                 </View>
             )
@@ -1500,11 +1502,18 @@ export default (props) => {
                             <View style={styles.viewDiscount}>
                                 <Text style={{ flex: 3 }}>{I18n.t('chiet_khau')}</Text>
                                 <View style={{ flexDirection: "row", flex: 3, marginLeft: 5 }}>
-                                    <TouchableOpacity onPress={() => { percentRef.current = false, selectPercent(false) }} style={[styles.selectPecent, { backgroundColor: !percent ? colors.colorchinh : "#fff" }]}>
+                                    <TouchableOpacity onPress={() => {
+                                        percentRef.current = false
+                                        jsonContent.DiscountValue = jsonContent.DiscountRatio * (totalPrice / 100);
+                                        setInputDiscount(jsonContent.DiscountValue)
+                                        selectPercent(false)
+                                    }} style={[styles.selectPecent, { backgroundColor: !percent ? colors.colorchinh : "#fff" }]}>
                                         <Text style={{ color: !percent ? "#fff" : '#000' }}>VNĐ</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity onPress={() => {
-                                        jsonContent.DiscountRatio = jsonContent.Discount / totalPrice * 100, percentRef.current = true
+                                        percentRef.current = true
+                                        jsonContent.DiscountRatio = jsonContent.DiscountValue / totalPrice * 100
+                                        setInputDiscount(jsonContent.DiscountRatio)
                                         selectPercent(true)
                                     }} style={[styles.viewSelectVAT, { backgroundColor: !percent ? "#fff" : colors.colorchinh }]}>
                                         <Text style={{ color: percent ? "#fff" : '#000' }}>%</Text>
@@ -1517,7 +1526,7 @@ export default (props) => {
                                     onFocus={() => onFocusDiscount()}
                                     placeholder="0"
                                     placeholderTextColor="#808080"
-                                    value={inputDiscount == "" ? "" : (inputDiscount)}
+                                    value={inputDiscount == "" ? "" : ("" + inputDiscount)}
                                     onTouchStart={() => onTouchInput(METHOD.discount)}
                                     editable={deviceType == Constant.TABLET ? false : true}
                                     onChangeText={(text) => onChangeTextInput(text, 1)}
