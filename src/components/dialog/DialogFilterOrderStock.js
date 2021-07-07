@@ -14,10 +14,11 @@ import DialogSelectSupplier from '../../components/dialog/DialogSelectSupplier'
 import DatePicker from 'react-native-date-picker';
 
 export default (props) => {
-    const [object, setObject] = useState({})
+    const [object, setObject] = useState(props.data ? props.data : {})
     const [showModal, setOnShowModal] = useState(false)
     const [listSupplier, setListSuppiler] = useState([])
-    const [status, setStatus] = useState(props.stt ? props.stt : [])
+    const [data, setData] = useState(props.data ? props.data : {})
+    const [status, setStatus] = useState([])
     const typeModal = useRef(0)
     const typeDate = useRef(0)
     const dateTmp = useRef()
@@ -25,11 +26,13 @@ export default (props) => {
     const statusTmp = useRef([])
 
     const onChange = (selectedDate) => {
-        if (selectedDate){
+        console.log("selectedDate", selectedDate);
+        if (selectedDate != undefined) {
             dateTmp.current = selectedDate;
         }
-        else
-            dateTmp.current = date
+        else {
+            dateTmp.current = new Date()
+        }
     }
     useEffect(() => {
         new HTTPService().setPath(ApiPath.CUSTOMER).GET({ Type: 2 }).then(res => {
@@ -40,19 +43,20 @@ export default (props) => {
         setStatus(statusTmp.current)
 
     }, [])
-    useEffect(()=>{
-        setStatus(props.stt)
-    },[props.stt])
+    useEffect(() => {
+        setData(props.data)
+        setObject(props.data)
+        setStatus(props.data.Status ? props.data.Status : [])
+    }, [props.data])
     useEffect(() => {
         setObject({ ...object, Status: status })
     }, [status])
     const onDone = () => {
+        console.log("selectedDate", dateTmp.current);
         if (typeDate.current == 1) {
-            setObject({ ...object, dateFrom: dateTmp.current != undefined ? dateTmp.current : date })
-            dateTmp.current = undefined
-        } else {
-            setObject({ ...object, dateTo:  dateTmp.current != undefined ? dateTmp.current : date })
-            dateTmp.current = undefined
+            setObject({ ...object, dateFrom: dateTmp.current ? dateTmp.current : new Date() })
+        } else if (typeDate.current == 2) {
+            setObject({ ...object, dateTo: dateTmp.current ? dateTmp.current : new Date() })
         }
         setOnShowModal(false)
     }
@@ -62,17 +66,18 @@ export default (props) => {
         setOnShowModal(false)
     }
     const onCLickDone = () => {
+        console.log("object", object);
         props.outPutFilter(object)
     }
     const onClickPickDateFrom = () => {
         typeModal.current = 1
-        setOnShowModal(true)
         typeDate.current = 1
+        setOnShowModal(true)
     }
     const onClickPickDateTo = () => {
         typeModal.current = 1
-        setOnShowModal(true)
         typeDate.current = 2
+        setOnShowModal(true)
     }
     const setDataStatus = (value) => {
         if (status.indexOf(value) > -1) {
@@ -93,7 +98,8 @@ export default (props) => {
                             onDateChange={onChange}
                             mode={'date'}
                             display="default"
-                            locale="vi-VN" />
+                            locale="vi-VN"
+                            maximumDate={date} />
                         <View style={{ paddingVertical: 15, paddingHorizontal: 30, flexDirection: 'row' }}>
                             <TouchableOpacity style={{ flex: 1, alignItems: 'center', justifyContent: 'center', borderColor: colors.colorchinh, borderRadius: 10, borderWidth: 1, paddingVertical: 10, marginRight: 5 }} onPress={() => setOnShowModal(false)}>
                                 <Text style={{ color: colors.colorchinh }}>{I18n.t('huy')}</Text>
@@ -140,13 +146,13 @@ export default (props) => {
                 <View style={{ flexDirection: 'row', paddingHorizontal: 10 }}>
                     <View style={{ flex: 1, paddingVertical: 10, marginRight: 5 }}>
                         <Text>{I18n.t('tu')}</Text>
-                        <TouchableOpacity style={styles.background} onPress={() => {onClickPickDateFrom()}}>
+                        <TouchableOpacity style={styles.background} onPress={() => { onClickPickDateFrom() }}>
                             <Text style={{ textAlign: 'center' }}>{object.dateFrom ? dateToDate(object.dateFrom) : 'DD/MM/YYYY'}</Text>
                         </TouchableOpacity>
                     </View>
                     <View style={{ flex: 1, paddingVertical: 10, marginLeft: 5 }}>
                         <Text>{I18n.t('den')}</Text>
-                        <TouchableOpacity style={styles.background} onPress={() => {onClickPickDateTo()}}>
+                        <TouchableOpacity style={styles.background} onPress={() => { onClickPickDateTo() }}>
                             <Text style={{ textAlign: 'center' }}>{object.dateTo ? dateToDate(object.dateTo) : 'DD/MM/YYYY'}</Text>
                         </TouchableOpacity>
                     </View>
@@ -155,7 +161,7 @@ export default (props) => {
                     <Text >{I18n.t('trang_thai')}</Text>
                     <TouchableOpacity style={styles.background} onPress={() => { typeModal.current = 2, setOnShowModal(true) }}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <Text>{status.length > 0 ? null : I18n.t('tat_ca')}{(status.indexOf(1) > -1 ? I18n.t('dang_xu_ly')+(status.indexOf(2) > -1 || status.indexOf(3) > -1 ?', ' : '') : null)} {(status.indexOf(2) > -1 ? I18n.t('hoan_thanh')+(status.indexOf(3) > -1 ? ', ' :'') : null)} {(status.indexOf(3) > -1 ? I18n.t('loai_bo') : null)}</Text>
+                            <Text>{status.length > 0 ? null : I18n.t('tat_ca')}{(status.indexOf(1) > -1 ? I18n.t('dang_xu_ly') + (status.indexOf(2) > -1 || status.indexOf(3) > -1 ? ', ' : '') : null)} {(status.indexOf(2) > -1 ? I18n.t('hoan_thanh') + (status.indexOf(3) > -1 ? ', ' : '') : null)} {(status.indexOf(3) > -1 ? I18n.t('loai_bo') : null)}</Text>
                             <Image source={Images.icon_arrow_down} style={{ width: 20, height: 20 }} />
                         </View>
                     </TouchableOpacity>
@@ -171,11 +177,11 @@ export default (props) => {
                 </View>
                 <View style={{ paddingHorizontal: 10, paddingVertical: 10 }}>
                     <Text>{I18n.t('ma_nhap_hang')}</Text>
-                    <TextInput style={[styles.background, , { color: '#000' }]} onChangeText={(text) => setObject({ ...object, OrderStockCode: text })}></TextInput>
+                    <TextInput style={[styles.background, , { color: '#000' }]} value={object.OrderStockCode ? object.OrderStockCode : null} onChangeText={(text) => setObject({ ...object, OrderStockCode: text })}></TextInput>
                 </View>
                 <View style={{ paddingHorizontal: 10, paddingVertical: 10 }}>
                     <Text>{I18n.t('ma_hang_hoa')}</Text>
-                    <TextInput style={[styles.background, { color: '#000' }]} onChangeText={(text) => setObject({ ...object, ProductCode: text })}></TextInput>
+                    <TextInput style={[styles.background, { color: '#000' }]} value={object.ProductCode ? object.ProductCode : null} onChangeText={(text) => setObject({ ...object, ProductCode: text })}></TextInput>
                 </View>
                 <TouchableOpacity style={{ backgroundColor: colors.colorLightBlue, alignItems: 'center', justifyContent: 'center', paddingVertical: 15, borderRadius: 10, marginHorizontal: 10, marginVertical: 10 }} onPress={() => onCLickDone()}>
                     <Text style={{ color: '#fff', fontWeight: 'bold' }}>{I18n.t('ap_dung')}</Text>

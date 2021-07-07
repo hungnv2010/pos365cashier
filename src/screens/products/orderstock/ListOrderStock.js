@@ -35,8 +35,10 @@ export default (props) => {
     const [marginModal, setMargin] = useState(0)
     const defauTitle = useRef()
     const currentBranch = useRef()
-    const [status, setStatus] = useState([])
+    const [dataParam, setDataParam] = useState({})
     const [additemTab, setAddItemTab] = useState(false)
+    const dateToTmp = useRef()
+    const dateFromTmp = useRef()
     let arrDate = []
     const { deviceType, allPer } = useSelector(state => {
         return state.Common
@@ -84,11 +86,13 @@ export default (props) => {
                 console.log("orderstock", res.results);
                 if (res.__count > 0) {
                     res.results.forEach(el => {
+                        console.log("el",el);
                         if (dateToString(el.CreatedDate) != defauTitle.current) {
                             arrDate.push({ Title: dateToString(el.CreatedDate) })
                             defauTitle.current = dateToString(el.CreatedDate)
                         }
                     })
+                    defauTitle.current = undefined
                     console.log("arrr", arrDate);
                     let arrdata = []
                     arrDate.forEach(el => {
@@ -168,38 +172,64 @@ export default (props) => {
     const clickFilter = () => {
         setOnShowModal(true)
     }
-    const setParamStatus = (data) =>{
-        let param 
+    const setParamStatus = (data) => {
+        let param
         if (data.length == 1) {
-          param =  `Status eq ${data[0]}`
-          console.log(param);
-        }else if(data.length == 2){
+            param = `Status eq ${data[0]}`
+            console.log(param);
+        } else if (data.length == 2) {
             param = `(Status eq ${data[0]} or Status eq ${data[1]})`
             console.log(param);
         }
-        else if(data.length == 3){
+        else if (data.length == 3) {
             param = `(Status eq ${data[0]} or Status eq ${data[1]} or Status eq ${data[2]})`
             console.log(param);
         }
         return param
     }
+    const setDateFrom = (data) => {
+        let date = data.dateFrom
+        if (data.dateFrom.getFullYear() == data.dateTo.getFullYear() && data.dateFrom.getMonth() == data.dateTo.getMonth() && data.dateFrom.getDate() == data.dateTo.getDate()) {
+            //date.setDate(data.dateFrom.getDate())
+            date.setHours(0)
+            date.setMinutes(0)
+            date.setSeconds(0)
+            console.log(momentToStringDateLocal(date));
+            console.log(momentToStringDateLocal(data.dateTo));
+
+        } else {
+            date = data.dateFrom
+        }
+        return date
+
+    }
+    const setDateTo = (data) => {
+        let date = data.dateTo
+        date.setHours(23)
+        date.setMinutes(59)
+        date.setSeconds(59)
+        console.log(momentToStringDateLocal(date));
+        return date
+    }
     const getOutputFilter = async (data) => {
+        dateFromTmp.current = data.dateFrom
+        dateToTmp.current = data.dateTo
         setOnShowModal(false)
-        console.log(data.Status);
-        setStatus(data.Status)
+        console.log(data);
+        setDataParam({ ...data, dateFrom: dateFromTmp.current, dateTo: dateToTmp.current})
         let paramSt = setParamStatus(data.Status)
         let param
         if (data.dateFrom && data.dateTo) {
             if (data.Status.length > 0)
-                param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', filter: `(${data.OrderStockCode ? `substringof('${data.OrderStockCode}',Code) and ` : ''} ${data.Supplier ? `PartnerId eq ${data.Supplier.Id} and` : ''} BranchId eq ${currentBranch.current.Id} and ${paramSt} and DocumentDate ge 'datetime''${momentToStringDateLocal(data.dateFrom)}''' and DocumentDate lt 'datetime''${momentToStringDateLocal(data.dateTo)}''')` }
+                param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', filter: `(${data.OrderStockCode ? `substringof('${data.OrderStockCode}',Code) and ` : ''} ${data.Supplier ? `PartnerId eq ${data.Supplier.Id} and ` : ''}BranchId eq ${currentBranch.current.Id} and ${paramSt} and DocumentDate ge 'datetime''${momentToStringDateLocal(setDateFrom(data))}''' and DocumentDate lt 'datetime''${momentToStringDateLocal(setDateTo(data))}''')` }
             else
-                param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', filter: `(${data.OrderStockCode ? `substringof('${data.OrderStockCode}',Code) and ` : ''} ${data.Supplier ? `PartnerId eq ${data.Supplier.Id} and` : ''} BranchId eq ${currentBranch.current.Id}  and DocumentDate ge 'datetime''${momentToStringDateLocal(data.dateFrom)}''' and DocumentDate lt 'datetime''${momentToStringDateLocal(data.dateTo)}''')` }
+                param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', filter: `(${data.OrderStockCode ? `substringof('${data.OrderStockCode}',Code) and ` : ''} ${data.Supplier ? `PartnerId eq ${data.Supplier.Id} and ` : ''}BranchId eq ${currentBranch.current.Id}  and DocumentDate ge 'datetime''${momentToStringDateLocal(setDateFrom(data))}''' and DocumentDate lt 'datetime''${momentToStringDateLocal(setDateTo(data))}''')` }
         }
         else {
             if (data.Status.length > 0)
-                param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', filter: `(${data.OrderStockCode ? `substringof('${data.OrderStockCode}',Code) and ` : ''} ${data.Supplier ? `PartnerId eq ${data.Supplier.Id} and` : ''} BranchId eq ${currentBranch.current.Id} and ${paramSt})` }
+                param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', filter: `(${data.OrderStockCode ? `substringof('${data.OrderStockCode}',Code) and ` : ''} ${data.Supplier ? `PartnerId eq ${data.Supplier.Id} and ` : ''}BranchId eq ${currentBranch.current.Id} and ${paramSt})` }
             else
-                param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', filter: `(${data.OrderStockCode ? `substringof('${data.OrderStockCode}',Code) and ` : ''} ${data.Supplier ? `PartnerId eq ${data.Supplier.Id} and` : ''} BranchId eq ${currentBranch.current.Id}  )` }
+                param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', filter: `(${data.OrderStockCode ? `substringof('${data.OrderStockCode}',Code) and ` : ''} ${data.Supplier ? `PartnerId eq ${data.Supplier.Id} and ` : ''}BranchId eq ${currentBranch.current.Id}  )` }
         }
         getOrderStock(currentBranch.current.Id, param)
         console.log(param);
@@ -290,7 +320,7 @@ export default (props) => {
 
                     </TouchableWithoutFeedback>
                     <View style={[{ width: Metrics.screenWidth * 0.8 }, { marginBottom: Platform.OS == 'ios' ? marginModal : 0 }]}>
-                        <DialogFilterOrderStock outPutFilter={getOutputFilter} stt={status} />
+                        <DialogFilterOrderStock outPutFilter={getOutputFilter} data={dataParam} />
                     </View>
                 </View>
             </Modal>
