@@ -15,11 +15,14 @@ import { useSelector } from 'react-redux';
 import printService from '../../data/html/PrintService';
 const { Print } = NativeModules;
 import HtmlDefault from '../../data/html/htmlDefault';
+import HtmlKitchen from '../../data/html/htmlKitchen';
 import ViewShot, { takeSnapshot, captureRef } from "react-native-view-shot";
 import AutoHeightWebView from 'react-native-autoheight-webview/autoHeightWebView'
 import ViewPrint, { defaultKitchen } from './ViewPrint';
 import I18n from '../../common/language/i18n'
 import colors from '../../theme/Colors';
+import { PaymentDataDefault } from '../tempPrint/ServicePrintTemp';
+import dataManager from '../../data/DataManager';
 
 const FOOTER_HEIGHT = 21;
 const PADDING = 16;
@@ -52,41 +55,33 @@ export default forwardRef((props, ref) => {
             let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
             console.log('data', JSON.parse(data));
             setVendorSession(JSON.parse(data))
-            let html = HtmlDefault;
-            // html = props.route.params.data;
-            if (deviceType == Constant.PHONE) {
-                html = props.route.params.data;
+            if ((deviceType != Constant.PHONE && props.type == 10) || (deviceType == Constant.PHONE && props.route.params.type == 10)) {
+                let html = HtmlDefault;
+                if (deviceType == Constant.PHONE) {
+                    html = props.route.params.data;
+                } else {
+                    if (props.data != "")
+                        html = props.data
+                }
+                printService.GenHtml(html, JsonContent1).then(res => {
+                    if (res && res != "") {
+                        setData(res)
+                    }
+                })
             } else {
-                console.log("Preview props.data", props.data);
-                if (props.data != "")
-                    html = props.data
-
-            }
-            console.log("Preview html", html);
-            printService.GenHtml(html, JsonContent1).then(res => {
+                let html = HtmlKitchen;
+                if (deviceType == Constant.PHONE) {
+                    html = props.route.params.data;
+                } else {
+                    if (props.data != "")
+                        html = props.data
+                }
+                let res = printService.GenHtmlKitchen(html, PaymentDataDefault.OrderDetails, 1, JSON.parse(data))
+                console.log("GenHtmlKitchen res", res);
                 if (res && res != "") {
-                    // if (deviceType == Constant.TABLET)
-                    //     res = res.replace("font-size:16.0px;", "font-size:22.0px;")
                     setData(res)
                 }
-            })
-            // // printService.GenHtmlKitchen(html, defaultKitchen).then(res => {
-            // //     if (res && res != "") {
-            // //         setData(res)
-            // //     }
-            // // })
-            // let i = 0;
-            // for (const key in defaultKitchen) {
-            //     if (defaultKitchen.hasOwnProperty(key)) {
-            //         const element = defaultKitchen[key];
-            //         console.log("printKitchen key element.length ", key, element.length);
-            //         let res = await printService.GenHtmlKitchen(html, element)
-            //         if (res && res != "" && i == 0) {
-            //             setData(res)
-            //         }
-            //     }
-            //     i++;
-            // }
+            }
         }
         getVendorSession()
     }, [props.data])
@@ -114,7 +109,7 @@ export default forwardRef((props, ref) => {
         new HTTPService().setPath(ApiPath.PRINT_TEMPLATES).POST(params).then((res) => {
             console.log("clickCheck res ", res);
             if (res) {
-                if ((deviceType != Constant.PHONE && props.type == 10) && (deviceType == Constant.PHONE && props.route.params.type == 10)) {
+                if ((deviceType != Constant.PHONE && props.type == 10) || (deviceType == Constant.PHONE && props.route.params.type == 10)) {
                     setFileLuuDuLieu(Constant.HTML_PRINT, "" + params.printTemplate.Content);
                 } else {
                     setFileLuuDuLieu(Constant.PRINT_KITCHEN, "" + params.printTemplate.Content);
@@ -131,25 +126,25 @@ export default forwardRef((props, ref) => {
 
     function clickPrint() {
         console.log("clickPrint data ", data)
-        // let getCurrentIP = await getFileDuLieuString(Constant.IPPRINT, true);
-        // console.log('getCurrentIP ', getCurrentIP);
-        // if (getCurrentIP && getCurrentIP != "") {
         if (isClick.current == false) {
-            let html = data.replace("width: 76mm", "")
-            // viewPrintRef.current.clickCaptureRef();
-            viewPrintRef.current.printProvisionalRef(JsonContent1, false, "", true)
+            if ((deviceType != Constant.PHONE && props.type == 10) || (deviceType == Constant.PHONE && props.route.params.type == 10)) {
+                let html = data.replace("width: 76mm", "")
+                viewPrintRef.current.printProvisionalRef(JsonContent1, false, "", true)
+            } else {
+                PaymentDataDefault.OrderDetails.forEach(element => {
+                    element.RoomName = I18n.t('phong_ban_');
+                    element.Pos = "A";
+                });
+                let data = dataManager.getDataPrintCook(PaymentDataDefault.OrderDetails)
+                console.log("printKitchen data ====: " + JSON.stringify(data));
+                // dispatch({ type: 'LIST_PRINT', listPrint: JSON.stringify(data) })
+                viewPrintRef.current.printKitchenRef(JSON.stringify(data))
+            }
         }
-        // isClick.current = true;
-        // setTimeout(() => {
-        //     isClick.current = false;
-        // }, 2000);
-        // } else {
-        //     dialogManager.showPopupOneButton(I18n.t('vui_long_kiem_tra_ket_noi_may_in'), I18n.t('thong_bao'))
-        // }
     }
 
     onCapture = uri => {
-        console.log("do something with ", uri);
+        console.log("onCapture uri ", uri);
         setUri(uri);
     }
 

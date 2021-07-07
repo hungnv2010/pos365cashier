@@ -63,7 +63,7 @@ export default {
   chon_nhom: "Chọn nhóm",
   cho_phep_nhan_thong_bao: "Cho phép nhận thông báo từ các chi nhánh",
   cau_hinh_chi_nhanh: "Cấu hình chi nhánh",
-  chua_cap_nhat: "Chưa cập nhât",
+  chua_cap_nhat: "Chưa cập nhật",
   chi_tiet: "Chi tiết",
   con_lai: "Còn lại",
   chi_nhanh: "Chi nhánh",

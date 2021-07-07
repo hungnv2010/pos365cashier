@@ -19,18 +19,24 @@ export default (props) => {
         return state.Common
     })
 
-    // useEffect(() => {
-    //     console.log('props report', props);
-    //     if(props.route.params.permission){
-    //     let item = props.route.params.permission.items
-    //     let per = item.filter(elm => elm.id == "EndOfDay_Read")
-    //     setPermission(per[0].Checked)
-    //     }
-    // }, [])
+    useEffect(() => {
+
+    }, [])
 
     const onClickEndOfDay = (screen) => {
         if (allPer.EndOfDay_Read || allPer.IsAdmin) {
             props.navigation.navigate(screen)
+        } else {
+            dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                dialogManager.destroy();
+            }, null, null, I18n.t('dong'))
+        }
+    }
+
+    const onClickNavigation = () => {
+        console.log('ReportManager allPer ', allPer);
+        if (allPer.AccountingTransaction_Read || allPer.IsAdmin) {
+            props.navigation.navigate(ScreenList.CashFlow)
         } else {
             dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
                 dialogManager.destroy();
@@ -48,10 +54,10 @@ export default (props) => {
 
             <View style={styles.viewContent}>
 
-                {/* <TouchableOpacity style={styles.button} onPress={onClickNavigation()}>
-                    <Image style={styles.iconButton} source={Images.ic_donhangthanhtoanvnpayqr} />
-                    <Text style={styles.textButton}>{I18n.t('don_hang_cho_thanh_toan_vnpay_qr')}</Text>
-                </TouchableOpacity> */}
+                <TouchableOpacity style={styles.button} onPress={() => onClickNavigation()}>
+                    <Image style={styles.iconButton} source={Images.ic_soquy} />
+                    <Text style={styles.textButton}>{I18n.t('thu_chi')}</Text>
+                </TouchableOpacity>
                 <TouchableOpacity style={styles.button} onPress={() => onClickEndOfDay(ScreenList.ReportEndDay)}>
                     <Image style={styles.iconButton} source={Images.ic_lichsuhuytrahang} />
                     <Text style={styles.textButton}>{I18n.t('bao_cao_cuoi_ngay')}</Text>

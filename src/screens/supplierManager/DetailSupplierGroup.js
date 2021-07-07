@@ -15,6 +15,7 @@ import { HTTPService } from '../../data/services/HttpService';
 import dialogManager from '../../components/dialog/DialogManager';
 import TextTicker from 'react-native-text-ticker';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useSelector } from 'react-redux';
 
 
 
@@ -25,6 +26,14 @@ export default (props) => {
     const [showModal, setShowModal] = useState(false)
     const ModifiedBy = useRef()
     const backupDetailGroup = useRef()
+
+    const { allPer } = useSelector(state => {
+        return state.Common
+    })
+
+    useEffect(() => {
+        console.log('DetailSupplierGroup allPer ', allPer);
+    }, [])
 
     useEffect(() => {
         console.log('detailGroup props', props.detailGroup);
@@ -162,58 +171,33 @@ export default (props) => {
 
     const renderModal = () => {
         return (
-            <View style={{ backgroundColor: "white", }}>
-                <View style={{ backgroundColor: colors.colorchinh, }}>
-                    <Text style={{ padding: 15, color: "white", fontWeight: "bold" }}>{detailGroup.Id !== 0 ? I18n.t('cap_nhat_nhom') : I18n.t('them_moi_nhom')}</Text>
+            <View style={{ backgroundColor: "white", borderRadius: 20 }}>
+                <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
+                    <Text style={{ flex: 1, textAlign: "center", padding: 15, color: "black", fontWeight: "bold", fontSize: 24 }}>{detailGroup.Id !== 0 ? I18n.t('cap_nhat_nhom') : I18n.t('them_moi_nhom')}</Text>
+                    <TouchableOpacity onPress={() => {
+                        // setDetailGroup(backupDetailGroup.current)
+                        setShowModal(false)
+                    }}>
+                        <Image source={Images.ic_remove} style={{ margin: 20, width: 20, height: 20 }} />
+                    </TouchableOpacity>
                 </View>
-                <View style={{ padding: 20 }}>
-                    <View style={{ flexDirection: "row", marginBottom: 20, alignItems: "center" }}>
-                        <Text style={{ flex: 3 }}>{I18n.t('ten_nhom')}</Text>
+                <View style={{ padding: 20, paddingTop: 10, flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
+                    <Image source={Images.new_construction} style={{ marginBottom: 20, width: 60, height: 60 }} />
+                    <View style={{ width: "100%", flexDirection: "column", marginBottom: 20, alignItems: "center" }}>
+                        <Text style={{ width: "100%", paddingBottom: 15 }}>{I18n.t('ten_nhom')}</Text>
                         <TextInput
-                            style={{ flex: 7, borderWidth: 0.5, padding: 7, borderRadius: 4, backgroundColor: "#D5D8DC" }}
+                            style={{ width: "100%", borderWidth: 0.5, padding: 15, borderRadius: 4, borderColor: colors.colorLightBlue }}
                             value={detailGroup.text}
                             onChangeText={text => { onChangeText(text, 1) }}
                         />
                     </View>
-                    {/* <View style={{ flexDirection: "row", marginBottom: 20, alignItems: "center" }}>
-                        <Text style={{ flex: 3 }}>{I18n.t('chiet_khau')}</Text>
-                        <TextInput
-                            style={{ flex: 7, borderWidth: 0.5, padding: 7, borderRadius: 4, backgroundColor: "#D5D8DC" }}
-                            value={detailGroup.DiscountRatio ? currencyToString(detailGroup.DiscountRatio) : "0"}
-                            onChangeText={text => { onChangeText(text, 2) }}
-                        />
-                    </View> */}
-                    {/* <View style={{ flexDirection: "row", marginBottom: 10, alignItems: "center" }}>
-                        <Checkbox.Android
-                            status={detailGroup.AutomaticallyAddMembers ? "checked" : "unchecked"}
-                            color={colors.colorchinh}
-                            onPress={() => {
-                                setDetailGroup({ ...detailGroup, AutomaticallyAddMembers: !detailGroup.AutomaticallyAddMembers })
-                            }}
-                        />
-                        <Text style={{}}>{I18n.t('tu_dong_them_doi_tac_vao_nhom')}</Text>
-                    </View>
-                    <View style={{ flexDirection: "row", marginBottom: 15 }}>
-                        <View style={{ marginRight: 10, flex: 1, }}>
-                            <Text style={{ marginBottom: 10, marginLeft: 5 }}>{I18n.t('tu')}</Text>
-                            <TextInput
-                                editable={detailGroup.AutomaticallyAddMembers}
-                                style={{ borderWidth: 0.5, padding: 7, borderRadius: 4, backgroundColor: "#D5D8DC", }}
-                                value={detailGroup.FromRevenue ? currencyToString(detailGroup.FromRevenue) : "0"}
-                                onChangeText={text => { onChangeText(text, 3) }}
-                            />
-                        </View>
-                        <View style={{ flex: 1, }}>
-                            <Text style={{ marginBottom: 10, marginLeft: 5 }}>{I18n.t('den')}</Text>
-                            <TextInput
-                                editable={detailGroup.AutomaticallyAddMembers}
-                                style={{ borderWidth: 0.5, padding: 7, borderRadius: 4, backgroundColor: "#D5D8DC", }}
-                                value={detailGroup.ToRevenue ? currencyToString(detailGroup.ToRevenue) : "0"}
-                                onChangeText={text => { onChangeText(text, 4) }}
-                            />
-                        </View>
-                    </View> */}
-                    <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
+                    <TouchableOpacity
+                        style={{ width: "100%", borderWidth: 0.5, padding: 15, borderRadius: 4, borderColor: colors.colorLightBlue, backgroundColor: detailGroup.text && detailGroup.text != "" ? colors.colorLightBlue : "#fff", alignItems: "center" }}
+                        onPress={onClickDone}
+                    >
+                        <Text style={{ color: detailGroup.text && detailGroup.text != "" ? "white" : "gray", fontWeight: "bold" }}>{I18n.t('tao_nhom')}</Text>
+                    </TouchableOpacity>
+                    {/* <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
                         {
                             detailGroup.Id !== 0 ?
                                 <TouchableOpacity
@@ -242,7 +226,7 @@ export default (props) => {
                                 <Text style={{ color: "white", fontWeight: "bold" }}>{I18n.t('huy')}</Text>
                             </TouchableOpacity>
                         </View>
-                    </View>
+                    </View> */}
                 </View>
             </View>
         )
@@ -257,7 +241,7 @@ export default (props) => {
                 </View>
                 <View style={{ flexDirection: "row", margin: 20, alignSelf: "center" }}>
                     {
-                        props.allPer.update ?
+                        allPer.Partner_Update || allPer.IsAdmin ?
                             <TouchableOpacity
                                 style={{ flexDirection: "row", marginRight: 15, backgroundColor: "#fde7d2", borderRadius: 10 }}
                                 onPress={() => { setShowModal(true) }}>
@@ -267,7 +251,7 @@ export default (props) => {
                             null
                     }
                     {
-                        props.allPer.delete ?
+                        allPer.Partner_Delete || allPer.IsAdmin ?
                             <TouchableOpacity
                                 style={{ flexDirection: "row", marginLeft: 15, backgroundColor: "#F7DCDC", borderRadius: 10 }}
                                 onPress={onClickDelete}

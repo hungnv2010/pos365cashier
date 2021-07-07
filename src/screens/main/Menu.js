@@ -231,7 +231,7 @@ const HeaderComponent = (props) => {
                 setBranch(selectBranch)
                 dispatch({ type: 'IS_FNB', isFNB: (selectBranch.FieldId == 3 || selectBranch.FieldId == 11 ? true : false) })
                 signalRManager.killSignalR();
-                getPrivileges(vendorSession.CurrentUser.Id,selectBranch.Id)
+                getPrivileges(vendorSession.CurrentUser.Id, selectBranch.Id)
                 savePrivileges(selectBranch.Id)
                 getRetailerInfoAndNavigate();
                 dialogManager.hiddenLoading();
@@ -253,14 +253,14 @@ const HeaderComponent = (props) => {
         }
         let apiPath = ApiPath.PRIVILEGES.replace('{userId}', userId)
         new HTTPService().setPath(apiPath).GET(params, getHeaders()).then(res => {
-            console.log("onClickItem props 1",res);
+            console.log("onClickItem props 1", res);
             setFileLuuDuLieu(Constant.PRIVILEGES, JSON.stringify(res));
         })
     }
-    const savePrivileges = async(branchId) =>{
+    const savePrivileges = async (branchId) => {
         let data = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
-            console.log('HeaderComponent data', data);
-            data = JSON.parse(data) 
+        console.log('HeaderComponent data', data);
+        data = JSON.parse(data)
         if (data && data.CurrentUser && data.CurrentUser.IsActive) {
             if (!data.CurrentUser.IsAdmin) {
                 let arr = {}
@@ -272,11 +272,11 @@ const HeaderComponent = (props) => {
                 })
                 console.log("arr", arr);
                 dispatch({ type: 'PERMISSION', allPer: arr })
-            }else{
+            } else {
                 dispatch({ type: 'PERMISSION', allPer: { IsAdmin: true } })
             }
+        }
     }
-}
 
     const navigateToHome = () => {
         props.navigation.dispatch(
@@ -518,13 +518,13 @@ const ContentComponent = (props) => {
         )
     }
 
-    const onClickItem = async(chucnang, index) => {
+    const onClickItem = async (chucnang, index) => {
         let privileges = await getFileDuLieuString(Constant.PRIVILEGES, true)
-            console.log('privileges menu', privileges);
-            if (privileges) {
-                privileges = JSON.parse(privileges)
-                Privileges.current = privileges
-            }
+        console.log('privileges menu', privileges);
+        if (privileges) {
+            privileges = JSON.parse(privileges)
+            Privileges.current = privileges
+        }
         console.log("onClickItem props ", props, Privileges.current);
         if (chucnang.func == KEY_FUNC.OVERVIEW || KEY_FUNC.ORDER_MANAGEMENT || KEY_FUNC.ROOM_LIST || KEY_FUNC.PRODUCT || KEY_FUNC.CUSTOMER_MANAGER || KEY_FUNC.REPORT_MANAGER || KEY_FUNC.SETTING_FUNC) {
         }
@@ -581,14 +581,14 @@ const ContentComponent = (props) => {
             getPermission(chucnang.func, index, 'Partner')
         }
         if (chucnang.func == KEY_FUNC.REPORT_MANAGER) {
-            getPermission(chucnang.func, index, 'Report')
+            props.navigation.navigate(chucnang.func, {})
         }
         if (chucnang.func == KEY_FUNC.SETTING_FUNC) {
             if (isAdmin.current) {
                 console.log("isAdminnnn", isAdmin.current);
                 let param = {}
                 props.navigation.navigate(chucnang.func, param)
-            }else {
+            } else {
                 dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
                     dialogManager.destroy();
                 }, null, null, I18n.t('dong'))
@@ -608,7 +608,7 @@ const ContentComponent = (props) => {
             console.log('permission', permission);
             if (permission[0].expanded) {
                 setCurrentItemMenu(index)
-                props.navigation.navigate(func, { })
+                props.navigation.navigate(func, {})
             } else {
                 dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
                     dialogManager.destroy();

@@ -3,7 +3,7 @@ import { dateToString, currencyToString, nonAccentVietnamese } from '../../commo
 import { getFileDuLieuString } from "../../data/fileStore/FileStorage";
 import { Constant } from "../../common/Constant";
 
-const PaymentDataDefault = {
+export const PaymentDataDefault = {
     "AccountId": null, "ActiveDate": "2021-05-27T03:02:46.907Z", "AmountReceive": 0, "AmountReceived": 55000, "CardNumber": null, "ChannelId": null, "Code": "", "Description": "", "Discount": 0, "DiscountRatio": 0, "DiscountToView": 0, "DiscountValue": 0, "ExcessCash": 0, "ExcessCashType": 0, "Id": 0, "MoreAttributes": "", "NumberOfGuests": 0, "OfflineId": "13afc2d2-660b-4487-ab33-b79f1535bb10", "OldDebt": 0, "OrderDetails": [{
         "AttributesName": "", "BasePrice": 40000, "BlockOfTimeToUseService": 6, "BonusPoint": 0, "BonusPointForAssistant": 0, "BonusPointForAssistant2": 0, "BonusPointForAssistant3": 0, "CategoryId": 0, "Checkin": "", "Checkout": "", "Code": "HH-0001", "Code2": "", "Code3": "", "Code4": "", "Coefficient": 1, "ConversionValue": 1, "Description": `-Thạch nha đam x1 = 10,000;
 -Trân châu đen x1 = 5,000;

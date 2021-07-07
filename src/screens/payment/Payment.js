@@ -915,7 +915,7 @@ export default (props) => {
         }
     }
 
-    const onTouchInput = (value) => {
+    const onTouchInput = (value, reset = true) => {
         console.log("onTouchInput value ", value);
 
         setChoosePoint(0);
@@ -935,7 +935,8 @@ export default (props) => {
                 } else {
                     setListSuggestions([])
                 }
-                onChangeTextInput("0", value == METHOD.vat ? 2 : 1)
+                if (reset)
+                    onChangeTextInput("0", value == METHOD.vat ? 2 : 1)
             }
         }
         percentRef.current = undefined
