@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useImperativeHandle, forwardRef, useRef } from 'react';
-import { Image, View, FlatList, Modal, Text, TouchableOpacity, TouchableWithoutFeedback, TextInput, NativeEventEmitter, NativeModules } from 'react-native';
+import { Image, View, FlatList, Modal, Text, TouchableOpacity, TouchableWithoutFeedback, TextInput, Keyboard, NativeEventEmitter, NativeModules } from 'react-native';
 import MainToolBar from '../main/MainToolBar';
 import I18n from '../../common/language/i18n';
 import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
@@ -16,6 +16,7 @@ import dialogManager from '../../components/dialog/DialogManager';
 import TextTicker from 'react-native-text-ticker';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useSelector } from 'react-redux';
+import { useFocusEffect } from '@react-navigation/native';
 
 
 
@@ -24,27 +25,34 @@ export default (props) => {
     const [detailGroup, setDetailGroup] = useState({})
     const [listMember, setListMember] = useState([])
     const [showModal, setShowModal] = useState(false)
+    const [margin, setMargin] = useState(0)
     const ModifiedBy = useRef()
     const backupDetailGroup = useRef()
 
-    const { allPer } = useSelector(state => {
+    const { deviceType, allPer } = useSelector(state => {
         return state.Common
     })
 
     useEffect(() => {
         console.log('DetailSupplierGroup allPer ', allPer);
+        if (deviceType == Constant.PHONE) {
+            getDataForPhone(props.route.params)
+        }
     }, [])
 
     useEffect(() => {
-        console.log('detailGroup props', props.detailGroup);
-        setDetailGroup(props.detailGroup)
-        backupDetailGroup.current = props.detailGroup
-        const getVendorSession = async () => {
-            let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true)
-            vendorSession = JSON.parse(vendorSession)
-            if (vendorSession && vendorSession.CurrentUser && vendorSession.CurrentUser.Id) ModifiedBy.current = vendorSession.CurrentUser.Id
+        if (deviceType == Constant.TABLET) {
+
+            console.log('detailGroup props', props.detailGroup);
+            setDetailGroup(props.detailGroup)
+            backupDetailGroup.current = props.detailGroup
+            const getVendorSession = async () => {
+                let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true)
+                vendorSession = JSON.parse(vendorSession)
+                if (vendorSession && vendorSession.CurrentUser && vendorSession.CurrentUser.Id) ModifiedBy.current = vendorSession.CurrentUser.Id
+            }
+            getVendorSession()
         }
-        getVendorSession()
     }, [props.detailGroup])
 
     useEffect(() => {
@@ -72,12 +80,36 @@ export default (props) => {
         }
         getListMember()
     }, [detailGroup])
+    const getDataForPhone = (param) => {
+        let data = JSON.parse(JSON.stringify(param.detailGroup))
+        console.log("data", data);
+        setDetailGroup(data)
+    }
 
     const getBranchId = async () => {
         let branch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
         if (branch) {
             return (JSON.parse(branch)).Id
         }
+    }
+    useFocusEffect(useCallback(() => {
+
+        var keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', _keyboardDidShow);
+        var keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', _keyboardDidHide);
+
+        return () => {
+            keyboardDidShowListener.remove();
+            keyboardDidHideListener.remove();
+        }
+
+
+    }, []))
+    const _keyboardDidShow = () => {
+        setMargin(Metrics.screenWidth / 2)
+    }
+
+    const _keyboardDidHide = () => {
+        setMargin(0)
     }
 
     const renderListMember = (item, index) => {
@@ -136,11 +168,19 @@ export default (props) => {
     }
 
     const onClickDelete = async () => {
-        dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_xoa_nhom_khach_hang'), I18n.t("thong_bao"), res => {
+        dialogManager.showPopupTwoButton(I18n.t('ban_co_chac_chan_muon_xoa_nhom_nha_cung_cap'), I18n.t("thong_bao"), res => {
             if (res == 1) {
                 new HTTPService().setPath(`${ApiPath.GROUP_CUSTOMER}/${detailGroup.id}`).DELETE()
                     .then(res => {
-                        if (res) props.onClickDone(true)
+                        if (res){
+                            if (deviceType == Constant.TABLET) {
+                                props.onClickDone(true)
+                            }else{
+                                props.route.params. _onSelect(true)
+                                props.navigation.pop()
+                            }
+                        }
+                         
                     })
                     .catch(err => console.log('onClickDelete err', err))
             }
@@ -186,7 +226,7 @@ export default (props) => {
                     <View style={{ width: "100%", flexDirection: "column", marginBottom: 20, alignItems: "center" }}>
                         <Text style={{ width: "100%", paddingBottom: 15 }}>{I18n.t('ten_nhom')}</Text>
                         <TextInput
-                            style={{ width: "100%", borderWidth: 0.5, padding: 15, borderRadius: 4, borderColor: colors.colorLightBlue }}
+                            style={{ width: "100%", borderWidth: 0.5, padding: 15, borderRadius: 4, borderColor: colors.colorLightBlue, color:'#000' }}
                             value={detailGroup.text}
                             onChangeText={text => { onChangeText(text, 1) }}
                         />
@@ -234,6 +274,13 @@ export default (props) => {
 
     return (
         <View style={{ flex: 1, borderLeftWidth: 0.5 }}>
+            {deviceType == Constant.PHONE ?
+                <ToolBarDefault
+                    {...props}
+                    title={detailGroup.Id == 0 ? I18n.t('them_moi_nhom') : I18n.t('cap_nhat_nhom')}
+                />
+                : null
+            }
             <View style={{ flex: 2, backgroundColor: "white", }}>
                 <View style={{ flex: 1, backgroundColor: "#f2f2f2", borderRadius: 30, marginHorizontal: 30, marginVertical: 20, alignItems: "center", justifyContent: "center" }}>
                     <Image style={{ width: 60, height: 60, marginBottom: 20 }} source={Images.ic_nhomkhachhang} />
@@ -303,7 +350,7 @@ export default (props) => {
                         }}></View>
 
                     </TouchableWithoutFeedback>
-                    <View style={{ width: Metrics.screenWidth * 0.8 }}>
+                    <View style={[{ width: Metrics.screenWidth * 0.8 },{ marginBottom: Platform.OS == 'ios' ? margin : 0 }]}>
                         {renderModal()}
                     </View>
                 </View>

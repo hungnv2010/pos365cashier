@@ -25,6 +25,9 @@ export default (props) => {
     const typeModal = useRef(null)
     const toastDescription = useRef('')
     const dateTmp = useRef()
+    const { deviceType, allPer } = useSelector(state => {
+        return state.Common
+    });
 
 
     useEffect(() => {
@@ -49,7 +52,8 @@ export default (props) => {
 
     useEffect(() => {
         console.log('customeretail props', props, listGroup);
-        let customerDetail = props.route.params.item
+        let customerDetail = JSON.parse(JSON.stringify(props.route.params.item))
+        console.log(customerDetail);
         if (customerDetail.Id == 0) {
             resetCustomer()
             return
@@ -73,7 +77,7 @@ export default (props) => {
         getListGroupByCustomer()
     }, [customerDetail, listGroup])
 
-  
+
 
 
     const resetCustomer = () => {
@@ -330,7 +334,7 @@ export default (props) => {
         let params = {
             CompareDebt: 0,
             // ComparePoint: 0,
-            Debt: customerDetail.TotalDebt,
+            Debt: customerDetail.TotalDebt ? customerDetail.TotalDebt : 0,
             Partner: {
                 Type: 2,
                 Code: customerDetail.Code,
@@ -342,11 +346,13 @@ export default (props) => {
                 PartnerGroupMembers: PartnerGroupMembers,
                 Address: customerDetail.Address,
                 Province: customerDetail.Province,
-                // Point: 0,
+                Point: customerDetail.Point ? customerDetail.Point : 0,
                 Description: customerDetail.Description,
             }
         }
         if (props.route.params.item.Id == 0) {
+            if (allPer.IsAdmin || allPer.Partner_Create) {
+          
             console.log('add');
             dialogManager.showLoading()
             new HTTPService().setPath(ApiPath.CUSTOMER).POST(params)
@@ -366,7 +372,13 @@ export default (props) => {
                     dialogManager.hiddenLoading()
                     console.log('onClickDone err', err);
                 })
+            }else{
+                dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                    dialogManager.destroy();
+                }, null, null, I18n.t('dong'))
+            }
         } else {
+            if (allPer.IsAdmin || allPer.Partner_Update) {
             console.log('update');
             params.Partner = { ...customerDetail }
             dialogManager.showLoading()
@@ -387,6 +399,11 @@ export default (props) => {
                     dialogManager.hiddenLoading()
                     console.log('onClickDone err', err);
                 })
+            }else{
+                dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
+                    dialogManager.destroy();
+                }, null, null, I18n.t('dong'))
+            }
         }
     }
 
@@ -497,7 +514,7 @@ export default (props) => {
                         renderGender(customerDetail.Gender)
                     }
                     <View style={{ padding: 15 }}>
-                <Text style={{ paddingBottom: 10 }}>{I18n.t('ma_so_thue')}</Text>
+                        <Text style={{ paddingBottom: 10 }}>{I18n.t('ma_so_thue')}</Text>
                         <TextInput
                             keyboardType="numeric"
                             placeholder={I18n.t('ma_so_thue')}
@@ -597,14 +614,17 @@ export default (props) => {
                 {
                     props.route.params.item.Id == 0 ?
                         null
-                        :
-                        <>
-                            <TouchableOpacity onPress={onClickDelete} style={{ flex: 1, flexDirection: "row", marginTop: 0, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 10 }}>
-                                <IconAntDesign name={"delete"} size={25} color="white" />
-                            </TouchableOpacity>
-                            <TouchableOpacity onPress={onClickPrint} style={{ flex: 1, flexDirection: "row", marginLeft: 10, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 10 }}>
-                                <IconAntDesign name={"printer"} size={25} color="white" />
-                            </TouchableOpacity>
+                        : <>
+                            {allPer.IsAdmin || allPer.Partner_Delete ?
+                                <>
+                                    <TouchableOpacity onPress={onClickDelete} style={{ flex: 1, flexDirection: "row", marginTop: 0, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 10 }}>
+                                        <IconAntDesign name={"delete"} size={25} color="white" />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={onClickPrint} style={{ flex: 1, flexDirection: "row", marginLeft: 10, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 10 }}>
+                                        <IconAntDesign name={"printer"} size={25} color="white" />
+                                    </TouchableOpacity>
+                                </> : null
+                            }
                         </>
                 }
                 <TouchableOpacity onPress={onClickDone} style={{ flex: 8, flexDirection: "row", marginLeft: 10, marginTop: 0, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 15 }}>

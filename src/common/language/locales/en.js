@@ -51,6 +51,7 @@ export default {
   ban_co_chac_chan_muon_xoa_nhom_hang_hoa: 'Are you sure you want to delete this group ?',
   ban_co_chac_chan_muon_xoa_nhom_phong_ban: "Are you sure you want to delete this group room table ?",
   ban_co_chac_chan_muon_huy_phieu_nhap_hang_nay: "Are you sure you want to cancel this voucher ?",
+  ban_co_chac_chan_muon_xoa_nhom_nha_cung_cap:"Are you sure you want to delete the supplier group?",
 
   // TODO: C 
 

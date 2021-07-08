@@ -51,6 +51,7 @@ export default {
   ban_co_chac_chan_muon_xoa_nhom_hang_hoa: 'Bạn có chắc chắn muốn xoá nhóm hàng hoá?',
   ban_co_chac_chan_muon_xoa_nhom_phong_ban: "Bạn có chắc chắn muốn xoá nhóm phòng bàn này?",
   ban_co_chac_chan_muon_huy_phieu_nhap_hang_nay: "Bạn có chắc chắn muốn huỷ phiếu nhập hàng này ?",
+  ban_co_chac_chan_muon_xoa_nhom_nha_cung_cap:'Bạn có chắc chắn muốn xoá nhóm nhà cung cấp?',
 
   // TODO: C
 
@@ -506,7 +507,7 @@ export default {
   them: "Thêm mới",
   ten_hang: "Tên",
   TT: "TT",
-  them_nha_cung_cap: "Create new supplier",
+  them_nha_cung_cap: "Thêm mới nhà cung cấp",
   them_khach_hang: "Thêm khách hàng",
   trieu: "triệu",
   tong_so_hoa_don: "Tổng số hóa đơn",

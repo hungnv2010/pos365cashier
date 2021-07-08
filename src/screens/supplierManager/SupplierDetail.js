@@ -15,6 +15,7 @@ import IconAntDesign from 'react-native-vector-icons/AntDesign';
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import dialogManager from '../../components/dialog/DialogManager';
 import DatePicker from 'react-native-date-picker';
+import { useSelector } from 'react-redux';
 
 export default (props) => {
 
@@ -27,6 +28,9 @@ export default (props) => {
     const typeModal = useRef(null)
     const toastDescription = useRef('')
     const dateTmp = useRef()
+    const { deviceType,allPer } = useSelector(state => {
+        return state.Common
+    });
 
     useEffect(() => {
         const getListGroup = async () => {
@@ -425,14 +429,14 @@ export default (props) => {
 
     const onClickDone = () => {
         if (props.customerDetail.Id.Id == 0) {
-            if (props.allPer.create) onClickApply()
+            if (allPer.IsAdmin || allPer.Partner_Create) onClickApply()
             else {
                 dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
                     dialogManager.destroy();
                 }, null, null, I18n.t('dong'))
             }
         } else {
-            if (props.allPer.update) onClickApply()
+            if (allPer.IsAdmin || allPer.Partner_Update) onClickApply()
             else {
                 dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
                     dialogManager.destroy();
@@ -640,7 +644,7 @@ export default (props) => {
                         :
                         <>
                             {
-                                props.allPer.delete ?
+                                allPer.IsAdmin || allPer.Partner_Delete ?
                                     <TouchableOpacity onPress={onClickDelete} style={{ flex: 1, flexDirection: "row", marginTop: 0, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 10 }}>
                                         <IconAntDesign name={"delete"} size={25} color="white" />
                                     </TouchableOpacity>
