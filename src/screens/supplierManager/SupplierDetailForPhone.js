@@ -14,6 +14,7 @@ import dialogManager from '../../components/dialog/DialogManager';
 import ToolBarDefault from '../../components/toolbar/ToolBarDefault';
 import { useSelector } from 'react-redux';
 import DatePicker from 'react-native-date-picker';
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default (props) => {
 
@@ -454,6 +455,7 @@ export default (props) => {
                 {...props}
                 title={props.route.params.item.Id == 0 ? I18n.t('them_nha_cung_cap') : I18n.t('cap_nhat_nha_cung_cap')} />
             <ScrollView style={{ flex: 1, padding: 10 }}>
+                <KeyboardAwareScrollView>
                 <Surface style={styles.surface}>
                     <View style={{ height: Metrics.screenHeight / 6, flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 15 }}>
                         <View style={{ flex: 1, marginRight: 20 }}>
@@ -609,6 +611,7 @@ export default (props) => {
                         />
                     </View>
                 </Surface>
+                </KeyboardAwareScrollView>
             </ScrollView>
             <View style={{ flexDirection: "row", margin: 10, }}>
                 {

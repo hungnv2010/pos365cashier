@@ -146,15 +146,29 @@ export default (props) => {
                 <View style={{ flexDirection: 'row', paddingHorizontal: 10 }}>
                     <View style={{ flex: 1, paddingVertical: 10, marginRight: 5 }}>
                         <Text>{I18n.t('tu')}</Text>
-                        <TouchableOpacity style={styles.background} onPress={() => { onClickPickDateFrom() }}>
-                            <Text style={{ textAlign: 'center' }}>{object.dateFrom ? dateToDate(object.dateFrom) : 'DD/MM/YYYY'}</Text>
-                        </TouchableOpacity>
+                        <View style={[styles.background, { flexDirection: 'row' }]}>
+                            <TouchableOpacity style={[{ flexDirection: 'row', flex: 7, alignItems: 'center', justifyContent: 'center' }]} onPress={() => { onClickPickDateFrom() }}>
+                                <Text style={{ textAlign: 'center' }}>{object.dateFrom ? dateToDate(object.dateFrom) : 'DD/MM/YYYY'}</Text>
+                            </TouchableOpacity>
+                            {object.dateFrom != undefined ?
+                                <TouchableOpacity style={{ flex: 1 }} onPress={() => { setObject({ ...object, dateFrom: undefined }) }}>
+                                    <Image source={Images.icon_red_x} style={{ width: 20, height: 20 }} />
+                                </TouchableOpacity>
+                                : null}
+                        </View>
                     </View>
                     <View style={{ flex: 1, paddingVertical: 10, marginLeft: 5 }}>
                         <Text>{I18n.t('den')}</Text>
-                        <TouchableOpacity style={styles.background} onPress={() => { onClickPickDateTo() }}>
-                            <Text style={{ textAlign: 'center' }}>{object.dateTo ? dateToDate(object.dateTo) : 'DD/MM/YYYY'}</Text>
-                        </TouchableOpacity>
+                        <View style={[styles.background, { flexDirection: 'row' }]}>
+                            <TouchableOpacity style={{ flex: 5, justifyContent: 'center', alignItems: 'center' }} onPress={() => { onClickPickDateTo() }}>
+                                <Text style={{ textAlign: 'center' }}>{object.dateTo ? dateToDate(object.dateTo) : 'DD/MM/YYYY'}</Text>
+                            </TouchableOpacity>
+                            {object.dateTo != undefined ?
+                                <TouchableOpacity style={{ flex: 1 }} onPress={() => { setObject({ ...object, dateTo: undefined }) }}>
+                                    <Image source={Images.icon_red_x} style={{ width: 20, height: 20 }} />
+                                </TouchableOpacity>
+                                : null}
+                        </View>
                     </View>
                 </View>
                 <View style={{ paddingHorizontal: 10, paddingVertical: 10 }}>
@@ -170,7 +184,15 @@ export default (props) => {
                     <Text>{I18n.t('nha_cung_cap')}</Text>
                     <TouchableOpacity style={styles.background} onPress={() => { typeModal.current = 3, setOnShowModal(true) }}>
                         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                            <View style={{flexDirection:'row',justifyContent:'space-between',flex:1, marginRight:10}}>
                             <Text>{object.Supplier ? object.Supplier.Name : I18n.t('tat_ca')}</Text>
+                            {
+                                object.Supplier != undefined ? 
+                                <TouchableOpacity style={{}} onPress={() => { setObject({ ...object, Supplier: undefined }) }}>
+                                    <Image source={Images.icon_red_x} style={{ width: 20, height: 20 }} />
+                                </TouchableOpacity> : null
+                            }
+                            </View>
                             <Image source={Images.icon_arrow_down} style={{ width: 20, height: 20 }} />
                         </View>
                     </TouchableOpacity>

@@ -202,7 +202,15 @@ export default (props) => {
         try {
             let res = await new HTTPService().setPath(ApiPath.GROUP_CUSTOMER).POST(params)
             console.log('onClickDone res', res);
-            if (res) props.onClickDone(true)
+            if (res){
+                if (deviceType == Constant.TABLET) {
+                    props.onClickDone(true)
+                }else{
+                    props.route.params. _onSelect(true)
+                    props.navigation.pop()
+                }
+            } 
+            
         } catch (error) {
             console.log('onClickDone err', error);
         }

@@ -476,7 +476,7 @@ export default (props) => {
             value = currencyToString(value, true)
         }
         setInputVat(value)
-        setOrderStock({ ...orderStock, VAT: convertMoneyToNumber(value) * totalCurrent.current / 100 })
+        setOrderStock({ ...orderStock, VAT: convertMoneyToNumber(value) })
         setValueVAT(convertMoneyToNumber(value) * totalCurrent.current / 100 )
     }
     const convertMoneyToNumber = (text) => {
