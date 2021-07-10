@@ -613,7 +613,7 @@ export default (props) => {
                         {
                             deviceType == Constant.TABLET ?
                                 <TouchableOpacity style={{marginBottom:10}} onPress={() => { props.navigation.navigate(ScreenList.SettingCashierScreen, {}) }}>
-                                    <Text style={styles.textTitleItem}>{I18n.t("cai_dat_man_hinh_thu_ngan")}</Text>
+                                    <Text style={styles.textTitleItem}>{I18n.t("cai_dat_man_hinh_chon_san_pham")}</Text>
                                 </TouchableOpacity> : null
                         }
                         {/* <SettingSwitch title={"khong_cho_phep_ban_hang_khi_het_ton_kho"} output={onSwitchTone} isStatus={settingObject.khong_cho_phep_ban_hang_khi_het_ton_kho} />

@@ -96,6 +96,12 @@ export default (props) => {
       dialogManager.showLoading()
       let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
       vendorSession = JSON.parse(vendorSession)
+    //   let productPos = vendorSession.Settings.ProductPositions
+    //   productPos = productPos.replace(/=/g,"\":").replace(/, /g,",\"")
+    //   productPos = productPos.replace(/{/g,"{\"")
+    //  // productPos = JSON.parse(productPos)
+    //  console.log("vendorSession pos",JSON.parse(productPos));
+    //   console.log("vendorSession pos",typeof(productPos));
       let currentBranch = await getFileDuLieuString(Constant.CURRENT_BRANCH, true);
       currentBranch = JSON.parse(currentBranch)
       let lastBranch = await getFileDuLieuString(Constant.LAST_BRANCH, true);

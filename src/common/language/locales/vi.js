@@ -127,7 +127,7 @@ export default {
   chi_tiet_nhom_phong_ban: "Chi tiết nhóm phòng bàn",
   chon_mau_in: "Chọn mẫu in",
   chon_phuong_thuc_thanh_toan: 'Chọn phương thức thanh toán',
-  cai_dat_man_hinh_thu_ngan: 'Cài đặt màn hình thu ngân',
+  cai_dat_man_hinh_chon_san_pham: 'Cài đặt màn hình chọn sản phẩm',
 
   // TODO: D
 

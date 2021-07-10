@@ -146,15 +146,13 @@ export default (props) => {
         totalCurrent.current = os.Total
         setDiscount(os.Discount ? os.Discount : 0)
         let arrPr = JSON.parse(JSON.stringify(param.listPr))
-        console.log("os VAT", os.VAT);
+        console.log("os VAT", arrPr);
         //setValueVAT(os.VAT)
         getTotal(arrPr)
         setListPr([...arrPr])
         setPaymentMethod(param.paymentMethod ? param.paymentMethod : I18n.t('tien_mat'))
     }
-    useEffect(() => {
-        getTotal(listPr)
-    }, [listPr])
+
     const getTotal = (list) => {
         setSumPr(listPr.length)
         let sum = 0
@@ -179,6 +177,8 @@ export default (props) => {
         //setOrderStock({ ...orderStock, Discount: isPercent == true ? totalCurrent.current * discount / 100 : discount })
     }, [discount, orderStock.VAT, isPercent])
     useEffect(() => {
+        console.log("listpr", listPr);
+        getTotal(listPr)
         let arrPr = []
         let list = []
         if (listPr.length > 0) {
@@ -194,16 +194,16 @@ export default (props) => {
                     ConversionValue: el.ConversionValue,
                     IsLargeUnit: false,
                     Price: el.Price,
-                    ProductId: el.ProductId,
+                    ProductId: el.ProductId ,
                     Quantity: el.Quantity,
                     SellingPrice: el.Price
                 }
                 list.push(itemPurchase)
             })
             setListPurchase(list)
-            console.log(orderStock)
+            console.log("123",arrPr)
             setListProduct(arrPr)
-            console.log("listpr", listPr);
+            
         }
     }, [listPr])
     useEffect(() => {
@@ -292,13 +292,15 @@ export default (props) => {
     const onChangeText = (text, item) => {
         text = +text
         if (text < 0) text = 0
-        listPr.forEach(el => {
-            if (el.ProductId == item.ProductId) {
-                el.Quantity = text
-            }
-        })
-        setListPr([...listPr])
-        console.log(text);
+        if (listPr.length > 0) {
+            listPr.forEach(el => {
+                if (el.ProductId == item.ProductId) {
+                    el.Quantity = text
+                }
+            })
+            setListPr([...listPr])
+            console.log(text);
+        }  
     }
     const onClickSelectMethod = (item) => {
         console.log("item", item);
@@ -452,12 +454,15 @@ export default (props) => {
     }
     const onChangeData = (text, item) => {
         if (text < 0) text = 0
-        listPr.forEach(el => {
-            if (el.ProductId == item.ProductId) {
-                el.Price = text
-            }
-        })
-        setListPr([...listPr])
+        if (listPr.length > 0) {
+            listPr.forEach(el => {
+                if (el.ProductId == item.ProductId) {
+                    el.Price = text
+                }
+            })
+            setListPr([...listPr])
+        }
+        
     }
     const onChangeTextVAT = (text) => {
         // debounceTimeInput.current.next(text)

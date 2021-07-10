@@ -354,25 +354,33 @@ class DataManager {
     syncProduct = async () => {
         let res = await new HTTPService().setPath(ApiPath.SYNC_PRODUCTS, false).GET()
         let setting = JSON.parse(await getFileDuLieuString(Constant.OBJECT_SETTING, true))
+        let vendorSession = await getFileDuLieuString(Constant.VENDOR_SESSION, true);
+        vendorSession = JSON.parse(vendorSession)
+        let productPos
+        if (vendorSession.Settings.ProductPositions !== "") {
+            productPos = vendorSession.Settings.ProductPositions
+            productPos = productPos.replace(/=/g, "\":").replace(/, /g, ",\"")
+            productPos = productPos.replace(/{/g, "{\"")
+            productPos = JSON.parse(productPos)
+            console.log("vendorSession datamanager", (productPos));
+        } else {
+            productPos = {}
+        }
 
         if (res && res.Data && res.Data.length > 0) {
             let dataPr = []
             let listPos = setting.SettingPosition ? setting.SettingPosition : []
             console.log("listPost", listPos);
             res.Data.forEach(item => {
-                if (listPos.length > 0) {
-                    let pos = listPos.filter(el => el.key == item.Id)
-                    if (pos.length > 0) {
-                        item.Position = pos[0].value
-                    } else {
-                        item.Position = 0
-                    }
-                    dataPr.push(item)
+                if (productPos[item.Id.toString()]) {
+                    item.Position = productPos[item.Id.toString()]
                 } else {
                     item.Position = 0
-                    dataPr.push(item)
                 }
+                dataPr.push(item)
+                //console.log("vendorSession datamanager", productPos[item.Id.toString()])
             })
+            console.log("vendorSession datamanager", dataPr);
             await realmStore.insertProducts(dataPr)
         }
 

@@ -127,7 +127,7 @@ export default {
   chi_tiet_nhom_phong_ban: "Group room/table detail",
   chon_phuong_thuc_thanh_toan: 'Select a payment method',
   chon_mau_in: "Select print template",
-  cai_dat_man_hinh_thu_ngan: "Setting cashier screen",
+  cai_dat_man_hinh_chon_san_pham: "Product selection screen setting",
 
   // TODO: D 
 

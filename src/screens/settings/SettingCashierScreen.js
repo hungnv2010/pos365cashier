@@ -17,6 +17,9 @@ import SelectProduct from "./SelectProduct"
 import { ScrollView } from 'react-native-gesture-handler';
 import { getFileDuLieuString, setFileLuuDuLieu } from "../../data/fileStore/FileStorage";
 import { currencyToString } from '../../common/Utils';
+import { HTTPService } from "../../data/services/HttpService";
+import { ApiPath } from "../../data/services/ApiPath";
+import dataManager from '../../data/DataManager';
 
 export default (props) => {
     const [listProduct, setListProduct] = useState([])
@@ -72,12 +75,15 @@ export default (props) => {
     }
     const outputDataChange = (data) => {
         console.log("data change ", data);
-        let obj = []
+        let obj = {}
         data.forEach((item, index) => {
-            obj.push({ key: item.Id, value: index + 1 })
+            obj[item.Id] = index
         })
+        obj = JSON.stringify(obj)
+        obj = obj.replace( /":/g,"=").replace( /,"/g,", ")
+        obj = obj.replace(/{"/g,"{")
         setObjPosition(obj)
-        console.log("object", obj);
+        console.log("object", (obj));
     }
 
     const onClickSave = () => {
@@ -86,8 +92,27 @@ export default (props) => {
         object['isHorizontal'] = isHorizontal
         object['size'] = size
         setObjSetting({ ...objSetting, OrderScreen: object })
-        setFileLuuDuLieu(Constant.OBJECT_SETTING, JSON.stringify({ ...objSetting, OrderScreen: object, SettingPosition: objPosition }))
+        setFileLuuDuLieu(Constant.OBJECT_SETTING, JSON.stringify({ ...objSetting, OrderScreen: object, }))
         dispatch({ type: 'SETTING_ORDER_SCREEN', orderScreen: object })
+        let params = {
+            Key: 'ProductPositions',
+            Value: objPosition
+        }
+        new HTTPService().setPath(ApiPath.UPDATE_SETTING).POST(params)
+            .then(res => {
+                console.log('onClickApply res', res);
+                if (res) {
+                    console.log("res");
+                    new HTTPService().setPath(ApiPath.VENDOR_SESSION).GET().then(async (res) => {
+                        console.log("getDataRetailerInfo res ", res);
+                        setFileLuuDuLieu(Constant.VENDOR_SESSION, JSON.stringify(res))
+                    })
+                    dataManager.syncProduct()
+                }
+            })
+            .catch(err => {
+                console.log('onClickApply err', err);
+            })
         props.navigation.pop()
     }
 
@@ -100,7 +125,7 @@ export default (props) => {
                         <View style={{ flex: 3 }}>
                             <ToolBarDefault
                                 {...props}
-                                title={I18n.t("cai_dat_man_hinh_thu_ngan")}
+                                title={I18n.t("cai_dat_man_hinh_chon_san_pham")}
                             />
 
                             <View style={{ flex: 1, flexDirection: isHorizontal ? 'column' : 'row' }}>
@@ -159,7 +184,7 @@ export default (props) => {
                         <View style={{ flex: 3 }}>
                             <ToolBarDefault
                                 {...props}
-                                title={I18n.t("cai_dat_man_hinh_thu_ngan")}
+                                title={I18n.t("cai_dat_man_hinh_chon_san_pham")}
                             />
                             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
                                 <Text>{I18n.t('vui_long_xoay_ngang_man_hinh_de_thuc_hien_chuc_nang')}</Text>
