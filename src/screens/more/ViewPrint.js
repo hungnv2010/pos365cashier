@@ -57,9 +57,9 @@ export default forwardRef((props, ref) => {
         printProvisionalRef(jsonContent, checkProvisional = false, imgBase64 = "", isPrintTest = false) {
             printProvisional(jsonContent, checkProvisional, imgBase64, isPrintTest)
         },
-        printKitchenRef(jsonContent, type = TYPE_PRINT.KITCHEN) {
+        printKitchenRef(jsonContent, type = TYPE_PRINT.KITCHEN, html = "") {
             console.log('printKitchenRef jsonContent type : ', jsonContent, type);
-            printKitchen(jsonContent, type)
+            printKitchen(jsonContent, type, true, html)
         },
         printDataNewOrdersRef(listKitchen, listReturnProduct) {
             console.log('printDataNewOrdersRef listKitchen, listReturnProduct : ', listKitchen, listReturnProduct);
@@ -175,13 +175,15 @@ export default forwardRef((props, ref) => {
         }
     }
 
-    const printKitchen = async (data, type = TYPE_PRINT.KITCHEN, isPrint = true) => {
+    const printKitchen = async (data, type = TYPE_PRINT.KITCHEN, isPrint = true, html = "") => {
         console.log("printKitchen printObject ", printObject);
         let setting = await getFileDuLieuString(Constant.OBJECT_SETTING, true)
         let HtmlPrint = await getFileDuLieuString(Constant.PRINT_KITCHEN, true)
+        console.log("printKitchen HtmlPrint ", HtmlPrint);
         if (HtmlPrint == undefined) {
             HtmlPrint = htmlKitchen
         }
+        if (html != "") HtmlPrint = html;
         if (setting && setting != "") {
             setting = JSON.parse(setting);
         }

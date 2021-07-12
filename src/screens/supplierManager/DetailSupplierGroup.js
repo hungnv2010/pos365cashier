@@ -172,15 +172,15 @@ export default (props) => {
             if (res == 1) {
                 new HTTPService().setPath(`${ApiPath.GROUP_CUSTOMER}/${detailGroup.id}`).DELETE()
                     .then(res => {
-                        if (res){
+                        if (res) {
                             if (deviceType == Constant.TABLET) {
                                 props.onClickDone(true)
-                            }else{
-                                props.route.params. _onSelect(true)
+                            } else {
+                                props.route.params._onSelect(true)
                                 props.navigation.pop()
                             }
                         }
-                         
+
                     })
                     .catch(err => console.log('onClickDelete err', err))
             }
@@ -202,15 +202,15 @@ export default (props) => {
         try {
             let res = await new HTTPService().setPath(ApiPath.GROUP_CUSTOMER).POST(params)
             console.log('onClickDone res', res);
-            if (res){
+            if (res) {
                 if (deviceType == Constant.TABLET) {
                     props.onClickDone(true)
-                }else{
-                    props.route.params. _onSelect(true)
+                } else {
+                    props.route.params._onSelect(true)
                     props.navigation.pop()
                 }
-            } 
-            
+            }
+
         } catch (error) {
             console.log('onClickDone err', error);
         }
@@ -234,7 +234,7 @@ export default (props) => {
                     <View style={{ width: "100%", flexDirection: "column", marginBottom: 20, alignItems: "center" }}>
                         <Text style={{ width: "100%", paddingBottom: 15 }}>{I18n.t('ten_nhom')}</Text>
                         <TextInput
-                            style={{ width: "100%", borderWidth: 0.5, padding: 15, borderRadius: 4, borderColor: colors.colorLightBlue, color:'#000' }}
+                            style={{ width: "100%", borderWidth: 0.5, padding: 15, borderRadius: 4, borderColor: colors.colorLightBlue, color: '#000' }}
                             value={detailGroup.text}
                             onChangeText={text => { onChangeText(text, 1) }}
                         />
@@ -243,7 +243,7 @@ export default (props) => {
                         style={{ width: "100%", borderWidth: 0.5, padding: 15, borderRadius: 4, borderColor: colors.colorLightBlue, backgroundColor: detailGroup.text && detailGroup.text != "" ? colors.colorLightBlue : "#fff", alignItems: "center" }}
                         onPress={onClickDone}
                     >
-                        <Text style={{ color: detailGroup.text && detailGroup.text != "" ? "white" : "gray", fontWeight: "bold" }}>{I18n.t('tao_nhom')}</Text>
+                        <Text style={{ color: detailGroup.text && detailGroup.text != "" ? "white" : "gray", fontWeight: "bold" }}>{detailGroup.Id == 0 ? I18n.t('tao_nhom') : I18n.t('cap_nhat')}</Text>
                     </TouchableOpacity>
                     {/* <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
                         {
@@ -358,7 +358,7 @@ export default (props) => {
                         }}></View>
 
                     </TouchableWithoutFeedback>
-                    <View style={[{ width: Metrics.screenWidth * 0.8 },{ marginBottom: Platform.OS == 'ios' ? margin : 0 }]}>
+                    <View style={[{ width: Metrics.screenWidth * 0.8 }, { marginBottom: Platform.OS == 'ios' ? margin : 0 }]}>
                         {renderModal()}
                     </View>
                 </View>

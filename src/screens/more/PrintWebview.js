@@ -12,7 +12,7 @@ import { dateToDate, DATE_FORMAT, currencyToString } from '../../common/Utils';
 import { getFileDuLieuString, setFileLuuDuLieu } from '../../data/fileStore/FileStorage';
 import { Constant } from '../../common/Constant';
 import { useSelector } from 'react-redux';
-import printService from '../../data/html/PrintService';
+import printService, { TYPE_PRINT } from '../../data/html/PrintService';
 const { Print } = NativeModules;
 import HtmlDefault from '../../data/html/htmlDefault';
 import HtmlKitchen from '../../data/html/htmlKitchen';
@@ -39,7 +39,6 @@ export default forwardRef((props, ref) => {
     const [vendorSession, setVendorSession] = useState({});
     const [uri, setUri] = useState("");
     let isClick = useRef();
-
     const deviceType = useSelector(state => {
         return state.Common.deviceType
     });
@@ -76,6 +75,10 @@ export default forwardRef((props, ref) => {
                     if (props.data != "")
                         html = props.data
                 }
+                PaymentDataDefault.OrderDetails.forEach(element => {
+                    element.RoomName = I18n.t('phong_ban_');
+                    element.Pos = "A";
+                });
                 let res = printService.GenHtmlKitchen(html, PaymentDataDefault.OrderDetails, 1, JSON.parse(data))
                 console.log("GenHtmlKitchen res", res);
                 if (res && res != "") {
@@ -127,8 +130,16 @@ export default forwardRef((props, ref) => {
     function clickPrint() {
         console.log("clickPrint data ", data)
         if (isClick.current == false) {
+
+            let html = HtmlKitchen;
+            if (deviceType == Constant.PHONE) {
+                html = props.route.params.data;
+            } else {
+                if (props.data != "")
+                    html = props.data
+            }
+
             if ((deviceType != Constant.PHONE && props.type == 10) || (deviceType == Constant.PHONE && props.route.params.type == 10)) {
-                let html = data.replace("width: 76mm", "")
                 viewPrintRef.current.printProvisionalRef(JsonContent1, false, "", true)
             } else {
                 PaymentDataDefault.OrderDetails.forEach(element => {
@@ -138,7 +149,7 @@ export default forwardRef((props, ref) => {
                 let data = dataManager.getDataPrintCook(PaymentDataDefault.OrderDetails)
                 console.log("printKitchen data ====: " + JSON.stringify(data));
                 // dispatch({ type: 'LIST_PRINT', listPrint: JSON.stringify(data) })
-                viewPrintRef.current.printKitchenRef(JSON.stringify(data))
+                viewPrintRef.current.printKitchenRef(JSON.stringify(data), TYPE_PRINT.KITCHEN, html)
             }
         }
     }

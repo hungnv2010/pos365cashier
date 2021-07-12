@@ -112,6 +112,7 @@ export default (props) => {
     const onClickAdd = () => {
         if (deviceType == Constant.TABLET) {
             setDetailGroup({ Id: 0 })
+            // setShowModal(true)
         } else {
             setDetailGroup({ Id: 0 })
             setShowModal(true)
