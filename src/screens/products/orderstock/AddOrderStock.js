@@ -113,7 +113,7 @@ export default (props) => {
             Status: orderStock.Status ? orderStock.Status : 1,
             Total: total,
             TotalPayment: orderStock.TotalPayment,
-            VAT: orderStock.VAT ? Number(orderStock.VAT) * totalCurrent.current / 100 : 0,
+            VAT: orderStock.VAT ? Number(orderStock.VAT) * (totalCurrent.current - (isPercent == true ? (totalCurrent.current * discount / 100) : discount)) / 100 : 0,
             VATRates: orderStock.VAT ? Number(orderStock.VAT) : 0,
         }
     }
@@ -287,7 +287,7 @@ export default (props) => {
         //setListPr([...arrItemPr])
     }
     useEffect(() => {
-        console.log("useEffect listPurchase",listPurchase);
+        console.log("useEffect listPurchase", listPurchase);
     }, [listPurchase])
     const onChangeText = (text, item) => {
         text = +text
@@ -343,7 +343,7 @@ export default (props) => {
                 Status: st,
                 Total: total,
                 TotalPayment: orderStock.TotalPayment ? orderStock.TotalPayment : 0,
-                VAT: orderStock.VAT ? Number(orderStock.VAT) * totalCurrent.current / 100 : 0,
+                VAT: orderStock.VAT ? Number(orderStock.VAT) * (totalCurrent.current - (isPercent == true ? (totalCurrent.current * discount / 100) : discount)) / 100 : 0,
                 VATRates: orderStock.VAT ? Number(orderStock.VAT) : 0,
             }
         }
@@ -641,7 +641,7 @@ export default (props) => {
                                 <View style={{ flexDirection: 'row', paddingHorizontal: 10, paddingVertical: 5 }}>
                                     <View style={{ flex: 4 }}>
                                         <Text>{I18n.t('ngay_nhap')}</Text>
-                                        <TouchableOpacity style={[styles.styleTextInput,{justifyContent:'center',alignItems:'center'}]} onPress={() => clickDocumentDate()}>
+                                        <TouchableOpacity style={[styles.styleTextInput, { justifyContent: 'center', alignItems: 'center' }]} onPress={() => clickDocumentDate()}>
                                             <Text style={{ fontWeight: 'bold', color: orderStock.DocumentDate ? '#000' : '#4a4a4a' }}>{orderStock.DocumentDate ? dateUTCToDate2(orderStock.DocumentDate) : 'DD/MM/YYYY'}</Text>
                                         </TouchableOpacity>
                                     </View>
@@ -650,7 +650,7 @@ export default (props) => {
                                     </View>
                                     <View style={{ flex: 4 }}>
                                         <Text>{I18n.t('ngay_giao')}</Text>
-                                        <TouchableOpacity style={[styles.styleTextInput,{justifyContent:'center',alignItems:'center'}]} onPress={() => clickDeliveryDate()}>
+                                        <TouchableOpacity style={[styles.styleTextInput, { justifyContent: 'center', alignItems: 'center' }]} onPress={() => clickDeliveryDate()}>
                                             <Text style={{ fontWeight: 'bold', color: orderStock.DeliveryDate ? '#000' : '#4a4a4a' }}>{orderStock.DeliveryDate ? dateUTCToDate2(orderStock.DeliveryDate) : 'DD/MM/YYYY'}</Text>
                                         </TouchableOpacity>
                                     </View>
@@ -687,8 +687,10 @@ export default (props) => {
                                         <Text>{I18n.t('thue_vat')}</Text>
                                     </View>
                                     <View style={{ flex: 3, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
-                                        <TextInput style={[styles.styleTextInput, { textAlign: 'right', flex: 1 }]} keyboardType={'numbers-and-punctuation'} value={inputVat ? inputVat + '' : null} onChangeText={(text) => onChangeTextVAT(text)}></TextInput>
-                                        <Text style={{ flex: 2, textAlign: 'right', color: colors.colorLightBlue, fontWeight: 'bold' }}>{inputVat != 0 ? currencyToString(inputVat * (totalCurrent.current - (isPercent == true ? (totalCurrent.current * discount / 100) : discount)) / 100) : currencyToString(valueVAT)}</Text>
+                                        <View style={{ flex: 1, marginRight: 10 }}>
+                                            <TextInput style={[styles.styleTextInput, { textAlign: 'right', flex: 1 }]} keyboardType={'numbers-and-punctuation'} value={inputVat ? inputVat + '' : null} onChangeText={(text) => onChangeTextVAT(text)}></TextInput>
+                                        </View>
+                                        <Text style={{ flex: 1, textAlign: 'right', color: colors.colorLightBlue, fontWeight: 'bold' }}>{inputVat != 0 ? currencyToString(inputVat * (totalCurrent.current - (isPercent == true ? (totalCurrent.current * discount / 100) : discount)) / 100) : currencyToString(valueVAT)}</Text>
                                     </View>
                                 </View>
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, paddingVertical: 5 }}>
@@ -699,9 +701,11 @@ export default (props) => {
                                     <View style={{ flex: 2, justifyContent: 'center' }}>
                                         <Text style={{}}>{I18n.t('tong_thanh_toan')}</Text>
                                     </View>
-                                    <View style={{ flexDirection: 'row', alignItems: 'center', flex: 3,justifyContent:'center' }}>
-                                        <TextInput style={[styles.styleTextInput, { flex: 3 }]} keyboardType={'numbers-and-punctuation'} value={orderStock.TotalPayment ? currencyToString(orderStock.TotalPayment) : null} onChangeText={(text) => setOrderStock({ ...orderStock, TotalPayment: onChangeTextInput(text) })} ></TextInput>
-                                        <TouchableOpacity style={{ alignItems: 'center', marginLeft: 10, justifyContent: 'center', paddingVertical: 10, paddingHorizontal: 5, flex: 2, borderWidth: 1, borderColor: colors.colorLightBlue, borderRadius: 10, marginTop: 10 }} onPress={() => setOrderStock({ ...orderStock, TotalPayment: total })}>
+                                    <View style={{ flexDirection: 'row', alignItems: 'center', flex: 3, justifyContent: 'center' }}>
+                                        <View style={{ flex: 2, marginRight: 10 }}>
+                                            <TextInput style={[styles.styleTextInput, { flex: 2 }]} keyboardType={'numbers-and-punctuation'} value={orderStock.TotalPayment ? currencyToString(orderStock.TotalPayment) : null} onChangeText={(text) => setOrderStock({ ...orderStock, TotalPayment: onChangeTextInput(text) })} ></TextInput>
+                                        </View>
+                                        <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center', paddingVertical: 10, paddingHorizontal: 5, flex: 2, borderWidth: 1, borderColor: colors.colorLightBlue, borderRadius: 10, marginTop: 10 }} onPress={() => setOrderStock({ ...orderStock, TotalPayment: total })}>
                                             <Text style={{ color: colors.colorLightBlue }}>{I18n.t('toi_da')}</Text>
                                         </TouchableOpacity>
                                     </View>

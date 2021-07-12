@@ -219,7 +219,7 @@ export default (props) => {
         setDataParam({ ...data, dateFrom: dateFromTmp.current, dateTo: dateToTmp.current})
         let paramSt = setParamStatus(data.Status)
         let param
-        if (data.dateFrom && data.dateTo) {
+        if (data.dateFrom != undefined && data.dateTo != undefined) {
             if (data.Status.length > 0)
                 param = { Includes: 'Partner', inlinecount: 'allpages', ProductCode: data.ProductCode ? data.ProductCode : '', filter: `(${data.OrderStockCode ? `substringof('${data.OrderStockCode}',Code) and ` : ''} ${data.Supplier ? `PartnerId eq ${data.Supplier.Id} and ` : ''}BranchId eq ${currentBranch.current.Id} and ${paramSt} and DocumentDate ge 'datetime''${momentToStringDateLocal(setDateFrom(data))}''' and DocumentDate lt 'datetime''${momentToStringDateLocal(setDateTo(data))}''')` }
             else
