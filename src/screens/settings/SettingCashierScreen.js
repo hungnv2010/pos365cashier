@@ -147,7 +147,7 @@ export default (props) => {
                                         : null}
                                     <TouchableOpacity style={[styles.styleBtn, { top: isHorizontal ? 10 : Metrics.screenHeight / 4, left: isHorizontal ? Metrics.screenWidth / 3 : 0 }]} onPress={() => { setisHorizontal(!isHorizontal), setSize(size), setListProduct([...listProduct]) }}>
                                         <Icon name={"sync"} size={20} color={"#fff"} />
-                                        <Text style={{ color: "#fff" }}>{orderScreen.isHorizontal ? I18n.t('xoay_doc') : I18n.t('xoay_ngang')}</Text>
+                                        <Text style={{ color: "#fff" }}>{isHorizontal ? I18n.t('xoay_doc') : I18n.t('xoay_ngang')}</Text>
                                     </TouchableOpacity>
                                 </View>
 
