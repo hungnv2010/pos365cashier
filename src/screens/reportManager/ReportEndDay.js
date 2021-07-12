@@ -125,11 +125,11 @@ export default (props) => {
                     />
                 </TouchableOpacity>
             </View>
-            <View style={{ width: "100%", padding: 5, justifyContent: "space-between", flexDirection: "row" }}>
-                <TouchableOpacity style={styles.button} onPress={() => { onSetting() }}>
+            <View style={{ width: "100%", padding: 5, justifyContent: "center", alignItems: "center", flexDirection: "row" }}>
+                {/* <TouchableOpacity style={styles.button} onPress={() => { onSetting() }}>
                     <Text style={styles.textButton}>{I18n.t('thiet_lap')}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={() => { printReport() }}>
+                </TouchableOpacity> */}
+                <TouchableOpacity style={[styles.button, { width: Metrics.screenWidth / 2 }]} onPress={() => { printReport() }}>
                     <Text style={styles.textButton}>{I18n.t('in_bao_cao')}</Text>
                 </TouchableOpacity>
             </View>
@@ -181,7 +181,7 @@ export default (props) => {
 }
 
 const styles = StyleSheet.create({
-    button: { flex: 1, padding: 12, justifyContent: "center", alignItems: "center", margin: 5, paddingHorizontal: 10, borderRadius: 20, backgroundColor: colors.colorLightBlue },
+    button: { /*flex: 1,*/ padding: 12, justifyContent: "center", alignItems: "center", margin: 5, paddingHorizontal: 10, borderRadius: 20, backgroundColor: colors.colorLightBlue },
     textButton: { color: "#fff", textTransform: "uppercase" },
 })
 
