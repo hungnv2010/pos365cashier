@@ -40,6 +40,10 @@ export default (props) => {
         let valueSearchLatin = change_alias(debouncedVal)
         let results = await realmStore.queryProducts()
         results = results.sorted('Position')
+        if(type.current == 1){
+          results = results.filtered(`ProductType == 1`)
+        }
+        console.log("result",result);
         let searchResult = results.filtered(`NameLatin CONTAINS[c] "${valueSearchLatin}" OR Code CONTAINS[c] "${debouncedVal}"`)
         console.log("search result",searchResult);
         searchResult = JSON.parse(JSON.stringify(searchResult))
@@ -78,6 +82,9 @@ export default (props) => {
         let newCategories = [];
         let results = await realmStore.queryCategories()
         let allProducts = await realmStore.queryProducts()
+        if(type.current == 1){
+          allProducts = allProducts.filtered(`ProductType == 1`)
+        }
         results.forEach(item => {
           let numberProduct = allProducts.filtered(`CategoryId == ${item.Id}`).length
           newCategories.push({ ...JSON.parse(JSON.stringify(item)), numberProduct })

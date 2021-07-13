@@ -208,7 +208,7 @@ export default (props) => {
         }
     }, [listPr])
     useEffect(() => {
-        console.log("orderstock", orderStock.VAT);
+        console.log("orderstock", orderStock);
         //setInputVat(orderStock.VAT)
     }, [orderStock])
 
@@ -325,7 +325,10 @@ export default (props) => {
     }
     const onClickDelItem = (index) => {
         listPr.splice(index, 1)
+        listProduct.splice(index, 1)
+        console.log(listPr);
         setListPr([...listPr])
+        setListProduct([...listProduct])
     }
     const onClickSave = async (st) => {
 
@@ -695,7 +698,7 @@ export default (props) => {
                                 </View>
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, paddingVertical: 5 }}>
                                     <Text>{I18n.t('tong_cong')}</Text>
-                                    <Text style={styles.styleTextValue}>{currencyToString(total)}</Text>
+                                    <Text style={styles.styleTextValue}>{currencyToString(total - (orderStock.Discount ? orderStock.Discount : 0))}</Text>
                                 </View>
                                 <View style={{ flexDirection: 'row', paddingHorizontal: 10, paddingVertical: 5, alignItems: 'center' }}>
                                     <View style={{ flex: 2, justifyContent: 'center' }}>
