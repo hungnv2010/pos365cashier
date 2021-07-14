@@ -18,7 +18,7 @@ export default (props) => {
   const [widthParent, setWidthParent] = useState(props.widthParent)
   const [numColumn, setNumColumn] = useState(props.numColumn ? props.numColumn : 3)
   const [listProduct, setListProduct] = useState(props.listProducts)
-  const { already } = useSelector(state => {
+  const { already, deviceType } = useSelector(state => {
     return state.Common
   });
 
@@ -123,28 +123,47 @@ export default (props) => {
         }
         renderItem={(item, index) => {
           return (
-            <View style={{ backgroundColor: "#fff", borderRadius: 5, width: (widthParent - 20 * numColumn) / (numColumn) }}>
-              <View style={{}}>
-                <Image
-                  style={{ height: 100, width: "100%", borderTopLeftRadius: 5, borderTopRightRadius: 5 }}
-                  source={JSON.parse(item.ProductImages).length > 0 ? { uri: JSON.parse(item.ProductImages)[0].ImageURL } : Images.default_food_image}
-                />
-                <View style={{
-                  marginHorizontal: 10,
-                  flexDirection: "row",
-                  alignItems: "center"
-                }}>
-                  <View style={{
-                    flexDirection: "column",
-                    flex: 2,
-                    justifyContent: "space-between",
-                  }}>
-                    <Text numberOfLines={2} style={{ textTransform: "uppercase", fontWeight: "bold", paddingVertical: 5, fontSize: 11 }}>{item.Name.trim()}</Text>
-                    <Text style={{ fontStyle: "italic", paddingBottom: 5 }}>{currencyToString(item.Price)}<Text style={{ color: Colors.colorchinh }}>{item.IsLargeUnit ? item.LargeUnit ? `/${item.LargeUnit}` : '' : item.Unit ? `/${item.Unit}` : ''}</Text></Text>
+            <>
+              {deviceType == Constant.TABLET ?
+                <View style={{ backgroundColor: "#fff", borderRadius: 5, width: (widthParent - 20 * numColumn) / (numColumn) }}>
+                  <View style={{}}>
+                    <Image
+                      style={{ height: 100, width: "100%", borderTopLeftRadius: 5, borderTopRightRadius: 5 }}
+                      source={JSON.parse(item.ProductImages).length > 0 ? { uri: JSON.parse(item.ProductImages)[0].ImageURL } : Images.default_food_image}
+                    />
+                    <View style={{
+                      marginHorizontal: 10,
+                      flexDirection: "row",
+                      alignItems: "center"
+                    }}>
+                      <View style={{
+                        flexDirection: "column",
+                        flex: 2,
+                        justifyContent: "space-between",
+                      }}>
+                        <Text numberOfLines={2} style={{ textTransform: "uppercase", fontWeight: "bold", paddingVertical: 5, fontSize: 11 }}>{item.Name.trim()}</Text>
+                        <Text style={{ fontStyle: "italic", paddingBottom: 5 }}>{currencyToString(item.Price)}<Text style={{ color: Colors.colorchinh }}>{item.IsLargeUnit ? item.LargeUnit ? `/${item.LargeUnit}` : '' : item.Unit ? `/${item.Unit}` : ''}</Text></Text>
+                      </View>
+                    </View>
                   </View>
-                </View>
-              </View>
-            </View>
+                </View> :
+
+                <View style={{ flexDirection: 'row', backgroundColor: '#fff', flex: 1, padding: 10, width: widthParent,borderRadius:10 }}>
+                  <Image
+                    style={{ height: 70, width: 70, borderRadius: 20, marginLeft: 5 }}
+                    source={JSON.parse(item.ProductImages).length > 0 ? { uri: JSON.parse(item.ProductImages)[0].ImageURL } : Images.default_food_image}
+                  />
+                  <View style={{}}>
+                    <View style={{}}>
+                      <Text numberOfLines={2} style={{ textTransform: "uppercase", fontWeight: "bold" }}>{item.Name}</Text>
+                      <Text style={{ paddingVertical: 5, fontStyle: "italic" }}>{currencyToString(item.Price)}<Text style={{ color: Colors.colorchinh }}>{item.IsLargeUnit ? item.LargeUnit ? `/${item.LargeUnit}` : '' : item.Unit ? `/${item.Unit}` : ''}</Text></Text>
+                    </View>
+                    {/* {item.Quantity <= 0 ?
+                    <Text numberOfLines={2} style={{ textTransform: "uppercase", fontWeight: "bold", paddingRight: 10, color: Colors.colorchinh }}>{item.ProductType == 1 ? (item.OnHand >= 0 ? item.OnHand : "") : "---"}</Text>
+                    : null} */}
+                  </View>
+                </View>}
+            </>
           )
         }}
       />

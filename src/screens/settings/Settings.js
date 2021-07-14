@@ -26,6 +26,9 @@ import moment from 'moment';
 import 'moment/min/locales'
 import DeviceInfo from 'react-native-device-info';
 import DialogSettingPrinter from '../../components/dialog/DialogSettingPrinter'
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import IconMaterial from 'react-native-vector-icons/MaterialCommunityIcons'
+import IonIcon from 'react-native-vector-icons/Ionicons'
 
 export const DefaultSetting = {
     am_bao_thanh_toan: true,
@@ -149,6 +152,7 @@ export default (props) => {
     const [settingObject, setSettingObject] = useState(DefaultSetting)
     const [inforStore, setInforStore] = useState({})
     const [marginModal, setMargin] = useState(0)
+    const [objTitle, setObjTitle] = useState({ isSettingPayment: true })
     const [language, setLanguage] = useState("vi");
 
     useFocusEffect(useCallback(() => {
@@ -478,11 +482,8 @@ export default (props) => {
         setModalStampPrint(data.stt)
         setTitlePrint(data.title)
     }
-    const [stateModalLAN, setStateModalLAN] = useState(false)
     const [titlePrint, setTitlePrint] = useState('')
     const [defaultType, setDefautlType] = useState('')
-    const [defaultSize, setDefaultSize] = useState('')
-    const [defaultIpLAN, setDefaultIpLAN] = useState('')
     const [positionPrint, setPositionPrint] = useState()
 
     const screenSwitch = (nameFun, pr) => {
@@ -552,140 +553,190 @@ export default (props) => {
                 title={I18n.t('setting')}
                 outPutTextSearch={() => { }}
             />
-            <ScrollView style={{ marginBottom: 1 }} keyboardShouldPersistTaps="handled">
-                <View style={{ flex: 1, flexDirection: 'column' }}>
-                    <TouchableOpacity onPress={() => screenSwitch(ScreenList.VNPayPaymentSetting, settingObject)}>
-                        <Text style={styles.textTitleItem}>{I18n.t("thiet_lap_thanh_toan_vnpay")}</Text>
-                    </TouchableOpacity>
-                    <View style={styles.viewLine}></View>
+            <View style={{ flexDirection: 'row', flex: 1 }}>
+                {orientaition == Constant.LANDSCAPE ?
+                    <View style={{ flex: 0.5, backgroundColor: '#fff', margin: 2 }}>
+                        <TouchableOpacity style={styles.styleBtnGroupSetting} onPress={() => setObjTitle({ isSettingPayment: true })}>
+                            <IconMaterial name={"qrcode"} size={24} style={{ paddingHorizontal: 15, flex: 1 }} color={objTitle.isSettingPayment == true ? colors.colorchinh : '#4a4a4a'} />
+                            <Text style={[styles.styleTitleGroup, { color: objTitle.isSettingPayment == true ? colors.colorchinh : '#4a4a4a' }]}>{I18n.t('thiet_lap_thanh_toan')}</Text>
+                            <Icon name={"navigate-next"} size={24} style={{ paddingHorizontal: 15, flex: 1 }} color={objTitle.isSettingPayment == true ? colors.colorchinh : '#4a4a4a'} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.styleBtnGroupSetting} onPress={() => setObjTitle({ isSettingNofi: true })}>
+                            <Icon name={"notifications"} size={24} style={{ paddingHorizontal: 15, flex: 1 }} color={objTitle.isSettingNofi == true ? colors.colorchinh : '#4a4a4a'} />
+                            <Text style={[styles.styleTitleGroup, { color: objTitle.isSettingNofi == true ? colors.colorchinh : '#4a4a4a' }]}>{I18n.t('thong_bao')}</Text>
+                            <Icon name={"navigate-next"} size={24} style={{ paddingHorizontal: 15, flex: 1 }} color={objTitle.isSettingNofi == true ? colors.colorchinh : '#4a4a4a'} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.styleBtnGroupSetting} onPress={() => setObjTitle({ isSettingConnectPr: true })}>
+                            <IconMaterial name={"printer-settings"} size={24} style={{ paddingHorizontal: 15, flex: 1 }} color={objTitle.isSettingConnectPr == true ? colors.colorchinh : '#4a4a4a'} />
+                            <Text style={[styles.styleTitleGroup, { color: objTitle.isSettingConnectPr == true ? colors.colorchinh : '#4a4a4a' }]}>{I18n.t('ket_noi_may_in')}</Text>
+                            <Icon name={"navigate-next"} size={24} style={{ paddingHorizontal: 15, flex: 1 }} color={objTitle.isSettingConnectPr == true ? colors.colorchinh : '#4a4a4a'} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.styleBtnGroupSetting} onPress={() => setObjTitle({ isSettingPrinter: true })}>
+                            <Icon name={"print"} size={24} style={{ paddingHorizontal: 15, flex: 1 }} color={objTitle.isSettingPrinter == true ? colors.colorchinh : '#4a4a4a'} />
+                            <Text style={[styles.styleTitleGroup, { color: objTitle.isSettingPrinter == true ? colors.colorchinh : '#4a4a4a' }]}>{I18n.t('cai_dat_may_in')}</Text>
+                            <Icon name={"navigate-next"} size={24} style={{ paddingHorizontal: 15, flex: 1 }} color={objTitle.isSettingPrinter == true ? colors.colorchinh : '#4a4a4a'} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.styleBtnGroupSetting} onPress={() => setObjTitle({ isSettingFeature: true })}>
+                            <IonIcon name={"ios-options"} size={24} style={{ paddingHorizontal: 15, flex: 1 }} color={objTitle.isSettingFeature == true ? colors.colorchinh : '#4a4a4a'} />
+                            <Text style={[styles.styleTitleGroup, { color: objTitle.isSettingFeature == true ? colors.colorchinh : '#4a4a4a' }]}>{I18n.t('thiet_lap_tinh_nang')}</Text>
+                            <Icon name={"navigate-next"} size={24} style={{ paddingHorizontal: 15, flex: 1 }} color={objTitle.isSettingFeature == true ? colors.colorchinh : '#4a4a4a'} />
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.styleBtnGroupSetting} onPress={() => setObjTitle({ isSettingSystem: true })}>
+                            <Icon name={"settings-applications"} size={24} style={{ paddingHorizontal: 15, flex: 1 }} color={objTitle.isSettingSystem == true ? colors.colorchinh : '#4a4a4a'} />
+                            <Text style={[styles.styleTitleGroup, { color: objTitle.isSettingSystem == true ? colors.colorchinh : '#4a4a4a' }]}>{I18n.t('thiet_lap_he_thong')}</Text>
+                            <Icon name={"navigate-next"} size={24} style={{ paddingHorizontal: 15, flex: 1 }} color={objTitle.isSettingSystem == true ? colors.colorchinh : '#4a4a4a'} />
+                        </TouchableOpacity>
+                        {/* <TouchableOpacity>
+                            <Text>{I18n.t('thiet_lap_diem_thuong')}</Text>
+                        </TouchableOpacity> */}
 
-                    <View>
-                        <Text style={styles.textTitle}>{I18n.t("thong_bao")}</Text>
-                        <SettingSwitch
-                            title={"am_bao_thanh_toan"} output={onSwitchTone} isStatus={settingObject.am_bao_thanh_toan}
-                        />
+
                     </View>
-                    <View style={styles.viewLine}>
-                    </View>
-                    <View>
-                        <Text style={styles.textTitle}>Print Connect</Text>
-                        {
-                            settingObject.Printer && settingObject.Printer.length > 0 ?
-                                settingObject.Printer.map((item, index) => {
-                                    if (item.show)
-                                        return (
-                                            <PrintConnect key={index.toString()} title={I18n.t(item.title)} onSet={onShowModal} stylePrinter={(item.type ? I18n.t(item.type) : I18n.t('khong_in')) + (item.size ? ', size ' + item.size + ' mm ' : '') + (item.ip ? '(' + item.ip + ')' : '')} pos={index} status={showModal} />
-                                        )
-                                })
+                    : null}
+                <View style={{ flex: 1 }}>
+                    <ScrollView style={{ marginBottom: 1 }} keyboardShouldPersistTaps="handled">
+                        <View style={{ flex: 1, flexDirection: 'column', backgroundColor: '#fff', margin: 2 }}>
+                            {orientaition == Constant.PORTRAIT || orientaition == Constant.LANDSCAPE && objTitle.isSettingPayment == true ?
+                                <TouchableOpacity onPress={() => screenSwitch(ScreenList.VNPayPaymentSetting, settingObject)} style={{ paddingVertical: 15, borderBottomWidth: 0.5, borderColor: '#f2f2f2' }}>
+                                    <Text style={[styles.textTitleItem, { marginTop: 0 }]}>{I18n.t("thiet_lap_thanh_toan_vnpay")}</Text>
+                                </TouchableOpacity>
                                 : null
-                        }
-                    </View>
-                    <View style={styles.viewLine}></View>
-                    <View>
-                        <Text style={styles.textTitle}>Print Setup</Text>
-                        <TouchableOpacity onPress={onShowModalStoreInfor}>
-                            <Text style={styles.textTitleItem}>{I18n.t("thong_tin_cua_hang")}</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => screenSwitch(ScreenList.PrintHtml)}>
-                            <Text style={styles.textTitleItem}>{I18n.t("thiet_lap_mau_in")}</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={() => screenSwitch(ScreenList.SetupTemp)}>
-                            <Text style={styles.textTitleItem}>{I18n.t("thiet_lap_mau_tem")}</Text>
-                        </TouchableOpacity>
-                        {isFNB ?
-                            <SettingSwitch title={"tu_dong_in_bao_bep"} output={onSwitchTone} isStatus={settingObject.tu_dong_in_bao_bep} />
-                            : null
-                        }
-                        <SettingSwitch title={"in_sau_khi_thanh_toan"} output={onSwitchTone} isStatus={settingObject.in_sau_khi_thanh_toan} />
-                        <SettingSwitch title={"in_hai_lien_cho_hoa_don"} output={onSwitchTone} isStatus={settingObject.in_hai_lien_cho_hoa_don} />
-                        {isFNB ?
-                            <SettingSwitch title={"in_hai_lien_cho_che_bien"} output={onSwitchTone} isStatus={settingObject.in_hai_lien_cho_che_bien} />
-                            : null}
-                        <SettingSwitch title={"in_tam_tinh"} output={onSwitchTone} isStatus={settingObject.in_tam_tinh} />
-                        <SettingSwitch title={"in_tem_truoc_thanh_toan"} output={onSwitchTone} isStatus={settingObject.in_tem_truoc_thanh_toan} />
-                        {/* <SettingSwitch title={"bao_che_bien_sau_thanh_toan"} output={onSwitchTone} isStatus={settingObject.bao_che_bien_sau_thanh_toan} /> */}
-                    </View>
-                    <View style={styles.viewLine}></View>
-                    <View>
-                        <Text style={styles.textTitle}>{I18n.t("thiet_lap_tinh_nang")}</Text>
-                        <SettingSwitch title={"cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang"} output={onSwitchTone} isStatus={settingObject.cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang} />
-                        <SettingSwitch title={"cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang"} output={onSwitchTone} isStatus={settingObject.cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang} />
-                        {
-                            deviceType == Constant.TABLET ?
-                                <TouchableOpacity style={{marginBottom:10}} onPress={() => { props.navigation.navigate(ScreenList.SettingCashierScreen, {}) }}>
-                                    <Text style={styles.textTitleItem}>{I18n.t("cai_dat_man_hinh_chon_san_pham")}</Text>
-                                </TouchableOpacity> : null
-                        }
-                        {/* <SettingSwitch title={"khong_cho_phep_ban_hang_khi_het_ton_kho"} output={onSwitchTone} isStatus={settingObject.khong_cho_phep_ban_hang_khi_het_ton_kho} />
+                            }
+                            {/* <View style={styles.viewLine}></View> */}
+                            {orientaition == Constant.PORTRAIT || orientaition == Constant.LANDSCAPE && objTitle.isSettingNofi == true ?
+                                <View style={{ paddingVertical: 15, marginVertical: 2, borderBottomWidth: 0.5, borderColor: '#f2f2f2' }}>
+                                    <Text style={styles.textTitle}>{I18n.t("thong_bao")}</Text>
+                                    <SettingSwitch
+                                        title={"am_bao_thanh_toan"} output={onSwitchTone} isStatus={settingObject.am_bao_thanh_toan}
+                                    />
+                                </View> : null
+                            }
+                            {/* <View style={styles.viewLine}>
+                        </View> */}
+                            {orientaition == Constant.PORTRAIT || orientaition == Constant.LANDSCAPE && objTitle.isSettingConnectPr == true ?
+                                <View style={{ paddingVertical: 15, marginVertical: 2, borderBottomWidth: 0.5, borderColor: '#f2f2f2' }}>
+                                    <Text style={styles.textTitle}>Print Connect</Text>
+                                    {
+                                        settingObject.Printer && settingObject.Printer.length > 0 ?
+                                            settingObject.Printer.map((item, index) => {
+                                                if (item.show)
+                                                    return (
+                                                        <PrintConnect key={index.toString()} title={I18n.t(item.title)} onSet={onShowModal} stylePrinter={(item.type ? I18n.t(item.type) : I18n.t('khong_in')) + (item.size ? ', size ' + item.size + ' mm ' : '') + (item.ip ? '(' + item.ip + ')' : '')} pos={index} status={showModal} />
+                                                    )
+                                            })
+                                            : null
+                                    }
+                                </View>
+                                : null}
+                            {/* <View style={styles.viewLine}></View> */}
+                            {orientaition == Constant.PORTRAIT || orientaition == Constant.LANDSCAPE && objTitle.isSettingPrinter == true ?
+                                <View style={{ paddingVertical: 15, marginVertical: 2, borderBottomWidth: 0.5, borderColor: '#f2f2f2' }}>
+                                    <Text style={styles.textTitle}>Print Setup</Text>
+                                    <TouchableOpacity onPress={onShowModalStoreInfor}>
+                                        <Text style={styles.textTitleItem}>{I18n.t("thong_tin_cua_hang")}</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => screenSwitch(ScreenList.PrintHtml)}>
+                                        <Text style={styles.textTitleItem}>{I18n.t("thiet_lap_mau_in")}</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={() => screenSwitch(ScreenList.SetupTemp)}>
+                                        <Text style={styles.textTitleItem}>{I18n.t("thiet_lap_mau_tem")}</Text>
+                                    </TouchableOpacity>
+                                    {isFNB ?
+                                        <SettingSwitch title={"tu_dong_in_bao_bep"} output={onSwitchTone} isStatus={settingObject.tu_dong_in_bao_bep} />
+                                        : null
+                                    }
+                                    <SettingSwitch title={"in_sau_khi_thanh_toan"} output={onSwitchTone} isStatus={settingObject.in_sau_khi_thanh_toan} />
+                                    <SettingSwitch title={"in_hai_lien_cho_hoa_don"} output={onSwitchTone} isStatus={settingObject.in_hai_lien_cho_hoa_don} />
+                                    {isFNB ?
+                                        <SettingSwitch title={"in_hai_lien_cho_che_bien"} output={onSwitchTone} isStatus={settingObject.in_hai_lien_cho_che_bien} />
+                                        : null}
+                                    <SettingSwitch title={"in_tam_tinh"} output={onSwitchTone} isStatus={settingObject.in_tam_tinh} />
+                                    <SettingSwitch title={"in_tem_truoc_thanh_toan"} output={onSwitchTone} isStatus={settingObject.in_tem_truoc_thanh_toan} />
+                                    {/* <SettingSwitch title={"bao_che_bien_sau_thanh_toan"} output={onSwitchTone} isStatus={settingObject.bao_che_bien_sau_thanh_toan} /> */}
+                                </View> : null}
+
+                            {/* <View style={styles.viewLine}></View> */}
+                            {orientaition == Constant.PORTRAIT || orientaition == Constant.LANDSCAPE && objTitle.isSettingFeature == true ?
+                                <View style={{ paddingVertical: 15, marginVertical: 2, borderBottomWidth: 0.5, borderColor: '#f2f2f2' }}>
+                                    <Text style={styles.textTitle}>{I18n.t("thiet_lap_tinh_nang")}</Text>
+                                    <SettingSwitch title={"cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang"} output={onSwitchTone} isStatus={settingObject.cho_phep_thay_doi_ten_hang_hoa_khi_ban_hang} />
+                                    <SettingSwitch title={"cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang"} output={onSwitchTone} isStatus={settingObject.cho_phep_nhan_vien_thay_doi_gia_khi_ban_hang} />
+                                    <TouchableOpacity style={{ marginBottom: 10 }} onPress={() => { props.navigation.navigate(ScreenList.SettingCashierScreen, {}) }}>
+                                        <Text style={styles.textTitleItem}>{I18n.t("cai_dat_man_hinh_chon_san_pham")}</Text>
+                                    </TouchableOpacity>
+                                    {/* <SettingSwitch title={"khong_cho_phep_ban_hang_khi_het_ton_kho"} output={onSwitchTone} isStatus={settingObject.khong_cho_phep_ban_hang_khi_het_ton_kho} />
                         <SettingSwitch title={"mo_cashbox_sau_khi_thanh_toan"} output={onSwitchTone} isStatus={settingObject.mo_cashbox_sau_khi_thanh_toan} />
                         <SettingSwitch title={"nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly"} output={onSwitchTone} isStatus={settingObject.nhan_tin_nhan_thong_bao_tu_phuc_vu_quan_ly} /> */}
-                    </View>
-                    <View style={styles.viewLine}></View>
-                    <View>
-                        <Text style={styles.textTitle}>{I18n.t("thiet_lap_he_thong")}</Text>
-                        <SettingSwitch title={"giu_man_hinh_luon_sang"} output={onSwitchTone} isStatus={settingObject.giu_man_hinh_luon_sang} />
-                        <CurrencyUnit onSetModalCurrency={funSetModalCurrentcy} currencyUnit={settingObject.CurrencyUnit} />
+                                </View> : null}
+                            {/* <View style={styles.viewLine}></View> */}
+                            {orientaition == Constant.PORTRAIT || orientaition == Constant.LANDSCAPE && objTitle.isSettingSystem == true ?
+                                <View style={{ paddingVertical: 15, marginVertical: 2, borderBottomWidth: 0.5, borderColor: '#f2f2f2' }}>
+                                    <Text style={styles.textTitle}>{I18n.t("thiet_lap_he_thong")}</Text>
+                                    <SettingSwitch title={"giu_man_hinh_luon_sang"} output={onSwitchTone} isStatus={settingObject.giu_man_hinh_luon_sang} />
+                                    <CurrencyUnit onSetModalCurrency={funSetModalCurrentcy} currencyUnit={settingObject.CurrencyUnit} />
 
-                        <View style={{ borderBottomWidth: 0.5, padding: 20, borderBottomColor: "#ddd", flexDirection: "column", }}>
-                            <TouchableOpacity style={{ flexDirection: "row", justifyContent: "space-between" }}>
-                                <Text style={{ marginTop: 0 }}>{I18n.t('ngon_ngu')}: <Text style={{ color: colors.colorLightBlue }}>{language == 'vi' ? I18n.t('tieng_viet') : I18n.t('tieng_anh')}</Text> </Text>
-                            </TouchableOpacity>
+                                    <View style={{ borderBottomWidth: 0.5, padding: 20, borderBottomColor: "#ddd", flexDirection: "column", }}>
+                                        <TouchableOpacity style={{ flexDirection: "row", justifyContent: "space-between" }}>
+                                            <Text style={{ marginTop: 0 }}>{I18n.t('ngon_ngu')}: <Text style={{ color: colors.colorLightBlue }}>{language == 'vi' ? I18n.t('tieng_viet') : I18n.t('tieng_anh')}</Text> </Text>
+                                        </TouchableOpacity>
 
-                            <View style={{ marginTop: 20, flexDirection: "row", justifyContent: "space-between" }}>
-                                <TouchableOpacity onPress={() => onSelectLanguage('vi')} style={{ flexDirection: "row", alignItems: "center", marginLeft: -10 }}>
-                                    <RadioButton.Android
-                                        style={{}}
-                                        color={colors.colorchinh}
-                                        status={language == 'vi' ? 'checked' : 'unchecked'}
-                                        onPress={() => onSelectLanguage('vi')}
-                                    />
-                                    <Image source={Images.icon_viet_nam} style={{ width: 30, height: 20, marginRight: 10 }} />
-                                    <Text>{I18n.t('tieng_viet')}</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={() => onSelectLanguage('en')} style={{ flexDirection: "row", alignItems: "center", marginLeft: -10 }}>
-                                    <RadioButton.Android
-                                        style={{}}
-                                        color={colors.colorchinh}
-                                        status={language != 'vi' ? 'checked' : 'unchecked'}
-                                        onPress={() => onSelectLanguage('en')}
-                                    />
-                                    <Image source={Images.icon_english} style={{ width: 30, height: 20, marginRight: 10 }} />
-                                    <Text>{I18n.t('tieng_anh')}</Text>
-                                </TouchableOpacity>
-                            </View>
+                                        <View style={{ marginTop: 20, flexDirection: "row", justifyContent: "space-between" }}>
+                                            <TouchableOpacity onPress={() => onSelectLanguage('vi')} style={{ flexDirection: "row", alignItems: "center", marginLeft: -10 }}>
+                                                <RadioButton.Android
+                                                    style={{}}
+                                                    color={colors.colorchinh}
+                                                    status={language == 'vi' ? 'checked' : 'unchecked'}
+                                                    onPress={() => onSelectLanguage('vi')}
+                                                />
+                                                <Image source={Images.icon_viet_nam} style={{ width: 30, height: 20, marginRight: 10 }} />
+                                                <Text>{I18n.t('tieng_viet')}</Text>
+                                            </TouchableOpacity>
+                                            <TouchableOpacity onPress={() => onSelectLanguage('en')} style={{ flexDirection: "row", alignItems: "center", marginLeft: -10 }}>
+                                                <RadioButton.Android
+                                                    style={{}}
+                                                    color={colors.colorchinh}
+                                                    status={language != 'vi' ? 'checked' : 'unchecked'}
+                                                    onPress={() => onSelectLanguage('en')}
+                                                />
+                                                <Image source={Images.icon_english} style={{ width: 30, height: 20, marginRight: 10 }} />
+                                                <Text>{I18n.t('tieng_anh')}</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>
+                                </View> : null}
+
+                            {/* <View style={styles.viewLine}></View> */}
                         </View>
-                    </View>
-                    <View style={styles.viewLine}></View>
-                </View>
-                <View style={{ alignItems: "center", justifyContent: 'center' }}>
-                    <Modal animationType='none'
-                        transparent={true}
-                        visible={showModal}
-                        supportedOrientations={["portrait", "landscape"]}
-                    >
-                        <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
-                            <TouchableWithoutFeedback
-                                onPress={() => {
-                                    setShowModal(false)
-                                }}
-                                style={{
-                                    position: 'absolute',
-                                    top: 0,
-                                    left: 0,
-                                    right: 0,
-                                    bottom: 0
-                                }}>
-                                <View style={{
-                                    backgroundColor: 'rgba(0,0,0,0.5)', position: 'absolute',
-                                    top: 0,
-                                    left: 0,
-                                    right: 0,
-                                    bottom: 0
-                                }}></View>
-                            </TouchableWithoutFeedback>
-                            <View style={[styles.styleViewModal, { marginBottom: Platform.OS == 'ios' ? marginModal : 0 }]} >
-                                <View style={{ width: Metrics.screenWidth * 0.8, }}>
-                                    {/* <Text style={styles.titleModal}>{I18n.t('chon_cong_nghe_in')}</Text>
+
+                        <View style={{ alignItems: "center", justifyContent: 'center' }}>
+                            <Modal animationType='none'
+                                transparent={true}
+                                visible={showModal}
+                                supportedOrientations={["portrait", "landscape"]}
+                            >
+                                <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+                                    <TouchableWithoutFeedback
+                                        onPress={() => {
+                                            setShowModal(false)
+                                        }}
+                                        style={{
+                                            position: 'absolute',
+                                            top: 0,
+                                            left: 0,
+                                            right: 0,
+                                            bottom: 0
+                                        }}>
+                                        <View style={{
+                                            backgroundColor: 'rgba(0,0,0,0.5)', position: 'absolute',
+                                            top: 0,
+                                            left: 0,
+                                            right: 0,
+                                            bottom: 0
+                                        }}></View>
+                                    </TouchableWithoutFeedback>
+                                    <View style={[styles.styleViewModal, { marginBottom: Platform.OS == 'ios' ? marginModal : 0 }]} >
+                                        <View style={{ width: Metrics.screenWidth * 0.8, }}>
+                                            {/* <Text style={styles.titleModal}>{I18n.t('chon_cong_nghe_in')}</Text>
                                     {
                                         Constant.CATYGORY_PRINT && [PrintType].concat(Constant.CATYGORY_PRINT).map((item, index) => {
                                             return (
@@ -701,8 +752,8 @@ export default (props) => {
                                             )
                                         })
                                     } */}
-                                    <DialogSettingPrinter title={printerTmp.title} printer={printerTmp} outputPrinter={outputSetPrinter} />
-                                    {/* <View style={{ justifyContent: "center", flexDirection: "row", paddingTop: 10 }}>
+                                            <DialogSettingPrinter title={printerTmp.title} printer={printerTmp} outputPrinter={outputSetPrinter} />
+                                            {/* <View style={{ justifyContent: "center", flexDirection: "row", paddingTop: 10 }}>
                                         <TouchableOpacity style={styles.styleButtonHuy} onPress={() => setShowModal(false)} >
                                             <Text style={styles.styleTextBtnHuy}>{I18n.t("huy")}</Text>
                                         </TouchableOpacity>
@@ -710,11 +761,11 @@ export default (props) => {
                                             <Text style={styles.styleTextBtnOk}>{I18n.t("dong_y")}</Text>
                                         </TouchableOpacity>
                                     </View> */}
+                                        </View>
+                                    </View>
                                 </View>
-                            </View>
-                        </View>
-                    </Modal>
-                    {/* <Modal animationType='fade'
+                            </Modal>
+                            {/* <Modal animationType='fade'
                         transparent={true}
                         visible={showModalSize}
                         supportedOrientations={['portrait', 'landscape']}
@@ -753,63 +804,63 @@ export default (props) => {
                             </View>
                         </View>
                     </Modal> */}
-                    <Modal animationType='none'
-                        transparent={true}
-                        visible={stateCurrentcy}
-                        supportedOrientations={["portrait", "landscape"]}
-                    >
-                        <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
-                            <TouchableWithoutFeedback
-                                onPress={() => {
-                                    setStateCurrentcy(false)
-                                }}
-                                style={{
-                                    position: 'absolute',
-                                    top: 0,
-                                    left: 0,
-                                    right: 0,
-                                    bottom: 0
-                                }}>
-                                <View style={{
-                                    backgroundColor: 'rgba(0,0,0,0.5)', position: 'absolute',
-                                    top: 0,
-                                    left: 0,
-                                    right: 0,
-                                    bottom: 0
-                                }}></View>
+                            <Modal animationType='none'
+                                transparent={true}
+                                visible={stateCurrentcy}
+                                supportedOrientations={["portrait", "landscape"]}
+                            >
+                                <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+                                    <TouchableWithoutFeedback
+                                        onPress={() => {
+                                            setStateCurrentcy(false)
+                                        }}
+                                        style={{
+                                            position: 'absolute',
+                                            top: 0,
+                                            left: 0,
+                                            right: 0,
+                                            bottom: 0
+                                        }}>
+                                        <View style={{
+                                            backgroundColor: 'rgba(0,0,0,0.5)', position: 'absolute',
+                                            top: 0,
+                                            left: 0,
+                                            right: 0,
+                                            bottom: 0
+                                        }}></View>
 
-                            </TouchableWithoutFeedback>
-                            <View style={styles.styleViewModal} >
-                                <View style={{ width: Metrics.screenWidth * 0.8, }}>
-                                    <Text style={styles.titleModal}>{I18n.t('don_vi_tien_te')}</Text>
-                                    {
-                                        Constant.CURRENTCY_UNIT && [Currentcy].concat(Constant.CURRENTCY_UNIT).map((item, index) => {
-                                            return (
-                                                <TouchableOpacity key={index.toString()} style={{ flexDirection: "row", alignItems: "center", marginLeft: 20 }} onPress={() => onSelectCurrentcy(item)}>
-                                                    <RadioButton.Android
-                                                        style={{ padding: 0, margin: 0 }}
-                                                        color='#FF4500'
-                                                        onPress={() => onSelectCurrentcy(item)}
-                                                        status={currentcy == item.value ? 'checked' : 'unchecked'}
-                                                    />
-                                                    <Text style={{ marginLeft: 0 }}>{item.name}</Text>
+                                    </TouchableWithoutFeedback>
+                                    <View style={styles.styleViewModal} >
+                                        <View style={{ width: Metrics.screenWidth * 0.8, }}>
+                                            <Text style={styles.titleModal}>{I18n.t('don_vi_tien_te')}</Text>
+                                            {
+                                                Constant.CURRENTCY_UNIT && [Currentcy].concat(Constant.CURRENTCY_UNIT).map((item, index) => {
+                                                    return (
+                                                        <TouchableOpacity key={index.toString()} style={{ flexDirection: "row", alignItems: "center", marginLeft: 20 }} onPress={() => onSelectCurrentcy(item)}>
+                                                            <RadioButton.Android
+                                                                style={{ padding: 0, margin: 0 }}
+                                                                color='#FF4500'
+                                                                onPress={() => onSelectCurrentcy(item)}
+                                                                status={currentcy == item.value ? 'checked' : 'unchecked'}
+                                                            />
+                                                            <Text style={{ marginLeft: 0 }}>{item.name}</Text>
+                                                        </TouchableOpacity>
+                                                    )
+                                                })
+                                            }
+                                            <View style={{ justifyContent: "center", flexDirection: "row", paddingTop: 10 }}>
+                                                <TouchableOpacity style={styles.styleButtonHuy} onPress={onChangeStateCurrentcy} >
+                                                    <Text style={styles.styleTextBtnHuy}>{I18n.t("huy")}</Text>
                                                 </TouchableOpacity>
-                                            )
-                                        })
-                                    }
-                                    <View style={{ justifyContent: "center", flexDirection: "row", paddingTop: 10 }}>
-                                        <TouchableOpacity style={styles.styleButtonHuy} onPress={onChangeStateCurrentcy} >
-                                            <Text style={styles.styleTextBtnHuy}>{I18n.t("huy")}</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity style={styles.styleButtonOK} onPress={onSelectTypeCurrentcy}>
-                                            <Text style={styles.styleTextBtnOk}>{I18n.t("dong_y")}</Text>
-                                        </TouchableOpacity>
+                                                <TouchableOpacity style={styles.styleButtonOK} onPress={onSelectTypeCurrentcy}>
+                                                    <Text style={styles.styleTextBtnOk}>{I18n.t("dong_y")}</Text>
+                                                </TouchableOpacity>
+                                            </View>
+                                        </View>
                                     </View>
                                 </View>
-                            </View>
-                        </View>
-                    </Modal>
-                    {/* <Modal animationType='fade'
+                            </Modal>
+                            {/* <Modal animationType='fade'
                         transparent={true}
                         visible={stateModalLAN}
                         supportedOrientations={['portrait', 'landscape']}
@@ -850,108 +901,110 @@ export default (props) => {
                             </View>
                         </View>
                     </Modal> */}
-                    <Modal animationType='none'
-                        transparent={true}
-                        visible={modalStampPrint}
-                        supportedOrientations={["portrait", "landscape"]}
-                    >
-                        <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
-                            <TouchableWithoutFeedback
-                                onPress={() => {
-                                    setModalStampPrint(false)
-                                    setStateValueIp('192.168.99.')
-                                }}
-                                style={{
-                                    position: 'absolute',
-                                    top: 0,
-                                    left: 0,
-                                    right: 0,
-                                    bottom: 0
-                                }}>
-                                <View style={{
-                                    backgroundColor: 'rgba(0,0,0,0.5)', position: 'absolute',
-                                    top: 0,
-                                    left: 0,
-                                    right: 0,
-                                    bottom: 0
-                                }}></View>
+                            <Modal animationType='none'
+                                transparent={true}
+                                visible={modalStampPrint}
+                                supportedOrientations={["portrait", "landscape"]}
+                            >
+                                <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+                                    <TouchableWithoutFeedback
+                                        onPress={() => {
+                                            setModalStampPrint(false)
+                                            setStateValueIp('192.168.99.')
+                                        }}
+                                        style={{
+                                            position: 'absolute',
+                                            top: 0,
+                                            left: 0,
+                                            right: 0,
+                                            bottom: 0
+                                        }}>
+                                        <View style={{
+                                            backgroundColor: 'rgba(0,0,0,0.5)', position: 'absolute',
+                                            top: 0,
+                                            left: 0,
+                                            right: 0,
+                                            bottom: 0
+                                        }}></View>
 
-                            </TouchableWithoutFeedback>
-                            <View style={styles.styleViewModal} >
-                                <View style={{ width: Metrics.screenWidth * 0.8, }}>
-                                    <Text style={styles.titleModal}>{I18n.t('chon_cong_nghe_in')}</Text>
-                                    {
-                                        Constant.STAMP_PRINTER && [PrintType].concat(Constant.STAMP_PRINTER).map((item, index) => {
-                                            return (
-                                                <TouchableOpacity key={index.toString()} style={{ flexDirection: "row", alignItems: "center" }} onPress={() => onSelectPrintType(item)}>
-                                                    <RadioButton.Android
-                                                        style={{ padding: 0, margin: 0 }}
-                                                        color='#FF4500'
-                                                        onPress={() => onSelectPrintType(item)}
-                                                        status={defaultType == item.name ? 'checked' : 'unchecked'}
-                                                    />
-                                                    <Text style={{ marginLeft: 0 }}>{I18n.t(item.name)}</Text>
+                                    </TouchableWithoutFeedback>
+                                    <View style={styles.styleViewModal} >
+                                        <View style={{ width: Metrics.screenWidth * 0.8, }}>
+                                            <Text style={styles.titleModal}>{I18n.t('chon_cong_nghe_in')}</Text>
+                                            {
+                                                Constant.STAMP_PRINTER && [PrintType].concat(Constant.STAMP_PRINTER).map((item, index) => {
+                                                    return (
+                                                        <TouchableOpacity key={index.toString()} style={{ flexDirection: "row", alignItems: "center" }} onPress={() => onSelectPrintType(item)}>
+                                                            <RadioButton.Android
+                                                                style={{ padding: 0, margin: 0 }}
+                                                                color='#FF4500'
+                                                                onPress={() => onSelectPrintType(item)}
+                                                                status={defaultType == item.name ? 'checked' : 'unchecked'}
+                                                            />
+                                                            <Text style={{ marginLeft: 0 }}>{I18n.t(item.name)}</Text>
+                                                        </TouchableOpacity>
+                                                    )
+                                                })
+                                            }
+                                            <View style={{ justifyContent: "center", flexDirection: "row", paddingTop: 10 }}>
+                                                <TouchableOpacity style={styles.styleButtonHuy} onPress={() => setModalStampPrint(false)} >
+                                                    <Text style={styles.styleTextBtnHuy}>{I18n.t("huy")}</Text>
                                                 </TouchableOpacity>
-                                            )
-                                        })
-                                    }
-                                    <View style={{ justifyContent: "center", flexDirection: "row", paddingTop: 10 }}>
-                                        <TouchableOpacity style={styles.styleButtonHuy} onPress={() => setModalStampPrint(false)} >
-                                            <Text style={styles.styleTextBtnHuy}>{I18n.t("huy")}</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity style={styles.styleButtonOK} onPress={onShowModalSize}>
-                                            <Text style={styles.styleTextBtnOk}>{I18n.t("dong_y")}</Text>
-                                        </TouchableOpacity>
+                                                <TouchableOpacity style={styles.styleButtonOK} onPress={onShowModalSize}>
+                                                    <Text style={styles.styleTextBtnOk}>{I18n.t("dong_y")}</Text>
+                                                </TouchableOpacity>
+                                            </View>
+                                        </View>
                                     </View>
                                 </View>
-                            </View>
-                        </View>
-                    </Modal>
-                    <Modal animationType='none'
-                        transparent={true}
-                        visible={modalStoreInfor}
-                        supportedOrientations={["portrait", "landscape"]}
-                    >
-                        <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
-                            <TouchableWithoutFeedback
-                                onPress={() => {
-                                    setModalStoreInfor(false)
-                                }}
-                                style={{
-                                    position: 'absolute',
-                                    top: 0,
-                                    left: 0,
-                                    right: 0,
-                                    bottom: 0
-                                }}>
-                                <View style={{
-                                    backgroundColor: 'rgba(0,0,0,0.5)', position: 'absolute',
-                                    top: 0,
-                                    left: 0,
-                                    right: 0,
-                                    bottom: 0
-                                }}></View>
+                            </Modal>
+                            <Modal animationType='none'
+                                transparent={true}
+                                visible={modalStoreInfor}
+                                supportedOrientations={["portrait", "landscape"]}
+                            >
+                                <View style={{ justifyContent: 'center', alignItems: 'center', flex: 1 }}>
+                                    <TouchableWithoutFeedback
+                                        onPress={() => {
+                                            setModalStoreInfor(false)
+                                        }}
+                                        style={{
+                                            position: 'absolute',
+                                            top: 0,
+                                            left: 0,
+                                            right: 0,
+                                            bottom: 0
+                                        }}>
+                                        <View style={{
+                                            backgroundColor: 'rgba(0,0,0,0.5)', position: 'absolute',
+                                            top: 0,
+                                            left: 0,
+                                            right: 0,
+                                            bottom: 0
+                                        }}></View>
 
-                            </TouchableWithoutFeedback>
-                            <View style={[styles.styleViewModal, { marginBottom: Platform.OS == 'ios' ? marginModal : 0 }]} >
-                                <View style={{ width: Metrics.screenWidth * 0.7 }}>
-                                    <Text style={styles.titleModal}>{I18n.t('thong_tin_cua_hang')}</Text>
-                                    <StoreInformation code={inforStore.Code} name={inforStore.Name} address={inforStore.Address} phoneNumber={inforStore.Phone} outPut={outPut} />
-                                    <View style={{ justifyContent: "center", flexDirection: "row", paddingTop: 10 }}>
-                                        <TouchableOpacity style={styles.styleButtonHuy} onPress={() => setModalStoreInfor(false)} >
-                                            <Text style={styles.styleTextBtnHuy}>{I18n.t("huy")}</Text>
-                                        </TouchableOpacity>
-                                        <TouchableOpacity style={styles.styleButtonOK} onPress={onClickOk}>
-                                            <Text style={styles.styleTextBtnOk}>{I18n.t("dong_y")}</Text>
-                                        </TouchableOpacity>
+                                    </TouchableWithoutFeedback>
+                                    <View style={[styles.styleViewModal, { marginBottom: Platform.OS == 'ios' ? marginModal : 0 }]} >
+                                        <View style={{ width: Metrics.screenWidth * 0.7 }}>
+                                            <Text style={styles.titleModal}>{I18n.t('thong_tin_cua_hang')}</Text>
+                                            <StoreInformation code={inforStore.Code} name={inforStore.Name} address={inforStore.Address} phoneNumber={inforStore.Phone} outPut={outPut} />
+                                            <View style={{ justifyContent: "center", flexDirection: "row", paddingTop: 10 }}>
+                                                <TouchableOpacity style={styles.styleButtonHuy} onPress={() => setModalStoreInfor(false)} >
+                                                    <Text style={styles.styleTextBtnHuy}>{I18n.t("huy")}</Text>
+                                                </TouchableOpacity>
+                                                <TouchableOpacity style={styles.styleButtonOK} onPress={onClickOk}>
+                                                    <Text style={styles.styleTextBtnOk}>{I18n.t("dong_y")}</Text>
+                                                </TouchableOpacity>
+                                            </View>
+                                        </View>
                                     </View>
                                 </View>
-                            </View>
+                            </Modal>
                         </View>
-                    </Modal>
+                    </ScrollView>
                 </View>
-            </ScrollView>
-        </View>
+            </View>
+        </View >
     )
 
 }
@@ -1045,11 +1098,15 @@ const styles = StyleSheet.create({
         alignItems: 'center', justifyContent: 'center', backgroundColor: "#fff", borderRadius: 5,
     },
     titleModal: {
-        fontSize: 18, fontWeight: "bold", textAlign: "center", paddingVertical: 10, color: colors.colorchinh
+        fontSize: 16, fontWeight: "bold", textAlign: "center", paddingVertical: 10, color: colors.colorchinh
     },
     textInputStyle: {
         borderWidth: 0.5, marginTop: 10, padding: 10, marginLeft: 20, marginRight: 20, fontSize: 14, borderRadius: 5, color: "#000"
     },
     styleTextBtnHuy: { textAlign: "center", color: colors.colorchinh, fontSize: 14 },
     styleTextBtnOk: { textAlign: "center", color: "#fff", fontSize: 14 },
+    styleBtnGroupSetting: { paddingHorizontal: 15, paddingVertical: 10, alignItems: 'center', justifyContent: 'center', flexDirection: 'row' },
+    styleTitleGroup:{
+        fontSize: 14, fontWeight: "bold", textAlign: "center", paddingVertical: 10, textTransform: 'uppercase', flex: 8
+    }
 })

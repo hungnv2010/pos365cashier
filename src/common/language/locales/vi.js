@@ -602,6 +602,7 @@ export default {
   them_moi_nhap_hang: "Thêm mới phiếu nhập",
   tinh_gio: "Tính giờ",
   thiet_lap: "Thiết lập",
+  thiet_lap_thanh_toan: "Thiết lập thanh toán",
 
   // TODO: U
   ung_dung_hien_tai_chua_ho_tro_in_co_dau: "Ứng dụng hiện tại chưa hỗ trợ in có dấu",

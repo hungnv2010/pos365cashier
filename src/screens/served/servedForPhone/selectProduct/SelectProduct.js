@@ -47,6 +47,7 @@ export default (props) => {
   const getProducts = useCallback(async () => {
     console.log('getProducts');
     let results = await realmStore.queryProducts()
+    results = results.sorted('Position')
     if(type.current == 1){
       results = results.filtered(`ProductType == 1`)
     }
@@ -86,6 +87,7 @@ export default (props) => {
         count.current = 0
         let valueSearchLatin = change_alias(debouncedVal)
         let results = await realmStore.queryProducts()
+        results = results.sorted('Position')
         if(type.current == 1){
           results = results.filtered(`ProductType == 1`)
         }

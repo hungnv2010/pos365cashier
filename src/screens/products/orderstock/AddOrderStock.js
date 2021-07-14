@@ -191,14 +191,13 @@ export default (props) => {
                 //         arrPr.push({ ...res.results[0], Quantity: el.Quantity })
                 //     }
                 // })
-                let itemPurchase = {
-                    ConversionValue: el.ConversionValue,
-                    IsLargeUnit: false,
-                    Price: el.Price,
-                    ProductId: el.ProductId,
-                    Quantity: el.Quantity,
-                    SellingPrice: el.Price
-                }
+                let itemPurchase = {}
+                itemPurchase['ConversionValue'] = el.ConversionValue
+                itemPurchase['IsLargeUnit'] = false
+                itemPurchase['Price'] = el.Price
+                itemPurchase['ProductId'] = el.ProductId
+                itemPurchase['Quantity'] = el.Quantity
+                itemPurchase['SellingPrice'] = el.Price
                 list.push(itemPurchase)
             })
             setListPurchase(list)
@@ -283,13 +282,12 @@ export default (props) => {
                 }
             })
         })
-        console.log("arr callback", arrItemPr);
         //setListPr([...arrItemPr])
     }
     useEffect(() => {
         console.log("useEffect listPurchase", listPurchase);
     }, [listPurchase])
-    const onChangeText = (text, item) => {
+    const onChangeTextQ = (text, item) => {
         text = +text
         if (text < 0) text = 0
         if (listPr.length > 0) {
@@ -583,7 +581,7 @@ export default (props) => {
                                 renderItem={({ item, index }) => <ItemPrOrderStock
                                     item={item}
                                     index={index}
-                                    onChangeText={onChangeText}
+                                    onChangeTextQ={onChangeTextQ}
                                     onClickDelItem={onClickDelItem}
                                     onChangeData={onChangeData}
                                 />}

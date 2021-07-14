@@ -605,6 +605,7 @@ export default {
   them_moi_nhap_hang: "Add new orderstock",
   tinh_gio: "Start timer",
   thiet_lap: "Settings",
+  thiet_lap_thanh_toán:"Payment settings",
 
   // TODO: U
   ung_dung_hien_tai_chua_ho_tro_in_co_dau: "The application currently does not support printing with accents",

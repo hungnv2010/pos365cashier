@@ -9,7 +9,7 @@ import { currencyToString, dateToString, momentToStringDateLocal, dateUTCToMomen
 import { useLinkProps } from '@react-navigation/native';
 
 
-const ItemPrOrderStock = ({ item, index, onChangeText, onClickDelItem, onChangeData }) => {
+const ItemPrOrderStock = ({ item, index, onChangeTextQ, onClickDelItem, onChangeData }) => {
     const [value, setValue] = useState(item.Quantity)
     const [price, setPrice] = useState(item.Price)
     useEffect(() => {
@@ -57,13 +57,13 @@ const ItemPrOrderStock = ({ item, index, onChangeText, onClickDelItem, onChangeD
                     <View style={{
                         flexDirection: 'row', backgroundColor: '#f2f2f2', paddingHorizontal: 5, marginTop: 10, borderRadius: 10,paddingVertical:5
                     }}>
-                        <TouchableOpacity style={{flex:1,paddingVertical:5,paddingHorizontal:5,alignItems:'center',justifyContent:'center',borderWidth:0.5,borderRadius:5, borderColor:colors.colorLightBlue }} onPress={()=>{setValue(value-1),onChangeText(value-1,item)}}>
+                        <TouchableOpacity style={{flex:1,paddingVertical:5,paddingHorizontal:5,alignItems:'center',justifyContent:'center',borderWidth:0.5,borderRadius:5, borderColor:colors.colorLightBlue }} onPress={()=>{setValue(value-1),onChangeTextQ(value-1,item)}}>
                             <Text style={{color:colors.colorLightBlue, fontWeight:'bold'}}>-</Text>
                         </TouchableOpacity>
                         <View style={{flex:5,paddingVertical:5}}>
-                        <TextInput style={{color: colors.colorLightBlue, textAlign: 'center', fontWeight: 'bold'}} keyboardType={'numbers-and-punctuation'} value={currencyToString(value)} onChangeText={text => { setValue((onChangeTextInput(text) <= 100000000 ? text : '100000000')), onChangeText((onChangeTextInput(text) <= 100000000 ? onChangeTextInput(text) : onChangeTextInput('100,000,000')), item), console.log("number", +text); }}></TextInput>
+                        <TextInput style={{color: colors.colorLightBlue, textAlign: 'center', fontWeight: 'bold'}} keyboardType={'numbers-and-punctuation'} value={currencyToString(value)} onChangeText={text => { setValue((onChangeTextInput(text) <= 100000000 ? text : '100000000')), onChangeTextQ((onChangeTextInput(text) <= 100000000 ? onChangeTextInput(text) : onChangeTextInput('100,000,000')), item), console.log("number", +text); }}></TextInput>
                         </View>
-                        <TouchableOpacity style={{flex:1,paddingVertical:5,paddingHorizontal:5,alignItems:'center',justifyContent:'center',borderWidth:0.5,borderRadius:5, borderColor:colors.colorLightBlue }} onPress={()=>{setValue(value+1),onChangeText(value+1,item)}}>
+                        <TouchableOpacity style={{flex:1,paddingVertical:5,paddingHorizontal:5,alignItems:'center',justifyContent:'center',borderWidth:0.5,borderRadius:5, borderColor:colors.colorLightBlue }} onPress={()=>{setValue(value+1),onChangeTextQ(value+1,item)}}>
                             <Text style={{color:colors.colorLightBlue, fontWeight:'bold'}}>+</Text>
                         </TouchableOpacity>
                     </View>
