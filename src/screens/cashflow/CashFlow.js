@@ -626,13 +626,13 @@ export default (props) => {
             >
                 {toastDescription}
             </Snackbar>
-            <FAB
+            {/* <FAB
                 style={styles.fab}
                 big
                 icon="plus"
                 color="#fff"
                 onPress={onClickAddCashFlow}
-            />
+            /> */}
         </View>
     );
 

@@ -28,7 +28,7 @@ export default (props) => {
     const typeModal = useRef(null)
     const toastDescription = useRef('')
     const dateTmp = useRef()
-    const { deviceType,allPer } = useSelector(state => {
+    const { deviceType, allPer } = useSelector(state => {
         return state.Common
     });
 
@@ -235,7 +235,7 @@ export default (props) => {
                     backgroundColor: "#fff", borderRadius: 4,
                     maxHeight: Metrics.screenHeight * 0.6
                 }}>
-                    <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", paddingVertical: 15, color: colors.colorLightBlue, textTransform: "uppercase" }}>{I18n.t('chon_nhom')}</Text>
+                    <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", paddingVertical: 15, color: colors.colorLightBlue }}>{I18n.t('chon_nhom')}</Text>
                     <ScrollView
                         contentContainerStyle={{ paddingLeft: 20 }}
                         showsVerticalScrollIndicator={false}
@@ -266,10 +266,10 @@ export default (props) => {
                     </ScrollView>
                     <View style={{ flexDirection: "row", paddingVertical: 15, justifyContent: "flex-end" }}>
                         <TouchableOpacity onPress={onClickCancelGroupName} style={{ paddingHorizontal: 20 }}>
-                            <Text style={{ fontSize: 16, color: "red", fontWeight: "bold" }}>CANCEL</Text>
+                            <Text style={{ fontSize: 16, color: "red", fontWeight: "bold" }}>{I18n.t("huy")}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={onClickOkGroupName} style={{ paddingHorizontal: 20 }}>
-                            <Text style={{ fontSize: 16, color: colors.colorLightBlue, fontWeight: "bold" }}>OK</Text>
+                            <Text style={{ fontSize: 16, color: colors.colorLightBlue, fontWeight: "bold" }}>{I18n.t("dong_y")}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -651,9 +651,9 @@ export default (props) => {
                                     :
                                     null
                             }
-                            <TouchableOpacity onPress={onClickPrint} style={{ flex: 1, flexDirection: "row", marginLeft: 10, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 10 }}>
+                            {/* <TouchableOpacity onPress={onClickPrint} style={{ flex: 1, flexDirection: "row", marginLeft: 10, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 10 }}>
                                 <IconAntDesign name={"printer"} size={25} color="white" />
-                            </TouchableOpacity>
+                            </TouchableOpacity> */}
                         </>
                 }
                 <TouchableOpacity onPress={onClickDone} style={{ flex: 8, flexDirection: "row", marginLeft: 10, marginTop: 0, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 15 }}>

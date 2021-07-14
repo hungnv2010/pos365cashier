@@ -240,9 +240,9 @@ export default (props) => {
                 :
                 <View style={{
                     backgroundColor: "#fff", borderRadius: 4,
-                    height: Metrics.screenHeight * 0.6
+                    maxhHeight: Metrics.screenHeight * 0.6
                 }}>
-                    <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", paddingVertical: 15, color: colors.colorLightBlue, textTransform: "uppercase" }}>{I18n.t('chon_nhom')}</Text>
+                    <Text style={{ fontSize: 20, fontWeight: "bold", textAlign: "center", paddingVertical: 15, color: colors.colorLightBlue }}>{I18n.t('chon_nhom')}</Text>
                     <ScrollView
                         contentContainerStyle={{ paddingLeft: 20 }}
                         showsVerticalScrollIndicator={false}
@@ -273,10 +273,10 @@ export default (props) => {
                     </ScrollView>
                     <View style={{ flexDirection: "row", paddingVertical: 15, justifyContent: "flex-end" }}>
                         <TouchableOpacity onPress={onClickCancelGroupName} style={{ paddingHorizontal: 20 }}>
-                            <Text style={{ fontSize: 16, color: "red", fontWeight: "bold" }}>CANCEL</Text>
+                            <Text style={{ fontSize: 16, color: "red", fontWeight: "bold" }}>{I18n.t("huy")}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={onClickOkGroupName} style={{ paddingHorizontal: 20 }}>
-                            <Text style={{ fontSize: 16, color: colors.colorLightBlue, fontWeight: "bold" }}>OK</Text>
+                            <Text style={{ fontSize: 16, color: colors.colorLightBlue, fontWeight: "bold" }}>{I18n.t("dong_y")}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -353,54 +353,54 @@ export default (props) => {
         }
         if (props.route.params.item.Id == 0) {
             if (allPer.IsAdmin || allPer.Partner_Create) {
-          
-            console.log('add');
-            dialogManager.showLoading()
-            new HTTPService().setPath(ApiPath.CUSTOMER).POST(params)
-                .then(res => {
-                    console.log('onClickDone res', res);
-                    if (res && res.ResponseStatus && res.ResponseStatus.Message) {
-                        dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
-                            dialogManager.destroy();
-                        }, null, null, I18n.t('dong'))
-                    } else {
-                        props.route.params.onCallBack('them')
-                        props.navigation.pop()
-                    }
-                    dialogManager.hiddenLoading()
-                })
-                .catch(err => {
-                    dialogManager.hiddenLoading()
-                    console.log('onClickDone err', err);
-                })
-            }else{
+
+                console.log('add');
+                dialogManager.showLoading()
+                new HTTPService().setPath(ApiPath.CUSTOMER).POST(params)
+                    .then(res => {
+                        console.log('onClickDone res', res);
+                        if (res && res.ResponseStatus && res.ResponseStatus.Message) {
+                            dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
+                                dialogManager.destroy();
+                            }, null, null, I18n.t('dong'))
+                        } else {
+                            props.route.params.onCallBack('them')
+                            props.navigation.pop()
+                        }
+                        dialogManager.hiddenLoading()
+                    })
+                    .catch(err => {
+                        dialogManager.hiddenLoading()
+                        console.log('onClickDone err', err);
+                    })
+            } else {
                 dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
                     dialogManager.destroy();
                 }, null, null, I18n.t('dong'))
             }
         } else {
             if (allPer.IsAdmin || allPer.Partner_Update) {
-            console.log('update');
-            params.Partner = { ...customerDetail }
-            dialogManager.showLoading()
-            new HTTPService().setPath(ApiPath.CUSTOMER).POST(params)
-                .then(res => {
-                    console.log('onClickDone res', res);
-                    if (res && res.ResponseStatus && res.ResponseStatus.Message) {
-                        dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
-                            dialogManager.destroy();
-                        }, null, null, I18n.t('dong'))
-                    } else {
-                        props.route.params.onCallBack('sua')
-                        props.navigation.pop()
-                    }
-                    dialogManager.hiddenLoading()
-                })
-                .catch(err => {
-                    dialogManager.hiddenLoading()
-                    console.log('onClickDone err', err);
-                })
-            }else{
+                console.log('update');
+                params.Partner = { ...customerDetail }
+                dialogManager.showLoading()
+                new HTTPService().setPath(ApiPath.CUSTOMER).POST(params)
+                    .then(res => {
+                        console.log('onClickDone res', res);
+                        if (res && res.ResponseStatus && res.ResponseStatus.Message) {
+                            dialogManager.showPopupOneButton(res.ResponseStatus.Message, I18n.t('thong_bao'), () => {
+                                dialogManager.destroy();
+                            }, null, null, I18n.t('dong'))
+                        } else {
+                            props.route.params.onCallBack('sua')
+                            props.navigation.pop()
+                        }
+                        dialogManager.hiddenLoading()
+                    })
+                    .catch(err => {
+                        dialogManager.hiddenLoading()
+                        console.log('onClickDone err', err);
+                    })
+            } else {
                 dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
                     dialogManager.destroy();
                 }, null, null, I18n.t('dong'))
@@ -456,134 +456,134 @@ export default (props) => {
                 title={props.route.params.item.Id == 0 ? I18n.t('them_nha_cung_cap') : I18n.t('cap_nhat_nha_cung_cap')} />
             <ScrollView style={{ flex: 1, padding: 10 }}>
                 <KeyboardAwareScrollView>
-                <Surface style={styles.surface}>
-                    <View style={{ height: Metrics.screenHeight / 6, flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 15 }}>
-                        <View style={{ flex: 1, marginRight: 20 }}>
-                            <Image source={getIcon(customerDetail.Gender, customerDetail.Image)} style={{ height: 100, width: 100, alignSelf: "center" }} />
-                        </View>
-                        <View style={{ flex: 2, }}>
-                            <Text style={{ fontWeight: "bold" }}>{I18n.t('ma_nha_cung_cap')}</Text>
-                            <View style={{ paddingVertical: 20 }}>
-                                <TextInput
-                                    placeholder={I18n.t('tu_dong_tao_ma')}
-                                    placeholderTextColor="#808080"
-                                    value={customerDetail.Code}
-                                    style={{ borderWidth: 0.5, color: "#000", padding: 10, borderRadius: 5 }}
-                                    onChangeText={(text) => { onChangeText(text, 0) }}
-                                />
+                    <Surface style={styles.surface}>
+                        <View style={{ height: Metrics.screenHeight / 6, flexDirection: "row", alignItems: "center", justifyContent: "space-between", padding: 15 }}>
+                            <View style={{ flex: 1, marginRight: 20 }}>
+                                <Image source={getIcon(customerDetail.Gender, customerDetail.Image)} style={{ height: 100, width: 100, alignSelf: "center" }} />
+                            </View>
+                            <View style={{ flex: 2, }}>
+                                <Text style={{ fontWeight: "bold" }}>{I18n.t('ma_nha_cung_cap')}</Text>
+                                <View style={{ paddingVertical: 20 }}>
+                                    <TextInput
+                                        placeholder={I18n.t('tu_dong_tao_ma')}
+                                        placeholderTextColor="#808080"
+                                        value={customerDetail.Code}
+                                        style={{ borderWidth: 0.5, color: "#000", padding: 10, borderRadius: 5 }}
+                                        onChangeText={(text) => { onChangeText(text, 0) }}
+                                    />
+                                </View>
                             </View>
                         </View>
-                    </View>
-                </Surface>
-                <Surface style={styles.surface}>
-                    <View style={{ padding: 15 }}>
-                        <Text style={{ paddingBottom: 10 }}>{I18n.t('ten')} <Text style={{ color: "red" }}>*</Text></Text>
-                        <TextInput
-                            placeholder={I18n.t('ten')}
-                            placeholderTextColor="#808080"
-                            value={customerDetail.Name}
-                            style={{ borderWidth: 0.5, padding: 10, borderRadius: 5 }}
-                            onChangeText={(text) => { onChangeText(text, 1) }}
-                        />
-                    </View>
-                    <View style={{ padding: 15 }}>
-                        <Text style={{ paddingBottom: 10 }}>{I18n.t('so_dien_thoai')}</Text>
-                        <TextInput
-                            returnKeyType='done'
-                            placeholder={I18n.t('so_dien_thoai')}
-                            placeholderTextColor="#808080"
-                            keyboardType="numeric"
-                            value={customerDetail.Phone}
-                            style={{ borderWidth: 0.5, color: "#000", padding: 10, borderRadius: 5 }}
-                            onChangeText={(text) => { onChangeText(text, 2) }}
-                        />
-                    </View>
-                    <View style={{ padding: 15 }}>
-                        <Text style={{ paddingBottom: 10 }}>{I18n.t('ngay_thanh_lap')}</Text>
-                        <View style={{ flexDirection: "row", flex: 1 }}>
-                            <TouchableOpacity onPress={() => {
-                                typeModal.current = 1
-                                setShowModal(true)
-                            }} style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
-                                <Text style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1, color: dateToString(customerDetail.DOB) ? null : "#CECCCB" }}>{dateToString(customerDetail.DOB) ? dateToString(customerDetail.DOB) : 'dd/mm/yyyy'}</Text>
-
-                                <Image source={Images.icon_arrow_down} style={{ width: 20, height: 20, position: "absolute", right: 15 }} />
-                            </TouchableOpacity>
-
+                    </Surface>
+                    <Surface style={styles.surface}>
+                        <View style={{ padding: 15 }}>
+                            <Text style={{ paddingBottom: 10 }}>{I18n.t('ten')} <Text style={{ color: "red" }}>*</Text></Text>
+                            <TextInput
+                                placeholder={I18n.t('ten')}
+                                placeholderTextColor="#808080"
+                                value={customerDetail.Name}
+                                style={{ borderWidth: 0.5, padding: 10, borderRadius: 5 }}
+                                onChangeText={(text) => { onChangeText(text, 1) }}
+                            />
                         </View>
-                    </View>
-                    {
-                        renderGender(customerDetail.Gender)
-                    }
-                    <View style={{ padding: 15 }}>
-                        <Text style={{ paddingBottom: 10 }}>{I18n.t('ma_so_thue')}</Text>
-                        <TextInput
-                            keyboardType="numeric"
-                            placeholder={I18n.t('ma_so_thue')}
-                            value={customerDetail.TaxCode}
-                            style={{ borderWidth: 0.5, color: "#000", padding: 10, borderRadius: 5 }}
-                            onChangeText={(text) => { onChangeText(text, 4) }}
-                        />
-                    </View>
-                    {
-                        props.route.params.item.Id == 0 ?
-                            null
-                            :
-                            <View style={{ padding: 15 }}>
-                                <Text style={{ paddingBottom: 10 }}>{I18n.t('ten_nhom')}</Text>
+                        <View style={{ padding: 15 }}>
+                            <Text style={{ paddingBottom: 10 }}>{I18n.t('so_dien_thoai')}</Text>
+                            <TextInput
+                                returnKeyType='done'
+                                placeholder={I18n.t('so_dien_thoai')}
+                                placeholderTextColor="#808080"
+                                keyboardType="numeric"
+                                value={customerDetail.Phone}
+                                style={{ borderWidth: 0.5, color: "#000", padding: 10, borderRadius: 5 }}
+                                onChangeText={(text) => { onChangeText(text, 2) }}
+                            />
+                        </View>
+                        <View style={{ padding: 15 }}>
+                            <Text style={{ paddingBottom: 10 }}>{I18n.t('ngay_thanh_lap')}</Text>
+                            <View style={{ flexDirection: "row", flex: 1 }}>
                                 <TouchableOpacity onPress={() => {
-                                    typeModal.current = 3
+                                    typeModal.current = 1
                                     setShowModal(true)
-                                }} style={{ flexDirection: "row", alignItems: "center" }}>
-                                    <Text style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1, color: getGroupName(customerDetail.PartnerGroupMembers) ? null : "#CECCCB" }}>{getGroupName(customerDetail.PartnerGroupMembers) ? getGroupName(customerDetail.PartnerGroupMembers) : I18n.t('ten_nhom')}</Text>
+                                }} style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
+                                    <Text style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1, color: dateToString(customerDetail.DOB) ? null : "#CECCCB" }}>{dateToString(customerDetail.DOB) ? dateToString(customerDetail.DOB) : 'dd/mm/yyyy'}</Text>
 
                                     <Image source={Images.icon_arrow_down} style={{ width: 20, height: 20, position: "absolute", right: 15 }} />
                                 </TouchableOpacity>
+
                             </View>
-                    }
-
-                </Surface>
-                <Surface style={styles.surface}>
-                    <View style={{ padding: 15 }}>
-                        <Text style={{ paddingBottom: 10 }}>{I18n.t('dia_chi')}</Text>
-                        <TextInput
-                            placeholder={I18n.t('dia_chi')}
-                            placeholderTextColor="#808080"
-                            value={customerDetail.Address}
-                            style={{ borderWidth: 0.5, color: "#000", padding: 10, borderRadius: 5 }}
-                            onChangeText={(text) => { onChangeText(text, 6) }}
-                        />
-                    </View>
-                    <View style={{ padding: 15 }}>
-                        <Text style={{ paddingBottom: 10 }}>{I18n.t('tinh_thanh')}</Text>
-                        <View style={{ flexDirection: "row", flex: 1 }}>
-                            <TouchableOpacity onPress={() => {
-                                typeModal.current = 2
-                                setShowModal(true)
-                            }} style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
-                                <Text style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1, color: customerDetail.Province ? null : "#CECCCB" }}>{customerDetail.Province ? customerDetail.Province : I18n.t('tinh_thanh')}</Text>
-
-                                <Image source={Images.icon_arrow_down} style={{ width: 20, height: 20, position: "absolute", right: 15 }} />
-                            </TouchableOpacity>
-
                         </View>
-                    </View>
+                        {
+                            renderGender(customerDetail.Gender)
+                        }
+                        <View style={{ padding: 15 }}>
+                            <Text style={{ paddingBottom: 10 }}>{I18n.t('ma_so_thue')}</Text>
+                            <TextInput
+                                keyboardType="numeric"
+                                placeholder={I18n.t('ma_so_thue')}
+                                value={customerDetail.TaxCode}
+                                style={{ borderWidth: 0.5, color: "#000", padding: 10, borderRadius: 5 }}
+                                onChangeText={(text) => { onChangeText(text, 4) }}
+                            />
+                        </View>
+                        {
+                            props.route.params.item.Id == 0 ?
+                                null
+                                :
+                                <View style={{ padding: 15 }}>
+                                    <Text style={{ paddingBottom: 10 }}>{I18n.t('ten_nhom')}</Text>
+                                    <TouchableOpacity onPress={() => {
+                                        typeModal.current = 3
+                                        setShowModal(true)
+                                    }} style={{ flexDirection: "row", alignItems: "center" }}>
+                                        <Text style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1, color: getGroupName(customerDetail.PartnerGroupMembers) ? null : "#CECCCB" }}>{getGroupName(customerDetail.PartnerGroupMembers) ? getGroupName(customerDetail.PartnerGroupMembers) : I18n.t('ten_nhom')}</Text>
 
-                </Surface>
-                <Surface style={styles.surface}>
-                    <View style={{ padding: 15 }}>
-                        <Text style={{ paddingBottom: 10 }}>{I18n.t('du_no')}</Text>
-                        <TextInput
-                            returnKeyType='done'
-                            placeholder={I18n.t('du_no')}
-                            placeholderTextColor="#808080"
-                            keyboardType="numeric"
-                            value={currencyToString(customerDetail.TotalDebt)}
-                            style={{ borderWidth: 0.5, color: "#000", padding: 10, borderRadius: 5 }}
-                            onChangeText={(text) => { onChangeText(text, 8) }}
-                        />
-                    </View>
-                    {/* <View style={{ padding: 15 }}>
+                                        <Image source={Images.icon_arrow_down} style={{ width: 20, height: 20, position: "absolute", right: 15 }} />
+                                    </TouchableOpacity>
+                                </View>
+                        }
+
+                    </Surface>
+                    <Surface style={styles.surface}>
+                        <View style={{ padding: 15 }}>
+                            <Text style={{ paddingBottom: 10 }}>{I18n.t('dia_chi')}</Text>
+                            <TextInput
+                                placeholder={I18n.t('dia_chi')}
+                                placeholderTextColor="#808080"
+                                value={customerDetail.Address}
+                                style={{ borderWidth: 0.5, color: "#000", padding: 10, borderRadius: 5 }}
+                                onChangeText={(text) => { onChangeText(text, 6) }}
+                            />
+                        </View>
+                        <View style={{ padding: 15 }}>
+                            <Text style={{ paddingBottom: 10 }}>{I18n.t('tinh_thanh')}</Text>
+                            <View style={{ flexDirection: "row", flex: 1 }}>
+                                <TouchableOpacity onPress={() => {
+                                    typeModal.current = 2
+                                    setShowModal(true)
+                                }} style={{ flexDirection: "row", alignItems: "center", flex: 1 }}>
+                                    <Text style={{ borderWidth: 0.5, padding: 10, borderRadius: 5, flex: 1, color: customerDetail.Province ? null : "#CECCCB" }}>{customerDetail.Province ? customerDetail.Province : I18n.t('tinh_thanh')}</Text>
+
+                                    <Image source={Images.icon_arrow_down} style={{ width: 20, height: 20, position: "absolute", right: 15 }} />
+                                </TouchableOpacity>
+
+                            </View>
+                        </View>
+
+                    </Surface>
+                    <Surface style={styles.surface}>
+                        <View style={{ padding: 15 }}>
+                            <Text style={{ paddingBottom: 10 }}>{I18n.t('du_no')}</Text>
+                            <TextInput
+                                returnKeyType='done'
+                                placeholder={I18n.t('du_no')}
+                                placeholderTextColor="#808080"
+                                keyboardType="numeric"
+                                value={currencyToString(customerDetail.TotalDebt)}
+                                style={{ borderWidth: 0.5, color: "#000", padding: 10, borderRadius: 5 }}
+                                onChangeText={(text) => { onChangeText(text, 8) }}
+                            />
+                        </View>
+                        {/* <View style={{ padding: 15 }}>
                         <Text style={{ paddingBottom: 10 }}>{I18n.t('diem_thuong')}</Text>
                         <TextInput
                             returnKeyType='done'
@@ -596,21 +596,21 @@ export default (props) => {
                         />
                     </View> */}
 
-                </Surface>
-                <Surface style={styles.surface}>
-                    <View style={{ padding: 15 }}>
-                        <Text style={{ paddingBottom: 10 }}>{I18n.t('ghi_chu')}</Text>
-                        <TextInput
-                            placeholder={I18n.t('ghi_chu')}
-                            placeholderTextColor="#808080"
-                            value={customerDetail.Description}
-                            style={{ borderWidth: 0.5, color: "#000", padding: 10, borderRadius: 5, height: 70 }}
-                            onChangeText={(text) => { onChangeText(text, 10) }}
-                            multiline={true}
-                            numberOfLines={3}
-                        />
-                    </View>
-                </Surface>
+                    </Surface>
+                    <Surface style={styles.surface}>
+                        <View style={{ padding: 15 }}>
+                            <Text style={{ paddingBottom: 10 }}>{I18n.t('ghi_chu')}</Text>
+                            <TextInput
+                                placeholder={I18n.t('ghi_chu')}
+                                placeholderTextColor="#808080"
+                                value={customerDetail.Description}
+                                style={{ borderWidth: 0.5, color: "#000", padding: 10, borderRadius: 5, height: 70 }}
+                                onChangeText={(text) => { onChangeText(text, 10) }}
+                                multiline={true}
+                                numberOfLines={3}
+                            />
+                        </View>
+                    </Surface>
                 </KeyboardAwareScrollView>
             </ScrollView>
             <View style={{ flexDirection: "row", margin: 10, }}>
@@ -623,9 +623,9 @@ export default (props) => {
                                     <TouchableOpacity onPress={onClickDelete} style={{ flex: 1, flexDirection: "row", marginTop: 0, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 10 }}>
                                         <IconAntDesign name={"delete"} size={25} color="white" />
                                     </TouchableOpacity>
-                                    <TouchableOpacity onPress={onClickPrint} style={{ flex: 1, flexDirection: "row", marginLeft: 10, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 10 }}>
+                                    {/* <TouchableOpacity onPress={onClickPrint} style={{ flex: 1, flexDirection: "row", marginLeft: 10, borderRadius: 5, backgroundColor: colors.colorLightBlue, justifyContent: "center", alignItems: "center", padding: 10 }}>
                                         <IconAntDesign name={"printer"} size={25} color="white" />
-                                    </TouchableOpacity>
+                                    </TouchableOpacity> */}
                                 </> : null
                             }
                         </>
