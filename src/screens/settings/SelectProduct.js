@@ -148,12 +148,12 @@ export default (props) => {
                   </View>
                 </View> :
 
-                <View style={{ flexDirection: 'row', backgroundColor: '#fff', flex: 1, padding: 10, width: widthParent - 20,borderRadius:10 }}>
+                <View style={{ flexDirection: 'row', backgroundColor: '#fff', flex: 1, padding: 10, width: widthParent - 20, borderRadius: 10 }}>
                   <Image
                     style={{ height: 70, width: 70, borderRadius: 20, marginLeft: 5 }}
                     source={JSON.parse(item.ProductImages).length > 0 ? { uri: JSON.parse(item.ProductImages)[0].ImageURL } : Images.default_food_image}
                   />
-                  <View style={{marginLeft:10}}>
+                  <View style={{ marginLeft: 10 }}>
                     <View style={{}}>
                       <Text numberOfLines={2} style={{ textTransform: "uppercase", fontWeight: "bold" }}>{item.Name}</Text>
                       <Text style={{ paddingVertical: 5, fontStyle: "italic" }}>{currencyToString(item.Price)}<Text style={{ color: Colors.colorchinh }}>{item.IsLargeUnit ? item.LargeUnit ? `/${item.LargeUnit}` : '' : item.Unit ? `/${item.Unit}` : ''}</Text></Text>

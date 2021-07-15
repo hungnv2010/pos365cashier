@@ -136,6 +136,8 @@ export default (props) => {
                                                 <FlatList
                                                     data={listCate}
                                                     horizontal={isHorizontal}
+                                                    showsHorizontalScrollIndicator={false}
+                                                    showsVerticalScrollIndicator={false}
                                                     keyExtractor={(item, index) => index.toString()}
                                                     renderItem={({ item, index }) => {
                                                         return (
@@ -198,48 +200,50 @@ export default (props) => {
                 </>
                 :
                 <View style={{ flex: 1 }}>
-                            <View style={{ flex: 1, flexDirection: 'column' }}>
-                                <View style={{ flex: 3 }}>
-                                    <ToolBarDefault
-                                        {...props}
-                                        title={I18n.t("cai_dat_man_hinh_chon_san_pham")}
-                                    />
+                    <View style={{ flex: 1, flexDirection: 'column' }}>
+                        <View style={{ flex: 3 }}>
+                            <ToolBarDefault
+                                {...props}
+                                title={I18n.t("cai_dat_man_hinh_chon_san_pham")}
+                            />
 
-                                    <View style={{ flex: 1, flexDirection: 'column', marginHorizontal:5 }}>
-                                        <View style={{ flexDirection: "column", flex: 0.2 }}>
-                                            {listCate.length > 0 ?
-                                                <FlatList
-                                                    data={listCate}
-                                                    horizontal={true}
-                                                    keyExtractor={(item, index) => index.toString()}
-                                                    renderItem={({ item, index }) => {
-                                                        return (
-                                                            <View style={{ backgroundColor: '#fff', paddingHorizontal: 10, paddingVertical: 20, alignItems: 'center' }}>
-                                                                <Text>{item.Name}</Text>
-                                                            </View>
-                                                        )
-                                                    }
-                                                    }
-                                                />
-                                                : null}
-                                        </View>
-                                        <View style={{ flex: 2 }}>
-                                            {
-                                                listProduct.length > 0 ?
-                                                    <SelectProduct numColumn={1} listProducts={listProduct} widthParent={Metrics.screenWidth} outputDataChange={outputDataChange} />
-                                                    :
-                                                    <Text style={{ textAlign: "center" }}>{I18n.t('khong_tim_thay_san_pham_nao_phu_hop')}</Text>
+                            <View style={{ flex: 1, flexDirection: 'column', marginHorizontal: 5 }}>
+                                <View style={{ flexDirection: "column", flex: 0.3, justifyContent: 'center', alignItems: 'center' }}>
+                                    {listCate.length > 0 ?
+                                        <FlatList
+                                            data={listCate}
+                                            horizontal={true}
+                                            showsHorizontalScrollIndicator={false}
+                                            showsVerticalScrollIndicator={false}
+                                            keyExtractor={(item, index) => index.toString()}
+                                            renderItem={({ item, index }) => {
+                                                return (
+                                                    <View style={{ backgroundColor: '#fff', paddingHorizontal: 10, paddingVertical: 20, alignItems: 'center', justifyContent: 'center' }}>
+                                                        <Text>{item.Name}</Text>
+                                                    </View>
+                                                )
                                             }
+                                            }
+                                        />
+                                        : null}
+                                </View>
+                                <View style={{ flex: 2,alignItems:'center' }}>
+                                    {
+                                        listProduct.length > 0 ?
+                                            <SelectProduct numColumn={1} listProducts={listProduct} widthParent={Metrics.screenWidth} outputDataChange={outputDataChange} />
+                                            :
+                                            <Text style={{ textAlign: "center" }}>{I18n.t('khong_tim_thay_san_pham_nao_phu_hop')}</Text>
+                                    }
 
-                                        </View>
-                                    </View>
                                 </View>
                             </View>
-                            <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center', marginHorizontal: Metrics.screenWidth / 4, backgroundColor: colors.colorchinh, paddingVertical: 15, borderRadius: 10, marginVertical: 10 }} onPress={() => onClickSave()}>
-                                <Text style={{ fontWeight: 'bold', color: '#fff' }}>{I18n.t("luu")}</Text>
-                            </TouchableOpacity>
                         </View>
-                }
+                    </View>
+                    <TouchableOpacity style={{ alignItems: 'center', justifyContent: 'center', marginHorizontal: Metrics.screenWidth / 4, backgroundColor: colors.colorchinh, paddingVertical: 15, borderRadius: 10, marginVertical: 10 }} onPress={() => onClickSave()}>
+                        <Text style={{ fontWeight: 'bold', color: '#fff' }}>{I18n.t("luu")}</Text>
+                    </TouchableOpacity>
+                </View>
+            }
         </>
     )
 }

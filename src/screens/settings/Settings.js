@@ -1107,6 +1107,6 @@ const styles = StyleSheet.create({
     styleTextBtnOk: { textAlign: "center", color: "#fff", fontSize: 14 },
     styleBtnGroupSetting: { paddingHorizontal: 15, paddingVertical: 10, alignItems: 'center', justifyContent: 'center', flexDirection: 'row' },
     styleTitleGroup:{
-        fontSize: 14, fontWeight: "bold", textAlign: "center", paddingVertical: 10, textTransform: 'uppercase', flex: 8
+        fontSize: 14, fontWeight: "bold", textAlign: "center", paddingVertical: 10, textTransform: 'uppercase', flex: 8,textAlign:'left'
     }
 })
