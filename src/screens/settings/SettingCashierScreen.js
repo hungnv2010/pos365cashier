@@ -205,7 +205,7 @@ export default (props) => {
                                         title={I18n.t("cai_dat_man_hinh_chon_san_pham")}
                                     />
 
-                                    <View style={{ flex: 1, flexDirection: 'column' }}>
+                                    <View style={{ flex: 1, flexDirection: 'column', marginHorizontal:5 }}>
                                         <View style={{ flexDirection: "column", flex: 0.2 }}>
                                             {listCate.length > 0 ?
                                                 <FlatList
