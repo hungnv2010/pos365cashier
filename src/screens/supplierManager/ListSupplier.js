@@ -197,6 +197,8 @@ export default (props) => {
             await realmStore.deletePartner()
             await dataManager.syncPartner()
             getCustomer()
+            setCustomerItem(GUEST)
+            // setCustomerItem();
             dialogManager.showPopupOneButton(`${I18n.t(type)} ${I18n.t('nha_cung_cap')} ${I18n.t('thanh_cong')}`, I18n.t('thong_bao'))
             dialogManager.hiddenLoading()
         } catch (error) {
@@ -213,7 +215,7 @@ export default (props) => {
         setOnShowModal(true)
     }
     const outputFilter = (data) => {
-        console.log("data", data);
+        console.log("outputFilter data", data);
         let paramFilter
         if (data.Phone || data.Name) {
             if (data.provice) {
@@ -228,6 +230,7 @@ export default (props) => {
                 paramFilter = `(Debt ge ${data.DebtFrom ? data.DebtFrom : NaN} and Debt le ${data.DebtTo ? data.DebtTo : NaN})`
             }
         }
+        
         new HTTPService().setPath(ApiPath.CUSTOMER).GET({ IncludeSummary: true, inlinecount: 'allpages', GroupId: data.GroupId ? data.GroupId : -1, Type: 2, BranchId: currentBranch.current.Id, Birthday: '', filter: paramFilter }).then((res) => {
             if (res != null) {
                 console.log('res', res.results);

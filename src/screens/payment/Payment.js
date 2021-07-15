@@ -1213,15 +1213,11 @@ export default (props) => {
             height="150" />`
             console.log("Data getRef QrCode  ============  image ", indexPayment.current, imageQr.current);
             jsonContentPayment.current.PaymentCode = resPayment.current.Code;
-
-            // setTimeout(() => {
             dispatch({ type: 'PRINT_PROVISIONAL', printProvisional: { jsonContent: jsonContentPayment.current, provisional: false, imgQr: imageQr.current } })
-            // }, 500);
         }
         indexPayment.current++;
-
-
     }
+    
     const getOutputPercent = (value) => {
         if (value.Type == 'discount') {
             onChangeTextInput(value.Value.toString(), 1)

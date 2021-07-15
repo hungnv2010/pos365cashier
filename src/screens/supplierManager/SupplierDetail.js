@@ -323,7 +323,7 @@ export default (props) => {
         let PartnerGroupMembers = []
         listGroup.forEach(item => {
             if (item.status) {
-                PartnerGroupMembers.push({ GroupId: item.Id })
+                PartnerGroupMembers.push({ GroupId: item.id })
             }
         })
         let params = {
@@ -428,7 +428,9 @@ export default (props) => {
     }
 
     const onClickDone = () => {
-        if (props.customerDetail.Id.Id == 0) {
+        console.log("onClickDone ", props.customerDetail );
+        
+        if (props.customerDetail.Id == 0) {
             if (allPer.IsAdmin || allPer.Partner_Create) onClickApply()
             else {
                 dialogManager.showPopupOneButton(I18n.t('tai_khoan_khong_co_quyen_su_dung_chuc_nang_nay'), I18n.t('thong_bao'), () => {
@@ -531,9 +533,9 @@ export default (props) => {
                         />
                     </View>
                     {
-                        props.customerDetail.Id == 0 ?
-                            null
-                            :
+                        // props.customerDetail.Id == 0 ?
+                        //     null
+                        //     :
                             <View style={{ padding: 15 }}>
                                 <Text style={{ paddingBottom: 10 }}>{I18n.t('ten_nhom')}</Text>
                                 <TouchableOpacity onPress={() => {
