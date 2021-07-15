@@ -47,6 +47,7 @@ export default (props) => {
     console.log('getProducts');
     let results = await realmStore.queryProducts()
     // results = results.sorted('Name')
+    results = results.sorted('Position')
     if (listCateId[0] != -1) {
       results = results.filtered(`CategoryId == ${listCateId[0]}`)
     }
@@ -83,6 +84,7 @@ export default (props) => {
         count.current = 0
         let valueSearchLatin = change_alias(debouncedVal)
         let results = await realmStore.queryProducts()
+        results = results.sorted('Position')
         let searchResult = results.filtered(`NameLatin CONTAINS[c] "${valueSearchLatin}" OR Code CONTAINS[c] "${debouncedVal}"`)
         searchResult = JSON.parse(JSON.stringify(searchResult))
         searchResult = Object.values(searchResult)
