@@ -24,6 +24,7 @@ import useDebounce from '../../customHook/useDebounce';
 import CustomerToolBar from '../customerManager/customer/CustomerToolBar';
 import SupplierDetail from './SupplierDetail';
 import DialogFilterSupplier from '../../components/dialog/DialogFilterSupplier'
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 let GUEST = {
     Id: 0,
@@ -217,15 +218,32 @@ export default (props) => {
         let paramFilter
         if (data.Phone || data.Name) {
             if (data.provice) {
-                `((substringof('${data.Phone}',Code) or substringof('${data.Phone ? data.Phone : data.Name}',Phone) or substringof('${data.Name ? data.Name : data.Phone}',Name)) and (Debt ge ${data.DebtFrom ? data.DebtFrom : NaN} and Debt le ${data.DebtTo ? data.DebtTo : NaN}) and Province eq '${data.provice}')`
+                if (data.DebtFrom && data.DebtTo) {
+                 paramFilter = `((substringof('${data.Phone}',Code) or substringof('${data.Phone ? data.Phone : data.Name}',Phone) or substringof('${data.Name ? data.Name : data.Phone}',Name)) and (Debt ge ${data.DebtFrom ? data.DebtFrom : NaN} and Debt le ${data.DebtTo ? data.DebtTo : NaN}) and Province eq '${data.provice}')`   
+                }else{
+                    paramFilter = `((substringof('${data.Phone}',Code) or substringof('${data.Phone ? data.Phone : data.Name}',Phone) or substringof('${data.Name ? data.Name : data.Phone}',Name)) and Province eq '${data.provice}')`  
+                }
+                
             } else {
-                paramFilter = `((substringof('${data.Phone}',Code) or substringof('${data.Phone ? data.Phone : data.Name}',Phone) or substringof('${data.Name ? data.Name : data.Phone}',Name)) and (Debt ge ${data.DebtFrom ? data.DebtFrom : NaN} and Debt le ${data.DebtTo ? data.DebtTo : NaN}))`
+                if (data.DebtFrom && data.DebtTo) {
+                    paramFilter = `((substringof('${data.Phone}',Code) or substringof('${data.Phone ? data.Phone : data.Name}',Phone) or substringof('${data.Name ? data.Name : data.Phone}',Name)) and (Debt ge ${data.DebtFrom ? data.DebtFrom : NaN} and Debt le ${data.DebtTo ? data.DebtTo : NaN}))`
+                }else
+                paramFilter = `((substringof('${data.Phone}',Code) or substringof('${data.Phone ? data.Phone : data.Name}',Phone) or substringof('${data.Name ? data.Name : data.Phone}',Name)))`
+                
             }
         } else {
             if (data.provice) {
-                paramFilter = `((Debt ge ${data.DebtFrom ? data.DebtFrom : NaN} and Debt le ${data.DebtTo ? data.DebtTo : NaN}) and Province eq '${data.provice}')`
+                if (data.DebtFrom && data.DebtTo) {
+                    paramFilter = `((Debt ge ${data.DebtFrom ? data.DebtFrom : NaN} and Debt le ${data.DebtTo ? data.DebtTo : NaN}) and Province eq '${data.provice}')` 
+                }else
+                paramFilter = `(Province eq '${data.provice}')`
+                
             } else {
-                paramFilter = `(Debt ge ${data.DebtFrom ? data.DebtFrom : NaN} and Debt le ${data.DebtTo ? data.DebtTo : NaN})`
+                if (data.DebtFrom && data.DebtTo) {
+                    paramFilter = `(Debt ge ${data.DebtFrom ? data.DebtFrom : NaN} and Debt le ${data.DebtTo ? data.DebtTo : NaN})`
+                }else
+                paramFilter = ``
+                
             }
         }
         new HTTPService().setPath(ApiPath.CUSTOMER).GET({ IncludeSummary: true, inlinecount: 'allpages', GroupId: data.GroupId ? data.GroupId : -1, Type: 2, BranchId: currentBranch.current.Id, Birthday: '', filter: paramFilter }).then((res) => {
